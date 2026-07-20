@@ -4,5 +4,5 @@
  * @description Barrel for the native built-in devtools panels.
  */
 
-export { ActionsNativeDevtoolsPanel } from './actions.native-devtools-panel';
-export { OverviewNativeDevtoolsPanel } from './overview.native-devtools-panel';
+export { ActionsNativeDevtoolsPanel } from "./actions.native-devtools-panel";
+export { OverviewNativeDevtoolsPanel } from "./overview.native-devtools-panel";

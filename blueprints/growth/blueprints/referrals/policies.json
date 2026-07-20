@@ -8,14 +8,46 @@
       "model": "ReferralProgram",
       "class": "Academorix\\Growth\\Referrals\\Policies\\ReferralProgramPolicy",
       "abilities": [
-        { "action": "viewAny", "permission": "referral_programs.viewAny", "scope": "admin + marketing + owner" },
-        { "action": "view", "permission": "referral_programs.view", "scope": "admin + marketing + owner" },
-        { "action": "create", "permission": "referral_programs.create", "scope": "admin + marketing + owner" },
-        { "action": "update", "permission": "referral_programs.update", "scope": "admin + marketing + owner" },
-        { "action": "delete", "permission": "referral_programs.delete", "scope": "admin + owner only — audit-critical" },
-        { "action": "activate", "permission": "referral_programs.activate", "scope": "admin + owner" },
-        { "action": "pause", "permission": "referral_programs.pause", "scope": "admin + marketing + owner" },
-        { "action": "archive", "permission": "referral_programs.archive", "scope": "admin + owner only" },
+        {
+          "action": "viewAny",
+          "permission": "referral_programs.viewAny",
+          "scope": "admin + marketing + owner"
+        },
+        {
+          "action": "view",
+          "permission": "referral_programs.view",
+          "scope": "admin + marketing + owner"
+        },
+        {
+          "action": "create",
+          "permission": "referral_programs.create",
+          "scope": "admin + marketing + owner"
+        },
+        {
+          "action": "update",
+          "permission": "referral_programs.update",
+          "scope": "admin + marketing + owner"
+        },
+        {
+          "action": "delete",
+          "permission": "referral_programs.delete",
+          "scope": "admin + owner only — audit-critical"
+        },
+        {
+          "action": "activate",
+          "permission": "referral_programs.activate",
+          "scope": "admin + owner"
+        },
+        {
+          "action": "pause",
+          "permission": "referral_programs.pause",
+          "scope": "admin + marketing + owner"
+        },
+        {
+          "action": "archive",
+          "permission": "referral_programs.archive",
+          "scope": "admin + owner only"
+        },
         { "action": "viewAnalytics", "permission": "referral_programs.view-analytics" }
       ]
     },
@@ -38,7 +70,11 @@
           "permission": "referral_codes.create",
           "scope": "admin + marketing + owner (for campaign codes). User codes auto-issued via IssueReferralCodeJob (no direct create permission needed)"
         },
-        { "action": "deactivate", "permission": "referral_codes.deactivate", "scope": "admin + marketing + owner" },
+        {
+          "action": "deactivate",
+          "permission": "referral_codes.deactivate",
+          "scope": "admin + marketing + owner"
+        },
         {
           "action": "delete",
           "permission": "referral_codes.delete",
@@ -88,7 +124,11 @@
           "permission": "referral_rewards.viewAny",
           "scope": "admin + marketing + support. Users see own via /me/referral-rewards."
         },
-        { "action": "view", "permission": "referral_rewards.view", "scope": "recipient + admin + marketing" },
+        {
+          "action": "view",
+          "permission": "referral_rewards.view",
+          "scope": "recipient + admin + marketing"
+        },
         {
           "action": "clawback",
           "permission": "referral_rewards.clawback",

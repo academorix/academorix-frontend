@@ -7,37 +7,122 @@
       "category": "connectivity",
       "display_label": "Connectivity",
       "amenities": [
-        { "tag": "wifi", "display_label": "Wi-Fi", "icon": "wifi", "description": "Free member Wi-Fi network." },
-        { "tag": "wifi_premium", "display_label": "Premium Wi-Fi", "icon": "wifi", "description": "Dedicated high-speed guest network (typically fibre-backed)." },
-        { "tag": "cellular_coverage", "display_label": "Cellular coverage", "icon": "signal", "description": "Signal boosters covering areas with weak mobile reception." }
+        {
+          "tag": "wifi",
+          "display_label": "Wi-Fi",
+          "icon": "wifi",
+          "description": "Free member Wi-Fi network."
+        },
+        {
+          "tag": "wifi_premium",
+          "display_label": "Premium Wi-Fi",
+          "icon": "wifi",
+          "description": "Dedicated high-speed guest network (typically fibre-backed)."
+        },
+        {
+          "tag": "cellular_coverage",
+          "display_label": "Cellular coverage",
+          "icon": "signal",
+          "description": "Signal boosters covering areas with weak mobile reception."
+        }
       ]
     },
     {
       "category": "access_and_mobility",
       "display_label": "Access + mobility",
       "amenities": [
-        { "tag": "parking", "display_label": "Parking", "icon": "truck", "description": "Vehicle parking available on-site." },
-        { "tag": "parking_free", "display_label": "Free parking", "icon": "truck", "description": "Parking included at no additional cost." },
-        { "tag": "parking_paid", "display_label": "Paid parking", "icon": "truck", "description": "Paid parking arrangement (metered or valet)." },
-        { "tag": "parking_ev_charging", "display_label": "EV charging", "icon": "bolt", "description": "Electric vehicle charging stations." },
-        { "tag": "bike_racks", "display_label": "Bike parking", "icon": "bicycle", "description": "Bicycle racks / lock-up." },
-        { "tag": "wheelchair_accessible", "display_label": "Wheelchair accessible", "icon": "hand-raised", "description": "ADA / regional-equivalent accessible entrances + facilities." },
-        { "tag": "elevator", "display_label": "Elevator", "icon": "arrows-up-down", "description": "Elevator access to all floors." },
-        { "tag": "public_transit_nearby", "display_label": "Public transit nearby", "icon": "map-pin", "description": "Bus / metro / tram stop within 500m." }
+        {
+          "tag": "parking",
+          "display_label": "Parking",
+          "icon": "truck",
+          "description": "Vehicle parking available on-site."
+        },
+        {
+          "tag": "parking_free",
+          "display_label": "Free parking",
+          "icon": "truck",
+          "description": "Parking included at no additional cost."
+        },
+        {
+          "tag": "parking_paid",
+          "display_label": "Paid parking",
+          "icon": "truck",
+          "description": "Paid parking arrangement (metered or valet)."
+        },
+        {
+          "tag": "parking_ev_charging",
+          "display_label": "EV charging",
+          "icon": "bolt",
+          "description": "Electric vehicle charging stations."
+        },
+        {
+          "tag": "bike_racks",
+          "display_label": "Bike parking",
+          "icon": "bicycle",
+          "description": "Bicycle racks / lock-up."
+        },
+        {
+          "tag": "wheelchair_accessible",
+          "display_label": "Wheelchair accessible",
+          "icon": "hand-raised",
+          "description": "ADA / regional-equivalent accessible entrances + facilities."
+        },
+        {
+          "tag": "elevator",
+          "display_label": "Elevator",
+          "icon": "arrows-up-down",
+          "description": "Elevator access to all floors."
+        },
+        {
+          "tag": "public_transit_nearby",
+          "display_label": "Public transit nearby",
+          "icon": "map-pin",
+          "description": "Bus / metro / tram stop within 500m."
+        }
       ]
     },
     {
       "category": "facilities",
       "display_label": "On-site facilities",
       "amenities": [
-        { "tag": "showers", "display_label": "Showers", "icon": "droplet", "description": "Members' showers." },
-        { "tag": "lockers", "display_label": "Lockers", "icon": "lock-closed", "description": "Member lockers (day-use or rented)." },
+        {
+          "tag": "showers",
+          "display_label": "Showers",
+          "icon": "droplet",
+          "description": "Members' showers."
+        },
+        {
+          "tag": "lockers",
+          "display_label": "Lockers",
+          "icon": "lock-closed",
+          "description": "Member lockers (day-use or rented)."
+        },
         { "tag": "changing_rooms", "display_label": "Changing rooms", "icon": "user-group" },
-        { "tag": "cafe", "display_label": "Café / snack bar", "icon": "cake", "description": "Food + beverage service on-site." },
+        {
+          "tag": "cafe",
+          "display_label": "Café / snack bar",
+          "icon": "cake",
+          "description": "Food + beverage service on-site."
+        },
         { "tag": "vending_machines", "display_label": "Vending machines", "icon": "shopping-bag" },
-        { "tag": "pro_shop", "display_label": "Pro shop", "icon": "shopping-cart", "description": "Retail sales of equipment / apparel." },
-        { "tag": "childcare", "display_label": "Childcare", "icon": "user-plus", "description": "On-site supervised childcare during member visits." },
-        { "tag": "physiotherapy", "display_label": "Physiotherapy", "icon": "heart", "description": "On-site physio / sports medicine services." },
+        {
+          "tag": "pro_shop",
+          "display_label": "Pro shop",
+          "icon": "shopping-cart",
+          "description": "Retail sales of equipment / apparel."
+        },
+        {
+          "tag": "childcare",
+          "display_label": "Childcare",
+          "icon": "user-plus",
+          "description": "On-site supervised childcare during member visits."
+        },
+        {
+          "tag": "physiotherapy",
+          "display_label": "Physiotherapy",
+          "icon": "heart",
+          "description": "On-site physio / sports medicine services."
+        },
         { "tag": "sauna", "display_label": "Sauna", "icon": "fire" },
         { "tag": "steam_room", "display_label": "Steam room", "icon": "cloud" }
       ]
@@ -46,10 +131,29 @@
       "category": "family_and_faith",
       "display_label": "Family + faith",
       "amenities": [
-        { "tag": "prayer_room", "display_label": "Prayer room", "icon": "sparkles", "description": "Dedicated prayer / meditation space." },
-        { "tag": "family_room", "display_label": "Family room", "icon": "home", "description": "Family-friendly waiting area." },
-        { "tag": "nursing_room", "display_label": "Nursing room", "icon": "heart", "description": "Private space for parents to nurse infants." },
-        { "tag": "family_changing_room", "display_label": "Family changing room", "icon": "user-group" }
+        {
+          "tag": "prayer_room",
+          "display_label": "Prayer room",
+          "icon": "sparkles",
+          "description": "Dedicated prayer / meditation space."
+        },
+        {
+          "tag": "family_room",
+          "display_label": "Family room",
+          "icon": "home",
+          "description": "Family-friendly waiting area."
+        },
+        {
+          "tag": "nursing_room",
+          "display_label": "Nursing room",
+          "icon": "heart",
+          "description": "Private space for parents to nurse infants."
+        },
+        {
+          "tag": "family_changing_room",
+          "display_label": "Family changing room",
+          "icon": "user-group"
+        }
       ]
     },
     {
@@ -59,7 +163,11 @@
         { "tag": "indoor_courts", "display_label": "Indoor courts", "icon": "square-3-stack-3d" },
         { "tag": "outdoor_courts", "display_label": "Outdoor courts", "icon": "sun" },
         { "tag": "swimming_pool", "display_label": "Swimming pool", "icon": "droplet" },
-        { "tag": "swimming_pool_heated", "display_label": "Heated swimming pool", "icon": "droplet" },
+        {
+          "tag": "swimming_pool_heated",
+          "display_label": "Heated swimming pool",
+          "icon": "droplet"
+        },
         { "tag": "gym", "display_label": "Gym / fitness room", "icon": "bolt" },
         { "tag": "cardio_zone", "display_label": "Cardio zone", "icon": "chart-bar" },
         { "tag": "free_weights", "display_label": "Free weights area", "icon": "beaker" },
@@ -73,11 +181,20 @@
       "category": "safety_and_service",
       "display_label": "Safety + service",
       "amenities": [
-        { "tag": "24_hour_access", "display_label": "24-hour access", "icon": "clock", "description": "Member-badge access outside staffed hours." },
+        {
+          "tag": "24_hour_access",
+          "display_label": "24-hour access",
+          "icon": "clock",
+          "description": "Member-badge access outside staffed hours."
+        },
         { "tag": "staffed_reception", "display_label": "Staffed reception", "icon": "user" },
         { "tag": "cctv", "display_label": "CCTV monitored", "icon": "eye" },
         { "tag": "defibrillator", "display_label": "AED / defibrillator on-site", "icon": "heart" },
-        { "tag": "first_aid_trained_staff", "display_label": "First-aid-trained staff", "icon": "plus" }
+        {
+          "tag": "first_aid_trained_staff",
+          "display_label": "First-aid-trained staff",
+          "icon": "plus"
+        }
       ]
     }
   ],

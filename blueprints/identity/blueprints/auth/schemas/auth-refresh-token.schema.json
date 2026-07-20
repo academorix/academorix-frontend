@@ -37,16 +37,40 @@
     "engine": "postgres",
     "columns": {
       "id": { "type": "string", "length": 30, "primary": true },
-      "tokenable_type": { "type": "string", "nullable": false, "description": "Polymorphic type \u2014 `Academorix\\User\\Models\\User` or `Academorix\\PlatformUser\\Models\\PlatformUser`." },
+      "tokenable_type": {
+        "type": "string",
+        "nullable": false,
+        "description": "Polymorphic type \u2014 `Academorix\\User\\Models\\User` or `Academorix\\PlatformUser\\Models\\PlatformUser`."
+      },
       "tokenable_id": { "type": "string", "length": 30, "nullable": false },
-      "token_hash": { "type": "text", "nullable": false, "description": "SHA-256 hex digest of the opaque token plaintext. Plaintext returned once at issue." },
-      "family_id": { "type": "uuid", "nullable": false, "description": "Every rotation shares the family. Fresh UUID on first-in-chain; inherited on rotation." },
-      "personal_access_token_id": { "type": "bigint", "nullable": false, "description": "Paired Sanctum PAT id. Cascades on Sanctum PAT delete." },
+      "token_hash": {
+        "type": "text",
+        "nullable": false,
+        "description": "SHA-256 hex digest of the opaque token plaintext. Plaintext returned once at issue."
+      },
+      "family_id": {
+        "type": "uuid",
+        "nullable": false,
+        "description": "Every rotation shares the family. Fresh UUID on first-in-chain; inherited on rotation."
+      },
+      "personal_access_token_id": {
+        "type": "bigint",
+        "nullable": false,
+        "description": "Paired Sanctum PAT id. Cascades on Sanctum PAT delete."
+      },
       "issued_at": { "type": "timestamptz", "nullable": false, "default": "now()" },
       "expires_at": { "type": "timestamptz", "nullable": false },
-      "consumed_at": { "type": "timestamptz", "nullable": true, "description": "Set atomically on rotation. Re-presenting a row with consumed_at IS NOT NULL is a REPLAY." },
+      "consumed_at": {
+        "type": "timestamptz",
+        "nullable": true,
+        "description": "Set atomically on rotation. Re-presenting a row with consumed_at IS NOT NULL is a REPLAY."
+      },
       "revoked_at": { "type": "timestamptz", "nullable": true },
-      "ip_address_hash": { "type": "text", "nullable": true, "description": "SHA-256 of request IP at issue; plaintext never persisted." },
+      "ip_address_hash": {
+        "type": "text",
+        "nullable": true,
+        "description": "SHA-256 of request IP at issue; plaintext never persisted."
+      },
       "user_agent_hash": { "type": "text", "nullable": true },
       "metadata": { "type": "jsonb", "nullable": true },
       "created_by": { "type": "uuid", "nullable": true },
@@ -59,11 +83,31 @@
     "indexes": [
       { "columns": ["token_hash"], "unique": true, "name": "auth_refresh_tokens_hash_unique" },
       { "columns": ["family_id"], "unique": false, "name": "auth_refresh_tokens_family_idx" },
-      { "columns": ["tokenable_type", "tokenable_id"], "unique": false, "name": "auth_refresh_tokens_tokenable_idx" },
-      { "columns": ["expires_at"], "unique": false, "predicate": "consumed_at IS NULL AND revoked_at IS NULL", "name": "auth_refresh_tokens_active_expiry_idx" }
+      {
+        "columns": ["tokenable_type", "tokenable_id"],
+        "unique": false,
+        "name": "auth_refresh_tokens_tokenable_idx"
+      },
+      {
+        "columns": ["expires_at"],
+        "unique": false,
+        "predicate": "consumed_at IS NULL AND revoked_at IS NULL",
+        "name": "auth_refresh_tokens_active_expiry_idx"
+      }
     ]
   },
-  "required": ["id", "tokenable_type", "tokenable_id", "token_hash", "family_id", "personal_access_token_id", "issued_at", "expires_at", "created_at", "updated_at"],
+  "required": [
+    "id",
+    "tokenable_type",
+    "tokenable_id",
+    "token_hash",
+    "family_id",
+    "personal_access_token_id",
+    "issued_at",
+    "expires_at",
+    "created_at",
+    "updated_at"
+  ],
   "properties": {
     "id": { "type": "string", "pattern": "^atr_[0-9A-HJKMNP-TV-Z]{26}$" },
     "tokenable_type": { "type": "string" },
@@ -74,7 +118,10 @@
     "expires_at": { "type": "string", "format": "date-time" },
     "consumed_at": { "type": ["string", "null"], "format": "date-time" },
     "revoked_at": { "type": ["string", "null"], "format": "date-time" },
-    "is_active": { "type": "boolean", "description": "Computed. revoked_at IS NULL AND consumed_at IS NULL AND expires_at > now()." },
+    "is_active": {
+      "type": "boolean",
+      "description": "Computed. revoked_at IS NULL AND consumed_at IS NULL AND expires_at > now()."
+    },
     "is_consumed": { "type": "boolean" },
     "is_revoked": { "type": "boolean" },
     "family_size": { "type": "integer" }

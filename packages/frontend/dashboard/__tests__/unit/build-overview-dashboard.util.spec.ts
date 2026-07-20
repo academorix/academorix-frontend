@@ -7,7 +7,10 @@
 
 import { describe, expect, it } from "vitest";
 
-import { BUILT_IN_ANALYTICS_ID, BUILT_IN_OVERVIEW_ID } from "@/core/constants/built-in-dashboards.constants";
+import {
+  BUILT_IN_ANALYTICS_ID,
+  BUILT_IN_OVERVIEW_ID,
+} from "@/core/constants/built-in-dashboards.constants";
 import { buildAnalyticsDashboard } from "@/core/utils/build-analytics-dashboard.util";
 import { buildOverviewDashboard } from "@/core/utils/build-overview-dashboard.util";
 
@@ -37,9 +40,7 @@ describe("buildOverviewDashboard", () => {
     const first = buildOverviewDashboard("user-1", "tenant-1", spanFor);
     const second = buildOverviewDashboard("user-1", "tenant-1", spanFor);
 
-    expect(first.widgets.map((entry) => entry.id)).toEqual(
-      second.widgets.map((entry) => entry.id),
-    );
+    expect(first.widgets.map((entry) => entry.id)).toEqual(second.widgets.map((entry) => entry.id));
   });
 
   it("emits one layout entry per widget at every breakpoint", () => {

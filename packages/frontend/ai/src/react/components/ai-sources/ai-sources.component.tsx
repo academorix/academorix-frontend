@@ -5,9 +5,9 @@
  *   `ChatSource` + `ChatSources` (Req 20.1, 20.2).
  */
 
-import type { JSX } from 'react';
-import { ChatSource, ChatSources } from '@stackra/ui/react';
-import type { IAiSource } from '@stackra/contracts';
+import type { JSX } from "react";
+import { ChatSource, ChatSources } from "@stackra/ui/react";
+import type { IAiSource } from "@stackra/contracts";
 
 /** Props accepted by {@link AiSources}. */
 export interface IAiSourcesProps {

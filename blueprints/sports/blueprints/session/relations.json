@@ -13,19 +13,108 @@
     }
   ],
   "outbound": [
-    { "from": "Session", "kind": "belongsTo", "to": "tenancy::Tenant", "foreignKey": "tenant_id", "onDelete": "cascade" },
-    { "from": "Session", "kind": "belongsTo", "to": "branch::Branch", "foreignKey": "branch_id", "onDelete": "restrict" },
-    { "from": "Session", "kind": "belongsTo", "to": "facility::ResourceBooking", "foreignKey": "resource_booking_id", "onDelete": "restrict", "description": "The physical slot. Session inherits starts_at/ends_at from here." },
-    { "from": "Session", "kind": "belongsTo", "to": "teams::Team", "foreignKey": "team_id", "nullable": true, "onDelete": "restrict", "description": "Nullable = standalone session." },
-    { "from": "Session", "kind": "belongsTo", "to": "season::Season", "foreignKey": "season_id", "nullable": true, "onDelete": "restrict" },
-    { "from": "Session", "kind": "belongsTo", "to": "event::Event", "foreignKey": "event_id", "nullable": true, "onDelete": "restrict" },
-    { "from": "Session", "kind": "belongsTo", "to": "coaching::Coach", "foreignKey": "head_coach_id", "nullable": true, "onDelete": "restrict", "description": "Head coach. RESTRICT — coach can't be deleted while assigned; deactivation cascades via listener." },
-    { "from": "Session", "kind": "belongsTo", "to": "staff::Staff", "foreignKey": "supervising_staff_id", "nullable": true, "onDelete": "restrict" },
-    { "from": "Session", "kind": "belongsTo", "to": "age-group::AgeGroup", "foreignKey": "age_group_id", "nullable": true, "onDelete": "restrict" },
-    { "from": "SessionAttendance", "kind": "belongsTo", "to": "tenancy::Tenant", "foreignKey": "tenant_id", "onDelete": "cascade" },
-    { "from": "SessionAttendance", "kind": "belongsTo", "to": "session::Session", "foreignKey": "session_id", "onDelete": "cascade" },
-    { "from": "SessionAttendance", "kind": "belongsTo", "to": "athlete::Athlete", "foreignKey": "athlete_id", "onDelete": "restrict" },
-    { "from": "SessionAttendance", "kind": "belongsTo", "to": "athlete-enrollment::AthleteEnrollment", "foreignKey": "athlete_enrollment_id", "nullable": true, "onDelete": "set null", "description": "SET NULL so attendance record survives enrollment deletion (safeguarding + financial retention)." }
+    {
+      "from": "Session",
+      "kind": "belongsTo",
+      "to": "tenancy::Tenant",
+      "foreignKey": "tenant_id",
+      "onDelete": "cascade"
+    },
+    {
+      "from": "Session",
+      "kind": "belongsTo",
+      "to": "branch::Branch",
+      "foreignKey": "branch_id",
+      "onDelete": "restrict"
+    },
+    {
+      "from": "Session",
+      "kind": "belongsTo",
+      "to": "facility::ResourceBooking",
+      "foreignKey": "resource_booking_id",
+      "onDelete": "restrict",
+      "description": "The physical slot. Session inherits starts_at/ends_at from here."
+    },
+    {
+      "from": "Session",
+      "kind": "belongsTo",
+      "to": "teams::Team",
+      "foreignKey": "team_id",
+      "nullable": true,
+      "onDelete": "restrict",
+      "description": "Nullable = standalone session."
+    },
+    {
+      "from": "Session",
+      "kind": "belongsTo",
+      "to": "season::Season",
+      "foreignKey": "season_id",
+      "nullable": true,
+      "onDelete": "restrict"
+    },
+    {
+      "from": "Session",
+      "kind": "belongsTo",
+      "to": "event::Event",
+      "foreignKey": "event_id",
+      "nullable": true,
+      "onDelete": "restrict"
+    },
+    {
+      "from": "Session",
+      "kind": "belongsTo",
+      "to": "coaching::Coach",
+      "foreignKey": "head_coach_id",
+      "nullable": true,
+      "onDelete": "restrict",
+      "description": "Head coach. RESTRICT — coach can't be deleted while assigned; deactivation cascades via listener."
+    },
+    {
+      "from": "Session",
+      "kind": "belongsTo",
+      "to": "staff::Staff",
+      "foreignKey": "supervising_staff_id",
+      "nullable": true,
+      "onDelete": "restrict"
+    },
+    {
+      "from": "Session",
+      "kind": "belongsTo",
+      "to": "age-group::AgeGroup",
+      "foreignKey": "age_group_id",
+      "nullable": true,
+      "onDelete": "restrict"
+    },
+    {
+      "from": "SessionAttendance",
+      "kind": "belongsTo",
+      "to": "tenancy::Tenant",
+      "foreignKey": "tenant_id",
+      "onDelete": "cascade"
+    },
+    {
+      "from": "SessionAttendance",
+      "kind": "belongsTo",
+      "to": "session::Session",
+      "foreignKey": "session_id",
+      "onDelete": "cascade"
+    },
+    {
+      "from": "SessionAttendance",
+      "kind": "belongsTo",
+      "to": "athlete::Athlete",
+      "foreignKey": "athlete_id",
+      "onDelete": "restrict"
+    },
+    {
+      "from": "SessionAttendance",
+      "kind": "belongsTo",
+      "to": "athlete-enrollment::AthleteEnrollment",
+      "foreignKey": "athlete_enrollment_id",
+      "nullable": true,
+      "onDelete": "set null",
+      "description": "SET NULL so attendance record survives enrollment deletion (safeguarding + financial retention)."
+    }
   ],
   "inbound": {
     "description": "Wave 3+ modules may add per-session rows (session-ratings, session-recap, etc.) via BelongsToSession trait.",

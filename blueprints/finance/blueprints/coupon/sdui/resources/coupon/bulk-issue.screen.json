@@ -32,8 +32,21 @@
         {
           "kind": "View",
           "children": [
-            { "kind": "Text", "props": { "as": "h1", "className": "text-2xl font-semibold", "children": "Bulk issue coupons" } },
-            { "kind": "Text", "props": { "className": "text-sm text-muted", "children": "Generate N unique codes for a named campaign in one shot. Consumes coupon_slot entitlement per code." } }
+            {
+              "kind": "Text",
+              "props": {
+                "as": "h1",
+                "className": "text-2xl font-semibold",
+                "children": "Bulk issue coupons"
+              }
+            },
+            {
+              "kind": "Text",
+              "props": {
+                "className": "text-sm text-muted",
+                "children": "Generate N unique codes for a named campaign in one shot. Consumes coupon_slot entitlement per code."
+              }
+            }
           ]
         },
         {
@@ -127,9 +140,21 @@
                   "itemRenderer": {
                     "kind": "View",
                     "children": [
-                      { "kind": "Text", "props": { "className": "font-mono text-sm" }, "bindings": { "children": { "$ref": "item.template" } } },
-                      { "kind": "Text", "props": { "className": "text-xs text-muted" }, "bindings": { "children": { "$ref": "item.typical_use_case" } } },
-                      { "kind": "Text", "props": { "className": "text-xs text-muted" }, "bindings": { "children": { "$expr": "'Example: ' + item.example" } } }
+                      {
+                        "kind": "Text",
+                        "props": { "className": "font-mono text-sm" },
+                        "bindings": { "children": { "$ref": "item.template" } }
+                      },
+                      {
+                        "kind": "Text",
+                        "props": { "className": "text-xs text-muted" },
+                        "bindings": { "children": { "$ref": "item.typical_use_case" } }
+                      },
+                      {
+                        "kind": "Text",
+                        "props": { "className": "text-xs text-muted" },
+                        "bindings": { "children": { "$expr": "'Example: ' + item.example" } }
+                      }
                     ]
                   }
                 }
@@ -141,7 +166,12 @@
               "children": [
                 {
                   "kind": "ComboBox",
-                  "props": { "name": "discount_type", "label": "Discount type", "menuTrigger": "focus", "isRequired": true },
+                  "props": {
+                    "name": "discount_type",
+                    "label": "Discount type",
+                    "menuTrigger": "focus",
+                    "isRequired": true
+                  },
                   "props_items": [
                     { "id": "percent", "label": "Percent discount" },
                     { "id": "fixed_amount", "label": "Fixed amount" },
@@ -157,7 +187,11 @@
                 },
                 {
                   "kind": "ComboBox",
-                  "props": { "name": "discount_currency", "label": "Currency", "menuTrigger": "focus" },
+                  "props": {
+                    "name": "discount_currency",
+                    "label": "Currency",
+                    "menuTrigger": "focus"
+                  },
                   "bindings": {
                     "hidden": { "$expr": "form.discount_type !== 'fixed_amount'" },
                     "isRequired": { "$expr": "form.discount_type === 'fixed_amount'" }
@@ -170,11 +204,24 @@
                 },
                 {
                   "kind": "NumberField",
-                  "props": { "name": "usage_cap", "label": "Per-code usage cap", "minValue": 1, "defaultValue": 1, "isRequired": true, "helpText": "Typical: 1 (each code redeemable once)." }
+                  "props": {
+                    "name": "usage_cap",
+                    "label": "Per-code usage cap",
+                    "minValue": 1,
+                    "defaultValue": 1,
+                    "isRequired": true,
+                    "helpText": "Typical: 1 (each code redeemable once)."
+                  }
                 },
                 {
                   "kind": "NumberField",
-                  "props": { "name": "per_customer_limit", "label": "Per-customer limit", "minValue": 1, "defaultValue": 1, "isRequired": true }
+                  "props": {
+                    "name": "per_customer_limit",
+                    "label": "Per-customer limit",
+                    "minValue": 1,
+                    "defaultValue": 1,
+                    "isRequired": true
+                  }
                 }
               ]
             },
@@ -184,11 +231,20 @@
               "children": [
                 {
                   "kind": "DatePicker",
-                  "props": { "name": "valid_from", "label": "Valid from", "isRequired": true, "defaultValue": "now" }
+                  "props": {
+                    "name": "valid_from",
+                    "label": "Valid from",
+                    "isRequired": true,
+                    "defaultValue": "now"
+                  }
                 },
                 {
                   "kind": "DatePicker",
-                  "props": { "name": "valid_until", "label": "Valid until", "helpText": "Recommended: set an end date for campaign codes." }
+                  "props": {
+                    "name": "valid_until",
+                    "label": "Valid until",
+                    "helpText": "Recommended: set an end date for campaign codes."
+                  }
                 }
               ]
             },

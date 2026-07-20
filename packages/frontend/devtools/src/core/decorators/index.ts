@@ -5,5 +5,5 @@
  *   devtools contributions.
  */
 
-export { DevtoolsPanel } from './devtools-panel.decorator';
-export { DevtoolsInspectorSource } from './devtools-inspector-source.decorator';
+export { DevtoolsPanel } from "./devtools-panel.decorator";
+export { DevtoolsInspectorSource } from "./devtools-inspector-source.decorator";

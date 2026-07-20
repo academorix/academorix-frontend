@@ -21,16 +21,56 @@
           "props": { "className": "flex items-center", "role": "img" },
           "bindings": { "aria-label": { "$expr": "$params.rating_value + ' out of 5 stars'" } },
           "children": [
-            { "kind": "Icon", "props": { "name": "star-solid", "className": "text-yellow-500 size-4" }, "bindings": { "hidden": { "$expr": "$params.rating_value < 1" } } },
-            { "kind": "Icon", "props": { "name": "star-solid", "className": "text-yellow-500 size-4" }, "bindings": { "hidden": { "$expr": "$params.rating_value < 2" } } },
-            { "kind": "Icon", "props": { "name": "star-solid", "className": "text-yellow-500 size-4" }, "bindings": { "hidden": { "$expr": "$params.rating_value < 3" } } },
-            { "kind": "Icon", "props": { "name": "star-solid", "className": "text-yellow-500 size-4" }, "bindings": { "hidden": { "$expr": "$params.rating_value < 4" } } },
-            { "kind": "Icon", "props": { "name": "star-solid", "className": "text-yellow-500 size-4" }, "bindings": { "hidden": { "$expr": "$params.rating_value < 5" } } },
-            { "kind": "Icon", "props": { "name": "star-outline", "className": "text-muted size-4" }, "bindings": { "hidden": { "$expr": "$params.rating_value >= 1" } } },
-            { "kind": "Icon", "props": { "name": "star-outline", "className": "text-muted size-4" }, "bindings": { "hidden": { "$expr": "$params.rating_value >= 2" } } },
-            { "kind": "Icon", "props": { "name": "star-outline", "className": "text-muted size-4" }, "bindings": { "hidden": { "$expr": "$params.rating_value >= 3" } } },
-            { "kind": "Icon", "props": { "name": "star-outline", "className": "text-muted size-4" }, "bindings": { "hidden": { "$expr": "$params.rating_value >= 4" } } },
-            { "kind": "Icon", "props": { "name": "star-outline", "className": "text-muted size-4" }, "bindings": { "hidden": { "$expr": "$params.rating_value >= 5" } } }
+            {
+              "kind": "Icon",
+              "props": { "name": "star-solid", "className": "text-yellow-500 size-4" },
+              "bindings": { "hidden": { "$expr": "$params.rating_value < 1" } }
+            },
+            {
+              "kind": "Icon",
+              "props": { "name": "star-solid", "className": "text-yellow-500 size-4" },
+              "bindings": { "hidden": { "$expr": "$params.rating_value < 2" } }
+            },
+            {
+              "kind": "Icon",
+              "props": { "name": "star-solid", "className": "text-yellow-500 size-4" },
+              "bindings": { "hidden": { "$expr": "$params.rating_value < 3" } }
+            },
+            {
+              "kind": "Icon",
+              "props": { "name": "star-solid", "className": "text-yellow-500 size-4" },
+              "bindings": { "hidden": { "$expr": "$params.rating_value < 4" } }
+            },
+            {
+              "kind": "Icon",
+              "props": { "name": "star-solid", "className": "text-yellow-500 size-4" },
+              "bindings": { "hidden": { "$expr": "$params.rating_value < 5" } }
+            },
+            {
+              "kind": "Icon",
+              "props": { "name": "star-outline", "className": "text-muted size-4" },
+              "bindings": { "hidden": { "$expr": "$params.rating_value >= 1" } }
+            },
+            {
+              "kind": "Icon",
+              "props": { "name": "star-outline", "className": "text-muted size-4" },
+              "bindings": { "hidden": { "$expr": "$params.rating_value >= 2" } }
+            },
+            {
+              "kind": "Icon",
+              "props": { "name": "star-outline", "className": "text-muted size-4" },
+              "bindings": { "hidden": { "$expr": "$params.rating_value >= 3" } }
+            },
+            {
+              "kind": "Icon",
+              "props": { "name": "star-outline", "className": "text-muted size-4" },
+              "bindings": { "hidden": { "$expr": "$params.rating_value >= 4" } }
+            },
+            {
+              "kind": "Icon",
+              "props": { "name": "star-outline", "className": "text-muted size-4" },
+              "bindings": { "hidden": { "$expr": "$params.rating_value >= 5" } }
+            }
           ]
         }
       ]

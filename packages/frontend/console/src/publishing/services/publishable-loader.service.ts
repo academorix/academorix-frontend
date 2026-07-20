@@ -16,10 +16,11 @@
 
 import { Inject, Injectable, type OnApplicationBootstrap } from "@stackra/container";
 import { DISCOVERY_SERVICE } from "@stackra/contracts";
-import type { IDiscoveryService, IPublishableConsumer, Type } from "@stackra/contracts";
 
 import { PublishableConsumer } from "../publishable.consumer";
 import { PublishableRegistry } from "../registries/publishable.registry";
+
+import type { IDiscoveryService, IPublishableConsumer, Type } from "@stackra/contracts";
 
 /**
  * Structural shape the loader probes for on every module class.

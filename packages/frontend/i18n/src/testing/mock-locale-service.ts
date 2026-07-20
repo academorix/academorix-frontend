@@ -9,9 +9,9 @@
  *   `setLocale`.
  */
 
-import type { II18nLocaleService } from '@stackra/contracts';
+import type { II18nLocaleService } from "@stackra/contracts";
 
-const RTL_LOCALES = new Set(['ar', 'he', 'fa', 'ur', 'ps', 'sd', 'yi', 'ku']);
+const RTL_LOCALES = new Set(["ar", "he", "fa", "ur", "ps", "sd", "yi", "ku"]);
 
 /**
  * In-memory locale orchestrator for testing.
@@ -25,7 +25,7 @@ export class MockLocaleService implements II18nLocaleService {
   public readonly calls: string[] = [];
 
   public constructor(options?: { defaultLocale?: string; supportedLocales?: string[] }) {
-    this.currentLocale = options?.defaultLocale ?? 'en';
+    this.currentLocale = options?.defaultLocale ?? "en";
     this.supportedLocales = options?.supportedLocales ?? [this.currentLocale];
   }
 
@@ -33,12 +33,12 @@ export class MockLocaleService implements II18nLocaleService {
     return this.currentLocale;
   }
 
-  public getDir(): 'ltr' | 'rtl' {
-    return this.isRTL() ? 'rtl' : 'ltr';
+  public getDir(): "ltr" | "rtl" {
+    return this.isRTL() ? "rtl" : "ltr";
   }
 
   public isRTL(): boolean {
-    const base = this.currentLocale.split('-')[0]!;
+    const base = this.currentLocale.split("-")[0]!;
     return RTL_LOCALES.has(this.currentLocale) || RTL_LOCALES.has(base);
   }
 

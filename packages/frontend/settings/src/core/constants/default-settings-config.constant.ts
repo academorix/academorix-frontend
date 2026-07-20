@@ -7,9 +7,9 @@
  *   re-declaring the rest.
  */
 
-import type { ISettingsConfig } from '@stackra/contracts';
+import type { ISettingsConfig } from "@stackra/contracts";
 
-import { DEFAULT_API_ENDPOINTS } from './api-endpoints.constant';
+import { DEFAULT_API_ENDPOINTS } from "./api-endpoints.constant";
 
 /**
  * Default settings-module configuration.
@@ -24,16 +24,16 @@ import { DEFAULT_API_ENDPOINTS } from './api-endpoints.constant';
  *   they also install `@stackra/realtime`.
  */
 export const DEFAULT_SETTINGS_CONFIG: ISettingsConfig = {
-  default: 'localStorage',
-  prefix: 'stackra:settings',
+  default: "localStorage",
+  prefix: "stackra:settings",
   stores: {
-    memory: { driver: 'memory' },
-    localStorage: { driver: 'storage', storageInstance: 'localStorage' },
+    memory: { driver: "memory" },
+    localStorage: { driver: "storage", storageInstance: "localStorage" },
   },
   debounce: true,
   debounceMs: 300,
   api: {
-    httpClient: 'default',
+    httpClient: "default",
     endpoints: DEFAULT_API_ENDPOINTS,
     autoLoadSchema: false,
     autoLoadValues: false,
@@ -41,7 +41,7 @@ export const DEFAULT_SETTINGS_CONFIG: ISettingsConfig = {
   },
   broadcasting: {
     enabled: false,
-    channelPrefix: 'settings',
-    connection: 'default',
+    channelPrefix: "settings",
+    connection: "default",
   },
 };

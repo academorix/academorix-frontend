@@ -12,14 +12,14 @@
  *   `@stackra/notifications/native` drawer uses.
  */
 
-import { useCallback, type ReactElement } from 'react';
-import { ScrollView, Text, View } from 'react-native';
-import { BottomSheet, Chip, PressableFeedback } from '@stackra/ui/native';
+import { useCallback, type ReactElement } from "react";
+import { ScrollView, Text, View } from "react-native";
+import { BottomSheet, Chip, PressableFeedback } from "@stackra/ui/native";
 
-import { useNativeDevtoolsFrameState } from '../../hooks/use-native-devtools-frame-state.hook';
-import { useNativeDevtoolsPanels } from '../../hooks/use-native-devtools-panels.hook';
-import { DevtoolsPanelView } from '../devtools-panel-view';
-import type { DevtoolsShellProps } from './devtools-shell.interface';
+import { useNativeDevtoolsFrameState } from "../../hooks/use-native-devtools-frame-state.hook";
+import { useNativeDevtoolsPanels } from "../../hooks/use-native-devtools-panels.hook";
+import { DevtoolsPanelView } from "../devtools-panel-view";
+import type { DevtoolsShellProps } from "./devtools-shell.interface";
 
 /**
  * The native devtools shell.
@@ -37,7 +37,7 @@ export function DevtoolsShell(_props: DevtoolsShellProps = {}): ReactElement {
   const handleClose = useCallback(() => update({ isOpen: false }), [update]);
   const handleSelect = useCallback(
     (panelId: string) => update({ activePanelId: panelId }),
-    [update]
+    [update],
   );
 
   // The active panel object is resolved via the registry so a re-
@@ -78,9 +78,9 @@ export function DevtoolsShell(_props: DevtoolsShellProps = {}): ReactElement {
                     onPress={() => handleSelect(panel.id)}
                   >
                     <Chip
-                      color={isActive ? 'accent' : 'default'}
+                      color={isActive ? "accent" : "default"}
                       size="sm"
-                      variant={isActive ? 'primary' : 'secondary'}
+                      variant={isActive ? "primary" : "secondary"}
                     >
                       <Chip.Label>{panel.title}</Chip.Label>
                     </Chip>
@@ -94,9 +94,9 @@ export function DevtoolsShell(_props: DevtoolsShellProps = {}): ReactElement {
               ) : (
                 <View className="p-4">
                   {panels.length === 0 ? (
-                    <Text className="text-sm text-muted">No panels registered yet.</Text>
+                    <Text className="text-muted text-sm">No panels registered yet.</Text>
                   ) : (
-                    <Text className="text-sm text-muted">Select a panel above to inspect it.</Text>
+                    <Text className="text-muted text-sm">Select a panel above to inspect it.</Text>
                   )}
                 </View>
               )}

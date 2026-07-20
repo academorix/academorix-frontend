@@ -4,7 +4,7 @@
  * @description Return shape for the `useInstallPrompt()` hook.
  */
 
-import type { IPwaInstallState } from '@/core/interfaces';
+import type { IPwaInstallState } from "@/core/interfaces";
 
 /**
  * Value returned by {@link useInstallPrompt}.

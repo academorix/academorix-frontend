@@ -16,8 +16,16 @@
     "placeholder": { "type": "string", "default": "Search positions..." },
     "size": { "type": "string", "default": "md" },
     "defaultValue": { "type": "string", "default": null },
-    "disciplineKey": { "type": "string", "required": true, "description": "Parent discipline slug — filter to Positions belonging to this Discipline." },
-    "fieldPositionsOnly": { "type": "boolean", "default": false, "description": "When true, filters to `filter[is_field_position]=true` — hides bench roles like assistant_coach." },
+    "disciplineKey": {
+      "type": "string",
+      "required": true,
+      "description": "Parent discipline slug — filter to Positions belonging to this Discipline."
+    },
+    "fieldPositionsOnly": {
+      "type": "boolean",
+      "default": false,
+      "description": "When true, filters to `filter[is_field_position]=true` — hides bench roles like assistant_coach."
+    },
     "filter": { "type": "string", "default": "active", "enum": ["active", "all"] }
   },
   "dataSources": [
@@ -51,11 +59,18 @@
         {
           "kind": "ComboBox.InputGroup",
           "children": [
-            { "kind": "Input", "bindings": { "props": { "placeholder": { "$ref": "props.placeholder" } } } },
+            {
+              "kind": "Input",
+              "bindings": { "props": { "placeholder": { "$ref": "props.placeholder" } } }
+            },
             { "kind": "ComboBox.Trigger" }
           ]
         },
-        { "kind": "Description", "props": { "children": "Pick a discipline first" }, "bindings": { "hidden": { "$expr": "!!props.disciplineKey" } } },
+        {
+          "kind": "Description",
+          "props": { "children": "Pick a discipline first" },
+          "bindings": { "hidden": { "$expr": "!!props.disciplineKey" } }
+        },
         {
           "kind": "ComboBox.Popover",
           "children": [
@@ -79,16 +94,30 @@
                             "kind": "View",
                             "props": { "className": "flex items-center gap-1" },
                             "children": [
-                              { "kind": "Text", "props": { "className": "font-medium" }, "bindings": { "children": { "$ref": "item.name" } } },
-                              { "kind": "Chip", "props": { "size": "xs", "variant": "danger", "children": "OFF" }, "bindings": { "hidden": { "$expr": "!item.is_offensive" } } },
-                              { "kind": "Chip", "props": { "size": "xs", "variant": "info", "children": "DEF" }, "bindings": { "hidden": { "$expr": "!item.is_defensive" } } }
+                              {
+                                "kind": "Text",
+                                "props": { "className": "font-medium" },
+                                "bindings": { "children": { "$ref": "item.name" } }
+                              },
+                              {
+                                "kind": "Chip",
+                                "props": { "size": "xs", "variant": "danger", "children": "OFF" },
+                                "bindings": { "hidden": { "$expr": "!item.is_offensive" } }
+                              },
+                              {
+                                "kind": "Chip",
+                                "props": { "size": "xs", "variant": "info", "children": "DEF" },
+                                "bindings": { "hidden": { "$expr": "!item.is_defensive" } }
+                              }
                             ]
                           },
                           {
                             "kind": "Text",
                             "props": { "className": "text-xs text-muted font-mono" },
                             "bindings": {
-                              "children": { "$expr": "item.slug + (item.typical_jersey_range_min ? ' · #' + item.typical_jersey_range_min + '-' + item.typical_jersey_range_max : '')" }
+                              "children": {
+                                "$expr": "item.slug + (item.typical_jersey_range_min ? ' · #' + item.typical_jersey_range_min + '-' + item.typical_jersey_range_max : '')"
+                              }
                             }
                           }
                         ]

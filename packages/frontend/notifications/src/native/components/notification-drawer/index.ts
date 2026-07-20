@@ -5,9 +5,9 @@
  *   component + its owned props / filter interfaces.
  */
 
-export { NotificationDrawer } from './notification-drawer.component';
+export { NotificationDrawer } from "./notification-drawer.component";
 export type {
   NotificationDrawerCategoryFilter,
   NotificationDrawerProps,
   NotificationDrawerSection,
-} from './notification-drawer.interface';
+} from "./notification-drawer.interface";

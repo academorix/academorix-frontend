@@ -39,7 +39,7 @@ export interface IRegisterPeriodicSyncOptions {
 export async function registerPeriodicSync(
   tag: string,
   registration: ServiceWorkerRegistration,
-  options: IRegisterPeriodicSyncOptions
+  options: IRegisterPeriodicSyncOptions,
 ): Promise<boolean> {
   // Structural check — `periodicSync` is not typed on the standard
   // lib.dom types, hence the deliberate cast.
@@ -53,11 +53,11 @@ export async function registerPeriodicSync(
   // Permission gate — Chromium requires the user to have granted
   // `periodic-background-sync` via a prior `permissions.query`.
   try {
-    if (typeof navigator !== 'undefined' && navigator.permissions?.query) {
+    if (typeof navigator !== "undefined" && navigator.permissions?.query) {
       const status = await navigator.permissions.query({
-        name: 'periodic-background-sync' as PermissionName,
+        name: "periodic-background-sync" as PermissionName,
       });
-      if (status.state !== 'granted') return false;
+      if (status.state !== "granted") return false;
     }
     await periodicSync.register(tag, { minInterval: options.minIntervalMs });
     return true;

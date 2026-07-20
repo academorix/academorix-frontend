@@ -23,12 +23,7 @@
       "name": "Organization Default Changed",
       "kind": "track",
       "consent_required": "functional",
-      "properties": [
-        "tenant_id",
-        "from_organization_id",
-        "to_organization_id",
-        "actor_id"
-      ],
+      "properties": ["tenant_id", "from_organization_id", "to_organization_id", "actor_id"],
       "description": "The tenant's is_default Organization was flipped. Critical for troubleshooting reports because most downstream tools default their filters to the default org."
     },
     {
@@ -65,12 +60,7 @@
       "name": "Organization Branding Updated",
       "kind": "track",
       "consent_required": "functional",
-      "properties": [
-        "tenant_id",
-        "organization_id",
-        "actor_id",
-        "changed_fields"
-      ],
+      "properties": ["tenant_id", "organization_id", "actor_id", "changed_fields"],
       "description": "logo_url / primary_color / secondary_color / description changed. Only fires when the tenant holds `organization_branding` entitlement."
     },
     {
@@ -103,12 +93,7 @@
       "name": "Organization Nesting Refused",
       "kind": "track",
       "consent_required": "functional",
-      "properties": [
-        "tenant_id",
-        "actor_id",
-        "reason",
-        "tier"
-      ],
+      "properties": ["tenant_id", "actor_id", "reason", "tier"],
       "description": "A parent_id set was refused because the tenant lacks `organization_hierarchy`. Strong upsell signal — the tenant tried to nest."
     }
   ]

@@ -4,5 +4,5 @@
  * @description Barrel export for the SettingsForm.
  */
 
-export { SettingsForm } from './settings-form.component';
-export type { ISettingsFormProps } from './settings-form.interface';
+export { SettingsForm } from "./settings-form.component";
+export type { ISettingsFormProps } from "./settings-form.interface";

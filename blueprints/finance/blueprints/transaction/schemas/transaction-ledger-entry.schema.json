@@ -15,7 +15,9 @@
     "incrementing": false,
     "model": "Academorix\\Finance\\Transaction\\Models\\TransactionLedgerEntry",
     "interface": "Academorix\\Finance\\Transaction\\Contracts\\Data\\TransactionLedgerEntryInterface",
-    "implements": ["Academorix\\Finance\\Transaction\\Contracts\\Data\\TransactionLedgerEntryInterface"],
+    "implements": [
+      "Academorix\\Finance\\Transaction\\Contracts\\Data\\TransactionLedgerEntryInterface"
+    ],
     "traits": [
       "HasFactory",
       "HasUlids",
@@ -93,13 +95,25 @@
         "foreign": { "table": "users", "column": "id", "onDelete": "restrict" },
         "description": "Denormalised from parent transaction.created_by_user_id."
       },
-      "updated_by": { "type": "string", "length": 64, "nullable": true, "note": "Populated only during creation; refuses to update thereafter (append-only)." },
+      "updated_by": {
+        "type": "string",
+        "length": 64,
+        "nullable": true,
+        "note": "Populated only during creation; refuses to update thereafter (append-only)."
+      },
       "created_at": { "type": "timestamptz", "nullable": false },
       "updated_at": { "type": "timestamptz", "nullable": false }
     },
     "indexes": [
-      { "columns": ["tenant_id", "account", "transaction_id"], "name": "ledger_entries_tenant_account_txn_idx" },
-      { "columns": ["tenant_id", "account", "created_at"], "name": "ledger_entries_tenant_account_time_idx", "description": "Running-balance queries." },
+      {
+        "columns": ["tenant_id", "account", "transaction_id"],
+        "name": "ledger_entries_tenant_account_txn_idx"
+      },
+      {
+        "columns": ["tenant_id", "account", "created_at"],
+        "name": "ledger_entries_tenant_account_time_idx",
+        "description": "Running-balance queries."
+      },
       { "columns": ["transaction_id"], "name": "ledger_entries_transaction_idx" },
       {
         "columns": ["tenant_id"],

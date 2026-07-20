@@ -4,4 +4,4 @@
  * @description Barrel export for the `useStoreDispatch` hook.
  */
 
-export { useStoreDispatch } from './use-store-dispatch.hook';
+export { useStoreDispatch } from "./use-store-dispatch.hook";

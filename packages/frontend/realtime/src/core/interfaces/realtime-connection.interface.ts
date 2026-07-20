@@ -16,4 +16,4 @@ export type {
   IRealtimeChannel,
   IRealtimeConnection,
   IRealtimePresenceChannel,
-} from '@stackra/contracts';
+} from "@stackra/contracts";

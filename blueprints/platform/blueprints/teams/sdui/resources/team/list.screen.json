@@ -178,9 +178,21 @@
             "kind": "View",
             "props": { "className": "col-span-full text-center py-12" },
             "children": [
-              { "kind": "Icon", "props": { "name": "user-group", "className": "size-12 mx-auto text-muted" } },
-              { "kind": "Text", "props": { "className": "mt-4 text-lg font-medium", "children": "No teams yet" } },
-              { "kind": "Text", "props": { "className": "text-sm text-muted", "children": "Create your first team to start managing rosters." } }
+              {
+                "kind": "Icon",
+                "props": { "name": "user-group", "className": "size-12 mx-auto text-muted" }
+              },
+              {
+                "kind": "Text",
+                "props": { "className": "mt-4 text-lg font-medium", "children": "No teams yet" }
+              },
+              {
+                "kind": "Text",
+                "props": {
+                  "className": "text-sm text-muted",
+                  "children": "Create your first team to start managing rosters."
+                }
+              }
             ]
           },
           "itemRenderer": {
@@ -230,7 +242,9 @@
                     "kind": "Chip",
                     "props": { "size": "sm" },
                     "bindings": {
-                      "variant": { "$expr": "row.status === 'active' ? 'success' : (row.status === 'paused' ? 'warning' : 'neutral')" },
+                      "variant": {
+                        "$expr": "row.status === 'active' ? 'success' : (row.status === 'paused' ? 'warning' : 'neutral')"
+                      },
                       "children": { "$ref": "row.status" }
                     }
                   }

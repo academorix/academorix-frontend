@@ -15,13 +15,13 @@
  *   and is NOT what the switcher consumes.
  */
 
-import { useMemo } from 'react';
-import type { Key } from 'react';
-import { ComboBox, Input, Label, ListBox, Chip, Button } from '@stackra/ui/react';
+import { useMemo } from "react";
+import type { Key } from "react";
+import { ComboBox, Input, Label, ListBox, Chip, Button } from "@stackra/ui/react";
 
-import { useScope } from '@/react/hooks/use-scope.hook';
-import type { IScopeNodeTreeNode } from '@/core/interfaces';
-import type { ScopeSwitcherProps } from '@/react/interfaces';
+import { useScope } from "@/react/hooks/use-scope.hook";
+import type { IScopeNodeTreeNode } from "@/core/interfaces";
+import type { ScopeSwitcherProps } from "@/react/interfaces";
 
 /** A single flattened row rendered inside the ComboBox. */
 interface IFlattenedRow {
@@ -46,7 +46,7 @@ interface IFlattenedRow {
 function flatten(
   nodes: readonly IScopeNodeTreeNode[],
   depth = 0,
-  acc: IFlattenedRow[] = []
+  acc: IFlattenedRow[] = [],
 ): IFlattenedRow[] {
   for (const node of nodes) {
     acc.push({
@@ -77,7 +77,7 @@ function flatten(
  * ```
  */
 export function ScopeSwitcher({
-  label = 'Scope',
+  label = "Scope",
   className,
   emulateOnSelect = false,
 }: ScopeSwitcherProps = {}) {
@@ -116,7 +116,7 @@ export function ScopeSwitcher({
                 isDisabled={opt.disabled}
               >
                 {/* Non-breaking em-dash indent — flat list, no nested UL. */}
-                {'\u2014 '.repeat(opt.depth)}
+                {"\u2014 ".repeat(opt.depth)}
                 {opt.label}
                 <ListBox.ItemIndicator />
               </ListBox.Item>

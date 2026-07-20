@@ -9,8 +9,8 @@
  *   production behaviour.
  */
 
-import type { ITabInfo } from '@/core/interfaces';
-import type { TabRole, RoleListener } from '@/core/types';
+import type { ITabInfo } from "@/core/interfaces";
+import type { TabRole, RoleListener } from "@/core/types";
 
 /**
  * In-memory tab coordinator for testing.
@@ -24,7 +24,7 @@ export class MockTabCoordinator {
   public readonly tabId: string = `mock-tab-${Math.random().toString(36).slice(2, 10)}`;
 
   /** Current role — leader by default. */
-  private role: TabRole = 'leader';
+  private role: TabRole = "leader";
 
   /** Leader ID — this tab's ID when leader, else null. */
   private leaderId: string | null = this.tabId;
@@ -36,7 +36,7 @@ export class MockTabCoordinator {
   private destroyed = false;
 
   public isLeader(): boolean {
-    return this.role === 'leader';
+    return this.role === "leader";
   }
 
   public getTabId(): string {
@@ -67,8 +67,8 @@ export class MockTabCoordinator {
   }
 
   public resign(): void {
-    if (this.role !== 'leader') return;
-    this.simulateRole('follower', null);
+    if (this.role !== "leader") return;
+    this.simulateRole("follower", null);
   }
 
   public destroy(): void {
@@ -92,7 +92,7 @@ export class MockTabCoordinator {
   public simulateRole(role: TabRole, leaderId?: string | null): void {
     if (this.role === role) return;
     this.role = role;
-    this.leaderId = leaderId ?? (role === 'leader' ? this.tabId : null);
+    this.leaderId = leaderId ?? (role === "leader" ? this.tabId : null);
     for (const listener of this.listeners) listener(role);
   }
 }

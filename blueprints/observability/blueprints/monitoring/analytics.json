@@ -81,7 +81,13 @@
       "name": "Monitoring Incident Resolved",
       "kind": "track",
       "consent_required": "essential",
-      "properties": ["tenant_id", "severity", "resolved_by", "time_to_resolve_seconds_bucket", "alert_count_bucket"]
+      "properties": [
+        "tenant_id",
+        "severity",
+        "resolved_by",
+        "time_to_resolve_seconds_bucket",
+        "alert_count_bucket"
+      ]
     },
     {
       "name": "Monitoring Provider Configured",

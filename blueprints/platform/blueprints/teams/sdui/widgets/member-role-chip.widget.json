@@ -7,7 +7,17 @@
   "props": {
     "role": {
       "type": "string",
-      "enum": ["player", "captain", "vice_captain", "coach", "assistant_coach", "team_manager", "medical", "analyst", "substitute"],
+      "enum": [
+        "player",
+        "captain",
+        "vice_captain",
+        "coach",
+        "assistant_coach",
+        "team_manager",
+        "medical",
+        "analyst",
+        "substitute"
+      ],
       "required": true
     },
     "size": { "type": "string", "default": "sm", "enum": ["xs", "sm", "md", "lg"] },

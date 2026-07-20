@@ -7,13 +7,13 @@
  *   surfaces the `promptInstall` / `dismiss` / `reset` methods.
  */
 
-import { useCallback } from 'react';
-import { useInject } from '@stackra/container/react';
+import { useCallback } from "react";
+import { useInject } from "@stackra/container/react";
 
-import { PWA_SERVICE } from '@/core/constants';
-import type { PwaService } from '@/core/services';
-import { usePwa } from '@/react/hooks/use-pwa/use-pwa.hook';
-import type { IUseInstallPromptResult } from './use-install-prompt.interface';
+import { PWA_SERVICE } from "@/core/constants";
+import type { PwaService } from "@/core/services";
+import { usePwa } from "@/react/hooks/use-pwa/use-pwa.hook";
+import type { IUseInstallPromptResult } from "./use-install-prompt.interface";
 
 /**
  * Access install-prompt state and actions.

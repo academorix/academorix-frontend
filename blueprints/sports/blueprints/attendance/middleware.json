@@ -31,6 +31,8 @@
     { "middleware": "user::enforce_tenant_membership" },
     { "middleware": "access::authorize" },
     { "middleware": "scope::resolve_scope" },
-    { "middleware": "geofencing::geofence.session_venue (used indirectly by attendance.geofence_verify)" }
+    {
+      "middleware": "geofencing::geofence.session_venue (used indirectly by attendance.geofence_verify)"
+    }
   ]
 }

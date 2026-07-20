@@ -4,18 +4,18 @@
  * @description Input shape accepted by `buildManifest`.
  */
 
-import type { IFileHandler } from './file-handler.interface';
-import type { ILaunchHandler } from './launch-handler.interface';
-import type { IManifestIcon } from './manifest-icon.interface';
-import type { IManifestScreenshot } from './manifest-screenshot.interface';
-import type { IManifestShortcut } from './manifest-shortcut.interface';
-import type { IManifestTranslation } from './manifest-translation.interface';
-import type { IProtocolHandler } from './protocol-handler.interface';
-import type { IRelatedApplication } from './related-application.interface';
-import type { IShareTarget } from './share-target.interface';
-import type { IUrlHandler } from './url-handler.interface';
-import type { ManifestDisplayMode } from './web-app-manifest.interface';
-import type { IWidget } from './widget.interface';
+import type { IFileHandler } from "./file-handler.interface";
+import type { ILaunchHandler } from "./launch-handler.interface";
+import type { IManifestIcon } from "./manifest-icon.interface";
+import type { IManifestScreenshot } from "./manifest-screenshot.interface";
+import type { IManifestShortcut } from "./manifest-shortcut.interface";
+import type { IManifestTranslation } from "./manifest-translation.interface";
+import type { IProtocolHandler } from "./protocol-handler.interface";
+import type { IRelatedApplication } from "./related-application.interface";
+import type { IShareTarget } from "./share-target.interface";
+import type { IUrlHandler } from "./url-handler.interface";
+import type { ManifestDisplayMode } from "./web-app-manifest.interface";
+import type { IWidget } from "./widget.interface";
 
 /**
  * Input to `buildManifest(input)`.
@@ -46,7 +46,7 @@ export interface IBuildManifestInput {
   /** Primary language BCP-47 tag (`'en-US'` etc.). */
   readonly lang: string;
   /** Text direction. @default 'auto' */
-  readonly dir?: 'ltr' | 'rtl' | 'auto';
+  readonly dir?: "ltr" | "rtl" | "auto";
   /** Per-locale translations. Keyed by BCP-47 tag. */
   readonly translations?: Readonly<Record<string, IManifestTranslation>>;
 
@@ -63,20 +63,20 @@ export interface IBuildManifestInput {
   readonly display?: ManifestDisplayMode;
   /** Fallback display modes tried in order. */
   readonly displayOverride?: readonly (
-    'window-controls-overlay' | 'fullscreen' | 'standalone' | 'minimal-ui' | 'browser'
+    "window-controls-overlay" | "fullscreen" | "standalone" | "minimal-ui" | "browser"
   )[];
   /**
    * Orientation preference. Emitted verbatim when present.
    */
   readonly orientation?:
-    | 'any'
-    | 'natural'
-    | 'landscape'
-    | 'landscape-primary'
-    | 'landscape-secondary'
-    | 'portrait'
-    | 'portrait-primary'
-    | 'portrait-secondary';
+    | "any"
+    | "natural"
+    | "landscape"
+    | "landscape-primary"
+    | "landscape-secondary"
+    | "portrait"
+    | "portrait-primary"
+    | "portrait-secondary";
 
   // ── Colors ──────────────────────────────────────────────────────
   /** Theme colour (browser chrome tint). */
@@ -120,8 +120,8 @@ export interface IBuildManifestInput {
 
   // ── Experimental / Chromium-specific ────────────────────────────
   readonly permissions?: readonly string[];
-  readonly captureLinks?: 'none' | 'new-client' | 'existing-client';
-  readonly handleLinks?: 'auto' | 'preferred';
+  readonly captureLinks?: "none" | "new-client" | "existing-client";
+  readonly handleLinks?: "auto" | "preferred";
   readonly scopeExtensions?: readonly string[];
   readonly launchQueue?: unknown;
 

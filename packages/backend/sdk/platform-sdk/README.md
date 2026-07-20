@@ -1,9 +1,11 @@
 # academorix/platform-sdk
 
-Typed Saloon SDK for the Platform service — applications, tenants, organizations, regions, branches, settings, feature flags, branding, domains, storage.
+Typed Saloon SDK for the Platform service — applications, tenants,
+organizations, regions, branches, settings, feature flags, branding, domains,
+storage.
 
-Per-service umbrella SDK built on the shared kernel (`academorix/api-sdk`).
-It owns the Platform service connector (config `sdk.platform.*`), a typed
+Per-service umbrella SDK built on the shared kernel (`academorix/api-sdk`). It
+owns the Platform service connector (config `sdk.platform.*`), a typed
 `PlatformSdk` client, and a discovery pass scoped to
 `#[AsSdkResource(service: 'platform')]`.
 

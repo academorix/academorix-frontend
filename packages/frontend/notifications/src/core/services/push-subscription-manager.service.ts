@@ -21,11 +21,11 @@
  *   platform.
  */
 
-import { Inject, Injectable, Optional } from '@stackra/container';
+import { Inject, Injectable, Optional } from "@stackra/container";
 
-import { NOTIFICATION_EVENTS, PUSH_SUBSCRIPTION_ADAPTER } from '../constants';
-import type { IPushSubscriptionAdapter, IPushSubscriptionResult } from '../interfaces';
-import { AnalyticsBridgeService } from './analytics-bridge.service';
+import { NOTIFICATION_EVENTS, PUSH_SUBSCRIPTION_ADAPTER } from "../constants";
+import type { IPushSubscriptionAdapter, IPushSubscriptionResult } from "../interfaces";
+import { AnalyticsBridgeService } from "./analytics-bridge.service";
 
 /**
  * Shared push subscription manager.
@@ -51,7 +51,7 @@ export class PushSubscriptionManager {
     // `NativeNotificationModule` (native).
     @Inject(PUSH_SUBSCRIPTION_ADAPTER)
     private readonly adapter: IPushSubscriptionAdapter,
-    @Optional() private readonly analytics?: AnalyticsBridgeService
+    @Optional() private readonly analytics?: AnalyticsBridgeService,
   ) {}
 
   // ── Reads ────────────────────────────────────────────────────────
@@ -93,7 +93,7 @@ export class PushSubscriptionManager {
       // adding a third platform later doesn't need a manager code
       // change — the manager stays platform-agnostic.
       const eventName =
-        this.adapter.platform === 'web'
+        this.adapter.platform === "web"
           ? NOTIFICATION_EVENTS.WEB_PUSH_SUBSCRIBED
           : NOTIFICATION_EVENTS.NATIVE_PUSH_TOKEN_OBTAINED;
       this.analytics?.emit(eventName, { platform: this.adapter.platform });
@@ -101,7 +101,7 @@ export class PushSubscriptionManager {
     } catch (raw) {
       const err = raw instanceof Error ? raw : new Error(String(raw));
       const failedEvent =
-        this.adapter.platform === 'web'
+        this.adapter.platform === "web"
           ? NOTIFICATION_EVENTS.WEB_PUSH_SUBSCRIPTION_FAILED
           : NOTIFICATION_EVENTS.NATIVE_PUSH_TOKEN_FAILED;
       this.analytics?.emit(failedEvent, {
@@ -123,7 +123,7 @@ export class PushSubscriptionManager {
    */
   public async unsubscribe(): Promise<boolean> {
     const ok = await this.adapter.unsubscribe();
-    if (ok && this.adapter.platform === 'web') {
+    if (ok && this.adapter.platform === "web") {
       this.analytics?.emit(NOTIFICATION_EVENTS.WEB_PUSH_UNSUBSCRIBED);
     }
     return ok;

@@ -43,7 +43,4 @@ export {
   type IRenderWithRoutingOptions,
   type IRenderWithRoutingResult,
 } from "./render-with-routing.util";
-export {
-  RoutingTestFrame,
-  type IRoutingTestFrameProps,
-} from "./routing-test-frame.util";
+export { RoutingTestFrame, type IRoutingTestFrameProps } from "./routing-test-frame.util";

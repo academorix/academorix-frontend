@@ -10,10 +10,10 @@
  *   update in one place.
  */
 
-import { getMetadata } from '@vivtel/metadata';
-import { DEVTOOLS_PANEL_METADATA_KEY } from '@stackra/contracts';
+import { getMetadata } from "@vivtel/metadata";
+import { DEVTOOLS_PANEL_METADATA_KEY } from "@stackra/contracts";
 
-import type { IDevtoolsPanelOptions } from '../interfaces/devtools-panel-options.interface';
+import type { IDevtoolsPanelOptions } from "../interfaces/devtools-panel-options.interface";
 
 /**
  * Read the panel-decorator metadata off a class or a resolved
@@ -29,6 +29,6 @@ export function readPanelMetadata(target: object | Function): IDevtoolsPanelOpti
   // primitives that could sneak in from a discovery scan.
   if (target === null || target === undefined) return null;
   const raw = getMetadata(DEVTOOLS_PANEL_METADATA_KEY, target as object);
-  if (!raw || typeof raw !== 'object') return null;
+  if (!raw || typeof raw !== "object") return null;
   return raw as IDevtoolsPanelOptions;
 }

@@ -140,7 +140,11 @@
               "children": [
                 {
                   "kind": "Text",
-                  "props": { "as": "h2", "className": "text-lg font-semibold", "children": "Permissions" }
+                  "props": {
+                    "as": "h2",
+                    "className": "text-lg font-semibold",
+                    "children": "Permissions"
+                  }
                 },
                 {
                   "kind": "Button",
@@ -171,7 +175,9 @@
               "bindings": { "items": { "$ref": "rolePermissions" } },
               "itemRenderer": {
                 "kind": "View",
-                "props": { "className": "flex items-center justify-between p-3 hover:bg-content1 rounded" },
+                "props": {
+                  "className": "flex items-center justify-between p-3 hover:bg-content1 rounded"
+                },
                 "children": [
                   {
                     "kind": "View",

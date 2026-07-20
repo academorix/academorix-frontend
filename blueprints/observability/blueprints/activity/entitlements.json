@@ -8,9 +8,7 @@
     "resolvedBy": "GET /api/auth/me → data.quota_summary + GET /api/v1/entitlements",
     "seededFrom": "BusinessType.default_config.entitlements[activity.*]"
   },
-  "kinds": [
-    { "kind": "boolean", "description": "Enable / disable the feature." }
-  ],
+  "kinds": [{ "kind": "boolean", "description": "Enable / disable the feature." }],
   "entitlements": [
     {
       "key": "activity_capture",

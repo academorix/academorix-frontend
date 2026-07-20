@@ -9,9 +9,7 @@
       "priority": 44,
       "description": "Guards tenant-plane marketing routes that expose marketing data. Refuses non-owner / non-admin / non-marketing-role callers with 403 MARKETING_INSUFFICIENT_ROLE. Not a consent-gate for the DATA (that's per-event via ConsentGate); this middleware gates VIEW ACCESS to the marketing surface based on role. Distinct from entitlement.enforce:marketing_capture which gates on tenant tier.",
       "auto_applied": false,
-      "auto_applied_to": [
-        "/api/v1/marketing/*"
-      ]
+      "auto_applied_to": ["/api/v1/marketing/*"]
     }
   ],
   "consumed": [

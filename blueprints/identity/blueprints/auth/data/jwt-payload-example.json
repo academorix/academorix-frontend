@@ -60,11 +60,7 @@
     "tid": null,
     "sco": {},
     "roles": ["service_account:ai_service_reader"],
-    "permissions": [
-      "users.view.tenant",
-      "profiles.view.tenant",
-      "athletes.view.tenant"
-    ],
+    "permissions": ["users.view.tenant", "profiles.view.tenant", "athletes.view.tenant"],
     "kid": "identity-2026-07-1",
     "iat": 1735689600,
     "exp": 1735692600,

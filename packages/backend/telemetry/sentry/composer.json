@@ -1,72 +1,72 @@
 {
-    "name": "academorix/laravel-sentry",
-    "description": "Sentry error tracking and monitoring with automatic context discovery for Academorix applications",
-    "type": "library",
-    "license": "MIT",
-    "authors": [
-        {
-            "name": "Academorix Team",
-            "email": "dev@academorix.com"
-        }
-    ],
-    "homepage": "https://github.com/academorix-inc/laravel-telemetry/sentry",
-    "support": {
-        "issues": "https://github.com/academorix-inc/laravel-telemetry/sentry/-/issues",
-        "source": "https://github.com/academorix-inc/laravel-telemetry/sentry"
-    },
-    "keywords": [
-        "academorix",
-        "telemetry",
-        "sentry",
-        "error-tracking",
-        "monitoring",
-        "observability",
-        "laravel"
-    ],
-    "prefer-stable": true,
-    "minimum-stability": "dev",
-    "config": {
-        "optimize-autoloader": true,
-        "preferred-install": "dist",
-        "sort-packages": true,
-        "allow-plugins": {
-            "php-http/discovery": true
-        }
-    },
-    "require": {
-        "php": "^8.4|^8.5",
-        "sentry/sentry-laravel": "^4.0",
-        "academorix/laravel-support": "@dev"
-    },
-    "require-dev": {
-        "mockery/mockery": "^1.6",
-        "orchestra/testbench": "^10.0",
-        "phpunit/phpunit": "^11.0"
-    },
-    "autoload": {
-        "psr-4": {
-            "Academorix\\Sentry\\": "src/"
-        }
-    },
-    "autoload-dev": {
-        "psr-4": {
-            "Academorix\\Sentry\\Tests\\": "tests/"
-        }
-    },
-    "extra": {
-        "laravel": {
-            "providers": [
-                "Academorix\\Sentry\\Providers\\SentryServiceProvider"
-            ]
-        }
-    },
-    "repositories": [
-        {
-            "type": "path",
-            "url": "../../../framework/src/support",
-            "options": {
-                "symlink": true
-            }
-        }
-    ]
+  "name": "academorix/laravel-sentry",
+  "description": "Sentry error tracking and monitoring with automatic context discovery for Academorix applications",
+  "type": "library",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Academorix Team",
+      "email": "dev@academorix.com"
+    }
+  ],
+  "homepage": "https://github.com/academorix-inc/laravel-telemetry/sentry",
+  "support": {
+    "issues": "https://github.com/academorix-inc/laravel-telemetry/sentry/-/issues",
+    "source": "https://github.com/academorix-inc/laravel-telemetry/sentry"
+  },
+  "keywords": [
+    "academorix",
+    "telemetry",
+    "sentry",
+    "error-tracking",
+    "monitoring",
+    "observability",
+    "laravel"
+  ],
+  "prefer-stable": true,
+  "minimum-stability": "dev",
+  "config": {
+    "optimize-autoloader": true,
+    "preferred-install": "dist",
+    "sort-packages": true,
+    "allow-plugins": {
+      "php-http/discovery": true
+    }
+  },
+  "require": {
+    "php": "^8.4|^8.5",
+    "sentry/sentry-laravel": "^4.0",
+    "academorix/laravel-support": "@dev"
+  },
+  "require-dev": {
+    "mockery/mockery": "^1.6",
+    "orchestra/testbench": "^10.0",
+    "phpunit/phpunit": "^11.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "Academorix\\Sentry\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Academorix\\Sentry\\Tests\\": "tests/"
+    }
+  },
+  "extra": {
+    "laravel": {
+      "providers": [
+        "Academorix\\Sentry\\Providers\\SentryServiceProvider"
+      ]
+    }
+  },
+  "repositories": [
+    {
+      "type": "path",
+      "url": "../../../framework/src/support",
+      "options": {
+        "symlink": true
+      }
+    }
+  ]
 }

@@ -50,7 +50,9 @@
           "children": [
             {
               "kind": "Text",
-              "props": { "children": "Organization and branch are immutable. To move this team, archive it and create a new one under the target branch." }
+              "props": {
+                "children": "Organization and branch are immutable. To move this team, archive it and create a new one under the target branch."
+              }
             }
           ]
         },
@@ -75,7 +77,12 @@
               "children": [
                 {
                   "kind": "TextField",
-                  "props": { "name": "name", "label": "Team name", "required": true, "maxLength": 128 }
+                  "props": {
+                    "name": "name",
+                    "label": "Team name",
+                    "required": true,
+                    "maxLength": 128
+                  }
                 },
                 {
                   "kind": "TextArea",
@@ -83,7 +90,11 @@
                 },
                 {
                   "kind": "ComboBox",
-                  "props": { "name": "competitive_level", "label": "Competitive level", "menuTrigger": "focus" },
+                  "props": {
+                    "name": "competitive_level",
+                    "label": "Competitive level",
+                    "menuTrigger": "focus"
+                  },
                   "props_items": [
                     { "id": "recreational", "label": "Recreational" },
                     { "id": "beginner", "label": "Beginner" },
@@ -101,7 +112,11 @@
               "children": [
                 {
                   "kind": "ComboBox",
-                  "props": { "name": "gender_category", "label": "Gender category", "menuTrigger": "focus" },
+                  "props": {
+                    "name": "gender_category",
+                    "label": "Gender category",
+                    "menuTrigger": "focus"
+                  },
                   "props_items": [
                     { "id": "any", "label": "Any" },
                     { "id": "male", "label": "Male" },
@@ -113,8 +128,14 @@
                   "kind": "View",
                   "props": { "className": "grid grid-cols-2 gap-3" },
                   "children": [
-                    { "kind": "NumberField", "props": { "name": "min_age", "label": "Minimum age", "min": 3, "max": 100 } },
-                    { "kind": "NumberField", "props": { "name": "max_age", "label": "Maximum age", "min": 3, "max": 100 } }
+                    {
+                      "kind": "NumberField",
+                      "props": { "name": "min_age", "label": "Minimum age", "min": 3, "max": 100 }
+                    },
+                    {
+                      "kind": "NumberField",
+                      "props": { "name": "max_age", "label": "Maximum age", "min": 3, "max": 100 }
+                    }
                   ]
                 }
               ]
@@ -127,8 +148,24 @@
                   "kind": "View",
                   "props": { "className": "grid grid-cols-2 gap-3" },
                   "children": [
-                    { "kind": "NumberField", "props": { "name": "capacity", "label": "Roster capacity", "min": 1, "max": 500 } },
-                    { "kind": "NumberField", "props": { "name": "capacity_waitlist", "label": "Waitlist size", "min": 0, "max": 100 } }
+                    {
+                      "kind": "NumberField",
+                      "props": {
+                        "name": "capacity",
+                        "label": "Roster capacity",
+                        "min": 1,
+                        "max": 500
+                      }
+                    },
+                    {
+                      "kind": "NumberField",
+                      "props": {
+                        "name": "capacity_waitlist",
+                        "label": "Waitlist size",
+                        "min": 0,
+                        "max": 100
+                      }
+                    }
                   ]
                 }
               ]
@@ -141,11 +178,28 @@
                   "kind": "View",
                   "props": { "className": "grid grid-cols-2 gap-3" },
                   "children": [
-                    { "kind": "TextField", "props": { "name": "primary_color", "label": "Primary colour", "pattern": "^#[0-9A-Fa-f]{6}$" } },
-                    { "kind": "TextField", "props": { "name": "secondary_color", "label": "Secondary colour", "pattern": "^#[0-9A-Fa-f]{6}$" } }
+                    {
+                      "kind": "TextField",
+                      "props": {
+                        "name": "primary_color",
+                        "label": "Primary colour",
+                        "pattern": "^#[0-9A-Fa-f]{6}$"
+                      }
+                    },
+                    {
+                      "kind": "TextField",
+                      "props": {
+                        "name": "secondary_color",
+                        "label": "Secondary colour",
+                        "pattern": "^#[0-9A-Fa-f]{6}$"
+                      }
+                    }
                   ]
                 },
-                { "kind": "TextField", "props": { "name": "logo_url", "label": "Logo URL", "type": "url" } }
+                {
+                  "kind": "TextField",
+                  "props": { "name": "logo_url", "label": "Logo URL", "type": "url" }
+                }
               ]
             },
             {
@@ -155,9 +209,14 @@
                 {
                   "kind": "Button",
                   "props": { "variant": "ghost", "children": "Cancel" },
-                  "actions": { "onPress": { "kind": "navigate", "toExpr": "'/tenant/teams/' + team.id" } }
+                  "actions": {
+                    "onPress": { "kind": "navigate", "toExpr": "'/tenant/teams/' + team.id" }
+                  }
                 },
-                { "kind": "Button", "props": { "type": "submit", "variant": "primary", "children": "Save changes" } }
+                {
+                  "kind": "Button",
+                  "props": { "type": "submit", "variant": "primary", "children": "Save changes" }
+                }
               ]
             }
           ]

@@ -26,5 +26,5 @@
  * getHttpConnectionToken("billing"); // Symbol.for("HTTP_CONNECTION_billing")
  * ```
  */
-export const getHttpConnectionToken = (name: string = 'default'): symbol =>
+export const getHttpConnectionToken = (name: string = "default"): symbol =>
   Symbol.for(`HTTP_CONNECTION_${name}`);

@@ -11,7 +11,7 @@
  * @module @stackra/http/middleware/auth
  */
 
-import { Inject, Optional } from '@stackra/container';
+import { Inject, Optional } from "@stackra/container";
 
 import {
   HTTP_TOKEN_PROVIDER,
@@ -21,9 +21,9 @@ import {
   type IHttpNextFunction,
   type IHttpResponse,
   type ITokenProvider,
-} from '@stackra/contracts';
+} from "@stackra/contracts";
 
-import { HttpMiddleware } from '../decorators/http-middleware.decorator';
+import { HttpMiddleware } from "../decorators/http-middleware.decorator";
 
 /**
  * Minimal `LockManager` shape used here. Avoids a hard import on
@@ -45,7 +45,7 @@ interface ILockManagerLike {
 /**
  * Bearer-token auth middleware.
  */
-@HttpMiddleware({ priority: 10, name: 'auth' })
+@HttpMiddleware({ priority: 10, name: "auth" })
 export class AuthMiddleware implements IHttpMiddleware {
   /**
    * @param tokenProvider - Token provider (optional — no-op when not configured).
@@ -53,7 +53,7 @@ export class AuthMiddleware implements IHttpMiddleware {
    */
   public constructor(
     @Optional() @Inject(HTTP_TOKEN_PROVIDER) private readonly tokenProvider?: ITokenProvider,
-    @Optional() @Inject(TAB_LOCK_MANAGER) private readonly lockManager?: ILockManagerLike
+    @Optional() @Inject(TAB_LOCK_MANAGER) private readonly lockManager?: ILockManagerLike,
   ) {}
 
   /** @inheritdoc */
@@ -63,7 +63,7 @@ export class AuthMiddleware implements IHttpMiddleware {
       return next(context);
     }
 
-    if (context.request.meta?.['skipAuth'] === true) {
+    if (context.request.meta?.["skipAuth"] === true) {
       return next(context);
     }
 
@@ -96,13 +96,13 @@ export class AuthMiddleware implements IHttpMiddleware {
    */
   private async handleUnauthorized(
     context: IHttpContext,
-    next: IHttpNextFunction
+    next: IHttpNextFunction,
   ): Promise<IHttpResponse> {
     const provider = this.tokenProvider;
     if (!provider) return next(context);
 
     const newToken = this.lockManager
-      ? await this.lockManager.run<string>('http:token-refresh', () => provider.refresh(), {
+      ? await this.lockManager.run<string>("http:token-refresh", () => provider.refresh(), {
           timeoutMs: 10_000,
         })
       : await provider.refresh();
@@ -117,7 +117,7 @@ export class AuthMiddleware implements IHttpMiddleware {
 
   /** Whether `err` is a normalized 401. */
   private isUnauthorized(err: unknown): boolean {
-    if (typeof err !== 'object' || err === null) return false;
+    if (typeof err !== "object" || err === null) return false;
     const code = (err as { statusCode?: number }).statusCode;
     return code === 401;
   }

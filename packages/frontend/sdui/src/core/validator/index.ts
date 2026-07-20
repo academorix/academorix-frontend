@@ -10,4 +10,4 @@ export {
   type ISduiValidationIssue,
   type ISduiValidationResult,
   type IComponentRegistryLike,
-} from './screen-validator';
+} from "./screen-validator";

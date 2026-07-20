@@ -10,4 +10,4 @@
 /**
  * Metadata key stored on classes decorated with `@CspPolicy()`.
  */
-export const CSP_POLICY_METADATA = 'CSP_POLICY_METADATA';
+export const CSP_POLICY_METADATA = "CSP_POLICY_METADATA";

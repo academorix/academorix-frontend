@@ -5,10 +5,10 @@
  *   sources through the injected {@link ISduiClient}.
  */
 
-import { useEffect, useMemo, useState } from 'react';
-import { useInject } from '@stackra/container/react';
-import type { ISduiClient, ISduiDataSource } from '@stackra/contracts';
-import { SDUI_CLIENT } from '@stackra/contracts';
+import { useEffect, useMemo, useState } from "react";
+import { useInject } from "@stackra/container/react";
+import type { ISduiClient, ISduiDataSource } from "@stackra/contracts";
+import { SDUI_CLIENT } from "@stackra/contracts";
 
 /**
  * Return shape of {@link useDataSources}.
@@ -26,7 +26,7 @@ export interface IUseDataSourcesResult {
  * The response for `source[i]` is written to `data[source.assignTo ?? source.id]`.
  */
 export function useDataSources(
-  sources: readonly ISduiDataSource[] | undefined
+  sources: readonly ISduiDataSource[] | undefined,
 ): IUseDataSourcesResult {
   const client = useInject<ISduiClient>(SDUI_CLIENT);
   const [data, setData] = useState<Record<string, unknown>>({});
@@ -47,7 +47,7 @@ export function useDataSources(
       client
         .request({
           endpoint: source.endpoint,
-          method: source.method ?? 'GET',
+          method: source.method ?? "GET",
           body: source.body,
           signal: controller.signal,
         })

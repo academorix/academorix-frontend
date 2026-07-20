@@ -8,7 +8,7 @@
  *   pre-configured mock.
  */
 
-import { MockRealtimeConnection } from './mock-realtime-connection';
+import { MockRealtimeConnection } from "./mock-realtime-connection";
 
 /**
  * Assertable-friendly mock realtime manager.
@@ -23,7 +23,7 @@ export class MockRealtimeManager {
   private readonly connections = new Map<string, MockRealtimeConnection>();
 
   /** Test-configurable default connection name. */
-  private defaultConnection: string = 'default';
+  private defaultConnection: string = "default";
 
   public getDefaultDriver(): string {
     return this.defaultConnection;
@@ -81,7 +81,7 @@ export class MockRealtimeManager {
     _connection: string,
     _channel: string,
     _event: string,
-    _data: unknown
+    _data: unknown,
   ): void {
     /* recorded by assertable proxy */
   }

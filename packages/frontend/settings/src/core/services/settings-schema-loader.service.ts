@@ -11,8 +11,8 @@
  *   independently.
  */
 
-import { Injectable, Inject, Optional, OnModuleInit } from '@stackra/container';
-import { retry, Uri } from '@stackra/support';
+import { Injectable, Inject, Optional, OnModuleInit } from "@stackra/container";
+import { retry, Uri } from "@stackra/support";
 import {
   HTTP_MANAGER,
   LOGGER_MANAGER,
@@ -27,9 +27,9 @@ import {
   type ISettingsConfig,
   type ISettingsRegistry,
   type ISettingsService,
-} from '@stackra/contracts';
+} from "@stackra/contracts";
 
-import { parseSchemaPayload } from '@/core/utils/parse-schema.util';
+import { parseSchemaPayload } from "@/core/utils/parse-schema.util";
 
 /**
  * Loads the settings schema from the backend at boot when opted in.
@@ -56,7 +56,7 @@ export class SettingsSchemaLoader implements OnModuleInit {
     @Optional() @Inject(SETTINGS_SERVICE) private readonly service?: ISettingsService,
     @Optional() @Inject(HTTP_MANAGER) private readonly httpManager?: IHttpManager,
     @Optional() @Inject(EVENT_EMITTER) private readonly events?: IEventEmitter,
-    @Optional() @Inject(LOGGER_MANAGER) private readonly logger?: ILoggerManager
+    @Optional() @Inject(LOGGER_MANAGER) private readonly logger?: ILoggerManager,
   ) {}
 
   /**
@@ -67,7 +67,7 @@ export class SettingsSchemaLoader implements OnModuleInit {
   public async onModuleInit(): Promise<void> {
     if (!this.config.api.autoLoadSchema) return;
     if (!this.httpManager) {
-      this.warn('autoLoadSchema is enabled but @stackra/http is not installed.');
+      this.warn("autoLoadSchema is enabled but @stackra/http is not installed.");
       return;
     }
     await this.loadSchema();
@@ -104,11 +104,11 @@ export class SettingsSchemaLoader implements OnModuleInit {
         try {
           await this.service.loadAll();
         } catch (error) {
-          this.warn('Failed to bulk-hydrate settings values.', error);
+          this.warn("Failed to bulk-hydrate settings values.", error);
         }
       }
     } catch (error) {
-      this.warn('Failed to load remote settings schema.', error);
+      this.warn("Failed to load remote settings schema.", error);
     }
   }
 
@@ -131,8 +131,8 @@ export class SettingsSchemaLoader implements OnModuleInit {
   private warn(message: string, cause?: unknown): void {
     if (!this.logger) return;
     try {
-      const suffix = cause ? `: ${String(cause)}` : '';
-      this.logger.create('settings').warn(`${message}${suffix}`);
+      const suffix = cause ? `: ${String(cause)}` : "";
+      this.logger.create("settings").warn(`${message}${suffix}`);
     } catch {
       /* fail-soft */
     }

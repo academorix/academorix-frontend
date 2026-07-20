@@ -10,13 +10,13 @@
  *   Enabled per-store via `realtime: true` in `StateModule.forFeature()`.
  */
 
-import { Injectable, Inject, Optional } from '@stackra/container';
-import type { OnModuleInit } from '@stackra/container';
-import { EVENT_EMITTER, STATE_EVENTS } from '@stackra/contracts';
-import type { IEventEmitter, UpdateStrategy } from '@stackra/contracts';
-import { Logger } from '@stackra/logger';
-import type { Store } from '@tanstack/store';
-import { StateRegistry } from '../registries/state.registry';
+import { Injectable, Inject, Optional } from "@stackra/container";
+import type { OnModuleInit } from "@stackra/container";
+import { EVENT_EMITTER, STATE_EVENTS } from "@stackra/contracts";
+import type { IEventEmitter, UpdateStrategy } from "@stackra/contracts";
+import { Logger } from "@stackra/logger";
+import type { Store } from "@tanstack/store";
+import { StateRegistry } from "../registries/state.registry";
 
 /** Pending realtime update awaiting application. */
 interface PendingRealtimeUpdate {
@@ -41,7 +41,7 @@ interface PendingRealtimeUpdate {
  */
 @Injectable()
 export class RealtimeBroadcaster implements OnModuleInit {
-  private readonly logger = new Logger('StateRealtimeBroadcaster');
+  private readonly logger = new Logger("StateRealtimeBroadcaster");
 
   /** Store names that have realtime sync enabled. */
   private readonly enabledStores = new Map<string, UpdateStrategy>();
@@ -51,7 +51,7 @@ export class RealtimeBroadcaster implements OnModuleInit {
 
   public constructor(
     @Optional() @Inject(EVENT_EMITTER) private readonly events?: IEventEmitter,
-    @Optional() @Inject(StateRegistry) private readonly registry?: StateRegistry
+    @Optional() @Inject(StateRegistry) private readonly registry?: StateRegistry,
   ) {}
 
   /**
@@ -60,7 +60,7 @@ export class RealtimeBroadcaster implements OnModuleInit {
    * @param name - The store name.
    * @param strategy - How to apply incoming updates.
    */
-  public enableForStore(name: string, strategy: UpdateStrategy = 'instant'): void {
+  public enableForStore(name: string, strategy: UpdateStrategy = "instant"): void {
     this.enabledStores.set(name, strategy);
     this.logger.debug(`Realtime enabled for store: ${name} (strategy: ${strategy})`);
   }
@@ -100,14 +100,14 @@ export class RealtimeBroadcaster implements OnModuleInit {
    */
   public onModuleInit(): void {
     if (!this.events) {
-      this.logger.debug('No EventEmitter — realtime state sync disabled');
+      this.logger.debug("No EventEmitter — realtime state sync disabled");
       return;
     }
 
     // Wildcard listeners receive the event name as the first argument (see
     // the EventEmitter contract) — cast bridges the narrower listener type.
-    this.events.on('realtime:state.*', this.handleEvent.bind(this) as (payload: unknown) => void);
-    this.logger.debug('Realtime state broadcaster active');
+    this.events.on("realtime:state.*", this.handleEvent.bind(this) as (payload: unknown) => void);
+    this.logger.debug("Realtime state broadcaster active");
   }
 
   /**
@@ -118,19 +118,19 @@ export class RealtimeBroadcaster implements OnModuleInit {
     if (!storeName) return;
     if (!this.enabledStores.has(storeName)) return;
 
-    const strategy = this.enabledStores.get(storeName) ?? 'instant';
+    const strategy = this.enabledStores.get(storeName) ?? "instant";
     const data = payload as { state?: unknown; data?: unknown } | undefined;
     const state = data?.state ?? data?.data ?? payload;
 
     this.logger.debug(`Realtime: ${eventName} → ${storeName} (strategy: ${strategy})`);
 
     switch (strategy) {
-      case 'instant':
+      case "instant":
         this.applyToStore(storeName, state);
         break;
 
-      case 'prompt':
-      case 'manual':
+      case "prompt":
+      case "manual":
         this.pendingUpdates.push({ storeName, state, timestamp: Date.now() });
         this.events?.emit(`${storeName}.realtime.pending`, {
           state,
@@ -138,7 +138,7 @@ export class RealtimeBroadcaster implements OnModuleInit {
         });
         break;
 
-      case 'next-open':
+      case "next-open":
         try {
           sessionStorage.setItem(`__state_realtime_pending_${storeName}`, JSON.stringify(state));
         } catch {
@@ -168,8 +168,8 @@ export class RealtimeBroadcaster implements OnModuleInit {
    * Parse "realtime:state.{storeName}.{action}" into the store name.
    */
   private parseStoreName(eventName: string): string | null {
-    const stripped = eventName.replace('realtime:state.', '');
-    const parts = stripped.split('.');
+    const stripped = eventName.replace("realtime:state.", "");
+    const parts = stripped.split(".");
     return parts[0] ?? null;
   }
 }

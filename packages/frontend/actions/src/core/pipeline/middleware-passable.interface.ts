@@ -10,7 +10,7 @@ import type {
   IActionDescriptor,
   IActionHandler,
   IActionResponse,
-} from '@stackra/contracts';
+} from "@stackra/contracts";
 
 /**
  * Envelope threaded through every action middleware pipe.

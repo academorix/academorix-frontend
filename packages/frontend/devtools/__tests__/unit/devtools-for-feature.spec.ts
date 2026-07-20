@@ -16,24 +16,24 @@
  *   'Symbol(DEVTOOLS_REGISTRY)'".
  */
 
-import 'reflect-metadata';
+import "reflect-metadata";
 
-import { describe, expect, it } from 'vitest';
-import { ApplicationFactory } from '@stackra/container';
-import { Injectable, Module } from '@stackra/container';
+import { describe, expect, it } from "vitest";
+import { ApplicationFactory } from "@stackra/container";
+import { Injectable, Module } from "@stackra/container";
 import type {
   DevtoolsCategory,
   IDevtoolsInspectorRegion,
   IDevtoolsInspectorRegionSource,
   IDevtoolsPanel,
   IDevtoolsView,
-} from '@stackra/contracts';
+} from "@stackra/contracts";
 
-import { DevtoolsModule } from '@/core/devtools.module';
-import { DevtoolsPanel } from '@/core/decorators/devtools-panel.decorator';
-import { DevtoolsInspectorSource } from '@/core/decorators/devtools-inspector-source.decorator';
-import { DevtoolsPanelsRegistry } from '@/core/registries/devtools-panels.registry';
-import { DevtoolsInspectorRegistry } from '@/core/registries/devtools-inspector.registry';
+import { DevtoolsModule } from "@/core/devtools.module";
+import { DevtoolsPanel } from "@/core/decorators/devtools-panel.decorator";
+import { DevtoolsInspectorSource } from "@/core/decorators/devtools-inspector-source.decorator";
+import { DevtoolsPanelsRegistry } from "@/core/registries/devtools-panels.registry";
+import { DevtoolsInspectorRegistry } from "@/core/registries/devtools-inspector.registry";
 
 // ────────────────────────────────────────────────────────────────────────
 // Fixtures
@@ -47,18 +47,18 @@ import { DevtoolsInspectorRegistry } from '@/core/registries/devtools-inspector.
  */
 @Injectable()
 @DevtoolsPanel({
-  id: 'test-panel',
-  title: 'Test panel',
-  category: 'framework',
+  id: "test-panel",
+  title: "Test panel",
+  category: "framework",
   order: 100,
 })
 class TestPanel implements IDevtoolsPanel {
-  public readonly id = 'test-panel';
-  public readonly title = 'Test panel';
-  public readonly category: DevtoolsCategory = 'framework';
+  public readonly id = "test-panel";
+  public readonly title = "Test panel";
+  public readonly category: DevtoolsCategory = "framework";
   public readonly order = 100;
   public readonly view: IDevtoolsView = {
-    type: 'component',
+    type: "component",
     render: (): null => null,
   };
 }
@@ -68,14 +68,14 @@ class TestPanel implements IDevtoolsPanel {
  */
 @Injectable()
 @DevtoolsInspectorSource({
-  id: 'test-inspector-source',
-  panelId: 'test-panel',
-  label: 'Test source',
+  id: "test-inspector-source",
+  panelId: "test-panel",
+  label: "Test source",
 })
 class TestInspectorSource implements IDevtoolsInspectorRegionSource {
-  public readonly id = 'test-inspector-source';
-  public readonly label = 'Test source';
-  public readonly panelId = 'test-panel';
+  public readonly id = "test-inspector-source";
+  public readonly label = "Test source";
+  public readonly panelId = "test-panel";
 
   public collect(): readonly IDevtoolsInspectorRegion[] {
     return [];
@@ -86,8 +86,8 @@ class TestInspectorSource implements IDevtoolsInspectorRegionSource {
 // Specs — standalone (no forRoot) fail-soft
 // ────────────────────────────────────────────────────────────────────────
 
-describe('DevtoolsModule.forFeature (standalone)', () => {
-  it('bootstraps without DevtoolsModule.forRoot() — the panel seed loader is a no-op', async () => {
+describe("DevtoolsModule.forFeature (standalone)", () => {
+  it("bootstraps without DevtoolsModule.forRoot() — the panel seed loader is a no-op", async () => {
     // The consumer app imports ONLY the feature module. This mirrors
     // a feature-package call site (e.g. CacheModule) whose consumer
     // hasn't wired devtools at the app root.
@@ -108,7 +108,7 @@ describe('DevtoolsModule.forFeature (standalone)', () => {
     await app.close();
   });
 
-  it('bootstraps without DevtoolsModule.forRoot() — the inspector-source seed loader is a no-op', async () => {
+  it("bootstraps without DevtoolsModule.forRoot() — the inspector-source seed loader is a no-op", async () => {
     @Module({
       imports: [DevtoolsModule.forInspectorSource([TestInspectorSource])],
     })
@@ -126,8 +126,8 @@ describe('DevtoolsModule.forFeature (standalone)', () => {
 // Specs — with forRoot the panel + source are seeded normally
 // ────────────────────────────────────────────────────────────────────────
 
-describe('DevtoolsModule.forFeature (with forRoot)', () => {
-  it('registers the panel with the panels registry when forRoot is present', async () => {
+describe("DevtoolsModule.forFeature (with forRoot)", () => {
+  it("registers the panel with the panels registry when forRoot is present", async () => {
     @Module({
       imports: [DevtoolsModule.forRoot(), DevtoolsModule.forFeature([TestPanel])],
     })
@@ -137,12 +137,12 @@ describe('DevtoolsModule.forFeature (with forRoot)', () => {
     const registry = app.get(DevtoolsPanelsRegistry);
     // The seed loader ran at onApplicationBootstrap — the panel is
     // now in the registry alongside any auto-discovered ones.
-    expect(registry.find('test-panel')).not.toBeNull();
+    expect(registry.find("test-panel")).not.toBeNull();
 
     await app.close();
   });
 
-  it('registers the inspector source with the inspector registry when forRoot is present', async () => {
+  it("registers the inspector source with the inspector registry when forRoot is present", async () => {
     @Module({
       imports: [DevtoolsModule.forRoot(), DevtoolsModule.forInspectorSource([TestInspectorSource])],
     })
@@ -151,7 +151,7 @@ describe('DevtoolsModule.forFeature (with forRoot)', () => {
     const app = await ApplicationFactory.create(AppModule);
     const registry = app.get(DevtoolsInspectorRegistry);
     const sources = registry.sources();
-    expect(sources.some((s) => s.id === 'test-inspector-source')).toBe(true);
+    expect(sources.some((s) => s.id === "test-inspector-source")).toBe(true);
 
     await app.close();
   });

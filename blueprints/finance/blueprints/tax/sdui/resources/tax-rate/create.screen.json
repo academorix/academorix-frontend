@@ -15,7 +15,10 @@
       "kind": "View",
       "props": { "className": "max-w-2xl mx-auto p-6 flex flex-col gap-6" },
       "children": [
-        { "kind": "Text", "props": { "as": "h1", "className": "text-2xl font-semibold", "children": "Add tax rate" } },
+        {
+          "kind": "Text",
+          "props": { "as": "h1", "className": "text-2xl font-semibold", "children": "Add tax rate" }
+        },
         {
           "kind": "Alert",
           "props": {
@@ -33,7 +36,11 @@
               "widget": "tax.jurisdiction-picker",
               "props": { "label": "Jurisdiction", "required": true },
               "actions": {
-                "onSelectionChange": { "kind": "form.set", "field": "tax_jurisdiction_id", "valueExpr": "$selectedKey" }
+                "onSelectionChange": {
+                  "kind": "form.set",
+                  "field": "tax_jurisdiction_id",
+                  "valueExpr": "$selectedKey"
+                }
               }
             },
             {
@@ -41,7 +48,11 @@
               "props": { "label": "Rate type", "menuTrigger": "focus", "required": true },
               "props_items_source": "tax.rate-type-catalog",
               "actions": {
-                "onSelectionChange": { "kind": "form.set", "field": "rate_type", "valueExpr": "$selectedKey" }
+                "onSelectionChange": {
+                  "kind": "form.set",
+                  "field": "rate_type",
+                  "valueExpr": "$selectedKey"
+                }
               }
             },
             {
@@ -92,7 +103,11 @@
                 { "id": "physical", "label": "Physical" }
               ],
               "actions": {
-                "onSelectionChange": { "kind": "form.set", "field": "applies_to", "valueExpr": "$selectedKey" }
+                "onSelectionChange": {
+                  "kind": "form.set",
+                  "field": "applies_to",
+                  "valueExpr": "$selectedKey"
+                }
               }
             },
             {
@@ -104,7 +119,10 @@
             },
             {
               "kind": "DateField",
-              "props": { "label": "Effective to (optional)", "helpText": "Leave empty for open-ended." },
+              "props": {
+                "label": "Effective to (optional)",
+                "helpText": "Leave empty for open-ended."
+              },
               "actions": {
                 "onChange": { "kind": "form.set", "field": "effective_to", "valueExpr": "$value" }
               }

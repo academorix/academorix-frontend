@@ -19,12 +19,12 @@
  *   grows beyond two levels of meaningful depth.
  */
 
-import { type ReactElement, useCallback, useSyncExternalStore } from 'react';
-import { Card, Chip } from '@stackra/ui/react';
+import { type ReactElement, useCallback, useSyncExternalStore } from "react";
+import { Card, Chip } from "@stackra/ui/react";
 
-import type { IScopeNodeTreeNode, IScopeSnapshot } from '@/core/interfaces';
-import type { ScopeService } from '@/core/services/scope.service';
-import type { ScopeDevtoolsPanelViewProps } from './scope-devtools-panel-view.interface';
+import type { IScopeNodeTreeNode, IScopeSnapshot } from "@/core/interfaces";
+import type { ScopeService } from "@/core/services/scope.service";
+import type { ScopeDevtoolsPanelViewProps } from "./scope-devtools-panel-view.interface";
 
 /**
  * Empty snapshot used when the service is absent. Referentially
@@ -63,8 +63,8 @@ function TreeNode({
         className="flex items-center gap-2 py-1"
         style={{ paddingLeft: `${depth * 12}px` }}
       >
-        <span className="text-sm text-foreground">{node.label}</span>
-        <code className="text-xs text-muted">{node.level}</code>
+        <span className="text-foreground text-sm">{node.label}</span>
+        <code className="text-muted text-xs">{node.level}</code>
         {isActive ? (
           <Chip size="sm" variant="primary">
             <Chip.Label>active</Chip.Label>
@@ -100,11 +100,11 @@ export function ScopeDevtoolsPanelView({ service }: ScopeDevtoolsPanelViewProps)
   // frozen empty snapshot so the hook doesn't tear on re-renders.
   const subscribe = useCallback(
     (cb: () => void) => (service ? service.subscribe(cb) : () => {}),
-    [service]
+    [service],
   );
   const getSnapshot = useCallback(
     () => (service ? service.getSnapshot() : EMPTY_SNAPSHOT),
-    [service]
+    [service],
   );
   const snapshot = useSyncExternalStore(subscribe, getSnapshot, getSnapshot);
 
@@ -129,8 +129,8 @@ export function ScopeDevtoolsPanelView({ service }: ScopeDevtoolsPanelViewProps)
   return (
     <div className="flex flex-col gap-3">
       <header>
-        <h3 className="text-base font-semibold text-foreground">Scope</h3>
-        <p className="text-xs text-muted">
+        <h3 className="text-foreground text-base font-semibold">Scope</h3>
+        <p className="text-muted text-xs">
           Live active scope context and the switch-target node tree.
         </p>
       </header>
@@ -151,7 +151,7 @@ export function ScopeDevtoolsPanelView({ service }: ScopeDevtoolsPanelViewProps)
             ) : null}
           </div>
           <Card.Description>
-            {scope ? `Currently at ${scope.level}: ${scope.entityId}` : 'No scope resolved yet.'}
+            {scope ? `Currently at ${scope.level}: ${scope.entityId}` : "No scope resolved yet."}
           </Card.Description>
         </Card.Header>
         {scope ? (
@@ -187,8 +187,8 @@ export function ScopeDevtoolsPanelView({ service }: ScopeDevtoolsPanelViewProps)
           <Card.Title className="text-sm">Switchable tree</Card.Title>
           <Card.Description>
             {tree.length === 0
-              ? 'The scope tree is empty. Load it via the data source.'
-              : `${tree.length} root node${tree.length === 1 ? '' : 's'}, authorised backend-side.`}
+              ? "The scope tree is empty. Load it via the data source."
+              : `${tree.length} root node${tree.length === 1 ? "" : "s"}, authorised backend-side.`}
           </Card.Description>
         </Card.Header>
         {tree.length > 0 ? (

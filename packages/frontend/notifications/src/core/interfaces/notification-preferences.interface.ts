@@ -10,7 +10,7 @@
  *   when the user hasn't set a window yet.
  */
 
-import type { IQuietHoursWindow } from './quiet-hours-window.interface';
+import type { IQuietHoursWindow } from "./quiet-hours-window.interface";
 
 /**
  * Per-user notification preferences.

@@ -48,17 +48,28 @@
           "kind": "View",
           "props": { "className": "flex items-center gap-3" },
           "children": [
-            { "kind": "Widget", "widget": "payment.payment-status-chip", "props": { "size": "lg" }, "bindings": { "props.status": { "$ref": "intent.status" } } },
+            {
+              "kind": "Widget",
+              "widget": "payment.payment-status-chip",
+              "props": { "size": "lg" },
+              "bindings": { "props.status": { "$ref": "intent.status" } }
+            },
             {
               "kind": "Text",
               "props": { "className": "text-lg font-medium" },
-              "bindings": { "children": { "$expr": "intent.status === 'succeeded' ? 'Payment complete' : (intent.status === 'failed' ? 'Payment failed' : (intent.status === 'requires_action' ? 'Additional verification required' : 'Processing'))" } }
+              "bindings": {
+                "children": {
+                  "$expr": "intent.status === 'succeeded' ? 'Payment complete' : (intent.status === 'failed' ? 'Payment failed' : (intent.status === 'requires_action' ? 'Additional verification required' : 'Processing'))"
+                }
+              }
             }
           ]
         },
         {
           "kind": "Card",
-          "bindings": { "hidden": { "$expr": "intent.status !== 'requires_action' || !intent.next_action_url" } },
+          "bindings": {
+            "hidden": { "$expr": "intent.status !== 'requires_action' || !intent.next_action_url" }
+          },
           "children": [
             {
               "kind": "CardContent",
@@ -74,7 +85,11 @@
                 },
                 {
                   "kind": "Button",
-                  "props": { "variant": "primary", "size": "lg", "children": "Complete verification" },
+                  "props": {
+                    "variant": "primary",
+                    "size": "lg",
+                    "children": "Complete verification"
+                  },
                   "actions": {
                     "onPress": {
                       "kind": "openUrl",
@@ -90,11 +105,25 @@
         {
           "kind": "Card",
           "children": [
-            { "kind": "CardHeader", "children": [{ "kind": "Text", "props": { "as": "h3", "className": "text-md font-medium", "children": "Amount" } }] },
+            {
+              "kind": "CardHeader",
+              "children": [
+                {
+                  "kind": "Text",
+                  "props": { "as": "h3", "className": "text-md font-medium", "children": "Amount" }
+                }
+              ]
+            },
             {
               "kind": "CardContent",
               "children": [
-                { "kind": "Text", "props": { "className": "text-2xl font-semibold" }, "bindings": { "children": { "$ref": "intent.amount_cents", "formatter": "currency" } } }
+                {
+                  "kind": "Text",
+                  "props": { "className": "text-2xl font-semibold" },
+                  "bindings": {
+                    "children": { "$ref": "intent.amount_cents", "formatter": "currency" }
+                  }
+                }
               ]
             }
           ]

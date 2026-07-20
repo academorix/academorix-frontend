@@ -5,7 +5,7 @@
  *   scoped translations registered lazily via a `createSeedLoader`.
  */
 
-import type { II18nLoader } from '@stackra/contracts';
+import type { II18nLoader } from "@stackra/contracts";
 
 /**
  * Options for a lazy-loaded translation namespace.

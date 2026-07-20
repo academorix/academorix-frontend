@@ -5,7 +5,10 @@
   "kind": "SduiWidget",
   "description": "Compact renderer for one token value. Shape adapts to the token type: color = swatch + hex code, dimension = ruler + px value, typography = font sample, radius = corner sample, shadow = box sample, motion = duration bar, opacity = transparency bar, z_index = numeric badge.",
   "props": {
-    "tokenKey": { "type": "string", "description": "Canonical token key (e.g. 'color.primary.500')." },
+    "tokenKey": {
+      "type": "string",
+      "description": "Canonical token key (e.g. 'color.primary.500')."
+    },
     "tokenValue": { "type": "string", "description": "The token's value." }
   },
   "dataSources": [],

@@ -5,15 +5,15 @@ Guzzle Promises Upgrade Guide
 ----------
 
 Guzzle Promises 2.0 is a major release that removes deprecated APIs, raises the
-minimum PHP version, and adds PHP 7 parameter and return types. Applications that
-only use the object-oriented API should usually need small changes. Applications
-that call helper functions, implement package interfaces, extend package classes,
-or pass invalid argument types need closer review.
+minimum PHP version, and adds PHP 7 parameter and return types. Applications
+that only use the object-oriented API should usually need small changes.
+Applications that call helper functions, implement package interfaces, extend
+package classes, or pass invalid argument types need closer review.
 
 #### PHP Version and Dependencies
 
-Guzzle Promises 2.0 requires PHP `^7.2.5 || ^8.0`. Guzzle Promises 1.x
-supported PHP `>=5.5`.
+Guzzle Promises 2.0 requires PHP `^7.2.5 || ^8.0`. Guzzle Promises 1.x supported
+PHP `>=5.5`.
 
 #### PHP 7 Type Hints and Return Types
 
@@ -55,29 +55,29 @@ use GuzzleHttp\Promise\Create;
 $promise = Create::promiseFor('value');
 ```
 
-| Original Function | Replacement Method |
-|-------------------|--------------------|
-| `queue` | `Utils::queue` |
-| `task` | `Utils::task` |
-| `promise_for` | `Create::promiseFor` |
-| `rejection_for` | `Create::rejectionFor` |
-| `exception_for` | `Create::exceptionFor` |
-| `iter_for` | `Create::iterFor` |
-| `inspect` | `Utils::inspect` |
-| `inspect_all` | `Utils::inspectAll` |
-| `unwrap` | `Utils::unwrap` |
-| `all` | `Utils::all` |
-| `some` | `Utils::some` |
-| `any` | `Utils::any` |
-| `settle` | `Utils::settle` |
-| `each` | `Each::of` |
-| `each_limit` | `Each::ofLimit` |
-| `each_limit_all` | `Each::ofLimitAll` |
-| `!is_fulfilled` | `Is::pending` |
-| `is_fulfilled` | `Is::fulfilled` |
-| `is_rejected` | `Is::rejected` |
-| `is_settled` | `Is::settled` |
-| `coroutine` | `Coroutine::of` |
+| Original Function | Replacement Method     |
+| ----------------- | ---------------------- |
+| `queue`           | `Utils::queue`         |
+| `task`            | `Utils::task`          |
+| `promise_for`     | `Create::promiseFor`   |
+| `rejection_for`   | `Create::rejectionFor` |
+| `exception_for`   | `Create::exceptionFor` |
+| `iter_for`        | `Create::iterFor`      |
+| `inspect`         | `Utils::inspect`       |
+| `inspect_all`     | `Utils::inspectAll`    |
+| `unwrap`          | `Utils::unwrap`        |
+| `all`             | `Utils::all`           |
+| `some`            | `Utils::some`          |
+| `any`             | `Utils::any`           |
+| `settle`          | `Utils::settle`        |
+| `each`            | `Each::of`             |
+| `each_limit`      | `Each::ofLimit`        |
+| `each_limit_all`  | `Each::ofLimitAll`     |
+| `!is_fulfilled`   | `Is::pending`          |
+| `is_fulfilled`    | `Is::fulfilled`        |
+| `is_rejected`     | `Is::rejected`         |
+| `is_settled`      | `Is::settled`          |
+| `coroutine`       | `Coroutine::of`        |
 
 For the full 2.0 diff, see
 https://github.com/guzzle/promises/compare/1.5.3...2.0.0.

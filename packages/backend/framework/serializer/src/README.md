@@ -13,7 +13,8 @@ Serializers Overview
    of closures using Laravel’s SerializableClosure library. • Key Features: •
    Serializes closures into a storable and transferable format. • Unserializes
    closures back into executable forms. • Utilizes SerializableClosureFactory
-   for creating closure instances. • Methods: • make(Closure $closure):
+   for creating closure instances. • Methods: • make(Closure
+   $closure):
    SerializableClosure • serialize(Closure $closure): string •
    unserialize(string $string): Closure • Usage Example:
 
@@ -45,7 +46,8 @@ $decoded = $jsonSerializer->decode($jsonString); print_r($decoded); }
    general PHP data types, extending Magento’s base serializer. • Key Features:
    • Converts PHP data into a serialized string format. • Restores serialized
    strings back to their original PHP data types. • Provides enhanced exception
-   handling. • Methods: • serialize(mixed $data): string|false •
+   handling. • Methods: • serialize(mixed
+   $data): string|false •
    unserialize(string $string): mixed • Usage Example:
 
 $genericSerializer = new Serializer();

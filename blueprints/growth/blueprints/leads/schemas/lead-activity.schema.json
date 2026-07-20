@@ -37,7 +37,12 @@
   "x-database": {
     "engine": "postgres",
     "columns": {
-      "id": { "type": "string", "length": 64, "primary": true, "description": "Prefixed ULID: `lea_<26>`." },
+      "id": {
+        "type": "string",
+        "length": 64,
+        "primary": true,
+        "description": "Prefixed ULID: `lea_<26>`."
+      },
       "tenant_id": {
         "type": "string",
         "length": 64,
@@ -84,9 +89,16 @@
       "updated_at": { "type": "timestamptz", "nullable": false }
     },
     "indexes": [
-      { "columns": ["tenant_id", "lead_id", "occurred_at"], "name": "lead_activities_lead_time_idx" },
+      {
+        "columns": ["tenant_id", "lead_id", "occurred_at"],
+        "name": "lead_activities_lead_time_idx"
+      },
       { "columns": ["tenant_id", "type", "occurred_at"], "name": "lead_activities_type_time_idx" },
-      { "columns": ["tenant_id", "actor_id", "occurred_at"], "name": "lead_activities_actor_time_idx", "predicate": "actor_id IS NOT NULL" }
+      {
+        "columns": ["tenant_id", "actor_id", "occurred_at"],
+        "name": "lead_activities_actor_time_idx",
+        "predicate": "actor_id IS NOT NULL"
+      }
     ]
   },
   "required": ["id", "tenant_id", "lead_id", "type", "occurred_at", "created_at", "updated_at"],
@@ -96,7 +108,17 @@
     "lead_id": { "type": "string", "pattern": "^led_[0-9A-HJKMNP-TV-Z]{26}$" },
     "type": {
       "type": "string",
-      "enum": ["note", "email", "call", "meeting", "form_submission", "stage_change", "assignment", "trial_scheduled", "trial_attended"]
+      "enum": [
+        "note",
+        "email",
+        "call",
+        "meeting",
+        "form_submission",
+        "stage_change",
+        "assignment",
+        "trial_scheduled",
+        "trial_attended"
+      ]
     },
     "body": { "type": ["string", "null"] },
     "metadata": { "type": ["object", "null"] },

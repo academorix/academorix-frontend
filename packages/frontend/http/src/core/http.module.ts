@@ -28,9 +28,9 @@ import {
   type DynamicModule,
   type OnApplicationBootstrap,
   type Type,
-} from '@stackra/container';
-import { Logger } from '@stackra/logger';
-import { createSeedLoader, seedLoaderToken } from '@stackra/support';
+} from "@stackra/container";
+import { Logger } from "@stackra/logger";
+import { createSeedLoader, seedLoaderToken } from "@stackra/support";
 
 import {
   DEFAULT_HTTP_CONNECTION_TOKEN,
@@ -46,11 +46,11 @@ import {
   type IHttpModuleAsyncOptions,
   type IHttpModuleFeatureOptions,
   type IHttpModuleOptions,
-} from '@stackra/contracts';
+} from "@stackra/contracts";
 
-import { AxiosConnector } from './connectors/axios.connector';
-import { getHttpInterceptorMetadata, getHttpMiddlewareMetadata } from './decorators';
-import { HttpModuleOptionsError } from './errors';
+import { AxiosConnector } from "./connectors/axios.connector";
+import { getHttpInterceptorMetadata, getHttpMiddlewareMetadata } from "./decorators";
+import { HttpModuleOptionsError } from "./errors";
 import {
   CacheInterceptor,
   ErrorNormalizerInterceptor,
@@ -58,21 +58,21 @@ import {
   MetricsInterceptor,
   RetryInterceptor,
   TransformInterceptor,
-} from './interceptors';
+} from "./interceptors";
 import {
   AuthMiddleware,
   CircuitBreakerMiddleware,
   DeduplicationMiddleware,
   ProgressMiddleware,
   RateLimitMiddleware,
-} from './middleware';
+} from "./middleware";
 import {
   CircuitBreakerService,
   HttpManager,
   MetricsCollectorService,
   TokenBucketService,
   UploadService,
-} from './services';
+} from "./services";
 
 /**
  * Built-in connector registration entry.
@@ -88,7 +88,7 @@ interface IBuiltInConnector {
  * Built-in connectors registered automatically by `forRoot()`.
  */
 const BUILT_IN_CONNECTORS: ReadonlyArray<IBuiltInConnector> = Object.freeze([
-  { driver: 'axios', type: AxiosConnector },
+  { driver: "axios", type: AxiosConnector },
 ]);
 
 /**
@@ -236,7 +236,7 @@ export class HttpModule {
    */
   public static forRootAsync(options: IHttpModuleAsyncOptions): DynamicModule {
     if (!options.useFactory) {
-      HttpModule.logger.warn('[HttpModule] forRootAsync requires useFactory.');
+      HttpModule.logger.warn("[HttpModule] forRootAsync requires useFactory.");
       return { module: HttpModule, providers: [], exports: [] };
     }
 
@@ -349,7 +349,7 @@ export class HttpModule {
     class HttpFeatureRegistrar implements OnApplicationBootstrap {
       public constructor(
         @Inject(HTTP_MANAGER) private readonly manager: IHttpManager,
-        private readonly moduleRef: ModuleRef
+        private readonly moduleRef: ModuleRef,
       ) {}
 
       public async onApplicationBootstrap(): Promise<void> {
@@ -358,7 +358,7 @@ export class HttpModule {
           const instance = this.moduleRef.get<IHttpConnector>(connector as Type<IHttpConnector>);
           if (instance) {
             this.manager.extend(driver, (config) =>
-              this.manager.createClientFromConnector(instance, config)
+              this.manager.createClientFromConnector(instance, config),
             );
           }
         }
@@ -430,7 +430,7 @@ export class HttpModule {
         useFactory: (manager: HttpManager, connector: IHttpConnector) =>
           createSeedLoader(() => {
             manager.extend(driver, (config) =>
-              manager.createClientFromConnector(connector, config)
+              manager.createClientFromConnector(connector, config),
             );
           }),
         inject: [HttpManager, type],
@@ -511,7 +511,7 @@ export class HttpModule {
   /** Resolve the connection list for a feature middleware/interceptor entry. */
   private static resolveTargets(
     connection: string | string[] | undefined,
-    manager: IHttpManager
+    manager: IHttpManager,
   ): string[] {
     if (connection === undefined) return [manager.getDefaultConnectionName()];
     if (Array.isArray(connection)) return connection;
@@ -527,22 +527,22 @@ export class HttpModule {
    */
   private static validate(config: IHttpModuleOptions): void {
     if (!config) {
-      throw new HttpModuleOptionsError('[HttpModule] forRoot() requires a configuration object.');
+      throw new HttpModuleOptionsError("[HttpModule] forRoot() requires a configuration object.");
     }
 
     if (!config.default) {
-      throw new HttpModuleOptionsError('[HttpModule] config.default is required.');
+      throw new HttpModuleOptionsError("[HttpModule] config.default is required.");
     }
 
     if (!config.connections || Object.keys(config.connections).length === 0) {
       throw new HttpModuleOptionsError(
-        '[HttpModule] config.connections must define at least one entry.'
+        "[HttpModule] config.connections must define at least one entry.",
       );
     }
 
     if (!config.connections[config.default]) {
       throw new HttpModuleOptionsError(
-        `[HttpModule] config.default "${config.default}" is not present in config.connections.`
+        `[HttpModule] config.default "${config.default}" is not present in config.connections.`,
       );
     }
   }

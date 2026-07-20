@@ -4,4 +4,4 @@
  * @description Barrel export for Web Push adapters.
  */
 
-export { WebPushAdapter } from './web-push.adapter';
+export { WebPushAdapter } from "./web-push.adapter";

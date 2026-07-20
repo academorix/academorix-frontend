@@ -4,5 +4,5 @@
  * @description Barrel export for native scope components.
  */
 
-export { NativeScopeSwitcher } from './scope-switcher';
-export type { NativeScopeSwitcherProps } from './scope-switcher';
+export { NativeScopeSwitcher } from "./scope-switcher";
+export type { NativeScopeSwitcherProps } from "./scope-switcher";

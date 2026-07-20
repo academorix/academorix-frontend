@@ -37,15 +37,27 @@
             {
               "kind": "View",
               "children": [
-                { "kind": "Text", "props": { "as": "h1", "className": "text-2xl font-semibold" }, "bindings": { "children": { "$expr": "'Edit ' + provider.provider" } } },
-                { "kind": "Text", "props": { "className": "text-sm text-muted font-mono" }, "bindings": { "children": { "$ref": "provider.id" } } }
+                {
+                  "kind": "Text",
+                  "props": { "as": "h1", "className": "text-2xl font-semibold" },
+                  "bindings": { "children": { "$expr": "'Edit ' + provider.provider" } }
+                },
+                {
+                  "kind": "Text",
+                  "props": { "className": "text-sm text-muted font-mono" },
+                  "bindings": { "children": { "$ref": "provider.id" } }
+                }
               ]
             },
             {
               "kind": "View",
               "props": { "className": "flex items-center gap-2" },
               "children": [
-                { "kind": "Widget", "widget": "marketing.circuit-breaker-badge", "bindings": { "provider_config": { "$ref": "provider" } } }
+                {
+                  "kind": "Widget",
+                  "widget": "marketing.circuit-breaker-badge",
+                  "bindings": { "provider_config": { "$ref": "provider" } }
+                }
               ]
             }
           ]
@@ -54,8 +66,21 @@
           "kind": "Card",
           "props": { "className": "p-6" },
           "children": [
-            { "kind": "Text", "props": { "as": "h2", "className": "text-lg font-semibold mb-4", "children": "Credentials" } },
-            { "kind": "Text", "props": { "className": "text-xs text-muted mb-3", "children": "Credentials are encrypted at rest. Editing rotates the encryption at rest." } },
+            {
+              "kind": "Text",
+              "props": {
+                "as": "h2",
+                "className": "text-lg font-semibold mb-4",
+                "children": "Credentials"
+              }
+            },
+            {
+              "kind": "Text",
+              "props": {
+                "className": "text-xs text-muted mb-3",
+                "children": "Credentials are encrypted at rest. Editing rotates the encryption at rest."
+              }
+            },
             {
               "kind": "DynamicForm",
               "bindings": {
@@ -69,7 +94,14 @@
           "kind": "Card",
           "props": { "className": "p-6" },
           "children": [
-            { "kind": "Text", "props": { "as": "h2", "className": "text-lg font-semibold mb-4", "children": "Event types" } },
+            {
+              "kind": "Text",
+              "props": {
+                "as": "h2",
+                "className": "text-lg font-semibold mb-4",
+                "children": "Event types"
+              }
+            },
             {
               "kind": "Widget",
               "widget": "marketing.event-type-picker",
@@ -85,14 +117,25 @@
           "kind": "Card",
           "props": { "className": "p-6" },
           "children": [
-            { "kind": "Text", "props": { "as": "h2", "className": "text-lg font-semibold mb-4", "children": "Danger zone" } },
+            {
+              "kind": "Text",
+              "props": {
+                "as": "h2",
+                "className": "text-lg font-semibold mb-4",
+                "children": "Danger zone"
+              }
+            },
             {
               "kind": "View",
               "props": { "className": "flex items-center gap-2 flex-wrap" },
               "children": [
                 {
                   "kind": "Button",
-                  "props": { "variant": "warning", "leadingIcon": "arrow-path", "children": "Reset circuit-breaker" },
+                  "props": {
+                    "variant": "warning",
+                    "leadingIcon": "arrow-path",
+                    "children": "Reset circuit-breaker"
+                  },
                   "requiresPermission": "marketing.providers.reset-circuit-breaker",
                   "bindings": { "disabled": { "$expr": "!provider.circuit_breaker_open_until" } },
                   "actions": {
@@ -112,7 +155,11 @@
                 },
                 {
                   "kind": "Button",
-                  "props": { "variant": "danger", "leadingIcon": "trash", "children": "Deactivate provider" },
+                  "props": {
+                    "variant": "danger",
+                    "leadingIcon": "trash",
+                    "children": "Deactivate provider"
+                  },
                   "requiresPermission": "marketing.providers.delete",
                   "actions": {
                     "onPress": {

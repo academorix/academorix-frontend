@@ -9,10 +9,33 @@
   "resource": { "module": "athlete-enrollment", "entity": "athlete-enrollment", "action": "list" },
   "requiresPermission": "enrollments.viewAny",
   "dataSources": [
-    { "name": "enrollments", "kind": "http.get", "url": "/api/v1/enrollments", "unwrap": "data", "queryFromFilters": true },
-    { "name": "teams", "kind": "http.get", "url": "/api/v1/teams?filter[status]=active", "unwrap": "data", "cache": { "ttlSeconds": 300 } },
-    { "name": "seasons", "kind": "http.get", "url": "/api/v1/seasons?filter[status]=registration_open,in_progress", "unwrap": "data", "cache": { "ttlSeconds": 300 } },
-    { "name": "slot_entitlement", "kind": "http.get", "url": "/api/v1/entitlements/athlete_enrollment_slot", "unwrap": "data" }
+    {
+      "name": "enrollments",
+      "kind": "http.get",
+      "url": "/api/v1/enrollments",
+      "unwrap": "data",
+      "queryFromFilters": true
+    },
+    {
+      "name": "teams",
+      "kind": "http.get",
+      "url": "/api/v1/teams?filter[status]=active",
+      "unwrap": "data",
+      "cache": { "ttlSeconds": 300 }
+    },
+    {
+      "name": "seasons",
+      "kind": "http.get",
+      "url": "/api/v1/seasons?filter[status]=registration_open,in_progress",
+      "unwrap": "data",
+      "cache": { "ttlSeconds": 300 }
+    },
+    {
+      "name": "slot_entitlement",
+      "kind": "http.get",
+      "url": "/api/v1/entitlements/athlete_enrollment_slot",
+      "unwrap": "data"
+    }
   ],
   "nodes": [
     {
@@ -27,8 +50,21 @@
             {
               "kind": "View",
               "children": [
-                { "kind": "Text", "props": { "as": "h1", "className": "text-2xl font-semibold", "children": "Enrollments" } },
-                { "kind": "Text", "props": { "className": "text-sm text-muted", "children": "Athletes on your rosters — active enrollments + waitlist + completed history." } }
+                {
+                  "kind": "Text",
+                  "props": {
+                    "as": "h1",
+                    "className": "text-2xl font-semibold",
+                    "children": "Enrollments"
+                  }
+                },
+                {
+                  "kind": "Text",
+                  "props": {
+                    "className": "text-sm text-muted",
+                    "children": "Athletes on your rosters — active enrollments + waitlist + completed history."
+                  }
+                }
               ]
             },
             {
@@ -47,8 +83,14 @@
                 },
                 {
                   "kind": "Button",
-                  "props": { "variant": "primary", "leadingIcon": "plus", "children": "Submit enrollment" },
-                  "actions": { "onPress": { "kind": "navigate", "to": "/tenant/enrollments/submit" } },
+                  "props": {
+                    "variant": "primary",
+                    "leadingIcon": "plus",
+                    "children": "Submit enrollment"
+                  },
+                  "actions": {
+                    "onPress": { "kind": "navigate", "to": "/tenant/enrollments/submit" }
+                  },
                   "bindings": { "disabled": { "$ref": "slot_entitlement.is_exceeded" } },
                   "requiresPermission": "enrollments.create"
                 }
@@ -64,13 +106,25 @@
               "kind": "ComboBox",
               "props": { "label": "Team", "menuTrigger": "focus", "className": "min-w-56" },
               "bindings": { "items": { "$ref": "teams" } },
-              "actions": { "onSelectionChange": { "kind": "filter.set", "field": "team_id", "valueExpr": "$selectedKey" } }
+              "actions": {
+                "onSelectionChange": {
+                  "kind": "filter.set",
+                  "field": "team_id",
+                  "valueExpr": "$selectedKey"
+                }
+              }
             },
             {
               "kind": "ComboBox",
               "props": { "label": "Season", "menuTrigger": "focus", "className": "min-w-56" },
               "bindings": { "items": { "$ref": "seasons" } },
-              "actions": { "onSelectionChange": { "kind": "filter.set", "field": "season_id", "valueExpr": "$selectedKey" } }
+              "actions": {
+                "onSelectionChange": {
+                  "kind": "filter.set",
+                  "field": "season_id",
+                  "valueExpr": "$selectedKey"
+                }
+              }
             },
             {
               "kind": "ComboBox",
@@ -87,20 +141,38 @@
                 { "id": "expelled", "label": "Expelled" },
                 { "id": "expired", "label": "Expired" }
               ],
-              "actions": { "onSelectionChange": { "kind": "filter.set", "field": "status", "valueExpr": "$selectedKey" } }
+              "actions": {
+                "onSelectionChange": {
+                  "kind": "filter.set",
+                  "field": "status",
+                  "valueExpr": "$selectedKey"
+                }
+              }
             }
           ]
         },
         {
           "kind": "Table",
           "props": { "aria-label": "Enrollments table" },
-          "bindings": { "rows": { "$ref": "enrollments" }, "isLoading": { "$ref": "enrollments.isLoading" } },
+          "bindings": {
+            "rows": { "$ref": "enrollments" },
+            "isLoading": { "$ref": "enrollments.isLoading" }
+          },
           "emptyState": {
             "kind": "View",
             "props": { "className": "text-center py-12" },
             "children": [
-              { "kind": "Icon", "props": { "name": "clipboard-document-list", "className": "size-12 mx-auto text-muted" } },
-              { "kind": "Text", "props": { "className": "mt-4 text-lg font-medium", "children": "No enrollments" } }
+              {
+                "kind": "Icon",
+                "props": {
+                  "name": "clipboard-document-list",
+                  "className": "size-12 mx-auto text-muted"
+                }
+              },
+              {
+                "kind": "Text",
+                "props": { "className": "mt-4 text-lg font-medium", "children": "No enrollments" }
+              }
             ]
           },
           "columns": [
@@ -111,7 +183,11 @@
                 "kind": "View",
                 "props": { "className": "flex items-center gap-2" },
                 "children": [
-                  { "kind": "Text", "props": { "className": "font-medium" }, "bindings": { "children": { "$ref": "row.athlete_display_name" } } },
+                  {
+                    "kind": "Text",
+                    "props": { "className": "font-medium" },
+                    "bindings": { "children": { "$ref": "row.athlete_display_name" } }
+                  },
                   {
                     "kind": "Widget",
                     "widget": "athlete.minor-badge",
@@ -120,8 +196,22 @@
                 ]
               }
             },
-            { "key": "team_id", "label": "Team", "renderer": { "kind": "Text", "bindings": { "children": { "$ref": "row.team_display_name" } } } },
-            { "key": "season_id", "label": "Season", "renderer": { "kind": "Text", "bindings": { "children": { "$ref": "row.season_display_name" } } } },
+            {
+              "key": "team_id",
+              "label": "Team",
+              "renderer": {
+                "kind": "Text",
+                "bindings": { "children": { "$ref": "row.team_display_name" } }
+              }
+            },
+            {
+              "key": "season_id",
+              "label": "Season",
+              "renderer": {
+                "kind": "Text",
+                "bindings": { "children": { "$ref": "row.season_display_name" } }
+              }
+            },
             {
               "key": "status",
               "label": "Status",

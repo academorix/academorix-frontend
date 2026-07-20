@@ -8,7 +8,7 @@
  *   fields with no sensible default and must be supplied by the consumer.
  */
 
-import type { IAiModuleOptions } from '@stackra/contracts';
+import type { IAiModuleOptions } from "@stackra/contracts";
 
 /**
  * The subset of {@link IAiModuleOptions} that carries sane defaults.
@@ -17,7 +17,7 @@ import type { IAiModuleOptions } from '@stackra/contracts';
  * excluded here — `mergeConfig()` spreads these defaults *under* the
  * user-supplied options.
  */
-export const DEFAULT_AI_CONFIG: Omit<IAiModuleOptions, 'baseUrl' | 'authProvider'> = Object.freeze({
+export const DEFAULT_AI_CONFIG: Omit<IAiModuleOptions, "baseUrl" | "authProvider"> = Object.freeze({
   /** Context-collection defaults (debounce, leader gating, size caps). */
   context: {
     debounceMs: 500,

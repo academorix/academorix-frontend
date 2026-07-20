@@ -32,7 +32,11 @@
   ],
   "broadcasts": [
     { "channel": "tenant.{tenantId}.chargebacks", "onEvent": ["*"], "action": "refresh" },
-    { "channel": "tenant.{tenantId}.chargebacks.rate-alerts", "onEvent": ["ChargebackRateThresholdExceeded"], "action": "refresh_rate_summary" }
+    {
+      "channel": "tenant.{tenantId}.chargebacks.rate-alerts",
+      "onEvent": ["ChargebackRateThresholdExceeded"],
+      "action": "refresh_rate_summary"
+    }
   ],
   "nodes": [
     {
@@ -47,8 +51,21 @@
             {
               "kind": "View",
               "children": [
-                { "kind": "Text", "props": { "as": "h1", "className": "text-2xl font-semibold", "children": "Chargebacks" } },
-                { "kind": "Text", "props": { "className": "text-sm text-muted", "children": "Bank-forced payment reversals initiated by cardholders." } }
+                {
+                  "kind": "Text",
+                  "props": {
+                    "as": "h1",
+                    "className": "text-2xl font-semibold",
+                    "children": "Chargebacks"
+                  }
+                },
+                {
+                  "kind": "Text",
+                  "props": {
+                    "className": "text-sm text-muted",
+                    "children": "Bank-forced payment reversals initiated by cardholders."
+                  }
+                }
               ]
             },
             {
@@ -57,8 +74,14 @@
               "children": [
                 {
                   "kind": "Button",
-                  "props": { "variant": "outline", "leadingIcon": "clock", "children": "Pending evidence" },
-                  "actions": { "onPress": { "kind": "navigate", "to": "/tenant/chargebacks/pending-evidence" } },
+                  "props": {
+                    "variant": "outline",
+                    "leadingIcon": "clock",
+                    "children": "Pending evidence"
+                  },
+                  "actions": {
+                    "onPress": { "kind": "navigate", "to": "/tenant/chargebacks/pending-evidence" }
+                  },
                   "bindings": {
                     "badge": { "$ref": "pending_evidence_count.count" },
                     "hidden": { "$expr": "!hasPermission('chargebacks.submit-evidence')" }
@@ -66,8 +89,14 @@
                 },
                 {
                   "kind": "Button",
-                  "props": { "variant": "outline", "leadingIcon": "chart-bar", "children": "Rate report" },
-                  "actions": { "onPress": { "kind": "navigate", "to": "/tenant/reports/chargeback-rate" } },
+                  "props": {
+                    "variant": "outline",
+                    "leadingIcon": "chart-bar",
+                    "children": "Rate report"
+                  },
+                  "actions": {
+                    "onPress": { "kind": "navigate", "to": "/tenant/reports/chargeback-rate" }
+                  },
                   "requiresPermission": "chargebacks.view-report"
                 }
               ]
@@ -81,7 +110,13 @@
             "hidden": { "$expr": "!rate_alert_summary.any_threshold_exceeded" }
           },
           "children": [
-            { "kind": "Text", "props": { "className": "font-medium", "children": "Chargeback rate threshold exceeded" } },
+            {
+              "kind": "Text",
+              "props": {
+                "className": "font-medium",
+                "children": "Chargeback rate threshold exceeded"
+              }
+            },
             {
               "kind": "Text",
               "props": { "className": "text-sm" },
@@ -131,12 +166,20 @@
                 { "id": "other", "label": "Other" }
               ],
               "actions": {
-                "onSelectionChange": { "kind": "filter.set", "field": "network", "valueExpr": "$selectedKey" }
+                "onSelectionChange": {
+                  "kind": "filter.set",
+                  "field": "network",
+                  "valueExpr": "$selectedKey"
+                }
               }
             },
             {
               "kind": "ComboBox",
-              "props": { "label": "Reason category", "menuTrigger": "focus", "className": "min-w-52" },
+              "props": {
+                "label": "Reason category",
+                "menuTrigger": "focus",
+                "className": "min-w-52"
+              },
               "props_items": [
                 { "id": "fraud", "label": "Fraud" },
                 { "id": "authorization", "label": "Authorization" },
@@ -145,7 +188,11 @@
                 { "id": "card_recovery", "label": "Card recovery" }
               ],
               "actions": {
-                "onSelectionChange": { "kind": "filter.set", "field": "reason_category", "valueExpr": "$selectedKey" }
+                "onSelectionChange": {
+                  "kind": "filter.set",
+                  "field": "reason_category",
+                  "valueExpr": "$selectedKey"
+                }
               }
             },
             {
@@ -160,14 +207,22 @@
                 { "id": "custom_webhook", "label": "Custom" }
               ],
               "actions": {
-                "onSelectionChange": { "kind": "filter.set", "field": "provider", "valueExpr": "$selectedKey" }
+                "onSelectionChange": {
+                  "kind": "filter.set",
+                  "field": "provider",
+                  "valueExpr": "$selectedKey"
+                }
               }
             },
             {
               "kind": "Checkbox",
               "props": { "label": "RDR-eligible only" },
               "actions": {
-                "onCheckedChange": { "kind": "filter.set", "field": "rdr_eligible", "valueExpr": "$checked ? true : null" }
+                "onCheckedChange": {
+                  "kind": "filter.set",
+                  "field": "rdr_eligible",
+                  "valueExpr": "$checked ? true : null"
+                }
               }
             }
           ]
@@ -183,9 +238,21 @@
             "kind": "View",
             "props": { "className": "col-span-full text-center py-12" },
             "children": [
-              { "kind": "Icon", "props": { "name": "shield-check", "className": "size-12 mx-auto text-success" } },
-              { "kind": "Text", "props": { "className": "mt-4 text-lg font-medium", "children": "No chargebacks" } },
-              { "kind": "Text", "props": { "className": "text-sm text-muted", "children": "Your merchant account is in good standing — the lower this list, the better." } }
+              {
+                "kind": "Icon",
+                "props": { "name": "shield-check", "className": "size-12 mx-auto text-success" }
+              },
+              {
+                "kind": "Text",
+                "props": { "className": "mt-4 text-lg font-medium", "children": "No chargebacks" }
+              },
+              {
+                "kind": "Text",
+                "props": {
+                  "className": "text-sm text-muted",
+                  "children": "Your merchant account is in good standing — the lower this list, the better."
+                }
+              }
             ]
           },
           "itemRenderer": {

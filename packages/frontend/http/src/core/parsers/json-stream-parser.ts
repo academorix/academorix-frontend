@@ -8,7 +8,7 @@
  * @module @stackra/http/parsers/json-stream-parser
  */
 
-import type { IStreamParser } from './stream-parser.interface';
+import type { IStreamParser } from "./stream-parser.interface";
 
 /**
  * Naive but production-safe streaming JSON parser. Emits each
@@ -18,10 +18,10 @@ import type { IStreamParser } from './stream-parser.interface';
  */
 export class JsonStreamParser<T = unknown> implements IStreamParser<T> {
   /** UTF-8 streaming decoder. */
-  private readonly decoder: TextDecoder = new TextDecoder('utf-8', { fatal: false });
+  private readonly decoder: TextDecoder = new TextDecoder("utf-8", { fatal: false });
 
   /** Pending text accumulated across chunks. */
-  private buffer: string = '';
+  private buffer: string = "";
 
   /** Current bracket depth — `0` between values. */
   private depth: number = 0;
@@ -45,7 +45,7 @@ export class JsonStreamParser<T = unknown> implements IStreamParser<T> {
 
     // Any trailing content that didn't reach depth 0 is dropped —
     // streaming JSON requires complete values per emission.
-    this.buffer = '';
+    this.buffer = "";
     this.depth = 0;
     this.inString = false;
     this.escapeNext = false;
@@ -64,7 +64,7 @@ export class JsonStreamParser<T = unknown> implements IStreamParser<T> {
       if (this.inString) {
         if (this.escapeNext) {
           this.escapeNext = false;
-        } else if (ch === '\\') {
+        } else if (ch === "\\") {
           this.escapeNext = true;
         } else if (ch === '"') {
           this.inString = false;
@@ -78,13 +78,13 @@ export class JsonStreamParser<T = unknown> implements IStreamParser<T> {
         continue;
       }
 
-      if (ch === '{' || ch === '[') {
+      if (ch === "{" || ch === "[") {
         if (this.depth === 0) valueStart = i;
         this.depth++;
         continue;
       }
 
-      if (ch === '}' || ch === ']') {
+      if (ch === "}" || ch === "]") {
         this.depth--;
         if (this.depth === 0 && valueStart !== -1) {
           const raw = this.buffer.slice(valueStart, i + 1);

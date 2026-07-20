@@ -4,4 +4,4 @@
  * @description Barrel export for built-in `ITranslationProvider` implementations.
  */
 
-export { NullTranslationProvider } from './null-translation.provider';
+export { NullTranslationProvider } from "./null-translation.provider";

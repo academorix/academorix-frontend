@@ -6,14 +6,14 @@
  *   region activates the owning panel and disables the overlay.
  */
 
-import { useCallback, useEffect, useMemo, useRef, useState, type ReactElement } from 'react';
-import { Tooltip } from '@stackra/ui/react';
-import type { IDevtoolsInspectorRegion } from '@stackra/contracts';
+import { useCallback, useEffect, useMemo, useRef, useState, type ReactElement } from "react";
+import { Tooltip } from "@stackra/ui/react";
+import type { IDevtoolsInspectorRegion } from "@stackra/contracts";
 
-import { useDevtoolsContext } from '../../hooks/use-devtools-context.hook';
-import { useDevtoolsFrameState } from '../../hooks/use-devtools-frame-state.hook';
-import { useDevtoolsInspector } from '../../hooks/use-devtools-inspector.hook';
-import type { DevtoolsInspectorOverlayProps } from './devtools-inspector-overlay.interface';
+import { useDevtoolsContext } from "../../hooks/use-devtools-context.hook";
+import { useDevtoolsFrameState } from "../../hooks/use-devtools-frame-state.hook";
+import { useDevtoolsInspector } from "../../hooks/use-devtools-inspector.hook";
+import type { DevtoolsInspectorOverlayProps } from "./devtools-inspector-overlay.interface";
 
 /**
  * A single region + its resolved bounds. Materialised from the
@@ -36,7 +36,7 @@ function resolveRegions(regions: readonly IDevtoolsInspectorRegion[]): readonly 
     // so a source with 100 regions never pays for measurement when
     // the overlay is closed.
     let rect: DOMRect | null;
-    if (typeof region.bounds === 'function') {
+    if (typeof region.bounds === "function") {
       try {
         rect = region.bounds();
       } catch {
@@ -80,12 +80,12 @@ export function DevtoolsInspectorOverlay({
   // scroll keep the outlines aligned.
   useEffect(() => {
     if (!enabled) return;
-    if (typeof window === 'undefined') return;
-    window.addEventListener('resize', requestRemeasure);
-    window.addEventListener('scroll', requestRemeasure, true);
+    if (typeof window === "undefined") return;
+    window.addEventListener("resize", requestRemeasure);
+    window.addEventListener("scroll", requestRemeasure, true);
     return () => {
-      window.removeEventListener('resize', requestRemeasure);
-      window.removeEventListener('scroll', requestRemeasure, true);
+      window.removeEventListener("resize", requestRemeasure);
+      window.removeEventListener("scroll", requestRemeasure, true);
       if (rafRef.current !== null) {
         window.cancelAnimationFrame(rafRef.current);
         rafRef.current = null;
@@ -96,15 +96,15 @@ export function DevtoolsInspectorOverlay({
   // Bind Escape → close overlay.
   useEffect(() => {
     if (!enabled) return;
-    if (typeof window === 'undefined') return;
+    if (typeof window === "undefined") return;
     const handleKey = (event: KeyboardEvent): void => {
-      if (event.key === 'Escape') {
+      if (event.key === "Escape") {
         event.preventDefault();
         setEnabled(false);
       }
     };
-    window.addEventListener('keydown', handleKey);
-    return () => window.removeEventListener('keydown', handleKey);
+    window.addEventListener("keydown", handleKey);
+    return () => window.removeEventListener("keydown", handleKey);
   }, [enabled, setEnabled]);
 
   // Re-measure every region on each render (pulse is a dep).
@@ -113,7 +113,7 @@ export function DevtoolsInspectorOverlay({
     // `pulse` is intentionally a dep so a resize/scroll triggers
     // fresh measurements.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [regions, pulse]
+    [regions, pulse],
   );
 
   const handleRegionClick = useCallback(
@@ -126,7 +126,7 @@ export function DevtoolsInspectorOverlay({
         // that visualise the same regions can highlight the row
         // that maps to the clicked outline.
         const scrollTo = (target as { scrollToRegion?: (id: string) => void }).scrollToRegion;
-        if (typeof scrollTo === 'function') {
+        if (typeof scrollTo === "function") {
           try {
             scrollTo(region.id);
           } catch {
@@ -139,18 +139,18 @@ export function DevtoolsInspectorOverlay({
       // "click-then-inspect" contract of browser DevTools.
       setEnabled(false);
     },
-    [analytics, panels, setEnabled, update]
+    [analytics, panels, setEnabled, update],
   );
 
   if (!enabled) return null;
-  if (typeof document === 'undefined') return null;
+  if (typeof document === "undefined") return null;
 
   return (
     <div
       // `pointer-events-none` on the container so pass-through
       // clicks still work everywhere except on the outlined regions
       // themselves.
-      className={className ?? 'pointer-events-none fixed inset-0 z-[2147483001] bg-overlay/10'}
+      className={className ?? "bg-overlay/10 pointer-events-none fixed inset-0 z-[2147483001]"}
       role="presentation"
       data-devtools-inspector-overlay=""
     >
@@ -165,13 +165,13 @@ export function DevtoolsInspectorOverlay({
               // rects are dynamic so a Tailwind class isn't
               // suitable.
               style={{
-                position: 'fixed',
+                position: "fixed",
                 top: rect.top,
                 left: rect.left,
                 width: rect.width,
                 height: rect.height,
               }}
-              className="pointer-events-auto absolute cursor-pointer rounded border-2 border-accent/70 bg-accent/10 outline-none focus:ring-2 focus:ring-accent"
+              className="border-accent/70 bg-accent/10 focus:ring-accent pointer-events-auto absolute cursor-pointer rounded border-2 outline-none focus:ring-2"
               data-devtools-inspector-region={region.id}
             />
           </Tooltip.Trigger>

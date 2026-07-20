@@ -16,16 +16,16 @@
  *     notification.
  */
 
-import { Module, type DynamicModule } from '@stackra/container';
-import { createSeedLoader, seedLoaderToken } from '@stackra/support';
+import { Module, type DynamicModule } from "@stackra/container";
+import { createSeedLoader, seedLoaderToken } from "@stackra/support";
 
-import type { IWebPushConfigOptions } from '@/core/interfaces';
-import { NOTIFICATION_MANAGER, PUSH_SUBSCRIPTION_ADAPTER } from '@/core/constants';
-import type { NotificationManager } from '@/core/services';
-import { WebPushAdapter } from './adapters';
-import { WebNotificationChannelDriver } from './channels';
-import { WEB_PUSH_CONFIG } from './constants';
-import type { IWebPushConfig } from './interfaces';
+import type { IWebPushConfigOptions } from "@/core/interfaces";
+import { NOTIFICATION_MANAGER, PUSH_SUBSCRIPTION_ADAPTER } from "@/core/constants";
+import type { NotificationManager } from "@/core/services";
+import { WebPushAdapter } from "./adapters";
+import { WebNotificationChannelDriver } from "./channels";
+import { WEB_PUSH_CONFIG } from "./constants";
+import type { IWebPushConfig } from "./interfaces";
 
 /**
  * Fill in the Web Push module defaults. Kept in this file rather
@@ -35,7 +35,7 @@ import type { IWebPushConfig } from './interfaces';
 function resolveConfig(options: IWebPushConfigOptions): IWebPushConfig {
   return {
     vapidPublicKey: options.vapidPublicKey,
-    serviceWorkerScope: options.serviceWorkerScope ?? '/',
+    serviceWorkerScope: options.serviceWorkerScope ?? "/",
     userVisibleOnly: options.userVisibleOnly ?? true,
   };
 }
@@ -76,7 +76,7 @@ export class PushModule {
         // load (last-wins semantics — see module-lifecycle steering).
         WebNotificationChannelDriver,
         {
-          provide: seedLoaderToken('notifications:channel:os-notification:web'),
+          provide: seedLoaderToken("notifications:channel:os-notification:web"),
           useFactory: (manager: NotificationManager, driver: WebNotificationChannelDriver) =>
             createSeedLoader(() => manager.register(driver)),
           inject: [NOTIFICATION_MANAGER, WebNotificationChannelDriver],

@@ -6,20 +6,20 @@
  *   method call through `createAssertableProxy` from `@stackra/testing`.
  */
 
-import { createAssertableProxy, type AssertableProxy } from '@stackra/testing';
+import { createAssertableProxy, type AssertableProxy } from "@stackra/testing";
 
 import type {
   IInAppNotification,
   INotificationPermissionState,
   INotificationPreferences,
   IPushSubscriptionResult,
-} from '@/core/interfaces';
-import { MockInAppNotificationCentre } from './mock-in-app-notification-centre';
-import { MockNotificationManager } from './mock-notification-manager';
-import { MockNotificationPreferences } from './mock-notification-preferences';
-import { MockPushSubscriptionAdapter } from './mock-push-subscription-adapter';
-import { MockPushSubscriptionManager } from './mock-push-subscription-manager';
-import { MockSnoozeStore } from './mock-snooze-store';
+} from "@/core/interfaces";
+import { MockInAppNotificationCentre } from "./mock-in-app-notification-centre";
+import { MockNotificationManager } from "./mock-notification-manager";
+import { MockNotificationPreferences } from "./mock-notification-preferences";
+import { MockPushSubscriptionAdapter } from "./mock-push-subscription-adapter";
+import { MockPushSubscriptionManager } from "./mock-push-subscription-manager";
+import { MockSnoozeStore } from "./mock-snooze-store";
 
 /** Options accepted by {@link createMockNotificationManager}. */
 export interface ICreateMockNotificationManagerOptions {
@@ -42,7 +42,7 @@ export interface ICreateMockPushSubscriptionManagerOptions {
 /** Options accepted by {@link createMockPushSubscriptionAdapter}. */
 export interface ICreateMockPushSubscriptionAdapterOptions {
   /** Which platform to advertise. */
-  readonly platform?: 'web' | 'native';
+  readonly platform?: "web" | "native";
   /** Seed permission state. */
   readonly permission?: NotificationPermission;
   /** Seed subscription. */
@@ -68,7 +68,7 @@ export interface ICreateMockNotificationPreferencesOptions {
  * ```
  */
 export function createMockNotificationManager(
-  options: ICreateMockNotificationManagerOptions = {}
+  options: ICreateMockNotificationManagerOptions = {},
 ): AssertableProxy<MockNotificationManager> {
   return createAssertableProxy(new MockNotificationManager(options));
 }
@@ -77,7 +77,7 @@ export function createMockNotificationManager(
  * Build an assertable {@link MockInAppNotificationCentre}.
  */
 export function createMockInAppNotificationCentre(
-  options: ICreateMockInAppNotificationCentreOptions = {}
+  options: ICreateMockInAppNotificationCentreOptions = {},
 ): AssertableProxy<MockInAppNotificationCentre> {
   return createAssertableProxy(new MockInAppNotificationCentre(options));
 }
@@ -86,7 +86,7 @@ export function createMockInAppNotificationCentre(
  * Build an assertable {@link MockPushSubscriptionManager}.
  */
 export function createMockPushSubscriptionManager(
-  options: ICreateMockPushSubscriptionManagerOptions = {}
+  options: ICreateMockPushSubscriptionManagerOptions = {},
 ): AssertableProxy<MockPushSubscriptionManager> {
   return createAssertableProxy(new MockPushSubscriptionManager(options));
 }
@@ -102,7 +102,7 @@ export function createMockPushSubscriptionManager(
  * ```
  */
 export function createMockPushSubscriptionAdapter(
-  options: ICreateMockPushSubscriptionAdapterOptions = {}
+  options: ICreateMockPushSubscriptionAdapterOptions = {},
 ): AssertableProxy<MockPushSubscriptionAdapter> {
   return createAssertableProxy(new MockPushSubscriptionAdapter(options));
 }
@@ -111,7 +111,7 @@ export function createMockPushSubscriptionAdapter(
  * Build an assertable {@link MockNotificationPreferences}.
  */
 export function createMockNotificationPreferences(
-  options: ICreateMockNotificationPreferencesOptions = {}
+  options: ICreateMockNotificationPreferencesOptions = {},
 ): AssertableProxy<MockNotificationPreferences> {
   return createAssertableProxy(new MockNotificationPreferences(options));
 }

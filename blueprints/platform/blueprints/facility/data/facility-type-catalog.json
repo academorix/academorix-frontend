@@ -118,13 +118,7 @@
       "typical_min_duration_minutes": 30,
       "typical_max_duration_minutes": 60,
       "typical_slot_step_minutes": 15,
-      "compatible_sports": [
-        "cardio",
-        "cycling",
-        "rowing",
-        "strength_training",
-        "physiotherapy"
-      ]
+      "compatible_sports": ["cardio", "cycling", "rowing", "strength_training", "physiotherapy"]
     },
     {
       "facility_type": "lane",
@@ -134,12 +128,7 @@
       "typical_min_duration_minutes": 30,
       "typical_max_duration_minutes": 90,
       "typical_slot_step_minutes": 30,
-      "compatible_sports": [
-        "swimming",
-        "running",
-        "athletics",
-        "walking"
-      ]
+      "compatible_sports": ["swimming", "running", "athletics", "walking"]
     },
     {
       "facility_type": "general",

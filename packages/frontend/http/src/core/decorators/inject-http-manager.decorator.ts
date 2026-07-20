@@ -9,8 +9,8 @@
  * @module @stackra/http/decorators/inject-http-manager
  */
 
-import { Inject } from '@stackra/container';
-import { HTTP_MANAGER } from '@stackra/contracts';
+import { Inject } from "@stackra/container";
+import { HTTP_MANAGER } from "@stackra/contracts";
 
 /**
  * Inject the `IHttpManager`.

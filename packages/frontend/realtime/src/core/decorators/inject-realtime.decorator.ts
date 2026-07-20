@@ -4,8 +4,8 @@
  * @description Parameter decorators for injecting realtime services.
  */
 
-import { Inject } from '@stackra/container';
-import { REALTIME_MANAGER } from '@stackra/contracts';
+import { Inject } from "@stackra/container";
+import { REALTIME_MANAGER } from "@stackra/contracts";
 
 /**
  * Inject the RealtimeManager service.

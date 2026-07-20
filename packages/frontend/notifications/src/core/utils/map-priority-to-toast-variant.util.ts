@@ -9,7 +9,7 @@
  *   `toast.danger(...)` on the HeroUI React toast queue.
  */
 
-import type { NotificationPriority } from '../interfaces';
+import type { NotificationPriority } from "../interfaces";
 
 /**
  * The HeroUI toast variant tags the mapper emits.
@@ -17,7 +17,7 @@ import type { NotificationPriority } from '../interfaces';
  * Matches the queue methods HeroUI exposes on `toast` — consumers
  * take the returned string and route to `toast[variant](...)`.
  */
-export type NotificationToastVariant = 'default' | 'info' | 'success' | 'warning' | 'danger';
+export type NotificationToastVariant = "default" | "info" | "success" | "warning" | "danger";
 
 /**
  * Map a priority to a toast variant.
@@ -31,17 +31,17 @@ export type NotificationToastVariant = 'default' | 'info' | 'success' | 'warning
  * @returns The matching HeroUI toast variant string.
  */
 export function mapPriorityToToastVariant(
-  priority: NotificationPriority
+  priority: NotificationPriority,
 ): NotificationToastVariant {
   switch (priority) {
-    case 'urgent':
-      return 'danger';
-    case 'high':
-      return 'warning';
-    case 'normal':
-      return 'info';
-    case 'low':
+    case "urgent":
+      return "danger";
+    case "high":
+      return "warning";
+    case "normal":
+      return "info";
+    case "low":
     default:
-      return 'success';
+      return "success";
   }
 }

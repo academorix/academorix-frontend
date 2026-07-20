@@ -13,8 +13,8 @@ export type {
   IDevtoolsModuleAsyncOptions,
   IDevtoolsModuleOptions,
   IDevtoolsShortcut,
-} from './devtools-module-options.interface';
-export type { IDevtoolsFrameState } from './devtools-frame-state.interface';
-export type { IDevtoolsPanelOptions } from './devtools-panel-options.interface';
-export type { IDevtoolsInspectorSourceOptions } from './devtools-inspector-source-options.interface';
-export type { IDevtoolsShellProps } from './devtools-shell-props.interface';
+} from "./devtools-module-options.interface";
+export type { IDevtoolsFrameState } from "./devtools-frame-state.interface";
+export type { IDevtoolsPanelOptions } from "./devtools-panel-options.interface";
+export type { IDevtoolsInspectorSourceOptions } from "./devtools-inspector-source-options.interface";
+export type { IDevtoolsShellProps } from "./devtools-shell-props.interface";

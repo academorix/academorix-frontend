@@ -10,8 +10,8 @@
  *   underlying manager isn't wired.
  */
 
-import { useCallback, useState, type ReactElement } from 'react';
-import { AlertDialog, Button, Card } from '@stackra/ui/react';
+import { useCallback, useState, type ReactElement } from "react";
+import { AlertDialog, Button, Card } from "@stackra/ui/react";
 import {
   ArrowPathIcon,
   CircleStackIcon,
@@ -19,18 +19,18 @@ import {
   QueueListIcon,
   RectangleGroupIcon,
   TrashIcon,
-} from '@stackra/ui/icons/heroicon/outline';
-import { useOptionalInject } from '@stackra/container/react';
+} from "@stackra/ui/icons/heroicon/outline";
+import { useOptionalInject } from "@stackra/container/react";
 import {
   CACHE_MANAGER,
   DISCOVERY_SERVICE,
   QUEUE_MANAGER,
   SCOPE_SERVICE,
   STATE_REGISTRY,
-} from '@stackra/contracts';
+} from "@stackra/contracts";
 
-import { useDevtoolsContext } from '../../hooks/use-devtools-context.hook';
-import type { ActionsPanelProps } from './actions-panel.interface';
+import { useDevtoolsContext } from "../../hooks/use-devtools-context.hook";
+import type { ActionsPanelProps } from "./actions-panel.interface";
 
 /** Shape of a single row in the actions grid. */
 interface Row {
@@ -40,7 +40,7 @@ interface Row {
   readonly icon: ReactElement;
   readonly available: boolean;
   readonly requireConfirmation: boolean;
-  readonly variant: 'primary' | 'secondary' | 'tertiary' | 'danger';
+  readonly variant: "primary" | "secondary" | "tertiary" | "danger";
   readonly handle: () => void | Promise<void>;
 }
 
@@ -71,27 +71,27 @@ export function ActionsPanel({ className }: ActionsPanelProps): ReactElement {
 
   const runRow = useCallback(
     async (row: Row): Promise<void> => {
-      analytics.actionTriggered('actions', row.id);
+      analytics.actionTriggered("actions", row.id);
       try {
         await row.handle();
       } catch {
         // fail-soft — action authors surface their own errors.
       }
     },
-    [analytics]
+    [analytics],
   );
 
   const rows: readonly Row[] = [
     {
-      id: 'clear-caches',
-      label: 'Clear all caches',
+      id: "clear-caches",
+      label: "Clear all caches",
       description: cache
-        ? 'Empty every registered @stackra/cache instance.'
-        : 'Requires @stackra/cache to be installed.',
+        ? "Empty every registered @stackra/cache instance."
+        : "Requires @stackra/cache to be installed.",
       icon: <TrashIcon aria-hidden="true" className="size-4" />,
       available: Boolean(cache),
       requireConfirmation: true,
-      variant: 'danger',
+      variant: "danger",
       handle: async (): Promise<void> => {
         if (!cache) return;
         // Iterate every configured instance via `getInstanceNames`
@@ -105,20 +105,20 @@ export function ActionsPanel({ className }: ActionsPanelProps): ReactElement {
         await Promise.all(
           names.map(async (name) => {
             await cache.instance?.(name)?.clear();
-          })
+          }),
         );
       },
     },
     {
-      id: 'drain-queues',
-      label: 'Drain queues',
+      id: "drain-queues",
+      label: "Drain queues",
       description: queue
-        ? 'Clear pending jobs in every registered queue.'
-        : 'Requires @stackra/queue to be installed.',
+        ? "Clear pending jobs in every registered queue."
+        : "Requires @stackra/queue to be installed.",
       icon: <QueueListIcon aria-hidden="true" className="size-4" />,
       available: Boolean(queue),
       requireConfirmation: true,
-      variant: 'danger',
+      variant: "danger",
       handle: async (): Promise<void> => {
         if (!queue) return;
         const names = queue.getInstanceNames?.() ?? [];
@@ -129,53 +129,53 @@ export function ActionsPanel({ className }: ActionsPanelProps): ReactElement {
         await Promise.all(
           names.map(async (name) => {
             await queue.instance?.(name)?.clear();
-          })
+          }),
         );
       },
     },
     {
-      id: 'reset-scopes',
-      label: 'Reset scopes',
+      id: "reset-scopes",
+      label: "Reset scopes",
       description: scope
-        ? 'Purge every active scope in the scope tree.'
-        : 'Requires @stackra/scope to be installed.',
+        ? "Purge every active scope in the scope tree."
+        : "Requires @stackra/scope to be installed.",
       icon: <RectangleGroupIcon aria-hidden="true" className="size-4" />,
       available: Boolean(scope?.resetAll),
       requireConfirmation: true,
-      variant: 'danger',
+      variant: "danger",
       handle: (): void => {
         scope?.resetAll?.();
       },
     },
     {
-      id: 'dump-state',
-      label: 'Dump state to console',
+      id: "dump-state",
+      label: "Dump state to console",
       description: state
-        ? 'Serialise every registered state store and log it.'
-        : 'Requires @stackra/state to be installed.',
+        ? "Serialise every registered state store and log it."
+        : "Requires @stackra/state to be installed.",
       icon: <CircleStackIcon aria-hidden="true" className="size-4" />,
       available: Boolean(state?.getSnapshot),
       requireConfirmation: false,
-      variant: 'secondary',
+      variant: "secondary",
       handle: (): void => {
         try {
           // eslint-disable-next-line no-console
-          console.info('[@stackra/devtools] state snapshot →', state?.getSnapshot?.());
+          console.info("[@stackra/devtools] state snapshot →", state?.getSnapshot?.());
         } catch {
           // fail-soft
         }
       },
     },
     {
-      id: 'copy-di-graph',
-      label: 'Copy DI graph',
+      id: "copy-di-graph",
+      label: "Copy DI graph",
       description: discovery
-        ? 'Write a JSON graph of every provider to the clipboard.'
-        : 'Requires @stackra/container discovery to be enabled.',
+        ? "Write a JSON graph of every provider to the clipboard."
+        : "Requires @stackra/container discovery to be enabled.",
       icon: <ClipboardDocumentIcon aria-hidden="true" className="size-4" />,
       available: Boolean(discovery),
       requireConfirmation: false,
-      variant: 'secondary',
+      variant: "secondary",
       handle: async (): Promise<void> => {
         if (!discovery) return;
         // Build a minimal graph: `[{ name, hasInstance }]`. A more
@@ -192,20 +192,20 @@ export function ActionsPanel({ className }: ActionsPanelProps): ReactElement {
           // http (non-https) origins. Fall back to a console log so
           // the dev still gets the payload.
           // eslint-disable-next-line no-console
-          console.info('[@stackra/devtools] DI graph →', graph);
+          console.info("[@stackra/devtools] DI graph →", graph);
         }
       },
     },
     {
-      id: 'reload-page',
-      label: 'Reload page',
-      description: 'Perform a full window.location.reload().',
+      id: "reload-page",
+      label: "Reload page",
+      description: "Perform a full window.location.reload().",
       icon: <ArrowPathIcon aria-hidden="true" className="size-4" />,
-      available: typeof window !== 'undefined',
+      available: typeof window !== "undefined",
       requireConfirmation: true,
-      variant: 'secondary',
+      variant: "secondary",
       handle: (): void => {
-        if (typeof window !== 'undefined') window.location.reload();
+        if (typeof window !== "undefined") window.location.reload();
       },
     },
   ];
@@ -219,7 +219,7 @@ export function ActionsPanel({ className }: ActionsPanelProps): ReactElement {
         void runRow(row);
       }
     },
-    [runRow]
+    [runRow],
   );
 
   const handleConfirm = useCallback(() => {
@@ -230,10 +230,10 @@ export function ActionsPanel({ className }: ActionsPanelProps): ReactElement {
   }, [pending, runRow]);
 
   return (
-    <div className={className ?? 'flex flex-col gap-4'}>
+    <div className={className ?? "flex flex-col gap-4"}>
       <header>
-        <h3 className="text-base font-semibold text-foreground">Maintenance</h3>
-        <p className="text-xs text-muted">
+        <h3 className="text-foreground text-base font-semibold">Maintenance</h3>
+        <p className="text-muted text-xs">
           One-shot maintenance actions. Optional dependencies are disabled when the corresponding
           package isn't installed in this app.
         </p>
@@ -242,7 +242,7 @@ export function ActionsPanel({ className }: ActionsPanelProps): ReactElement {
         {rows.map((row) => (
           <Card key={row.id}>
             <Card.Header>
-              <div className="flex items-center gap-2 text-muted">
+              <div className="text-muted flex items-center gap-2">
                 {row.icon}
                 <Card.Title className="text-sm">{row.label}</Card.Title>
               </div>
@@ -251,7 +251,7 @@ export function ActionsPanel({ className }: ActionsPanelProps): ReactElement {
             <Card.Footer>
               <Button
                 size="sm"
-                variant={row.variant === 'danger' ? 'danger-soft' : row.variant}
+                variant={row.variant === "danger" ? "danger-soft" : row.variant}
                 isDisabled={!row.available}
                 onPress={() => handlePress(row)}
                 data-devtools-action={row.id}
@@ -273,11 +273,11 @@ export function ActionsPanel({ className }: ActionsPanelProps): ReactElement {
             <AlertDialog.Dialog>
               <AlertDialog.CloseTrigger />
               <AlertDialog.Header>
-                <AlertDialog.Heading>{pending?.label ?? ''}</AlertDialog.Heading>
+                <AlertDialog.Heading>{pending?.label ?? ""}</AlertDialog.Heading>
               </AlertDialog.Header>
               <AlertDialog.Body>
-                <p className="text-sm text-muted">
-                  {pending?.description ?? 'This action is irreversible.'}
+                <p className="text-muted text-sm">
+                  {pending?.description ?? "This action is irreversible."}
                 </p>
               </AlertDialog.Body>
               <AlertDialog.Footer>
@@ -286,7 +286,7 @@ export function ActionsPanel({ className }: ActionsPanelProps): ReactElement {
                 </Button>
                 <Button
                   size="sm"
-                  variant={pending?.variant === 'danger' ? 'danger-soft' : 'primary'}
+                  variant={pending?.variant === "danger" ? "danger-soft" : "primary"}
                   onPress={handleConfirm}
                   data-devtools-action-confirm=""
                 >

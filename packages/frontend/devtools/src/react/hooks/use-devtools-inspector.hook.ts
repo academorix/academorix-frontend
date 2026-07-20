@@ -10,11 +10,11 @@
  *   `DevtoolsInspectorContext` for a stable identity.
  */
 
-import { useCallback, useContext, useSyncExternalStore } from 'react';
-import type { IDevtoolsInspectorRegion } from '@stackra/contracts';
+import { useCallback, useContext, useSyncExternalStore } from "react";
+import type { IDevtoolsInspectorRegion } from "@stackra/contracts";
 
-import { DevtoolsInspectorContext } from '../contexts/devtools-inspector.context';
-import { useDevtoolsContext } from './use-devtools-context.hook';
+import { DevtoolsInspectorContext } from "../contexts/devtools-inspector.context";
+import { useDevtoolsContext } from "./use-devtools-context.hook";
 
 /** Result returned by {@link useDevtoolsInspector}. */
 export interface IUseDevtoolsInspectorResult {
@@ -37,7 +37,7 @@ export function useDevtoolsInspector(): IUseDevtoolsInspectorResult {
 
   const subscribe = useCallback(
     (listener: () => void) => inspector.subscribe(listener),
-    [inspector]
+    [inspector],
   );
   const getSnapshot = useCallback(() => inspector.collectAll(), [inspector]);
   const regions = useSyncExternalStore(subscribe, getSnapshot, getSnapshot);

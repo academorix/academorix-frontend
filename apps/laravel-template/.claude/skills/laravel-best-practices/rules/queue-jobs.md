@@ -2,9 +2,11 @@
 
 ## Set `retry_after` Greater Than `timeout`
 
-If `retry_after` is shorter than the job's `timeout`, the queue worker re-dispatches the job while it's still running, causing duplicate execution.
+If `retry_after` is shorter than the job's `timeout`, the queue worker
+re-dispatches the job while it's still running, causing duplicate execution.
 
 Incorrect (`retry_after` ≤ `timeout`):
+
 ```php
 class ProcessReport implements ShouldQueue
 {
@@ -15,6 +17,7 @@ class ProcessReport implements ShouldQueue
 ```
 
 Correct (`retry_after` > `timeout`):
+
 ```php
 class ProcessReport implements ShouldQueue
 {
@@ -26,9 +29,11 @@ class ProcessReport implements ShouldQueue
 
 ## Use Exponential Backoff
 
-Use progressively longer delays between retries to avoid hammering failing services.
+Use progressively longer delays between retries to avoid hammering failing
+services.
 
 Incorrect (fixed retry interval):
+
 ```php
 class SyncWithStripe implements ShouldQueue
 {
@@ -38,6 +43,7 @@ class SyncWithStripe implements ShouldQueue
 ```
 
 Correct (exponential backoff):
+
 ```php
 class SyncWithStripe implements ShouldQueue
 {
@@ -114,7 +120,9 @@ public function retryUntil(): \DateTimeInterface
 
 ## Use `ShouldBeUniqueUntilProcessing` for Early Lock Release
 
-`ShouldBeUnique` holds the lock until the job completes. `ShouldBeUniqueUntilProcessing` releases it when processing starts, allowing new instances to queue.
+`ShouldBeUnique` holds the lock until the job completes.
+`ShouldBeUniqueUntilProcessing` releases it when processing starts, allowing new
+instances to queue.
 
 ```php
 class UpdateSearchIndex implements ShouldQueue, ShouldBeUniqueUntilProcessing
@@ -125,7 +133,8 @@ class UpdateSearchIndex implements ShouldQueue, ShouldBeUniqueUntilProcessing
 
 ## Use Horizon for Complex Queue Scenarios
 
-Use Laravel Horizon when you need monitoring, auto-scaling, failure tracking, or multiple queues with different priorities.
+Use Laravel Horizon when you need monitoring, auto-scaling, failure tracking, or
+multiple queues with different priorities.
 
 ```php
 // config/horizon.php

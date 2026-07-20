@@ -8,16 +8,56 @@
       "model": "Coupon",
       "class": "Academorix\\Finance\\Coupon\\Policies\\CouponPolicy",
       "abilities": [
-        { "action": "viewAny", "permission": "coupons.viewAny", "scope": "marketing + admin + owner + support" },
-        { "action": "view", "permission": "coupons.view", "scope": "marketing + admin + owner + support" },
-        { "action": "create", "permission": "coupons.create", "scope": "marketing + admin + owner" },
-        { "action": "update", "permission": "coupons.update", "scope": "marketing + admin + owner. Refuses discount_type / discount_amount edits once any redemption exists (returns COUPON_TERMS_LOCKED)" },
-        { "action": "delete", "permission": "coupons.delete", "scope": "admin + owner only. Soft-delete restricted to inactive coupons with zero non-reversed redemptions" },
-        { "action": "deactivate", "permission": "coupons.deactivate", "scope": "marketing + admin + owner" },
-        { "action": "extend", "permission": "coupons.extend", "scope": "marketing + admin + owner. Refuses when coupon is already deactivated + valid_until is past" },
-        { "action": "bulkIssue", "permission": "coupons.bulk-issue", "scope": "marketing + admin + owner + `coupon_bulk_issue` entitlement (Medium+)" },
-        { "action": "viewFinancials", "permission": "coupons.view-financials", "scope": "admin + owner + support only. Confidential financial fields (discount_amount, usage_cap, minimum_order_amount) are redacted for readers without this permission." },
-        { "action": "viewReport", "permission": "coupons.view-report", "scope": "marketing + admin + owner" },
+        {
+          "action": "viewAny",
+          "permission": "coupons.viewAny",
+          "scope": "marketing + admin + owner + support"
+        },
+        {
+          "action": "view",
+          "permission": "coupons.view",
+          "scope": "marketing + admin + owner + support"
+        },
+        {
+          "action": "create",
+          "permission": "coupons.create",
+          "scope": "marketing + admin + owner"
+        },
+        {
+          "action": "update",
+          "permission": "coupons.update",
+          "scope": "marketing + admin + owner. Refuses discount_type / discount_amount edits once any redemption exists (returns COUPON_TERMS_LOCKED)"
+        },
+        {
+          "action": "delete",
+          "permission": "coupons.delete",
+          "scope": "admin + owner only. Soft-delete restricted to inactive coupons with zero non-reversed redemptions"
+        },
+        {
+          "action": "deactivate",
+          "permission": "coupons.deactivate",
+          "scope": "marketing + admin + owner"
+        },
+        {
+          "action": "extend",
+          "permission": "coupons.extend",
+          "scope": "marketing + admin + owner. Refuses when coupon is already deactivated + valid_until is past"
+        },
+        {
+          "action": "bulkIssue",
+          "permission": "coupons.bulk-issue",
+          "scope": "marketing + admin + owner + `coupon_bulk_issue` entitlement (Medium+)"
+        },
+        {
+          "action": "viewFinancials",
+          "permission": "coupons.view-financials",
+          "scope": "admin + owner + support only. Confidential financial fields (discount_amount, usage_cap, minimum_order_amount) are redacted for readers without this permission."
+        },
+        {
+          "action": "viewReport",
+          "permission": "coupons.view-report",
+          "scope": "marketing + admin + owner"
+        },
         { "action": "platformViewAny", "permission": "platform.coupons.viewAny" },
         { "action": "platformView", "permission": "platform.coupons.view" }
       ]

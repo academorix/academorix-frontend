@@ -6,12 +6,12 @@
  *   supplied processor when the network comes back.
  */
 
-import { Inject, Injectable, Optional } from '@stackra/container';
-import { BehaviorSubject, type Observable } from 'rxjs';
-import type { IOperationQueueConfig, IQueuedOperation, IQueueStats } from '@stackra/contracts';
-import { OPERATION_QUEUE_CONFIG, OperationStatus } from '@stackra/contracts';
-import { Logger } from '@stackra/logger';
-import { Str } from '@stackra/support';
+import { Inject, Injectable, Optional } from "@stackra/container";
+import { BehaviorSubject, type Observable } from "rxjs";
+import type { IOperationQueueConfig, IQueuedOperation, IQueueStats } from "@stackra/contracts";
+import { OPERATION_QUEUE_CONFIG, OperationStatus } from "@stackra/contracts";
+import { Logger } from "@stackra/logger";
+import { Str } from "@stackra/support";
 
 /**
  * OperationQueue — offline operation persistence and replay.
@@ -27,10 +27,10 @@ export class OperationQueue {
   public readonly stats$: Observable<IQueueStats>;
 
   public constructor(
-    @Optional() @Inject(OPERATION_QUEUE_CONFIG) config: IOperationQueueConfig = {}
+    @Optional() @Inject(OPERATION_QUEUE_CONFIG) config: IOperationQueueConfig = {},
   ) {
     this.config = {
-      storageKey: config.storageKey ?? 'sync_operation_queue',
+      storageKey: config.storageKey ?? "sync_operation_queue",
       maxRetries: config.maxRetries ?? 3,
       initialRetryDelay: config.initialRetryDelay ?? 1000,
       maxRetryDelay: config.maxRetryDelay ?? 30_000,
@@ -49,8 +49,8 @@ export class OperationQueue {
   public async enqueue(
     operation: Omit<
       IQueuedOperation,
-      'id' | 'timestamp' | 'retryCount' | 'status' | 'idempotencyKey'
-    >
+      "id" | "timestamp" | "retryCount" | "status" | "idempotencyKey"
+    >,
   ): Promise<string> {
     const id = this.generateId();
     const queuedOperation: IQueuedOperation = {
@@ -79,7 +79,7 @@ export class OperationQueue {
 
   /** Run every pending operation through the caller-supplied processor. */
   public async processQueue(
-    processor: (operation: IQueuedOperation) => Promise<void>
+    processor: (operation: IQueuedOperation) => Promise<void>,
   ): Promise<{ success: number; failed: number }> {
     let success = 0;
     let failed = 0;
@@ -113,7 +113,7 @@ export class OperationQueue {
 
           const delay = Math.min(
             this.config.initialRetryDelay * Math.pow(2, operation.retryCount - 1),
-            this.config.maxRetryDelay
+            this.config.maxRetryDelay,
           );
           setTimeout(() => this.updateStats(), delay);
         }
@@ -227,17 +227,17 @@ export class OperationQueue {
   }
 
   private async persist(): Promise<void> {
-    if (!this.config.enablePersistence || typeof localStorage === 'undefined') return;
+    if (!this.config.enablePersistence || typeof localStorage === "undefined") return;
     try {
       const serialized = JSON.stringify(Array.from(this.operations.values()));
       localStorage.setItem(this.config.storageKey, serialized);
     } catch (error: unknown) {
-      this.logger.error('[OperationQueue] Failed to persist queue', { error });
+      this.logger.error("[OperationQueue] Failed to persist queue", { error });
     }
   }
 
   private loadFromStorage(): void {
-    if (typeof localStorage === 'undefined') return;
+    if (typeof localStorage === "undefined") return;
     try {
       const serialized = localStorage.getItem(this.config.storageKey);
       if (!serialized) return;
@@ -248,7 +248,7 @@ export class OperationQueue {
       }
       this.updateStats();
     } catch (error: unknown) {
-      this.logger.error('[OperationQueue] Failed to load queue from storage', { error });
+      this.logger.error("[OperationQueue] Failed to load queue from storage", { error });
     }
   }
 }

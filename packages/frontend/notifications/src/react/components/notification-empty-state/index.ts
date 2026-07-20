@@ -5,5 +5,5 @@
  *   compound.
  */
 
-export { NotificationEmptyState } from './notification-empty-state.component';
-export type { NotificationEmptyStateProps } from './notification-empty-state.interface';
+export { NotificationEmptyState } from "./notification-empty-state.component";
+export type { NotificationEmptyStateProps } from "./notification-empty-state.interface";

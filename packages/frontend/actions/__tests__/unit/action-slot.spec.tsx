@@ -7,11 +7,11 @@
  *   propagation from the underlying dispatch.
  */
 
-import { act, cleanup, fireEvent, render } from '@testing-library/react';
-import { afterEach, describe, expect, it, vi } from 'vitest';
-import type { IActionDescriptor, IActionResponse } from '@stackra/contracts';
+import { act, cleanup, fireEvent, render } from "@testing-library/react";
+import { afterEach, describe, expect, it, vi } from "vitest";
+import type { IActionDescriptor, IActionResponse } from "@stackra/contracts";
 
-import { Action } from '@/core/components/action';
+import { Action } from "@/core/components/action";
 
 const { mockDispatch, setDispatch } = vi.hoisted(() => {
   let impl: (d: IActionDescriptor, ctx?: unknown) => Promise<IActionResponse> = async () => ({
@@ -25,7 +25,7 @@ const { mockDispatch, setDispatch } = vi.hoisted(() => {
   };
 });
 
-vi.mock('@stackra/container/react', () => ({
+vi.mock("@stackra/container/react", () => ({
   useInject: () => ({ dispatch: mockDispatch }),
 }));
 
@@ -35,79 +35,79 @@ afterEach(() => {
   setDispatch(async () => ({ success: true }));
 });
 
-describe('<Action>', () => {
+describe("<Action>", () => {
   it('injects onClick when eventProp="onClick" and fires dispatch on click', async () => {
     const { getByRole } = render(
-      <Action action={{ kind: 'toast' }} eventProp="onClick">
+      <Action action={{ kind: "toast" }} eventProp="onClick">
         <button type="button">Save</button>
-      </Action>
+      </Action>,
     );
 
     await act(async () => {
-      fireEvent.click(getByRole('button'));
+      fireEvent.click(getByRole("button"));
     });
 
     expect(mockDispatch).toHaveBeenCalledOnce();
-    expect(mockDispatch.mock.calls[0]?.[0]).toEqual({ kind: 'toast' });
+    expect(mockDispatch.mock.calls[0]?.[0]).toEqual({ kind: "toast" });
   });
 
-  it('chains an existing child handler before the injected dispatch', async () => {
+  it("chains an existing child handler before the injected dispatch", async () => {
     const existing = vi.fn();
     const { getByRole } = render(
-      <Action action={{ kind: 'toast' }} eventProp="onClick">
+      <Action action={{ kind: "toast" }} eventProp="onClick">
         <button type="button" onClick={existing}>
           Save
         </button>
-      </Action>
+      </Action>,
     );
 
     await act(async () => {
-      fireEvent.click(getByRole('button'));
+      fireEvent.click(getByRole("button"));
     });
 
     expect(existing).toHaveBeenCalledOnce();
     expect(mockDispatch).toHaveBeenCalledOnce();
   });
 
-  it('invokes onDone with response + descriptor after each dispatch', async () => {
+  it("invokes onDone with response + descriptor after each dispatch", async () => {
     setDispatch(async () => ({ success: true, data: 42 }));
     const onDone = vi.fn();
     const { getByRole } = render(
-      <Action action={{ kind: 'toast' }} eventProp="onClick" onDone={onDone}>
+      <Action action={{ kind: "toast" }} eventProp="onClick" onDone={onDone}>
         <button type="button">Save</button>
-      </Action>
+      </Action>,
     );
 
     await act(async () => {
-      fireEvent.click(getByRole('button'));
+      fireEvent.click(getByRole("button"));
     });
 
-    expect(onDone).toHaveBeenCalledWith({ success: true, data: 42 }, { kind: 'toast' });
+    expect(onDone).toHaveBeenCalledWith({ success: true, data: 42 }, { kind: "toast" });
   });
 
-  it('throws when passed no children (Children.only contract)', () => {
+  it("throws when passed no children (Children.only contract)", () => {
     expect(() =>
       render(
         // @ts-expect-error — intentionally omit children to hit the guard.
-        <Action action={{ kind: 'toast' }} />
-      )
+        <Action action={{ kind: "toast" }} />,
+      ),
     ).toThrow();
   });
 
-  it('throws when passed multiple children', () => {
+  it("throws when passed multiple children", () => {
     expect(() =>
       render(
-        <Action action={{ kind: 'toast' }}>
+        <Action action={{ kind: "toast" }}>
           <button type="button">A</button>
           <button type="button">B</button>
-        </Action>
-      )
+        </Action>,
+      ),
     ).toThrow();
   });
 
-  it('throws on a bare text child (needs a React element)', () => {
-    expect(() => render(<Action action={{ kind: 'toast' }}>text-child</Action>)).toThrow(
-      /single React element child/
+  it("throws on a bare text child (needs a React element)", () => {
+    expect(() => render(<Action action={{ kind: "toast" }}>text-child</Action>)).toThrow(
+      /single React element child/,
     );
   });
 });

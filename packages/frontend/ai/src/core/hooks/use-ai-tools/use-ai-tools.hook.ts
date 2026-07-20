@@ -5,16 +5,16 @@
  *   tools + their converted JSON-schema definitions.
  */
 
-import { useEffect, useState } from 'react';
-import { useInject } from '@stackra/container/react';
+import { useEffect, useState } from "react";
+import { useInject } from "@stackra/container/react";
 import {
   AI_TOOL_CONVERTER,
   AI_TOOL_REGISTRY,
   type IAiClientToolDefinition,
-} from '@stackra/contracts';
+} from "@stackra/contracts";
 
-import { ToolConverter } from '@/core/services/tool-converter.service';
-import { ToolRegistry, type IToolEntry } from '@/core/registries/tool.registry';
+import { ToolConverter } from "@/core/services/tool-converter.service";
+import { ToolRegistry, type IToolEntry } from "@/core/registries/tool.registry";
 
 /** The value returned by {@link useAiTools}. */
 export interface IUseAiToolsResult {

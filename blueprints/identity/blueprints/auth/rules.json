@@ -71,10 +71,7 @@
       "example_field_rule": "new_password: [required, string, strong_password_via_auth:%identity_id%]",
       "error_message_key": "auth::validation.strong_password_via_auth",
       "default_message": "Password does not meet security requirements. :reason",
-      "consumes": [
-        "config('identity.password.*') via delegation",
-        "config('auth.password.*')"
-      ]
+      "consumes": ["config('identity.password.*') via delegation", "config('auth.password.*')"]
     }
   ],
   "usage_from_data_class": "Data classes composed with `LoginInput`, `ResetPasswordInput`, `RefreshInput`, `MfaVerifyInput`, `CrossAppExchangeInput` wire the rules via #[Validation] attribute on each property; consumers rarely reference the rules by name."

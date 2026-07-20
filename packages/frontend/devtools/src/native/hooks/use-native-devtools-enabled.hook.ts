@@ -7,7 +7,7 @@
  *   production and skip mounting the sheet + launcher.
  */
 
-import { useNativeDevtoolsContext } from './use-native-devtools-context.hook';
+import { useNativeDevtoolsContext } from "./use-native-devtools-context.hook";
 
 /**
  * @returns `true` when the native shell should mount, `false`

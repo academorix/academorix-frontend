@@ -14,8 +14,8 @@
  *   `StateModule.forFeature()`.
  */
 
-import { Injectable, Inject, Optional } from '@stackra/container';
-import type { OnModuleInit, OnModuleDestroy } from '@stackra/container';
+import { Injectable, Inject, Optional } from "@stackra/container";
+import type { OnModuleInit, OnModuleDestroy } from "@stackra/container";
 import {
   EVENT_EMITTER,
   STATE_EVENTS,
@@ -23,13 +23,13 @@ import {
   type IEventEmitter,
   type ITabTransport,
   type ITabTransportManager,
-} from '@stackra/contracts';
-import { Logger } from '@stackra/logger';
-import type { Store } from '@tanstack/store';
-import { StateRegistry } from '../registries/state.registry';
+} from "@stackra/contracts";
+import { Logger } from "@stackra/logger";
+import type { Store } from "@tanstack/store";
+import { StateRegistry } from "../registries/state.registry";
 
 /** Channel name shared across tabs for state sync. */
-const CHANNEL_NAME = '__stackra_state_sync';
+const CHANNEL_NAME = "__stackra_state_sync";
 
 /** Message shape broadcast between tabs. */
 interface CrossTabMessage {
@@ -59,7 +59,7 @@ interface CrossTabMessage {
  */
 @Injectable()
 export class CrossTabBroadcaster implements OnModuleInit, OnModuleDestroy {
-  private readonly logger = new Logger('CrossTabBroadcaster');
+  private readonly logger = new Logger("CrossTabBroadcaster");
 
   /** Store names that have cross-tab sync enabled. */
   private readonly enabledStores = new Set<string>();
@@ -76,7 +76,7 @@ export class CrossTabBroadcaster implements OnModuleInit, OnModuleDestroy {
   public constructor(
     @Optional() @Inject(EVENT_EMITTER) private readonly events?: IEventEmitter,
     @Optional() @Inject(StateRegistry) private readonly registry?: StateRegistry,
-    @Optional() @Inject(TAB_TRANSPORT_MANAGER) private readonly manager?: ITabTransportManager
+    @Optional() @Inject(TAB_TRANSPORT_MANAGER) private readonly manager?: ITabTransportManager,
   ) {}
 
   /**
@@ -94,12 +94,12 @@ export class CrossTabBroadcaster implements OnModuleInit, OnModuleDestroy {
    */
   public onModuleInit(): void {
     if (!this.events) {
-      this.logger.debug('No EventEmitter — cross-tab sync disabled');
+      this.logger.debug("No EventEmitter — cross-tab sync disabled");
       return;
     }
 
     if (!this.manager || !this.manager.isSupported()) {
-      this.logger.debug('No cross-tab transport — sync disabled');
+      this.logger.debug("No cross-tab transport — sync disabled");
       return;
     }
 
@@ -113,9 +113,9 @@ export class CrossTabBroadcaster implements OnModuleInit, OnModuleDestroy {
     // the EventEmitter contract) — cast bridges the narrower listener type.
     this.events.on(
       `*.${STATE_EVENTS.CHANGED}`,
-      this.handleOutbound.bind(this) as (payload: unknown) => void
+      this.handleOutbound.bind(this) as (payload: unknown) => void,
     );
-    this.logger.debug('Cross-tab state broadcaster active');
+    this.logger.debug("Cross-tab state broadcaster active");
   }
 
   /**
@@ -136,7 +136,7 @@ export class CrossTabBroadcaster implements OnModuleInit, OnModuleDestroy {
     if (this.isSyncing) return;
     if (!this.transport) return;
 
-    const storeName = eventName.replace(`.${STATE_EVENTS.CHANGED}`, '');
+    const storeName = eventName.replace(`.${STATE_EVENTS.CHANGED}`, "");
     if (!this.enabledStores.has(storeName)) return;
 
     const message: CrossTabMessage = {

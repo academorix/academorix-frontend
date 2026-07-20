@@ -46,9 +46,9 @@ export interface IBubblewrapConfigInput {
   /** URL of the splash image (usually the same as the maskable icon). */
   readonly splashImageUrl?: string;
   /** Display mode Bubblewrap should honour. */
-  readonly display?: 'standalone' | 'fullscreen' | 'minimal-ui';
+  readonly display?: "standalone" | "fullscreen" | "minimal-ui";
   /** Orientation preference. */
-  readonly orientation?: 'any' | 'portrait' | 'landscape';
+  readonly orientation?: "any" | "portrait" | "landscape";
   /** Home-screen shortcuts. */
   readonly shortcuts?: readonly {
     readonly name: string;

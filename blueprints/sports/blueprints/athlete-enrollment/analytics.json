@@ -5,17 +5,85 @@
   "sink": "segment",
   "consentTiers": ["essential", "functional", "analytics", "marketing"],
   "events": [
-    { "name": "Enrollment Submitted", "kind": "track", "consent_required": "functional", "properties": ["tenant_id", "enrollment_source", "enrollment_type", "athlete_is_minor", "price_bucket"] },
-    { "name": "Enrollment Confirmed", "kind": "track", "consent_required": "functional", "properties": ["tenant_id", "days_from_submit_to_confirm_bucket"] },
-    { "name": "Enrollment Activated", "kind": "track", "consent_required": "functional", "properties": ["tenant_id", "team_size_bucket"] },
-    { "name": "Enrollment Completed", "kind": "track", "consent_required": "functional", "properties": ["tenant_id", "days_active_bucket"] },
-    { "name": "Enrollment Withdrawn", "kind": "track", "consent_required": "functional", "properties": ["tenant_id", "withdrawal_reason", "days_active_bucket", "was_guardian_initiated"] },
-    { "name": "Enrollment Expelled", "kind": "track", "consent_required": "essential", "properties": ["tenant_id", "days_active_bucket"], "description": "Consent tier: essential — disciplinary signal for anti-discrimination detection." },
-    { "name": "Enrollment Expired", "kind": "track", "consent_required": "functional", "properties": ["tenant_id", "prior_status", "days_since_submission_bucket"] },
-    { "name": "Enrollment Waitlisted", "kind": "track", "consent_required": "functional", "properties": ["tenant_id", "waitlist_position_bucket"] },
-    { "name": "Enrollment Promoted From Waitlist", "kind": "track", "consent_required": "functional", "properties": ["tenant_id", "days_on_waitlist_bucket"] },
-    { "name": "Enrollment Atomicity Failed", "kind": "track", "consent_required": "essential", "properties": ["tenant_id"], "description": "P1 event. Every fire is investigated. Consent tier: essential (system-integrity signal)." },
-    { "name": "Enrollment Age Group Snapshot Mismatched", "kind": "track", "consent_required": "functional", "properties": ["tenant_id", "mismatch_kind"] }
+    {
+      "name": "Enrollment Submitted",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": [
+        "tenant_id",
+        "enrollment_source",
+        "enrollment_type",
+        "athlete_is_minor",
+        "price_bucket"
+      ]
+    },
+    {
+      "name": "Enrollment Confirmed",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "days_from_submit_to_confirm_bucket"]
+    },
+    {
+      "name": "Enrollment Activated",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "team_size_bucket"]
+    },
+    {
+      "name": "Enrollment Completed",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "days_active_bucket"]
+    },
+    {
+      "name": "Enrollment Withdrawn",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": [
+        "tenant_id",
+        "withdrawal_reason",
+        "days_active_bucket",
+        "was_guardian_initiated"
+      ]
+    },
+    {
+      "name": "Enrollment Expelled",
+      "kind": "track",
+      "consent_required": "essential",
+      "properties": ["tenant_id", "days_active_bucket"],
+      "description": "Consent tier: essential — disciplinary signal for anti-discrimination detection."
+    },
+    {
+      "name": "Enrollment Expired",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "prior_status", "days_since_submission_bucket"]
+    },
+    {
+      "name": "Enrollment Waitlisted",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "waitlist_position_bucket"]
+    },
+    {
+      "name": "Enrollment Promoted From Waitlist",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "days_on_waitlist_bucket"]
+    },
+    {
+      "name": "Enrollment Atomicity Failed",
+      "kind": "track",
+      "consent_required": "essential",
+      "properties": ["tenant_id"],
+      "description": "P1 event. Every fire is investigated. Consent tier: essential (system-integrity signal)."
+    },
+    {
+      "name": "Enrollment Age Group Snapshot Mismatched",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "mismatch_kind"]
+    }
   ],
   "notes": [
     "Analytics NEVER carry raw price_amount_cents — price_bucket categorises (free / under_50 / under_200 / under_1000 / over_1000).",

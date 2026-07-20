@@ -5,4 +5,4 @@
  *   `@stackra/consent` (core) and `@stackra/consent/react` (web bindings).
  */
 
-export * from './core';
+export * from "./core";

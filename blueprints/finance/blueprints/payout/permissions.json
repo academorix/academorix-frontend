@@ -8,12 +8,39 @@
   "permissions": [
     { "name": "payouts.viewAny", "guard": "sanctum", "seededOn": ["admin", "owner", "finance"] },
     { "name": "payouts.view", "guard": "sanctum", "seededOn": ["admin", "owner", "finance"] },
-    { "name": "payouts.sync", "guard": "sanctum", "description": "Force re-pull from provider.", "seededOn": ["admin", "owner", "finance"] },
-    { "name": "payout-items.viewAny", "guard": "sanctum", "seededOn": ["admin", "owner", "finance"] },
+    {
+      "name": "payouts.sync",
+      "guard": "sanctum",
+      "description": "Force re-pull from provider.",
+      "seededOn": ["admin", "owner", "finance"]
+    },
+    {
+      "name": "payout-items.viewAny",
+      "guard": "sanctum",
+      "seededOn": ["admin", "owner", "finance"]
+    },
     { "name": "payout-items.view", "guard": "sanctum", "seededOn": ["admin", "owner", "finance"] },
-    { "name": "payout-reconciliations.viewAny", "guard": "sanctum", "seededOn": ["admin", "owner", "finance"] },
-    { "name": "payout-reconciliations.view", "guard": "sanctum", "seededOn": ["admin", "owner", "finance"] },
-    { "name": "payout-reconciliations.resolve", "guard": "sanctum", "description": "Mark a drift reconciliation as resolved (audit-logged).", "seededOn": ["admin", "owner", "finance"] },
-    { "name": "platform.payouts.viewAny", "guard": "platform_admin", "description": "Cross-tenant payout audit.", "seededOn": ["super_admin", "ops"] }
+    {
+      "name": "payout-reconciliations.viewAny",
+      "guard": "sanctum",
+      "seededOn": ["admin", "owner", "finance"]
+    },
+    {
+      "name": "payout-reconciliations.view",
+      "guard": "sanctum",
+      "seededOn": ["admin", "owner", "finance"]
+    },
+    {
+      "name": "payout-reconciliations.resolve",
+      "guard": "sanctum",
+      "description": "Mark a drift reconciliation as resolved (audit-logged).",
+      "seededOn": ["admin", "owner", "finance"]
+    },
+    {
+      "name": "platform.payouts.viewAny",
+      "guard": "platform_admin",
+      "description": "Cross-tenant payout audit.",
+      "seededOn": ["super_admin", "ops"]
+    }
   ]
 }

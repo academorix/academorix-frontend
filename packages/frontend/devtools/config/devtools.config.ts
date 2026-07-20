@@ -5,7 +5,7 @@
  *   Consumed by `DevtoolsModule.forRoot()` at bootstrap.
  */
 
-import { defineConfig } from '@stackra/devtools';
+import { defineConfig } from "@stackra/devtools";
 
 export const devtoolsConfig = defineConfig({
   /*
@@ -18,7 +18,7 @@ export const devtoolsConfig = defineConfig({
   | keeping the module included in prod is safe.
   |
   */
-  position: 'right',
+  position: "right",
 
   /*
   |--------------------------------------------------------------------------

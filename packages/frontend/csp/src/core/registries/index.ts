@@ -4,4 +4,4 @@
  * @description Registries barrel export.
  */
 
-export { CspRegistry } from './csp.registry';
+export { CspRegistry } from "./csp.registry";

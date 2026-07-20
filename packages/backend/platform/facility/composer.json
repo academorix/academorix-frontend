@@ -1,68 +1,68 @@
 {
-    "name": "academorix/facility",
-    "type": "library",
-    "description": "Academorix Facility module \u2014 server-side Laravel package emitted from the module blueprint at `modules/platform/blueprints/facility/`. Complements the wire SDK at `academorix-platform/facility-sdk`.",
-    "license": "proprietary",
-    "keywords": [
-        "academorix",
-        "module",
-        "laravel",
-        "platform",
-        "facility"
-    ],
-    "require": {
-        "php": "^8.3",
-        "illuminate/support": "^13.0",
-        "illuminate/database": "^13.0",
-        "illuminate/container": "^13.0",
-        "illuminate/contracts": "^13.0",
-        "spatie/laravel-data": "^4.11",
-        "academorix/foundation": "@dev",
-        "academorix/crud": "@dev",
-        "academorix/routing": "@dev",
-        "academorix/service-provider": "@dev",
-        "academorix/support": "@dev",
-        "academorix-platform/facility-sdk": "@dev"
-    },
-    "require-dev": {
-        "orchestra/testbench": "^11.0",
-        "pestphp/pest": "^4.0",
-        "pestphp/pest-plugin-laravel": "^4.0",
-        "phpstan/phpstan": "^2.0",
-        "mockery/mockery": "^1.6"
-    },
-    "autoload": {
-        "psr-4": {
-            "Academorix\\Facility\\": "src/"
-        }
-    },
-    "autoload-dev": {
-        "psr-4": {
-            "Academorix\\Facility\\Tests\\": "tests/"
-        }
-    },
-    "extra": {
-        "laravel": {
-            "providers": [
-                "Academorix\\Facility\\Providers\\FacilityServiceProvider"
-            ],
-            "aliases": {}
-        }
-    },
-    "scripts": {
-        "test": "./vendor/bin/pest",
-        "test:coverage": "./vendor/bin/pest --coverage --min=80",
-        "lint": "./vendor/bin/pint --test",
-        "format": "./vendor/bin/pint",
-        "analyse": "./vendor/bin/phpstan analyse --memory-limit=2G"
-    },
-    "config": {
-        "sort-packages": true,
-        "allow-plugins": {
-            "pestphp/pest-plugin": true,
-            "olvlvl/composer-attribute-collector": true
-        }
-    },
-    "minimum-stability": "stable",
-    "prefer-stable": true
+  "name": "academorix/facility",
+  "type": "library",
+  "description": "Academorix Facility module \u2014 server-side Laravel package emitted from the module blueprint at `modules/platform/blueprints/facility/`. Complements the wire SDK at `academorix-platform/facility-sdk`.",
+  "license": "proprietary",
+  "keywords": [
+    "academorix",
+    "module",
+    "laravel",
+    "platform",
+    "facility"
+  ],
+  "require": {
+    "php": "^8.3",
+    "illuminate/support": "^13.0",
+    "illuminate/database": "^13.0",
+    "illuminate/container": "^13.0",
+    "illuminate/contracts": "^13.0",
+    "spatie/laravel-data": "^4.11",
+    "academorix/foundation": "@dev",
+    "academorix/crud": "@dev",
+    "academorix/routing": "@dev",
+    "academorix/service-provider": "@dev",
+    "academorix/support": "@dev",
+    "academorix-platform/facility-sdk": "@dev"
+  },
+  "require-dev": {
+    "orchestra/testbench": "^11.0",
+    "pestphp/pest": "^4.0",
+    "pestphp/pest-plugin-laravel": "^4.0",
+    "phpstan/phpstan": "^2.0",
+    "mockery/mockery": "^1.6"
+  },
+  "autoload": {
+    "psr-4": {
+      "Academorix\\Facility\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Academorix\\Facility\\Tests\\": "tests/"
+    }
+  },
+  "extra": {
+    "laravel": {
+      "providers": [
+        "Academorix\\Facility\\Providers\\FacilityServiceProvider"
+      ],
+      "aliases": {}
+    }
+  },
+  "scripts": {
+    "test": "./vendor/bin/pest",
+    "test:coverage": "./vendor/bin/pest --coverage --min=80",
+    "lint": "./vendor/bin/pint --test",
+    "format": "./vendor/bin/pint",
+    "analyse": "./vendor/bin/phpstan analyse --memory-limit=2G"
+  },
+  "config": {
+    "sort-packages": true,
+    "allow-plugins": {
+      "pestphp/pest-plugin": true,
+      "olvlvl/composer-attribute-collector": true
+    }
+  },
+  "minimum-stability": "stable",
+  "prefer-stable": true
 }

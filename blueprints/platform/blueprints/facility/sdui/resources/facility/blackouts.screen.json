@@ -81,8 +81,17 @@
             "kind": "View",
             "props": { "className": "text-center py-8" },
             "children": [
-              { "kind": "Icon", "props": { "name": "calendar-x", "className": "size-8 mx-auto text-muted" } },
-              { "kind": "Text", "props": { "className": "mt-2 text-sm text-muted", "children": "No blackouts scheduled." } }
+              {
+                "kind": "Icon",
+                "props": { "name": "calendar-x", "className": "size-8 mx-auto text-muted" }
+              },
+              {
+                "kind": "Text",
+                "props": {
+                  "className": "mt-2 text-sm text-muted",
+                  "children": "No blackouts scheduled."
+                }
+              }
             ]
           },
           "itemRenderer": {

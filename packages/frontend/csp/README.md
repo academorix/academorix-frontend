@@ -1,10 +1,10 @@
 # @stackra/csp
 
-Content-Security-Policy management for the Stackra framework — per-request
-nonce generation, a feature-scoped policy registry with `@CspPolicy()`
-auto-discovery, and React bindings (`<NonceProvider>`, `useNonce`,
-`<Script>`, `<CspMeta>`). Integrates with `@stackra/ssr` to stamp the CSP
-header + nonce onto server-rendered responses.
+Content-Security-Policy management for the Stackra framework — per-request nonce
+generation, a feature-scoped policy registry with `@CspPolicy()` auto-discovery,
+and React bindings (`<NonceProvider>`, `useNonce`, `<Script>`, `<CspMeta>`).
+Integrates with `@stackra/ssr` to stamp the CSP header + nonce onto
+server-rendered responses.
 
 ## Subpaths
 
@@ -13,10 +13,10 @@ header + nonce onto server-rendered responses.
 | `@stackra/csp`       | Core: `CspModule`, `CspService`, `NonceGenerator`, `CspPolicyLoader`, `CspRegistry`, `@CspPolicy` |
 | `@stackra/csp/react` | Web: `NonceProvider`, `NonceContext`, `useNonce`, `<Script>`, `<CspMeta>`                         |
 
-> CSP tokens (`CSP_SERVICE`, `CSP_CONFIG`, `CSP_REGISTRY`) and the
-> `ICspService` / `ICspPolicyResult` contracts live in `@stackra/contracts`
-> — import them from there. This lets `@stackra/ssr` consume the CSP service
-> without depending on this runtime.
+> CSP tokens (`CSP_SERVICE`, `CSP_CONFIG`, `CSP_REGISTRY`) and the `ICspService`
+> / `ICspPolicyResult` contracts live in `@stackra/contracts` — import them from
+> there. This lets `@stackra/ssr` consume the CSP service without depending on
+> this runtime.
 
 ## Installation
 
@@ -28,8 +28,8 @@ header + nonce onto server-rendered responses.
 ## Quick start
 
 ```typescript
-import { Module } from '@stackra/container';
-import { CspModule } from '@stackra/csp';
+import { Module } from "@stackra/container";
+import { CspModule } from "@stackra/csp";
 
 @Module({
   imports: [
@@ -45,17 +45,17 @@ export class AppModule {}
 
 ## Feature policies
 
-Each package declares the origins it needs — no monolithic app config.
-Prefer the decorator (auto-discovered by `CspPolicyLoader` at bootstrap):
+Each package declares the origins it needs — no monolithic app config. Prefer
+the decorator (auto-discovered by `CspPolicyLoader` at bootstrap):
 
 ```typescript
-import { Injectable } from '@stackra/container';
-import { CspPolicy } from '@stackra/csp';
+import { Injectable } from "@stackra/container";
+import { CspPolicy } from "@stackra/csp";
 
 @CspPolicy({
-  name: 'stripe',
-  scriptSrc: ['https://js.stripe.com'],
-  frameSrc: ['https://hooks.stripe.com'],
+  name: "stripe",
+  scriptSrc: ["https://js.stripe.com"],
+  frameSrc: ["https://hooks.stripe.com"],
 })
 @Injectable()
 export class StripeService {}
@@ -64,28 +64,31 @@ export class StripeService {}
 Or register dynamically:
 
 ```typescript
-CspModule.forFeature({ name: 'ga', scriptSrc: ['https://www.googletagmanager.com'] });
+CspModule.forFeature({
+  name: "ga",
+  scriptSrc: ["https://www.googletagmanager.com"],
+});
 ```
 
-`forFeature` seeds the registry through a lifecycle loader
-(`createSeedLoader` → `onApplicationBootstrap`) — no side-effect factories.
+`forFeature` seeds the registry through a lifecycle loader (`createSeedLoader` →
+`onApplicationBootstrap`) — no side-effect factories.
 
 ## SSR integration
 
-`@stackra/ssr`'s renderer optionally injects `CSP_SERVICE`. When wired, it
-mints a fresh nonce per request, passes it to `renderToReadableStream`, and
-sets the `Content-Security-Policy` header. For the SPA shell it stamps the
+`@stackra/ssr`'s renderer optionally injects `CSP_SERVICE`. When wired, it mints
+a fresh nonce per request, passes it to `renderToReadableStream`, and sets the
+`Content-Security-Policy` header. For the SPA shell it stamps the
 `<script nonce>` and embeds a `<meta http-equiv>` fallback.
 
-To make `useNonce()` / `<Script>` resolve **during** the server render, wrap
-the tree in `<NonceProvider>` via the SSR `wrapApp` seam (the decoupled
-equivalent of Shopify Hydrogen's manual `entry.server` wrapping — SSR never
-imports CSP):
+To make `useNonce()` / `<Script>` resolve **during** the server render, wrap the
+tree in `<NonceProvider>` via the SSR `wrapApp` seam (the decoupled equivalent
+of Shopify Hydrogen's manual `entry.server` wrapping — SSR never imports CSP):
 
 ```ts
 SsrModule.forRoot({
   // ...
-  wrapApp: (app, { nonce }) => createElement(NonceProvider, { nonce: nonce ?? '' }, app),
+  wrapApp: (app, { nonce }) =>
+    createElement(NonceProvider, { nonce: nonce ?? "" }, app),
 });
 ```
 
@@ -93,13 +96,13 @@ On the client, recover the nonce the server stamped onto the shell's
 `<script nonce>` and re-provide it (Hydrogen's `entry.client` pattern):
 
 ```tsx
-import { NonceProvider, readDocumentNonce } from '@stackra/csp/react';
+import { NonceProvider, readDocumentNonce } from "@stackra/csp/react";
 
 const nonce = readDocumentNonce();
 root.render(
   <NonceProvider nonce={nonce}>
     <App />
-  </NonceProvider>
+  </NonceProvider>,
 );
 ```
 

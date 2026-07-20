@@ -121,11 +121,7 @@ describe("WidgetCatalogueService", () => {
     catalogue.registerWidget(makeEntry({ key: "second" }));
     catalogue.registerWidget(makeEntry({ key: "third" }));
 
-    expect(catalogue.listWidgets().map((entry) => entry.key)).toEqual([
-      "first",
-      "second",
-      "third",
-    ]);
+    expect(catalogue.listWidgets().map((entry) => entry.key)).toEqual(["first", "second", "third"]);
   });
 
   it("seeds cohorts + widgets from injected config on onModuleInit", () => {

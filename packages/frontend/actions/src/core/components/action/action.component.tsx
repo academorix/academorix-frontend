@@ -20,12 +20,12 @@
  *   this component.
  */
 
-import { Children, cloneElement, isValidElement, type ReactElement } from 'react';
-import type { IActionDescriptor } from '@stackra/contracts';
+import { Children, cloneElement, isValidElement, type ReactElement } from "react";
+import type { IActionDescriptor } from "@stackra/contracts";
 
-import { useAction } from '@/core/hooks/use-action';
-import { enhanceActionChildProps } from './enhance-child-props.util';
-import type { IActionChildProps, IActionSlotProps } from './action.interface';
+import { useAction } from "@/core/hooks/use-action";
+import { enhanceActionChildProps } from "./enhance-child-props.util";
+import type { IActionChildProps, IActionSlotProps } from "./action.interface";
 
 /**
  * `<Action>` — polymorphic slot wiring a descriptor to a child's event
@@ -73,7 +73,7 @@ export function Action<D extends IActionDescriptor = IActionDescriptor, R = unkn
   // that `Children.only` accepts but `cloneElement` can't enhance.
   if (!isValidElement(child)) {
     throw new Error(
-      '<Action> requires a single React element child (e.g. a Button); received a text or fragment child.'
+      "<Action> requires a single React element child (e.g. a Button); received a text or fragment child.",
     );
   }
 
@@ -82,7 +82,7 @@ export function Action<D extends IActionDescriptor = IActionDescriptor, R = unkn
     action,
     run,
     isPending,
-    { eventProp, context, onDone, forwardPending }
+    { eventProp, context, onDone, forwardPending },
   );
 
   return cloneElement(child, enhanced);

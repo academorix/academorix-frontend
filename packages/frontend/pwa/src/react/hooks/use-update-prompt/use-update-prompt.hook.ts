@@ -4,13 +4,13 @@
  * @description Service-worker update prompt hook.
  */
 
-import { useCallback } from 'react';
-import { useInject } from '@stackra/container/react';
+import { useCallback } from "react";
+import { useInject } from "@stackra/container/react";
 
-import { PWA_SERVICE } from '@/core/constants';
-import type { PwaService } from '@/core/services';
-import { usePwa } from '@/react/hooks/use-pwa/use-pwa.hook';
-import type { IUseUpdatePromptResult } from './use-update-prompt.interface';
+import { PWA_SERVICE } from "@/core/constants";
+import type { PwaService } from "@/core/services";
+import { usePwa } from "@/react/hooks/use-pwa/use-pwa.hook";
+import type { IUseUpdatePromptResult } from "./use-update-prompt.interface";
 
 /**
  * Access service-worker update state + actions.

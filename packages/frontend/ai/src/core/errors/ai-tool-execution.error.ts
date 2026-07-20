@@ -5,7 +5,7 @@
  *   can distinguish tool failures from transport or schema failures.
  */
 
-import { AiError } from './ai.error';
+import { AiError } from "./ai.error";
 
 /**
  * Thrown by the `ToolExecutor` when a client-tool handler throws.
@@ -24,7 +24,7 @@ export class AiToolExecutionError extends AiError {
     message: string,
     public readonly toolCallId: string,
     public readonly toolName: string,
-    cause?: unknown
+    cause?: unknown,
   ) {
     super(message, cause);
   }

@@ -10,7 +10,7 @@ import {
   TRANSFORM_PIPES,
   DEFAULT_INTERPOLATION_PREFIX,
   DEFAULT_INTERPOLATION_SUFFIX,
-} from '../constants';
+} from "../constants";
 
 // ============================================================================
 // Transform Pipe Functions
@@ -53,7 +53,7 @@ export function interpolate(
   template: string,
   args?: Record<string, unknown>,
   prefix: string = DEFAULT_INTERPOLATION_PREFIX,
-  suffix: string = DEFAULT_INTERPOLATION_SUFFIX
+  suffix: string = DEFAULT_INTERPOLATION_SUFFIX,
 ): string {
   if (!args || !template) return template;
 
@@ -62,7 +62,7 @@ export function interpolate(
   const escapedSuffix = escapeRegex(suffix);
 
   // Match {{ expression }} — supports pipes
-  const regex = new RegExp(`${escapedPrefix}\\s*([^}]+?)\\s*${escapedSuffix}`, 'g');
+  const regex = new RegExp(`${escapedPrefix}\\s*([^}]+?)\\s*${escapedSuffix}`, "g");
 
   return template.replace(regex, (_match, rawExpression: string) => {
     const parts = rawExpression
@@ -103,11 +103,11 @@ function resolveArgValue(args: Record<string, unknown>, path: string): unknown {
   if (path in args) return args[path];
 
   // Dot-path traversal
-  const segments = path.split('.');
+  const segments = path.split(".");
   let current: unknown = args;
 
   for (const segment of segments) {
-    if (current === null || current === undefined || typeof current !== 'object') {
+    if (current === null || current === undefined || typeof current !== "object") {
       return undefined;
     }
     current = (current as Record<string, unknown>)[segment];
@@ -120,5 +120,5 @@ function resolveArgValue(args: Record<string, unknown>, path: string): unknown {
  * Escape special regex characters in a string.
  */
 function escapeRegex(str: string): string {
-  return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  return str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }

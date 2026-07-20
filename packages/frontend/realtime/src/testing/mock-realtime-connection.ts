@@ -8,12 +8,12 @@
  *   a real WebSocket.
  */
 
-import type { IRealtimeConnection } from '@/core/interfaces/realtime-connection.interface';
+import type { IRealtimeConnection } from "@/core/interfaces/realtime-connection.interface";
 import {
   MockRealtimeChannel,
   MockRealtimePresenceChannel,
   type RecordedWhisper,
-} from './mock-realtime-channel';
+} from "./mock-realtime-channel";
 
 /**
  * In-memory realtime connection for testing.
@@ -46,7 +46,7 @@ export class MockRealtimeConnection implements IRealtimeConnection {
     const key = `presence:${name}`;
     return this.getOrCreate(
       key,
-      () => new MockRealtimePresenceChannel(key, this.whispers)
+      () => new MockRealtimePresenceChannel(key, this.whispers),
     ) as MockRealtimePresenceChannel;
   }
 

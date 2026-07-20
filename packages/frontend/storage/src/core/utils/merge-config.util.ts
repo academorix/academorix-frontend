@@ -7,9 +7,9 @@
  *   consistent.
  */
 
-import type { IStorageConfig, IStorageModuleOptions } from '@stackra/contracts';
+import type { IStorageConfig, IStorageModuleOptions } from "@stackra/contracts";
 
-import { DEFAULT_STORAGE_CONFIG } from '@/core/constants/default-storage-config.constant';
+import { DEFAULT_STORAGE_CONFIG } from "@/core/constants/default-storage-config.constant";
 
 /**
  * Merge user options into `DEFAULT_STORAGE_CONFIG` and return the

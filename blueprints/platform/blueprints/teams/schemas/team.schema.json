@@ -187,7 +187,11 @@
       "sort_order": { "type": "integer", "nullable": false, "default": 100 },
       "registration_opens_at": { "type": "timestamptz", "nullable": true },
       "registration_closes_at": { "type": "timestamptz", "nullable": true },
-      "last_registration_opened_notification": { "type": "timestamptz", "nullable": true, "description": "Deduplication cursor for OpenClosePendingRegistrationsJob." },
+      "last_registration_opened_notification": {
+        "type": "timestamptz",
+        "nullable": true,
+        "description": "Deduplication cursor for OpenClosePendingRegistrationsJob."
+      },
       "last_registration_closed_notification": { "type": "timestamptz", "nullable": true },
       "metadata": { "type": "jsonb", "nullable": true },
       "created_by": { "type": "string", "length": 64, "nullable": true },
@@ -208,8 +212,16 @@
       { "columns": ["tenant_id", "team_type"], "name": "teams_type_idx" },
       { "columns": ["tenant_id", "sport_key"], "name": "teams_sport_idx" },
       { "columns": ["tenant_id", "coach_id"], "name": "teams_coach_idx" },
-      { "columns": ["tenant_id", "season_id"], "name": "teams_season_idx", "predicate": "season_id IS NOT NULL" },
-      { "columns": ["tenant_id", "registration_opens_at"], "name": "teams_registration_opens_idx", "predicate": "status = 'active' AND registration_opens_at IS NOT NULL" }
+      {
+        "columns": ["tenant_id", "season_id"],
+        "name": "teams_season_idx",
+        "predicate": "season_id IS NOT NULL"
+      },
+      {
+        "columns": ["tenant_id", "registration_opens_at"],
+        "name": "teams_registration_opens_idx",
+        "predicate": "status = 'active' AND registration_opens_at IS NOT NULL"
+      }
     ]
   },
   "required": [
@@ -258,10 +270,7 @@
     "secondary_color": { "type": ["string", "null"], "pattern": "^#[0-9A-Fa-f]{6}$" },
     "logo_url": { "type": ["string", "null"], "format": "uri", "maxLength": 512 },
     "schedule_pattern": {
-      "oneOf": [
-        { "type": "null" },
-        { "$ref": "#/$defs/schedulePattern" }
-      ]
+      "oneOf": [{ "type": "null" }, { "$ref": "#/$defs/schedulePattern" }]
     },
     "status": {
       "type": "string",

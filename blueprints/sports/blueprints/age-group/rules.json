@@ -21,8 +21,18 @@
       "signature": "valid_age_bounds:min_field,max_field",
       "description": "Cross-field validator. Applied on the data object (not on an individual field). Ensures min <= max, min >= 3 (platform floor), max <= 100 (platform ceiling), and both are integers. Runs BEFORE the observer's redundant guard so callers see the clean 422 error before hitting the write path.",
       "params": [
-        { "name": "min_field", "type": "string", "default": "min_age_inclusive", "description": "Field name on the data object holding the min age." },
-        { "name": "max_field", "type": "string", "default": "max_age_inclusive", "description": "Field name on the data object holding the max age." }
+        {
+          "name": "min_field",
+          "type": "string",
+          "default": "min_age_inclusive",
+          "description": "Field name on the data object holding the min age."
+        },
+        {
+          "name": "max_field",
+          "type": "string",
+          "default": "max_age_inclusive",
+          "description": "Field name on the data object holding the max age."
+        }
       ],
       "example_field_rule": "['valid_age_bounds:min_age_inclusive,max_age_inclusive']",
       "error_message_key": "age_group::validation.valid_age_bounds",
@@ -48,7 +58,12 @@
       "signature": "valid_sport_key[:registry]",
       "description": "Ensures the value matches the sport-key syntax `^[a-z][a-z0-9_]*$` (lowercase snake, starts with a letter). In Wave 3c the rule hardens: with `registry` mode set, it also checks the value against the sport registry (a shipped table of known sport identifiers). Until then, `registry` mode is a no-op — every syntactically-valid value passes.",
       "params": [
-        { "name": "mode", "type": "'syntax' | 'registry'", "default": "syntax", "description": "syntax = only regex check; registry = also verify against the shipped sports registry (Wave 3c)." }
+        {
+          "name": "mode",
+          "type": "'syntax' | 'registry'",
+          "default": "syntax",
+          "description": "syntax = only regex check; registry = also verify against the shipped sports registry (Wave 3c)."
+        }
       ],
       "example_field_rule": "sport_key: ['nullable', 'valid_sport_key']",
       "error_message_key": "age_group::validation.valid_sport_key",

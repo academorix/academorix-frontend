@@ -6,6 +6,7 @@
  *   methods, and supports pre-programmed responses for interactive prompts.
  */
 
+import type { IOutputCall } from "../interfaces/output-call.interface";
 import type {
   IConsoleOutput,
   ITextOptions,
@@ -39,7 +40,6 @@ import type {
  * output.assertConfirmCalled();
  * ```
  */
-import type { IOutputCall } from "../interfaces/output-call.interface";
 
 export class TestConsoleOutput implements IConsoleOutput {
   /** All recorded output calls. */

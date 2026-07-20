@@ -19,6 +19,6 @@ export {
   PLURAL_KEYS,
   RTL_LOCALES,
   DEFAULT_I18N_CONFIG,
-} from './defaults.constant';
+} from "./defaults.constant";
 
-export { I18N_CONFIG } from './tokens.constant';
+export { I18N_CONFIG } from "./tokens.constant";

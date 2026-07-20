@@ -11,21 +11,21 @@
  *   the frame-state service and the drawer moves.
  */
 
-import { useCallback, useEffect, type ReactElement } from 'react';
-import { Button, Drawer, Kbd } from '@stackra/ui/react';
-import { XMarkIcon } from '@stackra/ui/icons/heroicon/outline';
+import { useCallback, useEffect, type ReactElement } from "react";
+import { Button, Drawer, Kbd } from "@stackra/ui/react";
+import { XMarkIcon } from "@stackra/ui/icons/heroicon/outline";
 
-import { useDevtoolsContext } from '../../hooks/use-devtools-context.hook';
-import { useDevtoolsFrameState } from '../../hooks/use-devtools-frame-state.hook';
-import { useDevtoolsPanels } from '../../hooks/use-devtools-panels.hook';
-import { useDevtoolsSearch } from '../../hooks/use-devtools-search.hook';
-import { DevtoolsInspectorToolbar } from '../devtools-inspector-toolbar';
-import { DevtoolsNavRail } from '../devtools-nav-rail';
-import { DevtoolsPanelEmpty } from '../devtools-panel-empty';
-import { DevtoolsPanelFrame } from '../devtools-panel-frame';
-import { DevtoolsPositionMenu } from '../devtools-position-menu';
-import { DevtoolsSearch } from '../devtools-search';
-import type { DevtoolsShellProps } from './devtools-shell.interface';
+import { useDevtoolsContext } from "../../hooks/use-devtools-context.hook";
+import { useDevtoolsFrameState } from "../../hooks/use-devtools-frame-state.hook";
+import { useDevtoolsPanels } from "../../hooks/use-devtools-panels.hook";
+import { useDevtoolsSearch } from "../../hooks/use-devtools-search.hook";
+import { DevtoolsInspectorToolbar } from "../devtools-inspector-toolbar";
+import { DevtoolsNavRail } from "../devtools-nav-rail";
+import { DevtoolsPanelEmpty } from "../devtools-panel-empty";
+import { DevtoolsPanelFrame } from "../devtools-panel-frame";
+import { DevtoolsPositionMenu } from "../devtools-position-menu";
+import { DevtoolsSearch } from "../devtools-search";
+import type { DevtoolsShellProps } from "./devtools-shell.interface";
 
 /**
  * The main devtools drawer.
@@ -45,14 +45,14 @@ export function DevtoolsShell({ className }: DevtoolsShellProps): ReactElement {
       }
       update({ isOpen });
     },
-    [analytics, update]
+    [analytics, update],
   );
 
   const handleSelect = useCallback(
     (panelId: string) => {
       update({ activePanelId: panelId });
     },
-    [update]
+    [update],
   );
 
   // Auto-select the first panel when the drawer opens with no
@@ -76,11 +76,11 @@ export function DevtoolsShell({ className }: DevtoolsShellProps): ReactElement {
       <Drawer.Backdrop isOpen={state.isOpen} onOpenChange={handleOpenChange}>
         <Drawer.Content placement={state.position}>
           <Drawer.Dialog
-            className={className ?? 'flex h-full w-full flex-col overflow-hidden md:w-[520px]'}
+            className={className ?? "flex h-full w-full flex-col overflow-hidden md:w-[520px]"}
             data-devtools-shell=""
           >
             <Drawer.CloseTrigger />
-            <Drawer.Header className="flex items-center justify-between gap-3 border-b border-border px-4 py-3">
+            <Drawer.Header className="border-border flex items-center justify-between gap-3 border-b px-4 py-3">
               <div className="flex min-w-0 flex-1 items-center gap-2">
                 <Drawer.Heading>Devtools</Drawer.Heading>
                 <div className="min-w-0 flex-1">
@@ -111,7 +111,7 @@ export function DevtoolsShell({ className }: DevtoolsShellProps): ReactElement {
                 {activePanel ? <DevtoolsPanelFrame panel={activePanel} /> : <DevtoolsPanelEmpty />}
               </div>
             </Drawer.Body>
-            <Drawer.Footer className="flex items-center justify-between border-t border-border px-4 py-2 text-xs text-muted">
+            <Drawer.Footer className="border-border text-muted flex items-center justify-between border-t px-4 py-2 text-xs">
               <span className="flex items-center gap-1.5">
                 <span>Toggle</span>
                 {shortcutLabel}
@@ -130,18 +130,18 @@ export function DevtoolsShell({ className }: DevtoolsShellProps): ReactElement {
  * Returns `null` when the shortcut is disabled.
  */
 function renderShortcutLabel(
-  shortcut: ReturnType<typeof useDevtoolsContext>['config']['shortcut']
+  shortcut: ReturnType<typeof useDevtoolsContext>["config"]["shortcut"],
 ): ReactElement | null {
   if (!shortcut) return null;
   const parts: string[] = [];
-  if (shortcut.meta) parts.push('Meta');
-  if (shortcut.ctrl) parts.push('Ctrl');
-  if (shortcut.alt) parts.push('Alt');
-  if (shortcut.shift) parts.push('Shift');
+  if (shortcut.meta) parts.push("Meta");
+  if (shortcut.ctrl) parts.push("Ctrl");
+  if (shortcut.alt) parts.push("Alt");
+  if (shortcut.shift) parts.push("Shift");
   parts.push(shortcut.key.toUpperCase());
   return (
     <Kbd>
-      <Kbd.Content>{parts.join(' + ')}</Kbd.Content>
+      <Kbd.Content>{parts.join(" + ")}</Kbd.Content>
     </Kbd>
   );
 }

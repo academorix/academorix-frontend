@@ -5,11 +5,11 @@
  *   handler invocation and one of `SUCCEEDED` / `FAILED` after.
  */
 
-import { Inject, Injectable, Optional } from '@stackra/container';
-import type { IEventEmitter } from '@stackra/contracts';
-import { ACTION_EVENTS, EVENT_EMITTER } from '@stackra/contracts';
+import { Inject, Injectable, Optional } from "@stackra/container";
+import type { IEventEmitter } from "@stackra/contracts";
+import { ACTION_EVENTS, EVENT_EMITTER } from "@stackra/contracts";
 
-import type { IMiddlewarePassable } from './middleware-passable.interface';
+import type { IMiddlewarePassable } from "./middleware-passable.interface";
 
 /**
  * Trace middleware — emits START/SUCCESS/FAIL events on the shared bus.
@@ -20,7 +20,7 @@ export class TraceMiddleware {
 
   public async handle(
     passable: IMiddlewarePassable,
-    next: (p: IMiddlewarePassable) => Promise<IMiddlewarePassable>
+    next: (p: IMiddlewarePassable) => Promise<IMiddlewarePassable>,
   ): Promise<IMiddlewarePassable> {
     passable.startedAt = Date.now();
     await this.events?.emit(ACTION_EVENTS.STARTED, {

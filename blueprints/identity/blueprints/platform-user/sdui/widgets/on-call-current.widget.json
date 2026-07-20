@@ -6,7 +6,11 @@
   "description": "Sidebar widget on the platform-admin dashboard. Shows the currently-on-call PlatformUser (avatar + display_name + department) + shift remaining. Auto-refreshes every 60s (matches OnCallResolver cache TTL). Renders `null` when the resolver is disabled OR no shift is active.",
   "props": {
     "size": { "type": "string", "default": "md", "enum": ["sm", "md", "lg"] },
-    "department": { "type": ["string", "null"], "default": null, "description": "Scope to one department; null = platform-wide." }
+    "department": {
+      "type": ["string", "null"],
+      "default": null,
+      "description": "Scope to one department; null = platform-wide."
+    }
   },
   "dataSources": [
     {

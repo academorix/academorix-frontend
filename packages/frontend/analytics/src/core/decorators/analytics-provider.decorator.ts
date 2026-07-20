@@ -4,9 +4,9 @@
  * @description Marks a class as a discoverable analytics provider.
  */
 
-import { defineMetadata } from '@vivtel/metadata';
-import { Injectable } from '@stackra/container';
-import { ANALYTICS_PROVIDER_METADATA_KEY } from '@stackra/contracts';
+import { defineMetadata } from "@vivtel/metadata";
+import { Injectable } from "@stackra/container";
+import { ANALYTICS_PROVIDER_METADATA_KEY } from "@stackra/contracts";
 
 /** Options accepted by `@AnalyticsProvider()`. */
 export interface AnalyticsProviderOptions {

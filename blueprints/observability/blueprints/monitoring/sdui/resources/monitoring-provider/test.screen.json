@@ -10,7 +10,12 @@
   "requiresPermission": "monitoring.providers.test",
   "requiresEntitlement": "monitoring_capture",
   "dataSources": [
-    { "name": "provider", "kind": "http.get", "url": "/api/v1/monitoring/providers/{provider}", "unwrap": "data" }
+    {
+      "name": "provider",
+      "kind": "http.get",
+      "url": "/api/v1/monitoring/providers/{provider}",
+      "unwrap": "data"
+    }
   ],
   "nodes": [
     {
@@ -18,13 +23,28 @@
       "kind": "View",
       "props": { "className": "flex flex-col gap-4 p-6 max-w-2xl mx-auto" },
       "children": [
-        { "kind": "Text", "props": { "as": "h1", "className": "text-2xl font-semibold", "children": "Test provider" } },
+        {
+          "kind": "Text",
+          "props": {
+            "as": "h1",
+            "className": "text-2xl font-semibold",
+            "children": "Test provider"
+          }
+        },
         {
           "kind": "Card",
           "props": { "className": "p-4" },
           "children": [
-            { "kind": "Text", "props": { "className": "font-medium" }, "bindings": { "children": { "$ref": "provider.name" } } },
-            { "kind": "Text", "props": { "className": "text-sm text-muted" }, "bindings": { "children": { "$ref": "provider.provider" } } }
+            {
+              "kind": "Text",
+              "props": { "className": "font-medium" },
+              "bindings": { "children": { "$ref": "provider.name" } }
+            },
+            {
+              "kind": "Text",
+              "props": { "className": "text-sm text-muted" },
+              "bindings": { "children": { "$ref": "provider.provider" } }
+            }
           ]
         },
         {
@@ -37,7 +57,11 @@
         },
         {
           "kind": "Button",
-          "props": { "variant": "primary", "leadingIcon": "beaker", "children": "Send synthetic P4 test alert" },
+          "props": {
+            "variant": "primary",
+            "leadingIcon": "beaker",
+            "children": "Send synthetic P4 test alert"
+          },
           "actions": {
             "onPress": {
               "kind": "http.post",
@@ -52,7 +76,12 @@
         {
           "kind": "Button",
           "props": { "variant": "secondary", "children": "Back" },
-          "actions": { "onPress": { "kind": "navigate", "toExpr": "'/tenant/monitoring/providers/' + $routeParams.provider + '/edit'" } }
+          "actions": {
+            "onPress": {
+              "kind": "navigate",
+              "toExpr": "'/tenant/monitoring/providers/' + $routeParams.provider + '/edit'"
+            }
+          }
         }
       ]
     }

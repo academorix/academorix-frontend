@@ -9,9 +9,9 @@
  *   would find the filter reset frustrating.
  */
 
-import { useCallback } from 'react';
+import { useCallback } from "react";
 
-import { useDevtoolsFrameState } from './use-devtools-frame-state.hook';
+import { useDevtoolsFrameState } from "./use-devtools-frame-state.hook";
 
 /** Result returned by {@link useDevtoolsSearch}. */
 export interface IUseDevtoolsSearchResult {
@@ -30,7 +30,7 @@ export function useDevtoolsSearch(): IUseDevtoolsSearchResult {
   const { state, update } = useDevtoolsFrameState();
 
   const setQuery = useCallback((next: string) => update({ searchQuery: next }), [update]);
-  const clear = useCallback(() => update({ searchQuery: '' }), [update]);
+  const clear = useCallback(() => update({ searchQuery: "" }), [update]);
 
   return { query: state.searchQuery, setQuery, clear };
 }

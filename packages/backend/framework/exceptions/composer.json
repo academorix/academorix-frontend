@@ -1,59 +1,59 @@
 {
-    "name": "academorix/exceptions",
-    "type": "library",
-    "description": "Structured exception hierarchy, JSON error renderer, Spatie Ignition + AI solutions, and Sentry context enrichment for every Academorix app and package.",
-    "license": "proprietary",
-    "require": {
-        "php": "^8.3",
-        "academorix/foundation": "@dev",
-        "academorix/service-provider": "@dev",
-        "illuminate/auth": "^13.0",
-        "illuminate/contracts": "^13.0",
-        "illuminate/http": "^13.0",
-        "illuminate/support": "^13.0",
-        "illuminate/validation": "^13.0",
-        "symfony/http-foundation": "^7.0",
-        "symfony/http-kernel": "^7.0"
-    },
-    "require-dev": {
-        "laravel/ai": "^1.0",
-        "orchestra/testbench": "^11.0",
-        "pestphp/pest": "^4.0",
-        "pestphp/pest-plugin-laravel": "^4.0",
-        "phpstan/phpstan": "^2.0",
-        "sentry/sentry-laravel": "^4.0",
-        "spatie/ignition": "^1.15",
-        "spatie/laravel-ignition": "^2.9"
-    },
-    "suggest": {
-        "laravel/ai": "Required to enable the AI-augmented Ignition solution provider (dev-only).",
-        "spatie/laravel-ignition": "Required to enable the Ignition solutions provider (dev-only).",
-        "sentry/sentry-laravel": "Required to enable the Sentry context enricher."
-    },
-    "autoload": {
-        "psr-4": {
-            "Academorix\\Exceptions\\": "src/"
-        }
-    },
-    "autoload-dev": {
-        "psr-4": {
-            "Academorix\\Exceptions\\Tests\\": "tests/"
-        }
-    },
-    "extra": {
-        "laravel": {
-            "providers": [
-                "Academorix\\Exceptions\\Providers\\ExceptionsServiceProvider"
-            ],
-            "aliases": {}
-        }
-    },
-    "config": {
-        "sort-packages": true,
-        "allow-plugins": {
-            "pestphp/pest-plugin": true
-        }
-    },
-    "minimum-stability": "stable",
-    "prefer-stable": true
+  "name": "academorix/exceptions",
+  "type": "library",
+  "description": "Structured exception hierarchy, JSON error renderer, Spatie Ignition + AI solutions, and Sentry context enrichment for every Academorix app and package.",
+  "license": "proprietary",
+  "require": {
+    "php": "^8.3",
+    "academorix/foundation": "@dev",
+    "academorix/service-provider": "@dev",
+    "illuminate/auth": "^13.0",
+    "illuminate/contracts": "^13.0",
+    "illuminate/http": "^13.0",
+    "illuminate/support": "^13.0",
+    "illuminate/validation": "^13.0",
+    "symfony/http-foundation": "^7.0",
+    "symfony/http-kernel": "^7.0"
+  },
+  "require-dev": {
+    "laravel/ai": "^1.0",
+    "orchestra/testbench": "^11.0",
+    "pestphp/pest": "^4.0",
+    "pestphp/pest-plugin-laravel": "^4.0",
+    "phpstan/phpstan": "^2.0",
+    "sentry/sentry-laravel": "^4.0",
+    "spatie/ignition": "^1.15",
+    "spatie/laravel-ignition": "^2.9"
+  },
+  "suggest": {
+    "laravel/ai": "Required to enable the AI-augmented Ignition solution provider (dev-only).",
+    "spatie/laravel-ignition": "Required to enable the Ignition solutions provider (dev-only).",
+    "sentry/sentry-laravel": "Required to enable the Sentry context enricher."
+  },
+  "autoload": {
+    "psr-4": {
+      "Academorix\\Exceptions\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Academorix\\Exceptions\\Tests\\": "tests/"
+    }
+  },
+  "extra": {
+    "laravel": {
+      "providers": [
+        "Academorix\\Exceptions\\Providers\\ExceptionsServiceProvider"
+      ],
+      "aliases": {}
+    }
+  },
+  "config": {
+    "sort-packages": true,
+    "allow-plugins": {
+      "pestphp/pest-plugin": true
+    }
+  },
+  "minimum-stability": "stable",
+  "prefer-stable": true
 }

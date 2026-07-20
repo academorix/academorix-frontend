@@ -12,15 +12,15 @@
  *   callbacks alongside a reactive `subscription` snapshot.
  */
 
-import { useCallback, useEffect, useState } from 'react';
-import { useInject } from '@stackra/container/react';
+import { useCallback, useEffect, useState } from "react";
+import { useInject } from "@stackra/container/react";
 
-import { PUSH_SUBSCRIPTION_MANAGER } from '@/core/constants';
-import type { IPushSubscriptionResult, PushSubscriptionManager } from '@/core';
+import { PUSH_SUBSCRIPTION_MANAGER } from "@/core/constants";
+import type { IPushSubscriptionResult, PushSubscriptionManager } from "@/core";
 import type {
   IUsePushSubscriptionOptions,
   IUsePushSubscriptionResult,
-} from './use-push-subscription.interface';
+} from "./use-push-subscription.interface";
 
 /**
  * Manage the push subscription lifecycle.
@@ -46,7 +46,7 @@ import type {
  * ```
  */
 export function usePushSubscription(
-  options?: IUsePushSubscriptionOptions
+  options?: IUsePushSubscriptionOptions,
 ): IUsePushSubscriptionResult {
   const manager = useInject<PushSubscriptionManager>(PUSH_SUBSCRIPTION_MANAGER);
   const [subscription, setSubscription] = useState<IPushSubscriptionResult | null>(null);

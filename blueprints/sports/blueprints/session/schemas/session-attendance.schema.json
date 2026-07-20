@@ -40,7 +40,12 @@
   "x-database": {
     "engine": "postgres",
     "columns": {
-      "id": { "type": "string", "length": 64, "primary": true, "description": "Prefixed ULID: `sat_<26>`." },
+      "id": {
+        "type": "string",
+        "length": 64,
+        "primary": true,
+        "description": "Prefixed ULID: `sat_<26>`."
+      },
       "tenant_id": {
         "type": "string",
         "length": 64,
@@ -76,9 +81,21 @@
         "description": "Enum: registered / checked_in / absent / late / excused. registered = expected to attend but hasn't checked in yet. late = checked in past a grace window."
       },
       "checked_in_at": { "type": "timestamptz", "nullable": true },
-      "checked_out_at": { "type": "timestamptz", "nullable": true, "description": "Optional. Some sessions track check-out for duration billing / safeguarding." },
-      "late_minutes": { "type": "integer", "nullable": true, "description": "Minutes past session start when checked in. Populated automatically when status='late'." },
-      "notes": { "type": "text", "nullable": true, "description": "Freeform per-attendance note (excused reason, injury flag, etc.). Private-tier — coaches + admins only." },
+      "checked_out_at": {
+        "type": "timestamptz",
+        "nullable": true,
+        "description": "Optional. Some sessions track check-out for duration billing / safeguarding."
+      },
+      "late_minutes": {
+        "type": "integer",
+        "nullable": true,
+        "description": "Minutes past session start when checked in. Populated automatically when status='late'."
+      },
+      "notes": {
+        "type": "text",
+        "nullable": true,
+        "description": "Freeform per-attendance note (excused reason, injury flag, etc.). Private-tier — coaches + admins only."
+      },
       "metadata": { "type": "jsonb", "nullable": true },
       "created_by": { "type": "string", "length": 64, "nullable": true },
       "updated_by": { "type": "string", "length": 64, "nullable": true },
@@ -95,26 +112,28 @@
         "predicate": "deleted_at IS NULL",
         "description": "An athlete attends a session once. Re-adding after removal requires a new row."
       },
-      { "columns": ["tenant_id", "athlete_id", "checked_in_at"], "name": "session_attendance_athlete_history_idx" },
+      {
+        "columns": ["tenant_id", "athlete_id", "checked_in_at"],
+        "name": "session_attendance_athlete_history_idx"
+      },
       { "columns": ["tenant_id", "session_id", "status"], "name": "session_attendance_status_idx" },
-      { "columns": ["tenant_id", "athlete_enrollment_id"], "name": "session_attendance_enrollment_idx", "predicate": "athlete_enrollment_id IS NOT NULL" }
+      {
+        "columns": ["tenant_id", "athlete_enrollment_id"],
+        "name": "session_attendance_enrollment_idx",
+        "predicate": "athlete_enrollment_id IS NOT NULL"
+      }
     ]
   },
-  "required": [
-    "id",
-    "tenant_id",
-    "session_id",
-    "athlete_id",
-    "status",
-    "created_at",
-    "updated_at"
-  ],
+  "required": ["id", "tenant_id", "session_id", "athlete_id", "status", "created_at", "updated_at"],
   "properties": {
     "id": { "type": "string", "pattern": "^sat_[0-9A-HJKMNP-TV-Z]{26}$" },
     "tenant_id": { "type": "string", "pattern": "^ten_[0-9A-HJKMNP-TV-Z]{26}$" },
     "session_id": { "type": "string", "pattern": "^ses_[0-9A-HJKMNP-TV-Z]{26}$" },
     "athlete_id": { "type": "string", "pattern": "^ath_[0-9A-HJKMNP-TV-Z]{26}$" },
-    "athlete_enrollment_id": { "type": ["string", "null"], "pattern": "^aen_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "athlete_enrollment_id": {
+      "type": ["string", "null"],
+      "pattern": "^aen_[0-9A-HJKMNP-TV-Z]{26}$"
+    },
     "status": {
       "type": "string",
       "enum": ["registered", "checked_in", "absent", "late", "excused"]

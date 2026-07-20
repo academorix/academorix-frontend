@@ -8,7 +8,7 @@
  *   loads (CDNs, analytics, payment iframes, API + realtime endpoints).
  */
 
-import type { CspModuleOptions } from '@stackra/csp';
+import type { CspModuleOptions } from "@stackra/csp";
 
 /**
  * CSP module configuration.
@@ -40,7 +40,7 @@ export const cspConfig: CspModuleOptions = {
   | Image Sources
   |--------------------------------------------------------------------------
   */
-  imgSrc: ["'self'", 'data:', 'blob:'],
+  imgSrc: ["'self'", "data:", "blob:"],
 
   /*
   |--------------------------------------------------------------------------

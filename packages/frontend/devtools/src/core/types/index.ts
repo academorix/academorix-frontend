@@ -5,4 +5,4 @@
  *   devtools core.
  */
 
-export type { DevtoolsShellPosition } from './devtools-shell-position.type';
+export type { DevtoolsShellPosition } from "./devtools-shell-position.type";

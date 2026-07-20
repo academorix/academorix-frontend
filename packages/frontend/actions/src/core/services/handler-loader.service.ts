@@ -6,22 +6,22 @@
  *   classes and registers each with the {@link ActionRegistry}.
  */
 
-import { Inject, Injectable, Optional } from '@stackra/container';
+import { Inject, Injectable, Optional } from "@stackra/container";
 import type {
   IActionDispatcher,
   IActionHandler,
   IDiscoveryService,
   ILoggerManager,
   OnApplicationBootstrap,
-} from '@stackra/contracts';
+} from "@stackra/contracts";
 import {
   ACTION_DISPATCHER,
   ACTION_HANDLER_METADATA,
   DISCOVERY_SERVICE,
   LOGGER_MANAGER,
-} from '@stackra/contracts';
+} from "@stackra/contracts";
 
-import { ActionRegistry } from '../registries/action.registry';
+import { ActionRegistry } from "../registries/action.registry";
 
 /**
  * Scans the container at bootstrap for decorated handlers and registers
@@ -40,7 +40,7 @@ export class HandlerLoader implements OnApplicationBootstrap {
     private readonly registry: ActionRegistry,
     @Inject(ACTION_DISPATCHER) private readonly dispatcher: IActionDispatcher,
     @Optional() @Inject(DISCOVERY_SERVICE) private readonly discovery?: IDiscoveryService,
-    @Optional() @Inject(LOGGER_MANAGER) private readonly logger?: ILoggerManager
+    @Optional() @Inject(LOGGER_MANAGER) private readonly logger?: ILoggerManager,
   ) {}
 
   public onApplicationBootstrap(): void {
@@ -57,7 +57,7 @@ export class HandlerLoader implements OnApplicationBootstrap {
       // helps debugging when two `@ActionHandler(kind)` classes clash.
       if (this.registry.has(kind)) {
         this.logger
-          ?.channel('actions', 'discovery')
+          ?.channel("actions", "discovery")
           .warn(`[actions] @ActionHandler collision on kind "${kind}" — last-discovered wins.`);
       }
       // Route through the dispatcher (not `registry.register(...)`) so

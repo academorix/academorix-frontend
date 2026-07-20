@@ -5,15 +5,15 @@
  *   the response to a state store.
  */
 
-import { Inject, Injectable } from '@stackra/container';
+import { Inject, Injectable } from "@stackra/container";
 import type {
   IActionContext,
   IActionHandler,
   IActionResponse,
   IHttpManager,
   IMutateAction,
-} from '@stackra/contracts';
-import { ActionKind, HTTP_MANAGER } from '@stackra/contracts';
+} from "@stackra/contracts";
+import { ActionKind, HTTP_MANAGER } from "@stackra/contracts";
 
 /**
  * `MutateHandler` — dispatch handler for `ActionKind.Mutate`.
@@ -30,11 +30,11 @@ export class MutateHandler implements IActionHandler<IMutateAction> {
 
   public async execute(
     descriptor: IMutateAction,
-    context: IActionContext
+    context: IActionContext,
   ): Promise<IActionResponse> {
-    if (context.signal?.aborted) return { success: false, message: 'Aborted' };
+    if (context.signal?.aborted) return { success: false, message: "Aborted" };
     if (!descriptor.endpoint) {
-      return { success: false, message: 'MutateAction requires an endpoint' };
+      return { success: false, message: "MutateAction requires an endpoint" };
     }
 
     const connectionName = (context.metadata?.connectionName as string | undefined) ?? undefined;
@@ -44,21 +44,21 @@ export class MutateHandler implements IActionHandler<IMutateAction> {
     } catch (err) {
       return {
         success: false,
-        message: err instanceof Error ? err.message : 'HTTP connection unavailable',
+        message: err instanceof Error ? err.message : "HTTP connection unavailable",
       };
     }
 
     try {
       const response = await client.request({
         url: descriptor.endpoint,
-        method: descriptor.method ?? 'POST',
+        method: descriptor.method ?? "POST",
         data: descriptor.body,
         params: descriptor.params,
         signal: context.signal,
       });
       return { success: true, data: response.data };
     } catch (err) {
-      const message = err instanceof Error ? err.message : 'Mutation failed';
+      const message = err instanceof Error ? err.message : "Mutation failed";
       const errors = extractFieldErrors(err);
       return errors ? { success: false, message, errors } : { success: false, message };
     }
@@ -70,10 +70,10 @@ export class MutateHandler implements IActionHandler<IMutateAction> {
  * the transport surfaces them via `err.errors` or `err.response.data.errors`.
  */
 function extractFieldErrors(err: unknown): Record<string, string[]> | undefined {
-  if (err == null || typeof err !== 'object') return undefined;
+  if (err == null || typeof err !== "object") return undefined;
   const direct = (err as { errors?: unknown }).errors;
-  if (direct && typeof direct === 'object') return direct as Record<string, string[]>;
+  if (direct && typeof direct === "object") return direct as Record<string, string[]>;
   const nested = (err as { response?: { data?: { errors?: unknown } } }).response?.data?.errors;
-  if (nested && typeof nested === 'object') return nested as Record<string, string[]>;
+  if (nested && typeof nested === "object") return nested as Record<string, string[]>;
   return undefined;
 }

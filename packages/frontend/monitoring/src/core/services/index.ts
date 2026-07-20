@@ -3,5 +3,5 @@
  * @module @stackra/monitoring/core/services
  */
 
-export { MonitoringManager } from './monitoring-manager.service';
-export { MonitoringProviderLoader } from './monitoring-provider-loader.service';
+export { MonitoringManager } from "./monitoring-manager.service";
+export { MonitoringProviderLoader } from "./monitoring-provider-loader.service";

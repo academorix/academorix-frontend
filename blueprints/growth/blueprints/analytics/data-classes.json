@@ -72,9 +72,7 @@
       "AnalyticsDelivery.error_message",
       "AnalyticsIdentity.device_fingerprint_hash"
     ],
-    "restricted": [
-      "AnalyticsProviderConfig.config"
-    ],
+    "restricted": ["AnalyticsProviderConfig.config"],
     "regulated_minor": [],
     "regulated_health": [],
     "regulated_financial": [],

@@ -62,7 +62,10 @@
       "min_tier": "small",
       "is_customisable": true,
       "max_custom_permissions": 30,
-      "label_i18n": { "en": "Head Coach", "ar": "\u0627\u0644\u0645\u062f\u0631\u0628 \u0627\u0644\u0631\u0626\u064a\u0633\u064a" },
+      "label_i18n": {
+        "en": "Head Coach",
+        "ar": "\u0627\u0644\u0645\u062f\u0631\u0628 \u0627\u0644\u0631\u0626\u064a\u0633\u064a"
+      },
       "description_i18n": {
         "en": "Senior coach with cross-branch oversight. Manages coaches + programme design.",
         "ar": "\u0645\u062f\u0631\u0628 \u0631\u0626\u064a\u0633\u064a \u0645\u0639 \u0625\u0634\u0631\u0627\u0641 \u0645\u062a\u0639\u062f\u062f \u0627\u0644\u0641\u0631\u0648\u0639."
@@ -119,7 +122,10 @@
       "min_tier": "small",
       "is_customisable": true,
       "max_custom_permissions": 15,
-      "label_i18n": { "en": "Reception", "ar": "\u0627\u0644\u0627\u0633\u062a\u0642\u0628\u0627\u0644" },
+      "label_i18n": {
+        "en": "Reception",
+        "ar": "\u0627\u0644\u0627\u0633\u062a\u0642\u0628\u0627\u0644"
+      },
       "description_i18n": {
         "en": "Front-desk staff. Registers athletes, takes payments, schedules sessions.",
         "ar": "\u0645\u0648\u0638\u0641 \u0627\u0644\u0627\u0633\u062a\u0642\u0628\u0627\u0644."
@@ -147,7 +153,10 @@
       "min_tier": "medium",
       "is_customisable": false,
       "max_custom_permissions": 0,
-      "label_i18n": { "en": "Medical Staff", "ar": "\u0627\u0644\u0637\u0627\u0642\u0645 \u0627\u0644\u0637\u0628\u064a" },
+      "label_i18n": {
+        "en": "Medical Staff",
+        "ar": "\u0627\u0644\u0637\u0627\u0642\u0645 \u0627\u0644\u0637\u0628\u064a"
+      },
       "description_i18n": {
         "en": "Medical staff \u2014 physio, doctor. Access to injury records + medical notes.",
         "ar": "\u0637\u0627\u0642\u0645 \u0637\u0628\u064a."
@@ -264,7 +273,10 @@
       "min_tier": "small",
       "is_customisable": true,
       "max_custom_permissions": 40,
-      "label_i18n": { "en": "Principal", "ar": "\u0645\u062f\u064a\u0631 \u0627\u0644\u0645\u062f\u0631\u0633\u0629" },
+      "label_i18n": {
+        "en": "Principal",
+        "ar": "\u0645\u062f\u064a\u0631 \u0627\u0644\u0645\u062f\u0631\u0633\u0629"
+      },
       "description_i18n": {
         "en": "School principal \u2014 senior academic leadership.",
         "ar": "\u0645\u062f\u064a\u0631 \u0627\u0644\u0645\u062f\u0631\u0633\u0629."
@@ -333,7 +345,10 @@
       "min_tier": "medium",
       "is_customisable": true,
       "max_custom_permissions": 30,
-      "label_i18n": { "en": "Federation Officer", "ar": "\u0645\u0633\u0624\u0648\u0644 \u0627\u062a\u062d\u0627\u062f\u064a" },
+      "label_i18n": {
+        "en": "Federation Officer",
+        "ar": "\u0645\u0633\u0624\u0648\u0644 \u0627\u062a\u062d\u0627\u062f\u064a"
+      },
       "description_i18n": {
         "en": "Federation staff \u2014 manages events, competitions, member clubs.",
         "ar": "\u0645\u0648\u0638\u0641 \u0627\u062a\u062d\u0627\u062f\u064a."
@@ -377,7 +392,10 @@
       "min_tier": "small",
       "is_customisable": false,
       "max_custom_permissions": 0,
-      "label_i18n": { "en": "Super Admin", "ar": "\u0645\u062f\u064a\u0631 \u0631\u0626\u064a\u0633\u064a" },
+      "label_i18n": {
+        "en": "Super Admin",
+        "ar": "\u0645\u062f\u064a\u0631 \u0631\u0626\u064a\u0633\u064a"
+      },
       "description_i18n": {
         "en": "Academorix super-admin. Cross-tenant, cross-Application. Gate::before bypass.",
         "ar": "\u0645\u062f\u064a\u0631 \u0631\u0626\u064a\u0633\u064a \u0644\u0644\u0645\u0646\u0635\u0629."
@@ -445,7 +463,10 @@
       "min_tier": "small",
       "is_customisable": true,
       "max_custom_permissions": 20,
-      "label_i18n": { "en": "Compliance", "ar": "\u0627\u0644\u0625\u0645\u062a\u062b\u0627\u0644" },
+      "label_i18n": {
+        "en": "Compliance",
+        "ar": "\u0627\u0644\u0625\u0645\u062a\u062b\u0627\u0644"
+      },
       "description_i18n": {
         "en": "Compliance + privacy officer.",
         "ar": "\u0645\u0633\u0624\u0648\u0644 \u0627\u0644\u0625\u0645\u062a\u062b\u0627\u0644."
@@ -465,7 +486,10 @@
       "min_tier": "small",
       "is_customisable": true,
       "max_custom_permissions": 30,
-      "label_i18n": { "en": "Product", "ar": "\u0641\u0631\u064a\u0642 \u0627\u0644\u0645\u0646\u062a\u062c" },
+      "label_i18n": {
+        "en": "Product",
+        "ar": "\u0641\u0631\u064a\u0642 \u0627\u0644\u0645\u0646\u062a\u062c"
+      },
       "description_i18n": {
         "en": "Product team \u2014 role catalogue + role_definitions management.",
         "ar": "\u0641\u0631\u064a\u0642 \u0627\u0644\u0645\u0646\u062a\u062c."
@@ -490,7 +514,10 @@
       "min_tier": "small",
       "is_customisable": true,
       "max_custom_permissions": 20,
-      "label_i18n": { "en": "Ops", "ar": "\u0641\u0631\u064a\u0642 \u0627\u0644\u062a\u0634\u063a\u064a\u0644" },
+      "label_i18n": {
+        "en": "Ops",
+        "ar": "\u0641\u0631\u064a\u0642 \u0627\u0644\u062a\u0634\u063a\u064a\u0644"
+      },
       "description_i18n": {
         "en": "Platform operations \u2014 read-only observability + support tools.",
         "ar": "\u0641\u0631\u064a\u0642 \u0627\u0644\u062a\u0634\u063a\u064a\u0644."

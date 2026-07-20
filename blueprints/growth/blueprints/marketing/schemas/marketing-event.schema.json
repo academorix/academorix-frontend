@@ -161,8 +161,14 @@
         "predicate": "deleted_at IS NULL"
       },
       { "columns": ["tenant_id", "event_type", "created_at"], "name": "marketing_events_type_idx" },
-      { "columns": ["tenant_id", "status", "last_dispatched_at"], "name": "marketing_events_status_idx" },
-      { "columns": ["tenant_id", "subject_type", "subject_id"], "name": "marketing_events_subject_idx" },
+      {
+        "columns": ["tenant_id", "status", "last_dispatched_at"],
+        "name": "marketing_events_status_idx"
+      },
+      {
+        "columns": ["tenant_id", "subject_type", "subject_id"],
+        "name": "marketing_events_subject_idx"
+      },
       { "columns": ["tenant_id", "created_at"], "name": "marketing_events_recent_idx" }
     ]
   },
@@ -225,14 +231,27 @@
     "metadata": { "type": ["object", "null"] },
     "status": {
       "type": "string",
-      "enum": ["pending", "dispatching", "delivered", "partially_delivered", "failed", "suppressed_by_consent", "superseded"]
+      "enum": [
+        "pending",
+        "dispatching",
+        "delivered",
+        "partially_delivered",
+        "failed",
+        "suppressed_by_consent",
+        "superseded"
+      ]
     },
     "retry_count": { "type": "integer", "minimum": 0 },
     "first_dispatched_at": { "type": ["string", "null"], "format": "date-time" },
     "last_dispatched_at": { "type": ["string", "null"], "format": "date-time" },
     "eligible_provider_count": { "type": "integer", "minimum": 0 },
     "delivered_provider_count": { "type": "integer", "minimum": 0 },
-    "deduplication_key": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[A-Za-z0-9_:.-]+$" },
+    "deduplication_key": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128,
+      "pattern": "^[A-Za-z0-9_:.-]+$"
+    },
     "created_at": { "type": "string", "format": "date-time" },
     "updated_at": { "type": "string", "format": "date-time" }
   },

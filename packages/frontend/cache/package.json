@@ -1,7 +1,7 @@
 {
   "name": "@stackra/cache",
   "version": "0.1.0",
-  "description": "Client-side cache for the Stackra framework — pluggable stores, tags, TTLs, and React bindings.",
+  "description": "Client-side cache for the Stackra framework \u2014 pluggable stores, tags, TTLs, and React bindings.",
   "license": "MIT",
   "author": {
     "name": "Stackra L.L.C",
@@ -100,6 +100,8 @@
     }
   },
   "devDependencies": {
+    "@academorix/config-tsconfig": "workspace:*",
+    "@academorix/config-tsup": "workspace:*",
     "@heroicons/react": "catalog:",
     "@stackra/config": "workspace:*",
     "@stackra/container": "workspace:*",

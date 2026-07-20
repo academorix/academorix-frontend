@@ -4,7 +4,4 @@
  * @description Barrel export for ThemeScript component.
  */
 
-export {
-  ThemeScript,
-  type ThemeScriptProps,
-} from './theme-script.component';
+export { ThemeScript, type ThemeScriptProps } from "./theme-script.component";

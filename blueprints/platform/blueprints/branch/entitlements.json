@@ -29,7 +29,11 @@
       "key": "branch_amenities",
       "kind": "enum",
       "values": ["catalog_only", "custom"],
-      "defaultsByPlan": { "small": "catalog_only", "medium": "catalog_only", "enterprise": "custom" },
+      "defaultsByPlan": {
+        "small": "catalog_only",
+        "medium": "catalog_only",
+        "enterprise": "custom"
+      },
       "description": "Governs which amenity tags a tenant may set. `catalog_only` = the platform catalogue in `data/amenity-catalog.json` is the sole source of truth. `custom` = tenant may add tags outside the catalogue (Enterprise). Custom tags are still per-tenant scoped — they do NOT pollute the platform catalogue."
     },
     {

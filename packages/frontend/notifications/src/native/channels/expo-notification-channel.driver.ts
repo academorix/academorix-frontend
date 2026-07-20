@@ -10,9 +10,9 @@
  *   when the peer isn't installed.
  */
 
-import { Injectable } from '@stackra/container';
+import { Injectable } from "@stackra/container";
 
-import type { INotificationChannelDriver, INotificationPayload } from '@/core/interfaces';
+import type { INotificationChannelDriver, INotificationPayload } from "@/core/interfaces";
 
 /**
  * Minimal shape of the `expo-notifications` module the driver reads.
@@ -36,10 +36,10 @@ interface IExpoScheduleModule {
  */
 async function loadExpoNotifications(): Promise<IExpoScheduleModule | null> {
   try {
-    const moduleName = 'expo-notifications';
+    const moduleName = "expo-notifications";
     const mod = (await import(/* @vite-ignore */ moduleName)) as
       { default?: IExpoScheduleModule } | IExpoScheduleModule;
-    return 'default' in mod && mod.default ? mod.default : (mod as IExpoScheduleModule);
+    return "default" in mod && mod.default ? mod.default : (mod as IExpoScheduleModule);
   } catch {
     return null;
   }
@@ -52,7 +52,7 @@ async function loadExpoNotifications(): Promise<IExpoScheduleModule | null> {
 export class ExpoNotificationChannelDriver implements INotificationChannelDriver {
   /** Channel id — mirrors the web driver so cross-platform dispatch is */
   /** channel-agnostic (`channels: ['in-app', 'os-notification']`). */
-  public readonly id = 'os-notification';
+  public readonly id = "os-notification";
 
   /**
    * Test hook — override the module loader with a mock.

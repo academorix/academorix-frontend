@@ -4,43 +4,336 @@
   "title": "attendance — error codes",
   "namespace": "attendance",
   "errors": [
-    { "code": "ATTENDANCE_NOT_FOUND", "http": 404, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "attendance.errors.attendance_not_found" },
-    { "code": "ATTENDANCE_CAPTURE_NOT_ENTITLED", "http": 402, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "attendance.errors.capture_not_entitled", "description": "Tenant does not carry the attendance_capture entitlement. Support may have paused it during an incident." },
-    { "code": "ATTENDANCE_SELF_KIOSK_NOT_ENTITLED", "http": 402, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "attendance.errors.self_kiosk_not_entitled" },
-    { "code": "ATTENDANCE_GEOFENCE_NOT_ENTITLED", "http": 402, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "attendance.errors.geofence_not_entitled", "description": "Geofence-verified check-ins require Medium+ tier." },
-    { "code": "ATTENDANCE_QR_SCAN_NOT_ENTITLED", "http": 402, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "attendance.errors.qr_scan_not_entitled" },
-    { "code": "ATTENDANCE_ADVANCED_POLICIES_NOT_ENTITLED", "http": 402, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "attendance.errors.advanced_policies_not_entitled", "description": "Per-plan attendance policies require Medium+ tier." },
-    { "code": "ATTENDANCE_ENROLLMENT_MISMATCH", "http": 422, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "attendance.errors.enrollment_mismatch", "description": "The athlete's enrollment does not match the session's team + season." },
-    { "code": "ATTENDANCE_ENROLLMENT_INACTIVE", "http": 422, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "attendance.errors.enrollment_inactive", "description": "The athlete's enrollment is not active or confirmed. Cannot record attendance." },
-    { "code": "ATTENDANCE_SESSION_NOT_ATTENDABLE", "http": 422, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "attendance.errors.session_not_attendable", "description": "The session is not in a status that accepts new attendance (cancelled / archived)." },
-    { "code": "ATTENDANCE_POST_SESSION_WINDOW_CLOSED", "http": 422, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "attendance.errors.post_session_window_closed", "description": "Attendance corrections are not allowed more than 48 hours after the session ended. Contact an admin for post-window corrections." },
-    { "code": "ATTENDANCE_DUPLICATE", "http": 409, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "attendance.errors.attendance_duplicate", "description": "This athlete already has an attendance record for this session." },
-    { "code": "ATTENDANCE_ABSENCE_ALREADY_RECORDED", "http": 409, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "attendance.errors.absence_already_recorded", "description": "An absence record already exists for this athlete + session. Cannot co-exist with an attendance record." },
-    { "code": "ATTENDANCE_NO_ACTIVE_PASS", "http": 409, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "attendance.errors.no_active_pass", "description": "This session requires an active pass. The athlete does not have an unconsumed pass in the current membership period." },
-    { "code": "ATTENDANCE_PASS_ALREADY_CONSUMED", "http": 409, "retryable": true, "user_facing": true, "audit_severity": "warn", "i18n_key": "attendance.errors.pass_already_consumed", "description": "Race condition — the pass was consumed by a concurrent check-in. Retry the operation." },
-    { "code": "ATTENDANCE_FINGERPRINT_REQUIRED", "http": 422, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "attendance.errors.fingerprint_required", "description": "Self-kiosk and QR-scan check-ins require a device_fingerprint_hash for fraud correlation." },
-    { "code": "ATTENDANCE_GPS_REQUIRED", "http": 422, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "attendance.errors.gps_required", "description": "Geofence-verified check-ins require gps_lat + gps_lng." },
-    { "code": "ATTENDANCE_GEOFENCE_MISMATCH", "http": 422, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "attendance.errors.geofence_mismatch", "description": "GPS coordinates are outside the session's venue geofence radius." },
-    { "code": "ATTENDANCE_MINOR_CONSENT_MISSING", "http": 422, "retryable": false, "user_facing": true, "audit_severity": "warn", "i18n_key": "attendance.errors.minor_consent_missing", "description": "The athlete is a minor and guardian consent for device_fingerprint or GPS capture has not been recorded. Record consent first." },
-    { "code": "ATTENDANCE_TENANT_ID_IMMUTABLE", "http": 422, "retryable": false, "user_facing": true, "audit_severity": "warn", "i18n_key": "attendance.errors.tenant_id_immutable" },
-    { "code": "ATTENDANCE_SESSION_ID_IMMUTABLE", "http": 422, "retryable": false, "user_facing": true, "audit_severity": "warn", "i18n_key": "attendance.errors.session_id_immutable" },
-    { "code": "ATTENDANCE_ATHLETE_ID_IMMUTABLE", "http": 422, "retryable": false, "user_facing": true, "audit_severity": "warn", "i18n_key": "attendance.errors.athlete_id_immutable" },
-    { "code": "ATTENDANCE_ALREADY_CHECKED_OUT", "http": 409, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "attendance.errors.already_checked_out" },
-    { "code": "ATTENDANCE_RATE_LIMITED", "http": 429, "retryable": true, "user_facing": true, "audit_severity": "info", "i18n_key": "attendance.errors.rate_limited", "description": "Too many check-in attempts from this source in a short window. Try again in a minute." },
-    { "code": "ATTENDANCE_POLICY_NOT_FOUND", "http": 404, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "attendance.errors.policy_not_found" },
-    { "code": "ATTENDANCE_POLICY_GRACE_EXCEEDS_LATE", "http": 422, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "attendance.errors.policy_grace_exceeds_late", "description": "grace_period_minutes must be strictly less than late_after_minutes." },
-    { "code": "ATTENDANCE_POLICY_CURRENCY_REQUIRED", "http": 422, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "attendance.errors.policy_currency_required", "description": "no_show_fee_currency is required when no_show_fee_cents > 0." },
-    { "code": "ATTENDANCE_POLICY_MAX_ABSENCES_INVALID", "http": 422, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "attendance.errors.policy_max_absences_invalid", "description": "max_unexcused_absences_per_period must be between 1 and 100." },
-    { "code": "ATTENDANCE_POLICY_FREEZE_WINDOW_INVALID", "http": 422, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "attendance.errors.policy_freeze_window_invalid", "description": "absence_freeze_period_days must be between 7 and 365." },
-    { "code": "ATTENDANCE_POLICY_DUPLICATE_ACTIVE", "http": 409, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "attendance.errors.policy_duplicate_active", "description": "An active policy already exists at this (branch_id, membership_plan_id) specificity. Deactivate the existing one first." },
-    { "code": "ATTENDANCE_POLICY_ACTIVE_CANNOT_DELETE", "http": 422, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "attendance.errors.policy_active_cannot_delete", "description": "Cannot delete an active policy. Deactivate it first." },
-    { "code": "ABSENCE_NOT_FOUND", "http": 404, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "attendance.errors.absence_not_found" },
-    { "code": "ABSENCE_ENROLLMENT_MISMATCH", "http": 422, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "attendance.errors.absence_enrollment_mismatch" },
-    { "code": "ABSENCE_ATTENDANCE_ALREADY_RECORDED", "http": 409, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "attendance.errors.absence_attendance_already_recorded", "description": "An attendance record already exists for this athlete + session. Cannot record an absence." },
-    { "code": "ABSENCE_DUPLICATE", "http": 409, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "attendance.errors.absence_duplicate", "description": "This athlete already has an absence record for this session." },
-    { "code": "ABSENCE_EXCUSE_REASON_REQUIRED", "http": 422, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "attendance.errors.absence_excuse_reason_required", "description": "An absence_reason is required to excuse an absence." },
-    { "code": "LATE_ARRIVAL_NOT_APPLICABLE", "http": 422, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "attendance.errors.late_arrival_not_applicable", "description": "LateArrival can only be created for attendance records with status='late' or 'left_early'." },
-    { "code": "LATE_ARRIVAL_MINUTES_INVALID", "http": 422, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "attendance.errors.late_arrival_minutes_invalid" },
-    { "code": "ATTENDANCE_UPGRADE_REQUIRED", "http": 402, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "attendance.errors.upgrade_required", "description": "This feature requires a higher tier. Upgrade your plan to unlock." }
+    {
+      "code": "ATTENDANCE_NOT_FOUND",
+      "http": 404,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "attendance.errors.attendance_not_found"
+    },
+    {
+      "code": "ATTENDANCE_CAPTURE_NOT_ENTITLED",
+      "http": 402,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "attendance.errors.capture_not_entitled",
+      "description": "Tenant does not carry the attendance_capture entitlement. Support may have paused it during an incident."
+    },
+    {
+      "code": "ATTENDANCE_SELF_KIOSK_NOT_ENTITLED",
+      "http": 402,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "attendance.errors.self_kiosk_not_entitled"
+    },
+    {
+      "code": "ATTENDANCE_GEOFENCE_NOT_ENTITLED",
+      "http": 402,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "attendance.errors.geofence_not_entitled",
+      "description": "Geofence-verified check-ins require Medium+ tier."
+    },
+    {
+      "code": "ATTENDANCE_QR_SCAN_NOT_ENTITLED",
+      "http": 402,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "attendance.errors.qr_scan_not_entitled"
+    },
+    {
+      "code": "ATTENDANCE_ADVANCED_POLICIES_NOT_ENTITLED",
+      "http": 402,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "attendance.errors.advanced_policies_not_entitled",
+      "description": "Per-plan attendance policies require Medium+ tier."
+    },
+    {
+      "code": "ATTENDANCE_ENROLLMENT_MISMATCH",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "attendance.errors.enrollment_mismatch",
+      "description": "The athlete's enrollment does not match the session's team + season."
+    },
+    {
+      "code": "ATTENDANCE_ENROLLMENT_INACTIVE",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "attendance.errors.enrollment_inactive",
+      "description": "The athlete's enrollment is not active or confirmed. Cannot record attendance."
+    },
+    {
+      "code": "ATTENDANCE_SESSION_NOT_ATTENDABLE",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "attendance.errors.session_not_attendable",
+      "description": "The session is not in a status that accepts new attendance (cancelled / archived)."
+    },
+    {
+      "code": "ATTENDANCE_POST_SESSION_WINDOW_CLOSED",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "attendance.errors.post_session_window_closed",
+      "description": "Attendance corrections are not allowed more than 48 hours after the session ended. Contact an admin for post-window corrections."
+    },
+    {
+      "code": "ATTENDANCE_DUPLICATE",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "attendance.errors.attendance_duplicate",
+      "description": "This athlete already has an attendance record for this session."
+    },
+    {
+      "code": "ATTENDANCE_ABSENCE_ALREADY_RECORDED",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "attendance.errors.absence_already_recorded",
+      "description": "An absence record already exists for this athlete + session. Cannot co-exist with an attendance record."
+    },
+    {
+      "code": "ATTENDANCE_NO_ACTIVE_PASS",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "attendance.errors.no_active_pass",
+      "description": "This session requires an active pass. The athlete does not have an unconsumed pass in the current membership period."
+    },
+    {
+      "code": "ATTENDANCE_PASS_ALREADY_CONSUMED",
+      "http": 409,
+      "retryable": true,
+      "user_facing": true,
+      "audit_severity": "warn",
+      "i18n_key": "attendance.errors.pass_already_consumed",
+      "description": "Race condition — the pass was consumed by a concurrent check-in. Retry the operation."
+    },
+    {
+      "code": "ATTENDANCE_FINGERPRINT_REQUIRED",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "attendance.errors.fingerprint_required",
+      "description": "Self-kiosk and QR-scan check-ins require a device_fingerprint_hash for fraud correlation."
+    },
+    {
+      "code": "ATTENDANCE_GPS_REQUIRED",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "attendance.errors.gps_required",
+      "description": "Geofence-verified check-ins require gps_lat + gps_lng."
+    },
+    {
+      "code": "ATTENDANCE_GEOFENCE_MISMATCH",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "attendance.errors.geofence_mismatch",
+      "description": "GPS coordinates are outside the session's venue geofence radius."
+    },
+    {
+      "code": "ATTENDANCE_MINOR_CONSENT_MISSING",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "warn",
+      "i18n_key": "attendance.errors.minor_consent_missing",
+      "description": "The athlete is a minor and guardian consent for device_fingerprint or GPS capture has not been recorded. Record consent first."
+    },
+    {
+      "code": "ATTENDANCE_TENANT_ID_IMMUTABLE",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "warn",
+      "i18n_key": "attendance.errors.tenant_id_immutable"
+    },
+    {
+      "code": "ATTENDANCE_SESSION_ID_IMMUTABLE",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "warn",
+      "i18n_key": "attendance.errors.session_id_immutable"
+    },
+    {
+      "code": "ATTENDANCE_ATHLETE_ID_IMMUTABLE",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "warn",
+      "i18n_key": "attendance.errors.athlete_id_immutable"
+    },
+    {
+      "code": "ATTENDANCE_ALREADY_CHECKED_OUT",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "attendance.errors.already_checked_out"
+    },
+    {
+      "code": "ATTENDANCE_RATE_LIMITED",
+      "http": 429,
+      "retryable": true,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "attendance.errors.rate_limited",
+      "description": "Too many check-in attempts from this source in a short window. Try again in a minute."
+    },
+    {
+      "code": "ATTENDANCE_POLICY_NOT_FOUND",
+      "http": 404,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "attendance.errors.policy_not_found"
+    },
+    {
+      "code": "ATTENDANCE_POLICY_GRACE_EXCEEDS_LATE",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "attendance.errors.policy_grace_exceeds_late",
+      "description": "grace_period_minutes must be strictly less than late_after_minutes."
+    },
+    {
+      "code": "ATTENDANCE_POLICY_CURRENCY_REQUIRED",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "attendance.errors.policy_currency_required",
+      "description": "no_show_fee_currency is required when no_show_fee_cents > 0."
+    },
+    {
+      "code": "ATTENDANCE_POLICY_MAX_ABSENCES_INVALID",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "attendance.errors.policy_max_absences_invalid",
+      "description": "max_unexcused_absences_per_period must be between 1 and 100."
+    },
+    {
+      "code": "ATTENDANCE_POLICY_FREEZE_WINDOW_INVALID",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "attendance.errors.policy_freeze_window_invalid",
+      "description": "absence_freeze_period_days must be between 7 and 365."
+    },
+    {
+      "code": "ATTENDANCE_POLICY_DUPLICATE_ACTIVE",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "attendance.errors.policy_duplicate_active",
+      "description": "An active policy already exists at this (branch_id, membership_plan_id) specificity. Deactivate the existing one first."
+    },
+    {
+      "code": "ATTENDANCE_POLICY_ACTIVE_CANNOT_DELETE",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "attendance.errors.policy_active_cannot_delete",
+      "description": "Cannot delete an active policy. Deactivate it first."
+    },
+    {
+      "code": "ABSENCE_NOT_FOUND",
+      "http": 404,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "attendance.errors.absence_not_found"
+    },
+    {
+      "code": "ABSENCE_ENROLLMENT_MISMATCH",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "attendance.errors.absence_enrollment_mismatch"
+    },
+    {
+      "code": "ABSENCE_ATTENDANCE_ALREADY_RECORDED",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "attendance.errors.absence_attendance_already_recorded",
+      "description": "An attendance record already exists for this athlete + session. Cannot record an absence."
+    },
+    {
+      "code": "ABSENCE_DUPLICATE",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "attendance.errors.absence_duplicate",
+      "description": "This athlete already has an absence record for this session."
+    },
+    {
+      "code": "ABSENCE_EXCUSE_REASON_REQUIRED",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "attendance.errors.absence_excuse_reason_required",
+      "description": "An absence_reason is required to excuse an absence."
+    },
+    {
+      "code": "LATE_ARRIVAL_NOT_APPLICABLE",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "attendance.errors.late_arrival_not_applicable",
+      "description": "LateArrival can only be created for attendance records with status='late' or 'left_early'."
+    },
+    {
+      "code": "LATE_ARRIVAL_MINUTES_INVALID",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "attendance.errors.late_arrival_minutes_invalid"
+    },
+    {
+      "code": "ATTENDANCE_UPGRADE_REQUIRED",
+      "http": 402,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "attendance.errors.upgrade_required",
+      "description": "This feature requires a higher tier. Upgrade your plan to unlock."
+    }
   ]
 }

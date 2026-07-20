@@ -6,7 +6,7 @@
  *   checking.
  */
 
-import type { ISyncModuleOptions } from '@stackra/contracts';
+import type { ISyncModuleOptions } from "@stackra/contracts";
 
 /**
  * Authoring helper for sync configuration.

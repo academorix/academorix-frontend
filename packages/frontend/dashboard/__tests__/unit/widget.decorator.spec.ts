@@ -73,33 +73,29 @@ describe("@Widget decorator", () => {
     expect(hasWidget(NotAWidget)).toBe(false);
   });
 
-  it.each([
-    ["Kpi-Athletes"],
-    ["kpi_athletes"],
-    ["1kpi"],
-    ["-kpi"],
-    ["kpi--athletes"],
-    [""],
-  ])("throws InvalidWidgetMetadataError on the malformed key '%s'", (badKey) => {
-    // Wrap in a function so the decorator error surfaces via
-    // `.toThrow(...)` rather than at test-collection time.
-    const decorate = () => {
-      @Widget({
-        key: badKey,
-        cohort: "numbers",
-        title: "T",
-        description: "D",
-        icon: "square",
-        span: "third",
-      })
-      class BadWidget extends BaseWidget {
-        public render(): null {
-          return null;
+  it.each([["Kpi-Athletes"], ["kpi_athletes"], ["1kpi"], ["-kpi"], ["kpi--athletes"], [""]])(
+    "throws InvalidWidgetMetadataError on the malformed key '%s'",
+    (badKey) => {
+      // Wrap in a function so the decorator error surfaces via
+      // `.toThrow(...)` rather than at test-collection time.
+      const decorate = () => {
+        @Widget({
+          key: badKey,
+          cohort: "numbers",
+          title: "T",
+          description: "D",
+          icon: "square",
+          span: "third",
+        })
+        class BadWidget extends BaseWidget {
+          public render(): null {
+            return null;
+          }
         }
-      }
-      return BadWidget;
-    };
+        return BadWidget;
+      };
 
-    expect(decorate).toThrow(InvalidWidgetMetadataError);
-  });
+      expect(decorate).toThrow(InvalidWidgetMetadataError);
+    },
+  );
 });

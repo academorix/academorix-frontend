@@ -6,21 +6,21 @@
  *   callback registered per collection).
  */
 
-import { Inject, Injectable, Optional } from '@stackra/container';
+import { Inject, Injectable, Optional } from "@stackra/container";
 import type {
   IConflict,
   IConflictResolution,
   IConflictResolverConfig,
   IConflictResolverFn,
-} from '@stackra/contracts';
-import { CONFLICT_RESOLVER_CONFIG, ConflictStrategy } from '@stackra/contracts';
-import { Logger } from '@stackra/logger';
-import { Str } from '@stackra/support';
+} from "@stackra/contracts";
+import { CONFLICT_RESOLVER_CONFIG, ConflictStrategy } from "@stackra/contracts";
+import { Logger } from "@stackra/logger";
+import { Str } from "@stackra/support";
 
-import { ConflictError } from '../errors/conflict.error';
-import { lastWriteWins } from '../strategies/last-write-wins.strategy';
-import { localWins } from '../strategies/local-wins.strategy';
-import { remoteWins } from '../strategies/remote-wins.strategy';
+import { ConflictError } from "../errors/conflict.error";
+import { lastWriteWins } from "../strategies/last-write-wins.strategy";
+import { localWins } from "../strategies/local-wins.strategy";
+import { remoteWins } from "../strategies/remote-wins.strategy";
 
 /**
  * ConflictResolver — routes a conflict through a strategy and returns
@@ -47,12 +47,12 @@ export class ConflictResolver {
     [ConflictStrategy.RemoteWins]: remoteWins,
     [ConflictStrategy.LocalWins]: localWins,
     [ConflictStrategy.Custom]: () => {
-      throw new Error('Custom strategy requires a registered resolver function');
+      throw new Error("Custom strategy requires a registered resolver function");
     },
   };
 
   public constructor(
-    @Optional() @Inject(CONFLICT_RESOLVER_CONFIG) config: IConflictResolverConfig = {}
+    @Optional() @Inject(CONFLICT_RESOLVER_CONFIG) config: IConflictResolverConfig = {},
   ) {
     this.config = {
       defaultStrategy: config.defaultStrategy ?? ConflictStrategy.LastWriteWins,
@@ -93,27 +93,27 @@ export class ConflictResolver {
 
     try {
       let resolved: T;
-      let winner: 'local' | 'remote' | 'merged';
+      let winner: "local" | "remote" | "merged";
 
       if (this.customResolvers.has(conflict.collection)) {
         const customResolver = this.customResolvers.get(conflict.collection)!;
         resolved = await Promise.resolve(customResolver(conflict) as T);
-        winner = 'merged';
+        winner = "merged";
       } else if (strategy === ConflictStrategy.Custom) {
         throw new ConflictError(
           `Custom strategy specified for collection "${conflict.collection}" but no custom resolver registered`,
-          conflict
+          conflict,
         );
       } else {
         const resolver = this.builtInStrategies[strategy];
         resolved = await Promise.resolve(resolver(conflict) as T);
 
         if (strategy === ConflictStrategy.RemoteWins) {
-          winner = 'remote';
+          winner = "remote";
         } else if (strategy === ConflictStrategy.LocalWins) {
-          winner = 'local';
+          winner = "local";
         } else {
-          winner = conflict.remoteTimestamp > conflict.localTimestamp ? 'remote' : 'local';
+          winner = conflict.remoteTimestamp > conflict.localTimestamp ? "remote" : "local";
         }
       }
 
@@ -125,7 +125,7 @@ export class ConflictResolver {
       };
 
       this.logger.info(
-        `[ConflictResolver] Resolved conflict for ${conflict.collection}:${conflict.id} using ${strategy} (winner: ${winner})`
+        `[ConflictResolver] Resolved conflict for ${conflict.collection}:${conflict.id} using ${strategy} (winner: ${winner})`,
       );
 
       return resolution;
@@ -134,7 +134,7 @@ export class ConflictResolver {
       throw new ConflictError(
         `Failed to resolve conflict for ${conflict.collection}:${conflict.id}: ${error instanceof Error ? error.message : String(error)}`,
         conflict,
-        { originalError: error }
+        { originalError: error },
       );
     }
   }
@@ -148,7 +148,7 @@ export class ConflictResolver {
     local: T,
     remote: T,
     localTimestamp: Date,
-    remoteTimestamp: Date
+    remoteTimestamp: Date,
   ): IConflict<T> | null {
     if (localTimestamp.getTime() === remoteTimestamp.getTime()) return null;
 
@@ -156,7 +156,7 @@ export class ConflictResolver {
     const allKeys = new Set([...Object.keys(local), ...Object.keys(remote)]);
 
     for (const key of allKeys) {
-      if (key === 'id' || key === '_id' || Str.startsWith(key, '_')) continue; // metadata
+      if (key === "id" || key === "_id" || Str.startsWith(key, "_")) continue; // metadata
       if (JSON.stringify(local[key]) !== JSON.stringify(remote[key])) conflictingFields.push(key);
     }
 

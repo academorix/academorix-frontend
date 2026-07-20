@@ -4,7 +4,7 @@
  * @description Props for the native {@link DevtoolsPanelFrame}.
  */
 
-import type { IDevtoolsPanel } from '@stackra/contracts';
+import type { IDevtoolsPanel } from "@stackra/contracts";
 
 /** Props for the native {@link DevtoolsPanelFrame}. */
 export interface DevtoolsPanelFrameProps {

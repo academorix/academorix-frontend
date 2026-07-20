@@ -11,14 +11,14 @@
  *   identically to production.
  */
 
-import { Str } from '@stackra/support';
+import { Str } from "@stackra/support";
 
 import type {
   IInAppNotification,
   IInAppNotificationCentreSnapshot,
   INotificationPayload,
-} from '@/core/interfaces';
-import type { InAppNotificationCentreListener } from '@/core/services';
+} from "@/core/interfaces";
+import type { InAppNotificationCentreListener } from "@/core/services";
 
 /**
  * In-memory in-app notification centre for testing.

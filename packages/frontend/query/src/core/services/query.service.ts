@@ -23,10 +23,10 @@
  *   sibling for non-React contexts.
  */
 
-import { Inject, Injectable, Optional } from '@stackra/container';
-import { Logger } from '@stackra/logger';
-import type { Store } from '@tanstack/store';
-import { QueryClient } from '@tanstack/query-core';
+import { Inject, Injectable, Optional } from "@stackra/container";
+import { Logger } from "@stackra/logger";
+import type { Store } from "@tanstack/store";
+import { QueryClient } from "@tanstack/query-core";
 import {
   EVENT_EMITTER,
   REALTIME_MANAGER,
@@ -41,10 +41,10 @@ import {
   type IUndoableQueue,
   type LiveEventType,
   type MutationMode,
-} from '@stackra/contracts';
+} from "@stackra/contracts";
 
-import { QUERY_CONFIG } from '../tokens/query.tokens';
-import type { QueryModuleOptions } from '../interfaces/query-module-options.interface';
+import { QUERY_CONFIG } from "../tokens/query.tokens";
+import type { QueryModuleOptions } from "../interfaces/query-module-options.interface";
 
 // ══════════════════════════════════════════════════════════════════
 // Types
@@ -110,7 +110,7 @@ export interface QueryServiceSubscribe {
 }
 
 /** Payload accepted by `QueryService.publish`. */
-export type QueryServicePublishEvent = Omit<ILiveEvent, 'date'> & {
+export type QueryServicePublishEvent = Omit<ILiveEvent, "date"> & {
   readonly date?: Date;
 };
 
@@ -171,7 +171,7 @@ export class QueryService implements IQueryClient {
     @Optional() @Inject(UNDOABLE_QUEUE) private readonly undoable?: IUndoableQueue,
     @Optional()
     @Inject(QUERY_CONFIG)
-    private readonly config?: Required<QueryModuleOptions>
+    private readonly config?: Required<QueryModuleOptions>,
   ) {}
 
   // ══════════════════════════════════════════════════════════════
@@ -182,7 +182,7 @@ export class QueryService implements IQueryClient {
   public async fetch<T = unknown>(
     key: readonly unknown[],
     fetcher: () => Promise<T>,
-    options: { readonly staleTime?: number } = {}
+    options: { readonly staleTime?: number } = {},
   ): Promise<T> {
     return this.queryClient.fetchQuery({
       queryKey: key,
@@ -254,7 +254,7 @@ export class QueryService implements IQueryClient {
    *   value, or the raw data cast to `S` when `select` is omitted.
    */
   public async query<S, TData = S>(config: QueryServiceQuery<S, TData>): Promise<S> {
-    const storeName = config.storeName ?? 'unknown';
+    const storeName = config.storeName ?? "unknown";
 
     this.emit(`${storeName}.${STATE_EVENTS.QUERY_STARTED}`, {
       queryKey: config.queryKey,
@@ -265,7 +265,7 @@ export class QueryService implements IQueryClient {
       const raw = await this.fetch<TData>(
         config.queryKey,
         config.fetcher,
-        config.staleTime !== undefined ? { staleTime: config.staleTime } : undefined
+        config.staleTime !== undefined ? { staleTime: config.staleTime } : undefined,
       );
       const state = config.select ? config.select(raw) : (raw as unknown as S);
       if (config.store) {
@@ -302,20 +302,20 @@ export class QueryService implements IQueryClient {
    *   the undoable queue — the rejection reason is `'mutationCancelled'`.
    */
   public async mutate<TData, TVars, TState = unknown>(
-    options: QueryServiceMutation<TData, TVars, TState>
+    options: QueryServiceMutation<TData, TVars, TState>,
   ): Promise<TData> {
     const mode: MutationMode =
-      options.mutationMode ?? this.config?.defaultMutationMode ?? 'pessimistic';
+      options.mutationMode ?? this.config?.defaultMutationMode ?? "pessimistic";
     const timeout: number = options.undoableTimeout ?? this.config?.undoableTimeout ?? 5000;
     const mutId = genMutationId();
 
     // ── Pessimistic — server first, no local write ─────────────
-    if (mode === 'pessimistic') {
+    if (mode === "pessimistic") {
       return options.mutationFn(options.variables);
     }
 
     // ── Optimistic — write locally, roll back on throw ─────────
-    if (mode === 'optimistic') {
+    if (mode === "optimistic") {
       const snapshot = this.applyOptimistic(options);
       if (snapshot) {
         this.emit(`${snapshot.storeName}.${STATE_EVENTS.MUTATE_STARTED}`, {
@@ -361,7 +361,7 @@ export class QueryService implements IQueryClient {
 
     options.onCancel?.(() => this.undoable?.cancel(mutId));
 
-    let resolution: 'commit' | 'cancel';
+    let resolution: "commit" | "cancel";
     try {
       resolution = await this.undoable.add({
         id: mutId,
@@ -375,9 +375,9 @@ export class QueryService implements IQueryClient {
       throw error;
     }
 
-    if (resolution === 'cancel') {
+    if (resolution === "cancel") {
       if (snapshot) this.rollback(snapshot);
-      throw new Error('mutationCancelled');
+      throw new Error("mutationCancelled");
     }
 
     // resolution === 'commit' → fire the server call.
@@ -407,7 +407,7 @@ export class QueryService implements IQueryClient {
       conn = await this.realtime.connection(options.connection);
     } catch (error: unknown) {
       // Fail-soft: driver unavailable → no subscription.
-      this.logger.warn('[QueryService.subscribe] connection failed', {
+      this.logger.warn("[QueryService.subscribe] connection failed", {
         error: error instanceof Error ? error.message : String(error),
       });
       return () => undefined;
@@ -417,7 +417,7 @@ export class QueryService implements IQueryClient {
       ? conn.privateChannel(options.channel)
       : conn.channel(options.channel);
 
-    const effectiveTypes = options.types ?? (['*'] as readonly LiveEventType[]);
+    const effectiveTypes = options.types ?? (["*"] as readonly LiveEventType[]);
     const boundHandlers: Array<{ event: string; handler: (raw: unknown) => void }> = [];
     for (const eventType of effectiveTypes) {
       const handler = (raw: unknown): void => {
@@ -425,7 +425,7 @@ export class QueryService implements IQueryClient {
           channel: options.channel,
           type: eventType,
           payload:
-            raw && typeof raw === 'object' ? (raw as Record<string, unknown>) : { data: raw },
+            raw && typeof raw === "object" ? (raw as Record<string, unknown>) : { data: raw },
           date: new Date(),
         };
         try {
@@ -453,7 +453,7 @@ export class QueryService implements IQueryClient {
    */
   public async publish(
     event: QueryServicePublishEvent,
-    options: QueryServicePublishOptions = {}
+    options: QueryServicePublishOptions = {},
   ): Promise<void> {
     if (!this.realtime) return;
     const conn = await this.realtime.connection(options.connection);
@@ -476,7 +476,7 @@ export class QueryService implements IQueryClient {
    * config was supplied.
    */
   private applyOptimistic<TVars, TState>(
-    options: QueryServiceMutation<unknown, TVars, TState>
+    options: QueryServiceMutation<unknown, TVars, TState>,
   ): { store: Store<TState>; previous: TState; storeName: string } | null {
     const opt = options.optimistic;
     if (!opt) return null;
@@ -486,7 +486,7 @@ export class QueryService implements IQueryClient {
     return {
       store: opt.store,
       previous,
-      storeName: opt.storeName ?? 'unknown',
+      storeName: opt.storeName ?? "unknown",
     };
   }
 
@@ -501,7 +501,7 @@ export class QueryService implements IQueryClient {
     try {
       void this.eventEmitter.emit(name, payload);
     } catch (error: unknown) {
-      this.logger.warn('[QueryService] event emit failed', {
+      this.logger.warn("[QueryService] event emit failed", {
         name,
         error: error instanceof Error ? error.message : String(error),
       });

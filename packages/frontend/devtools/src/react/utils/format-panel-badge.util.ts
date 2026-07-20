@@ -10,7 +10,7 @@
  *   trimming, and null/undefined coercion.
  */
 
-import { Num, Str } from '@stackra/support';
+import { Num, Str } from "@stackra/support";
 
 /**
  * Format a badge value for display in the nav rail.
@@ -19,7 +19,7 @@ import { Num, Str } from '@stackra/support';
  */
 export function formatPanelBadge(raw: string | number | null | undefined): string | null {
   if (raw === null || raw === undefined) return null;
-  if (typeof raw === 'number') {
+  if (typeof raw === "number") {
     // Abbreviate large counts so the chip stays compact — `Num.abbreviate`
     // is the canonical helper per `.kiro/steering/support-utilities.md`.
     return Num.abbreviate(raw);

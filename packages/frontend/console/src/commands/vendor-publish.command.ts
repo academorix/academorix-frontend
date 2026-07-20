@@ -25,11 +25,11 @@
 import { existsSync, promises as fs } from "node:fs";
 import path from "node:path";
 
-import type { IPublishableFile, IPublishableRegistryEntry } from "@stackra/contracts";
-
 import { BaseCommand, Command } from "..";
 import { PublishableRegistry } from "../publishing/registries/publishable.registry";
 import { StubRenderer } from "../services/stub-renderer.service";
+
+import type { IPublishableFile, IPublishableRegistryEntry } from "@stackra/contracts";
 
 /**
  * Result of publishing a single file. Aggregated across every file the

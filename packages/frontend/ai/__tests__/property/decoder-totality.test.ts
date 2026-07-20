@@ -9,24 +9,24 @@
  *   yield a value in the totality domain.
  */
 
-import { describe, it, expect } from 'vitest';
-import { AiStreamEventType } from '@stackra/contracts';
+import { describe, it, expect } from "vitest";
+import { AiStreamEventType } from "@stackra/contracts";
 
-import { StreamDecoder } from '@/core/decoder/stream-decoder';
-import { forAll, type IPrng } from './property-test.helper';
+import { StreamDecoder } from "@/core/decoder/stream-decoder";
+import { forAll, type IPrng } from "./property-test.helper";
 
 const decoder = new StreamDecoder();
 
 const validTypes = [
-  'text-start',
-  'text-delta',
-  'text-end',
-  'tool-call-start',
-  'tool-call-delta',
-  'tool-call-end',
-  'tool-result',
-  'finish',
-  'error',
+  "text-start",
+  "text-delta",
+  "text-end",
+  "tool-call-start",
+  "tool-call-delta",
+  "tool-call-end",
+  "tool-result",
+  "finish",
+  "error",
 ];
 
 const validEventTypes = new Set(Object.values(AiStreamEventType));
@@ -34,7 +34,7 @@ const validEventTypes = new Set(Object.values(AiStreamEventType));
 /** Generate arbitrary garbage strings the decoder must survive. */
 function garbage(r: IPrng): string {
   const len = r.int(0, 64);
-  let out = '';
+  let out = "";
   for (let i = 0; i < len; i++) {
     // Include control chars, quotes, braces — anything that trips JSON.
     out += String.fromCharCode(r.int(1, 128));
@@ -46,23 +46,23 @@ function garbage(r: IPrng): string {
 function validFrame(r: IPrng): string {
   const type = r.pick(validTypes);
   const obj: Record<string, unknown> = { type };
-  if (type.startsWith('text-')) obj.id = 'x';
-  if (type.startsWith('tool-call')) obj.toolCallId = 'c';
-  if (type === 'tool-call-start') obj.toolName = 't';
-  if (type === 'tool-call-delta') obj.argsTextDelta = 'a';
-  if (type === 'tool-call-end') obj.args = {};
-  if (type === 'text-delta') obj.delta = 'd';
-  if (type === 'tool-result') {
-    obj.toolCallId = 'c';
+  if (type.startsWith("text-")) obj.id = "x";
+  if (type.startsWith("tool-call")) obj.toolCallId = "c";
+  if (type === "tool-call-start") obj.toolName = "t";
+  if (type === "tool-call-delta") obj.argsTextDelta = "a";
+  if (type === "tool-call-end") obj.args = {};
+  if (type === "text-delta") obj.delta = "d";
+  if (type === "tool-result") {
+    obj.toolCallId = "c";
     obj.result = null;
     obj.isError = r.bool();
   }
-  if (type === 'finish') {
-    obj.runId = 'r';
-    obj.reason = 'stop';
+  if (type === "finish") {
+    obj.runId = "r";
+    obj.reason = "stop";
   }
-  if (type === 'error') {
-    obj.message = 'm';
+  if (type === "error") {
+    obj.message = "m";
     obj.recoverable = r.bool();
   }
   return JSON.stringify(obj);
@@ -75,22 +75,22 @@ function anyFrame(r: IPrng): string {
     case 0:
       return validFrame(r);
     case 1:
-      return '[DONE]';
+      return "[DONE]";
     case 2:
-      return '';
+      return "";
     case 3:
       return garbage(r);
     case 4:
       // JSON that is not an object — arrays, primitives.
-      return JSON.stringify(r.pick([[1, 2], 42, 'string', null, true]));
+      return JSON.stringify(r.pick([[1, 2], 42, "string", null, true]));
     default:
       // Object without a valid `type`.
-      return JSON.stringify({ id: 'x', something: r.int(0, 100) });
+      return JSON.stringify({ id: "x", something: r.int(0, 100) });
   }
 }
 
-describe('Property 2: decoder totality (Req 4.6 + 4.7)', () => {
-  it('returns an IAiStreamEvent or null for any input, never throws', () => {
+describe("Property 2: decoder totality (Req 4.6 + 4.7)", () => {
+  it("returns an IAiStreamEvent or null for any input, never throws", () => {
     forAll(
       (r) => anyFrame(r),
       (input) => {
@@ -104,15 +104,15 @@ describe('Property 2: decoder totality (Req 4.6 + 4.7)', () => {
         }
         if (result === null) return true;
         // Otherwise the result must be an object with a valid AiStreamEventType.
-        if (!result || typeof result !== 'object') return false;
+        if (!result || typeof result !== "object") return false;
         const record = result as { type: unknown };
         return validEventTypes.has(record.type as AiStreamEventType);
       },
-      { runs: 500 }
+      { runs: 500 },
     );
   });
 
-  it('never throws on the empty string (regression case)', () => {
-    expect(() => decoder.decode('')).not.toThrow();
+  it("never throws on the empty string (regression case)", () => {
+    expect(() => decoder.decode("")).not.toThrow();
   });
 });

@@ -17,33 +17,15 @@
     "pii"
   ],
   "priority": 18,
-  "providers": [
-    "Academorix\\User\\Providers\\UserServiceProvider"
-  ],
+  "providers": ["Academorix\\User\\Providers\\UserServiceProvider"],
   "files": [],
-  "dependencies": [
-    "foundation",
-    "identity",
-    "application",
-    "tenancy"
-  ],
-  "extendedBy": [
-    "auth"
-  ],
+  "dependencies": ["foundation", "identity", "application", "tenancy"],
+  "extendedBy": ["auth"],
   "contributes": {
-    "traits": [
-      "BelongsToUser",
-      "HasProfile",
-      "IsUserOwnable"
-    ],
-    "attributes": [
-      "AsUserListener"
-    ],
+    "traits": ["BelongsToUser", "HasProfile", "IsUserOwnable"],
+    "attributes": ["AsUserListener"],
     "blueprints": [],
-    "middleware": [
-      "user.resolve_active_tenant",
-      "user.enforce_tenant_membership"
-    ],
+    "middleware": ["user.resolve_active_tenant", "user.enforce_tenant_membership"],
     "events": [
       "UserProvisioned",
       "UserActivated",
@@ -59,15 +41,8 @@
       "UserPreferredLocaleChanged",
       "TenantMembershipRoleChanged"
     ],
-    "policies": [
-      "UserPolicy",
-      "ProfilePolicy",
-      "TenantMemberPolicy"
-    ],
-    "hooks": [
-      "TenantMembersOnTenantErased",
-      "SeedOwnerMembershipOnTenantProvisioned"
-    ],
+    "policies": ["UserPolicy", "ProfilePolicy", "TenantMemberPolicy"],
+    "hooks": ["TenantMembersOnTenantErased", "SeedOwnerMembershipOnTenantProvisioned"],
     "commands": [
       "user:list",
       "user:describe",
@@ -96,29 +71,12 @@
       "ProfileUpdatedConfirmationNotification"
     ],
     "broadcasts": [],
-    "observers": [
-      "UserObserver",
-      "ProfileObserver",
-      "TenantMemberObserver"
-    ],
-    "rules": [
-      "valid_e164_phone",
-      "valid_iana_timezone",
-      "valid_bcp47_locale",
-      "age_meets_min"
-    ],
-    "casts": [
-      "E164Phone",
-      "IanaTimezone",
-      "Bcp47Locale"
-    ],
+    "observers": ["UserObserver", "ProfileObserver", "TenantMemberObserver"],
+    "rules": ["valid_e164_phone", "valid_iana_timezone", "valid_bcp47_locale", "age_meets_min"],
+    "casts": ["E164Phone", "IanaTimezone", "Bcp47Locale"],
     "views": [],
-    "lang": [
-      "user"
-    ],
-    "config": [
-      "user"
-    ],
+    "lang": ["user"],
+    "config": ["user"],
     "macros": [],
     "bindings": [
       "UserRepository",
@@ -129,11 +87,7 @@
       "ProfilePiiRedactor",
       "ScopeSuffixResolver"
     ],
-    "resources": [
-      "user",
-      "profile",
-      "tenant-member"
-    ]
+    "resources": ["user", "profile", "tenant-member"]
   },
   "hosts": {
     "tenant": {
@@ -157,15 +111,8 @@
     },
     "platform-admin": {
       "description": "Cross-tenant read for support tooling. Writes stay on the tenant surface.",
-      "routes": [
-        "GET /api/v1/platform/users",
-        "GET /api/v1/platform/users/{user}"
-      ]
+      "routes": ["GET /api/v1/platform/users", "GET /api/v1/platform/users/{user}"]
     }
   },
-  "planned_consumers": [
-    "access",
-    "sports",
-    "staff"
-  ]
+  "planned_consumers": ["access", "sports", "staff"]
 }

@@ -6,7 +6,7 @@
  *   hooks reused across web + native).
  */
 
-export { useI18n } from './use-i18n.hook';
-export { useLocale } from './use-locale.hook';
-export { useDirection } from './use-direction.hook';
-export { useFormat } from './use-format.hook';
+export { useI18n } from "./use-i18n.hook";
+export { useLocale } from "./use-locale.hook";
+export { useDirection } from "./use-direction.hook";
+export { useFormat } from "./use-format.hook";

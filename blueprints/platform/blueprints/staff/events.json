@@ -36,10 +36,7 @@
       "class": "Academorix\\Staff\\Events\\StaffUpdated",
       "trigger": "Any Staff scalar field mutated except employment_status (dedicated transition events), position (StaffPositionChanged), department (StaffDepartmentChanged), branch_id (StaffBranchChanged), is_branch_manager (StaffPromotedToBranchManager / StaffDemotedFromBranchManager), and compensation_* (CompensationChanged). Umbrella event for name-of-record changes, employee_number edits, weekly_hours tweaks, reports_to reassignments, probation_ends_at edits.",
       "queue": "notifications",
-      "consumers": [
-        "audit::WriteToAuditLog",
-        "activity::WriteToActivityLog"
-      ],
+      "consumers": ["audit::WriteToAuditLog", "activity::WriteToActivityLog"],
       "payload": {
         "staff_id": "ULID",
         "tenant_id": "ULID",
@@ -397,10 +394,7 @@
       "class": "Academorix\\Staff\\Events\\CoachCertificationRemoved",
       "trigger": "A certification entry was removed from Coach.certifications. Fires per certification removed.",
       "queue": "notifications",
-      "consumers": [
-        "audit::WriteToAuditLog",
-        "activity::WriteToActivityLog"
-      ],
+      "consumers": ["audit::WriteToAuditLog", "activity::WriteToActivityLog"],
       "payload": {
         "coach_id": "ULID",
         "tenant_id": "ULID",

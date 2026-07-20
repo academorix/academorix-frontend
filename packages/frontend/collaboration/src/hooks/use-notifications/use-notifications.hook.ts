@@ -4,15 +4,15 @@
  * @category Hooks
  */
 
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from "react";
 
-import { useStorage } from '@stackra/storage/react';
-import { Str } from '@stackra/support';
+import { useStorage } from "@stackra/storage/react";
+import { Str } from "@stackra/support";
 
-import type { CollaborationNotification } from '@/interfaces/notification.interface';
+import type { CollaborationNotification } from "@/interfaces/notification.interface";
 
 /** Storage key for persisting notifications. */
-const STORAGE_KEY = 'collab:notifications';
+const STORAGE_KEY = "collab:notifications";
 
 /**
  * `IStorage` instance name used for notification persistence.
@@ -22,7 +22,7 @@ const STORAGE_KEY = 'collab:notifications';
  * configures a `localStorage` (or matching) instance name in
  * `WebStorageModule.forRoot({ stores })`.
  */
-const STORAGE_INSTANCE = 'localStorage';
+const STORAGE_INSTANCE = "localStorage";
 
 /** Return type for the useNotifications hook. */
 interface UseNotificationsReturn {
@@ -40,7 +40,7 @@ interface UseNotificationsReturn {
 
   /** Add a notification (used internally by other hooks). */
   addNotification: (
-    notification: Omit<CollaborationNotification, 'id' | 'read' | 'createdAt'>
+    notification: Omit<CollaborationNotification, "id" | "read" | "createdAt">,
   ) => void;
 }
 
@@ -117,7 +117,7 @@ export function useNotifications(): UseNotificationsReturn {
   }, []);
 
   const addNotification = useCallback(
-    (notification: Omit<CollaborationNotification, 'id' | 'read' | 'createdAt'>) => {
+    (notification: Omit<CollaborationNotification, "id" | "read" | "createdAt">) => {
       const full: CollaborationNotification = {
         ...notification,
         // `Str.uuid()` from @stackra/support — replaces the previous
@@ -129,7 +129,7 @@ export function useNotifications(): UseNotificationsReturn {
       };
       setNotifications((prev) => [full, ...prev].slice(0, 50));
     },
-    []
+    [],
   );
 
   const unreadCount = notifications.filter((n) => !n.read).length;

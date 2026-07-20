@@ -11,24 +11,24 @@
  *   these class strings the same way Tailwind v4 does on web).
  */
 
-import { useMemo, type ReactElement } from 'react';
-import { View, Text } from 'react-native';
-import { Button, Card, Menu, PressableFeedback, Separator } from '@stackra/ui/native';
+import { useMemo, type ReactElement } from "react";
+import { View, Text } from "react-native";
+import { Button, Card, Menu, PressableFeedback, Separator } from "@stackra/ui/native";
 
-import type { IRenderableNotification, SnoozePreset } from '@/core/interfaces';
+import type { IRenderableNotification, SnoozePreset } from "@/core/interfaces";
 
-import { useNotificationWrites, useSnoozeStore } from '../../hooks';
-import type { NotificationRowProps } from './notification-row.interface';
+import { useNotificationWrites, useSnoozeStore } from "../../hooks";
+import type { NotificationRowProps } from "./notification-row.interface";
 
 /**
  * Priority → Uniwind border-accent class. Explicit strings so
  * the compiler doesn't strip them at build time.
  */
-const PRIORITY_ACCENT: Readonly<Record<IRenderableNotification['priority'], string>> = {
-  urgent: 'border-l-danger',
-  high: 'border-l-warning',
-  normal: 'border-l-accent',
-  low: 'border-l-transparent',
+const PRIORITY_ACCENT: Readonly<Record<IRenderableNotification["priority"], string>> = {
+  urgent: "border-l-danger",
+  high: "border-l-warning",
+  normal: "border-l-accent",
+  low: "border-l-transparent",
 };
 
 /**
@@ -36,11 +36,11 @@ const PRIORITY_ACCENT: Readonly<Record<IRenderableNotification['priority'], stri
  * `accessibilityHint` so a VoiceOver / TalkBack user hears
  * "urgent notification" alongside the title.
  */
-const PRIORITY_A11Y_LABEL: Readonly<Record<IRenderableNotification['priority'], string>> = {
-  urgent: 'Urgent notification',
-  high: 'High-priority notification',
-  normal: 'Notification',
-  low: 'Low-priority notification',
+const PRIORITY_A11Y_LABEL: Readonly<Record<IRenderableNotification["priority"], string>> = {
+  urgent: "Urgent notification",
+  high: "High-priority notification",
+  normal: "Notification",
+  low: "Low-priority notification",
 };
 
 /**
@@ -49,30 +49,30 @@ const PRIORITY_A11Y_LABEL: Readonly<Record<IRenderableNotification['priority'], 
  */
 function formatRelative(millis: number, now: Date = new Date()): string {
   const diff = now.getTime() - millis;
-  if (!Number.isFinite(diff) || diff < 0) return '';
-  const formatter = new Intl.RelativeTimeFormat('en', { numeric: 'auto' });
+  if (!Number.isFinite(diff) || diff < 0) return "";
+  const formatter = new Intl.RelativeTimeFormat("en", { numeric: "auto" });
   const seconds = Math.round(diff / 1000);
-  if (seconds < 60) return formatter.format(-seconds, 'second');
+  if (seconds < 60) return formatter.format(-seconds, "second");
   const minutes = Math.round(seconds / 60);
-  if (minutes < 60) return formatter.format(-minutes, 'minute');
+  if (minutes < 60) return formatter.format(-minutes, "minute");
   const hours = Math.round(minutes / 60);
-  if (hours < 24) return formatter.format(-hours, 'hour');
+  if (hours < 24) return formatter.format(-hours, "hour");
   const days = Math.round(hours / 24);
-  if (days < 7) return formatter.format(-days, 'day');
+  if (days < 7) return formatter.format(-days, "day");
   const weeks = Math.round(days / 7);
-  return formatter.format(-weeks, 'week');
+  return formatter.format(-weeks, "week");
 }
 
 /** Every snooze preset's user-facing label. */
 const SNOOZE_LABELS: Readonly<Record<SnoozePreset, string>> = {
-  hour: '1 hour',
-  threeHours: '3 hours',
-  tomorrow: 'Tomorrow',
-  nextWeek: 'Next week',
+  hour: "1 hour",
+  threeHours: "3 hours",
+  tomorrow: "Tomorrow",
+  nextWeek: "Next week",
 };
 
 /** Every snooze preset in a stable render order. */
-const SNOOZE_ORDER: readonly SnoozePreset[] = ['hour', 'threeHours', 'tomorrow', 'nextWeek'];
+const SNOOZE_ORDER: readonly SnoozePreset[] = ["hour", "threeHours", "tomorrow", "nextWeek"];
 
 /**
  * Native inbox row.
@@ -96,7 +96,7 @@ export function NotificationRow({
   const { notification, isRead, priority } = entry;
   const relative = useMemo(
     () => formatRelative(notification.createdAt, now),
-    [notification.createdAt, now]
+    [notification.createdAt, now],
   );
 
   const handleMarkRead = (): void => {
@@ -116,37 +116,37 @@ export function NotificationRow({
   return (
     <Card
       accessibilityHint={PRIORITY_A11Y_LABEL[priority]}
-      className={`flex-row items-start gap-2 rounded-none border-0 border-l-4 bg-surface py-3 pr-2 pl-3 ${PRIORITY_ACCENT[priority]}`}
+      className={`bg-surface flex-row items-start gap-2 rounded-none border-0 border-l-4 py-3 pr-2 pl-3 ${PRIORITY_ACCENT[priority]}`}
     >
       <View className="flex-1 flex-col">
         <View className="flex-row items-center gap-2">
           <Text
             className={
               isRead
-                ? 'flex-1 text-sm font-medium text-foreground'
-                : 'flex-1 text-sm font-semibold text-foreground'
+                ? "text-foreground flex-1 text-sm font-medium"
+                : "text-foreground flex-1 text-sm font-semibold"
             }
             numberOfLines={1}
           >
             {notification.payload.title}
           </Text>
           {!isRead ? (
-            <View accessibilityLabel="Unread" className="h-1.5 w-1.5 rounded-full bg-accent" />
+            <View accessibilityLabel="Unread" className="bg-accent h-1.5 w-1.5 rounded-full" />
           ) : null}
         </View>
         {notification.payload.body ? (
-          <Text className="mt-0.5 text-xs text-muted" numberOfLines={2}>
+          <Text className="text-muted mt-0.5 text-xs" numberOfLines={2}>
             {notification.payload.body}
           </Text>
         ) : null}
         <View className="mt-1 flex-row items-center gap-2">
-          <Text className="text-xs text-muted">{relative}</Text>
+          <Text className="text-muted text-xs">{relative}</Text>
           {notification.payload.category ? (
             <>
-              <Text aria-hidden className="text-xs text-muted">
+              <Text aria-hidden className="text-muted text-xs">
                 ·
               </Text>
-              <Text className="text-xs text-muted capitalize">{notification.payload.category}</Text>
+              <Text className="text-muted text-xs capitalize">{notification.payload.category}</Text>
             </>
           ) : null}
         </View>
@@ -188,7 +188,7 @@ export function NotificationRow({
           className="p-2"
           onPress={handleDelete}
         >
-          <Text className="text-sm text-danger">Delete</Text>
+          <Text className="text-danger text-sm">Delete</Text>
         </PressableFeedback>
       </View>
     </Card>

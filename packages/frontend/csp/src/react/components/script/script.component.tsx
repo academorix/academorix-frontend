@@ -10,10 +10,10 @@
  *   UI rule.
  */
 
-import { useEffect, useRef, type ReactElement } from 'react';
+import { useEffect, useRef, type ReactElement } from "react";
 
-import { useNonce } from '@/react/hooks/use-nonce.hook';
-import type { ScriptProps } from '@/react/interfaces/script-props.interface';
+import { useNonce } from "@/react/hooks/use-nonce.hook";
+import type { ScriptProps } from "@/react/interfaces/script-props.interface";
 
 /**
  * CSP-safe script injection component. Automatically applies the current
@@ -33,7 +33,7 @@ export function Script({
   content,
   async: isAsync = true,
   defer = false,
-  type = 'text/javascript',
+  type = "text/javascript",
   id,
   onLoad,
   onError,
@@ -50,7 +50,7 @@ export function Script({
     // Dedup by ID.
     if (id && document.getElementById(id)) return;
 
-    const script = document.createElement('script');
+    const script = document.createElement("script");
     script.type = type;
 
     if (nonce) {
@@ -67,11 +67,11 @@ export function Script({
       script.defer = defer;
 
       if (onLoad) {
-        script.addEventListener('load', onLoad);
+        script.addEventListener("load", onLoad);
       }
 
       if (onError) {
-        script.addEventListener('error', onError);
+        script.addEventListener("error", onError);
       }
     } else if (content) {
       script.textContent = content;
@@ -91,4 +91,4 @@ export function Script({
   return null;
 }
 
-Script.displayName = 'Script';
+Script.displayName = "Script";

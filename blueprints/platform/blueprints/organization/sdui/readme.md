@@ -13,8 +13,8 @@ Tenant-facing Organization management.
   on the `organization_branding` entitlement. `parent_id` selector is
   conditional on `organization_hierarchy`.
 - `tree.screen.json` — full-page tree renderer with drag-and-drop reparent
-  (Enterprise + `organization_reparent` entitlement). Non-Enterprise tenants
-  see the tree in read-only mode.
+  (Enterprise + `organization_reparent` entitlement). Non-Enterprise tenants see
+  the tree in read-only mode.
 
 ### `widgets/`
 

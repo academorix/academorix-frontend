@@ -11,8 +11,8 @@
  *   `onApplicationBootstrap` phase (never a side-effecting factory).
  */
 
-import { Module, type DynamicModule, type Type } from '@stackra/container';
-import { createSeedLoader, seedLoaderToken } from '@stackra/support';
+import { Module, type DynamicModule, type Type } from "@stackra/container";
+import { createSeedLoader, seedLoaderToken } from "@stackra/support";
 import {
   IAsyncModuleOptions,
   SETTINGS_CONFIG,
@@ -21,16 +21,16 @@ import {
   SETTINGS_SERVICE,
   type ISettingsModuleOptions,
   type ISettingsRegistry,
-} from '@stackra/contracts';
+} from "@stackra/contracts";
 
-import { SettingsRegistry } from '@/core/registries/settings.registry';
+import { SettingsRegistry } from "@/core/registries/settings.registry";
 import {
   SettingsBroadcastListener,
   SettingsSchemaLoader,
   SettingsService,
   SettingsStoreManager,
-} from '@/core/services';
-import { mergeConfig } from '@/core/utils/merge-config.util';
+} from "@/core/services";
+import { mergeConfig } from "@/core/utils/merge-config.util";
 
 /**
  * Settings DI module.
@@ -150,7 +150,7 @@ export class SettingsModule {
    */
   public static forFeature(dtos: Type | Type[]): DynamicModule {
     const list = Array.isArray(dtos) ? dtos : [dtos];
-    const suffix = list.map((dto) => dto.name).join(',');
+    const suffix = list.map((dto) => dto.name).join(",");
 
     return {
       module: SettingsModule,

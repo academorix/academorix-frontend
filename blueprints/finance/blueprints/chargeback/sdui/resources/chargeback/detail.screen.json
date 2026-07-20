@@ -25,7 +25,13 @@
     }
   ],
   "broadcasts": [
-    { "channel": "tenant.{tenantId}.chargebacks", "onEvent": ["*"], "action": "refresh_if_matches", "matchField": "chargeback_id", "matchValue": "{route.chargeback}" }
+    {
+      "channel": "tenant.{tenantId}.chargebacks",
+      "onEvent": ["*"],
+      "action": "refresh_if_matches",
+      "matchField": "chargeback_id",
+      "matchValue": "{route.chargeback}"
+    }
   ],
   "nodes": [
     {
@@ -78,9 +84,16 @@
               "children": [
                 {
                   "kind": "Button",
-                  "props": { "variant": "primary", "leadingIcon": "check-circle", "children": "Accept via RDR" },
+                  "props": {
+                    "variant": "primary",
+                    "leadingIcon": "check-circle",
+                    "children": "Accept via RDR"
+                  },
                   "actions": {
-                    "onPress": { "kind": "navigate", "toExpr": "'/tenant/chargebacks/' + chargeback.id + '/accept'" }
+                    "onPress": {
+                      "kind": "navigate",
+                      "toExpr": "'/tenant/chargebacks/' + chargeback.id + '/accept'"
+                    }
                   },
                   "bindings": {
                     "hidden": {
@@ -90,9 +103,16 @@
                 },
                 {
                   "kind": "Button",
-                  "props": { "variant": "outline", "leadingIcon": "document-check", "children": "Submit evidence" },
+                  "props": {
+                    "variant": "outline",
+                    "leadingIcon": "document-check",
+                    "children": "Submit evidence"
+                  },
                   "actions": {
-                    "onPress": { "kind": "navigate", "toExpr": "'/tenant/chargebacks/' + chargeback.id + '/submit-evidence'" }
+                    "onPress": {
+                      "kind": "navigate",
+                      "toExpr": "'/tenant/chargebacks/' + chargeback.id + '/submit-evidence'"
+                    }
                   },
                   "bindings": {
                     "hidden": {
@@ -102,9 +122,16 @@
                 },
                 {
                   "kind": "Button",
-                  "props": { "variant": "danger-outline", "leadingIcon": "x-mark", "children": "Mark lost" },
+                  "props": {
+                    "variant": "danger-outline",
+                    "leadingIcon": "x-mark",
+                    "children": "Mark lost"
+                  },
                   "actions": {
-                    "onPress": { "kind": "navigate", "toExpr": "'/tenant/chargebacks/' + chargeback.id + '/mark-lost'" }
+                    "onPress": {
+                      "kind": "navigate",
+                      "toExpr": "'/tenant/chargebacks/' + chargeback.id + '/mark-lost'"
+                    }
                   },
                   "bindings": {
                     "hidden": {
@@ -125,7 +152,10 @@
             }
           },
           "children": [
-            { "kind": "Text", "props": { "className": "font-medium", "children": "Evidence deadline approaching" } },
+            {
+              "kind": "Text",
+              "props": { "className": "font-medium", "children": "Evidence deadline approaching" }
+            },
             {
               "kind": "Text",
               "props": { "className": "text-sm" },
@@ -146,10 +176,16 @@
             }
           },
           "children": [
-            { "kind": "Text", "props": { "className": "font-medium", "children": "Finalization is pending" } },
             {
               "kind": "Text",
-              "props": { "className": "text-sm", "children": "The offsetting transaction + network fee are being recorded. Refresh in a minute or contact support if this persists." }
+              "props": { "className": "font-medium", "children": "Finalization is pending" }
+            },
+            {
+              "kind": "Text",
+              "props": {
+                "className": "text-sm",
+                "children": "The offsetting transaction + network fee are being recorded. Refresh in a minute or contact support if this persists."
+              }
             }
           ]
         },
@@ -165,7 +201,13 @@
                   "kind": "View",
                   "props": { "className": "flex flex-col gap-3 py-4" },
                   "children": [
-                    { "kind": "Text", "props": { "className": "text-sm text-muted", "children": "State transitions + notifications + webhook receipts." } }
+                    {
+                      "kind": "Text",
+                      "props": {
+                        "className": "text-sm text-muted",
+                        "children": "State transitions + notifications + webhook receipts."
+                      }
+                    }
                   ]
                 }
               ]
@@ -177,7 +219,9 @@
                 {
                   "kind": "View",
                   "props": { "className": "flex flex-col gap-3 py-4" },
-                  "bindings": { "hidden": { "$expr": "!hasPermission('chargebacks.view-evidence')" } },
+                  "bindings": {
+                    "hidden": { "$expr": "!hasPermission('chargebacks.view-evidence')" }
+                  },
                   "children": [
                     {
                       "kind": "Grid",
@@ -187,7 +231,10 @@
                       },
                       "emptyState": {
                         "kind": "Text",
-                        "props": { "className": "text-sm text-muted", "children": "No evidence submissions yet." }
+                        "props": {
+                          "className": "text-sm text-muted",
+                          "children": "No evidence submissions yet."
+                        }
                       },
                       "itemRenderer": {
                         "kind": "Card",
@@ -201,7 +248,9 @@
                                 "kind": "Text",
                                 "props": { "className": "font-medium" },
                                 "bindings": {
-                                  "children": { "$expr": "'Attempt #' + row.submission_attempt_number" }
+                                  "children": {
+                                    "$expr": "'Attempt #' + row.submission_attempt_number"
+                                  }
                                 }
                               },
                               {
@@ -217,7 +266,9 @@
                             "kind": "Text",
                             "props": { "className": "text-xs text-muted mt-2" },
                             "bindings": {
-                              "children": { "$expr": "'Submitted ' + formatDate(row.submitted_at, 'relative')" }
+                              "children": {
+                                "$expr": "'Submitted ' + formatDate(row.submitted_at, 'relative')"
+                              }
                             }
                           }
                         ]
@@ -235,7 +286,10 @@
                   "kind": "View",
                   "props": { "className": "flex flex-col gap-3 py-4" },
                   "children": [
-                    { "kind": "Text", "props": { "className": "font-medium", "children": "Amount" } },
+                    {
+                      "kind": "Text",
+                      "props": { "className": "font-medium", "children": "Amount" }
+                    },
                     {
                       "kind": "Text",
                       "props": { "className": "text-sm" },

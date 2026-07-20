@@ -12,8 +12,8 @@
  *   render today.
  */
 
-import type { HTMLAttributes, ReactNode } from 'react';
-import type { ComponentRegistry } from '@/core/registries/component.registry';
+import type { HTMLAttributes, ReactNode } from "react";
+import type { ComponentRegistry } from "@/core/registries/component.registry";
 
 // ── Layout primitives ────────────────────────────────────────────────
 
@@ -29,14 +29,14 @@ function Box({ children, ...rest }: IBoxProps) {
 
 interface IStackProps extends HTMLAttributes<HTMLDivElement> {
   gap?: number;
-  direction?: 'row' | 'column';
+  direction?: "row" | "column";
   children?: ReactNode;
 }
 
 /** `Stack` — flex column (or row) with a numeric `gap` (Tailwind units). */
-function Stack({ gap = 3, direction = 'column', className, children, ...rest }: IStackProps) {
-  const dir = direction === 'row' ? 'flex-row' : 'flex-col';
-  const composed = `flex ${dir} gap-${gap} ${className ?? ''}`.trim();
+function Stack({ gap = 3, direction = "column", className, children, ...rest }: IStackProps) {
+  const dir = direction === "row" ? "flex-row" : "flex-col";
+  const composed = `flex ${dir} gap-${gap} ${className ?? ""}`.trim();
   return (
     <div {...rest} className={composed}>
       {children}
@@ -52,7 +52,7 @@ interface IGridProps extends HTMLAttributes<HTMLDivElement> {
 
 /** `Grid` — Tailwind grid with `cols` and `gap`. */
 function Grid({ cols = 2, gap = 3, className, children, ...rest }: IGridProps) {
-  const composed = `grid grid-cols-${cols} gap-${gap} ${className ?? ''}`.trim();
+  const composed = `grid grid-cols-${cols} gap-${gap} ${className ?? ""}`.trim();
   return (
     <div {...rest} className={composed}>
       {children}
@@ -66,7 +66,7 @@ interface ISectionProps extends HTMLAttributes<HTMLElement> {
 
 /** `Section` — semantic `<section>` with light default padding. */
 function Section({ className, children, ...rest }: ISectionProps) {
-  const composed = `py-4 ${className ?? ''}`.trim();
+  const composed = `py-4 ${className ?? ""}`.trim();
   return (
     <section {...rest} className={composed}>
       {children}
@@ -92,9 +92,9 @@ interface IHeadingProps extends HTMLAttributes<HTMLHeadingElement> {
 
 /** `Heading` — `h1`-`h6` with sensible default sizes. */
 function Heading({ level = 2, className, value, children, ...rest }: IHeadingProps) {
-  const Tag = `h${level}` as 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6';
-  const sizes = ['text-3xl', 'text-2xl', 'text-xl', 'text-lg', 'text-base', 'text-sm'] as const;
-  const composed = `${sizes[level - 1] ?? 'text-xl'} font-semibold ${className ?? ''}`.trim();
+  const Tag = `h${level}` as "h1" | "h2" | "h3" | "h4" | "h5" | "h6";
+  const sizes = ["text-3xl", "text-2xl", "text-xl", "text-lg", "text-base", "text-sm"] as const;
+  const composed = `${sizes[level - 1] ?? "text-xl"} font-semibold ${className ?? ""}`.trim();
   return (
     <Tag {...rest} className={composed}>
       {value ?? children}
@@ -107,14 +107,14 @@ function Heading({ level = 2, className, value, children, ...rest }: IHeadingPro
  * registry. Idempotent — safe to call multiple times.
  */
 export function registerCorePrimitives(registry: ComponentRegistry): void {
-  registry.register('Box', { component: Box, category: 'primitive' });
-  registry.register('Stack', { component: Stack, category: 'primitive' });
-  registry.register('Grid', { component: Grid, category: 'primitive' });
-  registry.register('Section', { component: Section, category: 'primitive' });
-  registry.register('Text', { component: Text, category: 'primitive', acceptsChildren: false });
-  registry.register('Heading', {
+  registry.register("Box", { component: Box, category: "primitive" });
+  registry.register("Stack", { component: Stack, category: "primitive" });
+  registry.register("Grid", { component: Grid, category: "primitive" });
+  registry.register("Section", { component: Section, category: "primitive" });
+  registry.register("Text", { component: Text, category: "primitive", acceptsChildren: false });
+  registry.register("Heading", {
     component: Heading,
-    category: 'primitive',
+    category: "primitive",
     acceptsChildren: false,
   });
 }

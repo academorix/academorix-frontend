@@ -1,7 +1,7 @@
 {
   "name": "@stackra/settings",
   "version": "0.1.0",
-  "description": "Unified settings framework for the Stackra platform — registry-based with @Setting()/@Field()/@Group()/@Section() decorators, multi-driver persistence over @stackra/storage + @stackra/http, sync-cache + async-hydrate + debounced persist, real-time broadcast via @stackra/realtime, and HeroUI-driven admin UI.",
+  "description": "Unified settings framework for the Stackra platform \u2014 registry-based with @Setting()/@Field()/@Group()/@Section() decorators, multi-driver persistence over @stackra/storage + @stackra/http, sync-cache + async-hydrate + debounced persist, real-time broadcast via @stackra/realtime, and HeroUI-driven admin UI.",
   "license": "MIT",
   "author": {
     "name": "Stackra L.L.C",
@@ -111,14 +111,16 @@
     }
   },
   "devDependencies": {
+    "@academorix/config-tsconfig": "workspace:*",
+    "@academorix/config-tsup": "workspace:*",
     "@stackra/container": "workspace:*",
     "@stackra/contracts": "workspace:*",
     "@stackra/http": "workspace:*",
     "@stackra/logger": "workspace:*",
+    "@stackra/query": "workspace:*",
     "@stackra/realtime": "workspace:*",
     "@stackra/storage": "workspace:*",
     "@stackra/support": "workspace:*",
-    "@stackra/query": "workspace:*",
     "@stackra/testing": "workspace:*",
     "@stackra/ui": "workspace:*",
     "@tanstack/query-core": "catalog:",

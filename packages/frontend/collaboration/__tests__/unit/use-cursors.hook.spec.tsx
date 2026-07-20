@@ -18,13 +18,13 @@
  *   so a `MockRoomManager` stands in for the DI-resolved instance.
  */
 
-import { act, cleanup, renderHook } from '@testing-library/react';
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { act, cleanup, renderHook } from "@testing-library/react";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-import { COLLABORATION_EVENTS } from '@stackra/contracts';
+import { COLLABORATION_EVENTS } from "@stackra/contracts";
 
-import { MockRoomManager, MockCollaborationTransport } from '@/testing';
-import type { RoomMember } from '@/interfaces/room-member.interface';
+import { MockRoomManager, MockCollaborationTransport } from "@/testing";
+import type { RoomMember } from "@/interfaces/room-member.interface";
 
 // ── Mock `@stackra/container/react` ─────────────────────────────────────────
 //
@@ -35,21 +35,21 @@ const state = vi.hoisted(() => ({
   manager: null as MockRoomManager | null,
 }));
 
-vi.mock('@stackra/container/react', () => ({
+vi.mock("@stackra/container/react", () => ({
   useInject: () => state.manager,
 }));
 
 // AFTER the mock — import the hook.
-import { useCursors } from '@/hooks/use-cursors/use-cursors.hook';
+import { useCursors } from "@/hooks/use-cursors/use-cursors.hook";
 
 // ── Helpers ─────────────────────────────────────────────────────────────────
 
 /** Build a `RoomMember` fixture with sensible defaults. */
 function member(overrides: Partial<RoomMember> = {}): RoomMember {
   return {
-    userId: overrides.userId ?? 'user-remote',
-    name: overrides.name ?? 'Remote',
-    color: overrides.color ?? '#3498db',
+    userId: overrides.userId ?? "user-remote",
+    name: overrides.name ?? "Remote",
+    color: overrides.color ?? "#3498db",
     joinedAt: overrides.joinedAt ?? Date.now(),
     presence: overrides.presence ?? {},
   };
@@ -57,7 +57,7 @@ function member(overrides: Partial<RoomMember> = {}): RoomMember {
 
 // ── Spec ────────────────────────────────────────────────────────────────────
 
-describe('useCursors', () => {
+describe("useCursors", () => {
   let manager: MockRoomManager;
   let transport: MockCollaborationTransport;
 
@@ -76,115 +76,115 @@ describe('useCursors', () => {
 
   // ── Inbound events ───────────────────────────────────────────────────────
 
-  describe('inbound events', () => {
-    it('adds the sender to the cursors map when a CURSOR_MOVE broadcast arrives', () => {
-      const { result } = renderHook(() => useCursors('room-1'));
+  describe("inbound events", () => {
+    it("adds the sender to the cursors map when a CURSOR_MOVE broadcast arrives", () => {
+      const { result } = renderHook(() => useCursors("room-1"));
 
       // No cursors before an event arrives.
       expect(result.current.cursors.size).toBe(0);
 
-      const sender = member({ userId: 'user-a', name: 'Alice', color: '#e74c3c' });
+      const sender = member({ userId: "user-a", name: "Alice", color: "#e74c3c" });
       act(() => {
         transport.simulateBroadcast(
-          'room-1',
+          "room-1",
           COLLABORATION_EVENTS.CURSOR_MOVE,
           { x: 100, y: 200 },
-          sender
+          sender,
         );
       });
 
       expect(result.current.cursors.size).toBe(1);
-      const entry = result.current.cursors.get('user-a');
+      const entry = result.current.cursors.get("user-a");
       // The full CursorPosition shape is assembled from the sender +
       // payload — assert both halves are copied through.
       expect(entry).toEqual({
         x: 100,
         y: 200,
-        userId: 'user-a',
-        name: 'Alice',
-        color: '#e74c3c',
+        userId: "user-a",
+        name: "Alice",
+        color: "#e74c3c",
       });
     });
 
-    it('overwrites an existing cursor when the same user broadcasts again', () => {
-      const { result } = renderHook(() => useCursors('room-1'));
-      const sender = member({ userId: 'user-a', name: 'Alice' });
+    it("overwrites an existing cursor when the same user broadcasts again", () => {
+      const { result } = renderHook(() => useCursors("room-1"));
+      const sender = member({ userId: "user-a", name: "Alice" });
 
       act(() => {
         transport.simulateBroadcast(
-          'room-1',
+          "room-1",
           COLLABORATION_EVENTS.CURSOR_MOVE,
           { x: 10, y: 20 },
-          sender
+          sender,
         );
       });
       act(() => {
         transport.simulateBroadcast(
-          'room-1',
+          "room-1",
           COLLABORATION_EVENTS.CURSOR_MOVE,
           { x: 50, y: 60 },
-          sender
+          sender,
         );
       });
 
       expect(result.current.cursors.size).toBe(1);
-      expect(result.current.cursors.get('user-a')).toMatchObject({ x: 50, y: 60 });
+      expect(result.current.cursors.get("user-a")).toMatchObject({ x: 50, y: 60 });
     });
 
-    it('removes the entry when a CURSOR_REMOVE broadcast arrives', () => {
-      const { result } = renderHook(() => useCursors('room-1'));
-      const alice = member({ userId: 'user-a', name: 'Alice' });
-      const bob = member({ userId: 'user-b', name: 'Bob' });
+    it("removes the entry when a CURSOR_REMOVE broadcast arrives", () => {
+      const { result } = renderHook(() => useCursors("room-1"));
+      const alice = member({ userId: "user-a", name: "Alice" });
+      const bob = member({ userId: "user-b", name: "Bob" });
 
       act(() => {
         transport.simulateBroadcast(
-          'room-1',
+          "room-1",
           COLLABORATION_EVENTS.CURSOR_MOVE,
           { x: 1, y: 2 },
-          alice
+          alice,
         );
         transport.simulateBroadcast(
-          'room-1',
+          "room-1",
           COLLABORATION_EVENTS.CURSOR_MOVE,
           { x: 3, y: 4 },
-          bob
+          bob,
         );
       });
       expect(result.current.cursors.size).toBe(2);
 
       act(() => {
         transport.simulateBroadcast(
-          'room-1',
+          "room-1",
           COLLABORATION_EVENTS.CURSOR_REMOVE,
-          { userId: 'user-a' },
-          alice
+          { userId: "user-a" },
+          alice,
         );
       });
 
       expect(result.current.cursors.size).toBe(1);
-      expect(result.current.cursors.has('user-a')).toBe(false);
-      expect(result.current.cursors.has('user-b')).toBe(true);
+      expect(result.current.cursors.has("user-a")).toBe(false);
+      expect(result.current.cursors.has("user-b")).toBe(true);
     });
 
-    it('removes the entry when the member leaves the room', () => {
-      const { result } = renderHook(() => useCursors('room-1'));
-      const alice = member({ userId: 'user-a', name: 'Alice' });
+    it("removes the entry when the member leaves the room", () => {
+      const { result } = renderHook(() => useCursors("room-1"));
+      const alice = member({ userId: "user-a", name: "Alice" });
 
       act(() => {
         transport.simulateBroadcast(
-          'room-1',
+          "room-1",
           COLLABORATION_EVENTS.CURSOR_MOVE,
           { x: 1, y: 2 },
-          alice
+          alice,
         );
         // The mock's `simulateMemberJoin` also seeds the member map so
         // `simulateMemberLeave` has an entry to delete.
-        transport.simulateMemberJoin('room-1', alice);
+        transport.simulateMemberJoin("room-1", alice);
       });
       expect(result.current.cursors.size).toBe(1);
 
       act(() => {
-        transport.simulateMemberLeave('room-1', 'user-a');
+        transport.simulateMemberLeave("room-1", "user-a");
       });
 
       expect(result.current.cursors.size).toBe(0);
@@ -193,28 +193,28 @@ describe('useCursors', () => {
 
   // ── updateCursor + throttling ───────────────────────────────────────────
 
-  describe('updateCursor + throttling', () => {
-    it('broadcasts a CURSOR_MOVE on the first call', () => {
+  describe("updateCursor + throttling", () => {
+    it("broadcasts a CURSOR_MOVE on the first call", () => {
       // Fake timers so `Date.now()` (used inside the throttle) is
       // deterministic and starts at a known value.
       vi.useFakeTimers();
-      const { result } = renderHook(() => useCursors('room-1'));
+      const { result } = renderHook(() => useCursors("room-1"));
 
       act(() => {
         result.current.updateCursor({ x: 42, y: 99 });
       });
 
       const moves = transport.broadcasts.filter(
-        (b) => b.event === COLLABORATION_EVENTS.CURSOR_MOVE
+        (b) => b.event === COLLABORATION_EVENTS.CURSOR_MOVE,
       );
       expect(moves).toHaveLength(1);
-      expect(moves[0]?.roomId).toBe('room-1');
+      expect(moves[0]?.roomId).toBe("room-1");
       expect(moves[0]?.data).toEqual({ x: 42, y: 99 });
     });
 
-    it('drops calls within the 16ms throttle window', () => {
+    it("drops calls within the 16ms throttle window", () => {
       vi.useFakeTimers();
-      const { result } = renderHook(() => useCursors('room-1'));
+      const { result } = renderHook(() => useCursors("room-1"));
 
       // First call — passes.
       act(() => {
@@ -230,15 +230,15 @@ describe('useCursors', () => {
       });
 
       const moves = transport.broadcasts.filter(
-        (b) => b.event === COLLABORATION_EVENTS.CURSOR_MOVE
+        (b) => b.event === COLLABORATION_EVENTS.CURSOR_MOVE,
       );
       expect(moves).toHaveLength(1);
       expect(moves[0]?.data).toEqual({ x: 1, y: 1 });
     });
 
-    it('passes a second call once the 16ms window has elapsed', () => {
+    it("passes a second call once the 16ms window has elapsed", () => {
       vi.useFakeTimers();
-      const { result } = renderHook(() => useCursors('room-1'));
+      const { result } = renderHook(() => useCursors("room-1"));
 
       act(() => {
         result.current.updateCursor({ x: 1, y: 1 });
@@ -252,7 +252,7 @@ describe('useCursors', () => {
       });
 
       const moves = transport.broadcasts.filter(
-        (b) => b.event === COLLABORATION_EVENTS.CURSOR_MOVE
+        (b) => b.event === COLLABORATION_EVENTS.CURSOR_MOVE,
       );
       expect(moves).toHaveLength(2);
       expect(moves[1]?.data).toEqual({ x: 2, y: 2 });
@@ -261,18 +261,18 @@ describe('useCursors', () => {
 
   // ── Cleanup on unmount ──────────────────────────────────────────────────
 
-  describe('cleanup', () => {
-    it('unsubscribes broadcast + presence listeners on unmount', () => {
-      const { unmount, result } = renderHook(() => useCursors('room-1'));
+  describe("cleanup", () => {
+    it("unsubscribes broadcast + presence listeners on unmount", () => {
+      const { unmount, result } = renderHook(() => useCursors("room-1"));
 
       // Prime a cursor before unmount so we can assert the map clears.
-      const alice = member({ userId: 'user-a', name: 'Alice' });
+      const alice = member({ userId: "user-a", name: "Alice" });
       act(() => {
         transport.simulateBroadcast(
-          'room-1',
+          "room-1",
           COLLABORATION_EVENTS.CURSOR_MOVE,
           { x: 1, y: 2 },
-          alice
+          alice,
         );
       });
       expect(result.current.cursors.size).toBe(1);
@@ -282,7 +282,7 @@ describe('useCursors', () => {
       // After unmount, further broadcasts must not be observable —
       // the mock keeps a `Set` of listeners, so `size === 0` is the
       // strongest assertion available without touching internals.
-      const room = (transport as unknown as { rooms: Map<string, unknown> }).rooms.get('room-1') as
+      const room = (transport as unknown as { rooms: Map<string, unknown> }).rooms.get("room-1") as
         | {
             memberJoinListeners: Set<unknown>;
             memberLeaveListeners: Set<unknown>;

@@ -9,8 +9,17 @@
   "resource": { "module": "staff", "entity": "coach", "action": "manageCertifications" },
   "requiresPermission": "coach.view",
   "dataSources": [
-    { "name": "coach", "kind": "http.get", "urlExpr": "'/api/v1/coaches/' + params.coachId", "unwrap": "data" },
-    { "name": "certification_orgs", "kind": "static", "src": "staff::data/certification-organization-catalog.json" },
+    {
+      "name": "coach",
+      "kind": "http.get",
+      "urlExpr": "'/api/v1/coaches/' + params.coachId",
+      "unwrap": "data"
+    },
+    {
+      "name": "certification_orgs",
+      "kind": "static",
+      "src": "staff::data/certification-organization-catalog.json"
+    },
     { "name": "features", "kind": "http.get", "url": "/api/v1/features", "unwrap": "data" }
   ],
   "nodes": [
@@ -29,18 +38,28 @@
                 {
                   "kind": "Text",
                   "props": { "as": "h1", "className": "text-2xl font-semibold" },
-                  "bindings": { "children": { "$expr": "coach.display_name + ' — Certifications'" } }
+                  "bindings": {
+                    "children": { "$expr": "coach.display_name + ' — Certifications'" }
+                  }
                 },
                 {
                   "kind": "Text",
                   "props": { "className": "text-sm text-muted" },
-                  "bindings": { "children": { "$expr": "coach.certifications.length + ' certifications on record'" } }
+                  "bindings": {
+                    "children": {
+                      "$expr": "coach.certifications.length + ' certifications on record'"
+                    }
+                  }
                 }
               ]
             },
             {
               "kind": "Button",
-              "props": { "variant": "primary", "leadingIcon": "plus", "children": "Add certification" },
+              "props": {
+                "variant": "primary",
+                "leadingIcon": "plus",
+                "children": "Add certification"
+              },
               "actions": {
                 "onPress": { "kind": "modal.open", "modalId": "add_certification_modal" }
               },
@@ -146,9 +165,24 @@
             "kind": "View",
             "props": { "className": "text-center py-12" },
             "children": [
-              { "kind": "Icon", "props": { "name": "check-badge", "className": "size-12 mx-auto text-muted" } },
-              { "kind": "Text", "props": { "className": "mt-4 text-lg font-medium", "children": "No certifications yet" } },
-              { "kind": "Text", "props": { "className": "text-sm text-muted", "children": "Add one to showcase this coach's credentials on their public profile." } }
+              {
+                "kind": "Icon",
+                "props": { "name": "check-badge", "className": "size-12 mx-auto text-muted" }
+              },
+              {
+                "kind": "Text",
+                "props": {
+                  "className": "mt-4 text-lg font-medium",
+                  "children": "No certifications yet"
+                }
+              },
+              {
+                "kind": "Text",
+                "props": {
+                  "className": "text-sm text-muted",
+                  "children": "Add one to showcase this coach's credentials on their public profile."
+                }
+              }
             ]
           }
         }

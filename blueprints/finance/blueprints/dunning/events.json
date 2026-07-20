@@ -6,19 +6,161 @@
   "dispatchMode": "afterCommit",
   "description": "State-machine transitions + step-level events. DunningRunExhausted is the load-bearing signal — feeds entitlement revocation, membership suspension, subscription lapse.",
   "events": [
-    { "name": "DunningPlanCreated", "class": "Academorix\\Finance\\Dunning\\Events\\DunningPlanCreated", "trigger": "New DunningPlan committed.", "queue": "dunning", "consumers": ["audit::WriteToAuditLog"], "payload": { "dunning_plan_id": "ULID (dpl_*)", "tenant_id": "ULID", "at": "ISO 8601" } },
-    { "name": "DunningPlanUpdated", "class": "Academorix\\Finance\\Dunning\\Events\\DunningPlanUpdated", "trigger": "DunningPlan updated.", "queue": "dunning", "consumers": ["audit::WriteToAuditLog"], "payload": { "dunning_plan_id": "ULID", "tenant_id": "ULID", "at": "ISO 8601" } },
-    { "name": "DunningPlanDeleted", "class": "Academorix\\Finance\\Dunning\\Events\\DunningPlanDeleted", "trigger": "DunningPlan soft-deleted.", "queue": "dunning", "consumers": ["audit::WriteToAuditLog"], "payload": { "dunning_plan_id": "ULID", "tenant_id": "ULID", "at": "ISO 8601" } },
-    { "name": "DunningRunStarted", "class": "Academorix\\Finance\\Dunning\\Events\\DunningRunStarted", "trigger": "New DunningRun row committed. Triggered by a failed charge.", "queue": "dunning-critical", "consumers": ["audit::WriteToAuditLog", "activity::LogActivity"], "payload": { "dunning_run_id": "ULID (drn_*)", "tenant_id": "ULID", "subject_type": "string", "subject_id": "ULID", "amount_due_minor": "integer", "at": "ISO 8601" } },
-    { "name": "DunningStepReached", "class": "Academorix\\Finance\\Dunning\\Events\\DunningStepReached", "trigger": "TickDunningStepJob advanced current_step. Fires the step's configured action (notify / retry / escalate).", "queue": "dunning", "consumers": ["dunning::AttemptRetryListener", "notifications::DispatchDunningReminderNotificationListener"], "payload": { "dunning_run_id": "ULID", "step_index": "integer", "action": "string", "at": "ISO 8601" } },
-    { "name": "DunningRetryAttempted", "class": "Academorix\\Finance\\Dunning\\Events\\DunningRetryAttempted", "trigger": "AttemptDunningRetryJob dispatched a charge attempt to the gateway.", "queue": "dunning", "consumers": ["audit::WriteToAuditLog"], "payload": { "dunning_run_id": "ULID", "step_index": "integer", "at": "ISO 8601" } },
-    { "name": "DunningRetrySucceeded", "class": "Academorix\\Finance\\Dunning\\Events\\DunningRetrySucceeded", "trigger": "Retry attempt succeeded. Triggers DunningRunResolved next.", "queue": "dunning-critical", "consumers": ["audit::WriteToAuditLog", "notifications::DispatchDunningResolvedNotificationListener"], "payload": { "dunning_run_id": "ULID", "payment_id": "ULID", "at": "ISO 8601" } },
-    { "name": "DunningRetryFailed", "class": "Academorix\\Finance\\Dunning\\Events\\DunningRetryFailed", "trigger": "Retry attempt failed. Schedule advances to next step.", "queue": "dunning", "consumers": ["audit::WriteToAuditLog"], "payload": { "dunning_run_id": "ULID", "step_index": "integer", "error": "string", "at": "ISO 8601" } },
-    { "name": "DunningRunEscalated", "class": "Academorix\\Finance\\Dunning\\Events\\DunningRunEscalated", "trigger": "Step advanced to escalation tier (harsher email + suspend eligibility).", "queue": "dunning", "consumers": ["notifications::DispatchDunningReminderNotificationListener"], "payload": { "dunning_run_id": "ULID", "new_step_index": "integer", "at": "ISO 8601" } },
-    { "name": "DunningRunPaused", "class": "Academorix\\Finance\\Dunning\\Events\\DunningRunPaused", "trigger": "Manual pause (support intervention).", "queue": "dunning", "consumers": ["audit::WriteToAuditLog"], "payload": { "dunning_run_id": "ULID", "reason": "string | null", "at": "ISO 8601" } },
-    { "name": "DunningRunResumed", "class": "Academorix\\Finance\\Dunning\\Events\\DunningRunResumed", "trigger": "Manual resume.", "queue": "dunning", "consumers": ["audit::WriteToAuditLog"], "payload": { "dunning_run_id": "ULID", "at": "ISO 8601" } },
-    { "name": "DunningRunCancelled", "class": "Academorix\\Finance\\Dunning\\Events\\DunningRunCancelled", "trigger": "Manual cancel (refund issued, dispute resolved externally).", "queue": "dunning", "consumers": ["audit::WriteToAuditLog"], "payload": { "dunning_run_id": "ULID", "reason": "string | null", "at": "ISO 8601" } },
-    { "name": "DunningRunExhausted", "class": "Academorix\\Finance\\Dunning\\Events\\DunningRunExhausted", "trigger": "All retries failed and last step reached. LOAD-BEARING — triggers entitlement revocation.", "queue": "dunning-critical", "consumers": ["audit::WriteToAuditLog", "entitlements::RevokeAccessListener", "membership::SuspendMembershipListener", "subscription::LapseSubscriptionListener", "notifications::DispatchDunningExhaustedNotificationListener"], "payload": { "dunning_run_id": "ULID", "subject_type": "string", "subject_id": "ULID", "amount_due_minor": "integer", "at": "ISO 8601" } },
-    { "name": "DunningRunResolved", "class": "Academorix\\Finance\\Dunning\\Events\\DunningRunResolved", "trigger": "Payment succeeded (mid-run retry OR out-of-band manual payment).", "queue": "dunning-critical", "consumers": ["audit::WriteToAuditLog", "entitlements::RestoreAccessListener", "notifications::DispatchDunningResolvedNotificationListener"], "payload": { "dunning_run_id": "ULID", "subject_type": "string", "subject_id": "ULID", "at": "ISO 8601" } }
+    {
+      "name": "DunningPlanCreated",
+      "class": "Academorix\\Finance\\Dunning\\Events\\DunningPlanCreated",
+      "trigger": "New DunningPlan committed.",
+      "queue": "dunning",
+      "consumers": ["audit::WriteToAuditLog"],
+      "payload": { "dunning_plan_id": "ULID (dpl_*)", "tenant_id": "ULID", "at": "ISO 8601" }
+    },
+    {
+      "name": "DunningPlanUpdated",
+      "class": "Academorix\\Finance\\Dunning\\Events\\DunningPlanUpdated",
+      "trigger": "DunningPlan updated.",
+      "queue": "dunning",
+      "consumers": ["audit::WriteToAuditLog"],
+      "payload": { "dunning_plan_id": "ULID", "tenant_id": "ULID", "at": "ISO 8601" }
+    },
+    {
+      "name": "DunningPlanDeleted",
+      "class": "Academorix\\Finance\\Dunning\\Events\\DunningPlanDeleted",
+      "trigger": "DunningPlan soft-deleted.",
+      "queue": "dunning",
+      "consumers": ["audit::WriteToAuditLog"],
+      "payload": { "dunning_plan_id": "ULID", "tenant_id": "ULID", "at": "ISO 8601" }
+    },
+    {
+      "name": "DunningRunStarted",
+      "class": "Academorix\\Finance\\Dunning\\Events\\DunningRunStarted",
+      "trigger": "New DunningRun row committed. Triggered by a failed charge.",
+      "queue": "dunning-critical",
+      "consumers": ["audit::WriteToAuditLog", "activity::LogActivity"],
+      "payload": {
+        "dunning_run_id": "ULID (drn_*)",
+        "tenant_id": "ULID",
+        "subject_type": "string",
+        "subject_id": "ULID",
+        "amount_due_minor": "integer",
+        "at": "ISO 8601"
+      }
+    },
+    {
+      "name": "DunningStepReached",
+      "class": "Academorix\\Finance\\Dunning\\Events\\DunningStepReached",
+      "trigger": "TickDunningStepJob advanced current_step. Fires the step's configured action (notify / retry / escalate).",
+      "queue": "dunning",
+      "consumers": [
+        "dunning::AttemptRetryListener",
+        "notifications::DispatchDunningReminderNotificationListener"
+      ],
+      "payload": {
+        "dunning_run_id": "ULID",
+        "step_index": "integer",
+        "action": "string",
+        "at": "ISO 8601"
+      }
+    },
+    {
+      "name": "DunningRetryAttempted",
+      "class": "Academorix\\Finance\\Dunning\\Events\\DunningRetryAttempted",
+      "trigger": "AttemptDunningRetryJob dispatched a charge attempt to the gateway.",
+      "queue": "dunning",
+      "consumers": ["audit::WriteToAuditLog"],
+      "payload": { "dunning_run_id": "ULID", "step_index": "integer", "at": "ISO 8601" }
+    },
+    {
+      "name": "DunningRetrySucceeded",
+      "class": "Academorix\\Finance\\Dunning\\Events\\DunningRetrySucceeded",
+      "trigger": "Retry attempt succeeded. Triggers DunningRunResolved next.",
+      "queue": "dunning-critical",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "notifications::DispatchDunningResolvedNotificationListener"
+      ],
+      "payload": { "dunning_run_id": "ULID", "payment_id": "ULID", "at": "ISO 8601" }
+    },
+    {
+      "name": "DunningRetryFailed",
+      "class": "Academorix\\Finance\\Dunning\\Events\\DunningRetryFailed",
+      "trigger": "Retry attempt failed. Schedule advances to next step.",
+      "queue": "dunning",
+      "consumers": ["audit::WriteToAuditLog"],
+      "payload": {
+        "dunning_run_id": "ULID",
+        "step_index": "integer",
+        "error": "string",
+        "at": "ISO 8601"
+      }
+    },
+    {
+      "name": "DunningRunEscalated",
+      "class": "Academorix\\Finance\\Dunning\\Events\\DunningRunEscalated",
+      "trigger": "Step advanced to escalation tier (harsher email + suspend eligibility).",
+      "queue": "dunning",
+      "consumers": ["notifications::DispatchDunningReminderNotificationListener"],
+      "payload": { "dunning_run_id": "ULID", "new_step_index": "integer", "at": "ISO 8601" }
+    },
+    {
+      "name": "DunningRunPaused",
+      "class": "Academorix\\Finance\\Dunning\\Events\\DunningRunPaused",
+      "trigger": "Manual pause (support intervention).",
+      "queue": "dunning",
+      "consumers": ["audit::WriteToAuditLog"],
+      "payload": { "dunning_run_id": "ULID", "reason": "string | null", "at": "ISO 8601" }
+    },
+    {
+      "name": "DunningRunResumed",
+      "class": "Academorix\\Finance\\Dunning\\Events\\DunningRunResumed",
+      "trigger": "Manual resume.",
+      "queue": "dunning",
+      "consumers": ["audit::WriteToAuditLog"],
+      "payload": { "dunning_run_id": "ULID", "at": "ISO 8601" }
+    },
+    {
+      "name": "DunningRunCancelled",
+      "class": "Academorix\\Finance\\Dunning\\Events\\DunningRunCancelled",
+      "trigger": "Manual cancel (refund issued, dispute resolved externally).",
+      "queue": "dunning",
+      "consumers": ["audit::WriteToAuditLog"],
+      "payload": { "dunning_run_id": "ULID", "reason": "string | null", "at": "ISO 8601" }
+    },
+    {
+      "name": "DunningRunExhausted",
+      "class": "Academorix\\Finance\\Dunning\\Events\\DunningRunExhausted",
+      "trigger": "All retries failed and last step reached. LOAD-BEARING — triggers entitlement revocation.",
+      "queue": "dunning-critical",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "entitlements::RevokeAccessListener",
+        "membership::SuspendMembershipListener",
+        "subscription::LapseSubscriptionListener",
+        "notifications::DispatchDunningExhaustedNotificationListener"
+      ],
+      "payload": {
+        "dunning_run_id": "ULID",
+        "subject_type": "string",
+        "subject_id": "ULID",
+        "amount_due_minor": "integer",
+        "at": "ISO 8601"
+      }
+    },
+    {
+      "name": "DunningRunResolved",
+      "class": "Academorix\\Finance\\Dunning\\Events\\DunningRunResolved",
+      "trigger": "Payment succeeded (mid-run retry OR out-of-band manual payment).",
+      "queue": "dunning-critical",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "entitlements::RestoreAccessListener",
+        "notifications::DispatchDunningResolvedNotificationListener"
+      ],
+      "payload": {
+        "dunning_run_id": "ULID",
+        "subject_type": "string",
+        "subject_id": "ULID",
+        "at": "ISO 8601"
+      }
+    }
   ]
 }

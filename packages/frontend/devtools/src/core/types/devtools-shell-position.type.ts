@@ -12,4 +12,4 @@
  * majority of browser inspectors). `'bottom'` is the mobile-friendly
  * default on native, but is also selectable on the web shell.
  */
-export type DevtoolsShellPosition = 'left' | 'right' | 'top' | 'bottom';
+export type DevtoolsShellPosition = "left" | "right" | "top" | "bottom";

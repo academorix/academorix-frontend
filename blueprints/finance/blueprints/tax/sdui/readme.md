@@ -11,8 +11,8 @@ Tenant-facing tax rate CRUD + provider sync. Owner + admin + finance role.
 - `list.screen.json` — filterable rate ledger with active/expired chips +
   percentage-range badges. Filters on jurisdiction, rate_type, applies_to,
   active flag.
-- `create.screen.json` — rate creation form with jurisdiction picker + rate
-  type picker + percentage input + effective-range date picker.
+- `create.screen.json` — rate creation form with jurisdiction picker + rate type
+  picker + percentage input + effective-range date picker.
 - `edit.screen.json` — same fields as create. Update refused when the rate has
   been referenced by any tax_calculation (calculation-freeze).
 - `sync.screen.json` — trigger on-demand SyncTaxRatesFromProviderJob per
@@ -22,11 +22,11 @@ Tenant-facing tax rate CRUD + provider sync. Owner + admin + finance role.
 
 Jurisdiction CRUD. Reads platform-reference (tenant_id IS NULL) + custom.
 
-- `list.screen.json` — filterable jurisdiction browser with country flag +
-  tax type chip. Filters on country_code, tax_type, custom-only toggle.
+- `list.screen.json` — filterable jurisdiction browser with country flag + tax
+  type chip. Filters on country_code, tax_type, custom-only toggle.
 - `create.screen.json` — custom jurisdiction creation. Enterprise-only.
-- `edit.screen.json` — same fields as create. Platform-reference edits
-  refused unless super_admin.
+- `edit.screen.json` — same fields as create. Platform-reference edits refused
+  unless super_admin.
 
 ### `resources/tax-exemption/`
 
@@ -36,12 +36,12 @@ compliance.
 - `list.screen.json` — filterable exemption queue with verification-status
   chips + expiry badges. Default filter: pending.
 - `create.screen.json` — exemption submission form with polymorphic customer
-  picker + jurisdiction picker + exemption type picker + certificate upload
-  (S3 pre-signed).
+  picker + jurisdiction picker + exemption type picker + certificate upload (S3
+  pre-signed).
 - `verify.screen.json` — dedicated verify flow: shows the certificate document
   preview + verifier registry check response + confirmation with note.
-- `reject.screen.json` — dedicated reject flow: reason picker (invalid /
-  expired / jurisdiction mismatch / fraudulent / other) + notes.
+- `reject.screen.json` — dedicated reject flow: reason picker (invalid / expired
+  / jurisdiction mismatch / fraudulent / other) + notes.
 
 ### `resources/tax-calculation/`
 
@@ -77,7 +77,7 @@ Reporting surface. Enterprise + Medium tiers.
 
 - `rate-badge.widget.json` — colour-coded chip for tax rates (percentage
   displayed + active/expired indicator).
-- `jurisdiction-picker.widget.json` — country + state autocomplete backed by
-  the ISO 3166 catalog + custom jurisdictions.
+- `jurisdiction-picker.widget.json` — country + state autocomplete backed by the
+  ISO 3166 catalog + custom jurisdictions.
 - `exemption-status-chip.widget.json` — colour-coded chip for verification
   status (pending yellow / verified green / rejected red / expired grey).

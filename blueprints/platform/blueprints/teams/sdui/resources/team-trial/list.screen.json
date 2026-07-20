@@ -11,7 +11,15 @@
   "requiresEntitlement": "team_trials",
   "realtime": {
     "channel": "team.{teamId}.trials",
-    "events": ["TrialScheduled", "TrialStarted", "TrialCompleted", "TrialConvertedToMember", "TrialRejected", "TrialNoShow", "TrialCancelled"],
+    "events": [
+      "TrialScheduled",
+      "TrialStarted",
+      "TrialCompleted",
+      "TrialConvertedToMember",
+      "TrialRejected",
+      "TrialNoShow",
+      "TrialCancelled"
+    ],
     "onEvent": { "kind": "refetch", "sources": ["trials"] }
   },
   "dataSources": [
@@ -49,14 +57,26 @@
                 },
                 {
                   "kind": "Text",
-                  "props": { "className": "text-sm text-muted", "children": "Probationary tryouts for prospective members." }
+                  "props": {
+                    "className": "text-sm text-muted",
+                    "children": "Probationary tryouts for prospective members."
+                  }
                 }
               ]
             },
             {
               "kind": "Button",
-              "props": { "variant": "primary", "leadingIcon": "plus", "children": "Schedule trial" },
-              "actions": { "onPress": { "kind": "navigate", "toExpr": "'/tenant/teams/' + team.id + '/trials/new'" } },
+              "props": {
+                "variant": "primary",
+                "leadingIcon": "plus",
+                "children": "Schedule trial"
+              },
+              "actions": {
+                "onPress": {
+                  "kind": "navigate",
+                  "toExpr": "'/tenant/teams/' + team.id + '/trials/new'"
+                }
+              },
               "requiresPermission": "trials.schedule"
             }
           ]
@@ -69,32 +89,60 @@
               "kind": "Card",
               "props": { "className": "p-4" },
               "children": [
-                { "kind": "Text", "props": { "className": "text-sm text-muted", "children": "Scheduled" } },
-                { "kind": "Text", "props": { "className": "text-2xl font-semibold mt-1" }, "bindings": { "children": { "$ref": "trials.meta.scheduled_count" } } }
+                {
+                  "kind": "Text",
+                  "props": { "className": "text-sm text-muted", "children": "Scheduled" }
+                },
+                {
+                  "kind": "Text",
+                  "props": { "className": "text-2xl font-semibold mt-1" },
+                  "bindings": { "children": { "$ref": "trials.meta.scheduled_count" } }
+                }
               ]
             },
             {
               "kind": "Card",
               "props": { "className": "p-4" },
               "children": [
-                { "kind": "Text", "props": { "className": "text-sm text-muted", "children": "In progress" } },
-                { "kind": "Text", "props": { "className": "text-2xl font-semibold mt-1" }, "bindings": { "children": { "$ref": "trials.meta.in_progress_count" } } }
+                {
+                  "kind": "Text",
+                  "props": { "className": "text-sm text-muted", "children": "In progress" }
+                },
+                {
+                  "kind": "Text",
+                  "props": { "className": "text-2xl font-semibold mt-1" },
+                  "bindings": { "children": { "$ref": "trials.meta.in_progress_count" } }
+                }
               ]
             },
             {
               "kind": "Card",
               "props": { "className": "p-4" },
               "children": [
-                { "kind": "Text", "props": { "className": "text-sm text-muted", "children": "Awaiting decision" } },
-                { "kind": "Text", "props": { "className": "text-2xl font-semibold mt-1" }, "bindings": { "children": { "$ref": "trials.meta.completed_count" } } }
+                {
+                  "kind": "Text",
+                  "props": { "className": "text-sm text-muted", "children": "Awaiting decision" }
+                },
+                {
+                  "kind": "Text",
+                  "props": { "className": "text-2xl font-semibold mt-1" },
+                  "bindings": { "children": { "$ref": "trials.meta.completed_count" } }
+                }
               ]
             },
             {
               "kind": "Card",
               "props": { "className": "p-4" },
               "children": [
-                { "kind": "Text", "props": { "className": "text-sm text-muted", "children": "Converted (30d)" } },
-                { "kind": "Text", "props": { "className": "text-2xl font-semibold mt-1" }, "bindings": { "children": { "$ref": "trials.meta.converted_30d_count" } } }
+                {
+                  "kind": "Text",
+                  "props": { "className": "text-sm text-muted", "children": "Converted (30d)" }
+                },
+                {
+                  "kind": "Text",
+                  "props": { "className": "text-2xl font-semibold mt-1" },
+                  "bindings": { "children": { "$ref": "trials.meta.converted_30d_count" } }
+                }
               ]
             }
           ]
@@ -154,17 +202,78 @@
             { "field": "trial_type", "label": "Type" },
             { "field": "starts_at", "label": "Starts", "format": "datetime", "sortable": true },
             { "field": "session_count", "label": "Sessions", "align": "right" },
-            { "field": "status", "label": "Status", "renderer": { "kind": "Widget", "widget": "teams.trial-status-chip", "bindings": { "status": { "$ref": "row.status" } } } },
+            {
+              "field": "status",
+              "label": "Status",
+              "renderer": {
+                "kind": "Widget",
+                "widget": "teams.trial-status-chip",
+                "bindings": { "status": { "$ref": "row.status" } }
+              }
+            },
             {
               "field": "actions",
               "label": "",
               "renderer": {
                 "kind": "Dropdown",
                 "children": [
-                  { "kind": "Dropdown.Item", "props": { "children": "View" }, "actions": { "onPress": { "kind": "navigate", "toExpr": "'/tenant/teams/' + team.id + '/trials/' + row.id" } } },
-                  { "kind": "Dropdown.Item", "props": { "children": "Complete", "hidden": { "$expr": "row.status !== 'in_progress' && row.status !== 'scheduled'" } }, "actions": { "onPress": { "kind": "navigate", "toExpr": "'/tenant/teams/' + team.id + '/trials/' + row.id + '/evaluate'" } }, "requiresPermission": "trials.evaluate" },
-                  { "kind": "Dropdown.Item", "props": { "children": "Convert / Reject", "hidden": { "$expr": "row.status !== 'completed'" } }, "actions": { "onPress": { "kind": "navigate", "toExpr": "'/tenant/teams/' + team.id + '/trials/' + row.id + '/decision'" } }, "requiresPermission": "trials.convert" },
-                  { "kind": "Dropdown.Item", "props": { "children": "Cancel", "hidden": { "$expr": "!(row.status === 'scheduled' || row.status === 'in_progress')" } }, "actions": { "onPress": { "kind": "modal.open", "modal": "cancel-trial", "context": { "trial_id": "row.id" } } }, "requiresPermission": "trials.cancel" }
+                  {
+                    "kind": "Dropdown.Item",
+                    "props": { "children": "View" },
+                    "actions": {
+                      "onPress": {
+                        "kind": "navigate",
+                        "toExpr": "'/tenant/teams/' + team.id + '/trials/' + row.id"
+                      }
+                    }
+                  },
+                  {
+                    "kind": "Dropdown.Item",
+                    "props": {
+                      "children": "Complete",
+                      "hidden": {
+                        "$expr": "row.status !== 'in_progress' && row.status !== 'scheduled'"
+                      }
+                    },
+                    "actions": {
+                      "onPress": {
+                        "kind": "navigate",
+                        "toExpr": "'/tenant/teams/' + team.id + '/trials/' + row.id + '/evaluate'"
+                      }
+                    },
+                    "requiresPermission": "trials.evaluate"
+                  },
+                  {
+                    "kind": "Dropdown.Item",
+                    "props": {
+                      "children": "Convert / Reject",
+                      "hidden": { "$expr": "row.status !== 'completed'" }
+                    },
+                    "actions": {
+                      "onPress": {
+                        "kind": "navigate",
+                        "toExpr": "'/tenant/teams/' + team.id + '/trials/' + row.id + '/decision'"
+                      }
+                    },
+                    "requiresPermission": "trials.convert"
+                  },
+                  {
+                    "kind": "Dropdown.Item",
+                    "props": {
+                      "children": "Cancel",
+                      "hidden": {
+                        "$expr": "!(row.status === 'scheduled' || row.status === 'in_progress')"
+                      }
+                    },
+                    "actions": {
+                      "onPress": {
+                        "kind": "modal.open",
+                        "modal": "cancel-trial",
+                        "context": { "trial_id": "row.id" }
+                      }
+                    },
+                    "requiresPermission": "trials.cancel"
+                  }
                 ]
               }
             }

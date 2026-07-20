@@ -8,20 +8,20 @@ age group. Wave 3a of the sports tier (priority 53).
 
 ## 1. What this module owns
 
-| Concern                             | Owned artefact                                                                                              |
-| ----------------------------------- | ----------------------------------------------------------------------------------------------------------- |
-| Age-bucket classifier               | `AgeGroup` (`age_groups.tenant_id` + nullable `organization_id`) — bounds + cutoff config + is_youth        |
-| Default catalog                     | `data/default-age-groups.json` — 10-entry seeded catalog (U6..Masters) dispatched on TenantProvisioned      |
-| Sport-cutoff reference              | `data/sport-cutoff-samples.json` — canonical per-sport cutoff patterns from public federation docs (advisory) |
-| Auto-provisioning                   | `SeedDefaultAgeGroupsForTenantJob` — dispatched on tenancy::TenantProvisioned; idempotent                   |
-| Default-per-tuple invariant         | Exactly one `is_default=true` per (tenant_id, organization_id, sport_key), enforced by observer + reconciler |
-| Tenant surface                      | Full CRUD on `/api/v1/age-groups` + lifecycle (`set-default`, `archive`, `restore`) + hypothetical resolver  |
-| Platform-admin surface              | Cross-tenant read (`/api/v1/platform/age-groups`)                                                            |
-| `BelongsToAgeGroup` trait           | For Team (Wave 2b), EventDivision (Wave 3+), TeamRegistration (Wave 3+)                                     |
-| `HasAgeGroupCatalog` trait          | On Tenant — sibling accessors + catalog rollups                                                              |
-| `AgeGroupResolver` service          | `resolveFor(dob, sport_key = null, on_date = today)` — the eligibility resolution primitive                 |
-| `CutoffDateCalculator` pure fn      | Given (kind, month, day, birthday, on_date), returns the effective age                                       |
-| Entitlement gates                   | `age_group_custom` (Medium+), `age_group_slot` (Small=0, Medium=20, Enterprise=∞), `age_group_sport_specific` (Enterprise) |
+| Concern                        | Owned artefact                                                                                                             |
+| ------------------------------ | -------------------------------------------------------------------------------------------------------------------------- |
+| Age-bucket classifier          | `AgeGroup` (`age_groups.tenant_id` + nullable `organization_id`) — bounds + cutoff config + is_youth                       |
+| Default catalog                | `data/default-age-groups.json` — 10-entry seeded catalog (U6..Masters) dispatched on TenantProvisioned                     |
+| Sport-cutoff reference         | `data/sport-cutoff-samples.json` — canonical per-sport cutoff patterns from public federation docs (advisory)              |
+| Auto-provisioning              | `SeedDefaultAgeGroupsForTenantJob` — dispatched on tenancy::TenantProvisioned; idempotent                                  |
+| Default-per-tuple invariant    | Exactly one `is_default=true` per (tenant_id, organization_id, sport_key), enforced by observer + reconciler               |
+| Tenant surface                 | Full CRUD on `/api/v1/age-groups` + lifecycle (`set-default`, `archive`, `restore`) + hypothetical resolver                |
+| Platform-admin surface         | Cross-tenant read (`/api/v1/platform/age-groups`)                                                                          |
+| `BelongsToAgeGroup` trait      | For Team (Wave 2b), EventDivision (Wave 3+), TeamRegistration (Wave 3+)                                                    |
+| `HasAgeGroupCatalog` trait     | On Tenant — sibling accessors + catalog rollups                                                                            |
+| `AgeGroupResolver` service     | `resolveFor(dob, sport_key = null, on_date = today)` — the eligibility resolution primitive                                |
+| `CutoffDateCalculator` pure fn | Given (kind, month, day, birthday, on_date), returns the effective age                                                     |
+| Entitlement gates              | `age_group_custom` (Medium+), `age_group_slot` (Small=0, Medium=20, Enterprise=∞), `age_group_sport_specific` (Enterprise) |
 
 ### 1.1 AgeGroup is orthogonal to Region + Branch
 
@@ -48,10 +48,10 @@ Three booleans, three different jobs:
 - **`is_default`** — exactly one per (tenant, organization, sport_key) tuple.
   Marks the tenant's fallback/preferred group. Drives tier-pricing defaults
   (Finance Wave 4).
-- **`is_seeded`** — true when the row was created by the platform seeder. IMMUTABLE.
-  Distinguishes platform-baseline rows (cannot be deleted, may be edited within
-  entitlements) from tenant customs (subject to age_group_slot cap; may be
-  archived + deleted).
+- **`is_seeded`** — true when the row was created by the platform seeder.
+  IMMUTABLE. Distinguishes platform-baseline rows (cannot be deleted, may be
+  edited within entitlements) from tenant customs (subject to age_group_slot
+  cap; may be archived + deleted).
 - **`is_youth`** — DERIVED from `max_age_inclusive < 18`. Stored on the row for
   indexed filtering (safeguarding queries, minor-consent banners, retention
   windows on child data). Set by the observer; caller writes are silently
@@ -62,12 +62,12 @@ Three booleans, three different jobs:
 `cutoff_date_kind` picks how the CutoffDateCalculator resolves an athlete's
 effective age:
 
-| Kind                     | How age is computed                                                       | Requires cutoff_month | Requires cutoff_day |
-| ------------------------ | ------------------------------------------------------------------------- | --------------------- | ------------------- |
-| `calendar_year`          | age = year_of_resolution - year_of_birth (Jan 1 cutoff)                   | No (must be NULL)     | No (must be NULL)   |
-| `academic_year`          | age = year_of_academic_start - year_of_birth (Sep 1, etc.)                | Yes (1-12)            | No (defaults to 1)  |
-| `rolling_from_birthday`  | age = actual age in years on resolution date                              | No (must be NULL)     | No (must be NULL)   |
-| `custom_date`            | age = year_of_resolution_if_before_cutoff_else_year_after - year_of_birth | Yes (1-12)            | Yes (1-31)          |
+| Kind                    | How age is computed                                                       | Requires cutoff_month | Requires cutoff_day |
+| ----------------------- | ------------------------------------------------------------------------- | --------------------- | ------------------- |
+| `calendar_year`         | age = year_of_resolution - year_of_birth (Jan 1 cutoff)                   | No (must be NULL)     | No (must be NULL)   |
+| `academic_year`         | age = year_of_academic_start - year_of_birth (Sep 1, etc.)                | Yes (1-12)            | No (defaults to 1)  |
+| `rolling_from_birthday` | age = actual age in years on resolution date                              | No (must be NULL)     | No (must be NULL)   |
+| `custom_date`           | age = year_of_resolution_if_before_cutoff_else_year_after - year_of_birth | Yes (1-12)            | Yes (1-31)          |
 
 The choice matters. A football club in Ireland picks `custom_date` with cutoff
 Jan 1 (UEFA rule). A US Soccer club picks `custom_date` with cutoff Aug 1. A
@@ -101,11 +101,11 @@ Cross-tenant FKs from AgeGroup to any other aggregate are forbidden.
 
 Per `hierarchy.md` §7 tier matrix + this module's entitlements:
 
-| Tier       | Seeded catalog | Custom groups            | Sport-specific overrides |
-| ---------- | -------------- | ------------------------ | ------------------------ |
-| Small      | ✅ (10 rows)   | ❌ (age_group_custom off)| ❌                       |
-| Medium     | ✅             | ✅ up to 20              | ❌                       |
-| Enterprise | ✅             | ✅ unlimited             | ✅                       |
+| Tier       | Seeded catalog | Custom groups             | Sport-specific overrides |
+| ---------- | -------------- | ------------------------- | ------------------------ |
+| Small      | ✅ (10 rows)   | ❌ (age_group_custom off) | ❌                       |
+| Medium     | ✅             | ✅ up to 20               | ❌                       |
+| Enterprise | ✅             | ✅ unlimited              | ✅                       |
 
 Backed by three entitlements:
 
@@ -121,26 +121,28 @@ Backed by three entitlements:
 Downgrading (Enterprise → Medium) does NOT auto-clear sport_key values (that
 would silently reshape resolution answers). Downgrading (Medium → Small) does
 NOT auto-archive existing customs. The entitlement reconciler surfaces the drift
+
 - suggests a manual archive path.
 
 ## 4. The default catalog
 
 The 10-entry seeded catalog covers the standard youth-development progression
-- adult/senior/masters divisions. Every entry has `sport_key=null` (generic —
-applies across every sport) and `organization_id=null` (tenant-wide):
 
-| Name    | Bounds     | Cutoff kind             | is_youth | is_default |
-| ------- | ---------- | ----------------------- | -------- | ---------- |
-| U6      | 3-5        | calendar_year           | ✅       | ❌         |
-| U8      | 6-7        | calendar_year           | ✅       | ❌         |
-| U10     | 8-9        | calendar_year           | ✅       | ❌         |
-| U12     | 10-11      | calendar_year           | ✅       | ❌         |
-| U14     | 12-13      | calendar_year           | ✅       | ❌         |
-| U16     | 14-15      | calendar_year           | ✅       | ❌         |
-| U18     | 16-17      | calendar_year           | ✅       | ❌         |
-| Adult   | 18-34      | rolling_from_birthday   | ❌       | ✅         |
-| Senior  | 35-100     | rolling_from_birthday   | ❌       | ❌         |
-| Masters | 50-100     | rolling_from_birthday   | ❌       | ❌         |
+- adult/senior/masters divisions. Every entry has `sport_key=null` (generic —
+  applies across every sport) and `organization_id=null` (tenant-wide):
+
+| Name    | Bounds | Cutoff kind           | is_youth | is_default |
+| ------- | ------ | --------------------- | -------- | ---------- |
+| U6      | 3-5    | calendar_year         | ✅       | ❌         |
+| U8      | 6-7    | calendar_year         | ✅       | ❌         |
+| U10     | 8-9    | calendar_year         | ✅       | ❌         |
+| U12     | 10-11  | calendar_year         | ✅       | ❌         |
+| U14     | 12-13  | calendar_year         | ✅       | ❌         |
+| U16     | 14-15  | calendar_year         | ✅       | ❌         |
+| U18     | 16-17  | calendar_year         | ✅       | ❌         |
+| Adult   | 18-34  | rolling_from_birthday | ❌       | ✅         |
+| Senior  | 35-100 | rolling_from_birthday | ❌       | ❌         |
+| Masters | 50-100 | rolling_from_birthday | ❌       | ❌         |
 
 `Adult` is is_default=true so downstream code (Finance tier-pricing defaults,
 enrollment previews) always has a working answer for the (tenant, null, null)
@@ -174,13 +176,12 @@ Three guardrails:
   have exactly one default. Promote another AgeGroup first
   (`CANNOT_DELETE_DEFAULT_AGE_GROUP` 409).
 - **`is_seeded=true` cannot be deleted / archived.** The platform's baseline
-  catalog must remain intact. Seeded rows may still be edited (rename,
-  recolour, bounds edits within entitlements). `CANNOT_DELETE_SEEDED_AGE_GROUP`
-  409.
-- **AgeGroups in use cannot be archived / deleted.** Any inbound Team.age_group_id
-  or EventDivision.age_group_id blocks the write with `AGE_GROUP_IN_USE` (409).
-  AthleteEnrollment.age_group_snapshot_id does NOT count — snapshots are
-  self-contained copies.
+  catalog must remain intact. Seeded rows may still be edited (rename, recolour,
+  bounds edits within entitlements). `CANNOT_DELETE_SEEDED_AGE_GROUP` 409.
+- **AgeGroups in use cannot be archived / deleted.** Any inbound
+  Team.age_group_id or EventDivision.age_group_id blocks the write with
+  `AGE_GROUP_IN_USE` (409). AthleteEnrollment.age_group_snapshot_id does NOT
+  count — snapshots are self-contained copies.
 
 ## 6. Snapshotting on AthleteEnrollment (Wave 3+)
 
@@ -188,9 +189,9 @@ Three guardrails:
 stores the age_group_id + a JSONB copy of the bounds + cutoff at enrollment
 time. Two motivations:
 
-1. **Bounds drift.** If a tenant edits U12's bounds from 10-11 to 11-12 mid-season,
-   currently-enrolled athletes should not silently lose eligibility. The
-   snapshot preserves the enrollment's original eligibility posture.
+1. **Bounds drift.** If a tenant edits U12's bounds from 10-11 to 11-12
+   mid-season, currently-enrolled athletes should not silently lose eligibility.
+   The snapshot preserves the enrollment's original eligibility posture.
 2. **Athlete birthday drift.** An athlete who was 11 when enrolled becomes 12
    during the season. Their competitive eligibility for the season shouldn't
    change — the snapshot preserves the age they were when enrolled.
@@ -203,18 +204,17 @@ references is permitted (assuming no live Team.age_group_id references remain).
 
 - **Doesn't own athletes.** Athletes are in the `athlete` module (Wave 3+); the
   AgeGroupResolver operates on a DOB argument, not on an Athlete row.
-- **Doesn't own teams.** Teams are in the `teams` module (Wave 2b); Team
-  carries `age_group_id` (nullable) via the `BelongsToAgeGroup` trait shipped
-  here.
+- **Doesn't own teams.** Teams are in the `teams` module (Wave 2b); Team carries
+  `age_group_id` (nullable) via the `BelongsToAgeGroup` trait shipped here.
 - **Doesn't compute eligibility against real athlete records.** The resolver
   answers "what group does this DOB fall into?" — the downstream Athlete +
   AthleteEnrollment modules make the actual eligibility decisions using the
   resolver's answer + tenant policy.
-- **Doesn't ship a sports registry.** `sport_key` accepts any syntactically-valid
-  string in Wave 3a. Wave 3c will introduce a registered sports catalogue +
-  tighten valid_sport_key validation.
+- **Doesn't ship a sports registry.** `sport_key` accepts any
+  syntactically-valid string in Wave 3a. Wave 3c will introduce a registered
+  sports catalogue + tighten valid_sport_key validation.
 - **Doesn't clone age groups.** Each tenant creates their own via the seeder
-  + admin CRUD. Cross-tenant cloning is forbidden.
+  - admin CRUD. Cross-tenant cloning is forbidden.
 - **Doesn't nest.** No `parent_id` — age groups are flat. Programs that nest
   (e.g. "Junior Program" → U12 + U14) live in a future `programme` aggregate
   that references age groups by FK.
@@ -230,8 +230,8 @@ default catalog for NEW tenants going forward. Existing tenants at deploy time
 are handled by the one-shot `age-group:seed-defaults-for-tenant --all` variant.
 Idempotent — safe to re-run.
 
-Wave 3a does NOT enforce `AGE_GROUP_BOUNDS_INVALIDATE_ATHLETES` (that check is
-a no-op because Athlete + AthleteEnrollment don't exist yet). Wave 3+ will hook
+Wave 3a does NOT enforce `AGE_GROUP_BOUNDS_INVALIDATE_ATHLETES` (that check is a
+no-op because Athlete + AthleteEnrollment don't exist yet). Wave 3+ will hook
 the Athlete module's roster into the AgeGroupObserver's bounds-mutation check,
 so from Wave 3+ onward, bounds changes on an in-use group refuse with a 409
 listing affected athletes.
@@ -240,7 +240,8 @@ listing affected athletes.
 
 - `.kiro/steering/hierarchy.md` §1a — canonical vocabulary (AgeGroup helps
   assess Athlete → Team fit)
-- `.kiro/steering/hierarchy.md` §7 — tier matrix (age_group_slot + age_group_custom)
+- `.kiro/steering/hierarchy.md` §7 — tier matrix (age_group_slot +
+  age_group_custom)
 - `.kiro/steering/tenancy-columns.md` §3 — the tenant_id mandate (AgeGroup
   carries tenant_id, nullable organization_id)
 - `.kiro/steering/tenancy-columns.md` §5 — forbidden columns (region_id on

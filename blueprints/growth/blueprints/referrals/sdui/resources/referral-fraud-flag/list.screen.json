@@ -28,8 +28,21 @@
         {
           "kind": "View",
           "children": [
-            { "kind": "Text", "props": { "as": "h1", "className": "text-2xl font-semibold", "children": "Fraud review queue" } },
-            { "kind": "Text", "props": { "className": "text-sm text-muted", "children": "Flags awaiting review. Confirm fraud (cancels referral + clawbacks rewards), dismiss as false positive, or manual-override to permit the referral." } }
+            {
+              "kind": "Text",
+              "props": {
+                "as": "h1",
+                "className": "text-2xl font-semibold",
+                "children": "Fraud review queue"
+              }
+            },
+            {
+              "kind": "Text",
+              "props": {
+                "className": "text-sm text-muted",
+                "children": "Flags awaiting review. Confirm fraud (cancels referral + clawbacks rewards), dismiss as false positive, or manual-override to permit the referral."
+              }
+            }
           ]
         },
         {
@@ -44,7 +57,13 @@
                 { "id": "block", "label": "Block" },
                 { "id": "critical", "label": "Critical" }
               ],
-              "actions": { "onSelectionChange": { "kind": "filter.set", "field": "severity", "valueExpr": "$selectedKey" } }
+              "actions": {
+                "onSelectionChange": {
+                  "kind": "filter.set",
+                  "field": "severity",
+                  "valueExpr": "$selectedKey"
+                }
+              }
             },
             {
               "kind": "ComboBox",
@@ -60,7 +79,13 @@
                 { "id": "geographic_mismatch", "label": "Geographic mismatch" },
                 { "id": "behavioral_anomaly", "label": "Behavioral anomaly" }
               ],
-              "actions": { "onSelectionChange": { "kind": "filter.set", "field": "flag_type", "valueExpr": "$selectedKey" } }
+              "actions": {
+                "onSelectionChange": {
+                  "kind": "filter.set",
+                  "field": "flag_type",
+                  "valueExpr": "$selectedKey"
+                }
+              }
             },
             {
               "kind": "ComboBox",
@@ -69,7 +94,13 @@
                 { "id": "false", "label": "Unreviewed" },
                 { "id": "true", "label": "Reviewed" }
               ],
-              "actions": { "onSelectionChange": { "kind": "filter.set", "field": "reviewed", "valueExpr": "$selectedKey" } }
+              "actions": {
+                "onSelectionChange": {
+                  "kind": "filter.set",
+                  "field": "reviewed",
+                  "valueExpr": "$selectedKey"
+                }
+              }
             }
           ]
         },

@@ -7,5 +7,5 @@
  *   Android APK/AAB from a PWA.
  */
 
-export { getBubblewrapConfig } from './utils';
-export type { IBubblewrapConfigInput, ITwaManifest } from './interfaces';
+export { getBubblewrapConfig } from "./utils";
+export type { IBubblewrapConfigInput, ITwaManifest } from "./interfaces";

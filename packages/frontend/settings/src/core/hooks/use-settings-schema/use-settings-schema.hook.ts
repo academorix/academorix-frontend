@@ -9,8 +9,8 @@
  *   `onApplicationBootstrap`.
  */
 
-import { useEffect, useState } from 'react';
-import { useInject, useOptionalInject } from '@stackra/container/react';
+import { useEffect, useState } from "react";
+import { useInject, useOptionalInject } from "@stackra/container/react";
 import {
   EVENT_EMITTER,
   SETTINGS_EVENTS,
@@ -18,7 +18,7 @@ import {
   type IEventEmitter,
   type ISettingDefinition,
   type ISettingsRegistry,
-} from '@stackra/contracts';
+} from "@stackra/contracts";
 
 /**
  * Subscribe to the current settings schema — every registered group

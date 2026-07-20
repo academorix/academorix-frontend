@@ -45,9 +45,7 @@
       "max_active_members": "integer",
       "current_active_members": "integer"
     },
-    "observers": [
-      "MembershipPlanObserver"
-    ]
+    "observers": ["MembershipPlanObserver"]
   },
   "x-database": {
     "engine": "postgres",
@@ -240,7 +238,11 @@
       "properties": {
         "requires_athlete_medical_clearance": { "type": "boolean" },
         "requires_guardian_verified": { "type": "boolean" },
-        "requires_minimum_athlete_age": { "type": ["integer", "null"], "minimum": 0, "maximum": 100 }
+        "requires_minimum_athlete_age": {
+          "type": ["integer", "null"],
+          "minimum": 0,
+          "maximum": 100
+        }
       }
     },
     "addon_config": {

@@ -9,9 +9,9 @@
  *   no sentinel-returning factories.
  */
 
-import { Global, Module, type DynamicModule } from '@stackra/container';
-import { createSeedLoader, seedLoaderToken } from '@stackra/support';
-import type { ISduiClient, ISduiModuleOptions } from '@stackra/contracts';
+import { Global, Module, type DynamicModule } from "@stackra/container";
+import { createSeedLoader, seedLoaderToken } from "@stackra/support";
+import type { ISduiClient, ISduiModuleOptions } from "@stackra/contracts";
 import {
   SDUI_CLIENT,
   SDUI_COMPONENT_REGISTRY,
@@ -20,10 +20,10 @@ import {
   SDUI_PAGE_REGISTRY,
   SDUI_SCHEMA_CACHE,
   SDUI_SERVICE,
-} from '@stackra/contracts';
+} from "@stackra/contracts";
 
-import { ComponentRegistry, LayoutRegistry, SduiPageRegistry } from './registries';
-import { NullSduiClient, SchemaCache, SduiService } from './services';
+import { ComponentRegistry, LayoutRegistry, SduiPageRegistry } from "./registries";
+import { NullSduiClient, SchemaCache, SduiService } from "./services";
 
 /**
  * SDUI configuration + client-slot options.
@@ -86,11 +86,11 @@ export class SduiModule {
 
         // Cache TTL + consumer-supplied component/layout entries seeded via a lifecycle loader.
         {
-          provide: seedLoaderToken('sdui:forRoot'),
+          provide: seedLoaderToken("sdui:forRoot"),
           useFactory: (
             cache: SchemaCache,
             components: ComponentRegistry,
-            layouts: LayoutRegistry
+            layouts: LayoutRegistry,
           ) =>
             createSeedLoader(() => {
               if (options.cacheTtl != null) cache.setTtlSeconds(options.cacheTtl);
@@ -125,14 +125,14 @@ export class SduiModule {
    * Register additional components / layouts via a lifecycle-safe loader.
    */
   public static forFeature(items: {
-    components?: Readonly<Record<string, import('@stackra/contracts').ISduiComponentEntry>>;
-    layouts?: readonly import('@stackra/contracts').ISduiLayoutEntry[];
+    components?: Readonly<Record<string, import("@stackra/contracts").ISduiComponentEntry>>;
+    layouts?: readonly import("@stackra/contracts").ISduiLayoutEntry[];
   }): DynamicModule {
     return {
       module: SduiModule,
       providers: [
         {
-          provide: seedLoaderToken('sdui:forFeature'),
+          provide: seedLoaderToken("sdui:forFeature"),
           useFactory: (components: ComponentRegistry, layouts: LayoutRegistry) =>
             createSeedLoader(() => {
               for (const [type, entry] of Object.entries(items.components ?? {})) {

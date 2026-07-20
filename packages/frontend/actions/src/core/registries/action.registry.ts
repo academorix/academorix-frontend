@@ -5,10 +5,10 @@
  *   handlers, extending `BaseRegistry` from `@stackra/support`.
  */
 
-import { Inject, Injectable, Optional } from '@stackra/container';
-import { BaseRegistry } from '@stackra/support';
-import type { IActionHandler, ILoggerManager } from '@stackra/contracts';
-import { LOGGER_MANAGER } from '@stackra/contracts';
+import { Inject, Injectable, Optional } from "@stackra/container";
+import { BaseRegistry } from "@stackra/support";
+import type { IActionHandler, ILoggerManager } from "@stackra/contracts";
+import { LOGGER_MANAGER } from "@stackra/contracts";
 
 /**
  * Registry of action handlers keyed by `kind`.
@@ -16,7 +16,7 @@ import { LOGGER_MANAGER } from '@stackra/contracts';
 @Injectable()
 export class ActionRegistry extends BaseRegistry<string, IActionHandler> {
   public constructor(
-    @Optional() @Inject(LOGGER_MANAGER) private readonly loggerManager?: ILoggerManager
+    @Optional() @Inject(LOGGER_MANAGER) private readonly loggerManager?: ILoggerManager,
   ) {
     super();
   }
@@ -28,7 +28,7 @@ export class ActionRegistry extends BaseRegistry<string, IActionHandler> {
   public override register(kind: string, handler: IActionHandler): this {
     if (this.has(kind)) {
       this.loggerManager
-        ?.channel('actions', 'actions')
+        ?.channel("actions", "actions")
         .warn(`[actions] Handler collision on kind "${kind}" — last-wins replacement.`);
       return this.replace(kind, handler);
     }

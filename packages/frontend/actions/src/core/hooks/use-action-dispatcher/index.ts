@@ -4,4 +4,4 @@
  * @description Public API barrel for the `useActionDispatcher` entity.
  */
 
-export { useActionDispatcher, type ActionDispatchCallback } from './use-action-dispatcher.hook';
+export { useActionDispatcher, type ActionDispatchCallback } from "./use-action-dispatcher.hook";

@@ -4,9 +4,9 @@
  * @description React hook for accessing the RealtimeManager from DI.
  */
 
-import { useInject } from '@stackra/container/react';
-import { REALTIME_MANAGER } from '@stackra/contracts';
-import { RealtimeManager } from '@/core/services/realtime-manager.service';
+import { useInject } from "@stackra/container/react";
+import { REALTIME_MANAGER } from "@stackra/contracts";
+import { RealtimeManager } from "@/core/services/realtime-manager.service";
 
 /**
  * Access the RealtimeManager for advanced operations.

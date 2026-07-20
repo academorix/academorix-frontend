@@ -8,7 +8,7 @@
  *   plausible.
  */
 
-import type { INotificationPayload } from '@/core/interfaces';
+import type { INotificationPayload } from "@/core/interfaces";
 
 /**
  * Build a plausible {@link INotificationPayload}, with every
@@ -20,12 +20,12 @@ import type { INotificationPayload } from '@/core/interfaces';
  * ```
  */
 export function mockNotificationPayload(
-  overrides: Partial<INotificationPayload> = {}
+  overrides: Partial<INotificationPayload> = {},
 ): INotificationPayload {
   return {
-    title: 'Test notification',
-    body: 'Test body copy — created by mockNotificationPayload.',
-    tag: 'stackra:test',
+    title: "Test notification",
+    body: "Test body copy — created by mockNotificationPayload.",
+    tag: "stackra:test",
     timestamp: 1_700_000_000_000,
     ...overrides,
   };

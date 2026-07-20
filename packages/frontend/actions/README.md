@@ -16,12 +16,16 @@ pnpm add @stackra/actions @stackra/container @stackra/contracts \
 ## Quick start
 
 ```ts
-import { Module, ApplicationFactory } from '@stackra/container';
-import { PipelineModule } from '@stackra/pipeline';
-import { EventsModule } from '@stackra/events';
-import { LoggerModule } from '@stackra/logger';
-import { ActionsModule } from '@stackra/actions';
-import { ActionKind, ACTION_DISPATCHER, type IActionDispatcher } from '@stackra/contracts';
+import { Module, ApplicationFactory } from "@stackra/container";
+import { PipelineModule } from "@stackra/pipeline";
+import { EventsModule } from "@stackra/events";
+import { LoggerModule } from "@stackra/logger";
+import { ActionsModule } from "@stackra/actions";
+import {
+  ActionKind,
+  ACTION_DISPATCHER,
+  type IActionDispatcher,
+} from "@stackra/contracts";
 
 @Module({
   imports: [
@@ -41,9 +45,13 @@ const dispatch = app.get<IActionDispatcher>(ACTION_DISPATCHER);
 await dispatch.dispatch({
   kind: ActionKind.Composite,
   actions: [
-    { kind: ActionKind.Mutate, endpoint: '/api/orders/1/approve', method: 'POST' },
-    { kind: ActionKind.Toast, status: 'success', message: 'Order approved' },
-    { kind: ActionKind.Refresh, resource: 'orders' },
+    {
+      kind: ActionKind.Mutate,
+      endpoint: "/api/orders/1/approve",
+      method: "POST",
+    },
+    { kind: ActionKind.Toast, status: "success", message: "Order approved" },
+    { kind: ActionKind.Refresh, resource: "orders" },
   ],
 });
 ```
@@ -117,8 +125,8 @@ any component whose event carries a single value:
 
 ```tsx
 const onSelectionChange = useActionChange<boolean>((v) => ({
-  kind: 'setState',
-  path: 'settings.autoLock',
+  kind: "setState",
+  path: "settings.autoLock",
   value: v,
 }));
 
@@ -141,7 +149,7 @@ For Tabs / Menu / ListBox / ComboBox / Segment / RadioGroup:
 
 ```tsx
 const onSelectionChange = useActionSelection<Key>((k) => ({
-  kind: 'navigate',
+  kind: "navigate",
   to: `/section/${String(k)}`,
 }));
 

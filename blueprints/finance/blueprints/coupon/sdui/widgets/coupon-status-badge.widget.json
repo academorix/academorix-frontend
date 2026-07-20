@@ -11,7 +11,11 @@
     "usageCount": { "type": "integer", "required": true, "minimum": 0 },
     "usageCap": { "type": ["integer", "null"], "description": "NULL = unlimited." },
     "size": { "type": "string", "default": "sm", "enum": ["xs", "sm", "md", "lg"] },
-    "showUsage": { "type": "boolean", "default": true, "description": "When true + user has coupons.view-financials, appends 'X / Y used' after the status label." }
+    "showUsage": {
+      "type": "boolean",
+      "default": true,
+      "description": "When true + user has coupons.view-financials, appends 'X / Y used' after the status label."
+    }
   },
   "nodes": [
     {

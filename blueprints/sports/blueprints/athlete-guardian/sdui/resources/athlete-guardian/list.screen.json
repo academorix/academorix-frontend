@@ -46,11 +46,16 @@
                 {
                   "kind": "Text",
                   "props": { "as": "h1", "className": "text-2xl font-semibold" },
-                  "bindings": { "children": { "$expr": "'Guardians for ' + $ref('athlete.display_name')" } }
+                  "bindings": {
+                    "children": { "$expr": "'Guardians for ' + $ref('athlete.display_name')" }
+                  }
                 },
                 {
                   "kind": "Text",
-                  "props": { "className": "text-sm text-muted", "children": "The parents and legal guardians responsible for this athlete." }
+                  "props": {
+                    "className": "text-sm text-muted",
+                    "children": "The parents and legal guardians responsible for this athlete."
+                  }
                 }
               ]
             },
@@ -68,7 +73,9 @@
                 }
               },
               "bindings": {
-                "disabled": { "$expr": "!$ref('features.athlete_guardian.multi_guardian') && $ref('guardians').length >= 1" }
+                "disabled": {
+                  "$expr": "!$ref('features.athlete_guardian.multi_guardian') && $ref('guardians').length >= 1"
+                }
               },
               "requiresPermission": "athlete_guardians.create"
             }
@@ -94,9 +101,21 @@
             "kind": "View",
             "props": { "className": "text-center py-12" },
             "children": [
-              { "kind": "Icon", "props": { "name": "users", "className": "size-12 mx-auto text-muted" } },
-              { "kind": "Text", "props": { "className": "mt-4 text-lg font-medium", "children": "No guardians yet" } },
-              { "kind": "Text", "props": { "className": "text-sm text-muted", "children": "Add the athlete's parent or legal guardian." } }
+              {
+                "kind": "Icon",
+                "props": { "name": "users", "className": "size-12 mx-auto text-muted" }
+              },
+              {
+                "kind": "Text",
+                "props": { "className": "mt-4 text-lg font-medium", "children": "No guardians yet" }
+              },
+              {
+                "kind": "Text",
+                "props": {
+                  "className": "text-sm text-muted",
+                  "children": "Add the athlete's parent or legal guardian."
+                }
+              }
             ]
           },
           "columns": [

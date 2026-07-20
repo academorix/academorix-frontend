@@ -183,9 +183,7 @@
       "class": "Academorix\\Finance\\Tax\\Events\\TaxCalculationRequested",
       "trigger": "TaxCalculator::calculate() invoked. Fires BEFORE the provider call. Distinct from TaxCalculationCompleted (per-provider-per-attempt success). Reserved for provider-latency observability + drift detection instrumentation.",
       "queue": "tax",
-      "consumers": [
-        "monitoring::MetricsCollector (starts calculation-duration histogram)"
-      ],
+      "consumers": ["monitoring::MetricsCollector (starts calculation-duration histogram)"],
       "payload": {
         "correlation_id": "ULID",
         "tenant_id": "ULID",

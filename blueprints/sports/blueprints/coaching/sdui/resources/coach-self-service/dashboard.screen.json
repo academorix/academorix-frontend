@@ -48,24 +48,59 @@
               "kind": "View",
               "props": { "className": "flex items-center gap-4" },
               "children": [
-                { "kind": "Avatar", "props": { "size": "lg" }, "bindings": { "src": { "$ref": "profile.photo_url_signed" }, "name": { "$ref": "profile.display_name" } } },
+                {
+                  "kind": "Avatar",
+                  "props": { "size": "lg" },
+                  "bindings": {
+                    "src": { "$ref": "profile.photo_url_signed" },
+                    "name": { "$ref": "profile.display_name" }
+                  }
+                },
                 {
                   "kind": "View",
                   "children": [
-                    { "kind": "Text", "props": { "as": "h1", "className": "text-2xl font-semibold" }, "bindings": { "children": { "$ref": "profile.display_name" } } },
+                    {
+                      "kind": "Text",
+                      "props": { "as": "h1", "className": "text-2xl font-semibold" },
+                      "bindings": { "children": { "$ref": "profile.display_name" } }
+                    },
                     {
                       "kind": "View",
                       "props": { "className": "flex items-center gap-2 mt-1" },
                       "children": [
-                        { "kind": "Widget", "widget": "coaching.coach-status-chip", "bindings": { "is_active": { "$ref": "profile.is_active" }, "verified_by_admin_at": { "$ref": "profile.verified_by_admin_at" } } },
-                        { "kind": "Chip", "props": { "size": "sm" }, "bindings": { "children": { "$ref": "profile.primary_sport_slug" }, "hidden": { "$expr": "!profile.primary_sport_slug" } } }
+                        {
+                          "kind": "Widget",
+                          "widget": "coaching.coach-status-chip",
+                          "bindings": {
+                            "is_active": { "$ref": "profile.is_active" },
+                            "verified_by_admin_at": { "$ref": "profile.verified_by_admin_at" }
+                          }
+                        },
+                        {
+                          "kind": "Chip",
+                          "props": { "size": "sm" },
+                          "bindings": {
+                            "children": { "$ref": "profile.primary_sport_slug" },
+                            "hidden": { "$expr": "!profile.primary_sport_slug" }
+                          }
+                        }
                       ]
                     }
                   ]
                 }
               ]
             },
-            { "kind": "Button", "props": { "variant": "primary", "leadingIcon": "pencil", "children": "Edit profile" }, "actions": { "onPress": { "kind": "navigate", "toExpr": "'/tenant/coaches/me/edit'" } } }
+            {
+              "kind": "Button",
+              "props": {
+                "variant": "primary",
+                "leadingIcon": "pencil",
+                "children": "Edit profile"
+              },
+              "actions": {
+                "onPress": { "kind": "navigate", "toExpr": "'/tenant/coaches/me/edit'" }
+              }
+            }
           ]
         },
         {
@@ -75,14 +110,48 @@
             {
               "kind": "Card",
               "children": [
-                { "kind": "Card.Header", "children": [{ "kind": "Text", "props": { "as": "h2", "className": "font-semibold", "children": "My profile" } }] },
+                {
+                  "kind": "Card.Header",
+                  "children": [
+                    {
+                      "kind": "Text",
+                      "props": {
+                        "as": "h2",
+                        "className": "font-semibold",
+                        "children": "My profile"
+                      }
+                    }
+                  ]
+                },
                 {
                   "kind": "Card.Content",
                   "children": [
-                    { "kind": "Description", "props": { "label": "Coaching since" }, "bindings": { "children": { "$ref": "profile.coaching_since_year" } } },
-                    { "kind": "Description", "props": { "label": "Specializations" }, "bindings": { "children": { "$expr": "$ref('profile.specializations').join(', ')" } } },
-                    { "kind": "Description", "props": { "label": "Languages" }, "bindings": { "children": { "$expr": "$ref('profile.languages_spoken').join(', ')" } } },
-                    { "kind": "Description", "props": { "label": "Accepting new athletes" }, "bindings": { "children": { "$expr": "profile.is_accepting_new_athletes ? 'Yes' : 'No'" } } }
+                    {
+                      "kind": "Description",
+                      "props": { "label": "Coaching since" },
+                      "bindings": { "children": { "$ref": "profile.coaching_since_year" } }
+                    },
+                    {
+                      "kind": "Description",
+                      "props": { "label": "Specializations" },
+                      "bindings": {
+                        "children": { "$expr": "$ref('profile.specializations').join(', ')" }
+                      }
+                    },
+                    {
+                      "kind": "Description",
+                      "props": { "label": "Languages" },
+                      "bindings": {
+                        "children": { "$expr": "$ref('profile.languages_spoken').join(', ')" }
+                      }
+                    },
+                    {
+                      "kind": "Description",
+                      "props": { "label": "Accepting new athletes" },
+                      "bindings": {
+                        "children": { "$expr": "profile.is_accepting_new_athletes ? 'Yes' : 'No'" }
+                      }
+                    }
                   ]
                 }
               ]
@@ -90,8 +159,32 @@
             {
               "kind": "Card",
               "children": [
-                { "kind": "Card.Header", "children": [{ "kind": "Text", "props": { "as": "h2", "className": "font-semibold", "children": "Availability" } }] },
-                { "kind": "Card.Content", "children": [{ "kind": "Widget", "widget": "coaching.availability-calendar", "bindings": { "availability": { "$ref": "profile.availability" }, "editable": { "$value": false } } }] }
+                {
+                  "kind": "Card.Header",
+                  "children": [
+                    {
+                      "kind": "Text",
+                      "props": {
+                        "as": "h2",
+                        "className": "font-semibold",
+                        "children": "Availability"
+                      }
+                    }
+                  ]
+                },
+                {
+                  "kind": "Card.Content",
+                  "children": [
+                    {
+                      "kind": "Widget",
+                      "widget": "coaching.availability-calendar",
+                      "bindings": {
+                        "availability": { "$ref": "profile.availability" },
+                        "editable": { "$value": false }
+                      }
+                    }
+                  ]
+                }
               ]
             }
           ]
@@ -106,8 +199,21 @@
                   "kind": "View",
                   "props": { "className": "flex items-center justify-between" },
                   "children": [
-                    { "kind": "Text", "props": { "as": "h2", "className": "font-semibold", "children": "My upcoming assignments" } },
-                    { "kind": "Chip", "props": { "size": "sm" }, "bindings": { "children": { "$expr": "$ref('assignments').length + ' active'" } } }
+                    {
+                      "kind": "Text",
+                      "props": {
+                        "as": "h2",
+                        "className": "font-semibold",
+                        "children": "My upcoming assignments"
+                      }
+                    },
+                    {
+                      "kind": "Chip",
+                      "props": { "size": "sm" },
+                      "bindings": {
+                        "children": { "$expr": "$ref('assignments').length + ' active'" }
+                      }
+                    }
                   ]
                 }
               ]
@@ -119,13 +225,57 @@
                   "kind": "Table",
                   "props": { "aria-label": "My assignments" },
                   "bindings": { "rows": { "$ref": "assignments" } },
-                  "emptyState": { "kind": "Text", "props": { "className": "text-sm text-muted text-center py-8", "children": "No active assignments." } },
+                  "emptyState": {
+                    "kind": "Text",
+                    "props": {
+                      "className": "text-sm text-muted text-center py-8",
+                      "children": "No active assignments."
+                    }
+                  },
                   "columns": [
-                    { "key": "type", "renderer": { "kind": "Chip", "props": { "size": "xs" }, "bindings": { "children": { "$ref": "row.assignable_type" } } } },
-                    { "key": "target", "renderer": { "kind": "Text", "bindings": { "children": { "$ref": "row.assignable_summary" } } } },
-                    { "key": "role", "renderer": { "kind": "Chip", "props": { "size": "sm" }, "bindings": { "children": { "$ref": "row.role" } } } },
-                    { "key": "start", "renderer": { "kind": "Text", "bindings": { "children": { "$expr": "$formatDate(row.start_date, 'MMM d, yyyy')" } } } },
-                    { "key": "end", "renderer": { "kind": "Text", "bindings": { "children": { "$expr": "row.end_date ? $formatDate(row.end_date, 'MMM d, yyyy') : 'Open'" } } } }
+                    {
+                      "key": "type",
+                      "renderer": {
+                        "kind": "Chip",
+                        "props": { "size": "xs" },
+                        "bindings": { "children": { "$ref": "row.assignable_type" } }
+                      }
+                    },
+                    {
+                      "key": "target",
+                      "renderer": {
+                        "kind": "Text",
+                        "bindings": { "children": { "$ref": "row.assignable_summary" } }
+                      }
+                    },
+                    {
+                      "key": "role",
+                      "renderer": {
+                        "kind": "Chip",
+                        "props": { "size": "sm" },
+                        "bindings": { "children": { "$ref": "row.role" } }
+                      }
+                    },
+                    {
+                      "key": "start",
+                      "renderer": {
+                        "kind": "Text",
+                        "bindings": {
+                          "children": { "$expr": "$formatDate(row.start_date, 'MMM d, yyyy')" }
+                        }
+                      }
+                    },
+                    {
+                      "key": "end",
+                      "renderer": {
+                        "kind": "Text",
+                        "bindings": {
+                          "children": {
+                            "$expr": "row.end_date ? $formatDate(row.end_date, 'MMM d, yyyy') : 'Open'"
+                          }
+                        }
+                      }
+                    }
                   ]
                 }
               ]
@@ -142,11 +292,28 @@
                   "kind": "View",
                   "props": { "className": "flex items-center justify-between" },
                   "children": [
-                    { "kind": "Text", "props": { "as": "h2", "className": "font-semibold", "children": "My certifications" } },
+                    {
+                      "kind": "Text",
+                      "props": {
+                        "as": "h2",
+                        "className": "font-semibold",
+                        "children": "My certifications"
+                      }
+                    },
                     {
                       "kind": "Button",
-                      "props": { "size": "sm", "variant": "flat", "leadingIcon": "plus", "children": "Add certification" },
-                      "actions": { "onPress": { "kind": "navigate", "toExpr": "'/tenant/coaches/me/certifications/create'" } },
+                      "props": {
+                        "size": "sm",
+                        "variant": "flat",
+                        "leadingIcon": "plus",
+                        "children": "Add certification"
+                      },
+                      "actions": {
+                        "onPress": {
+                          "kind": "navigate",
+                          "toExpr": "'/tenant/coaches/me/certifications/create'"
+                        }
+                      },
                       "requiresPermission": "coach_certifications.create.own"
                     }
                   ]
@@ -160,12 +327,52 @@
                   "kind": "Table",
                   "props": { "aria-label": "My certifications" },
                   "bindings": { "rows": { "$ref": "certifications" } },
-                  "emptyState": { "kind": "Text", "props": { "className": "text-sm text-muted text-center py-8", "children": "No certifications captured." } },
+                  "emptyState": {
+                    "kind": "Text",
+                    "props": {
+                      "className": "text-sm text-muted text-center py-8",
+                      "children": "No certifications captured."
+                    }
+                  },
                   "columns": [
-                    { "key": "body", "renderer": { "kind": "Chip", "props": { "size": "sm" }, "bindings": { "children": { "$ref": "row.issuing_body" } } } },
-                    { "key": "name", "renderer": { "kind": "Text", "bindings": { "children": { "$ref": "row.certification_name" } } } },
-                    { "key": "expiration", "renderer": { "kind": "Widget", "widget": "coaching.certification-expiration-badge", "bindings": { "expires_at": { "$ref": "row.expires_at" }, "days_until_expiry": { "$ref": "row.days_until_expiry" }, "is_expired": { "$ref": "row.is_expired" } } } },
-                    { "key": "verified", "renderer": { "kind": "Chip", "props": { "size": "sm" }, "bindings": { "children": { "$expr": "row.is_verified ? 'Verified' : 'Pending'" }, "variant": { "$expr": "row.is_verified ? 'success' : 'warning'" } } } }
+                    {
+                      "key": "body",
+                      "renderer": {
+                        "kind": "Chip",
+                        "props": { "size": "sm" },
+                        "bindings": { "children": { "$ref": "row.issuing_body" } }
+                      }
+                    },
+                    {
+                      "key": "name",
+                      "renderer": {
+                        "kind": "Text",
+                        "bindings": { "children": { "$ref": "row.certification_name" } }
+                      }
+                    },
+                    {
+                      "key": "expiration",
+                      "renderer": {
+                        "kind": "Widget",
+                        "widget": "coaching.certification-expiration-badge",
+                        "bindings": {
+                          "expires_at": { "$ref": "row.expires_at" },
+                          "days_until_expiry": { "$ref": "row.days_until_expiry" },
+                          "is_expired": { "$ref": "row.is_expired" }
+                        }
+                      }
+                    },
+                    {
+                      "key": "verified",
+                      "renderer": {
+                        "kind": "Chip",
+                        "props": { "size": "sm" },
+                        "bindings": {
+                          "children": { "$expr": "row.is_verified ? 'Verified' : 'Pending'" },
+                          "variant": { "$expr": "row.is_verified ? 'success' : 'warning'" }
+                        }
+                      }
+                    }
                   ]
                 }
               ]
@@ -175,7 +382,19 @@
         {
           "kind": "Card",
           "children": [
-            { "kind": "Card.Header", "children": [{ "kind": "Text", "props": { "as": "h2", "className": "font-semibold", "children": "My skill ratings" } }] },
+            {
+              "kind": "Card.Header",
+              "children": [
+                {
+                  "kind": "Text",
+                  "props": {
+                    "as": "h2",
+                    "className": "font-semibold",
+                    "children": "My skill ratings"
+                  }
+                }
+              ]
+            },
             {
               "kind": "Card.Content",
               "children": [
@@ -183,11 +402,52 @@
                   "kind": "Table",
                   "props": { "aria-label": "My skill ratings" },
                   "bindings": { "rows": { "$ref": "ratings" } },
-                  "emptyState": { "kind": "Text", "props": { "className": "text-sm text-muted text-center py-8", "children": "No ratings recorded yet." } },
+                  "emptyState": {
+                    "kind": "Text",
+                    "props": {
+                      "className": "text-sm text-muted text-center py-8",
+                      "children": "No ratings recorded yet."
+                    }
+                  },
                   "columns": [
-                    { "key": "ratable", "renderer": { "kind": "View", "props": { "className": "flex items-center gap-2" }, "children": [{ "kind": "Chip", "props": { "size": "xs" }, "bindings": { "children": { "$ref": "row.ratable_type" } } }, { "kind": "Text", "bindings": { "children": { "$ref": "row.ratable_display_name" } } }] } },
-                    { "key": "rating", "renderer": { "kind": "Widget", "widget": "coaching.skill-rating-stars", "bindings": { "rating_scale": { "$ref": "row.rating_scale" }, "rating_value": { "$ref": "row.rating_value" } } } },
-                    { "key": "rated_at", "renderer": { "kind": "Text", "bindings": { "children": { "$expr": "$formatDate(row.rated_at, 'MMM yyyy')" } } } }
+                    {
+                      "key": "ratable",
+                      "renderer": {
+                        "kind": "View",
+                        "props": { "className": "flex items-center gap-2" },
+                        "children": [
+                          {
+                            "kind": "Chip",
+                            "props": { "size": "xs" },
+                            "bindings": { "children": { "$ref": "row.ratable_type" } }
+                          },
+                          {
+                            "kind": "Text",
+                            "bindings": { "children": { "$ref": "row.ratable_display_name" } }
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "key": "rating",
+                      "renderer": {
+                        "kind": "Widget",
+                        "widget": "coaching.skill-rating-stars",
+                        "bindings": {
+                          "rating_scale": { "$ref": "row.rating_scale" },
+                          "rating_value": { "$ref": "row.rating_value" }
+                        }
+                      }
+                    },
+                    {
+                      "key": "rated_at",
+                      "renderer": {
+                        "kind": "Text",
+                        "bindings": {
+                          "children": { "$expr": "$formatDate(row.rated_at, 'MMM yyyy')" }
+                        }
+                      }
+                    }
                   ]
                 }
               ]

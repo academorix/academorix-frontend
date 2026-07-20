@@ -1,1 +1,1 @@
-export { getAtPath, setAtPath } from './dotted-path.util';
+export { getAtPath, setAtPath } from "./dotted-path.util";

@@ -6,8 +6,24 @@
   "namespace": "academorix.coupon",
   "labelConventions": {
     "always": [],
-    "commonlyAvailable": ["discount_type", "applicability", "issuance_source", "refusal_reason", "clawback_reason", "code_type_bucket"],
-    "forbiddenAsLabels": ["tenant_id", "coupon_id", "redemption_id", "customer_id", "code", "campaign_name", "discount_amount", "source_amount"]
+    "commonlyAvailable": [
+      "discount_type",
+      "applicability",
+      "issuance_source",
+      "refusal_reason",
+      "clawback_reason",
+      "code_type_bucket"
+    ],
+    "forbiddenAsLabels": [
+      "tenant_id",
+      "coupon_id",
+      "redemption_id",
+      "customer_id",
+      "code",
+      "campaign_name",
+      "discount_amount",
+      "source_amount"
+    ]
   },
   "metrics": [
     {

@@ -24,7 +24,7 @@ import type { IRouteRecord } from "@stackra/contracts";
  *
  * export const dashboardRoute = defineRoute({
  *   path: '/dashboard',
- *   lazy: () => import('@/pages/dashboard'),
+ *   lazy: () => import('./dashboard.page'),
  * });
  * ```
  */

@@ -138,7 +138,11 @@
             }
           ],
           "actions": [
-            { "label": "Register another", "route": "/me/mfa/webauthn/register", "kind": "secondary" },
+            {
+              "label": "Register another",
+              "route": "/me/mfa/webauthn/register",
+              "kind": "secondary"
+            },
             { "label": "Back to MFA settings", "route": "/me/mfa", "kind": "primary" }
           ]
         }

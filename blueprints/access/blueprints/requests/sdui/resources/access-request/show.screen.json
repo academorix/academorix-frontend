@@ -67,9 +67,30 @@
                   "kind": "View",
                   "props": { "className": "text-muted flex flex-wrap items-center gap-3 text-sm" },
                   "children": [
-                    { "id": "status", "kind": "Widget", "widget": "access-requests.status-chip", "props": { "status": { "$ref": "accessRequest.status" }, "size": "md" } },
-                    { "id": "requester", "kind": "Text", "bindings": { "children": { "$expr": "'Requested by: ' + accessRequest.requester.display_name" } } },
-                    { "id": "perms", "kind": "Text", "bindings": { "children": { "$expr": "'Permissions: ' + accessRequest.permissions_wanted.join(', ')" } } }
+                    {
+                      "id": "status",
+                      "kind": "Widget",
+                      "widget": "access-requests.status-chip",
+                      "props": { "status": { "$ref": "accessRequest.status" }, "size": "md" }
+                    },
+                    {
+                      "id": "requester",
+                      "kind": "Text",
+                      "bindings": {
+                        "children": {
+                          "$expr": "'Requested by: ' + accessRequest.requester.display_name"
+                        }
+                      }
+                    },
+                    {
+                      "id": "perms",
+                      "kind": "Text",
+                      "bindings": {
+                        "children": {
+                          "$expr": "'Permissions: ' + accessRequest.permissions_wanted.join(', ')"
+                        }
+                      }
+                    }
                   ]
                 }
               ]
@@ -82,13 +103,25 @@
                 {
                   "id": "withdraw",
                   "kind": "Button",
-                  "props": { "variant": "ghost", "size": "sm", "children": "Withdraw", "leadingIcon": "no-symbol" },
-                  "bindings": { "isHidden": { "$expr": "accessRequest.status !== 'pending' || accessRequest.requester.id !== identity.id" } },
+                  "props": {
+                    "variant": "ghost",
+                    "size": "sm",
+                    "children": "Withdraw",
+                    "leadingIcon": "no-symbol"
+                  },
+                  "bindings": {
+                    "isHidden": {
+                      "$expr": "accessRequest.status !== 'pending' || accessRequest.requester.id !== identity.id"
+                    }
+                  },
                   "actions": {
                     "onPress": {
                       "kind": "http.post",
                       "urlExpr": "'/api/v1/access-requests/' + accessRequest.id + '/withdraw'",
-                      "confirm": { "title": "Withdraw request?", "description": "The approvers will no longer see this in their queue." },
+                      "confirm": {
+                        "title": "Withdraw request?",
+                        "description": "The approvers will no longer see this in their queue."
+                      },
                       "onSuccess": {
                         "kind": "sequence",
                         "steps": [
@@ -102,7 +135,12 @@
                 {
                   "id": "reject",
                   "kind": "Button",
-                  "props": { "variant": "secondary", "size": "sm", "children": "Reject", "leadingIcon": "x-mark" },
+                  "props": {
+                    "variant": "secondary",
+                    "size": "sm",
+                    "children": "Reject",
+                    "leadingIcon": "x-mark"
+                  },
                   "bindings": {
                     "isHidden": {
                       "$expr": "accessRequest.status !== 'pending' || !accessRequest.approvers.some(a => a.id === identity.id)"
@@ -115,7 +153,13 @@
                       "confirm": {
                         "title": "Reject request?",
                         "description": "The requester will be notified. A comment is required for audit.",
-                        "reasonField": { "label": "Reason", "name": "comment", "kind": "TextArea", "required": true, "minLength": 10 }
+                        "reasonField": {
+                          "label": "Reason",
+                          "name": "comment",
+                          "kind": "TextArea",
+                          "required": true,
+                          "minLength": 10
+                        }
                       },
                       "onSuccess": {
                         "kind": "sequence",
@@ -130,7 +174,12 @@
                 {
                   "id": "approve",
                   "kind": "Button",
-                  "props": { "variant": "primary", "size": "sm", "children": "Approve", "leadingIcon": "check" },
+                  "props": {
+                    "variant": "primary",
+                    "size": "sm",
+                    "children": "Approve",
+                    "leadingIcon": "check"
+                  },
                   "bindings": {
                     "isHidden": {
                       "$expr": "accessRequest.status !== 'pending' || !accessRequest.approvers.some(a => a.id === identity.id)"
@@ -143,12 +192,20 @@
                       "confirm": {
                         "title": "Approve request?",
                         "description": "A grant will be created with a 7-day TTL by default.",
-                        "reasonField": { "label": "Comment (optional)", "name": "comment", "kind": "TextArea", "required": false }
+                        "reasonField": {
+                          "label": "Comment (optional)",
+                          "name": "comment",
+                          "kind": "TextArea",
+                          "required": false
+                        }
                       },
                       "onSuccess": {
                         "kind": "sequence",
                         "steps": [
-                          { "kind": "toast.success", "message": "Request approved. Grant will be materialised shortly." },
+                          {
+                            "kind": "toast.success",
+                            "message": "Request approved. Grant will be materialised shortly."
+                          },
                           { "kind": "data.refresh", "source": "accessRequest" }
                         ]
                       }
@@ -169,7 +226,11 @@
               "kind": "Card",
               "props": { "className": "md:col-span-2 flex flex-col gap-4" },
               "children": [
-                { "id": "reason-header", "kind": "Text", "props": { "as": "h2", "className": "text-lg font-medium", "children": "Reason" } },
+                {
+                  "id": "reason-header",
+                  "kind": "Text",
+                  "props": { "as": "h2", "className": "text-lg font-medium", "children": "Reason" }
+                },
                 {
                   "id": "reason-body",
                   "kind": "Text",
@@ -179,7 +240,11 @@
                 {
                   "id": "audit-header",
                   "kind": "Text",
-                  "props": { "as": "h2", "className": "text-lg font-medium mt-4", "children": "Timeline" }
+                  "props": {
+                    "as": "h2",
+                    "className": "text-lg font-medium mt-4",
+                    "children": "Timeline"
+                  }
                 },
                 {
                   "id": "audit-timeline",
@@ -202,7 +267,11 @@
                           {
                             "kind": "Text",
                             "props": { "className": "font-medium" },
-                            "bindings": { "children": { "$expr": "item.event.charAt(0).toUpperCase() + item.event.slice(1).replace(/_/g, ' ')" } }
+                            "bindings": {
+                              "children": {
+                                "$expr": "item.event.charAt(0).toUpperCase() + item.event.slice(1).replace(/_/g, ' ')"
+                              }
+                            }
                           },
                           {
                             "kind": "Text",
@@ -225,16 +294,29 @@
               "kind": "Card",
               "props": { "className": "flex flex-col gap-4" },
               "children": [
-                { "id": "details-header", "kind": "Text", "props": { "as": "h2", "className": "text-lg font-medium", "children": "Details" } },
+                {
+                  "id": "details-header",
+                  "kind": "Text",
+                  "props": { "as": "h2", "className": "text-lg font-medium", "children": "Details" }
+                },
                 {
                   "id": "details-list",
                   "kind": "DescriptionList",
                   "items": [
                     { "label": "Requester", "valueExpr": "accessRequest.requester.display_name" },
                     { "label": "Resource", "valueExpr": "accessRequest.resource.display_name" },
-                    { "label": "Permissions", "valueExpr": "accessRequest.permissions_wanted.join(', ')" },
-                    { "label": "Requested", "valueExpr": "formatDateTime(accessRequest.requested_at)" },
-                    { "label": "Decided", "valueExpr": "accessRequest.decided_at ? formatDateTime(accessRequest.decided_at) : '\u2014'" },
+                    {
+                      "label": "Permissions",
+                      "valueExpr": "accessRequest.permissions_wanted.join(', ')"
+                    },
+                    {
+                      "label": "Requested",
+                      "valueExpr": "formatDateTime(accessRequest.requested_at)"
+                    },
+                    {
+                      "label": "Decided",
+                      "valueExpr": "accessRequest.decided_at ? formatDateTime(accessRequest.decided_at) : '\u2014'"
+                    },
                     { "label": "Expires", "valueExpr": "formatDateTime(accessRequest.expires_at)" },
                     { "label": "Reminders sent", "valueExpr": "accessRequest.reminders_sent" },
                     {
@@ -247,7 +329,11 @@
                 {
                   "id": "approvers-header",
                   "kind": "Text",
-                  "props": { "as": "h2", "className": "text-lg font-medium mt-2", "children": "Approvers" }
+                  "props": {
+                    "as": "h2",
+                    "className": "text-lg font-medium mt-2",
+                    "children": "Approvers"
+                  }
                 },
                 {
                   "id": "approvers-list",

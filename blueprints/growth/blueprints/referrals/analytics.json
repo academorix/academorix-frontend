@@ -10,7 +10,14 @@
       "name": "Referral Program Created",
       "kind": "track",
       "consent_required": "functional",
-      "properties": ["tenant_id", "program_id", "side", "reward_type", "trigger_event", "vesting_rule"],
+      "properties": [
+        "tenant_id",
+        "program_id",
+        "side",
+        "reward_type",
+        "trigger_event",
+        "vesting_rule"
+      ],
       "description": "Admin created a referral program. Powers program-setup funnel + reward-type-mix insight."
     },
     {
@@ -23,7 +30,12 @@
       "name": "Referral Program Archived",
       "kind": "track",
       "consent_required": "functional",
-      "properties": ["tenant_id", "program_id", "cascaded_referral_count", "cascaded_clawback_count"]
+      "properties": [
+        "tenant_id",
+        "program_id",
+        "cascaded_referral_count",
+        "cascaded_clawback_count"
+      ]
     },
     {
       "name": "Referral Code Issued",
@@ -36,7 +48,13 @@
       "name": "Referral Clicked",
       "kind": "track",
       "consent_required": "marketing",
-      "properties": ["tenant_id", "code_type_bucket", "has_utm", "click_id_provider", "referrer_domain_hash"],
+      "properties": [
+        "tenant_id",
+        "code_type_bucket",
+        "has_utm",
+        "click_id_provider",
+        "referrer_domain_hash"
+      ],
       "description": "click_id_provider = google/meta/tiktok/microsoft/snapchat/none. Consent-tier marketing because click data can inform ad-network optimisation."
     },
     {
@@ -50,7 +68,13 @@
       "name": "Referral Signed Up",
       "kind": "track",
       "consent_required": "functional",
-      "properties": ["tenant_id", "program_id", "days_from_claim_bucket", "utm_source", "click_id_provider"]
+      "properties": [
+        "tenant_id",
+        "program_id",
+        "days_from_claim_bucket",
+        "utm_source",
+        "click_id_provider"
+      ]
     },
     {
       "name": "Referral Trigger Reached",
@@ -62,26 +86,54 @@
       "name": "Referral Vested",
       "kind": "track",
       "consent_required": "functional",
-      "properties": ["tenant_id", "program_id", "reward_type", "reward_amount_bucket", "side", "days_from_trigger_bucket", "was_forced"],
+      "properties": [
+        "tenant_id",
+        "program_id",
+        "reward_type",
+        "reward_amount_bucket",
+        "side",
+        "days_from_trigger_bucket",
+        "was_forced"
+      ],
       "description": "Fires a mirror event on the marketing lane for ad-network conversion attribution."
     },
     {
       "name": "Referral Reward Materialized",
       "kind": "track",
       "consent_required": "functional",
-      "properties": ["tenant_id", "program_id", "reward_type", "reward_amount_bucket", "recipient_role", "days_from_vested_bucket"]
+      "properties": [
+        "tenant_id",
+        "program_id",
+        "reward_type",
+        "reward_amount_bucket",
+        "recipient_role",
+        "days_from_vested_bucket"
+      ]
     },
     {
       "name": "Referral Rewarded",
       "kind": "track",
       "consent_required": "functional",
-      "properties": ["tenant_id", "program_id", "reward_type", "reward_amount_bucket", "recipient_role", "days_from_materialized_bucket"]
+      "properties": [
+        "tenant_id",
+        "program_id",
+        "reward_type",
+        "reward_amount_bucket",
+        "recipient_role",
+        "days_from_materialized_bucket"
+      ]
     },
     {
       "name": "Referral Cancelled",
       "kind": "track",
       "consent_required": "functional",
-      "properties": ["tenant_id", "program_id", "cancellation_reason", "was_within_notice_window", "status_at_cancel"]
+      "properties": [
+        "tenant_id",
+        "program_id",
+        "cancellation_reason",
+        "was_within_notice_window",
+        "status_at_cancel"
+      ]
     },
     {
       "name": "Referral Expired",
@@ -100,19 +152,37 @@
       "name": "Referral Fraud Reviewed",
       "kind": "track",
       "consent_required": "essential",
-      "properties": ["tenant_id", "flag_type", "severity", "disposition", "days_from_created_bucket"]
+      "properties": [
+        "tenant_id",
+        "flag_type",
+        "severity",
+        "disposition",
+        "days_from_created_bucket"
+      ]
     },
     {
       "name": "Referral Clawback",
       "kind": "track",
       "consent_required": "functional",
-      "properties": ["tenant_id", "program_id", "clawback_reason", "was_paid", "was_materialized", "reversed_amount_bucket"]
+      "properties": [
+        "tenant_id",
+        "program_id",
+        "clawback_reason",
+        "was_paid",
+        "was_materialized",
+        "reversed_amount_bucket"
+      ]
     },
     {
       "name": "Referral Program Budget Reached",
       "kind": "track",
       "consent_required": "functional",
-      "properties": ["tenant_id", "program_id", "budget_cap_bucket", "days_since_program_start_bucket"]
+      "properties": [
+        "tenant_id",
+        "program_id",
+        "budget_cap_bucket",
+        "days_since_program_start_bucket"
+      ]
     },
     {
       "name": "Referral Program Budget Spike",

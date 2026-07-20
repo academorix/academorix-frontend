@@ -7,10 +7,10 @@
  *   when the call is in `RequiresAction`.
  */
 
-import type { JSX } from 'react';
-import { View } from 'react-native';
-import { Button, Card, Chip, Typography } from '@stackra/ui/native';
-import { AiToolState, type IAiToolCall } from '@stackra/contracts';
+import type { JSX } from "react";
+import { View } from "react-native";
+import { Button, Card, Chip, Typography } from "@stackra/ui/native";
+import { AiToolState, type IAiToolCall } from "@stackra/contracts";
 
 /** Props accepted by {@link AiToolCall}. */
 export interface IAiToolCallProps {
@@ -28,42 +28,42 @@ export interface IAiToolCallProps {
 function labelFor(state: AiToolState): string {
   switch (state) {
     case AiToolState.InputStreaming:
-      return 'Preparing…';
+      return "Preparing…";
     case AiToolState.InputAvailable:
-      return 'Running…';
+      return "Running…";
     case AiToolState.OutputAvailable:
-      return 'Completed';
+      return "Completed";
     case AiToolState.OutputError:
-      return 'Failed';
+      return "Failed";
     case AiToolState.RequiresAction:
-      return 'Approval needed';
+      return "Approval needed";
     default:
       return String(state);
   }
 }
 
 /** Map state to the semantic `Chip` color. */
-function chipColorFor(state: AiToolState): 'accent' | 'success' | 'warning' | 'danger' | 'default' {
+function chipColorFor(state: AiToolState): "accent" | "success" | "warning" | "danger" | "default" {
   switch (state) {
     case AiToolState.OutputAvailable:
-      return 'success';
+      return "success";
     case AiToolState.OutputError:
-      return 'danger';
+      return "danger";
     case AiToolState.RequiresAction:
-      return 'warning';
+      return "warning";
     case AiToolState.InputStreaming:
     case AiToolState.InputAvailable:
-      return 'accent';
+      return "accent";
     default:
-      return 'default';
+      return "default";
   }
 }
 
 /** Serialise a payload for display (compact JSON, truncated). */
 function preview(value: unknown, max: number = 220): string {
-  if (value === undefined || value === null) return '';
+  if (value === undefined || value === null) return "";
   try {
-    const raw = typeof value === 'string' ? value : JSON.stringify(value);
+    const raw = typeof value === "string" ? value : JSON.stringify(value);
     return raw.length > max ? `${raw.slice(0, max)}…` : raw;
   } catch {
     return String(value);
@@ -106,7 +106,7 @@ export function AiToolCall(props: IAiToolCallProps): JSX.Element {
         ) : null}
 
         {errorBody ? (
-          <Typography type="body-xs" className="mt-2 text-danger" numberOfLines={4}>
+          <Typography type="body-xs" className="text-danger mt-2" numberOfLines={4}>
             {errorBody}
           </Typography>
         ) : null}

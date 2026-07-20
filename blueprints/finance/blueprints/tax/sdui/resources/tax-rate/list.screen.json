@@ -31,8 +31,21 @@
             {
               "kind": "View",
               "children": [
-                { "kind": "Text", "props": { "as": "h1", "className": "text-2xl font-semibold", "children": "Tax rates" } },
-                { "kind": "Text", "props": { "className": "text-sm text-muted", "children": "Per-jurisdiction rate rows with effective-range time bounds." } }
+                {
+                  "kind": "Text",
+                  "props": {
+                    "as": "h1",
+                    "className": "text-2xl font-semibold",
+                    "children": "Tax rates"
+                  }
+                },
+                {
+                  "kind": "Text",
+                  "props": {
+                    "className": "text-sm text-muted",
+                    "children": "Per-jurisdiction rate rows with effective-range time bounds."
+                  }
+                }
               ]
             },
             {
@@ -41,7 +54,11 @@
               "children": [
                 {
                   "kind": "Button",
-                  "props": { "variant": "secondary", "leadingIcon": "arrow-down-tray", "children": "Sync from provider" },
+                  "props": {
+                    "variant": "secondary",
+                    "leadingIcon": "arrow-down-tray",
+                    "children": "Sync from provider"
+                  },
                   "requiresPermission": "tax.rates.sync",
                   "actions": {
                     "onPress": { "kind": "navigate", "to": "/tenant/tax/rates/sync" }
@@ -67,7 +84,11 @@
               "kind": "Widget",
               "widget": "tax.jurisdiction-picker",
               "actions": {
-                "onSelectionChange": { "kind": "filter.set", "field": "jurisdiction_id", "valueExpr": "$selectedKey" }
+                "onSelectionChange": {
+                  "kind": "filter.set",
+                  "field": "jurisdiction_id",
+                  "valueExpr": "$selectedKey"
+                }
               }
             },
             {
@@ -75,7 +96,11 @@
               "props": { "label": "Rate type", "menuTrigger": "focus", "className": "min-w-48" },
               "props_items_source": "tax.rate-type-catalog",
               "actions": {
-                "onSelectionChange": { "kind": "filter.set", "field": "rate_type", "valueExpr": "$selectedKey" }
+                "onSelectionChange": {
+                  "kind": "filter.set",
+                  "field": "rate_type",
+                  "valueExpr": "$selectedKey"
+                }
               }
             },
             {
@@ -98,10 +123,28 @@
             "columns": [
               { "field": "name", "label": "Name", "sortable": true, "width": 240 },
               { "field": "rate_type", "label": "Type", "sortable": true, "width": 140 },
-              { "field": "percentage", "label": "Rate", "sortable": true, "width": 100, "renderer": { "widget": "tax.rate-badge" } },
+              {
+                "field": "percentage",
+                "label": "Rate",
+                "sortable": true,
+                "width": 100,
+                "renderer": { "widget": "tax.rate-badge" }
+              },
               { "field": "applies_to", "label": "Applies to", "width": 120 },
-              { "field": "effective_from", "label": "Effective from", "sortable": true, "defaultSort": "desc", "width": 140, "formatter": "date" },
-              { "field": "effective_to", "label": "Effective to", "width": 140, "formatter": "date" },
+              {
+                "field": "effective_from",
+                "label": "Effective from",
+                "sortable": true,
+                "defaultSort": "desc",
+                "width": 140,
+                "formatter": "date"
+              },
+              {
+                "field": "effective_to",
+                "label": "Effective to",
+                "width": 140,
+                "formatter": "date"
+              },
               { "field": "source", "label": "Source", "width": 120 }
             ],
             "onRowPress": {
@@ -113,9 +156,24 @@
             "kind": "View",
             "props": { "className": "text-center py-12" },
             "children": [
-              { "kind": "Icon", "props": { "name": "calculator", "className": "size-12 mx-auto text-muted" } },
-              { "kind": "Text", "props": { "className": "mt-4 text-lg font-medium", "children": "No tax rates configured yet" } },
-              { "kind": "Text", "props": { "className": "text-sm text-muted", "children": "Add rates manually or sync from your configured provider." } }
+              {
+                "kind": "Icon",
+                "props": { "name": "calculator", "className": "size-12 mx-auto text-muted" }
+              },
+              {
+                "kind": "Text",
+                "props": {
+                  "className": "mt-4 text-lg font-medium",
+                  "children": "No tax rates configured yet"
+                }
+              },
+              {
+                "kind": "Text",
+                "props": {
+                  "className": "text-sm text-muted",
+                  "children": "Add rates manually or sync from your configured provider."
+                }
+              }
             ]
           }
         }

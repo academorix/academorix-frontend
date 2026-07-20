@@ -48,7 +48,13 @@
     },
     "payload_shape": {
       "type": "string",
-      "enum": ["canonical", "slack_incoming_webhook", "grafana_webhook_v1", "new_relic_events_api", "custom"],
+      "enum": [
+        "canonical",
+        "slack_incoming_webhook",
+        "grafana_webhook_v1",
+        "new_relic_events_api",
+        "custom"
+      ],
       "default": "canonical",
       "description": "Payload shape. 'canonical' = the full alert / incident JSON. 'slack_incoming_webhook' = Slack blocks format. 'grafana_webhook_v1' = Grafana Alerting webhook format. 'new_relic_events_api' = New Relic Custom Event format. 'custom' = tenant provides transform_expression."
     },
@@ -60,7 +66,14 @@
       "type": "array",
       "items": {
         "type": "string",
-        "enum": ["alert_fired", "alert_resolved", "incident_opened", "incident_acknowledged", "incident_resolved", "provider_circuit_breaker_opened"]
+        "enum": [
+          "alert_fired",
+          "alert_resolved",
+          "incident_opened",
+          "incident_acknowledged",
+          "incident_resolved",
+          "provider_circuit_breaker_opened"
+        ]
       },
       "default": ["alert_fired", "alert_resolved", "incident_opened", "incident_resolved"],
       "description": "Which events fire this webhook. Enables tenant to route specific events to specific webhooks (Slack for opens, PagerDuty for critical, ...)."

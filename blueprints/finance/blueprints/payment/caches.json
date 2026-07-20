@@ -3,17 +3,20 @@
   "$version": 1,
   "title": "payment — cache keys + tags",
   "driver": "redis",
-  "ownedTags": ["payment", "payment.providers", "payment.methods", "payment.intents", "payment.disputes"],
+  "ownedTags": [
+    "payment",
+    "payment.providers",
+    "payment.methods",
+    "payment.intents",
+    "payment.disputes"
+  ],
   "keys": [
     {
       "pattern": "pay:providers:{tenant_id}",
       "description": "Active payment provider config list for a tenant. Read on every PaymentIntent create to determine which provider to route the invoice to.",
       "ttlSeconds": 300,
       "tags": ["payment", "payment.providers", "tenant"],
-      "invalidatedBy": [
-        "PaymentProviderConfigured",
-        "PaymentProviderDeactivated"
-      ]
+      "invalidatedBy": ["PaymentProviderConfigured", "PaymentProviderDeactivated"]
     },
     {
       "pattern": "pay:provider-default:{tenant_id}",
@@ -62,29 +65,21 @@
       "description": "Fully-hydrated payment intent snapshot. Read by the customer's SDK during confirmation. Short TTL because intent state changes frequently.",
       "ttlSeconds": 30,
       "tags": ["payment", "payment.intents", "tenant"],
-      "invalidatedBy": [
-        "Every PaymentIntent* status transition event"
-      ]
+      "invalidatedBy": ["Every PaymentIntent* status transition event"]
     },
     {
       "pattern": "pay:3ds-thresholds:{tenant_id}",
       "description": "Tenant's 3DS2 threshold configuration (from settings.three_ds.required_over_amount_cents + tenant overrides + high_risk_regions). Read by ThreeDsGate on every intent create.",
       "ttlSeconds": 3600,
       "tags": ["payment", "tenant"],
-      "invalidatedBy": [
-        "Settings change on payment.three_ds.*",
-        "TenantSettingsChanged event"
-      ]
+      "invalidatedBy": ["Settings change on payment.three_ds.*", "TenantSettingsChanged event"]
     },
     {
       "pattern": "pay:disputes:count:{tenant_id}:unresolved",
       "description": "Unresolved dispute count per tenant. Feeds the SDUI dispute-count badge.",
       "ttlSeconds": 60,
       "tags": ["payment", "payment.disputes", "tenant"],
-      "invalidatedBy": [
-        "PaymentDisputeOpened",
-        "PaymentDisputeClosed"
-      ]
+      "invalidatedBy": ["PaymentDisputeOpened", "PaymentDisputeClosed"]
     },
     {
       "pattern": "pay:disputes:evidence-due-soon:{tenant_id}",
@@ -102,20 +97,14 @@
       "description": "Provider capability matrix — read once at boot into an in-memory registry. This cache is a warm-boot accelerator.",
       "ttlSeconds": 86400,
       "tags": ["payment"],
-      "invalidatedBy": [
-        "Boot-time discovery re-run",
-        "Manual: payment:invalidate-capabilities"
-      ]
+      "invalidatedBy": ["Boot-time discovery re-run", "Manual: payment:invalidate-capabilities"]
     },
     {
       "pattern": "pay:provider-schemas:{provider}",
       "description": "Parsed data/providers/<provider>-config.schema.json JSON Schema object. Read by PaymentProviderConfigObserver on every config create/update.",
       "ttlSeconds": 86400,
       "tags": ["payment"],
-      "invalidatedBy": [
-        "Boot-time reload",
-        "Manual"
-      ]
+      "invalidatedBy": ["Boot-time reload", "Manual"]
     },
     {
       "pattern": "pay:webhook-secret:{tenant_id}:{provider}",
@@ -132,9 +121,7 @@
       "description": "Timestamp of the last successful ReconcilePaymentIntentsJob run per (tenant, provider). Read by the health probe + read by the next reconcile run for lookback windowing.",
       "ttlSeconds": 86400,
       "tags": ["payment", "payment.providers"],
-      "invalidatedBy": [
-        "PaymentReconcileCompleted (writes)"
-      ]
+      "invalidatedBy": ["PaymentReconcileCompleted (writes)"]
     }
   ]
 }

@@ -9,18 +9,18 @@
  *   operands produce a JSON-safe fallback rather than throwing.
  */
 
-import type { ISduiExpression, ISduiEvalScope, SduiBindable } from '@stackra/contracts';
-import { OPERATORS } from './operators';
+import type { ISduiExpression, ISduiEvalScope, SduiBindable } from "@stackra/contracts";
+import { OPERATORS } from "./operators";
 
 /**
  * Type guard for an SDUI expression.
  */
 export function isExpression(value: SduiBindable): value is ISduiExpression {
   return (
-    typeof value === 'object' &&
+    typeof value === "object" &&
     value !== null &&
     !Array.isArray(value) &&
-    ('$exp' in (value as object) || '$op' in (value as object))
+    ("$exp" in (value as object) || "$op" in (value as object))
   );
 }
 
@@ -29,11 +29,11 @@ export function isExpression(value: SduiBindable): value is ISduiExpression {
  * Returns `undefined` when any intermediate segment is missing.
  */
 function readPath(path: string, scope: ISduiEvalScope): unknown {
-  if (!path.startsWith('$.') && path !== '$') return undefined;
-  const segments = path === '$' ? [] : path.slice(2).split('.').filter(Boolean);
+  if (!path.startsWith("$.") && path !== "$") return undefined;
+  const segments = path === "$" ? [] : path.slice(2).split(".").filter(Boolean);
   let cursor: unknown = scope;
   for (const segment of segments) {
-    if (cursor == null || typeof cursor !== 'object') return undefined;
+    if (cursor == null || typeof cursor !== "object") return undefined;
     cursor = (cursor as Record<string, unknown>)[segment];
   }
   return cursor;
@@ -46,7 +46,7 @@ function readPath(path: string, scope: ISduiEvalScope): unknown {
  * JSON-safe fallback (`null`).
  */
 export function evaluateExpression(expression: ISduiExpression, scope: ISduiEvalScope): unknown {
-  if ('$exp' in expression) {
+  if ("$exp" in expression) {
     return readPath(expression.$exp, scope);
   }
   const operator = OPERATORS[expression.$op];
@@ -73,7 +73,7 @@ export function resolveBindable(value: SduiBindable, scope: ISduiEvalScope): unk
   if (isExpression(value)) {
     return evaluateExpression(value, scope);
   }
-  if (typeof value === 'object' && value !== null) {
+  if (typeof value === "object" && value !== null) {
     const result: Record<string, unknown> = {};
     for (const [key, nested] of Object.entries(value as Record<string, SduiBindable>)) {
       result[key] = resolveBindable(nested, scope);

@@ -14,4 +14,4 @@
  *   in `@stackra/notifications`.
  */
 
-export * from './core';
+export * from "./core";

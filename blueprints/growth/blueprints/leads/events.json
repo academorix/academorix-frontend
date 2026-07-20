@@ -32,10 +32,7 @@
       "class": "Academorix\\Growth\\Leads\\Events\\LeadContacted",
       "trigger": "Lead.stage transitions NEW -> CONTACTED. LeadObserver.updating fires when the stage_change validator accepts the transition.",
       "queue": "leads",
-      "consumers": [
-        "audit::WriteToAuditLog",
-        "monitoring::MetricsCollector"
-      ],
+      "consumers": ["audit::WriteToAuditLog", "monitoring::MetricsCollector"],
       "payload": {
         "lead_id": "ULID",
         "tenant_id": "ULID",
@@ -50,10 +47,7 @@
       "class": "Academorix\\Growth\\Leads\\Events\\LeadQualified",
       "trigger": "Lead.stage transitions CONTACTED -> QUALIFIED.",
       "queue": "leads",
-      "consumers": [
-        "audit::WriteToAuditLog",
-        "monitoring::MetricsCollector"
-      ],
+      "consumers": ["audit::WriteToAuditLog", "monitoring::MetricsCollector"],
       "payload": {
         "lead_id": "ULID",
         "tenant_id": "ULID",

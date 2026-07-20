@@ -4,5 +4,5 @@
  * @description Barrel for the `DevtoolsPositionMenu` entity.
  */
 
-export { DevtoolsPositionMenu } from './devtools-position-menu.component';
-export type { DevtoolsPositionMenuProps } from './devtools-position-menu.interface';
+export { DevtoolsPositionMenu } from "./devtools-position-menu.component";
+export type { DevtoolsPositionMenuProps } from "./devtools-position-menu.interface";

@@ -132,11 +132,7 @@
     {
       "name": "provider-webhooks",
       "prefix": "/api/v1/webhooks",
-      "middleware": [
-        "request.id",
-        "chargeback.webhook_verify",
-        "response.envelope"
-      ],
+      "middleware": ["request.id", "chargeback.webhook_verify", "response.envelope"],
       "hosts": ["tenant"],
       "description": "Provider webhook receipt. Owned by the payment module's PaymentWebhookHandler + PaymentWebhookVerifier — this module contributes chargeback-typed event handling via listener (HandleChargebackWebhook). No routes declared here — the payment module owns the route + this module hooks into ChargebackWebhookReceived events fired by the payment module's webhook handler."
     }

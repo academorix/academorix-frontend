@@ -10,8 +10,18 @@
   "requiresPermission": "monitoring.alert_policies.create",
   "requiresEntitlement": "monitoring_capture",
   "dataSources": [
-    { "name": "signal_types", "kind": "http.get", "url": "/api/v1/monitoring/alert-policies/signal-types", "unwrap": "data" },
-    { "name": "providers", "kind": "http.get", "url": "/api/v1/monitoring/providers?filter[is_active]=1", "unwrap": "data" }
+    {
+      "name": "signal_types",
+      "kind": "http.get",
+      "url": "/api/v1/monitoring/alert-policies/signal-types",
+      "unwrap": "data"
+    },
+    {
+      "name": "providers",
+      "kind": "http.get",
+      "url": "/api/v1/monitoring/providers?filter[is_active]=1",
+      "unwrap": "data"
+    }
   ],
   "nodes": [
     {
@@ -26,18 +36,31 @@
             {
               "kind": "Input",
               "props": { "label": "Policy name", "placeholder": "5xx rate high" },
-              "actions": { "onChange": { "kind": "form.set", "field": "name", "valueExpr": "$value" } }
+              "actions": {
+                "onChange": { "kind": "form.set", "field": "name", "valueExpr": "$value" }
+              }
             },
             {
               "kind": "Select",
               "props": { "label": "Signal type" },
               "bindings": { "options": { "$ref": "signal_types" } },
-              "actions": { "onSelectionChange": { "kind": "form.set", "field": "signal_type", "valueExpr": "$selectedKey" } }
+              "actions": {
+                "onSelectionChange": {
+                  "kind": "form.set",
+                  "field": "signal_type",
+                  "valueExpr": "$selectedKey"
+                }
+              }
             },
             {
               "kind": "Input",
-              "props": { "label": "Signal source", "description": "For health_check_status: health_check.slug. For metric signals: metric-name pattern." },
-              "actions": { "onChange": { "kind": "form.set", "field": "signal_source", "valueExpr": "$value" } }
+              "props": {
+                "label": "Signal source",
+                "description": "For health_check_status: health_check.slug. For metric signals: metric-name pattern."
+              },
+              "actions": {
+                "onChange": { "kind": "form.set", "field": "signal_source", "valueExpr": "$value" }
+              }
             }
           ]
         },
@@ -47,28 +70,68 @@
           "children": [
             {
               "kind": "Select",
-              "props": { "label": "Operator", "options": ["greater_than", "less_than", "equals", "not_equals"] },
-              "actions": { "onSelectionChange": { "kind": "form.set", "field": "threshold_operator", "valueExpr": "$selectedKey" } }
+              "props": {
+                "label": "Operator",
+                "options": ["greater_than", "less_than", "equals", "not_equals"]
+              },
+              "actions": {
+                "onSelectionChange": {
+                  "kind": "form.set",
+                  "field": "threshold_operator",
+                  "valueExpr": "$selectedKey"
+                }
+              }
             },
             {
               "kind": "Input",
               "props": { "label": "Value", "type": "number" },
-              "actions": { "onChange": { "kind": "form.set", "field": "threshold_value", "valueExpr": "$value" } }
+              "actions": {
+                "onChange": {
+                  "kind": "form.set",
+                  "field": "threshold_value",
+                  "valueExpr": "$value"
+                }
+              }
             },
             {
               "kind": "Select",
               "props": { "label": "Unit", "options": ["percent", "ms", "count", "bytes"] },
-              "actions": { "onSelectionChange": { "kind": "form.set", "field": "threshold_unit", "valueExpr": "$selectedKey" } }
+              "actions": {
+                "onSelectionChange": {
+                  "kind": "form.set",
+                  "field": "threshold_unit",
+                  "valueExpr": "$selectedKey"
+                }
+              }
             },
             {
               "kind": "Slider",
-              "props": { "label": "Window (seconds)", "min": 60, "max": 3600, "step": 60, "defaultValue": 300 },
-              "actions": { "onChange": { "kind": "form.set", "field": "window_seconds", "valueExpr": "$value" } }
+              "props": {
+                "label": "Window (seconds)",
+                "min": 60,
+                "max": 3600,
+                "step": 60,
+                "defaultValue": 300
+              },
+              "actions": {
+                "onChange": { "kind": "form.set", "field": "window_seconds", "valueExpr": "$value" }
+              }
             },
             {
               "kind": "Slider",
-              "props": { "label": "Consecutive breaches required", "min": 1, "max": 10, "defaultValue": 2 },
-              "actions": { "onChange": { "kind": "form.set", "field": "consecutive_breaches_required", "valueExpr": "$value" } }
+              "props": {
+                "label": "Consecutive breaches required",
+                "min": 1,
+                "max": 10,
+                "defaultValue": 2
+              },
+              "actions": {
+                "onChange": {
+                  "kind": "form.set",
+                  "field": "consecutive_breaches_required",
+                  "valueExpr": "$value"
+                }
+              }
             }
           ]
         },
@@ -78,14 +141,30 @@
           "children": [
             {
               "kind": "RadioGroup",
-              "props": { "label": "Severity", "options": [ { "value": "p1", "label": "P1 — Critical (pages on-call)" }, { "value": "p2", "label": "P2 — High" }, { "value": "p3", "label": "P3 — Medium" }, { "value": "p4", "label": "P4 — Info (dashboard-only)" } ] },
-              "actions": { "onChange": { "kind": "form.set", "field": "severity", "valueExpr": "$value" } }
+              "props": {
+                "label": "Severity",
+                "options": [
+                  { "value": "p1", "label": "P1 — Critical (pages on-call)" },
+                  { "value": "p2", "label": "P2 — High" },
+                  { "value": "p3", "label": "P3 — Medium" },
+                  { "value": "p4", "label": "P4 — Info (dashboard-only)" }
+                ]
+              },
+              "actions": {
+                "onChange": { "kind": "form.set", "field": "severity", "valueExpr": "$value" }
+              }
             },
             {
               "kind": "MultiSelect",
               "props": { "label": "Notify these providers" },
               "bindings": { "options": { "$ref": "providers" } },
-              "actions": { "onSelectionChange": { "kind": "form.set", "field": "notify_provider_configs", "valueExpr": "$selectedKeys" } }
+              "actions": {
+                "onSelectionChange": {
+                  "kind": "form.set",
+                  "field": "notify_provider_configs",
+                  "valueExpr": "$selectedKeys"
+                }
+              }
             }
           ]
         },
@@ -96,12 +175,24 @@
             {
               "kind": "Switch",
               "props": { "label": "Suppress after hours" },
-              "actions": { "onChange": { "kind": "form.set", "field": "suppression_config.after_hours_suppress", "valueExpr": "$value" } }
+              "actions": {
+                "onChange": {
+                  "kind": "form.set",
+                  "field": "suppression_config.after_hours_suppress",
+                  "valueExpr": "$value"
+                }
+              }
             },
             {
               "kind": "Switch",
               "props": { "label": "Suppress on weekends" },
-              "actions": { "onChange": { "kind": "form.set", "field": "suppression_config.weekend_suppress", "valueExpr": "$value" } }
+              "actions": {
+                "onChange": {
+                  "kind": "form.set",
+                  "field": "suppression_config.weekend_suppress",
+                  "valueExpr": "$value"
+                }
+              }
             }
           ]
         },

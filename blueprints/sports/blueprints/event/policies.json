@@ -33,25 +33,77 @@
           "permission": "events.update",
           "scope": "Admin or owner. Mutable fields depend on status — see routes.json PATCH endpoint. Post-registration_open changes to dates/venue/pricing/eligibility require the specific sub-permissions."
         },
-        { "action": "shiftDates", "permission": "events.dates.shift", "scope": "Owner only. Post-announced date changes." },
-        { "action": "changeVenue", "permission": "events.venue.change", "scope": "Owner only. Post-registration_open venue changes." },
-        { "action": "changePricing", "permission": "events.pricing.change", "scope": "Owner only. Post-registration_open price changes. Audit-critical." },
-        { "action": "narrowEligibility", "permission": "events.eligibility.narrow", "scope": "Owner only. Post-registration_open min_age/max_age/age_group_ids narrowing that would exclude existing registrants." },
-        { "action": "delete", "permission": "events.delete", "scope": "Owner only. Soft-delete (archive). Refused when active registrations reference." },
+        {
+          "action": "shiftDates",
+          "permission": "events.dates.shift",
+          "scope": "Owner only. Post-announced date changes."
+        },
+        {
+          "action": "changeVenue",
+          "permission": "events.venue.change",
+          "scope": "Owner only. Post-registration_open venue changes."
+        },
+        {
+          "action": "changePricing",
+          "permission": "events.pricing.change",
+          "scope": "Owner only. Post-registration_open price changes. Audit-critical."
+        },
+        {
+          "action": "narrowEligibility",
+          "permission": "events.eligibility.narrow",
+          "scope": "Owner only. Post-registration_open min_age/max_age/age_group_ids narrowing that would exclude existing registrants."
+        },
+        {
+          "action": "delete",
+          "permission": "events.delete",
+          "scope": "Owner only. Soft-delete (archive). Refused when active registrations reference."
+        },
         { "action": "announce", "permission": "events.announce", "scope": "Admin or owner." },
-        { "action": "openRegistration", "permission": "events.open_registration", "scope": "Admin or owner." },
-        { "action": "closeRegistration", "permission": "events.close_registration", "scope": "Admin or owner." },
+        {
+          "action": "openRegistration",
+          "permission": "events.open_registration",
+          "scope": "Admin or owner."
+        },
+        {
+          "action": "closeRegistration",
+          "permission": "events.close_registration",
+          "scope": "Admin or owner."
+        },
         { "action": "start", "permission": "events.start", "scope": "Admin or owner." },
         { "action": "complete", "permission": "events.complete", "scope": "Admin or owner." },
-        { "action": "cancel", "permission": "events.cancel", "scope": "Admin or owner. Fires cannot-opt-out cancellation broadcast." },
+        {
+          "action": "cancel",
+          "permission": "events.cancel",
+          "scope": "Admin or owner. Fires cannot-opt-out cancellation broadcast."
+        },
         { "action": "archive", "permission": "events.archive", "scope": "Admin or owner." },
         { "action": "restore", "permission": "events.restore", "scope": "Admin or owner." },
-        { "action": "publish", "permission": "events.publish", "scope": "Admin or owner. Gated by event_public_visibility entitlement." },
+        {
+          "action": "publish",
+          "permission": "events.publish",
+          "scope": "Admin or owner. Gated by event_public_visibility entitlement."
+        },
         { "action": "unpublish", "permission": "events.unpublish", "scope": "Admin or owner." },
-        { "action": "manageLivestream", "permission": "events.livestream.manage", "scope": "Admin or owner. Gated by event_livestream entitlement." },
-        { "action": "platformViewAny", "permission": "platform.events.viewAny", "scope": "platform_admin only." },
-        { "action": "platformView", "permission": "platform.events.view", "scope": "platform_admin only." },
-        { "action": "platformForceCancel", "permission": "platform.events.force_cancel", "scope": "platform_admin only + super_admin approval required per action-level middleware." }
+        {
+          "action": "manageLivestream",
+          "permission": "events.livestream.manage",
+          "scope": "Admin or owner. Gated by event_livestream entitlement."
+        },
+        {
+          "action": "platformViewAny",
+          "permission": "platform.events.viewAny",
+          "scope": "platform_admin only."
+        },
+        {
+          "action": "platformView",
+          "permission": "platform.events.view",
+          "scope": "platform_admin only."
+        },
+        {
+          "action": "platformForceCancel",
+          "permission": "platform.events.force_cancel",
+          "scope": "platform_admin only + super_admin approval required per action-level middleware."
+        }
       ]
     },
     {

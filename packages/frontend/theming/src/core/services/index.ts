@@ -4,5 +4,5 @@
  * @description Barrel export for theming services.
  */
 
-export { ThemeService } from './theme.service';
-export { ThemeApiService } from './theme-api.service';
+export { ThemeService } from "./theme.service";
+export { ThemeApiService } from "./theme-api.service";

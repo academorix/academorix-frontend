@@ -8,17 +8,61 @@
       "model": "Refund",
       "class": "Academorix\\Finance\\Refund\\Policies\\RefundPolicy",
       "abilities": [
-        { "action": "viewAny", "permission": "refunds.viewAny", "scope": "finance + admin + owner + support" },
-        { "action": "view", "permission": "refunds.view", "scope": "finance + admin + owner + support + customer (own refund only — refund.initiated_by_user_id == auth()->id() OR refund.customer_id == auth()->id())" },
-        { "action": "create", "permission": "refunds.create", "scope": "finance + admin + owner. Customer path uses refunds.request (POST /refunds/mine) — segregated permission to allow different consent flows." },
-        { "action": "request", "permission": "refunds.request", "scope": "authenticated tenant users. Requires `refund_customer_self_service` entitlement. Customer-allowed reasons only (customer_requested / product_not_received / product_unacceptable / subscription_cancelled)." },
-        { "action": "approve", "permission": "refunds.approve", "scope": "finance + admin + owner. REFUSES when refund.initiated_by_user_id == auth()->id() (segregation of duties per SOX §404 — returns REFUND_SELF_APPROVAL_REFUSED)." },
-        { "action": "reject", "permission": "refunds.approve", "scope": "finance + admin + owner. Same segregation of duties as approve — cannot reject own request." },
-        { "action": "cancel", "permission": "refunds.cancel", "scope": "customer (own refund only) + admin + owner + finance. Only when status IN ('awaiting_approval', 'approved'). Refused once dispatch begins." },
-        { "action": "forceFail", "permission": "refunds.force-fail", "scope": "admin + owner only. Escape hatch for stuck provider_error refunds after manual provider-side investigation." },
-        { "action": "reconcile", "permission": "refunds.reconcile", "scope": "admin + owner + finance. Dispatches ReconcileRefundsJob." },
-        { "action": "viewReport", "permission": "refunds.view-report", "scope": "finance + admin + owner + marketing (read-only)" },
-        { "action": "viewFinancials", "permission": "refunds.view-financials", "scope": "finance + admin + owner + support. Confidential financial fields (amount_cents, currency, provider_fee_reversal_cents) are redacted for readers without this permission." },
+        {
+          "action": "viewAny",
+          "permission": "refunds.viewAny",
+          "scope": "finance + admin + owner + support"
+        },
+        {
+          "action": "view",
+          "permission": "refunds.view",
+          "scope": "finance + admin + owner + support + customer (own refund only — refund.initiated_by_user_id == auth()->id() OR refund.customer_id == auth()->id())"
+        },
+        {
+          "action": "create",
+          "permission": "refunds.create",
+          "scope": "finance + admin + owner. Customer path uses refunds.request (POST /refunds/mine) — segregated permission to allow different consent flows."
+        },
+        {
+          "action": "request",
+          "permission": "refunds.request",
+          "scope": "authenticated tenant users. Requires `refund_customer_self_service` entitlement. Customer-allowed reasons only (customer_requested / product_not_received / product_unacceptable / subscription_cancelled)."
+        },
+        {
+          "action": "approve",
+          "permission": "refunds.approve",
+          "scope": "finance + admin + owner. REFUSES when refund.initiated_by_user_id == auth()->id() (segregation of duties per SOX §404 — returns REFUND_SELF_APPROVAL_REFUSED)."
+        },
+        {
+          "action": "reject",
+          "permission": "refunds.approve",
+          "scope": "finance + admin + owner. Same segregation of duties as approve — cannot reject own request."
+        },
+        {
+          "action": "cancel",
+          "permission": "refunds.cancel",
+          "scope": "customer (own refund only) + admin + owner + finance. Only when status IN ('awaiting_approval', 'approved'). Refused once dispatch begins."
+        },
+        {
+          "action": "forceFail",
+          "permission": "refunds.force-fail",
+          "scope": "admin + owner only. Escape hatch for stuck provider_error refunds after manual provider-side investigation."
+        },
+        {
+          "action": "reconcile",
+          "permission": "refunds.reconcile",
+          "scope": "admin + owner + finance. Dispatches ReconcileRefundsJob."
+        },
+        {
+          "action": "viewReport",
+          "permission": "refunds.view-report",
+          "scope": "finance + admin + owner + marketing (read-only)"
+        },
+        {
+          "action": "viewFinancials",
+          "permission": "refunds.view-financials",
+          "scope": "finance + admin + owner + support. Confidential financial fields (amount_cents, currency, provider_fee_reversal_cents) are redacted for readers without this permission."
+        },
         { "action": "platformViewAny", "permission": "platform.refunds.viewAny" },
         { "action": "platformView", "permission": "platform.refunds.view" }
       ]

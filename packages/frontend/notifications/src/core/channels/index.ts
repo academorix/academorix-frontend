@@ -4,4 +4,4 @@
  * @description Barrel export for built-in channel drivers.
  */
 
-export { InAppChannelDriver } from './in-app-channel.driver';
+export { InAppChannelDriver } from "./in-app-channel.driver";

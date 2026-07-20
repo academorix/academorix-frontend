@@ -5,19 +5,19 @@ this customer owe us, for what, and when's it due?".
 
 ## 1. What this module owns
 
-| Concern                                | Owned artefact                                                                                        |
-| -------------------------------------- | ----------------------------------------------------------------------------------------------------- |
-| The customer-facing bill               | `Invoice` — one row per membership renewal or standalone purchase. 7-year retention (financial audit).|
-| Line items                             | `InvoiceLine` — one row per membership charge / addon / setup fee / late fee / adjustment / discount. |
-| Reversal invoices                      | `CreditNote` — one row per refund / adjustment / write-off / duplicate / dispute-resolution. Immutable. |
-| Sequential invoice numbering           | `InvoiceNumberGenerator` + Postgres advisory lock — gap-free + collision-free per tenant per year.    |
-| Credit note numbering                  | `CreditNoteNumberGenerator` — same pattern.                                                            |
-| Draft → open finalization              | `InvoiceFinalizer` — freezes totals + billing_address + generates PDF + sends email.                   |
-| PDF rendering                          | `InvoicePDFRenderer` — DomPDF default; wkhtmltopdf for Enterprise via `#[AsInvoicePdfRenderer]`.       |
-| Dunning schedule                       | `DunningScheduler` — day+3/7/14/30/60 default; Enterprise-customizable.                                |
-| Payment reconciliation                 | `InvoicePaymentReconciler` — nightly sweep against the transactions ledger.                            |
-| Credit note issuance                   | `CreditNoteIssuer` — creates the reversal row + fires the notification cascade.                        |
-| Aging / revenue / tax-collected reports| `InvoiceAgingReporter` + `InvoiceRevenueReporter` + `InvoiceTaxCollectedReporter`.                    |
+| Concern                                 | Owned artefact                                                                                          |
+| --------------------------------------- | ------------------------------------------------------------------------------------------------------- |
+| The customer-facing bill                | `Invoice` — one row per membership renewal or standalone purchase. 7-year retention (financial audit).  |
+| Line items                              | `InvoiceLine` — one row per membership charge / addon / setup fee / late fee / adjustment / discount.   |
+| Reversal invoices                       | `CreditNote` — one row per refund / adjustment / write-off / duplicate / dispute-resolution. Immutable. |
+| Sequential invoice numbering            | `InvoiceNumberGenerator` + Postgres advisory lock — gap-free + collision-free per tenant per year.      |
+| Credit note numbering                   | `CreditNoteNumberGenerator` — same pattern.                                                             |
+| Draft → open finalization               | `InvoiceFinalizer` — freezes totals + billing_address + generates PDF + sends email.                    |
+| PDF rendering                           | `InvoicePDFRenderer` — DomPDF default; wkhtmltopdf for Enterprise via `#[AsInvoicePdfRenderer]`.        |
+| Dunning schedule                        | `DunningScheduler` — day+3/7/14/30/60 default; Enterprise-customizable.                                 |
+| Payment reconciliation                  | `InvoicePaymentReconciler` — nightly sweep against the transactions ledger.                             |
+| Credit note issuance                    | `CreditNoteIssuer` — creates the reversal row + fires the notification cascade.                         |
+| Aging / revenue / tax-collected reports | `InvoiceAgingReporter` + `InvoiceRevenueReporter` + `InvoiceTaxCollectedReporter`.                      |
 
 ### 1.1 The three owned tables
 
@@ -26,8 +26,8 @@ this customer owe us, for what, and when's it due?".
   `MembershipRenewal`. 7-year retention (10 for Enterprise).
 - `invoice_lines` — per-invoice line items. Belongs to `Tenant` + `Invoice`
   (RESTRICT). Draft-only mutation.
-- `credit_notes` — reversal invoices. Belongs to `Tenant` + `Invoice` (RESTRICT).
-  Immutable after issuance. Retained indefinitely (financial audit).
+- `credit_notes` — reversal invoices. Belongs to `Tenant` + `Invoice`
+  (RESTRICT). Immutable after issuance. Retained indefinitely (financial audit).
 
 None of these carry `application_id`, `region_id`, `organization_id`,
 `branch_id`, or `scope_node_id` — every row is tenant-scoped per
@@ -38,12 +38,12 @@ Enforced by the tenancy-compliance-auditor.
 
 The finance stack has FOUR complementary modules that never conflate:
 
-| Module              | Answers                                       | Key aggregate                     |
-| ------------------- | --------------------------------------------- | --------------------------------- |
-| **`membership`**    | Is this customer paying to attend?            | `Membership` (subscription contract) |
-| **`invoice`** (this)| How much do they owe, for what, when's it due?| `Invoice` (money owed)            |
-| **`transaction`**   | What movements happened in the double-entry ledger? | `Transaction` (money moved) |
-| **`payment`**       | When + how did the money physically transfer? | `PaymentIntent` (payment provider link) |
+| Module               | Answers                                             | Key aggregate                           |
+| -------------------- | --------------------------------------------------- | --------------------------------------- |
+| **`membership`**     | Is this customer paying to attend?                  | `Membership` (subscription contract)    |
+| **`invoice`** (this) | How much do they owe, for what, when's it due?      | `Invoice` (money owed)                  |
+| **`transaction`**    | What movements happened in the double-entry ledger? | `Transaction` (money moved)             |
+| **`payment`**        | When + how did the money physically transfer?       | `PaymentIntent` (payment provider link) |
 
 Distinctions:
 
@@ -98,9 +98,9 @@ Meta CAPI, Google Ads, GA4, TikTok, LinkedIn, Snapchat, Pinterest,
 Custom Webhook, GTM Server — revenue signal delivered.
 ```
 
-The InvoicePaid signal ALSO triggers `membership::ActivateMembershipOnInvoicePaid`
-which transitions the parent Membership to status='active' + generates Pass
-records for the period.
+The InvoicePaid signal ALSO triggers
+`membership::ActivateMembershipOnInvoicePaid` which transitions the parent
+Membership to status='active' + generates Pass records for the period.
 
 Every step is audit-logged with 7-year retention.
 
@@ -124,7 +124,8 @@ in-depth against advisory-lock failure.
 
 Number format: `{series?}-{YYYY}-{seq:06}`.
 
-- Small tier: locked to 'INV' series (config('invoice.numbering.default_series') = 'INV').
+- Small tier: locked to 'INV' series (config('invoice.numbering.default_series')
+  = 'INV').
 - Medium+ with invoice_custom_series: any 3-8 char uppercase alpha prefix.
 - Credit notes: fixed 'CN-' prefix. `CN-{YYYY}-{seq:06}`.
 
@@ -132,7 +133,8 @@ Number format: `{series?}-{YYYY}-{seq:06}`.
 
 Once `invoice.status` transitions draft → open:
 
-- `subtotal_cents`, `discount_amount_cents`, `tax_amount_cents`, `total_cents` FROZEN.
+- `subtotal_cents`, `discount_amount_cents`, `tax_amount_cents`, `total_cents`
+  FROZEN.
 - `billing_address`, `shipping_address`, `customer_tax_id`, `currency` FROZEN.
 - `invoice_number`, `issue_date` FROZEN.
 - No line CRUD permitted.
@@ -143,8 +145,8 @@ Corrections flow ONLY through credit note issuance:
    applied_to_type='refund' (money returned to payment method).
 2. Customer overpaid but no refund → credit note applied_to='customer_balance'
    (offsets future invoice).
-3. Tenant issued wrong invoice → credit note applied_to='next_invoice'
-   (deducted from the next invoice for the customer).
+3. Tenant issued wrong invoice → credit note applied_to='next_invoice' (deducted
+   from the next invoice for the customer).
 
 Never mutate a paid invoice.
 
@@ -198,8 +200,8 @@ Admin manually marks uncollectible
 Admin manually marks written_off
 ```
 
-Enterprise tenants with `invoice_dunning_advanced` may customize the cadence
-via settings.
+Enterprise tenants with `invoice_dunning_advanced` may customize the cadence via
+settings.
 
 ## 8. Credit note flow
 
@@ -225,7 +227,8 @@ CreditNote.status = 'applied' + applied_to_type + applied_to_id set
 The credit note is IMMUTABLE after status='issued' (except for the applied_to
 fields on the issued → applied transition).
 
-Sequential numbering: `CN-{YYYY}-{seq:06}`. Same advisory-lock pattern as invoices.
+Sequential numbering: `CN-{YYYY}-{seq:06}`. Same advisory-lock pattern as
+invoices.
 
 ## 9. Multi-currency support
 
@@ -252,17 +255,17 @@ snapshot).
 
 Enforced by `invoice_capture` (master) + `invoice_slot_per_month` (volume cap) +
 `invoice_custom_series` (Medium+) + `invoice_multi_currency` (Medium+) +
-`invoice_tenant_branded_pdf` (Medium+) + `invoice_dunning_advanced` (Enterprise) +
-`invoice_collections_integration` (Enterprise) + `invoice_extended_retention`
-(Enterprise) + `credit_note_issuance` (all tiers).
+`invoice_tenant_branded_pdf` (Medium+) + `invoice_dunning_advanced`
+(Enterprise) + `invoice_collections_integration` (Enterprise) +
+`invoice_extended_retention` (Enterprise) + `credit_note_issuance` (all tiers).
 
 ## 11. Retention
 
 - Invoices: 7 years default (10 for Enterprise). Migration to S3 Glacier at
   retention boundary; compliance-archive copy on TenantErased before FK CASCADE.
 - Invoice lines: 7 years (cascaded via RESTRICT).
-- Credit notes: 7 years default (10 Enterprise) in the primary DB; INDEFINITE
-  in the compliance archive.
+- Credit notes: 7 years default (10 Enterprise) in the primary DB; INDEFINITE in
+  the compliance archive.
 - PDFs: 7 years hot S3; 10y hot for Enterprise; then Glacier indefinitely.
 - Individual UserErased (GDPR Art. 17): redact PII fields on affected invoices +
   credit notes; the row survives.
@@ -275,8 +278,8 @@ Enforced by `invoice_capture` (master) + `invoice_slot_per_month` (volume cap) +
   Payment tokens live in the payment module.
 - **Payment processing.** The payment module handles Stripe / Paddle / gateway
   integrations. This module records that a payment happened.
-- **Double-entry accounting ledger.** The transaction module is the ledger;
-  this module is the customer-facing bill.
+- **Double-entry accounting ledger.** The transaction module is the ledger; this
+  module is the customer-facing bill.
 - **Revenue recognition automation.** ASC 606 / IFRS 15 revenue recognition
   timing is a downstream concern — this module fires InvoicePaid at the
   earned-time; the revenue module (v2) recognizes.
@@ -286,8 +289,8 @@ Enforced by `invoice_capture` (master) + `invoice_slot_per_month` (volume cap) +
 - **`application_id` / `region_id` / `organization_id` / `branch_id` /
   `scope_node_id` on any row.** All are forbidden per tenancy-columns.md §5.
 - **Cross-tenant reads.** Every query is tenant-scoped.
-- **Dispute handling.** The chargeback module owns chargeback lifecycle;
-  this module reflects the state on the invoice (paid → disputed).
+- **Dispute handling.** The chargeback module owns chargeback lifecycle; this
+  module reflects the state on the invoice (paid → disputed).
 
 ## 13. Cross-references
 

@@ -8,30 +8,94 @@
       "model": "Membership",
       "class": "Academorix\\Finance\\Membership\\Policies\\MembershipPolicy",
       "abilities": [
-        { "action": "viewAny", "permission": "memberships.viewAny", "scope": "finance_officer + reception + branch_manager + admin + owner; guardians + adult athletes narrow via .own" },
-        { "action": "view", "permission": "memberships.view", "scope": "same + .own for self / guardian's related athlete" },
-        { "action": "create", "permission": "memberships.create", "scope": "reception + finance_officer + branch_manager + admin + owner. Guardians + adult athletes via .own for self-subscribe" },
-        { "action": "pause", "permission": "memberships.pause", "scope": "finance staff. Guardians via .own for hardship pause (limited monthly cap)" },
+        {
+          "action": "viewAny",
+          "permission": "memberships.viewAny",
+          "scope": "finance_officer + reception + branch_manager + admin + owner; guardians + adult athletes narrow via .own"
+        },
+        {
+          "action": "view",
+          "permission": "memberships.view",
+          "scope": "same + .own for self / guardian's related athlete"
+        },
+        {
+          "action": "create",
+          "permission": "memberships.create",
+          "scope": "reception + finance_officer + branch_manager + admin + owner. Guardians + adult athletes via .own for self-subscribe"
+        },
+        {
+          "action": "pause",
+          "permission": "memberships.pause",
+          "scope": "finance staff. Guardians via .own for hardship pause (limited monthly cap)"
+        },
         { "action": "resume", "permission": "memberships.resume" },
-        { "action": "cancel", "permission": "memberships.cancel", "scope": "finance staff. Guardians + adult athletes via .own — but only soft cancel (hard cancel requires admin approval to prevent revenue leakage from self-serve refund abuse)" },
-        { "action": "reissuePasses", "permission": "memberships.reissue-passes", "scope": "finance staff. Audit-critical" },
-        { "action": "report", "permission": "memberships.report", "scope": "finance staff + owner. Business-sensitive metrics" },
-        { "action": "auditRefund", "permission": "memberships.audit.refund", "scope": "finance_officer + admin + owner. Compliance-critical" },
-        { "action": "auditChargeback", "permission": "memberships.audit.chargeback", "scope": "finance_officer + admin + owner" },
-        { "action": "platformViewAny", "permission": "platform.memberships.viewAny", "guard": "platform_admin" },
-        { "action": "platformView", "permission": "platform.memberships.view", "guard": "platform_admin" },
-        { "action": "platformAuditRefund", "permission": "platform.memberships.audit.refund", "guard": "platform_admin" }
+        {
+          "action": "cancel",
+          "permission": "memberships.cancel",
+          "scope": "finance staff. Guardians + adult athletes via .own — but only soft cancel (hard cancel requires admin approval to prevent revenue leakage from self-serve refund abuse)"
+        },
+        {
+          "action": "reissuePasses",
+          "permission": "memberships.reissue-passes",
+          "scope": "finance staff. Audit-critical"
+        },
+        {
+          "action": "report",
+          "permission": "memberships.report",
+          "scope": "finance staff + owner. Business-sensitive metrics"
+        },
+        {
+          "action": "auditRefund",
+          "permission": "memberships.audit.refund",
+          "scope": "finance_officer + admin + owner. Compliance-critical"
+        },
+        {
+          "action": "auditChargeback",
+          "permission": "memberships.audit.chargeback",
+          "scope": "finance_officer + admin + owner"
+        },
+        {
+          "action": "platformViewAny",
+          "permission": "platform.memberships.viewAny",
+          "guard": "platform_admin"
+        },
+        {
+          "action": "platformView",
+          "permission": "platform.memberships.view",
+          "guard": "platform_admin"
+        },
+        {
+          "action": "platformAuditRefund",
+          "permission": "platform.memberships.audit.refund",
+          "guard": "platform_admin"
+        }
       ]
     },
     {
       "model": "MembershipPlan",
       "class": "Academorix\\Finance\\Membership\\Policies\\MembershipPlanPolicy",
       "abilities": [
-        { "action": "viewAny", "permission": "membership_plans.viewAny", "scope": "customer-readable for signup flow" },
+        {
+          "action": "viewAny",
+          "permission": "membership_plans.viewAny",
+          "scope": "customer-readable for signup flow"
+        },
         { "action": "view", "permission": "membership_plans.view" },
-        { "action": "create", "permission": "membership_plans.create", "scope": "finance_officer + branch_manager + admin + owner. Consumes membership_plan_slot" },
-        { "action": "update", "permission": "membership_plans.update", "scope": "same. Immutable fields refused" },
-        { "action": "archive", "permission": "membership_plans.archive", "scope": "same. Prevented by PreventPlanArchiveWithActiveMemberships hook" },
+        {
+          "action": "create",
+          "permission": "membership_plans.create",
+          "scope": "finance_officer + branch_manager + admin + owner. Consumes membership_plan_slot"
+        },
+        {
+          "action": "update",
+          "permission": "membership_plans.update",
+          "scope": "same. Immutable fields refused"
+        },
+        {
+          "action": "archive",
+          "permission": "membership_plans.archive",
+          "scope": "same. Prevented by PreventPlanArchiveWithActiveMemberships hook"
+        },
         { "action": "duplicate", "permission": "membership_plans.create" }
       ]
     },
@@ -39,18 +103,42 @@
       "model": "MembershipRenewal",
       "class": "Academorix\\Finance\\Membership\\Policies\\MembershipRenewalPolicy",
       "abilities": [
-        { "action": "viewAny", "permission": "membership_renewals.viewAny", "scope": "finance staff. Read-only — renewals are append-only audit rows" },
-        { "action": "view", "permission": "membership_renewals.view.own", "scope": "guardians + adult athletes see renewals for their own memberships (during dunning)" }
+        {
+          "action": "viewAny",
+          "permission": "membership_renewals.viewAny",
+          "scope": "finance staff. Read-only — renewals are append-only audit rows"
+        },
+        {
+          "action": "view",
+          "permission": "membership_renewals.view.own",
+          "scope": "guardians + adult athletes see renewals for their own memberships (during dunning)"
+        }
       ]
     },
     {
       "model": "Pass",
       "class": "Academorix\\Finance\\Membership\\Policies\\PassPolicy",
       "abilities": [
-        { "action": "viewAny", "permission": "passes.viewAny", "scope": "reception + coach + finance_officer + admin. Coaches see passes at check-in time" },
-        { "action": "view", "permission": "passes.view.own", "scope": "guardians + adult athletes see their family's passes" },
-        { "action": "consume", "permission": "passes.consume", "scope": "reception + coach + kiosk + session module's service account. Idempotent" },
-        { "action": "refund", "permission": "passes.refund", "scope": "reception + finance_officer + admin + owner. Returns a pass when a session is cancelled" }
+        {
+          "action": "viewAny",
+          "permission": "passes.viewAny",
+          "scope": "reception + coach + finance_officer + admin. Coaches see passes at check-in time"
+        },
+        {
+          "action": "view",
+          "permission": "passes.view.own",
+          "scope": "guardians + adult athletes see their family's passes"
+        },
+        {
+          "action": "consume",
+          "permission": "passes.consume",
+          "scope": "reception + coach + kiosk + session module's service account. Idempotent"
+        },
+        {
+          "action": "refund",
+          "permission": "passes.refund",
+          "scope": "reception + finance_officer + admin + owner. Returns a pass when a session is cancelled"
+        }
       ]
     }
   ]

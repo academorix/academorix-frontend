@@ -1,9 +1,9 @@
 # dunning
 
 Retry + escalation ladder for failed recurring charges (memberships, tenant
-subscriptions, marketplace fees). Not a collections agency — a retry engine
-that gracefully degrades a paying customer to a non-paying one while giving
-them plenty of chances to fix the payment.
+subscriptions, marketplace fees). Not a collections agency — a retry engine that
+gracefully degrades a paying customer to a non-paying one while giving them
+plenty of chances to fix the payment.
 
 ## Owned tables
 
@@ -32,6 +32,7 @@ Tenants override any step's timing + copy per plan.
 
 - `finance/membership` — creates a run on failed monthly charge.
 - `billing/subscription` — creates a run on failed SaaS invoice.
-- `finance/gateway` — retry attempts route through the active PaymentGatewayInterface.
+- `finance/gateway` — retry attempts route through the active
+  PaymentGatewayInterface.
 - `notifications/notifications` — DunningReminderNotification per step.
 - `entitlements/entitlements` — access revocation on exhausted.

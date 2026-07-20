@@ -1,7 +1,7 @@
 # academorix/leads
 
-Server-side Laravel package for the `leads` module. Auto-generated from
-the blueprint at `modules/growth/blueprints/leads/`.
+Server-side Laravel package for the `leads` module. Auto-generated from the
+blueprint at `modules/growth/blueprints/leads/`.
 
 ## Entities
 
@@ -39,11 +39,12 @@ python3 modules/shared/blueprints/foundation/scripts/generate-module.py \
     growth leads --force
 ```
 
-Files carrying the `AUTO-GENERATED` header are safe to regenerate; every
-other file is a hand-tuned override that survives regeneration.
+Files carrying the `AUTO-GENERATED` header are safe to regenerate; every other
+file is a hand-tuned override that survives regeneration.
 
 ## Companion wire SDK
 
-The wire-visible Saloon + Spatie Data package lives at `academorix-growth/leads-sdk`
-under `sdk/growth-leads-sdk/`. Consumers cross the service boundary
-through the SDK; this package is the SERVER-side owner of the domain.
+The wire-visible Saloon + Spatie Data package lives at
+`academorix-growth/leads-sdk` under `sdk/growth-leads-sdk/`. Consumers cross the
+service boundary through the SDK; this package is the SERVER-side owner of the
+domain.

@@ -6,34 +6,151 @@
   "isSystem": true,
   "scope_suffix_convention": "Session read permissions may carry scope suffixes (`.any`, `.tenant`, `.branch`, `.own` — sessions assigned to caller as coach, or attended by caller/their child). Writes always tenant-scoped. Coach-facing surface has narrower permissions than admin.",
   "permissions": [
-    { "name": "sessions.viewAny", "guard": "sanctum", "seededOn": ["admin", "owner", "coach", "reception"], "description": "List sessions. Admin/owner see all; coaches see .own (their assigned sessions); reception sees .branch (their branch)." },
+    {
+      "name": "sessions.viewAny",
+      "guard": "sanctum",
+      "seededOn": ["admin", "owner", "coach", "reception"],
+      "description": "List sessions. Admin/owner see all; coaches see .own (their assigned sessions); reception sees .branch (their branch)."
+    },
     { "name": "sessions.viewAny.tenant", "guard": "sanctum", "seededOn": ["admin", "owner"] },
     { "name": "sessions.viewAny.branch", "guard": "sanctum", "seededOn": ["reception"] },
     { "name": "sessions.viewAny.own", "guard": "sanctum", "seededOn": ["coach"] },
-    { "name": "sessions.view", "guard": "sanctum", "seededOn": ["admin", "owner", "coach", "reception", "athlete", "guardian"], "description": "Single-session read. Athletes + guardians see sessions where their athlete has attendance; coaches see their assigned sessions; admin sees all." },
-    { "name": "sessions.viewNotes", "guard": "sanctum", "seededOn": ["admin", "owner", "coach"], "description": "Read session_notes (coach's post-session narrative). NOT seeded on reception/athlete/guardian — notes are private-tier." },
-    { "name": "sessions.create", "guard": "sanctum", "seededOn": ["admin", "owner", "coach"], "description": "Consumes 1 session_slot per ISO calendar week of session.starts_at. Coaches can create their own sessions (private lessons, ad-hoc training)." },
-    { "name": "sessions.update", "guard": "sanctum", "seededOn": ["admin", "owner", "coach"], "description": "Coaches can update sessions they're assigned to (curriculum, notes). Admin/owner update anything." },
-    { "name": "sessions.reschedule", "guard": "sanctum", "seededOn": ["admin", "owner", "coach"], "description": "Reschedule via new resource_booking_id. Fires SessionRescheduled (audit-warn) + cannot-opt-out notification." },
-    { "name": "sessions.cancel", "guard": "sanctum", "seededOn": ["admin", "owner", "coach"], "description": "Cancel a session. Fires SessionCancelled + cannot-opt-out notification." },
-    { "name": "sessions.cancel.short-notice", "guard": "sanctum", "seededOn": ["admin", "owner"], "description": "Admin+owner-only. Cancel a session < 24h before start. Requires the base sessions.cancel PLUS this permission." },
-    { "name": "sessions.assign_coach", "guard": "sanctum", "seededOn": ["admin", "owner"], "description": "Assign or reassign the head coach. Coaches cannot self-assign or reassign each other." },
-    { "name": "sessions.assign_coach.short-notice", "guard": "sanctum", "seededOn": ["owner"], "description": "Owner-only. Reassign head coach <24h before start. Fires SessionCoachReassigned with critical audit severity when minors registered." },
-    { "name": "sessions.confirm", "guard": "sanctum", "seededOn": ["admin", "owner", "coach"], "description": "Transition scheduled -> confirmed." },
-    { "name": "sessions.start", "guard": "sanctum", "seededOn": ["admin", "owner", "coach", "reception"], "description": "Manual start (bypasses the automated job at start-time)." },
-    { "name": "sessions.complete", "guard": "sanctum", "seededOn": ["admin", "owner", "coach", "reception"] },
-    { "name": "sessions.delete", "guard": "sanctum", "seededOn": ["admin", "owner"], "description": "Soft-delete. Hard-delete via purge job." },
+    {
+      "name": "sessions.view",
+      "guard": "sanctum",
+      "seededOn": ["admin", "owner", "coach", "reception", "athlete", "guardian"],
+      "description": "Single-session read. Athletes + guardians see sessions where their athlete has attendance; coaches see their assigned sessions; admin sees all."
+    },
+    {
+      "name": "sessions.viewNotes",
+      "guard": "sanctum",
+      "seededOn": ["admin", "owner", "coach"],
+      "description": "Read session_notes (coach's post-session narrative). NOT seeded on reception/athlete/guardian — notes are private-tier."
+    },
+    {
+      "name": "sessions.create",
+      "guard": "sanctum",
+      "seededOn": ["admin", "owner", "coach"],
+      "description": "Consumes 1 session_slot per ISO calendar week of session.starts_at. Coaches can create their own sessions (private lessons, ad-hoc training)."
+    },
+    {
+      "name": "sessions.update",
+      "guard": "sanctum",
+      "seededOn": ["admin", "owner", "coach"],
+      "description": "Coaches can update sessions they're assigned to (curriculum, notes). Admin/owner update anything."
+    },
+    {
+      "name": "sessions.reschedule",
+      "guard": "sanctum",
+      "seededOn": ["admin", "owner", "coach"],
+      "description": "Reschedule via new resource_booking_id. Fires SessionRescheduled (audit-warn) + cannot-opt-out notification."
+    },
+    {
+      "name": "sessions.cancel",
+      "guard": "sanctum",
+      "seededOn": ["admin", "owner", "coach"],
+      "description": "Cancel a session. Fires SessionCancelled + cannot-opt-out notification."
+    },
+    {
+      "name": "sessions.cancel.short-notice",
+      "guard": "sanctum",
+      "seededOn": ["admin", "owner"],
+      "description": "Admin+owner-only. Cancel a session < 24h before start. Requires the base sessions.cancel PLUS this permission."
+    },
+    {
+      "name": "sessions.assign_coach",
+      "guard": "sanctum",
+      "seededOn": ["admin", "owner"],
+      "description": "Assign or reassign the head coach. Coaches cannot self-assign or reassign each other."
+    },
+    {
+      "name": "sessions.assign_coach.short-notice",
+      "guard": "sanctum",
+      "seededOn": ["owner"],
+      "description": "Owner-only. Reassign head coach <24h before start. Fires SessionCoachReassigned with critical audit severity when minors registered."
+    },
+    {
+      "name": "sessions.confirm",
+      "guard": "sanctum",
+      "seededOn": ["admin", "owner", "coach"],
+      "description": "Transition scheduled -> confirmed."
+    },
+    {
+      "name": "sessions.start",
+      "guard": "sanctum",
+      "seededOn": ["admin", "owner", "coach", "reception"],
+      "description": "Manual start (bypasses the automated job at start-time)."
+    },
+    {
+      "name": "sessions.complete",
+      "guard": "sanctum",
+      "seededOn": ["admin", "owner", "coach", "reception"]
+    },
+    {
+      "name": "sessions.delete",
+      "guard": "sanctum",
+      "seededOn": ["admin", "owner"],
+      "description": "Soft-delete. Hard-delete via purge job."
+    },
     { "name": "sessions.archive", "guard": "sanctum", "seededOn": ["admin", "owner"] },
     { "name": "sessions.restore", "guard": "sanctum", "seededOn": ["admin", "owner"] },
-    { "name": "sessions.attendance.record", "guard": "sanctum", "seededOn": ["admin", "owner", "coach", "reception"], "description": "Check-in / mark-absent / mark-late athletes. Coaches record for their assigned sessions." },
-    { "name": "sessions.attendance.remove", "guard": "sanctum", "seededOn": ["admin", "owner"], "description": "Remove an athlete from the attendance list (soft-delete the pivot). Coaches cannot — the attendance record is the safeguarding trail." },
-    { "name": "sessions.attendance.viewNotes", "guard": "sanctum", "seededOn": ["admin", "owner", "coach"], "description": "Read per-attendance notes (private-tier)." },
-    { "name": "sessions.rate", "guard": "sanctum", "seededOn": ["athlete", "guardian"], "description": "Submit a rating on a session the athlete attended. Gated by session_coach_ratings entitlement." },
-    { "name": "sessions.safeguarding.flag", "guard": "sanctum", "seededOn": ["admin", "owner", "coach"], "description": "Set safeguarding_incident_flag=true. Requires session_notes to be filled. Fires SessionMinorSafeguardingIncident when minors registered — top-severity audit + regulator-facing." },
-    { "name": "sessions.safeguarding.view", "guard": "sanctum", "seededOn": ["admin", "owner"], "description": "Read safeguarding-flagged session details. NOT seeded on coach — coaches can FLAG but cannot READ across sessions (need-to-know)." },
-    { "name": "sessions.manage", "guard": "sanctum", "seededOn": ["admin", "owner"], "description": "Umbrella permission." },
-    { "name": "platform.sessions.viewAny", "guard": "platform_admin", "seededOn": ["super_admin", "ops", "support"] },
-    { "name": "platform.sessions.view", "guard": "platform_admin", "seededOn": ["super_admin", "ops", "support"] },
-    { "name": "platform.sessions.safeguarding.viewAny", "guard": "platform_admin", "seededOn": ["super_admin", "safeguarding_officer"], "description": "Cross-tenant safeguarding-incident search. Restricted to platform safeguarding role — audit-critical." }
+    {
+      "name": "sessions.attendance.record",
+      "guard": "sanctum",
+      "seededOn": ["admin", "owner", "coach", "reception"],
+      "description": "Check-in / mark-absent / mark-late athletes. Coaches record for their assigned sessions."
+    },
+    {
+      "name": "sessions.attendance.remove",
+      "guard": "sanctum",
+      "seededOn": ["admin", "owner"],
+      "description": "Remove an athlete from the attendance list (soft-delete the pivot). Coaches cannot — the attendance record is the safeguarding trail."
+    },
+    {
+      "name": "sessions.attendance.viewNotes",
+      "guard": "sanctum",
+      "seededOn": ["admin", "owner", "coach"],
+      "description": "Read per-attendance notes (private-tier)."
+    },
+    {
+      "name": "sessions.rate",
+      "guard": "sanctum",
+      "seededOn": ["athlete", "guardian"],
+      "description": "Submit a rating on a session the athlete attended. Gated by session_coach_ratings entitlement."
+    },
+    {
+      "name": "sessions.safeguarding.flag",
+      "guard": "sanctum",
+      "seededOn": ["admin", "owner", "coach"],
+      "description": "Set safeguarding_incident_flag=true. Requires session_notes to be filled. Fires SessionMinorSafeguardingIncident when minors registered — top-severity audit + regulator-facing."
+    },
+    {
+      "name": "sessions.safeguarding.view",
+      "guard": "sanctum",
+      "seededOn": ["admin", "owner"],
+      "description": "Read safeguarding-flagged session details. NOT seeded on coach — coaches can FLAG but cannot READ across sessions (need-to-know)."
+    },
+    {
+      "name": "sessions.manage",
+      "guard": "sanctum",
+      "seededOn": ["admin", "owner"],
+      "description": "Umbrella permission."
+    },
+    {
+      "name": "platform.sessions.viewAny",
+      "guard": "platform_admin",
+      "seededOn": ["super_admin", "ops", "support"]
+    },
+    {
+      "name": "platform.sessions.view",
+      "guard": "platform_admin",
+      "seededOn": ["super_admin", "ops", "support"]
+    },
+    {
+      "name": "platform.sessions.safeguarding.viewAny",
+      "guard": "platform_admin",
+      "seededOn": ["super_admin", "safeguarding_officer"],
+      "description": "Cross-tenant safeguarding-incident search. Restricted to platform safeguarding role — audit-critical."
+    }
   ]
 }

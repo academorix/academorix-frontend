@@ -11,9 +11,9 @@
  *   ship through the `./react` subpath.
  */
 
-export { QueryModule } from './query.module';
-export { QUERY_CONFIG } from './tokens';
-export { defineConfig } from './utils';
+export { QueryModule } from "./query.module";
+export { QUERY_CONFIG } from "./tokens";
+export { defineConfig } from "./utils";
 export {
   QueryService,
   UndoableQueueService,
@@ -23,5 +23,5 @@ export {
   type QueryServicePublishOptions,
   type QueryServiceQuery,
   type QueryServiceSubscribe,
-} from './services';
-export type { QueryModuleOptions } from './interfaces';
+} from "./services";
+export type { QueryModuleOptions } from "./interfaces";

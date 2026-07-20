@@ -8,14 +8,14 @@
  *   call on `.calls` for assertions.
  */
 
-import type { IScopeContext, IScopeDataSource, IScopeNodeTreeNode } from '../core/interfaces';
+import type { IScopeContext, IScopeDataSource, IScopeNodeTreeNode } from "../core/interfaces";
 
 /** A recorded data-source call. */
 export type RecordedDataSourceCall =
-  | { kind: 'resolveScope'; nodeId: string }
-  | { kind: 'loadTree' }
-  | { kind: 'resolveValue'; nodeId: string; namespace: string; key: string }
-  | { kind: 'persist'; scope: IScopeContext };
+  | { kind: "resolveScope"; nodeId: string }
+  | { kind: "loadTree" }
+  | { kind: "resolveValue"; nodeId: string; namespace: string; key: string }
+  | { kind: "persist"; scope: IScopeContext };
 
 /**
  * In-memory scope data source for testing.
@@ -67,27 +67,27 @@ export class MockScopeDataSource implements IScopeDataSource {
   }
 
   public async resolveScope(nodeId: string): Promise<IScopeContext | null> {
-    this.calls.push({ kind: 'resolveScope', nodeId });
+    this.calls.push({ kind: "resolveScope", nodeId });
     return this.scopes.get(nodeId) ?? null;
   }
 
   public async loadTree(): Promise<IScopeNodeTreeNode[]> {
-    this.calls.push({ kind: 'loadTree' });
+    this.calls.push({ kind: "loadTree" });
     return [...this.tree];
   }
 
   public async resolveValue<T = unknown>(
     nodeId: string,
     namespace: string,
-    key: string
+    key: string,
   ): Promise<T | null> {
-    this.calls.push({ kind: 'resolveValue', nodeId, namespace, key });
+    this.calls.push({ kind: "resolveValue", nodeId, namespace, key });
     const compositeKey = `${nodeId}:${namespace}:${key}`;
     return (this.values.get(compositeKey) as T) ?? null;
   }
 
   public persist(scope: IScopeContext): void {
-    this.calls.push({ kind: 'persist', scope });
+    this.calls.push({ kind: "persist", scope });
     this.persisted.push(scope);
   }
 

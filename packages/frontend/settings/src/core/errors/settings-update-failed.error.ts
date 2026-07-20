@@ -5,7 +5,7 @@
  *   persisted after the configured retry policy has been exhausted.
  */
 
-import { SettingsError } from './settings.error';
+import { SettingsError } from "./settings.error";
 
 /**
  * Thrown when an update request cannot be persisted to the underlying
@@ -30,13 +30,13 @@ export class SettingsUpdateFailedError extends SettingsError {
    * @param cause - Underlying error (HTTP failure, storage quota, …).
    */
   public constructor(groupKey: string, fieldKeys: readonly string[], cause?: unknown) {
-    const fieldsPreview = fieldKeys.slice(0, 5).join(', ');
-    const suffix = fieldKeys.length > 5 ? `, +${fieldKeys.length - 5} more` : '';
+    const fieldsPreview = fieldKeys.slice(0, 5).join(", ");
+    const suffix = fieldKeys.length > 5 ? `, +${fieldKeys.length - 5} more` : "";
     super(
       `Failed to update settings group "${groupKey}" ` + `(fields: ${fieldsPreview}${suffix}).`,
-      cause
+      cause,
     );
-    this.name = 'SettingsUpdateFailedError';
+    this.name = "SettingsUpdateFailedError";
     this.groupKey = groupKey;
     this.fieldKeys = fieldKeys;
   }

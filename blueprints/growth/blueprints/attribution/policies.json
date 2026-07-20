@@ -8,20 +8,59 @@
       "model": "Attribution",
       "class": "Academorix\\Growth\\Attribution\\Policies\\AttributionPolicy",
       "abilities": [
-        { "action": "viewAny", "permission": "attribution.viewAny", "scope": "marketing sees aggregated view (no PII); admin + owner see full rows" },
-        { "action": "view", "permission": "attribution.view", "scope": "narrows to own subject unless caller has attribution.view-all" },
-        { "action": "viewOwn", "permission": "attribution.view-own", "scope": "always allowed for GET /me/attribution — GDPR Art. 15" },
-        { "action": "reset", "permission": "attribution.reset", "scope": "admin + owner OR the subject themselves via attribution.reset-own" },
-        { "action": "resetOwn", "permission": "attribution.reset-own", "scope": "always allowed for the subject's own reset — GDPR Art. 17" },
-        { "action": "merge", "permission": "attribution.merge", "scope": "Enterprise-only — checked against attribution_merge entitlement + admin + owner role" },
+        {
+          "action": "viewAny",
+          "permission": "attribution.viewAny",
+          "scope": "marketing sees aggregated view (no PII); admin + owner see full rows"
+        },
+        {
+          "action": "view",
+          "permission": "attribution.view",
+          "scope": "narrows to own subject unless caller has attribution.view-all"
+        },
+        {
+          "action": "viewOwn",
+          "permission": "attribution.view-own",
+          "scope": "always allowed for GET /me/attribution — GDPR Art. 15"
+        },
+        {
+          "action": "reset",
+          "permission": "attribution.reset",
+          "scope": "admin + owner OR the subject themselves via attribution.reset-own"
+        },
+        {
+          "action": "resetOwn",
+          "permission": "attribution.reset-own",
+          "scope": "always allowed for the subject's own reset — GDPR Art. 17"
+        },
+        {
+          "action": "merge",
+          "permission": "attribution.merge",
+          "scope": "Enterprise-only — checked against attribution_merge entitlement + admin + owner role"
+        },
         { "action": "import", "permission": "attribution.import", "scope": "Enterprise-only" },
-        { "action": "viewRollup", "permission": "attribution.view-rollup", "scope": "aggregated data only — no per-subject PII returned even to callers with viewAny" },
+        {
+          "action": "viewRollup",
+          "permission": "attribution.view-rollup",
+          "scope": "aggregated data only — no per-subject PII returned even to callers with viewAny"
+        },
         { "action": "viewAuditUsage", "permission": "attribution.view-audit-usage" },
-        { "action": "viewConsentSuppressions", "permission": "attribution.view-consent-suppressions", "scope": "compliance role only — regulatory audit report" },
+        {
+          "action": "viewConsentSuppressions",
+          "permission": "attribution.view-consent-suppressions",
+          "scope": "compliance role only — regulatory audit report"
+        },
         { "action": "platformViewAny", "permission": "platform.attribution.viewAny" },
         { "action": "platformView", "permission": "platform.attribution.view" },
-        { "action": "platformForceReset", "permission": "platform.attribution.force-reset", "scope": "audit-critical: every fire notifies the tenant admin + writes an audit row with 7-year retention" },
-        { "action": "platformViewAuditUsage", "permission": "platform.attribution.view-audit-usage" }
+        {
+          "action": "platformForceReset",
+          "permission": "platform.attribution.force-reset",
+          "scope": "audit-critical: every fire notifies the tenant admin + writes an audit row with 7-year retention"
+        },
+        {
+          "action": "platformViewAuditUsage",
+          "permission": "platform.attribution.view-audit-usage"
+        }
       ]
     },
     {

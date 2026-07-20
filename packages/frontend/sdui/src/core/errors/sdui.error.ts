@@ -12,9 +12,9 @@ export class SduiError extends Error {
   public readonly code: string;
   public readonly context?: Record<string, unknown>;
 
-  public constructor(message: string, code = 'SDUI_ERROR', context?: Record<string, unknown>) {
+  public constructor(message: string, code = "SDUI_ERROR", context?: Record<string, unknown>) {
     super(message);
-    this.name = 'SduiError';
+    this.name = "SduiError";
     this.code = code;
     this.context = context;
   }
@@ -25,10 +25,10 @@ export class SduiSchemaVersionError extends SduiError {
   public constructor(actual: number, supported: { min: number; max: number }) {
     super(
       `SDUI schema version ${actual} is out of range (supported ${supported.min}-${supported.max})`,
-      'SDUI_SCHEMA_VERSION',
-      { actual, supported }
+      "SDUI_SCHEMA_VERSION",
+      { actual, supported },
     );
-    this.name = 'SduiSchemaVersionError';
+    this.name = "SduiSchemaVersionError";
   }
 }
 
@@ -36,10 +36,10 @@ export class SduiSchemaVersionError extends SduiError {
 export class SduiValidationError extends SduiError {
   public readonly issues: readonly { path: string; message: string }[];
   public constructor(issues: readonly { path: string; message: string }[]) {
-    super(`SDUI screen validation failed (${issues.length} issue(s))`, 'SDUI_VALIDATION', {
+    super(`SDUI screen validation failed (${issues.length} issue(s))`, "SDUI_VALIDATION", {
       issues,
     });
-    this.name = 'SduiValidationError';
+    this.name = "SduiValidationError";
     this.issues = issues;
   }
 }

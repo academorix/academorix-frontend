@@ -4,11 +4,11 @@
  * @description React hook for monitoring scheduled tasks.
  */
 
-import { useState, useCallback } from 'react';
-import { useInject } from '@stackra/container/react';
-import { SCHEDULER_SERVICE } from '@stackra/contracts';
-import { SchedulerService } from '@/core/services/scheduler.service';
-import type { IScheduledTask } from '@/core/interfaces';
+import { useState, useCallback } from "react";
+import { useInject } from "@stackra/container/react";
+import { SCHEDULER_SERVICE } from "@stackra/contracts";
+import { SchedulerService } from "@/core/services/scheduler.service";
+import type { IScheduledTask } from "@/core/interfaces";
 
 /**
  * Return type of the `useScheduler` hook.
@@ -64,7 +64,7 @@ export function useScheduler(): UseSchedulerResult {
       scheduler.pause(name);
       refresh();
     },
-    [scheduler, refresh]
+    [scheduler, refresh],
   );
 
   const resume = useCallback(
@@ -72,7 +72,7 @@ export function useScheduler(): UseSchedulerResult {
       scheduler.resume(name);
       refresh();
     },
-    [scheduler, refresh]
+    [scheduler, refresh],
   );
 
   const runNow = useCallback(
@@ -80,7 +80,7 @@ export function useScheduler(): UseSchedulerResult {
       await scheduler.runNow(name);
       refresh();
     },
-    [scheduler, refresh]
+    [scheduler, refresh],
   );
 
   return { tasks, refresh, pause, resume, runNow };

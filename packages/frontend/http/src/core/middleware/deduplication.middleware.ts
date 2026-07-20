@@ -10,7 +10,7 @@
  * @module @stackra/http/middleware/deduplication
  */
 
-import { Inject } from '@stackra/container';
+import { Inject } from "@stackra/container";
 
 import {
   HTTP_CONFIG,
@@ -20,14 +20,14 @@ import {
   type IHttpNextFunction,
   type IHttpRequestConfig,
   type IHttpResponse,
-} from '@stackra/contracts';
+} from "@stackra/contracts";
 
-import { HttpMiddleware } from '../decorators/http-middleware.decorator';
+import { HttpMiddleware } from "../decorators/http-middleware.decorator";
 
 /**
  * Deduplication middleware.
  */
-@HttpMiddleware({ priority: 50, name: 'deduplication' })
+@HttpMiddleware({ priority: 50, name: "deduplication" })
 export class DeduplicationMiddleware implements IHttpMiddleware {
   /** Active in-flight promises keyed by request key. */
   private readonly pending: Map<string, Promise<IHttpResponse>> = new Map();
@@ -45,7 +45,7 @@ export class DeduplicationMiddleware implements IHttpMiddleware {
       return next(context);
     }
 
-    if (context.request.meta?.['skipDeduplication'] === true) {
+    if (context.request.meta?.["skipDeduplication"] === true) {
       return next(context);
     }
 
@@ -65,8 +65,8 @@ export class DeduplicationMiddleware implements IHttpMiddleware {
 
   /** Default `{METHOD}:{URL}:{params}` key. */
   private static defaultKey(request: IHttpRequestConfig): string {
-    const params = request.params ? JSON.stringify(request.params) : '';
-    return `${request.method ?? 'GET'}:${request.url ?? ''}:${params}`;
+    const params = request.params ? JSON.stringify(request.params) : "";
+    return `${request.method ?? "GET"}:${request.url ?? ""}:${params}`;
   }
 
   /** Read the active in-flight count (debug helper). */

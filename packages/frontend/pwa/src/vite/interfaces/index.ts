@@ -4,5 +4,5 @@
  * @description Barrel export for Vite adapter interfaces.
  */
 
-export type { IGetVitePwaOptionsInput } from './get-vite-pwa-options-input.interface';
-export type { IGetAssetsGeneratorConfigInput } from './get-assets-generator-config-input.interface';
+export type { IGetVitePwaOptionsInput } from "./get-vite-pwa-options-input.interface";
+export type { IGetAssetsGeneratorConfigInput } from "./get-assets-generator-config-input.interface";

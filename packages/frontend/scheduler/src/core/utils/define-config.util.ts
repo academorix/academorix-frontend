@@ -33,7 +33,7 @@
  * See `.kiro/steering/config-architecture.md` for the full guide.
  */
 
-import type { ISchedulerModuleOptions } from '@/core/interfaces/scheduler-module-options.interface';
+import type { ISchedulerModuleOptions } from "@/core/interfaces/scheduler-module-options.interface";
 
 /**
  * Type-safe configuration builder for the scheduler module.

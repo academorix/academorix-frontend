@@ -5,6 +5,7 @@
  */
 
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
+
 import { ConsoleOutput } from "@/services/console-output.service";
 import { DEFAULT_ICONS } from "@/services/theme.service";
 

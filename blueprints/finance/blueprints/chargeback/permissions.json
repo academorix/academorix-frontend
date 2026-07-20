@@ -6,18 +6,79 @@
   "isSystem": true,
   "description": "Two audiences. Tenant plane (sanctum) — owner + finance + admin manage chargebacks + read chargeback ledger; support role reads only (no evidence submission); marketing role reads reports only (for fraud model tuning). NO customer permissions — chargebacks are admin-only surface (card network rules prohibit customer-facing chargeback state on most networks). Platform plane (platform_admin) — cross-tenant read for support intervention + regulator-facing reporting + merchant-account risk monitoring (rate-threshold alerts). All tenant permissions carry the appropriate resource prefix (`chargebacks.` for the aggregate, `chargebacks.view-financials` for confidential fields, `chargebacks.view-evidence` for evidence bundles with customer PII).",
   "permissions": [
-    { "name": "chargebacks.viewAny", "guard": "sanctum", "seededOn": ["finance", "admin", "owner", "support"] },
-    { "name": "chargebacks.view", "guard": "sanctum", "seededOn": ["finance", "admin", "owner", "support"] },
-    { "name": "chargebacks.view-evidence", "guard": "sanctum", "seededOn": ["finance", "admin", "owner", "support"], "description": "View chargeback evidence bundles. Evidence contains customer PII (IP, device fingerprint hash, service attendance, communication logs) — segregated permission from view. Some support roles need chargeback context but not evidence drill-down." },
-    { "name": "chargebacks.submit-evidence", "guard": "sanctum", "seededOn": ["finance", "admin", "owner"], "description": "Submit evidence to the acquiring bank. Requires `chargeback_evidence_submission` entitlement. Support role does NOT hold this permission — evidence submission is finance-tier only." },
-    { "name": "chargebacks.accept", "guard": "sanctum", "seededOn": ["finance", "admin", "owner"], "description": "RDR path — auto-refund below threshold to close pre-chargeback state. Requires `chargeback_rdr` entitlement (Medium+). Only valid when parent chargeback.rdr_eligible=true." },
-    { "name": "chargebacks.mark-lost", "guard": "sanctum", "seededOn": ["admin", "owner"], "description": "Admin escape hatch — force-mark a chargeback as lost after ops investigation. High-privilege — only admin + owner (not finance)." },
-    { "name": "chargebacks.reconcile", "guard": "sanctum", "seededOn": ["finance", "admin", "owner"], "description": "Dispatches CheckChargebackStatusJob. Sweeps stuck chargebacks after provider outage recovery." },
-    { "name": "chargebacks.view-report", "guard": "sanctum", "seededOn": ["finance", "admin", "owner", "marketing", "support"], "description": "Read the chargeback rate report. Marketing role holds for fraud model tuning (chargeback rate + reason distribution feed ad-network fraud model retraining tuning)." },
-    { "name": "chargebacks.view-financials", "guard": "sanctum", "seededOn": ["finance", "admin", "owner", "support"], "description": "Read the confidential financial fields: amount_cents, currency, fee_cents, provider_metadata, provider_reference_id. Redactor strips these when the caller lacks this permission." },
-    { "name": "platform.chargebacks.viewAny", "guard": "platform_admin", "seededOn": ["super_admin", "ops", "support"] },
-    { "name": "platform.chargebacks.view", "guard": "platform_admin", "seededOn": ["super_admin", "ops", "support"] },
-    { "name": "platform.chargebacks.view-rate-alerts", "guard": "platform_admin", "seededOn": ["super_admin", "ops"], "description": "Cross-tenant merchant-account risk monitoring — surfaces every tenant approaching VDMP/MDMP thresholds. Actionable for Academorix ops (fraud review recommendations, RDR enrollment suggestions, in extreme cases account termination)." },
-    { "name": "platform.chargebacks.pii.view", "guard": "platform_admin", "seededOn": ["super_admin"], "description": "Cross-tenant view WITH customer PII (customer_id / customer name / email unmasked + full evidence bundles including IP + device fingerprint). Reserved for regulator-facing investigations. Default view hashes PII." }
+    {
+      "name": "chargebacks.viewAny",
+      "guard": "sanctum",
+      "seededOn": ["finance", "admin", "owner", "support"]
+    },
+    {
+      "name": "chargebacks.view",
+      "guard": "sanctum",
+      "seededOn": ["finance", "admin", "owner", "support"]
+    },
+    {
+      "name": "chargebacks.view-evidence",
+      "guard": "sanctum",
+      "seededOn": ["finance", "admin", "owner", "support"],
+      "description": "View chargeback evidence bundles. Evidence contains customer PII (IP, device fingerprint hash, service attendance, communication logs) — segregated permission from view. Some support roles need chargeback context but not evidence drill-down."
+    },
+    {
+      "name": "chargebacks.submit-evidence",
+      "guard": "sanctum",
+      "seededOn": ["finance", "admin", "owner"],
+      "description": "Submit evidence to the acquiring bank. Requires `chargeback_evidence_submission` entitlement. Support role does NOT hold this permission — evidence submission is finance-tier only."
+    },
+    {
+      "name": "chargebacks.accept",
+      "guard": "sanctum",
+      "seededOn": ["finance", "admin", "owner"],
+      "description": "RDR path — auto-refund below threshold to close pre-chargeback state. Requires `chargeback_rdr` entitlement (Medium+). Only valid when parent chargeback.rdr_eligible=true."
+    },
+    {
+      "name": "chargebacks.mark-lost",
+      "guard": "sanctum",
+      "seededOn": ["admin", "owner"],
+      "description": "Admin escape hatch — force-mark a chargeback as lost after ops investigation. High-privilege — only admin + owner (not finance)."
+    },
+    {
+      "name": "chargebacks.reconcile",
+      "guard": "sanctum",
+      "seededOn": ["finance", "admin", "owner"],
+      "description": "Dispatches CheckChargebackStatusJob. Sweeps stuck chargebacks after provider outage recovery."
+    },
+    {
+      "name": "chargebacks.view-report",
+      "guard": "sanctum",
+      "seededOn": ["finance", "admin", "owner", "marketing", "support"],
+      "description": "Read the chargeback rate report. Marketing role holds for fraud model tuning (chargeback rate + reason distribution feed ad-network fraud model retraining tuning)."
+    },
+    {
+      "name": "chargebacks.view-financials",
+      "guard": "sanctum",
+      "seededOn": ["finance", "admin", "owner", "support"],
+      "description": "Read the confidential financial fields: amount_cents, currency, fee_cents, provider_metadata, provider_reference_id. Redactor strips these when the caller lacks this permission."
+    },
+    {
+      "name": "platform.chargebacks.viewAny",
+      "guard": "platform_admin",
+      "seededOn": ["super_admin", "ops", "support"]
+    },
+    {
+      "name": "platform.chargebacks.view",
+      "guard": "platform_admin",
+      "seededOn": ["super_admin", "ops", "support"]
+    },
+    {
+      "name": "platform.chargebacks.view-rate-alerts",
+      "guard": "platform_admin",
+      "seededOn": ["super_admin", "ops"],
+      "description": "Cross-tenant merchant-account risk monitoring — surfaces every tenant approaching VDMP/MDMP thresholds. Actionable for Academorix ops (fraud review recommendations, RDR enrollment suggestions, in extreme cases account termination)."
+    },
+    {
+      "name": "platform.chargebacks.pii.view",
+      "guard": "platform_admin",
+      "seededOn": ["super_admin"],
+      "description": "Cross-tenant view WITH customer PII (customer_id / customer name / email unmasked + full evidence bundles including IP + device fingerprint). Reserved for regulator-facing investigations. Default view hashes PII."
+    }
   ]
 }

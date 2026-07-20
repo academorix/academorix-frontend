@@ -7,18 +7,18 @@
  *   remote sync API.
  */
 
-import { Inject, Injectable } from '@stackra/container';
+import { Inject, Injectable } from "@stackra/container";
 import type {
   IBatchOperation,
   IHttpManager,
   IPushOptions,
   IPushResult,
   IQueuedOperation,
-} from '@stackra/contracts';
-import { HTTP_MANAGER, OPERATION_QUEUE, OperationStatus, OperationType } from '@stackra/contracts';
-import { Logger } from '@stackra/logger';
-import { Str } from '@stackra/support';
-import type { OperationQueue } from './operation-queue.service';
+} from "@stackra/contracts";
+import { HTTP_MANAGER, OPERATION_QUEUE, OperationStatus, OperationType } from "@stackra/contracts";
+import { Logger } from "@stackra/logger";
+import { Str } from "@stackra/support";
+import type { OperationQueue } from "./operation-queue.service";
 
 /**
  * Wire shape of the batch push request body.
@@ -53,7 +53,7 @@ export class PushService {
 
   public constructor(
     @Inject(HTTP_MANAGER) private readonly http: IHttpManager,
-    @Inject(OPERATION_QUEUE) private readonly operationQueue: OperationQueue
+    @Inject(OPERATION_QUEUE) private readonly operationQueue: OperationQueue,
   ) {}
 
   /**
@@ -88,7 +88,7 @@ export class PushService {
 
         const response = await client.request<IBatchPushResponse>({
           url: `${options.baseUrl}/${collection}/sync/push`,
-          method: 'POST',
+          method: "POST",
           data: batchBody,
           timeout: options.timeout,
         });
@@ -109,7 +109,7 @@ export class PushService {
             operation.status = OperationStatus.Failed;
             operation.lastError = result.error;
             totalFailed++;
-            errors.push({ operationId: operation.id, message: result.error ?? 'Unknown error' });
+            errors.push({ operationId: operation.id, message: result.error ?? "Unknown error" });
           }
         }
       } catch (error: unknown) {

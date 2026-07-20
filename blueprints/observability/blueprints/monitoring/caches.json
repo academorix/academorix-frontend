@@ -3,7 +3,13 @@
   "$version": 1,
   "title": "monitoring — cache keys + tags",
   "driver": "redis",
-  "ownedTags": ["monitoring", "monitoring.health_checks", "monitoring.policies", "monitoring.providers", "monitoring.dashboard"],
+  "ownedTags": [
+    "monitoring",
+    "monitoring.health_checks",
+    "monitoring.policies",
+    "monitoring.providers",
+    "monitoring.dashboard"
+  ],
   "keys": [
     {
       "pattern": "mon:health-checks:{tenant_id}",
@@ -73,11 +79,7 @@
       "description": "Recent-incident lookup for the GroupAlertsIntoIncidentJob path. Stores { incident_id, opened_at, affected_services[] } for firing incidents within the 5-min grouping window.",
       "ttlSeconds": 300,
       "tags": ["monitoring", "tenant"],
-      "invalidatedBy": [
-        "MonitoringIncidentOpened",
-        "MonitoringIncidentResolved",
-        "TTL"
-      ]
+      "invalidatedBy": ["MonitoringIncidentOpened", "MonitoringIncidentResolved", "TTL"]
     },
     {
       "pattern": "mon:dashboard:{tenant_id}",

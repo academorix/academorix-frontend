@@ -10,11 +10,11 @@
  *   combinations. Uses the deterministic seeded PRNG so failures reproduce.
  */
 
-import { describe, it } from 'vitest';
+import { describe, it } from "vitest";
 
-import { ConnectionManager } from '@/core/services/connection-manager.service';
-import type { IAiConfig, IAiRetryPolicy } from '@stackra/contracts';
-import { forAll, type IPrng } from './property-test.helper';
+import { ConnectionManager } from "@/core/services/connection-manager.service";
+import type { IAiConfig, IAiRetryPolicy } from "@stackra/contracts";
+import { forAll, type IPrng } from "./property-test.helper";
 
 /** Generate a random valid retry policy. */
 function genPolicy(r: IPrng): IAiRetryPolicy {
@@ -27,7 +27,7 @@ function genPolicy(r: IPrng): IAiRetryPolicy {
 /** Build a manager just to drain its scheduleReconnect() sequence. */
 function drain(policy: IAiRetryPolicy): number[] {
   const config: IAiConfig = {
-    baseUrl: 'https://x',
+    baseUrl: "https://x",
     authProvider: {
       getCredentials: () => Promise.resolve({}),
       refresh: () => Promise.resolve({}),
@@ -46,8 +46,8 @@ function drain(policy: IAiRetryPolicy): number[] {
   return delays;
 }
 
-describe('Property 11: bounded exponential backoff (Req 24.3)', () => {
-  it('is non-decreasing, capped at capMs, and stops after maxAttempts', () => {
+describe("Property 11: bounded exponential backoff (Req 24.3)", () => {
+  it("is non-decreasing, capped at capMs, and stops after maxAttempts", () => {
     forAll(
       (r) => genPolicy(r),
       (policy) => {
@@ -66,7 +66,7 @@ describe('Property 11: bounded exponential backoff (Req 24.3)', () => {
         }
         return true;
       },
-      { runs: 250 }
+      { runs: 250 },
     );
   });
 });

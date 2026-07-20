@@ -14,9 +14,9 @@
  *     wants to override the category-derived default.
  */
 
-import type { INotificationAction } from './notification-action.interface';
-import type { NotificationCategory } from './notification-category.type';
-import type { NotificationPriority } from './notification-priority.type';
+import type { INotificationAction } from "./notification-action.interface";
+import type { NotificationCategory } from "./notification-category.type";
+import type { NotificationPriority } from "./notification-priority.type";
 
 /**
  * A notification payload dispatched through the manager.
@@ -57,7 +57,7 @@ export interface INotificationPayload {
    */
   readonly requireInteraction?: boolean;
   /** Text direction. */
-  readonly dir?: 'ltr' | 'rtl' | 'auto';
+  readonly dir?: "ltr" | "rtl" | "auto";
   /** BCP-47 language tag for accessibility. */
   readonly lang?: string;
   /**

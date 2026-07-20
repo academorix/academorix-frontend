@@ -25,12 +25,12 @@
 // ============================================================================
 // Module
 // ============================================================================
-export { CollaborationModule } from './collaboration.module';
+export { CollaborationModule } from "./collaboration.module";
 
 // ============================================================================
 // Services
 // ============================================================================
-export { RoomManager } from './services';
+export { RoomManager } from "./services";
 
 // ============================================================================
 // Hooks
@@ -43,12 +43,12 @@ export {
   useThreads,
   useNotifications,
   useActivityFeed,
-} from './hooks';
+} from "./hooks";
 
 // ============================================================================
 // Transports
 // ============================================================================
-export { BroadcastChannelTransport, ReverbTransport, MockTransport } from './transports';
+export { BroadcastChannelTransport, ReverbTransport, MockTransport } from "./transports";
 
 // ============================================================================
 // Interfaces
@@ -62,9 +62,9 @@ export type {
   Thread,
   ThreadMessage,
   CollaborationNotification,
-} from './interfaces';
+} from "./interfaces";
 
 // ============================================================================
 // Types
 // ============================================================================
-export type { ActivityEntry } from './types';
+export type { ActivityEntry } from "./types";

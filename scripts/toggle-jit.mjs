@@ -58,27 +58,27 @@
  *   toggle.
  */
 
-import { readdirSync, existsSync, writeFileSync, readFileSync } from 'node:fs';
-import { join, relative, dirname, resolve } from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { readdirSync, existsSync, writeFileSync, readFileSync } from "node:fs";
+import { join, relative, dirname, resolve } from "node:path";
+import { fileURLToPath } from "node:url";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
-const ROOT = join(__dirname, '..');
-const PACKAGES = join(ROOT, 'packages');
+const ROOT = join(__dirname, "..");
+const PACKAGES = join(ROOT, "packages");
 
 // ── CLI args ────────────────────────────────────────────────────────────────
 
 const args = process.argv.slice(2);
-const mode = args.includes('--compiled') ? 'compiled' : 'jit';
-const checkOnly = args.includes('--check');
-const rewriteOnly = args.includes('--rewrite-only');
+const mode = args.includes("--compiled") ? "compiled" : "jit";
+const checkOnly = args.includes("--check");
+const rewriteOnly = args.includes("--rewrite-only");
 /**
  * When set, the script flips `package.json` exports but does NOT
  * touch `@/...` imports in the source tree. Use this if you want
  * to manage alias rewriting yourself (or if you've already done it).
  */
-const noRewrite = args.includes('--no-rewrite');
-const filterIdx = args.indexOf('--filter');
+const noRewrite = args.includes("--no-rewrite");
+const filterIdx = args.indexOf("--filter");
 const filterName = filterIdx !== -1 ? args[filterIdx + 1] : null;
 
 // ── Package discovery ───────────────────────────────────────────────────────
@@ -86,11 +86,11 @@ const filterName = filterIdx !== -1 ? args[filterIdx + 1] : null;
 function findPackages(dir) {
   const results = [];
   for (const entry of readdirSync(dir, { withFileTypes: true })) {
-    if (['node_modules', 'dist', '.DS_Store', '.turbo', '__generated__'].includes(entry.name))
+    if (["node_modules", "dist", ".DS_Store", ".turbo", "__generated__"].includes(entry.name))
       continue;
     const full = join(dir, entry.name);
     if (entry.isDirectory()) {
-      if (existsSync(join(full, 'package.json'))) {
+      if (existsSync(join(full, "package.json"))) {
         results.push(full);
       } else {
         results.push(...findPackages(full));
@@ -120,20 +120,20 @@ function findPackages(dir) {
  */
 function extractCustomExports(currentExports) {
   const preserved = {};
-  if (!currentExports || typeof currentExports !== 'object') return preserved;
+  if (!currentExports || typeof currentExports !== "object") return preserved;
 
   for (const [key, value] of Object.entries(currentExports)) {
     // String value — check if the target looks like TS source / dist JS.
-    if (typeof value === 'string') {
+    if (typeof value === "string") {
       if (isSourceOrDistTarget(value)) continue;
       preserved[key] = value;
       continue;
     }
 
     // Conditional object — check the most authoritative slot.
-    if (value && typeof value === 'object') {
+    if (value && typeof value === "object") {
       const probe = value.default ?? value.import ?? value.require ?? value.types;
-      if (typeof probe === 'string' && isSourceOrDistTarget(probe)) continue;
+      if (typeof probe === "string" && isSourceOrDistTarget(probe)) continue;
       preserved[key] = value;
     }
   }
@@ -171,8 +171,8 @@ function detectEntries(pkgDir) {
     // Convert tsup entry names to export keys: "index" → ".", "react" → "./react"
     const entries = {};
     for (const [name, source] of Object.entries(tsupEntries)) {
-      const key = name === 'index' ? '.' : `./${name}`;
-      entries[key] = source.startsWith('./') ? source : `./${source}`;
+      const key = name === "index" ? "." : `./${name}`;
+      entries[key] = source.startsWith("./") ? source : `./${source}`;
     }
     return entries;
   }
@@ -186,11 +186,11 @@ function detectEntries(pkgDir) {
  * Returns { index: 'src/index.ts', react: 'src/react/index.ts', ... } or null.
  */
 function readTsupEntries(pkgDir) {
-  const configPath = join(pkgDir, 'tsup.config.ts');
+  const configPath = join(pkgDir, "tsup.config.ts");
   if (!existsSync(configPath)) return null;
 
   try {
-    const content = readFileSync(configPath, 'utf8');
+    const content = readFileSync(configPath, "utf8");
     // Extract the entry object using regex (simple but covers all generated configs)
     const entryMatch = content.match(/entry:\s*\{([^}]+)\}/s);
     if (!entryMatch) return null;
@@ -219,13 +219,13 @@ function detectEntriesFromStructure(pkgDir) {
   const entries = {};
 
   // Standard subpaths to check for any package
-  const SUBPATHS = ['core', 'react', 'nestjs', 'native', 'vite', 'testing', 'ssr'];
+  const SUBPATHS = ["core", "react", "nestjs", "native", "vite", "testing", "ssr"];
 
   // Unified platform packages: src/core/, src/react/, src/nestjs/, etc.
-  if (existsSync(join(pkgDir, 'src/core/index.ts'))) {
-    entries['.'] = './src/core/index.ts';
+  if (existsSync(join(pkgDir, "src/core/index.ts"))) {
+    entries["."] = "./src/core/index.ts";
     for (const sub of SUBPATHS) {
-      if (sub === 'core') continue;
+      if (sub === "core") continue;
       if (existsSync(join(pkgDir, `src/${sub}/index.ts`))) {
         entries[`./${sub}`] = `./src/${sub}/index.ts`;
       }
@@ -234,23 +234,23 @@ function detectEntriesFromStructure(pkgDir) {
   }
 
   // Full-stack domain/app packages: src/shared/, src/api/, src/web/, src/native/
-  if (existsSync(join(pkgDir, 'src/shared/index.ts'))) {
-    if (existsSync(join(pkgDir, 'src/index.ts'))) {
-      entries['.'] = './src/index.ts';
+  if (existsSync(join(pkgDir, "src/shared/index.ts"))) {
+    if (existsSync(join(pkgDir, "src/index.ts"))) {
+      entries["."] = "./src/index.ts";
     } else {
-      entries['.'] = './src/shared/index.ts';
+      entries["."] = "./src/shared/index.ts";
     }
-    entries['./shared'] = './src/shared/index.ts';
-    if (existsSync(join(pkgDir, 'src/api/index.ts'))) entries['./api'] = './src/api/index.ts';
-    if (existsSync(join(pkgDir, 'src/web/index.ts'))) entries['./web'] = './src/web/index.ts';
-    if (existsSync(join(pkgDir, 'src/native/index.ts')))
-      entries['./native'] = './src/native/index.ts';
+    entries["./shared"] = "./src/shared/index.ts";
+    if (existsSync(join(pkgDir, "src/api/index.ts"))) entries["./api"] = "./src/api/index.ts";
+    if (existsSync(join(pkgDir, "src/web/index.ts"))) entries["./web"] = "./src/web/index.ts";
+    if (existsSync(join(pkgDir, "src/native/index.ts")))
+      entries["./native"] = "./src/native/index.ts";
     return entries;
   }
 
   // Flat infra packages or simple packages: src/index.ts + optional subpaths
-  if (existsSync(join(pkgDir, 'src/index.ts'))) {
-    entries['.'] = './src/index.ts';
+  if (existsSync(join(pkgDir, "src/index.ts"))) {
+    entries["."] = "./src/index.ts";
     // Check for additional subpaths even in flat packages
     for (const sub of SUBPATHS) {
       if (existsSync(join(pkgDir, `src/${sub}/index.ts`))) {
@@ -274,7 +274,7 @@ function toCompiledExports(entries) {
 
   for (const [key, srcPath] of Object.entries(entries)) {
     // Native subpath always points to source (JIT by Metro)
-    if (key === './native') {
+    if (key === "./native") {
       exports[key] = {
         types: srcPath,
         import: srcPath,
@@ -285,9 +285,9 @@ function toCompiledExports(entries) {
 
     // Convert source path to dist path: ./src/core/index.ts → ./dist/core/index
     const distBase = srcPath
-      .replace('./src/', './dist/')
-      .replace('/index.ts', '/index')
-      .replace('.ts', '');
+      .replace("./src/", "./dist/")
+      .replace("/index.ts", "/index")
+      .replace(".ts", "");
 
     exports[key] = {
       types: `${distBase}.d.ts`,
@@ -319,12 +319,12 @@ function toJitExports(entries) {
 function findSourceFiles(dir) {
   const results = [];
   for (const entry of readdirSync(dir, { withFileTypes: true })) {
-    if (['node_modules', 'dist', '.turbo', '__generated__', '__tests__'].includes(entry.name))
+    if (["node_modules", "dist", ".turbo", "__generated__", "__tests__"].includes(entry.name))
       continue;
     const full = join(dir, entry.name);
     if (entry.isDirectory()) {
       results.push(...findSourceFiles(full));
-    } else if (/\.(ts|tsx)$/.test(entry.name) && !entry.name.endsWith('.d.ts')) {
+    } else if (/\.(ts|tsx)$/.test(entry.name) && !entry.name.endsWith(".d.ts")) {
       results.push(full);
     }
   }
@@ -335,30 +335,30 @@ function findSourceFiles(dir) {
  * Resolve the `@/` base path from a package's tsconfig.json.
  */
 function resolveAliasBase(pkgDir) {
-  const tsconfigPath = join(pkgDir, 'tsconfig.json');
-  if (!existsSync(tsconfigPath)) return join(pkgDir, 'src');
+  const tsconfigPath = join(pkgDir, "tsconfig.json");
+  if (!existsSync(tsconfigPath)) return join(pkgDir, "src");
   try {
-    const raw = readFileSync(tsconfigPath, 'utf8')
-      .replace(/\/\/.*$/gm, '')
-      .replace(/\/\*[\s\S]*?\*\//g, '');
+    const raw = readFileSync(tsconfigPath, "utf8")
+      .replace(/\/\/.*$/gm, "")
+      .replace(/\/\*[\s\S]*?\*\//g, "");
     const tsconfig = JSON.parse(raw);
     const paths = tsconfig?.compilerOptions?.paths;
-    if (paths && paths['@/*']) {
-      const mapped = paths['@/*'][0];
-      const base = mapped.replace('/*', '').replace('./', '');
+    if (paths && paths["@/*"]) {
+      const mapped = paths["@/*"][0];
+      const base = mapped.replace("/*", "").replace("./", "");
       return join(pkgDir, base);
     }
   } catch {
     /* fallback */
   }
-  return join(pkgDir, 'src');
+  return join(pkgDir, "src");
 }
 
 /**
  * Convert `@/` imports to relative paths in a source file.
  */
 function convertAliasToRelative(filePath, aliasBase) {
-  const content = readFileSync(filePath, 'utf8');
+  const content = readFileSync(filePath, "utf8");
   const fileDir = dirname(filePath);
 
   const aliasRegex = /(['"])@\/([^'"]+)\1/g;
@@ -367,9 +367,9 @@ function convertAliasToRelative(filePath, aliasBase) {
   const updated = content.replace(/(['"])@\/([^'"]+)\1/g, (match, quote, importPath) => {
     const absoluteTarget = join(aliasBase, importPath);
     let relativePath = relative(fileDir, absoluteTarget);
-    relativePath = relativePath.split('\\').join('/');
-    if (!relativePath.startsWith('.')) {
-      relativePath = './' + relativePath;
+    relativePath = relativePath.split("\\").join("/");
+    if (!relativePath.startsWith(".")) {
+      relativePath = "./" + relativePath;
     }
     return `${quote}${relativePath}${quote}`;
   });
@@ -385,7 +385,7 @@ function convertAliasToRelative(filePath, aliasBase) {
  * Convert relative imports back to `@/` path aliases.
  */
 function convertRelativeToAlias(filePath, aliasBase) {
-  const content = readFileSync(filePath, 'utf8');
+  const content = readFileSync(filePath, "utf8");
   const fileDir = dirname(filePath);
 
   const relativeRegex = /(['"])(\.\.?\/[^'"]+)\1/g;
@@ -394,10 +394,10 @@ function convertRelativeToAlias(filePath, aliasBase) {
   const updated = content.replace(relativeRegex, (match, quote, importPath) => {
     const absoluteTarget = resolve(fileDir, importPath);
     const relToBase = relative(aliasBase, absoluteTarget);
-    if (relToBase.startsWith('..') || relToBase.startsWith('/')) {
+    if (relToBase.startsWith("..") || relToBase.startsWith("/")) {
       return match;
     }
-    const aliasPath = '@/' + relToBase.split('\\').join('/');
+    const aliasPath = "@/" + relToBase.split("\\").join("/");
     modified = true;
     return `${quote}${aliasPath}${quote}`;
   });
@@ -413,7 +413,7 @@ function convertRelativeToAlias(filePath, aliasBase) {
  * Rewrite imports for a package: @/ → relative (JIT) or relative → @/ (compiled).
  */
 function rewriteImports(pkgDir, targetMode) {
-  const srcDir = join(pkgDir, 'src');
+  const srcDir = join(pkgDir, "src");
   if (!existsSync(srcDir)) return 0;
 
   const aliasBase = resolveAliasBase(pkgDir);
@@ -421,7 +421,7 @@ function rewriteImports(pkgDir, targetMode) {
   let count = 0;
 
   for (const file of files) {
-    if (targetMode === 'jit') {
+    if (targetMode === "jit") {
       if (convertAliasToRelative(file, aliasBase)) count++;
     } else {
       if (convertRelativeToAlias(file, aliasBase)) count++;
@@ -440,41 +440,41 @@ let skipped = 0;
 
 // ── Clean stale artifacts when switching modes ──────────────────────────────
 if (!checkOnly && !rewriteOnly) {
-  const { execSync } = await import('node:child_process');
-  console.log('🧹 Cleaning dist/ and .turbo/ caches...');
+  const { execSync } = await import("node:child_process");
+  console.log("🧹 Cleaning dist/ and .turbo/ caches...");
   try {
     execSync(
       'find packages/ -name "dist" -type d -not -path "*/node_modules/*" -not -path "*/.ref/*" -exec rm -rf {} + 2>/dev/null',
-      { cwd: ROOT, stdio: 'pipe' }
+      { cwd: ROOT, stdio: "pipe" },
     );
   } catch {}
   try {
     execSync(
       'find packages/ apps/ -name ".turbo" -type d -not -path "*/node_modules/*" -exec rm -rf {} + 2>/dev/null',
-      { cwd: ROOT, stdio: 'pipe' }
+      { cwd: ROOT, stdio: "pipe" },
     );
   } catch {}
   try {
-    execSync('rm -rf .turbo 2>/dev/null', { cwd: ROOT, stdio: 'pipe' });
+    execSync("rm -rf .turbo 2>/dev/null", { cwd: ROOT, stdio: "pipe" });
   } catch {}
-  console.log('  ✓ Cleaned\n');
+  console.log("  ✓ Cleaned\n");
 }
 
 console.log(
-  `\n${checkOnly ? '🔍 Checking' : rewriteOnly ? '🔄 Rewriting imports only' : mode === 'jit' ? '⚡ Switching to JIT' : '📦 Switching to Compiled'} — ${packages.length} packages\n`
+  `\n${checkOnly ? "🔍 Checking" : rewriteOnly ? "🔄 Rewriting imports only" : mode === "jit" ? "⚡ Switching to JIT" : "📦 Switching to Compiled"} — ${packages.length} packages\n`,
 );
 
 // ─── Rewrite-only mode ──────────────────────────────────────────────────────
 if (rewriteOnly) {
   let totalFiles = 0;
   for (const pkgDir of packages) {
-    const pkg = JSON.parse(readFileSync(join(pkgDir, 'package.json'), 'utf8'));
+    const pkg = JSON.parse(readFileSync(join(pkgDir, "package.json"), "utf8"));
     const rel = relative(PACKAGES, pkgDir);
     if (filterName && !rel.includes(filterName) && pkg.name !== filterName) continue;
 
     const count = rewriteImports(pkgDir, mode);
     if (count > 0) {
-      console.log(`  ${mode === 'jit' ? '⚡' : '📦'} ${rel} — ${count} file(s) rewritten`);
+      console.log(`  ${mode === "jit" ? "⚡" : "📦"} ${rel} — ${count} file(s) rewritten`);
       totalFiles += count;
     }
   }
@@ -483,8 +483,8 @@ if (rewriteOnly) {
 }
 
 for (const pkgDir of packages) {
-  const pkgPath = join(pkgDir, 'package.json');
-  const pkg = JSON.parse(readFileSync(pkgPath, 'utf8'));
+  const pkgPath = join(pkgDir, "package.json");
+  const pkg = JSON.parse(readFileSync(pkgPath, "utf8"));
   const rel = relative(PACKAGES, pkgDir);
 
   // Apply filter
@@ -501,7 +501,7 @@ for (const pkgDir of packages) {
   }
 
   // Determine target exports
-  const generatedExports = mode === 'jit' ? toJitExports(entries) : toCompiledExports(entries);
+  const generatedExports = mode === "jit" ? toJitExports(entries) : toCompiledExports(entries);
   // Preserve any export the toggle script didn't author — CSS files,
   // JSON manifests, font assets, etc. These are package-author-owned
   // and must survive every mode flip.
@@ -521,7 +521,7 @@ for (const pkgDir of packages) {
       const rewrittenCount = rewriteImports(pkgDir, mode);
       if (rewrittenCount > 0) {
         console.log(
-          `  ${mode === 'jit' ? '⚡' : '📦'} ${rel} (${pkg.name}) — ${rewrittenCount} file(s) rewritten (exports already correct)`
+          `  ${mode === "jit" ? "⚡" : "📦"} ${rel} (${pkg.name}) — ${rewrittenCount} file(s) rewritten (exports already correct)`,
         );
       }
     }
@@ -529,9 +529,9 @@ for (const pkgDir of packages) {
   }
 
   if (checkOnly) {
-    const isCurrentlyJit = typeof Object.values(pkg.exports || {})[0] === 'string';
+    const isCurrentlyJit = typeof Object.values(pkg.exports || {})[0] === "string";
     console.log(
-      `  ${isCurrentlyJit ? '⚡' : '📦'} ${rel} (${pkg.name}) — ${isCurrentlyJit ? 'JIT' : 'compiled'}`
+      `  ${isCurrentlyJit ? "⚡" : "📦"} ${rel} (${pkg.name}) — ${isCurrentlyJit ? "JIT" : "compiled"}`,
     );
     switched++;
     continue;
@@ -540,31 +540,31 @@ for (const pkgDir of packages) {
   // Apply change
   pkg.exports = targetExports;
 
-  if (mode === 'jit') {
+  if (mode === "jit") {
     // JIT mode: point main/types to source, no build needed
-    pkg.main = entries['.'];
-    pkg.module = entries['.'];
-    pkg.types = entries['.'];
+    pkg.main = entries["."];
+    pkg.module = entries["."];
+    pkg.types = entries["."];
     if (pkg.scripts) {
       pkg.scripts.build = 'echo "⚡ JIT mode — skipping build"';
       pkg.scripts.dev = 'echo "⚡ JIT mode — no watch needed"';
     }
   } else {
     // Compiled mode: point to SWC output
-    const entryName = 'index';
+    const entryName = "index";
     pkg.main = `./dist/${entryName}.js`;
     pkg.module = `./dist/${entryName}.js`;
     pkg.types = `./dist/${entryName}.d.ts`;
     if (pkg.scripts) {
       // Calculate relative path to root .swcrc
-      const depth = relative(PACKAGES, pkgDir).split('/').length + 1; // +1 for 'packages/'
-      const rootPrefix = '../'.repeat(depth);
-      pkg.scripts.build = 'npx tsup';
-      pkg.scripts.dev = 'npx tsup --watch';
+      const depth = relative(PACKAGES, pkgDir).split("/").length + 1; // +1 for 'packages/'
+      const rootPrefix = "../".repeat(depth);
+      pkg.scripts.build = "npx tsup";
+      pkg.scripts.dev = "npx tsup --watch";
     }
   }
 
-  writeFileSync(pkgPath, JSON.stringify(pkg, null, 2) + '\n');
+  writeFileSync(pkgPath, JSON.stringify(pkg, null, 2) + "\n");
   switched++;
 
   // ── Rewrite @/ ↔ relative imports in the source tree ──────────────────
@@ -582,7 +582,7 @@ for (const pkgDir of packages) {
     const rewrittenCount = rewriteImports(pkgDir, mode);
     if (rewrittenCount > 0) {
       console.log(
-        `  ${mode === 'jit' ? '⚡' : '📦'} ${rel} (${pkg.name}) — ${rewrittenCount} file(s) rewritten`
+        `  ${mode === "jit" ? "⚡" : "📦"} ${rel} (${pkg.name}) — ${rewrittenCount} file(s) rewritten`,
       );
     }
   }
@@ -595,7 +595,7 @@ console.log(`
 Summary
 ─────────────────────────────────────────
   Mode:            ${mode.toUpperCase()}
-  ${checkOnly ? 'Would switch' : 'Switched'}:     ${switched}
+  ${checkOnly ? "Would switch" : "Switched"}:     ${switched}
   Already correct: ${alreadyCorrect}
   Skipped:         ${skipped}
   Total:           ${packages.length}
@@ -603,8 +603,8 @@ Summary
 
 if (!checkOnly && switched > 0) {
   console.log(
-    mode === 'jit'
-      ? `⚡ JIT mode active — no build needed, source consumed directly.${noRewrite ? '' : '\n   @/* imports rewritten to relative paths so SWC / Node require hooks can resolve them.'}\n`
-      : `📦 Compiled mode active — run \`yarn build\` (tsup) to generate dist/.${noRewrite ? '' : '\n   Relative imports inside src/ rewritten back to @/* aliases.'}\n`
+    mode === "jit"
+      ? `⚡ JIT mode active — no build needed, source consumed directly.${noRewrite ? "" : "\n   @/* imports rewritten to relative paths so SWC / Node require hooks can resolve them."}\n`
+      : `📦 Compiled mode active — run \`yarn build\` (tsup) to generate dist/.${noRewrite ? "" : "\n   Relative imports inside src/ rewritten back to @/* aliases."}\n`,
   );
 }

@@ -1,8 +1,8 @@
 # analytics — SDUI blueprints
 
 Server-Driven UI for analytics admin surface. Six resource surfaces + four
-lifecycle widgets. Read-heavy — most tenant work is inspecting events +
-managing provider configs; only identity-merge is a mutation of any weight.
+lifecycle widgets. Read-heavy — most tenant work is inspecting events + managing
+provider configs; only identity-merge is a mutation of any weight.
 
 ## Surfaces
 
@@ -21,7 +21,7 @@ listener-only).
 Tenant admin surface for provider CRUD.
 
 - `list.screen.json` — provider list with health chip + circuit breaker chip
-  + fanout stats. Menu action per row.
+  - fanout stats. Menu action per row.
 - `create.screen.json` — provider setup wizard (choose provider → configure
   credentials → configure sampling + batching → test).
 - `edit.screen.json` — update sampling, enabled_event_types, batch_config.
@@ -33,22 +33,22 @@ Tenant admin surface for provider CRUD.
 
 Tenant admin surface for identity resolution.
 
-- `list.screen.json` — identity list filtered by identified vs anonymous.
-  Menu action per row (merge, identify, deidentify).
+- `list.screen.json` — identity list filtered by identified vs anonymous. Menu
+  action per row (merge, identify, deidentify).
 - `merge.screen.json` — merge wizard (choose survivor + mergees, preview
   affected event count, confirm).
 
 ### `resources/analytics-funnel/`
 
-- `report.screen.json` — funnel report screen. Prompts for funnel_key +
-  date range + group-by; renders bar chart per step + conversion rates +
-  drop-off analysis.
+- `report.screen.json` — funnel report screen. Prompts for funnel_key + date
+  range + group-by; renders bar chart per step + conversion rates + drop-off
+  analysis.
 
 ### `resources/analytics-experiment/`
 
-- `report.screen.json` — experiment results screen. Prompts for
-  experiment_key + metric + confidence level; renders variant comparison +
-  uplift + p-value + sample size.
+- `report.screen.json` — experiment results screen. Prompts for experiment_key +
+  metric + confidence level; renders variant comparison + uplift + p-value +
+  sample size.
 
 ## Widgets
 
@@ -60,5 +60,5 @@ Tenant admin surface for identity resolution.
 - `analytics-provider-badge.widget.json` — provider brand badge with logo +
   name. Consumed by delivery list + provider config list + event detail.
 - `analytics-sampling-indicator.widget.json` — small inline indicator showing
-  configured sampling rate. Renders "100%" green, "10-99%" info, "<10%"
-  warning, "0%" muted.
+  configured sampling rate. Renders "100%" green, "10-99%" info, "<10%" warning,
+  "0%" muted.

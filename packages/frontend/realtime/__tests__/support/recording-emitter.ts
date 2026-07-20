@@ -6,7 +6,7 @@
  *   subscribe surface is stubbed to keep the type happy.
  */
 
-import type { IEventEmitter } from '@stackra/contracts';
+import type { IEventEmitter } from "@stackra/contracts";
 
 /** One recorded emit call. */
 export interface IRecordedEmit {

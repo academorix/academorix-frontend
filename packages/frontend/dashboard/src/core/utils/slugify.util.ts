@@ -38,9 +38,7 @@ const RESERVED_SLUGS: readonly string[] = ["new", "create", "edit", "embed", "se
 export function slugify(input: string): string {
   // NFKD normalisation splits accented characters into base + combining
   // marks; stripping the combining-mark range leaves plain ASCII.
-  const normalised = Str.lower(
-    Str.trim(input.normalize("NFKD").replace(/[\u0300-\u036f]/g, "")),
-  );
+  const normalised = Str.lower(Str.trim(input.normalize("NFKD").replace(/[\u0300-\u036f]/g, "")));
 
   const hyphenated = normalised.replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
 

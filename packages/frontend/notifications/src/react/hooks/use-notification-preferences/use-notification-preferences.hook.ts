@@ -8,17 +8,17 @@
  *   delegate to the service directly.
  */
 
-import { useCallback, useSyncExternalStore } from 'react';
-import { useInject } from '@stackra/container/react';
+import { useCallback, useSyncExternalStore } from "react";
+import { useInject } from "@stackra/container/react";
 
-import { NOTIFICATION_PREFERENCES_SERVICE } from '@/core/constants';
-import type { NotificationPreferencesService } from '@/core';
+import { NOTIFICATION_PREFERENCES_SERVICE } from "@/core/constants";
+import type { NotificationPreferencesService } from "@/core";
 import type {
   INotificationPreferences,
   IQuietHoursWindow,
   NotificationCategory,
-} from '@/core/interfaces';
-import type { IUseNotificationPreferencesResult } from './use-notification-preferences.interface';
+} from "@/core/interfaces";
+import type { IUseNotificationPreferencesResult } from "./use-notification-preferences.interface";
 
 /**
  * Preferences hook.
@@ -43,22 +43,22 @@ export function useNotificationPreferences(): IUseNotificationPreferencesResult 
   const set = useCallback((next: INotificationPreferences) => service.set(next), [service]);
   const patch = useCallback(
     (defaults: Record<string, unknown>) => service.patch(defaults),
-    [service]
+    [service],
   );
   const setChannelEnabled = useCallback(
     (category: NotificationCategory, channel: string, enabled: boolean) =>
       service.setChannelEnabled(category, channel, enabled),
-    [service]
+    [service],
   );
   const setQuietHours = useCallback(
     (window: IQuietHoursWindow) => service.setQuietHours(window),
-    [service]
+    [service],
   );
   const clearQuietHours = useCallback(() => service.clearQuietHours(), [service]);
   const isChannelEnabled = useCallback(
     (category: NotificationCategory, channel: string) =>
       service.isChannelEnabled(category, channel),
-    [service]
+    [service],
   );
   const isInQuietHours = useCallback((now?: Date) => service.isInQuietHours(now), [service]);
 

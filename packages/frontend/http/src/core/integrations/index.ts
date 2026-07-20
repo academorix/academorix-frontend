@@ -15,7 +15,7 @@
  */
 
 /** Token for an optional scope/tenant context store (`TenantHeaderMiddleware`). */
-export const SCOPE_CONTEXT_STORE = Symbol.for('SCOPE_CONTEXT_STORE');
+export const SCOPE_CONTEXT_STORE = Symbol.for("SCOPE_CONTEXT_STORE");
 
 /** The active scope/tenant context. */
 export interface IScopeContext {

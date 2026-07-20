@@ -4,43 +4,346 @@
   "title": "chargeback — error codes",
   "namespace": "chargeback",
   "errors": [
-    { "code": "CHARGEBACK_NOT_FOUND", "http": 404, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "chargeback.errors.not_found" },
-    { "code": "CHARGEBACK_MANAGEMENT_NOT_ENTITLED", "http": 402, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "chargeback.errors.management_not_entitled", "description": "Tenant lacks the `chargeback_management` gate. Response includes upgrade CTA." },
-    { "code": "CHARGEBACK_EVIDENCE_NOT_ENTITLED", "http": 402, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "chargeback.errors.evidence_not_entitled", "description": "Tenant does not permit evidence submission (chargeback_evidence_submission entitlement off). Evidence deadlines will lapse -> auto-loss." },
-    { "code": "CHARGEBACK_RDR_NOT_ENTITLED", "http": 402, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "chargeback.errors.rdr_not_entitled", "description": "RDR path requires Medium+ tier (`chargeback_rdr`)." },
-    { "code": "CHARGEBACK_CE3_NOT_ENTITLED", "http": 402, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "chargeback.errors.ce3_not_entitled", "description": "CE3.0 evidence builder requires Medium+ tier (`chargeback_ce3`)." },
-    { "code": "CHARGEBACK_ADVANCED_REPORTING_NOT_ENTITLED", "http": 402, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "chargeback.errors.advanced_reporting_not_entitled", "description": "Rich chargeback reports require Medium+ tier (`chargeback_advanced_reporting`)." },
-    { "code": "CHARGEBACK_INVALID_NETWORK", "http": 422, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "chargeback.errors.invalid_network", "description": "Network must be one of: visa / mastercard / amex / discover / jcb / unionpay / diners / other." },
-    { "code": "CHARGEBACK_INVALID_REASON_CODE", "http": 422, "retryable": false, "user_facing": true, "audit_severity": "warn", "i18n_key": "chargeback.errors.invalid_reason_code", "description": "Reason code is not valid for the declared network. e.g. Visa reason codes on Mastercard chargebacks refuse." },
-    { "code": "CHARGEBACK_INVALID_REASON_CATEGORY", "http": 422, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "chargeback.errors.invalid_reason_category", "description": "Reason category must be one of: fraud / authorization / processing_errors / consumer_disputes / card_recovery." },
-    { "code": "CHARGEBACK_INVALID_AMOUNT", "http": 422, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "chargeback.errors.invalid_amount", "description": "amount_cents must be positive integer." },
-    { "code": "CHARGEBACK_AMOUNT_EXCEEDS_PAYMENT", "http": 422, "retryable": false, "user_facing": true, "audit_severity": "warn", "i18n_key": "chargeback.errors.amount_exceeds_payment", "description": "Chargeback amount exceeds the un-refunded portion of the parent payment (payment.amount_cents - payment.amount_refunded_cents)." },
-    { "code": "CHARGEBACK_CURRENCY_MISMATCH", "http": 422, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "chargeback.errors.currency_mismatch", "description": "Chargeback currency must match parent payment currency (no multi-currency chargebacks)." },
-    { "code": "CHARGEBACK_PAYMENT_NOT_FOUND", "http": 404, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "chargeback.errors.payment_not_found", "description": "Parent payment_id does not exist or is soft-deleted." },
-    { "code": "CHARGEBACK_PAYMENT_NOT_SUCCEEDED", "http": 409, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "chargeback.errors.payment_not_succeeded", "description": "Cannot chargeback a payment that is not in succeeded status." },
-    { "code": "CHARGEBACK_INVOICE_MISMATCH", "http": 422, "retryable": false, "user_facing": true, "audit_severity": "warn", "i18n_key": "chargeback.errors.invoice_mismatch", "description": "invoice_id does not match parent payment.invoice_id." },
-    { "code": "CHARGEBACK_DISPUTE_MISMATCH", "http": 422, "retryable": false, "user_facing": true, "audit_severity": "warn", "i18n_key": "chargeback.errors.dispute_mismatch", "description": "payment_dispute_id references a dispute for a different payment than chargeback.payment_id (escalation guard)." },
-    { "code": "CHARGEBACK_DISPUTE_NOT_LOST", "http": 409, "retryable": false, "user_facing": true, "audit_severity": "warn", "i18n_key": "chargeback.errors.dispute_not_lost", "description": "Cannot escalate from a PaymentDispute that is not in status='lost'." },
-    { "code": "CHARGEBACK_INVALID_STATE_TRANSITION", "http": 409, "retryable": false, "user_facing": true, "audit_severity": "warn", "i18n_key": "chargeback.errors.invalid_state_transition", "description": "The requested state transition is not permitted by the chargeback state machine." },
-    { "code": "CHARGEBACK_TERMS_LOCKED", "http": 409, "retryable": false, "user_facing": true, "audit_severity": "warn", "i18n_key": "chargeback.errors.terms_locked", "description": "Chargeback terms (network / reason_code / amount / currency / fee / payment_id / invoice_id / provider) cannot be edited once evidence submission starts." },
-    { "code": "CHARGEBACK_IMMUTABLE", "http": 409, "retryable": false, "user_facing": false, "audit_severity": "critical", "i18n_key": "chargeback.errors.immutable", "description": "P1 signal. Attempted mutation of a terminal chargeback. Chargebacks are IMMUTABLE post-terminal (won / lost / expired / accepted_refund). Corrections require ops investigation + manual reversal transaction." },
-    { "code": "CHARGEBACK_NUMBER_IMMUTABLE", "http": 409, "retryable": false, "user_facing": false, "audit_severity": "warn", "i18n_key": "chargeback.errors.chargeback_number_immutable", "description": "chargeback_number is immutable — sequential generator handles allocation; direct mutation refused." },
-    { "code": "CHARGEBACK_EVIDENCE_DEADLINE_LOCKED", "http": 409, "retryable": false, "user_facing": true, "audit_severity": "warn", "i18n_key": "chargeback.errors.evidence_deadline_locked", "description": "evidence_due_by can only be extended (never shortened) and only while status='pending_evidence'." },
-    { "code": "CHARGEBACK_EVIDENCE_DEADLINE_MISSED", "http": 409, "retryable": false, "user_facing": true, "audit_severity": "warn", "i18n_key": "chargeback.errors.evidence_deadline_missed", "description": "The evidence deadline has passed. Use `chargeback:mark-lost-manually` to acknowledge miss instead of submitting late evidence." },
-    { "code": "CHARGEBACK_EVIDENCE_PARENT_LOCKED", "http": 409, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "chargeback.errors.evidence_parent_locked", "description": "Evidence submission not permitted — parent chargeback is not in a submitting state (pending_evidence / evidence_submitted)." },
-    { "code": "CHARGEBACK_EVIDENCE_INVALID_SHAPE", "http": 422, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "chargeback.errors.evidence_invalid_shape", "description": "Evidence body does not match schemas/chargeback-evidence.schema.json." },
-    { "code": "CHARGEBACK_EVIDENCE_PCI_VIOLATION", "http": 422, "retryable": false, "user_facing": false, "audit_severity": "critical", "i18n_key": "chargeback.errors.evidence_pci_violation", "description": "P1 signal. Evidence body contains a PAN pattern (13-19 digit string matching card BIN prefix). PCI-DSS Req 3.4 refuses card storage anywhere. Strip the PAN + resubmit with only tokens + last-4 + BIN." },
-    { "code": "CHARGEBACK_EVIDENCE_UNAUTHORIZED_SUBMITTER", "http": 403, "retryable": false, "user_facing": true, "audit_severity": "warn", "i18n_key": "chargeback.errors.evidence_unauthorized_submitter", "description": "The submitter does not hold chargebacks.submit-evidence permission." },
-    { "code": "CHARGEBACK_EVIDENCE_DUPLICATE_ATTEMPT", "http": 409, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "chargeback.errors.evidence_duplicate_attempt", "description": "Two evidence rows for the same chargeback cannot share submission_attempt_number (composite unique refused)." },
-    { "code": "CHARGEBACK_EVIDENCE_IMMUTABLE", "http": 409, "retryable": false, "user_facing": false, "audit_severity": "warn", "i18n_key": "chargeback.errors.evidence_immutable", "description": "Evidence rows are immutable append-only audit. Corrections require submitting a new attempt with submission_attempt_number + 1." },
-    { "code": "CHARGEBACK_RDR_ELIGIBILITY_MISMATCH", "http": 422, "retryable": false, "user_facing": true, "audit_severity": "warn", "i18n_key": "chargeback.errors.rdr_eligibility_mismatch", "description": "Direct mutation of rdr_eligible refused — the flag is computed at creation from network + amount + entitlement + payment history." },
-    { "code": "CHARGEBACK_RDR_NOT_ELIGIBLE", "http": 409, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "chargeback.errors.rdr_not_eligible", "description": "This chargeback is not RDR-eligible (Visa-only, below threshold, tenant entitled, unrefunded payment). Use evidence submission or manual mark-lost instead." },
-    { "code": "CHARGEBACK_CE3_ELIGIBILITY_MISMATCH", "http": 422, "retryable": false, "user_facing": true, "audit_severity": "warn", "i18n_key": "chargeback.errors.ce3_eligibility_mismatch", "description": "Direct mutation of ce3_eligible refused — the flag is computed at creation from network + reason_category + entitlement + customer purchase history." },
-    { "code": "CHARGEBACK_WEBHOOK_INVALID_SIGNATURE", "http": 403, "retryable": false, "user_facing": false, "audit_severity": "critical", "i18n_key": "chargeback.errors.webhook_invalid_signature", "description": "P1 signal. Provider webhook signature verification failed. Delegated to payment::PaymentWebhookVerifier." },
-    { "code": "CHARGEBACK_WEBHOOK_STALE_TIMESTAMP", "http": 409, "retryable": false, "user_facing": false, "audit_severity": "warn", "i18n_key": "chargeback.errors.webhook_stale_timestamp", "description": "Provider webhook timestamp is older than the replay-window. Delegated to payment::PaymentWebhookVerifier." },
-    { "code": "CHARGEBACK_ATOMICITY_FAILED", "http": 500, "retryable": false, "user_facing": false, "audit_severity": "critical", "i18n_key": "chargeback.errors.atomicity_failed", "description": "P1 signal. The chargeback transaction failed to commit atomically with its finalization chain (two offsetting transactions + invoice state update + clawback fan-out + marketing negative-conversion)." },
-    { "code": "CHARGEBACK_FINALIZATION_FAILED", "http": 500, "retryable": true, "user_facing": false, "audit_severity": "critical", "i18n_key": "chargeback.errors.finalization_failed", "description": "P1 signal. FinalizeChargebackJob step failed. Chargeback stays in terminal status with metadata.finalization_error set for retry via chargeback:reconcile admin CLI." },
-    { "code": "CHARGEBACK_CLAWBACK_FAILED", "http": 500, "retryable": true, "user_facing": false, "audit_severity": "critical", "i18n_key": "chargeback.errors.clawback_failed", "description": "P1 signal. ChargebackClawbackReferral or ChargebackClawbackCoupon downstream event failed to process. Retried up to 5 times before dead-lettering." },
-    { "code": "CHARGEBACK_RATE_THRESHOLD_EXCEEDED", "http": 200, "retryable": false, "user_facing": true, "audit_severity": "critical", "i18n_key": "chargeback.errors.rate_threshold_exceeded", "description": "P1 signal. Rate crossed VDMP/MDMP threshold. NOT an error response — surfaces as a data field in the report response + fires ChargebackRateThresholdExceeded event." }
+    {
+      "code": "CHARGEBACK_NOT_FOUND",
+      "http": 404,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "chargeback.errors.not_found"
+    },
+    {
+      "code": "CHARGEBACK_MANAGEMENT_NOT_ENTITLED",
+      "http": 402,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "chargeback.errors.management_not_entitled",
+      "description": "Tenant lacks the `chargeback_management` gate. Response includes upgrade CTA."
+    },
+    {
+      "code": "CHARGEBACK_EVIDENCE_NOT_ENTITLED",
+      "http": 402,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "chargeback.errors.evidence_not_entitled",
+      "description": "Tenant does not permit evidence submission (chargeback_evidence_submission entitlement off). Evidence deadlines will lapse -> auto-loss."
+    },
+    {
+      "code": "CHARGEBACK_RDR_NOT_ENTITLED",
+      "http": 402,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "chargeback.errors.rdr_not_entitled",
+      "description": "RDR path requires Medium+ tier (`chargeback_rdr`)."
+    },
+    {
+      "code": "CHARGEBACK_CE3_NOT_ENTITLED",
+      "http": 402,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "chargeback.errors.ce3_not_entitled",
+      "description": "CE3.0 evidence builder requires Medium+ tier (`chargeback_ce3`)."
+    },
+    {
+      "code": "CHARGEBACK_ADVANCED_REPORTING_NOT_ENTITLED",
+      "http": 402,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "chargeback.errors.advanced_reporting_not_entitled",
+      "description": "Rich chargeback reports require Medium+ tier (`chargeback_advanced_reporting`)."
+    },
+    {
+      "code": "CHARGEBACK_INVALID_NETWORK",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "chargeback.errors.invalid_network",
+      "description": "Network must be one of: visa / mastercard / amex / discover / jcb / unionpay / diners / other."
+    },
+    {
+      "code": "CHARGEBACK_INVALID_REASON_CODE",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "warn",
+      "i18n_key": "chargeback.errors.invalid_reason_code",
+      "description": "Reason code is not valid for the declared network. e.g. Visa reason codes on Mastercard chargebacks refuse."
+    },
+    {
+      "code": "CHARGEBACK_INVALID_REASON_CATEGORY",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "chargeback.errors.invalid_reason_category",
+      "description": "Reason category must be one of: fraud / authorization / processing_errors / consumer_disputes / card_recovery."
+    },
+    {
+      "code": "CHARGEBACK_INVALID_AMOUNT",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "chargeback.errors.invalid_amount",
+      "description": "amount_cents must be positive integer."
+    },
+    {
+      "code": "CHARGEBACK_AMOUNT_EXCEEDS_PAYMENT",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "warn",
+      "i18n_key": "chargeback.errors.amount_exceeds_payment",
+      "description": "Chargeback amount exceeds the un-refunded portion of the parent payment (payment.amount_cents - payment.amount_refunded_cents)."
+    },
+    {
+      "code": "CHARGEBACK_CURRENCY_MISMATCH",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "chargeback.errors.currency_mismatch",
+      "description": "Chargeback currency must match parent payment currency (no multi-currency chargebacks)."
+    },
+    {
+      "code": "CHARGEBACK_PAYMENT_NOT_FOUND",
+      "http": 404,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "chargeback.errors.payment_not_found",
+      "description": "Parent payment_id does not exist or is soft-deleted."
+    },
+    {
+      "code": "CHARGEBACK_PAYMENT_NOT_SUCCEEDED",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "chargeback.errors.payment_not_succeeded",
+      "description": "Cannot chargeback a payment that is not in succeeded status."
+    },
+    {
+      "code": "CHARGEBACK_INVOICE_MISMATCH",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "warn",
+      "i18n_key": "chargeback.errors.invoice_mismatch",
+      "description": "invoice_id does not match parent payment.invoice_id."
+    },
+    {
+      "code": "CHARGEBACK_DISPUTE_MISMATCH",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "warn",
+      "i18n_key": "chargeback.errors.dispute_mismatch",
+      "description": "payment_dispute_id references a dispute for a different payment than chargeback.payment_id (escalation guard)."
+    },
+    {
+      "code": "CHARGEBACK_DISPUTE_NOT_LOST",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "warn",
+      "i18n_key": "chargeback.errors.dispute_not_lost",
+      "description": "Cannot escalate from a PaymentDispute that is not in status='lost'."
+    },
+    {
+      "code": "CHARGEBACK_INVALID_STATE_TRANSITION",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "warn",
+      "i18n_key": "chargeback.errors.invalid_state_transition",
+      "description": "The requested state transition is not permitted by the chargeback state machine."
+    },
+    {
+      "code": "CHARGEBACK_TERMS_LOCKED",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "warn",
+      "i18n_key": "chargeback.errors.terms_locked",
+      "description": "Chargeback terms (network / reason_code / amount / currency / fee / payment_id / invoice_id / provider) cannot be edited once evidence submission starts."
+    },
+    {
+      "code": "CHARGEBACK_IMMUTABLE",
+      "http": 409,
+      "retryable": false,
+      "user_facing": false,
+      "audit_severity": "critical",
+      "i18n_key": "chargeback.errors.immutable",
+      "description": "P1 signal. Attempted mutation of a terminal chargeback. Chargebacks are IMMUTABLE post-terminal (won / lost / expired / accepted_refund). Corrections require ops investigation + manual reversal transaction."
+    },
+    {
+      "code": "CHARGEBACK_NUMBER_IMMUTABLE",
+      "http": 409,
+      "retryable": false,
+      "user_facing": false,
+      "audit_severity": "warn",
+      "i18n_key": "chargeback.errors.chargeback_number_immutable",
+      "description": "chargeback_number is immutable — sequential generator handles allocation; direct mutation refused."
+    },
+    {
+      "code": "CHARGEBACK_EVIDENCE_DEADLINE_LOCKED",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "warn",
+      "i18n_key": "chargeback.errors.evidence_deadline_locked",
+      "description": "evidence_due_by can only be extended (never shortened) and only while status='pending_evidence'."
+    },
+    {
+      "code": "CHARGEBACK_EVIDENCE_DEADLINE_MISSED",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "warn",
+      "i18n_key": "chargeback.errors.evidence_deadline_missed",
+      "description": "The evidence deadline has passed. Use `chargeback:mark-lost-manually` to acknowledge miss instead of submitting late evidence."
+    },
+    {
+      "code": "CHARGEBACK_EVIDENCE_PARENT_LOCKED",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "chargeback.errors.evidence_parent_locked",
+      "description": "Evidence submission not permitted — parent chargeback is not in a submitting state (pending_evidence / evidence_submitted)."
+    },
+    {
+      "code": "CHARGEBACK_EVIDENCE_INVALID_SHAPE",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "chargeback.errors.evidence_invalid_shape",
+      "description": "Evidence body does not match schemas/chargeback-evidence.schema.json."
+    },
+    {
+      "code": "CHARGEBACK_EVIDENCE_PCI_VIOLATION",
+      "http": 422,
+      "retryable": false,
+      "user_facing": false,
+      "audit_severity": "critical",
+      "i18n_key": "chargeback.errors.evidence_pci_violation",
+      "description": "P1 signal. Evidence body contains a PAN pattern (13-19 digit string matching card BIN prefix). PCI-DSS Req 3.4 refuses card storage anywhere. Strip the PAN + resubmit with only tokens + last-4 + BIN."
+    },
+    {
+      "code": "CHARGEBACK_EVIDENCE_UNAUTHORIZED_SUBMITTER",
+      "http": 403,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "warn",
+      "i18n_key": "chargeback.errors.evidence_unauthorized_submitter",
+      "description": "The submitter does not hold chargebacks.submit-evidence permission."
+    },
+    {
+      "code": "CHARGEBACK_EVIDENCE_DUPLICATE_ATTEMPT",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "chargeback.errors.evidence_duplicate_attempt",
+      "description": "Two evidence rows for the same chargeback cannot share submission_attempt_number (composite unique refused)."
+    },
+    {
+      "code": "CHARGEBACK_EVIDENCE_IMMUTABLE",
+      "http": 409,
+      "retryable": false,
+      "user_facing": false,
+      "audit_severity": "warn",
+      "i18n_key": "chargeback.errors.evidence_immutable",
+      "description": "Evidence rows are immutable append-only audit. Corrections require submitting a new attempt with submission_attempt_number + 1."
+    },
+    {
+      "code": "CHARGEBACK_RDR_ELIGIBILITY_MISMATCH",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "warn",
+      "i18n_key": "chargeback.errors.rdr_eligibility_mismatch",
+      "description": "Direct mutation of rdr_eligible refused — the flag is computed at creation from network + amount + entitlement + payment history."
+    },
+    {
+      "code": "CHARGEBACK_RDR_NOT_ELIGIBLE",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "chargeback.errors.rdr_not_eligible",
+      "description": "This chargeback is not RDR-eligible (Visa-only, below threshold, tenant entitled, unrefunded payment). Use evidence submission or manual mark-lost instead."
+    },
+    {
+      "code": "CHARGEBACK_CE3_ELIGIBILITY_MISMATCH",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "warn",
+      "i18n_key": "chargeback.errors.ce3_eligibility_mismatch",
+      "description": "Direct mutation of ce3_eligible refused — the flag is computed at creation from network + reason_category + entitlement + customer purchase history."
+    },
+    {
+      "code": "CHARGEBACK_WEBHOOK_INVALID_SIGNATURE",
+      "http": 403,
+      "retryable": false,
+      "user_facing": false,
+      "audit_severity": "critical",
+      "i18n_key": "chargeback.errors.webhook_invalid_signature",
+      "description": "P1 signal. Provider webhook signature verification failed. Delegated to payment::PaymentWebhookVerifier."
+    },
+    {
+      "code": "CHARGEBACK_WEBHOOK_STALE_TIMESTAMP",
+      "http": 409,
+      "retryable": false,
+      "user_facing": false,
+      "audit_severity": "warn",
+      "i18n_key": "chargeback.errors.webhook_stale_timestamp",
+      "description": "Provider webhook timestamp is older than the replay-window. Delegated to payment::PaymentWebhookVerifier."
+    },
+    {
+      "code": "CHARGEBACK_ATOMICITY_FAILED",
+      "http": 500,
+      "retryable": false,
+      "user_facing": false,
+      "audit_severity": "critical",
+      "i18n_key": "chargeback.errors.atomicity_failed",
+      "description": "P1 signal. The chargeback transaction failed to commit atomically with its finalization chain (two offsetting transactions + invoice state update + clawback fan-out + marketing negative-conversion)."
+    },
+    {
+      "code": "CHARGEBACK_FINALIZATION_FAILED",
+      "http": 500,
+      "retryable": true,
+      "user_facing": false,
+      "audit_severity": "critical",
+      "i18n_key": "chargeback.errors.finalization_failed",
+      "description": "P1 signal. FinalizeChargebackJob step failed. Chargeback stays in terminal status with metadata.finalization_error set for retry via chargeback:reconcile admin CLI."
+    },
+    {
+      "code": "CHARGEBACK_CLAWBACK_FAILED",
+      "http": 500,
+      "retryable": true,
+      "user_facing": false,
+      "audit_severity": "critical",
+      "i18n_key": "chargeback.errors.clawback_failed",
+      "description": "P1 signal. ChargebackClawbackReferral or ChargebackClawbackCoupon downstream event failed to process. Retried up to 5 times before dead-lettering."
+    },
+    {
+      "code": "CHARGEBACK_RATE_THRESHOLD_EXCEEDED",
+      "http": 200,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "critical",
+      "i18n_key": "chargeback.errors.rate_threshold_exceeded",
+      "description": "P1 signal. Rate crossed VDMP/MDMP threshold. NOT an error response — surfaces as a data field in the report response + fires ChargebackRateThresholdExceeded event."
+    }
   ]
 }

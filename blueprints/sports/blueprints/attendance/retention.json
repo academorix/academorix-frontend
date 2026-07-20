@@ -14,7 +14,9 @@
     {
       "entity": "AttendanceRecord",
       "hot": { "days": 365 },
-      "cold": { "days": "2555 (7 years post session.ends_at); 3650 (10 years Enterprise via attendance_extended_retention)" },
+      "cold": {
+        "days": "2555 (7 years post session.ends_at); 3650 (10 years Enterprise via attendance_extended_retention)"
+      },
       "purge": {
         "trigger": "> 7 years post session.ends_at (or 10 years Enterprise) AND no regulator hold",
         "action": "hard delete via PurgeCompletedAttendanceJob",

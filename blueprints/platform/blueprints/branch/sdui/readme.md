@@ -15,24 +15,23 @@ Tenant-facing branch CRUD + lifecycle + hours-editor + map view.
   Step 3: hours (starts from an opening-hours template picker). Step 4:
   amenities + capacity + review. Consumes 1 `branch_slot` on submit.
 - `edit.screen.json` — combined edit for identity + address + phone + email
-  + website + capacity + amenities + sort_order. Hours + coordinates have
-  their own dedicated screens because their editors are visual.
+  - website + capacity + amenities + sort_order. Hours + coordinates have their
+    own dedicated screens because their editors are visual.
 - `hours-editor.screen.json` — the visual weekly-hours editor. Day-of-week
-  columns with drag-to-set periods. Exception days as timeline blocks. Uses
-  the shared `is-open-chip` widget for a live preview. Refuses multi-period
-  days on tenants without `branch_multi_period_hours` (surfaces an upgrade
-  banner instead of the split-period toolbar).
+  columns with drag-to-set periods. Exception days as timeline blocks. Uses the
+  shared `is-open-chip` widget for a live preview. Refuses multi-period days on
+  tenants without `branch_multi_period_hours` (surfaces an upgrade banner
+  instead of the split-period toolbar).
 - `map-view.screen.json` — map-based view of every branch in the caller's
-  visible tenants + orgs. Uses Mapbox tiles + amenity-cluster markers. Pin
-  drop mode lets admins manually set `coordinates.source=manual` when
-  auto-geocoding was unavailable or produced a low-quality result.
+  visible tenants + orgs. Uses Mapbox tiles + amenity-cluster markers. Pin drop
+  mode lets admins manually set `coordinates.source=manual` when auto-geocoding
+  was unavailable or produced a low-quality result.
 
 ### `widgets/`
 
-- `amenity-picker.widget.json` — the amenity-tag picker with search +
-  category grouping. Consumed by `create.screen.json` + `edit.screen.json`.
-  Feature-gates the custom-tag input behind the `branch_amenities: custom`
-  entitlement.
+- `amenity-picker.widget.json` — the amenity-tag picker with search + category
+  grouping. Consumed by `create.screen.json` + `edit.screen.json`. Feature-gates
+  the custom-tag input behind the `branch_amenities: custom` entitlement.
 - `is-open-chip.widget.json` — colour-coded chip for the branch's live
-  open/closed state (respects both `status` + `opening_hours` +
-  `exceptions`). Consumed by the list + map + hours-editor screens.
+  open/closed state (respects both `status` + `opening_hours` + `exceptions`).
+  Consumed by the list + map + hours-editor screens.

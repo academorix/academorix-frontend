@@ -27,9 +27,9 @@ import {
   Optional,
   type OnModuleDestroy,
   type OnModuleInit,
-} from '@stackra/container';
-import { MultipleInstanceManager } from '@stackra/support';
-import { Logger } from '@stackra/logger';
+} from "@stackra/container";
+import { MultipleInstanceManager } from "@stackra/support";
+import { Logger } from "@stackra/logger";
 
 import {
   EVENT_EMITTER,
@@ -43,12 +43,12 @@ import {
   type IHttpManager,
   type IHttpMiddlewareRegistry,
   type IHttpModuleOptions,
-} from '@stackra/contracts';
+} from "@stackra/contracts";
 
-import { HttpDriverError } from '../errors';
-import { InterceptorRegistry, MiddlewareRegistry } from '../registries';
+import { HttpDriverError } from "../errors";
+import { InterceptorRegistry, MiddlewareRegistry } from "../registries";
 
-import { HttpClient } from './http-client.service';
+import { HttpClient } from "./http-client.service";
 
 /**
  * Concrete `IHttpManager` implementation.
@@ -73,7 +73,7 @@ export class HttpManager
    */
   public constructor(
     @Inject(HTTP_CONFIG) private readonly config: IHttpModuleOptions,
-    @Optional() @Inject(EVENT_EMITTER) private readonly eventEmitter?: IEventEmitter
+    @Optional() @Inject(EVENT_EMITTER) private readonly eventEmitter?: IEventEmitter,
   ) {
     super();
   }
@@ -85,13 +85,13 @@ export class HttpManager
   /** @inheritdoc */
   public async onModuleInit(): Promise<void> {
     if (!this.config?.default) {
-      this.logger.warn('[HttpManager] config.default is missing — skipping warm-up.');
+      this.logger.warn("[HttpManager] config.default is missing — skipping warm-up.");
       return;
     }
 
     if (!this.config.connections[this.config.default]) {
       this.logger.warn(
-        `[HttpManager] default connection "${this.config.default}" is not declared.`
+        `[HttpManager] default connection "${this.config.default}" is not declared.`,
       );
       return;
     }
@@ -102,7 +102,7 @@ export class HttpManager
       await this.connection();
     } catch (err: Error | any) {
       this.logger.debug(
-        `[HttpManager] deferred default connection warm-up: ${(err as Error).message}`
+        `[HttpManager] deferred default connection warm-up: ${(err as Error).message}`,
       );
     }
   }
@@ -127,7 +127,7 @@ export class HttpManager
   public override setDefaultInstance(name: string): void {
     if (!this.config.connections[name]) {
       throw new HttpDriverError(
-        `[HttpManager] cannot set default to "${name}" — not declared in connections.`
+        `[HttpManager] cannot set default to "${name}" — not declared in connections.`,
       );
     }
     (this.config as { default: string }).default = name;
@@ -144,7 +144,7 @@ export class HttpManager
     if (!raw) return null;
     return {
       ...(raw as unknown as Record<string, unknown>),
-      driver: raw.driver ?? 'axios',
+      driver: raw.driver ?? "axios",
       __connectionName: name,
     };
   }
@@ -162,11 +162,11 @@ export class HttpManager
    */
   public createClientFromConnector(
     connector: IHttpConnector,
-    config: Record<string, unknown>
+    config: Record<string, unknown>,
   ): IHttpClient {
-    const connectionName = (config['__connectionName'] as string | undefined) ?? 'default';
+    const connectionName = (config["__connectionName"] as string | undefined) ?? "default";
     const clientConfig = { ...config } as Record<string, unknown>;
-    delete clientConfig['__connectionName'];
+    delete clientConfig["__connectionName"];
 
     const middlewareRegistry =
       this.middlewareRegistries.get(connectionName) ?? new MiddlewareRegistry();
@@ -187,8 +187,8 @@ export class HttpManager
 
     this.emit(HTTP_EVENTS.CONNECTION_CREATED, {
       connection: connectionName,
-      driver: (config['driver'] as string | undefined) ?? 'unknown',
-      baseURL: (clientConfig['baseURL'] as string | undefined) ?? null,
+      driver: (config["driver"] as string | undefined) ?? "unknown",
+      baseURL: (clientConfig["baseURL"] as string | undefined) ?? null,
     });
 
     return client;
@@ -231,7 +231,7 @@ export class HttpManager
   public addConnection(name: string, config: IHttpClientConfig): boolean {
     if (this.config.connections[name]) {
       this.logger.info(
-        `[HttpManager] connection "${name}" already configured — keeping existing entry.`
+        `[HttpManager] connection "${name}" already configured — keeping existing entry.`,
       );
       return false;
     }
@@ -249,7 +249,7 @@ export class HttpManager
     const registry = this.middlewareRegistries.get(connectionName);
     if (!registry) {
       throw new HttpDriverError(
-        `[HttpManager] middleware registry for "${connectionName}" is unavailable.`
+        `[HttpManager] middleware registry for "${connectionName}" is unavailable.`,
       );
     }
     return registry;
@@ -264,7 +264,7 @@ export class HttpManager
     const registry = this.interceptorRegistries.get(connectionName);
     if (!registry) {
       throw new HttpDriverError(
-        `[HttpManager] interceptor registry for "${connectionName}" is unavailable.`
+        `[HttpManager] interceptor registry for "${connectionName}" is unavailable.`,
       );
     }
     return registry;

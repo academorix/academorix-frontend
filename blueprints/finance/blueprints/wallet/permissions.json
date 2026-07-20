@@ -6,14 +6,53 @@
   "isSystem": true,
   "description": "Guardian sees own wallets (all three kinds). Finance role manages tenant-level wallet operations. Manual adjustments (staff-issued credits) require finance role.",
   "permissions": [
-    { "name": "wallets.viewAny", "guard": "sanctum", "seededOn": ["admin", "owner", "finance", "support", "guardian"] },
-    { "name": "wallets.view", "guard": "sanctum", "seededOn": ["admin", "owner", "finance", "support", "guardian"] },
-    { "name": "wallets.adjust", "guard": "sanctum", "description": "Manual debit/credit against a wallet. Financial-critical.", "seededOn": ["admin", "owner", "finance"] },
-    { "name": "wallets.reconcile", "guard": "sanctum", "description": "Trigger reconciliation against upstream source.", "seededOn": ["admin", "owner", "finance"] },
-    { "name": "wallet-transactions.viewAny", "guard": "sanctum", "seededOn": ["admin", "owner", "finance", "support", "guardian"] },
-    { "name": "wallet-transactions.view", "guard": "sanctum", "seededOn": ["admin", "owner", "finance", "support", "guardian"] },
-    { "name": "wallet-holds.viewAny", "guard": "sanctum", "seededOn": ["admin", "owner", "finance", "support"] },
-    { "name": "wallet-holds.view", "guard": "sanctum", "seededOn": ["admin", "owner", "finance", "support"] },
-    { "name": "wallet-holds.release", "guard": "sanctum", "description": "Manually release a stuck hold.", "seededOn": ["admin", "owner", "finance"] }
+    {
+      "name": "wallets.viewAny",
+      "guard": "sanctum",
+      "seededOn": ["admin", "owner", "finance", "support", "guardian"]
+    },
+    {
+      "name": "wallets.view",
+      "guard": "sanctum",
+      "seededOn": ["admin", "owner", "finance", "support", "guardian"]
+    },
+    {
+      "name": "wallets.adjust",
+      "guard": "sanctum",
+      "description": "Manual debit/credit against a wallet. Financial-critical.",
+      "seededOn": ["admin", "owner", "finance"]
+    },
+    {
+      "name": "wallets.reconcile",
+      "guard": "sanctum",
+      "description": "Trigger reconciliation against upstream source.",
+      "seededOn": ["admin", "owner", "finance"]
+    },
+    {
+      "name": "wallet-transactions.viewAny",
+      "guard": "sanctum",
+      "seededOn": ["admin", "owner", "finance", "support", "guardian"]
+    },
+    {
+      "name": "wallet-transactions.view",
+      "guard": "sanctum",
+      "seededOn": ["admin", "owner", "finance", "support", "guardian"]
+    },
+    {
+      "name": "wallet-holds.viewAny",
+      "guard": "sanctum",
+      "seededOn": ["admin", "owner", "finance", "support"]
+    },
+    {
+      "name": "wallet-holds.view",
+      "guard": "sanctum",
+      "seededOn": ["admin", "owner", "finance", "support"]
+    },
+    {
+      "name": "wallet-holds.release",
+      "guard": "sanctum",
+      "description": "Manually release a stuck hold.",
+      "seededOn": ["admin", "owner", "finance"]
+    }
   ]
 }

@@ -201,7 +201,12 @@
     "subject_id": "usr_northgate_parent_smith_01",
     "resource_type": "athlete",
     "resource_id": "ath_smith_child_01",
-    "permissions": ["athlete.view", "athlete.progress.view", "athlete.attendance.view", "athlete.messages.send"],
+    "permissions": [
+      "athlete.view",
+      "athlete.progress.view",
+      "athlete.attendance.view",
+      "athlete.messages.send"
+    ],
     "decision": "allow",
     "granted_by": null,
     "granted_at": "2026-07-11T09:05:00Z",

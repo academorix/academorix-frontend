@@ -7,40 +7,130 @@
   "sections": {
     "defaults": {
       "keys": [
-        { "path": "attendance.defaults.grace_period_minutes", "type": "int", "default": 15, "description": "Default grace period when no AttendancePolicy matches at any specificity." },
-        { "path": "attendance.defaults.late_after_minutes", "type": "int", "default": 30, "description": "Default late-after threshold when no policy matches." },
-        { "path": "attendance.defaults.max_unexcused_absences_per_period", "type": "int", "default": 3, "description": "Default freeze threshold when no policy matches." },
-        { "path": "attendance.defaults.absence_freeze_period_days", "type": "int", "default": 30, "description": "Default rolling window for freeze threshold." },
-        { "path": "attendance.defaults.late_arrival_penalty_type", "type": "string", "default": "notify_only", "description": "Default late-arrival penalty when no policy matches." },
-        { "path": "attendance.defaults.post_session_correction_window_hours", "type": "int", "default": 48, "description": "Hours past session.ends_at during which attendance can be edited without admin override." }
+        {
+          "path": "attendance.defaults.grace_period_minutes",
+          "type": "int",
+          "default": 15,
+          "description": "Default grace period when no AttendancePolicy matches at any specificity."
+        },
+        {
+          "path": "attendance.defaults.late_after_minutes",
+          "type": "int",
+          "default": 30,
+          "description": "Default late-after threshold when no policy matches."
+        },
+        {
+          "path": "attendance.defaults.max_unexcused_absences_per_period",
+          "type": "int",
+          "default": 3,
+          "description": "Default freeze threshold when no policy matches."
+        },
+        {
+          "path": "attendance.defaults.absence_freeze_period_days",
+          "type": "int",
+          "default": 30,
+          "description": "Default rolling window for freeze threshold."
+        },
+        {
+          "path": "attendance.defaults.late_arrival_penalty_type",
+          "type": "string",
+          "default": "notify_only",
+          "description": "Default late-arrival penalty when no policy matches."
+        },
+        {
+          "path": "attendance.defaults.post_session_correction_window_hours",
+          "type": "int",
+          "default": 48,
+          "description": "Hours past session.ends_at during which attendance can be edited without admin override."
+        }
       ]
     },
     "reconciliation": {
       "keys": [
-        { "path": "attendance.reconciliation.schedule_cron", "type": "string", "default": "0 3 * * *", "description": "Cron schedule for ReconcileAttendanceJob. Default 03:00 UTC (tenant-local resolved at job time)." },
-        { "path": "attendance.reconciliation.session_lookback_hours", "type": "int", "default": 25, "description": "Sessions past ends_at within N hours are reconciled." },
-        { "path": "attendance.reconciliation.batch_size", "type": "int", "default": 200, "description": "Sessions per reconciliation-job batch." }
+        {
+          "path": "attendance.reconciliation.schedule_cron",
+          "type": "string",
+          "default": "0 3 * * *",
+          "description": "Cron schedule for ReconcileAttendanceJob. Default 03:00 UTC (tenant-local resolved at job time)."
+        },
+        {
+          "path": "attendance.reconciliation.session_lookback_hours",
+          "type": "int",
+          "default": 25,
+          "description": "Sessions past ends_at within N hours are reconciled."
+        },
+        {
+          "path": "attendance.reconciliation.batch_size",
+          "type": "int",
+          "default": 200,
+          "description": "Sessions per reconciliation-job batch."
+        }
       ]
     },
     "notifications": {
       "keys": [
-        { "path": "attendance.notifications.absence_thresholds", "type": "array", "default": [1, 2, 3], "description": "Absence counts at which policy.notification_config triggers cascade notifications." },
-        { "path": "attendance.notifications.late_arrival_min_minutes", "type": "int", "default": 5, "description": "Late arrivals shorter than N minutes do not trigger LateArrivalNotification (noise suppression)." }
+        {
+          "path": "attendance.notifications.absence_thresholds",
+          "type": "array",
+          "default": [1, 2, 3],
+          "description": "Absence counts at which policy.notification_config triggers cascade notifications."
+        },
+        {
+          "path": "attendance.notifications.late_arrival_min_minutes",
+          "type": "int",
+          "default": 5,
+          "description": "Late arrivals shorter than N minutes do not trigger LateArrivalNotification (noise suppression)."
+        }
       ]
     },
     "fraud": {
       "keys": [
-        { "path": "attendance.fraud.require_device_fingerprint_on_self_kiosk", "type": "bool", "default": true, "description": "Self-kiosk + QR-scan check-ins REQUIRE device_fingerprint_hash. When false, missing fingerprint allowed (test / staging only)." },
-        { "path": "attendance.fraud.gps_precision_meters", "type": "int", "default": 100, "description": "Geofence validation tolerance in meters. gps_lat/gps_lng must be within (session.venue_geofence_radius + this) of the venue centre." },
-        { "path": "attendance.fraud.rate_limit_attempts_per_minute", "type": "int", "default": 5, "description": "Max check-in attempts per (athlete, session, source) per minute." },
-        { "path": "attendance.fraud.suspicious_fingerprint_threshold", "type": "int", "default": 10, "description": "N distinct athletes on the same device_fingerprint_hash in a rolling 24h window flags for admin review." }
+        {
+          "path": "attendance.fraud.require_device_fingerprint_on_self_kiosk",
+          "type": "bool",
+          "default": true,
+          "description": "Self-kiosk + QR-scan check-ins REQUIRE device_fingerprint_hash. When false, missing fingerprint allowed (test / staging only)."
+        },
+        {
+          "path": "attendance.fraud.gps_precision_meters",
+          "type": "int",
+          "default": 100,
+          "description": "Geofence validation tolerance in meters. gps_lat/gps_lng must be within (session.venue_geofence_radius + this) of the venue centre."
+        },
+        {
+          "path": "attendance.fraud.rate_limit_attempts_per_minute",
+          "type": "int",
+          "default": 5,
+          "description": "Max check-in attempts per (athlete, session, source) per minute."
+        },
+        {
+          "path": "attendance.fraud.suspicious_fingerprint_threshold",
+          "type": "int",
+          "default": 10,
+          "description": "N distinct athletes on the same device_fingerprint_hash in a rolling 24h window flags for admin review."
+        }
       ]
     },
     "retention": {
       "keys": [
-        { "path": "attendance.retention.attendance_years", "type": "int", "default": 7, "description": "Years past session.ends_at at which attendance records become eligible for hard-purge. Extended to 10 with attendance_extended_retention entitlement." },
-        { "path": "attendance.retention.absence_years", "type": "int", "default": 3, "description": "Years past session.ends_at for absence records." },
-        { "path": "attendance.retention.late_arrival_cotermimous", "type": "bool", "default": true, "description": "Late arrival rows hard-delete with their parent AttendanceRecord — no independent retention window." }
+        {
+          "path": "attendance.retention.attendance_years",
+          "type": "int",
+          "default": 7,
+          "description": "Years past session.ends_at at which attendance records become eligible for hard-purge. Extended to 10 with attendance_extended_retention entitlement."
+        },
+        {
+          "path": "attendance.retention.absence_years",
+          "type": "int",
+          "default": 3,
+          "description": "Years past session.ends_at for absence records."
+        },
+        {
+          "path": "attendance.retention.late_arrival_cotermimous",
+          "type": "bool",
+          "default": true,
+          "description": "Late arrival rows hard-delete with their parent AttendanceRecord — no independent retention window."
+        }
       ]
     }
   }

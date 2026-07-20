@@ -5,7 +5,7 @@
  *   Consumed by `SettingsModule.forRoot()` at bootstrap.
  */
 
-import { defineConfig } from '@stackra/settings';
+import { defineConfig } from "@stackra/settings";
 
 export const settingsConfig = defineConfig({
   /*
@@ -17,7 +17,7 @@ export const settingsConfig = defineConfig({
   | per-group override in `groups` below. Must be a key of `stores`.
   |
   */
-  default: 'localStorage',
+  default: "localStorage",
 
   /*
   |--------------------------------------------------------------------------
@@ -29,7 +29,7 @@ export const settingsConfig = defineConfig({
   | origin.
   |
   */
-  prefix: 'stackra:settings',
+  prefix: "stackra:settings",
 
   /*
   |--------------------------------------------------------------------------
@@ -45,8 +45,8 @@ export const settingsConfig = defineConfig({
   |
   */
   stores: {
-    memory: { driver: 'memory' },
-    localStorage: { driver: 'storage', storageInstance: 'localStorage' },
+    memory: { driver: "memory" },
+    localStorage: { driver: "storage", storageInstance: "localStorage" },
     // api: {
     //   driver: 'api',
     //   httpClient: 'api',
@@ -78,12 +78,12 @@ export const settingsConfig = defineConfig({
   |
   */
   api: {
-    httpClient: 'api',
+    httpClient: "api",
     endpoints: {
-      schema: '/api/v1/settings/schema',
-      listGroups: '/api/v1/settings',
-      getGroup: '/api/v1/settings/{group}',
-      updateGroup: '/api/v1/settings/{group}',
+      schema: "/api/v1/settings/schema",
+      listGroups: "/api/v1/settings",
+      getGroup: "/api/v1/settings/{group}",
+      updateGroup: "/api/v1/settings/{group}",
     },
     autoLoadSchema: false,
     autoLoadValues: false,
@@ -102,7 +102,7 @@ export const settingsConfig = defineConfig({
   */
   broadcasting: {
     enabled: false,
-    channelPrefix: 'settings',
-    connection: 'default',
+    channelPrefix: "settings",
+    connection: "default",
   },
 });

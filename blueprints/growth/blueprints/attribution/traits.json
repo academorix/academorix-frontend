@@ -55,16 +55,28 @@
       { "trait": "Academorix\\Foundation\\Concerns\\HasUserstamps" },
       { "trait": "Academorix\\Foundation\\Concerns\\HasMetadata" },
       { "trait": "Academorix\\Foundation\\Concerns\\Filterable" },
-      { "trait": "Academorix\\Foundation\\Concerns\\Searchable", "reason": "Attribution only — searchable by campaign/source. NOT AttributionTouchpoint (too high-volume for full-text)." }
+      {
+        "trait": "Academorix\\Foundation\\Concerns\\Searchable",
+        "reason": "Attribution only — searchable by campaign/source. NOT AttributionTouchpoint (too high-volume for full-text)."
+      }
     ],
     "tenants": [
-      { "trait": "Academorix\\Tenancy\\Concerns\\BelongsToTenant", "reason": "Every owned row carries tenant_id per tenancy-columns.md §3." }
+      {
+        "trait": "Academorix\\Tenancy\\Concerns\\BelongsToTenant",
+        "reason": "Every owned row carries tenant_id per tenancy-columns.md §3."
+      }
     ],
     "audit": [
-      { "trait": "Academorix\\Audit\\Concerns\\Auditable", "reason": "Attribution lifecycle transitions + reset requests are compliance-relevant (7-year retention)." }
+      {
+        "trait": "Academorix\\Audit\\Concerns\\Auditable",
+        "reason": "Attribution lifecycle transitions + reset requests are compliance-relevant (7-year retention)."
+      }
     ],
     "activity": [
-      { "trait": "Academorix\\Activity\\Concerns\\HasActivityLog", "reason": "Attribution profile lifecycle transitions feed the staff-visible activity feed. NOT on AttributionTouchpoint — too high-volume." }
+      {
+        "trait": "Academorix\\Activity\\Concerns\\HasActivityLog",
+        "reason": "Attribution profile lifecycle transitions feed the staff-visible activity feed. NOT on AttributionTouchpoint — too high-volume."
+      }
     ]
   },
   "composition": {

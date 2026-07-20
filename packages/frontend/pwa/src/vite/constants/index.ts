@@ -4,4 +4,4 @@
  * @description Barrel export for Vite adapter constants.
  */
 
-export { DEFAULT_NAVIGATE_FALLBACK_DENYLIST } from './default-navigate-fallback-denylist.constant';
+export { DEFAULT_NAVIGATE_FALLBACK_DENYLIST } from "./default-navigate-fallback-denylist.constant";

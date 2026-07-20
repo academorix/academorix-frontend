@@ -11,15 +11,15 @@
  *   round-trip on top.
  */
 
-import type { ReactElement } from 'react';
-import { View, Text } from 'react-native';
+import type { ReactElement } from "react";
+import { View, Text } from "react-native";
 
-import { MANDATORY_ON_MATRIX, NOTIFICATION_CATEGORIES } from '@/core/constants';
-import type { NotificationCategory } from '@/core/interfaces';
+import { MANDATORY_ON_MATRIX, NOTIFICATION_CATEGORIES } from "@/core/constants";
+import type { NotificationCategory } from "@/core/interfaces";
 
-import { useNotificationPreferences } from '../../../hooks';
-import { ChannelToggle } from '../channel-toggle';
-import type { CategoryPreferencesPanelProps } from './category-preferences-panel.interface';
+import { useNotificationPreferences } from "../../../hooks";
+import { ChannelToggle } from "../channel-toggle";
+import type { CategoryPreferencesPanelProps } from "./category-preferences-panel.interface";
 
 /**
  * The native category × channel matrix.
@@ -42,14 +42,14 @@ export function CategoryPreferencesPanel({
   const categories = Object.values(NOTIFICATION_CATEGORIES);
 
   return (
-    <View className={`gap-6${className ? ` ${className}` : ''}`}>
+    <View className={`gap-6${className ? ` ${className}` : ""}`}>
       {categories.map((category) => (
         <View key={category.key} className="gap-2">
           <View className="gap-0.5">
-            <Text className="text-sm font-semibold text-foreground capitalize">
+            <Text className="text-foreground text-sm font-semibold capitalize">
               {category.label}
             </Text>
-            <Text className="text-xs text-muted">{category.description}</Text>
+            <Text className="text-muted text-xs">{category.description}</Text>
           </View>
           <View className="gap-2">
             {channels.map((channel) => {
@@ -66,7 +66,7 @@ export function CategoryPreferencesPanel({
                   isMandatoryOn={isMandatoryOn}
                   label={channel.label}
                   note={
-                    isMandatoryOn ? 'Always on — safety alerts bypass every filter.' : channel.note
+                    isMandatoryOn ? "Always on — safety alerts bypass every filter." : channel.note
                   }
                   onChange={(next) =>
                     setChannelEnabled(category.key as NotificationCategory, channel.id, next)

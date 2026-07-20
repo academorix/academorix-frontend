@@ -9,4 +9,4 @@
  *   - `@stackra/notifications/testing` (mocks + factories)
  */
 
-export * from './core';
+export * from "./core";

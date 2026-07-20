@@ -4,9 +4,9 @@
  * @description Factories returning assertable realtime mocks.
  */
 
-import { createAssertableProxy, type AssertableProxy } from '@stackra/testing';
-import { MockRealtimeManager } from './mock-realtime-manager';
-import { MockRealtimeConnection } from './mock-realtime-connection';
+import { createAssertableProxy, type AssertableProxy } from "@stackra/testing";
+import { MockRealtimeManager } from "./mock-realtime-manager";
+import { MockRealtimeConnection } from "./mock-realtime-connection";
 
 /**
  * Create an assertable mock realtime manager.

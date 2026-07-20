@@ -5,15 +5,15 @@
  *   browser download via a hidden `<a download>` element.
  */
 
-import { Inject, Injectable } from '@stackra/container';
+import { Inject, Injectable } from "@stackra/container";
 import type {
   IActionContext,
   IActionHandler,
   IActionResponse,
   IDownloadAction,
   IHttpManager,
-} from '@stackra/contracts';
-import { ActionKind, HTTP_MANAGER } from '@stackra/contracts';
+} from "@stackra/contracts";
+import { ActionKind, HTTP_MANAGER } from "@stackra/contracts";
 
 /**
  * `DownloadHandler` — dispatch handler for `ActionKind.Download`.
@@ -34,21 +34,21 @@ export class DownloadHandler implements IActionHandler<IDownloadAction> {
 
   public async execute(
     descriptor: IDownloadAction,
-    context: IActionContext
+    context: IActionContext,
   ): Promise<IActionResponse> {
-    if (context.signal?.aborted) return { success: false, message: 'Aborted' };
+    if (context.signal?.aborted) return { success: false, message: "Aborted" };
 
     const client = await this.http.connection();
     try {
       const response = await client.request({
         url: descriptor.endpoint,
-        method: descriptor.method ?? 'GET',
+        method: descriptor.method ?? "GET",
         params: descriptor.params,
-        responseType: 'blob',
+        responseType: "blob",
         signal: context.signal,
       });
 
-      if (typeof window === 'undefined' || typeof document === 'undefined') {
+      if (typeof window === "undefined" || typeof document === "undefined") {
         const nativeDownload = context.metadata?.nativeDownload as
           ((url: string, filename?: string) => void) | undefined;
         if (nativeDownload) {
@@ -57,15 +57,15 @@ export class DownloadHandler implements IActionHandler<IDownloadAction> {
         }
         return {
           success: false,
-          message: 'No native download handler available in IActionContext.metadata',
+          message: "No native download handler available in IActionContext.metadata",
         };
       }
 
       const url = URL.createObjectURL(response.data as Blob);
-      const link = document.createElement('a');
+      const link = document.createElement("a");
       link.href = url;
-      link.download = descriptor.filename ?? '';
-      link.rel = 'noopener';
+      link.download = descriptor.filename ?? "";
+      link.rel = "noopener";
       document.body.appendChild(link);
       link.click();
       link.remove();
@@ -74,7 +74,7 @@ export class DownloadHandler implements IActionHandler<IDownloadAction> {
     } catch (err) {
       return {
         success: false,
-        message: err instanceof Error ? err.message : 'Download failed',
+        message: err instanceof Error ? err.message : "Download failed",
       };
     }
   }

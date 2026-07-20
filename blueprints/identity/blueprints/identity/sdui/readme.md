@@ -5,15 +5,15 @@
 ### None owned by this module
 
 The `identity` module ships NO tenant-facing SDUI surfaces. It is a security
-substrate — the tenant surface (login form, MFA enrolment wizard, password
-reset flow) is owned by `identity/auth`. The platform-admin surface (identity
-list + detail + unlock + force-reset + erase) is also owned by `identity/auth`
-so the SDUI blueprints live alongside the routes they render for.
+substrate — the tenant surface (login form, MFA enrolment wizard, password reset
+flow) is owned by `identity/auth`. The platform-admin surface (identity list +
+detail + unlock + force-reset + erase) is also owned by `identity/auth` so the
+SDUI blueprints live alongside the routes they render for.
 
 This directory exists to anchor the future home:
 
-- `resources/` — reserved for platform-admin identity list + detail screens
-  when they land in `identity/auth`. Empty today.
+- `resources/` — reserved for platform-admin identity list + detail screens when
+  they land in `identity/auth`. Empty today.
 - `widgets/` — reserved for reusable identity-status widgets (e.g. a
   `identity-status-chip.widget.json` rendering `is_locked` / `mfa_enabled` /
   `email_verified`). Empty today.
@@ -38,11 +38,11 @@ Once `identity/auth` is authored, expect:
 
 - `resources/identity/list.screen.json` — filterable by locked / unverified /
   erased. Redacted columns (fingerprint, no email).
-- `resources/identity/show.screen.json` — read-only detail. PII unmute gated
-  on `platform.identity.view.pii` permission (server-enforced; the widget
-  respects the response).
+- `resources/identity/show.screen.json` — read-only detail. PII unmute gated on
+  `platform.identity.view.pii` permission (server-enforced; the widget respects
+  the response).
 - `widgets/identity-status-chip.widget.json` — colour-coded status chip.
 - `widgets/lockout-countdown.widget.json` — live countdown to `locked_until`.
 
-These live under `identity/auth`'s blueprint, not here. The `identity`
-substrate stays UI-free by design.
+These live under `identity/auth`'s blueprint, not here. The `identity` substrate
+stays UI-free by design.

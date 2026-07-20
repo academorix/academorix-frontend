@@ -4,7 +4,7 @@
  * @description Language resolution with fallback chains and wildcard support.
  */
 
-import type { I18nFallbacks } from '../interfaces';
+import type { I18nFallbacks } from "../interfaces";
 
 /**
  * Resolve a language code through the fallback map and supported locales.
@@ -23,7 +23,7 @@ import type { I18nFallbacks } from '../interfaces';
 export function resolveLanguage(
   lang: string,
   supportedLocales: string[],
-  fallbacks?: I18nFallbacks
+  fallbacks?: I18nFallbacks,
 ): string {
   // Direct support check
   if (supportedLocales.includes(lang)) {
@@ -38,7 +38,7 @@ export function resolveLanguage(
     }
 
     // Wildcard match (e.g., "ar-*" matches "ar-SA")
-    const base = lang.includes('-') ? lang.split('-')[0] : lang;
+    const base = lang.includes("-") ? lang.split("-")[0] : lang;
     const wildcardKey = `${base}-*`;
     if (fallbacks[wildcardKey]) {
       return fallbacks[wildcardKey];
@@ -46,8 +46,8 @@ export function resolveLanguage(
   }
 
   // Base language fallback (e.g., "en-US" → "en")
-  if (lang.includes('-')) {
-    const base = lang.split('-')[0]!;
+  if (lang.includes("-")) {
+    const base = lang.split("-")[0]!;
     if (supportedLocales.includes(base)) {
       return base;
     }
@@ -68,11 +68,11 @@ export function resolveLanguage(
  */
 export function getNextFallbackLanguage(lang: string, defaultLocale: string): string {
   // Try stripping region
-  if (lang.includes('-')) {
-    return lang.split('-')[0]!;
+  if (lang.includes("-")) {
+    return lang.split("-")[0]!;
   }
-  if (lang.includes('_')) {
-    return lang.split('_')[0]!;
+  if (lang.includes("_")) {
+    return lang.split("_")[0]!;
   }
 
   return defaultLocale;

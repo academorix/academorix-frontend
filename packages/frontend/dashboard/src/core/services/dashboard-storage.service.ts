@@ -31,7 +31,10 @@
 
 import { Inject, Injectable, Optional } from "@stackra/container";
 
-import { BUILT_IN_ANALYTICS_ID, BUILT_IN_OVERVIEW_ID } from "@/core/constants/built-in-dashboards.constants";
+import {
+  BUILT_IN_ANALYTICS_ID,
+  BUILT_IN_OVERVIEW_ID,
+} from "@/core/constants/built-in-dashboards.constants";
 import { DASHBOARD_TEMPLATES } from "@/core/constants/dashboard-templates.constants";
 import {
   PLAYGROUND_OWNER_ID,
@@ -234,7 +237,9 @@ export class DashboardStorageService implements IDashboardStorageAdapter {
       const template = DASHBOARD_TEMPLATES.find((entry) => entry.id === input.fromTemplate);
 
       if (template) {
-        const materialised = materialiseTemplate(template, this.ownerId, (key) => this.spanFor(key));
+        const materialised = materialiseTemplate(template, this.ownerId, (key) =>
+          this.spanFor(key),
+        );
 
         widgets = materialised.widgets;
         layouts = normaliseLayouts(materialised.layouts);
@@ -894,8 +899,7 @@ export class DashboardStorageService implements IDashboardStorageAdapter {
     const existing = nextStore[sourceRaw];
 
     if (existing) {
-      const clampedGrace =
-        Number.isFinite(graceSeconds) && graceSeconds > 0 ? graceSeconds : 0;
+      const clampedGrace = Number.isFinite(graceSeconds) && graceSeconds > 0 ? graceSeconds : 0;
       const graceExpiresAt = new Date(Date.now() + clampedGrace * 1000).toISOString();
 
       nextStore[sourceRaw] = {
@@ -1035,10 +1039,7 @@ export class DashboardStorageService implements IDashboardStorageAdapter {
   }
 
   /** Filter caller-supplied ids down to owned + shared siblings. */
-  private async filterOwnedSharedIds(
-    ids: readonly string[],
-    primaryId: string,
-  ): Promise<string[]> {
+  private async filterOwnedSharedIds(ids: readonly string[], primaryId: string): Promise<string[]> {
     const owned = await this.list();
     const ownedSharedById = new Map<string, IDashboard>();
 
@@ -1077,9 +1078,7 @@ export class DashboardStorageService implements IDashboardStorageAdapter {
       for (const id of filters.dashboardIds) dashboardSet.add(id);
     }
 
-    const beforeIso = filters.beforeDate
-      ? new Date(filters.beforeDate).toISOString()
-      : undefined;
+    const beforeIso = filters.beforeDate ? new Date(filters.beforeDate).toISOString() : undefined;
 
     const results: [string, EmbedTokenStoreEntry][] = [];
 

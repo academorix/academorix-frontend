@@ -23,7 +23,7 @@
  *   | `synthesize`      | `POST /api/ai/tts`                    | 18.2 |
  */
 
-import { Inject, Injectable } from '@stackra/container';
+import { Inject, Injectable } from "@stackra/container";
 import {
   AI_AUTH_PROVIDER,
   AI_STREAM_DECODER,
@@ -38,10 +38,10 @@ import {
   type IAiTransport,
   type IPersona,
   type IUiContextSnapshot,
-} from '@stackra/contracts';
+} from "@stackra/contracts";
 
-import { AiAuthError } from '../errors';
-import { base64Decode, base64Encode } from '../utils/base64.util';
+import { AiAuthError } from "../errors";
+import { base64Decode, base64Encode } from "../utils/base64.util";
 
 /**
  * `IAiClient` implementation.
@@ -56,7 +56,7 @@ export class AiClientService implements IAiClient {
   public constructor(
     @Inject(AI_TRANSPORT) private readonly transport: IAiTransport,
     @Inject(AI_STREAM_DECODER) private readonly decoder: IAiStreamDecoder,
-    @Inject(AI_AUTH_PROVIDER) private readonly authProvider: IAiAuthProvider
+    @Inject(AI_AUTH_PROVIDER) private readonly authProvider: IAiAuthProvider,
   ) {}
 
   // ────────────────────────────────────────────────────────────────────
@@ -79,7 +79,7 @@ export class AiClientService implements IAiClient {
   public async *chat(
     persona: string,
     req: IAiChatRequest,
-    signal: AbortSignal
+    signal: AbortSignal,
   ): AsyncIterable<IAiStreamEvent> {
     let attemptedRefresh = false;
     // The retry loop only re-opens when we've yielded nothing yet.
@@ -113,9 +113,9 @@ export class AiClientService implements IAiClient {
   public async cancelRun(runId: string): Promise<void> {
     await this.withAuthRetry(() =>
       this.transport.request<void>({
-        method: 'DELETE',
+        method: "DELETE",
         path: `/api/ai/runs/${encodeURIComponent(runId)}`,
-      })
+      }),
     );
   }
 
@@ -123,10 +123,10 @@ export class AiClientService implements IAiClient {
   public async postToolResult(result: IAiToolResult): Promise<void> {
     await this.withAuthRetry(() =>
       this.transport.request<void>({
-        method: 'POST',
-        path: '/api/ai/tool-results',
+        method: "POST",
+        path: "/api/ai/tool-results",
         body: result,
-      })
+      }),
     );
   }
 
@@ -134,9 +134,9 @@ export class AiClientService implements IAiClient {
   public async confirmDraft(draftId: string): Promise<void> {
     await this.withAuthRetry(() =>
       this.transport.request<void>({
-        method: 'POST',
+        method: "POST",
         path: `/api/ai/drafts/${encodeURIComponent(draftId)}/confirm`,
-      })
+      }),
     );
   }
 
@@ -148,9 +148,9 @@ export class AiClientService implements IAiClient {
   public async listPersonas(): Promise<IPersona[]> {
     return this.withAuthRetry(() =>
       this.transport.request<IPersona[]>({
-        method: 'GET',
-        path: '/api/admin/ai/personas',
-      })
+        method: "GET",
+        path: "/api/admin/ai/personas",
+      }),
     );
   }
 
@@ -158,9 +158,9 @@ export class AiClientService implements IAiClient {
   public async listTools(): Promise<IAiClientToolDefinition[]> {
     return this.withAuthRetry(() =>
       this.transport.request<IAiClientToolDefinition[]>({
-        method: 'GET',
-        path: '/api/admin/ai/tools',
-      })
+        method: "GET",
+        path: "/api/admin/ai/tools",
+      }),
     );
   }
 
@@ -179,10 +179,10 @@ export class AiClientService implements IAiClient {
   public async advertiseTools(defs: IAiClientToolDefinition[]): Promise<void> {
     await this.withAuthRetry(() =>
       this.transport.request<void>({
-        method: 'POST',
-        path: '/api/ai/tools/advertise',
+        method: "POST",
+        path: "/api/ai/tools/advertise",
         body: { tools: defs },
-      })
+      }),
     );
   }
 
@@ -190,10 +190,10 @@ export class AiClientService implements IAiClient {
   public async syncContext(snapshot: IUiContextSnapshot): Promise<void> {
     await this.withAuthRetry(() =>
       this.transport.request<void>({
-        method: 'POST',
-        path: '/api/ai/context',
+        method: "POST",
+        path: "/api/ai/context",
         body: snapshot,
-      })
+      }),
     );
   }
 
@@ -205,10 +205,10 @@ export class AiClientService implements IAiClient {
   public async transcribe(audio: Uint8Array | ArrayBuffer): Promise<{ text: string }> {
     return this.withAuthRetry(() =>
       this.transport.request<{ text: string }>({
-        method: 'POST',
-        path: '/api/ai/transcribe',
+        method: "POST",
+        path: "/api/ai/transcribe",
         body: { audio: base64Encode(audio) },
-      })
+      }),
     );
   }
 
@@ -216,10 +216,10 @@ export class AiClientService implements IAiClient {
   public async synthesize(text: string): Promise<ArrayBuffer> {
     const response = await this.withAuthRetry(() =>
       this.transport.request<{ audio: string }>({
-        method: 'POST',
-        path: '/api/ai/tts',
+        method: "POST",
+        path: "/api/ai/tts",
         body: { text },
-      })
+      }),
     );
     return base64Decode(response.audio);
   }

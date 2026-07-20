@@ -4,4 +4,4 @@
  * @description Barrel for the react providers.
  */
 
-export { StackraQueryProvider, type StackraQueryProviderProps } from './stackra-query-provider';
+export { StackraQueryProvider, type StackraQueryProviderProps } from "./stackra-query-provider";

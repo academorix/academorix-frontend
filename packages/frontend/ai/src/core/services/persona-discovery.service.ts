@@ -10,18 +10,18 @@
  *   Requirement 14.3.
  */
 
-import 'reflect-metadata';
-import { Inject, Injectable, Optional, type OnApplicationBootstrap } from '@stackra/container';
-import { Logger } from '@stackra/logger';
+import "reflect-metadata";
+import { Inject, Injectable, Optional, type OnApplicationBootstrap } from "@stackra/container";
+import { Logger } from "@stackra/logger";
 import {
   AI_AGENT_METADATA,
   AI_AGENT_REGISTRY,
   DISCOVERY_SERVICE,
   type IDiscoveryService,
   type IPersona,
-} from '@stackra/contracts';
+} from "@stackra/contracts";
 
-import { AgentRegistry } from '../registries/agent.registry';
+import { AgentRegistry } from "../registries/agent.registry";
 
 /**
  * PersonaDiscovery — Requirement 14.3.
@@ -32,13 +32,13 @@ export class PersonaDiscovery implements OnApplicationBootstrap {
 
   public constructor(
     @Inject(AI_AGENT_REGISTRY) private readonly registry: AgentRegistry,
-    @Optional() @Inject(DISCOVERY_SERVICE) private readonly discovery?: IDiscoveryService
+    @Optional() @Inject(DISCOVERY_SERVICE) private readonly discovery?: IDiscoveryService,
   ) {}
 
   public onApplicationBootstrap(): void {
     if (!this.discovery) {
       this.logger.debug?.(
-        '[PersonaDiscovery] DISCOVERY_SERVICE not bound; skipping @AiAgent discovery'
+        "[PersonaDiscovery] DISCOVERY_SERVICE not bound; skipping @AiAgent discovery",
       );
       return;
     }

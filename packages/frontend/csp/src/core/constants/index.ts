@@ -4,4 +4,4 @@
  * @description Constants barrel export.
  */
 
-export { CSP_POLICY_METADATA } from './csp-policy-metadata.constant';
+export { CSP_POLICY_METADATA } from "./csp-policy-metadata.constant";

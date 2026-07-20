@@ -33,7 +33,14 @@
         {
           "kind": "View",
           "children": [
-            { "kind": "Text", "props": { "as": "h1", "className": "text-2xl font-semibold", "children": "Merge anonymous profiles" } },
+            {
+              "kind": "Text",
+              "props": {
+                "as": "h1",
+                "className": "text-2xl font-semibold",
+                "children": "Merge anonymous profiles"
+              }
+            },
             {
               "kind": "Text",
               "props": {
@@ -50,20 +57,50 @@
             "className": "my-2"
           },
           "children": [
-            { "kind": "Text", "props": { "className": "font-medium", "children": "This action is irreversible." } },
-            { "kind": "Text", "props": { "className": "text-sm", "children": "Absorbed profiles are soft-deleted immediately. Every touchpoint is replayed onto this profile." } }
+            {
+              "kind": "Text",
+              "props": { "className": "font-medium", "children": "This action is irreversible." }
+            },
+            {
+              "kind": "Text",
+              "props": {
+                "className": "text-sm",
+                "children": "Absorbed profiles are soft-deleted immediately. Every touchpoint is replayed onto this profile."
+              }
+            }
           ]
         },
         {
           "kind": "Card",
           "props": { "className": "p-4" },
           "children": [
-            { "kind": "Text", "props": { "className": "text-sm font-semibold uppercase text-muted mb-3", "children": "Target (identified)" } },
+            {
+              "kind": "Text",
+              "props": {
+                "className": "text-sm font-semibold uppercase text-muted mb-3",
+                "children": "Target (identified)"
+              }
+            },
             {
               "kind": "View",
               "children": [
-                { "kind": "Text", "bindings": { "children": { "$expr": "attribution.subject_type + ' ' + attribution.subject_id" } } },
-                { "kind": "Text", "props": { "className": "text-sm text-muted mt-1" }, "bindings": { "children": { "$expr": "'First-touch: ' + attribution.first_touch_source + ' / ' + (attribution.first_touch_campaign || 'no campaign') + ' at ' + attribution.first_touch_at" } } }
+                {
+                  "kind": "Text",
+                  "bindings": {
+                    "children": {
+                      "$expr": "attribution.subject_type + ' ' + attribution.subject_id"
+                    }
+                  }
+                },
+                {
+                  "kind": "Text",
+                  "props": { "className": "text-sm text-muted mt-1" },
+                  "bindings": {
+                    "children": {
+                      "$expr": "'First-touch: ' + attribution.first_touch_source + ' / ' + (attribution.first_touch_campaign || 'no campaign') + ' at ' + attribution.first_touch_at"
+                    }
+                  }
+                }
               ]
             }
           ]
@@ -76,11 +113,19 @@
               "kind": "View",
               "props": { "className": "flex items-center justify-between mb-3" },
               "children": [
-                { "kind": "Text", "props": { "className": "text-sm font-semibold uppercase text-muted", "children": "Candidate anonymous profiles" } },
+                {
+                  "kind": "Text",
+                  "props": {
+                    "className": "text-sm font-semibold uppercase text-muted",
+                    "children": "Candidate anonymous profiles"
+                  }
+                },
                 {
                   "kind": "Text",
                   "props": { "className": "text-xs text-muted" },
-                  "bindings": { "children": { "$expr": "merge_candidates.length + ' candidate(s)'" } }
+                  "bindings": {
+                    "children": { "$expr": "merge_candidates.length + ' candidate(s)'" }
+                  }
                 }
               ]
             },
@@ -89,7 +134,10 @@
               "bindings": { "items": { "$ref": "merge_candidates" } },
               "emptyState": {
                 "kind": "Text",
-                "props": { "className": "text-sm text-muted text-center py-8", "children": "No candidates match session_id / ip_hash / device_hash within the 30-day window." }
+                "props": {
+                  "className": "text-sm text-muted text-center py-8",
+                  "children": "No candidates match session_id / ip_hash / device_hash within the 30-day window."
+                }
               },
               "columns": [
                 {
@@ -208,8 +256,16 @@
             },
             {
               "kind": "Button",
-              "props": { "variant": "primary", "leadingIcon": "arrow-path-rounded-square", "children": "Merge selected" },
-              "bindings": { "disabled": { "$expr": "!form.from_attribution_ids || form.from_attribution_ids.length === 0" } },
+              "props": {
+                "variant": "primary",
+                "leadingIcon": "arrow-path-rounded-square",
+                "children": "Merge selected"
+              },
+              "bindings": {
+                "disabled": {
+                  "$expr": "!form.from_attribution_ids || form.from_attribution_ids.length === 0"
+                }
+              },
               "actions": {
                 "onPress": {
                   "kind": "http.post",

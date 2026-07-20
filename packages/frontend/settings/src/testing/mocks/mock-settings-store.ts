@@ -9,4 +9,4 @@
  *   core barrel for a test-only concern.
  */
 
-export { MemorySettingsStore as MockSettingsStore } from '@/core/stores/memory-settings.store';
+export { MemorySettingsStore as MockSettingsStore } from "@/core/stores/memory-settings.store";

@@ -6,23 +6,96 @@
   "isSystem": true,
   "description": "Two audiences. Tenant plane (sanctum) — owner + admin configure gateways + rotate credentials; support role reads the webhook ledger (never credentials); guardian role manages own payment methods. Platform plane (platform_admin) — ops + support read cross-tenant webhook ledger for support-ticket triage (credentials redacted).",
   "permissions": [
-    { "name": "gateways.viewAny", "guard": "sanctum", "seededOn": ["admin", "owner", "support", "finance"] },
-    { "name": "gateways.view", "guard": "sanctum", "description": "Credentials redacted from response. Only display_name, provider, mode, is_active surface.", "seededOn": ["admin", "owner", "support", "finance"] },
-    { "name": "gateways.create", "guard": "sanctum", "description": "Configure a new gateway. Credentials are financial-critical.", "seededOn": ["admin", "owner"] },
+    {
+      "name": "gateways.viewAny",
+      "guard": "sanctum",
+      "seededOn": ["admin", "owner", "support", "finance"]
+    },
+    {
+      "name": "gateways.view",
+      "guard": "sanctum",
+      "description": "Credentials redacted from response. Only display_name, provider, mode, is_active surface.",
+      "seededOn": ["admin", "owner", "support", "finance"]
+    },
+    {
+      "name": "gateways.create",
+      "guard": "sanctum",
+      "description": "Configure a new gateway. Credentials are financial-critical.",
+      "seededOn": ["admin", "owner"]
+    },
     { "name": "gateways.update", "guard": "sanctum", "seededOn": ["admin", "owner"] },
     { "name": "gateways.delete", "guard": "sanctum", "seededOn": ["admin", "owner"] },
-    { "name": "gateways.test", "guard": "sanctum", "description": "Send a synthetic test transaction via the provider's sandbox endpoint.", "seededOn": ["admin", "owner"] },
-    { "name": "gateways.connect-oauth", "guard": "sanctum", "description": "Initiate Stripe Connect / OAuth flow to link a provider account.", "seededOn": ["admin", "owner"] },
-    { "name": "payment-methods.viewAny", "guard": "sanctum", "description": "Guardian sees own; admin + owner + finance see all tenant methods (redacted).", "seededOn": ["admin", "owner", "finance", "support", "guardian"] },
-    { "name": "payment-methods.view", "guard": "sanctum", "seededOn": ["admin", "owner", "finance", "support", "guardian"] },
-    { "name": "payment-methods.create", "guard": "sanctum", "seededOn": ["admin", "owner", "finance", "guardian"] },
-    { "name": "payment-methods.delete", "guard": "sanctum", "description": "Guardian can delete own; admin + owner can delete any.", "seededOn": ["admin", "owner", "guardian"] },
-    { "name": "payment-methods.set-default", "guard": "sanctum", "seededOn": ["admin", "owner", "finance", "guardian"] },
-    { "name": "gateway-webhooks.viewAny", "guard": "sanctum", "seededOn": ["admin", "owner", "support", "finance"] },
-    { "name": "gateway-webhooks.view", "guard": "sanctum", "seededOn": ["admin", "owner", "support", "finance"] },
-    { "name": "gateway-webhooks.replay", "guard": "sanctum", "description": "Manually replay a failed webhook.", "seededOn": ["admin", "owner"] },
-    { "name": "platform.gateways.viewAny", "guard": "platform_admin", "description": "Cross-tenant gateway config (credentials REDACTED).", "seededOn": ["super_admin", "ops", "support"] },
-    { "name": "platform.gateway-webhooks.viewAny", "guard": "platform_admin", "seededOn": ["super_admin", "ops", "support"] },
-    { "name": "platform.gateway-webhooks.replay", "guard": "platform_admin", "description": "Cross-tenant support-intervention webhook replay. Every fire notifies the tenant admin + writes audit.", "seededOn": ["super_admin", "ops"] }
+    {
+      "name": "gateways.test",
+      "guard": "sanctum",
+      "description": "Send a synthetic test transaction via the provider's sandbox endpoint.",
+      "seededOn": ["admin", "owner"]
+    },
+    {
+      "name": "gateways.connect-oauth",
+      "guard": "sanctum",
+      "description": "Initiate Stripe Connect / OAuth flow to link a provider account.",
+      "seededOn": ["admin", "owner"]
+    },
+    {
+      "name": "payment-methods.viewAny",
+      "guard": "sanctum",
+      "description": "Guardian sees own; admin + owner + finance see all tenant methods (redacted).",
+      "seededOn": ["admin", "owner", "finance", "support", "guardian"]
+    },
+    {
+      "name": "payment-methods.view",
+      "guard": "sanctum",
+      "seededOn": ["admin", "owner", "finance", "support", "guardian"]
+    },
+    {
+      "name": "payment-methods.create",
+      "guard": "sanctum",
+      "seededOn": ["admin", "owner", "finance", "guardian"]
+    },
+    {
+      "name": "payment-methods.delete",
+      "guard": "sanctum",
+      "description": "Guardian can delete own; admin + owner can delete any.",
+      "seededOn": ["admin", "owner", "guardian"]
+    },
+    {
+      "name": "payment-methods.set-default",
+      "guard": "sanctum",
+      "seededOn": ["admin", "owner", "finance", "guardian"]
+    },
+    {
+      "name": "gateway-webhooks.viewAny",
+      "guard": "sanctum",
+      "seededOn": ["admin", "owner", "support", "finance"]
+    },
+    {
+      "name": "gateway-webhooks.view",
+      "guard": "sanctum",
+      "seededOn": ["admin", "owner", "support", "finance"]
+    },
+    {
+      "name": "gateway-webhooks.replay",
+      "guard": "sanctum",
+      "description": "Manually replay a failed webhook.",
+      "seededOn": ["admin", "owner"]
+    },
+    {
+      "name": "platform.gateways.viewAny",
+      "guard": "platform_admin",
+      "description": "Cross-tenant gateway config (credentials REDACTED).",
+      "seededOn": ["super_admin", "ops", "support"]
+    },
+    {
+      "name": "platform.gateway-webhooks.viewAny",
+      "guard": "platform_admin",
+      "seededOn": ["super_admin", "ops", "support"]
+    },
+    {
+      "name": "platform.gateway-webhooks.replay",
+      "guard": "platform_admin",
+      "description": "Cross-tenant support-intervention webhook replay. Every fire notifies the tenant admin + writes audit.",
+      "seededOn": ["super_admin", "ops"]
+    }
   ]
 }

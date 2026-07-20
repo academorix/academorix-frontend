@@ -10,13 +10,13 @@ import type {
   IMonitoringBreadcrumb,
   IMonitoringProvider,
   IMonitoringUser,
-} from '@stackra/contracts';
+} from "@stackra/contracts";
 
 /**
  * Console monitoring provider — prints captures with their context.
  */
 export class ConsoleMonitoringProvider implements IMonitoringProvider {
-  public readonly name = 'console';
+  public readonly name = "console";
 
   private user: IMonitoringUser | null = null;
 
@@ -26,7 +26,7 @@ export class ConsoleMonitoringProvider implements IMonitoringProvider {
    */
   public captureException(error: Error, context?: ICaptureContext): void {
     // eslint-disable-next-line no-console
-    console.error('[monitoring] exception', error, this.enrich(context));
+    console.error("[monitoring] exception", error, this.enrich(context));
   }
 
   /**
@@ -35,7 +35,7 @@ export class ConsoleMonitoringProvider implements IMonitoringProvider {
    */
   public captureMessage(message: string, context?: ICaptureContext): void {
     // eslint-disable-next-line no-console
-    console.warn('[monitoring] message', message, this.enrich(context));
+    console.warn("[monitoring] message", message, this.enrich(context));
   }
 
   /**
@@ -43,7 +43,7 @@ export class ConsoleMonitoringProvider implements IMonitoringProvider {
    */
   public addBreadcrumb(breadcrumb: IMonitoringBreadcrumb): void {
     // eslint-disable-next-line no-console
-    console.debug('[monitoring] breadcrumb', breadcrumb);
+    console.debug("[monitoring] breadcrumb", breadcrumb);
   }
 
   /**

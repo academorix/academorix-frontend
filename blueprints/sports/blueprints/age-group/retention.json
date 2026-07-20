@@ -45,7 +45,9 @@
     },
     {
       "entity": "cache keys (age:*)",
-      "hot": { "days": "seconds — TTL-driven (list_ttl_seconds=600, catalog_ttl_seconds=1800, resolver_ttl_seconds=300)" },
+      "hot": {
+        "days": "seconds — TTL-driven (list_ttl_seconds=600, catalog_ttl_seconds=1800, resolver_ttl_seconds=300)"
+      },
       "purge": {
         "trigger": "TTL expiry OR invalidation on AgeGroup mutation",
         "action": "Redis EXPIRE"

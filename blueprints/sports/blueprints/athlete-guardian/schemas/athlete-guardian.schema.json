@@ -15,7 +15,9 @@
     "incrementing": false,
     "model": "Academorix\\Sports\\AthleteGuardian\\Models\\AthleteGuardian",
     "interface": "Academorix\\Sports\\AthleteGuardian\\Contracts\\Data\\AthleteGuardianInterface",
-    "implements": ["Academorix\\Sports\\AthleteGuardian\\Contracts\\Data\\AthleteGuardianInterface"],
+    "implements": [
+      "Academorix\\Sports\\AthleteGuardian\\Contracts\\Data\\AthleteGuardianInterface"
+    ],
     "traits": [
       "HasFactory",
       "HasPrefixedUlid",
@@ -41,38 +43,159 @@
       "metadata": "array"
     },
     "observers": ["AthleteGuardianObserver"],
-    "appends": [
-      "guardian_display_name",
-      "athlete_display_name",
-      "days_since_added",
-      "is_active"
-    ]
+    "appends": ["guardian_display_name", "athlete_display_name", "days_since_added", "is_active"]
   },
   "x-database": {
     "engine": "postgres",
     "columns": {
-      "id": { "type": "string", "length": 30, "primary": true, "description": "Prefixed ULID: `agu_<26>`." },
-      "tenant_id": { "type": "string", "length": 30, "nullable": false, "foreign": { "table": "tenants", "column": "id", "onUpdate": "cascade", "onDelete": "cascade" } },
-      "athlete_id": { "type": "string", "length": 30, "nullable": false, "foreign": { "table": "athletes", "column": "id", "onUpdate": "cascade", "onDelete": "cascade" }, "description": "CASCADE: guardian rows have no meaning without their athlete. When an athlete is hard-deleted (post-7-year retention), guardian rows go with it." },
-      "user_id": { "type": "string", "length": 30, "nullable": false, "foreign": { "table": "users", "column": "id", "onUpdate": "cascade", "onDelete": "restrict" }, "description": "The guardian's User. RESTRICT — the User cannot be soft-deleted while they hold an active guardianship. Guardian handoff (transfer to another User) must complete first." },
-      "relationship": { "type": "string", "length": 32, "nullable": false, "description": "Enum: mother / father / step_mother / step_father / grandmother / grandfather / aunt / uncle / sibling / legal_guardian / foster_parent / other. The 'other' bucket covers legal-guardian-as-a-legal-status when the relationship word doesn't fit (e.g. an appointed court-ordered guardian who is neither a relative nor a foster parent)." },
-      "is_primary": { "type": "boolean", "nullable": false, "default": "false", "description": "Exactly one is_primary=true per (tenant, athlete) when any guardian exists. Enforced by partial unique index. Auto-elected to the earliest-added remaining guardian on primary removal." },
-      "has_legal_custody": { "type": "boolean", "nullable": false, "default": "false", "description": "Legal decision-making authority for the athlete. Required to record consents on medical + third-party disclosures for minors." },
-      "can_pickup": { "type": "boolean", "nullable": false, "default": "true", "description": "Authorised to collect the athlete from sessions. Reception staff check this on session dismissal. Default true because most guardians can pick up; explicit false is set for absent guardians." },
-      "can_receive_communications": { "type": "boolean", "nullable": false, "default": "true", "description": "Receives session / enrollment notifications. Default true. False is rare — usually set when a divorced parent's spouse is on the roster but not the day-to-day contact." },
-      "can_authorise_medical_care": { "type": "boolean", "nullable": false, "default": "false", "description": "Emergency medical decisions. Default false. Set true only for guardians with has_legal_custody=true — the observer refuses can_authorise_medical_care=true without has_legal_custody=true." },
-      "verification_status": { "type": "string", "length": 16, "nullable": false, "default": "'pending'", "description": "Enum: pending / verified / disputed / revoked. Guardians in verified state may record consents for the athlete. Disputed guardians BLOCK from consent-recording (the athlete-consent rule refuses). Revoked is terminal." },
-      "verification_method": { "type": "string", "length": 32, "nullable": true, "description": "Enum: auto_household / hr_manual / silent_acceptance / self_declared. How the current verification was reached. Auto-populated by the observer on transition to verified." },
+      "id": {
+        "type": "string",
+        "length": 30,
+        "primary": true,
+        "description": "Prefixed ULID: `agu_<26>`."
+      },
+      "tenant_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": {
+          "table": "tenants",
+          "column": "id",
+          "onUpdate": "cascade",
+          "onDelete": "cascade"
+        }
+      },
+      "athlete_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": {
+          "table": "athletes",
+          "column": "id",
+          "onUpdate": "cascade",
+          "onDelete": "cascade"
+        },
+        "description": "CASCADE: guardian rows have no meaning without their athlete. When an athlete is hard-deleted (post-7-year retention), guardian rows go with it."
+      },
+      "user_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": {
+          "table": "users",
+          "column": "id",
+          "onUpdate": "cascade",
+          "onDelete": "restrict"
+        },
+        "description": "The guardian's User. RESTRICT — the User cannot be soft-deleted while they hold an active guardianship. Guardian handoff (transfer to another User) must complete first."
+      },
+      "relationship": {
+        "type": "string",
+        "length": 32,
+        "nullable": false,
+        "description": "Enum: mother / father / step_mother / step_father / grandmother / grandfather / aunt / uncle / sibling / legal_guardian / foster_parent / other. The 'other' bucket covers legal-guardian-as-a-legal-status when the relationship word doesn't fit (e.g. an appointed court-ordered guardian who is neither a relative nor a foster parent)."
+      },
+      "is_primary": {
+        "type": "boolean",
+        "nullable": false,
+        "default": "false",
+        "description": "Exactly one is_primary=true per (tenant, athlete) when any guardian exists. Enforced by partial unique index. Auto-elected to the earliest-added remaining guardian on primary removal."
+      },
+      "has_legal_custody": {
+        "type": "boolean",
+        "nullable": false,
+        "default": "false",
+        "description": "Legal decision-making authority for the athlete. Required to record consents on medical + third-party disclosures for minors."
+      },
+      "can_pickup": {
+        "type": "boolean",
+        "nullable": false,
+        "default": "true",
+        "description": "Authorised to collect the athlete from sessions. Reception staff check this on session dismissal. Default true because most guardians can pick up; explicit false is set for absent guardians."
+      },
+      "can_receive_communications": {
+        "type": "boolean",
+        "nullable": false,
+        "default": "true",
+        "description": "Receives session / enrollment notifications. Default true. False is rare — usually set when a divorced parent's spouse is on the roster but not the day-to-day contact."
+      },
+      "can_authorise_medical_care": {
+        "type": "boolean",
+        "nullable": false,
+        "default": "false",
+        "description": "Emergency medical decisions. Default false. Set true only for guardians with has_legal_custody=true — the observer refuses can_authorise_medical_care=true without has_legal_custody=true."
+      },
+      "verification_status": {
+        "type": "string",
+        "length": 16,
+        "nullable": false,
+        "default": "'pending'",
+        "description": "Enum: pending / verified / disputed / revoked. Guardians in verified state may record consents for the athlete. Disputed guardians BLOCK from consent-recording (the athlete-consent rule refuses). Revoked is terminal."
+      },
+      "verification_method": {
+        "type": "string",
+        "length": 32,
+        "nullable": true,
+        "description": "Enum: auto_household / hr_manual / silent_acceptance / self_declared. How the current verification was reached. Auto-populated by the observer on transition to verified."
+      },
       "verified_at": { "type": "timestamptz", "nullable": true },
-      "verified_by_user_id": { "type": "string", "length": 30, "nullable": true, "foreign": { "table": "users", "column": "id", "onUpdate": "cascade", "onDelete": "set null" }, "description": "The User who performed the verification (typically HR for manual verify; null for auto_household / silent_acceptance)." },
-      "verification_document_file_id": { "type": "string", "length": 30, "nullable": true, "description": "Reference to a storage::File (Wave 4+) with the signed proof document. Only set when verification_method='hr_manual' AND athlete_guardian_verification entitlement is on." },
-      "dispute_reason": { "type": "text", "nullable": true, "description": "Free-text reason when verification_status='disputed'. HR-visible only." },
+      "verified_by_user_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": true,
+        "foreign": {
+          "table": "users",
+          "column": "id",
+          "onUpdate": "cascade",
+          "onDelete": "set null"
+        },
+        "description": "The User who performed the verification (typically HR for manual verify; null for auto_household / silent_acceptance)."
+      },
+      "verification_document_file_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": true,
+        "description": "Reference to a storage::File (Wave 4+) with the signed proof document. Only set when verification_method='hr_manual' AND athlete_guardian_verification entitlement is on."
+      },
+      "dispute_reason": {
+        "type": "text",
+        "nullable": true,
+        "description": "Free-text reason when verification_status='disputed'. HR-visible only."
+      },
       "dispute_recorded_at": { "type": "timestamptz", "nullable": true },
-      "dispute_recorded_by_user_id": { "type": "string", "length": 30, "nullable": true, "foreign": { "table": "users", "column": "id", "onUpdate": "cascade", "onDelete": "set null" } },
-      "revoke_reason": { "type": "text", "nullable": true, "description": "Free-text reason when verification_status='revoked'. HR-visible only. Retained 7 years." },
+      "dispute_recorded_by_user_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": true,
+        "foreign": {
+          "table": "users",
+          "column": "id",
+          "onUpdate": "cascade",
+          "onDelete": "set null"
+        }
+      },
+      "revoke_reason": {
+        "type": "text",
+        "nullable": true,
+        "description": "Free-text reason when verification_status='revoked'. HR-visible only. Retained 7 years."
+      },
       "revoked_at": { "type": "timestamptz", "nullable": true },
-      "revoked_by_user_id": { "type": "string", "length": 30, "nullable": true, "foreign": { "table": "users", "column": "id", "onUpdate": "cascade", "onDelete": "set null" } },
-      "notes": { "type": "text", "nullable": true, "description": "Admin-visible relationship notes. HR-visible only." },
+      "revoked_by_user_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": true,
+        "foreign": {
+          "table": "users",
+          "column": "id",
+          "onUpdate": "cascade",
+          "onDelete": "set null"
+        }
+      },
+      "notes": {
+        "type": "text",
+        "nullable": true,
+        "description": "Admin-visible relationship notes. HR-visible only."
+      },
       "metadata": { "type": "jsonb", "nullable": true },
       "created_by": { "type": "string", "length": 30, "nullable": true },
       "updated_by": { "type": "string", "length": 30, "nullable": true },
@@ -96,9 +219,21 @@
         "predicate": "is_primary = true AND deleted_at IS NULL",
         "description": "The load-bearing invariant: exactly one primary guardian per athlete when any exists. Enforced at the DB layer."
       },
-      { "columns": ["tenant_id", "user_id"], "name": "athlete_guardians_user_idx", "description": "Feeds the /me/guardianships surface (list every athlete this User guardians)." },
-      { "columns": ["tenant_id", "athlete_id", "verification_status"], "name": "athlete_guardians_verification_idx" },
-      { "columns": ["tenant_id", "verification_status", "created_at"], "name": "athlete_guardians_pending_verification_idx", "predicate": "verification_status = 'pending' AND deleted_at IS NULL", "description": "Feeds VerifyGuardianByEmailDomainJob's pending queue." }
+      {
+        "columns": ["tenant_id", "user_id"],
+        "name": "athlete_guardians_user_idx",
+        "description": "Feeds the /me/guardianships surface (list every athlete this User guardians)."
+      },
+      {
+        "columns": ["tenant_id", "athlete_id", "verification_status"],
+        "name": "athlete_guardians_verification_idx"
+      },
+      {
+        "columns": ["tenant_id", "verification_status", "created_at"],
+        "name": "athlete_guardians_pending_verification_idx",
+        "predicate": "verification_status = 'pending' AND deleted_at IS NULL",
+        "description": "Feeds VerifyGuardianByEmailDomainJob's pending queue."
+      }
     ]
   },
   "required": [
@@ -123,7 +258,20 @@
     "user_id": { "type": "string", "pattern": "^usr_[0-9A-HJKMNP-TV-Z]{26}$" },
     "relationship": {
       "type": "string",
-      "enum": ["mother", "father", "step_mother", "step_father", "grandmother", "grandfather", "aunt", "uncle", "sibling", "legal_guardian", "foster_parent", "other"]
+      "enum": [
+        "mother",
+        "father",
+        "step_mother",
+        "step_father",
+        "grandmother",
+        "grandfather",
+        "aunt",
+        "uncle",
+        "sibling",
+        "legal_guardian",
+        "foster_parent",
+        "other"
+      ]
     },
     "is_primary": { "type": "boolean" },
     "has_legal_custody": { "type": "boolean" },
@@ -139,20 +287,38 @@
       "enum": ["auto_household", "hr_manual", "silent_acceptance", "self_declared", null]
     },
     "verified_at": { "type": ["string", "null"], "format": "date-time" },
-    "verified_by_user_id": { "type": ["string", "null"], "pattern": "^usr_[0-9A-HJKMNP-TV-Z]{26}$" },
-    "verification_document_file_id": { "type": ["string", "null"], "pattern": "^fil_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "verified_by_user_id": {
+      "type": ["string", "null"],
+      "pattern": "^usr_[0-9A-HJKMNP-TV-Z]{26}$"
+    },
+    "verification_document_file_id": {
+      "type": ["string", "null"],
+      "pattern": "^fil_[0-9A-HJKMNP-TV-Z]{26}$"
+    },
     "dispute_reason": { "type": ["string", "null"], "maxLength": 2048 },
     "dispute_recorded_at": { "type": ["string", "null"], "format": "date-time" },
-    "dispute_recorded_by_user_id": { "type": ["string", "null"], "pattern": "^usr_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "dispute_recorded_by_user_id": {
+      "type": ["string", "null"],
+      "pattern": "^usr_[0-9A-HJKMNP-TV-Z]{26}$"
+    },
     "revoke_reason": { "type": ["string", "null"], "maxLength": 2048 },
     "revoked_at": { "type": ["string", "null"], "format": "date-time" },
     "revoked_by_user_id": { "type": ["string", "null"], "pattern": "^usr_[0-9A-HJKMNP-TV-Z]{26}$" },
     "notes": { "type": ["string", "null"], "maxLength": 4096 },
     "metadata": { "type": ["object", "null"] },
-    "guardian_display_name": { "type": "string", "description": "Computed. Delegated to user->profile->display_name." },
-    "athlete_display_name": { "type": "string", "description": "Computed. Delegated to athlete->display_name." },
+    "guardian_display_name": {
+      "type": "string",
+      "description": "Computed. Delegated to user->profile->display_name."
+    },
+    "athlete_display_name": {
+      "type": "string",
+      "description": "Computed. Delegated to athlete->display_name."
+    },
     "days_since_added": { "type": "integer" },
-    "is_active": { "type": "boolean", "description": "Computed. verification_status IN ('verified', 'pending', 'disputed') AND deleted_at IS NULL." },
+    "is_active": {
+      "type": "boolean",
+      "description": "Computed. verification_status IN ('verified', 'pending', 'disputed') AND deleted_at IS NULL."
+    },
     "created_at": { "type": "string", "format": "date-time" },
     "updated_at": { "type": "string", "format": "date-time" }
   },

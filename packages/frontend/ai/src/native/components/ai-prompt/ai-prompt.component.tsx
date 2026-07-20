@@ -8,11 +8,11 @@
  *   between "Send" and "Stop" based on orchestrator status.
  */
 
-import type { JSX, ReactNode } from 'react';
-import { View } from 'react-native';
-import { Button, Description, TextArea, TextField, Typography } from '@stackra/ui/native';
+import type { JSX, ReactNode } from "react";
+import { View } from "react-native";
+import { Button, Description, TextArea, TextField, Typography } from "@stackra/ui/native";
 
-import type { IUseAiChatResult } from '@/core/hooks/use-ai-chat';
+import type { IUseAiChatResult } from "@/core/hooks/use-ai-chat";
 
 /** Props accepted by {@link AiPrompt}. */
 export interface IAiPromptProps {
@@ -28,8 +28,8 @@ export interface IAiPromptProps {
 
 /** The chat composer, bound to `useAiChat`. */
 export function AiPrompt(props: IAiPromptProps): JSX.Element {
-  const { chat, placeholder = 'Message the assistant…', footer, className } = props;
-  const isStreaming = chat.status === 'streaming';
+  const { chat, placeholder = "Message the assistant…", footer, className } = props;
+  const isStreaming = chat.status === "streaming";
   const disabledReason = !chat.connection.isConnected ? chat.connection.reason?.message : undefined;
   const canSubmit = chat.canSubmit;
 
@@ -43,7 +43,7 @@ export function AiPrompt(props: IAiPromptProps): JSX.Element {
   };
 
   return (
-    <View className={`gap-2${className ? ` ${className}` : ''}`}>
+    <View className={`gap-2${className ? ` ${className}` : ""}`}>
       <TextField isDisabled={!!disabledReason}>
         <View className="flex-row items-end gap-2">
           <View className="flex-1">
@@ -58,11 +58,11 @@ export function AiPrompt(props: IAiPromptProps): JSX.Element {
           </View>
           <Button
             size="md"
-            variant={isStreaming ? 'danger' : 'primary'}
+            variant={isStreaming ? "danger" : "primary"}
             isDisabled={!isStreaming && !canSubmit}
             onPress={onPress}
           >
-            <Button.Label>{isStreaming ? 'Stop' : 'Send'}</Button.Label>
+            <Button.Label>{isStreaming ? "Stop" : "Send"}</Button.Label>
           </Button>
         </View>
         {disabledReason ? (
@@ -71,7 +71,7 @@ export function AiPrompt(props: IAiPromptProps): JSX.Element {
       </TextField>
 
       {!disabledReason && footer ? (
-        typeof footer === 'string' ? (
+        typeof footer === "string" ? (
           <Typography type="body-xs" color="muted">
             {footer}
           </Typography>

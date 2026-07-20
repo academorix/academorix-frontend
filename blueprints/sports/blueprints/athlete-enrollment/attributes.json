@@ -10,7 +10,12 @@
       "targets": ["class"],
       "description": "Marks a service as a subscriber to enrollment lifecycle events. EnrollmentAtomicityFailed requires explicit opt-in (it routes on notifications-critical queue and is P1).",
       "params": [
-        { "name": "events", "type": "array<string>", "default": [], "description": "Empty = subscribe to every Academorix\\Sports\\AthleteEnrollment\\Events\\Enrollment* event EXCEPT EnrollmentAtomicityFailed (explicit opt-in required)." },
+        {
+          "name": "events",
+          "type": "array<string>",
+          "default": [],
+          "description": "Empty = subscribe to every Academorix\\Sports\\AthleteEnrollment\\Events\\Enrollment* event EXCEPT EnrollmentAtomicityFailed (explicit opt-in required)."
+        },
         { "name": "queue", "type": "string | null", "default": null },
         { "name": "priority", "type": "integer", "default": 100 }
       ],

@@ -10,20 +10,40 @@
       "name": "Membership Created",
       "kind": "track",
       "consent_required": "essential",
-      "properties": ["tenant_id", "plan_id", "billing_interval", "price_bucket", "currency", "used_coupon", "used_trial"],
+      "properties": [
+        "tenant_id",
+        "plan_id",
+        "billing_interval",
+        "price_bucket",
+        "currency",
+        "used_coupon",
+        "used_trial"
+      ],
       "description": "Fires on MembershipCreated. Essential — revenue-signal for MRR forecasting."
     },
     {
       "name": "Membership Activated",
       "kind": "track",
       "consent_required": "essential",
-      "properties": ["tenant_id", "plan_id", "billing_interval", "price_bucket", "days_from_signup_to_activation_bucket"]
+      "properties": [
+        "tenant_id",
+        "plan_id",
+        "billing_interval",
+        "price_bucket",
+        "days_from_signup_to_activation_bucket"
+      ]
     },
     {
       "name": "Membership Renewed",
       "kind": "track",
       "consent_required": "essential",
-      "properties": ["tenant_id", "plan_id", "attempt_number", "amount_bucket", "was_recovered_from_dunning"]
+      "properties": [
+        "tenant_id",
+        "plan_id",
+        "attempt_number",
+        "amount_bucket",
+        "was_recovered_from_dunning"
+      ]
     },
     {
       "name": "Membership Renewal Failed",
@@ -35,14 +55,26 @@
       "name": "Membership Lapsed",
       "kind": "track",
       "consent_required": "essential",
-      "properties": ["tenant_id", "plan_id", "lifetime_value_bucket", "consecutive_failed_renewal_count"],
+      "properties": [
+        "tenant_id",
+        "plan_id",
+        "lifetime_value_bucket",
+        "consecutive_failed_renewal_count"
+      ],
       "description": "Terminal involuntary churn. Feeds win-back campaign eligibility (30-day trigger via growth::marketing)."
     },
     {
       "name": "Membership Cancelled",
       "kind": "track",
       "consent_required": "essential",
-      "properties": ["tenant_id", "plan_id", "cancellation_kind", "cancellation_reason_category", "days_active_bucket", "lifetime_value_bucket"]
+      "properties": [
+        "tenant_id",
+        "plan_id",
+        "cancellation_kind",
+        "cancellation_reason_category",
+        "days_active_bucket",
+        "lifetime_value_bucket"
+      ]
     },
     {
       "name": "Membership Refunded",

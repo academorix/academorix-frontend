@@ -14,8 +14,18 @@
       "aggregation": "COUNT(status IN ('unhealthy', 'timeout', 'error')) OVER window",
       "typical_window_seconds": 300,
       "typical_thresholds": [
-        { "description": "1 unhealthy run in 5 min = P2", "value": 1, "unit": "count", "operator": "greater_than" },
-        { "description": "3 unhealthy runs in 5 min = P1", "value": 3, "unit": "count", "operator": "greater_than" }
+        {
+          "description": "1 unhealthy run in 5 min = P2",
+          "value": 1,
+          "unit": "count",
+          "operator": "greater_than"
+        },
+        {
+          "description": "3 unhealthy runs in 5 min = P1",
+          "value": 3,
+          "unit": "count",
+          "operator": "greater_than"
+        }
       ]
     },
     {
@@ -29,8 +39,18 @@
       "aggregation": "SUM(5xx) / SUM(total) OVER window",
       "typical_window_seconds": 300,
       "typical_thresholds": [
-        { "description": "5xx > 1% over 5min = P2", "value": 1, "unit": "percent", "operator": "greater_than" },
-        { "description": "5xx > 5% over 5min = P1", "value": 5, "unit": "percent", "operator": "greater_than" }
+        {
+          "description": "5xx > 1% over 5min = P2",
+          "value": 1,
+          "unit": "percent",
+          "operator": "greater_than"
+        },
+        {
+          "description": "5xx > 5% over 5min = P1",
+          "value": 5,
+          "unit": "percent",
+          "operator": "greater_than"
+        }
       ]
     },
     {
@@ -44,8 +64,18 @@
       "aggregation": "PERCENTILE_CONT(0.95) OVER window",
       "typical_window_seconds": 300,
       "typical_thresholds": [
-        { "description": "P95 > 500ms over 5min = P3", "value": 500, "unit": "ms", "operator": "greater_than" },
-        { "description": "P95 > 2000ms over 5min = P2", "value": 2000, "unit": "ms", "operator": "greater_than" }
+        {
+          "description": "P95 > 500ms over 5min = P3",
+          "value": 500,
+          "unit": "ms",
+          "operator": "greater_than"
+        },
+        {
+          "description": "P95 > 2000ms over 5min = P2",
+          "value": 2000,
+          "unit": "ms",
+          "operator": "greater_than"
+        }
       ]
     },
     {
@@ -59,8 +89,18 @@
       "aggregation": "PERCENTILE_CONT(0.99) OVER window",
       "typical_window_seconds": 300,
       "typical_thresholds": [
-        { "description": "P99 > 1000ms over 3min = P2", "value": 1000, "unit": "ms", "operator": "greater_than" },
-        { "description": "P99 > 5000ms over 3min = P1", "value": 5000, "unit": "ms", "operator": "greater_than" }
+        {
+          "description": "P99 > 1000ms over 3min = P2",
+          "value": 1000,
+          "unit": "ms",
+          "operator": "greater_than"
+        },
+        {
+          "description": "P99 > 5000ms over 3min = P1",
+          "value": 5000,
+          "unit": "ms",
+          "operator": "greater_than"
+        }
       ]
     },
     {
@@ -74,8 +114,18 @@
       "aggregation": "MAX(depth) OVER window",
       "typical_window_seconds": 60,
       "typical_thresholds": [
-        { "description": "Queue > 1000 jobs = P3", "value": 1000, "unit": "count", "operator": "greater_than" },
-        { "description": "Queue > 10000 jobs = P2", "value": 10000, "unit": "count", "operator": "greater_than" }
+        {
+          "description": "Queue > 1000 jobs = P3",
+          "value": 1000,
+          "unit": "count",
+          "operator": "greater_than"
+        },
+        {
+          "description": "Queue > 10000 jobs = P2",
+          "value": 10000,
+          "unit": "count",
+          "operator": "greater_than"
+        }
       ]
     },
     {
@@ -89,7 +139,12 @@
       "aggregation": "COUNT(status='healthy') OVER window",
       "typical_window_seconds": 60,
       "typical_thresholds": [
-        { "description": "< 2 healthy workers = P1", "value": 2, "unit": "count", "operator": "less_than" }
+        {
+          "description": "< 2 healthy workers = P1",
+          "value": 2,
+          "unit": "count",
+          "operator": "less_than"
+        }
       ]
     },
     {

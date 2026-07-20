@@ -4,5 +4,5 @@
  * @description Barrel for the devtools registries.
  */
 
-export { DevtoolsPanelsRegistry } from './devtools-panels.registry';
-export { DevtoolsInspectorRegistry } from './devtools-inspector.registry';
+export { DevtoolsPanelsRegistry } from "./devtools-panels.registry";
+export { DevtoolsInspectorRegistry } from "./devtools-inspector.registry";

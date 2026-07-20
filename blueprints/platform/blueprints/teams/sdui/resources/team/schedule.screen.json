@@ -37,7 +37,10 @@
                 },
                 {
                   "kind": "Text",
-                  "props": { "className": "text-sm text-muted", "children": "Weekly recurring practice slots. Members receive a mandatory notification on save." }
+                  "props": {
+                    "className": "text-sm text-muted",
+                    "children": "Weekly recurring practice slots. Members receive a mandatory notification on save."
+                  }
                 }
               ]
             }
@@ -49,7 +52,9 @@
           "children": [
             {
               "kind": "Text",
-              "props": { "children": "Saving changes here fires a schedule-change notification to every active member — this notification cannot be opted out. Only make changes members need to react to." }
+              "props": {
+                "children": "Saving changes here fires a schedule-change notification to every active member — this notification cannot be opted out. Only make changes members need to react to."
+              }
             }
           ]
         },
@@ -72,7 +77,13 @@
               "kind": "View",
               "props": { "className": "space-y-3" },
               "children": [
-                { "kind": "SchedulePatternEditor", "props": { "name": "schedule_pattern", "helpText": "One or more time windows per day. Overlapping windows within a day are refused." } }
+                {
+                  "kind": "SchedulePatternEditor",
+                  "props": {
+                    "name": "schedule_pattern",
+                    "helpText": "One or more time windows per day. Overlapping windows within a day are refused."
+                  }
+                }
               ]
             },
             {
@@ -82,9 +93,18 @@
                 {
                   "kind": "Button",
                   "props": { "variant": "ghost", "children": "Cancel" },
-                  "actions": { "onPress": { "kind": "navigate", "toExpr": "'/tenant/teams/' + team.id" } }
+                  "actions": {
+                    "onPress": { "kind": "navigate", "toExpr": "'/tenant/teams/' + team.id" }
+                  }
                 },
-                { "kind": "Button", "props": { "type": "submit", "variant": "primary", "children": "Save + notify members" } }
+                {
+                  "kind": "Button",
+                  "props": {
+                    "type": "submit",
+                    "variant": "primary",
+                    "children": "Save + notify members"
+                  }
+                }
               ]
             }
           ]

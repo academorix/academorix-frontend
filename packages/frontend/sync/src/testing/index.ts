@@ -20,5 +20,5 @@
  * ```
  */
 
-export { MockCheckpointService } from './mock-checkpoint-service';
-export { createMockCheckpointService } from './create-mock-checkpoint-service';
+export { MockCheckpointService } from "./mock-checkpoint-service";
+export { createMockCheckpointService } from "./create-mock-checkpoint-service";

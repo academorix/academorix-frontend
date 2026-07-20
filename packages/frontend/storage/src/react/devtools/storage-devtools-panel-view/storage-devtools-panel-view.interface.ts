@@ -5,7 +5,7 @@
  *   the React body of the `@stackra/devtools` storage panel.
  */
 
-import type { IStorageConfig, IStorageManager } from '@stackra/contracts';
+import type { IStorageConfig, IStorageManager } from "@stackra/contracts";
 
 /**
  * Props accepted by {@link StorageDevtoolsPanelView}.

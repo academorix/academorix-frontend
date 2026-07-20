@@ -7,7 +7,7 @@
  *   the real backing driver is unavailable.
  */
 
-import type { IStorage } from '@stackra/contracts';
+import type { IStorage } from "@stackra/contracts";
 
 /**
  * No-op `IStorage`.

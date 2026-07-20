@@ -11,9 +11,9 @@
  *   pattern: providers + `useExisting` aliases + a `useValue` config only.
  */
 
-import { Global, Module, type DynamicModule } from '@stackra/container';
-import { DevtoolsModule } from '@stackra/devtools';
-import type { IAsyncModuleOptions, ISyncModuleOptions } from '@stackra/contracts';
+import { Global, Module, type DynamicModule } from "@stackra/container";
+import { DevtoolsModule } from "@stackra/devtools";
+import type { IAsyncModuleOptions, ISyncModuleOptions } from "@stackra/contracts";
 import {
   CHECKPOINT_SERVICE,
   CONFLICT_RESOLVER,
@@ -28,18 +28,18 @@ import {
   PUSH_SERVICE,
   SYNC_CONFIG,
   SYNC_ENGINE,
-} from '@stackra/contracts';
+} from "@stackra/contracts";
 
-import { mergeConfig } from './utils/merge-config.util';
-import { NetworkDetector } from './services/network-detector.service';
-import { OperationQueue } from './services/operation-queue.service';
-import { ConflictResolver } from './resolvers/conflict.resolver';
-import { SyncEngine } from './services/sync-engine.service';
-import { PullService } from './services/pull.service';
-import { PushService } from './services/push.service';
-import { MergeService } from './services/merge.service';
-import { CheckpointService } from './services/checkpoint.service';
-import { SyncDevtoolsPanel } from '../react/devtools/sync.devtools-panel';
+import { mergeConfig } from "./utils/merge-config.util";
+import { NetworkDetector } from "./services/network-detector.service";
+import { OperationQueue } from "./services/operation-queue.service";
+import { ConflictResolver } from "./resolvers/conflict.resolver";
+import { SyncEngine } from "./services/sync-engine.service";
+import { PullService } from "./services/pull.service";
+import { PushService } from "./services/push.service";
+import { MergeService } from "./services/merge.service";
+import { CheckpointService } from "./services/checkpoint.service";
+import { SyncDevtoolsPanel } from "../react/devtools/sync.devtools-panel";
 
 /**
  * SyncModule — configures every sync service in one call.

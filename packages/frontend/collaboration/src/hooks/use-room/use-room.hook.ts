@@ -4,35 +4,35 @@
  * @category Hooks
  */
 
-import { useState, useEffect, useCallback, useRef } from 'react';
-import { useInject } from '@stackra/container/react';
-import { Str } from '@stackra/support';
+import { useState, useEffect, useCallback, useRef } from "react";
+import { useInject } from "@stackra/container/react";
+import { Str } from "@stackra/support";
 
-import type { RoomMember } from '@/interfaces/room-member.interface';
-import type { RoomOptions } from '@/interfaces/room-options.interface';
-import { RoomManager } from '@/services/room-manager.service';
+import type { RoomMember } from "@/interfaces/room-member.interface";
+import type { RoomOptions } from "@/interfaces/room-options.interface";
+import { RoomManager } from "@/services/room-manager.service";
 
 /** Color palette for auto-assigning user colors. */
 const COLOR_PALETTE = [
-  '#e74c3c',
-  '#3498db',
-  '#2ecc71',
-  '#f39c12',
-  '#9b59b6',
-  '#1abc9c',
-  '#e67e22',
-  '#34495e',
-  '#16a085',
-  '#c0392b',
-  '#2980b9',
-  '#8e44ad',
-  '#27ae60',
-  '#d35400',
-  '#7f8c8d',
+  "#e74c3c",
+  "#3498db",
+  "#2ecc71",
+  "#f39c12",
+  "#9b59b6",
+  "#1abc9c",
+  "#e67e22",
+  "#34495e",
+  "#16a085",
+  "#c0392b",
+  "#2980b9",
+  "#8e44ad",
+  "#27ae60",
+  "#d35400",
+  "#7f8c8d",
 ];
 
 /** Connection status for the room. */
-type RoomStatus = 'connecting' | 'connected' | 'disconnected' | 'error';
+type RoomStatus = "connecting" | "connected" | "disconnected" | "error";
 
 /** Return type for the useRoom hook. */
 interface UseRoomReturn {
@@ -87,7 +87,7 @@ export function useRoom(roomId: string, options?: RoomOptions): UseRoomReturn {
 
   const [members, setMembers] = useState<RoomMember[]>([]);
   const [self, setSelf] = useState<RoomMember | null>(null);
-  const [status, setStatus] = useState<RoomStatus>('disconnected');
+  const [status, setStatus] = useState<RoomStatus>("disconnected");
   const connectedRef = useRef(false);
 
   // Generate stable user identity per tab. `Str.uuid()` replaces the
@@ -98,7 +98,7 @@ export function useRoom(roomId: string, options?: RoomOptions): UseRoomReturn {
   const userColorRef = useRef(
     options?.userColor ??
       COLOR_PALETTE[Math.floor(Math.random() * COLOR_PALETTE.length)] ??
-      '#3498db'
+      "#3498db",
   );
   const userNameRef = useRef(options?.userName ?? `User-${userIdRef.current}`);
 
@@ -119,16 +119,16 @@ export function useRoom(roomId: string, options?: RoomOptions): UseRoomReturn {
     };
 
     setSelf(selfMember);
-    setStatus('connecting');
+    setStatus("connecting");
 
     transport
       .connect(roomId, userId, { name: userName, color: userColor, ...options?.initialPresence })
       .then(() => {
         connectedRef.current = true;
-        setStatus('connected');
+        setStatus("connected");
       })
       .catch(() => {
-        setStatus('error');
+        setStatus("error");
       });
 
     const unsubJoin = transport.onMemberJoin(roomId, (member) => {
@@ -149,7 +149,7 @@ export function useRoom(roomId: string, options?: RoomOptions): UseRoomReturn {
         transport.disconnect(roomId);
         connectedRef.current = false;
       }
-      setStatus('disconnected');
+      setStatus("disconnected");
       setMembers([]);
     };
   }, [roomId, roomManager]);
@@ -159,7 +159,7 @@ export function useRoom(roomId: string, options?: RoomOptions): UseRoomReturn {
       if (!roomManager) return;
       roomManager.getTransport().broadcast(roomId, event, data);
     },
-    [roomId, roomManager]
+    [roomId, roomManager],
   );
 
   const leave = useCallback(() => {
@@ -167,7 +167,7 @@ export function useRoom(roomId: string, options?: RoomOptions): UseRoomReturn {
     if (connectedRef.current) {
       roomManager.getTransport().disconnect(roomId);
       connectedRef.current = false;
-      setStatus('disconnected');
+      setStatus("disconnected");
       setMembers([]);
     }
   }, [roomId, roomManager]);

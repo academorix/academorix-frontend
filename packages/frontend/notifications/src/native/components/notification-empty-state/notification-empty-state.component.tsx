@@ -10,11 +10,11 @@
  *   `action` slot or subclass the empty state.
  */
 
-import { Text } from 'react-native';
-import type { ReactElement } from 'react';
-import { EmptyState } from '@stackra/ui/native';
+import { Text } from "react-native";
+import type { ReactElement } from "react";
+import { EmptyState } from "@stackra/ui/native";
 
-import type { NotificationEmptyStateProps } from './notification-empty-state.interface';
+import type { NotificationEmptyStateProps } from "./notification-empty-state.interface";
 
 /**
  * Native empty state.
@@ -27,8 +27,8 @@ import type { NotificationEmptyStateProps } from './notification-empty-state.int
  */
 export function NotificationEmptyState({
   title = "You're all caught up",
-  description = 'New notifications will appear here.',
-  variant = 'drawer',
+  description = "New notifications will appear here.",
+  variant = "drawer",
   action,
   className,
 }: NotificationEmptyStateProps = {}): ReactElement {
@@ -44,7 +44,7 @@ export function NotificationEmptyState({
         <EmptyState.Media>
           <Text
             accessibilityElementsHidden
-            className={variant === 'page' ? 'text-3xl' : 'text-2xl'}
+            className={variant === "page" ? "text-3xl" : "text-2xl"}
           >
             🔕
           </Text>

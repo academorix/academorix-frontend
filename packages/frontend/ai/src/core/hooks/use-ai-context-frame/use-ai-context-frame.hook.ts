@@ -13,12 +13,12 @@
  *   Requirements 10.1, 10.2, 10.3, 12.3.
  */
 
-import { useEffect, useRef } from 'react';
-import { useInject } from '@stackra/container/react';
-import { AI_CONTEXT_REGISTRY } from '@stackra/contracts';
+import { useEffect, useRef } from "react";
+import { useInject } from "@stackra/container/react";
+import { AI_CONTEXT_REGISTRY } from "@stackra/contracts";
 
-import { ContextRegistry } from '@/core/registries/context.registry';
-import { deepEqual } from '@/core/utils/deep-equal.util';
+import { ContextRegistry } from "@/core/registries/context.registry";
+import { deepEqual } from "@/core/utils/deep-equal.util";
 
 /** Options accepted by {@link useAiContextFrame}. */
 export interface IUseAiContextFrameOptions {
@@ -39,7 +39,7 @@ export interface IUseAiContextFrameOptions {
 export function useAiContextFrame(
   key: string,
   snapshot: unknown,
-  options: IUseAiContextFrameOptions = {}
+  options: IUseAiContextFrameOptions = {},
 ): void {
   const registry = useInject<ContextRegistry>(AI_CONTEXT_REGISTRY);
   const priority = options.priority ?? 0;

@@ -14,8 +14,8 @@
  *   - Tailwind CSS `rtl:` variants activate
  */
 
-import { Injectable } from '@stackra/container';
-import type { IDirectionAdapter } from '@stackra/contracts';
+import { Injectable } from "@stackra/container";
+import type { IDirectionAdapter } from "@stackra/contracts";
 
 /**
  * Web platform direction adapter.
@@ -34,8 +34,8 @@ export class WebDirectionAdapter implements IDirectionAdapter {
    * @param locale - The locale code (set as `lang` attribute)
    * @returns Always `false` — web never needs a restart
    */
-  public apply(direction: 'ltr' | 'rtl', locale: string): boolean {
-    if (typeof document === 'undefined') return false;
+  public apply(direction: "ltr" | "rtl", locale: string): boolean {
+    if (typeof document === "undefined") return false;
 
     document.documentElement.dir = direction;
     document.documentElement.lang = locale;
@@ -48,8 +48,8 @@ export class WebDirectionAdapter implements IDirectionAdapter {
    *
    * @returns The current `dir` attribute value, defaults to 'ltr'
    */
-  public getCurrentDirection(): 'ltr' | 'rtl' {
-    if (typeof document === 'undefined') return 'ltr';
-    return (document.documentElement.dir as 'ltr' | 'rtl') || 'ltr';
+  public getCurrentDirection(): "ltr" | "rtl" {
+    if (typeof document === "undefined") return "ltr";
+    return (document.documentElement.dir as "ltr" | "rtl") || "ltr";
   }
 }

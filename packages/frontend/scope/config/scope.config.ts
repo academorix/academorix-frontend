@@ -5,7 +5,7 @@
  *   Copy into your app's `src/config/` and import into your AppModule.
  */
 
-import { defineConfig } from '@stackra/scope';
+import { defineConfig } from "@stackra/scope";
 
 export const scopeConfig = defineConfig({
   /*

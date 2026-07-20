@@ -98,10 +98,7 @@
       "class": "Academorix\\Sports\\AgeGroup\\Events\\AgeGroupSportKeyChanged",
       "trigger": "sport_key mutated (including null → non-null and non-null → null). Audit-warn severity — the sport-specific override chain reshapes on this change; downstream resolvers switch their answers.",
       "queue": "notifications",
-      "consumers": [
-        "audit::WriteToAuditLog (retention: 7 years)",
-        "activity::WriteToActivityLog"
-      ],
+      "consumers": ["audit::WriteToAuditLog (retention: 7 years)", "activity::WriteToActivityLog"],
       "payload": {
         "age_group_id": "ULID",
         "tenant_id": "ULID",
@@ -133,10 +130,7 @@
       "class": "Academorix\\Sports\\AgeGroup\\Events\\AgeGroupArchived",
       "trigger": "AgeGroup soft-deleted (deleted_at set). Refused when is_default=true (observer catches it). Refused when is_seeded=true (seeded defaults cannot be deleted). Refused when any inbound row (Team, AthleteEnrollment via non-snapshot column, EventDivision) still references this AgeGroup (AGE_GROUP_IN_USE). Archived AgeGroups vanish from selectors but existing rows stay valid.",
       "queue": "notifications",
-      "consumers": [
-        "audit::WriteToAuditLog",
-        "activity::WriteToActivityLog"
-      ],
+      "consumers": ["audit::WriteToAuditLog", "activity::WriteToActivityLog"],
       "payload": {
         "age_group_id": "ULID",
         "tenant_id": "ULID",
@@ -150,10 +144,7 @@
       "class": "Academorix\\Sports\\AgeGroup\\Events\\AgeGroupRestored",
       "trigger": "Archived AgeGroup transitioned back to active (deleted_at cleared). Restoration allowed within the 1095-day (3-year) retention window before PurgeArchivedAgeGroupsJob hard-deletes it.",
       "queue": "notifications",
-      "consumers": [
-        "audit::WriteToAuditLog",
-        "activity::WriteToActivityLog"
-      ],
+      "consumers": ["audit::WriteToAuditLog", "activity::WriteToActivityLog"],
       "payload": {
         "age_group_id": "ULID",
         "tenant_id": "ULID",
@@ -166,10 +157,7 @@
       "class": "Academorix\\Sports\\AgeGroup\\Events\\AgeGroupDeleted",
       "trigger": "AgeGroup soft-deleted OR hard-deleted. Distinct events not needed — the payload carries the mode.",
       "queue": "notifications",
-      "consumers": [
-        "audit::WriteToAuditLog",
-        "activity::WriteToActivityLog"
-      ],
+      "consumers": ["audit::WriteToAuditLog", "activity::WriteToActivityLog"],
       "payload": {
         "age_group_id": "ULID",
         "tenant_id": "ULID",

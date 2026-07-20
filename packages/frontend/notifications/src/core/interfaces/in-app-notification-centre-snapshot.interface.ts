@@ -10,7 +10,7 @@
  *   contract it needs.
  */
 
-import type { IInAppNotification } from './in-app-notification.interface';
+import type { IInAppNotification } from "./in-app-notification.interface";
 
 /**
  * Immutable snapshot of the in-app centre's observable state.

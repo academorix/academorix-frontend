@@ -4,7 +4,7 @@
  * @description Props for the {@link InboxPage} component.
  */
 
-import type { NotificationWriter } from '../../hooks/use-notification-writes';
+import type { NotificationWriter } from "../../hooks/use-notification-writes";
 
 /**
  * Props accepted by {@link InboxPage}.

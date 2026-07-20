@@ -8,8 +8,8 @@
  *   `.runNow(name)`.
  */
 
-import type { IScheduledTask, ITaskOptions } from '@/core/interfaces';
-import { MockTaskRunner } from './mock-task-runner';
+import type { IScheduledTask, ITaskOptions } from "@/core/interfaces";
+import { MockTaskRunner } from "./mock-task-runner";
 
 /**
  * Assertable-friendly mock scheduler.

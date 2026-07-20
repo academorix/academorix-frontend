@@ -16,7 +16,7 @@ import type {
   I18nTranslation,
   TranslationPath,
   TranslateOptions,
-} from '@stackra/contracts';
+} from "@stackra/contracts";
 
 /**
  * In-memory translation engine — records every translate call so tests
@@ -36,7 +36,7 @@ export class MockI18nManager<K = Record<string, unknown>> implements II18nManage
     supportedLocales?: string[];
     translations?: Record<string, I18nTranslation>;
   }) {
-    this.currentLocale = options?.defaultLocale ?? 'en';
+    this.currentLocale = options?.defaultLocale ?? "en";
     this.supportedLocales = options?.supportedLocales ?? [this.currentLocale];
     this.translations = options?.translations ?? {};
   }
@@ -53,14 +53,14 @@ export class MockI18nManager<K = Record<string, unknown>> implements II18nManage
     const table = this.translations[lang];
     if (!table) return options?.defaultValue ?? (key as string);
 
-    const parts = (key as string).split('.');
+    const parts = (key as string).split(".");
     let node: unknown = table;
     for (const part of parts) {
-      if (typeof node !== 'object' || node === null)
+      if (typeof node !== "object" || node === null)
         return options?.defaultValue ?? (key as string);
       node = (node as Record<string, unknown>)[part];
     }
-    return typeof node === 'string' ? node : (options?.defaultValue ?? (key as string));
+    return typeof node === "string" ? node : (options?.defaultValue ?? (key as string));
   }
 
   public t<P extends TranslationPath<K> = TranslationPath<K>>(
@@ -100,7 +100,7 @@ export class MockI18nManager<K = Record<string, unknown>> implements II18nManage
 
   public mergeTranslations(
     namespace: string,
-    localeTranslations: Record<string, Record<string, unknown>>
+    localeTranslations: Record<string, Record<string, unknown>>,
   ): void {
     for (const [locale, table] of Object.entries(localeTranslations)) {
       this.translations[locale] = {

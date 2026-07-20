@@ -1,1 +1,1 @@
-export * from './i18n-plugin-options.interface';
+export * from "./i18n-plugin-options.interface";

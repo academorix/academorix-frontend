@@ -22,30 +22,28 @@ entitlement at render time.
   select-payment → amount + refund_type → reason + reason_note → refunded_to →
   review. Payment selector uses ComboBox (never Select — payment list may be
   long). Refund type step filters options by entitlement (Small = full only;
-  Medium+ unlocks partial + prorated). Prorated step embeds
-  `proration-preview` widget with the computed refund_amount visible before
-  submission.
-- `approve.screen.json` — approver-facing approve action modal. Renders the
-  full refund detail summary (frozen values) + inline notes field +
-  confirm/cancel buttons. Segregation-of-duties guard — refuses to render the
-  approve button when the current user is the initiator (shows a "You cannot
-  approve your own refund request" panel instead).
+  Medium+ unlocks partial + prorated). Prorated step embeds `proration-preview`
+  widget with the computed refund_amount visible before submission.
+- `approve.screen.json` — approver-facing approve action modal. Renders the full
+  refund detail summary (frozen values) + inline notes field + confirm/cancel
+  buttons. Segregation-of-duties guard — refuses to render the approve button
+  when the current user is the initiator (shows a "You cannot approve your own
+  refund request" panel instead).
 - `reject.screen.json` — approver-facing reject action modal. Requires
-  rejection_reason (256 char, customer-visible) + optional internal notes.
-  Same segregation-of-duties guard as approve.
+  rejection_reason (256 char, customer-visible) + optional internal notes. Same
+  segregation-of-duties guard as approve.
 
 ### `resources/refund-line/`
 
-Admin-only. Only rendered when the parent refund is in status IN
-('pending', 'awaiting_approval', 'approved') AND the tenant holds
-refund_partial or refund_prorated entitlement.
+Admin-only. Only rendered when the parent refund is in status IN ('pending',
+'awaiting_approval', 'approved') AND the tenant holds refund_partial or
+refund_prorated entitlement.
 
-- `editor.screen.json` — partial/prorated refund line editor. Two modes:
-  partial (line-by-line selection of invoice lines with per-line amount
-  inputs; live sum-validation ensures Σ line_amounts == parent
-  refund.amount_cents) + prorated (single line with embedded
-  proration-preview widget; computed refund_amount populates the line
-  amount).
+- `editor.screen.json` — partial/prorated refund line editor. Two modes: partial
+  (line-by-line selection of invoice lines with per-line amount inputs; live
+  sum-validation ensures Σ line_amounts == parent refund.amount_cents) +
+  prorated (single line with embedded proration-preview widget; computed
+  refund_amount populates the line amount).
 
 ### `resources/refund-pending-approvals/`
 
@@ -66,34 +64,33 @@ Finance/admin/marketing-facing report.
   total refunded amount, avg approval-to-success duration, clawback rate.
   Sparklines for daily counts + amounts. Reason distribution donut chart.
   Provider distribution donut chart. Top-refunded invoices table. CSV export
-  button (dispatches GenerateCouponUsageReportJob equivalent
-  synchronously for the requested range).
+  button (dispatches GenerateCouponUsageReportJob equivalent synchronously for
+  the requested range).
 
 ### `widgets/`
 
 - `refund-status-chip.widget.json` — composite chip showing (status + optional
   provider_error indicator + optional requires_approval indicator). Colour +
   icon + text label. Never colour-alone. Priority order: 'Failed' > 'Provider
-  error' > 'Rejected' > 'Cancelled' > 'Succeeded' > 'Processing' >
-  'Approved' > 'Awaiting approval' > 'Pending'.
+  error' > 'Rejected' > 'Cancelled' > 'Succeeded' > 'Processing' > 'Approved' >
+  'Awaiting approval' > 'Pending'.
 - `reason-picker.widget.json` — ComboBox for selecting refund reason (with
   audience-based filtering — customer path shows customer-allowed set only;
-  admin shows full set). Displays reason display_name + tooltip with
-  regulator relevance. Loads from `data/reason-catalog.json`.
-- `proration-preview.widget.json` — live proration preview for prorated
-  refunds. Given a payment + cancellation date, renders the computed
-  refund_amount + a breakdown (unused_period_start/end, unused_days,
-  unused_pass_credit, base_refund_amount). Read-only — computed via
-  compute_proration helper.
+  admin shows full set). Displays reason display_name + tooltip with regulator
+  relevance. Loads from `data/reason-catalog.json`.
+- `proration-preview.widget.json` — live proration preview for prorated refunds.
+  Given a payment + cancellation date, renders the computed refund_amount + a
+  breakdown (unused_period_start/end, unused_days, unused_pass_credit,
+  base_refund_amount). Read-only — computed via compute_proration helper.
 
 ## Notes on `ComboBox` over `Select`
 
 Every picker in this module uses HeroUI `ComboBox`. Rationale: the payment list
 for a customer with many purchases may be long (60+ payments in a year for a
-regular gym member); the invoice line list for partial refunds may be dense
-(15+ lines on a big-order invoice); the reason picker has 10 values but
-tooltip-rich options benefit from filterable search. `Select` is deliberately
-NOT used anywhere here.
+regular gym member); the invoice line list for partial refunds may be dense (15+
+lines on a big-order invoice); the reason picker has 10 values but tooltip-rich
+options benefit from filterable search. `Select` is deliberately NOT used
+anywhere here.
 
 ## Financial redaction
 
@@ -102,7 +99,8 @@ currency, provider_fee_reversal_cents) checks the caller's
 `refunds.view-financials` permission before rendering. Fields render as `••••`
 when redacted. Customer variants show the customer's own amounts (which are
 public to the customer) but hide provider_fee_reversal_cents (competitive info)
-+ any admin-only metadata.
+
+- any admin-only metadata.
 
 ## Segregation of duties surfacing
 
@@ -142,8 +140,8 @@ workflow. It surfaces:
 Refunds with a linked marketing conversion event render a "Marketing reversal"
 pill in the refund detail view. Clicking the pill deep-links to the
 marketing::MarketingEvent rollup filtered to the campaign that originally
-generated the payment. Enables marketing/finance cross-team visibility on
-"which campaigns generate the most refund-worthy purchases".
+generated the payment. Enables marketing/finance cross-team visibility on "which
+campaigns generate the most refund-worthy purchases".
 
 ## Prorated-refund UX
 
@@ -159,8 +157,8 @@ a payment + cancellation date, it renders:
 - Final refund amount: $501.37
 
 The widget makes the arithmetic visible — customers understand exactly why
-they're getting the amount they're getting, reducing support tickets around
-"why is my refund less than I expected".
+they're getting the amount they're getting, reducing support tickets around "why
+is my refund less than I expected".
 
 ## Empty states
 
@@ -180,13 +178,13 @@ they're getting the amount they're getting, reducing support tickets around
 
 ## Non-goals
 
-- **No "hypothetical refund" preview endpoint UI.** The
-  customer-facing UI shows the maximum refundable amount inline (via GET
+- **No "hypothetical refund" preview endpoint UI.** The customer-facing UI shows
+  the maximum refundable amount inline (via GET
   /payments/{payment}/refundable-amount) but does NOT preview the full refund
   side effects (credit note, transaction, clawbacks). Those materialize on
   succeeded transition — previewing them would leak internal implementation.
 - **No "refund preview" via SDUI for admin-initiated bulk refunds.** Bulk refund
   is CLI-only in v1 (refund_bulk_processing entitlement) — no SDUI UX for it.
 - **No "cancel while processing" UI.** Once a refund enters processing state,
-  the state machine is one-way — the cancel button is hidden on any refund
-  past 'approved'.
+  the state machine is one-way — the cancel button is hidden on any refund past
+  'approved'.

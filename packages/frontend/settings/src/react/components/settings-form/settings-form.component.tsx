@@ -16,15 +16,15 @@
  *     `w-full`) — no bespoke class names.
  */
 
-import { useCallback, useMemo, type JSX, type ReactNode } from 'react';
-import { Fieldset, Separator, Typography } from '@stackra/ui/react';
-import type { ISettingDefinition, ISettingField } from '@stackra/contracts';
+import { useCallback, useMemo, type JSX, type ReactNode } from "react";
+import { Fieldset, Separator, Typography } from "@stackra/ui/react";
+import type { ISettingDefinition, ISettingField } from "@stackra/contracts";
 
-import { useSettings } from '@/core/hooks/use-settings';
-import { useSettingsSchema } from '@/core/hooks/use-settings-schema';
-import { SettingField } from '@/react/components/setting-field';
+import { useSettings } from "@/core/hooks/use-settings";
+import { useSettingsSchema } from "@/core/hooks/use-settings-schema";
+import { SettingField } from "@/react/components/setting-field";
 
-import type { ISettingsFormProps } from './settings-form.interface';
+import type { ISettingsFormProps } from "./settings-form.interface";
 
 /**
  * Render every field in a settings group as a form.
@@ -62,28 +62,28 @@ export function SettingsForm(props: ISettingsFormProps): JSX.Element | null {
   const schema = useSettingsSchema();
   const definition = useMemo<ISettingDefinition | undefined>(
     () =>
-      typeof group === 'string'
+      typeof group === "string"
         ? schema.find((d) => d.key === group)
         : (schema.find((d) => d.dto === group) as ISettingDefinition | undefined),
-    [schema, group]
+    [schema, group],
   );
 
   // Register the settings service subscription against the resolved
   // group. Fall back to the group-key form when a DTO wasn't
   // supplied.
-  const groupKey = definition?.key ?? (typeof group === 'string' ? group : undefined);
+  const groupKey = definition?.key ?? (typeof group === "string" ? group : undefined);
 
   // Hook must be called unconditionally; when the definition hasn't
   // arrived yet we pass a placeholder key and drop the returned
   // values below.
-  const settings = useSettings<Record<string, unknown>>(groupKey ?? '__stackra_settings_pending__');
+  const settings = useSettings<Record<string, unknown>>(groupKey ?? "__stackra_settings_pending__");
 
   const onChangeFor = useCallback(
     (field: ISettingField) => (next: unknown) => {
       if (!groupKey) return;
       settings.set(field.key, next);
     },
-    [groupKey, settings]
+    [groupKey, settings],
   );
 
   if (!definition || !groupKey) {
@@ -99,7 +99,7 @@ export function SettingsForm(props: ISettingsFormProps): JSX.Element | null {
   const groupedFields = groupFieldsByVisualGroup(fields, definition);
 
   return (
-    <div className={className ?? 'flex flex-col gap-6'}>
+    <div className={className ?? "flex flex-col gap-6"}>
       {renderHeader ? renderHeader(definition) : <DefaultHeader definition={definition} />}
 
       {rootFields.length > 0 ? (
@@ -163,7 +163,7 @@ function FieldRow(props: {
   readonly onChange: (next: unknown) => void;
   readonly isDisabled?: boolean;
   readonly isReadOnly?: boolean;
-  readonly renderField?: ISettingsFormProps['renderField'];
+  readonly renderField?: ISettingsFormProps["renderField"];
 }): JSX.Element {
   const { field, definition, value, onChange, isDisabled, isReadOnly, renderField } = props;
   const section = definition.sections?.[field.key];
@@ -208,7 +208,7 @@ function VisualGroupSection(props: {
   readonly settings: ReturnType<typeof useSettings<Record<string, unknown>>>;
   readonly isDisabled?: boolean;
   readonly isReadOnly?: boolean;
-  readonly renderField?: ISettingsFormProps['renderField'];
+  readonly renderField?: ISettingsFormProps["renderField"];
 }): JSX.Element {
   const { heading, fields, definition, settings, isDisabled, isReadOnly, renderField } = props;
 
@@ -253,7 +253,7 @@ interface IGroupedFieldsEntry {
  */
 function groupFieldsByVisualGroup(
   fields: readonly ISettingField[],
-  definition: ISettingDefinition
+  definition: ISettingDefinition,
 ): Map<string, IGroupedFieldsEntry> {
   const grouped = new Map<string, IGroupedFieldsEntry>();
 

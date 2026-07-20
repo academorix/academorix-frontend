@@ -4,5 +4,5 @@
  * @description Public API barrel for the `useAction` entity.
  */
 
-export { useAction } from './use-action.hook';
-export type { IUseActionResult, IUseActionState } from './use-action.interface';
+export { useAction } from "./use-action.hook";
+export type { IUseActionResult, IUseActionState } from "./use-action.interface";

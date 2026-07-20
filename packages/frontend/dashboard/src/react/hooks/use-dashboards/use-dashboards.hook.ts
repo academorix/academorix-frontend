@@ -66,9 +66,7 @@ function isRelevantStorageEvent(event: StorageEvent): boolean {
  * Kept in this file so a future backend swap (bulk `listGrants`
  * API) lands in one place.
  */
-async function readAllGrants(
-  storage: IDashboardStorageAdapter,
-): Promise<IDashboardShareGrant[]> {
+async function readAllGrants(storage: IDashboardStorageAdapter): Promise<IDashboardShareGrant[]> {
   const dashboards = await storage.list();
   const perDashboard = await Promise.all(
     dashboards.map((entry) => storage.listShareGrants(entry.id)),
@@ -83,9 +81,7 @@ async function readAllGrants(
  * per-dashboard reader but the UI wants a tenant-wide snapshot for
  * O(1) count lookups by widget instance id.
  */
-async function readAllAnnotations(
-  storage: IDashboardStorageAdapter,
-): Promise<IWidgetAnnotation[]> {
+async function readAllAnnotations(storage: IDashboardStorageAdapter): Promise<IWidgetAnnotation[]> {
   const dashboards = await storage.list();
   const perDashboard = await Promise.all(
     dashboards.map((entry) => storage.listAnnotations(entry.id)),

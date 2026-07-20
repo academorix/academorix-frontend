@@ -30,8 +30,8 @@
  *   - 24.4 — cache runId + assistant message ids so a resume avoids duplication.
  */
 
-import { Inject, Injectable, Optional } from '@stackra/container';
-import { Logger } from '@stackra/logger';
+import { Inject, Injectable, Optional } from "@stackra/container";
+import { Logger } from "@stackra/logger";
 import {
   AI_CLIENT,
   AI_CONNECTION_MANAGER,
@@ -48,13 +48,13 @@ import {
   type IAiStreamEvent,
   type IAiToolCall,
   type IEventEmitter,
-} from '@stackra/contracts';
+} from "@stackra/contracts";
 
-import { AiTransportError } from '../errors';
-import { ConnectionManager } from './connection-manager.service';
-import { ConversationStore } from './conversation-store.service';
-import { ToolConverter } from './tool-converter.service';
-import { ToolExecutor } from './tool-executor.service';
+import { AiTransportError } from "../errors";
+import { ConnectionManager } from "./connection-manager.service";
+import { ConversationStore } from "./conversation-store.service";
+import { ToolConverter } from "./tool-converter.service";
+import { ToolExecutor } from "./tool-executor.service";
 
 /** Options for `send()`. */
 export interface ISendOptions {
@@ -67,7 +67,7 @@ export interface ISendOptions {
 }
 
 /** Observable status of the orchestrator. */
-export type OrchestratorStatus = 'idle' | 'streaming' | 'complete' | 'error' | 'cancelled';
+export type OrchestratorStatus = "idle" | "streaming" | "complete" | "error" | "cancelled";
 
 /** Error surfaced via `onError`. */
 export interface IOrchestratorError {
@@ -96,7 +96,7 @@ export class ChatOrchestrator {
   } | null = null;
 
   /** Public orchestrator status. */
-  private _status: OrchestratorStatus = 'idle';
+  private _status: OrchestratorStatus = "idle";
 
   private readonly statusListeners = new Set<(status: OrchestratorStatus) => void>();
   private readonly errorListeners = new Set<(error: IOrchestratorError) => void>();
@@ -107,7 +107,7 @@ export class ChatOrchestrator {
     @Inject(AI_TOOL_EXECUTOR) private readonly toolExecutor: ToolExecutor,
     @Inject(AI_TOOL_CONVERTER) private readonly toolConverter: ToolConverter,
     @Optional() @Inject(AI_CONNECTION_MANAGER) private readonly connection?: ConnectionManager,
-    @Optional() @Inject(EVENT_EMITTER) private readonly events?: IEventEmitter
+    @Optional() @Inject(EVENT_EMITTER) private readonly events?: IEventEmitter,
   ) {}
 
   // ────────────────────────────────────────────────────────────────────
@@ -143,7 +143,7 @@ export class ChatOrchestrator {
    */
   public async send(options: ISendOptions): Promise<void> {
     if (this.currentRun) {
-      throw new Error('[ChatOrchestrator] a run is already in progress; call stop() first');
+      throw new Error("[ChatOrchestrator] a run is already in progress; call stop() first");
     }
 
     // ── Append the user message + prime an assistant message. ──────────
@@ -159,7 +159,7 @@ export class ChatOrchestrator {
       toolCallMessageIds: new Map(),
       approvalWaits: new Map(),
     };
-    this.setStatus('streaming');
+    this.setStatus("streaming");
     void this.events?.emit(AI_EVENTS.STREAM_STARTED, {
       threadId: options.threadId,
       persona: options.persona,
@@ -179,7 +179,7 @@ export class ChatOrchestrator {
         await this.handleEvent(event);
       }
       // Iterator ended without a `finish` event — treat as complete.
-      if (this._status === 'streaming') this.completeRun();
+      if (this._status === "streaming") this.completeRun();
     } catch (err) {
       this.failRun(err);
       throw err;
@@ -209,12 +209,12 @@ export class ChatOrchestrator {
       try {
         await this.client.cancelRun(run.runId);
       } catch (err) {
-        this.logger.warn('[ChatOrchestrator] cancelRun failed', {
+        this.logger.warn("[ChatOrchestrator] cancelRun failed", {
           error: err instanceof Error ? err.message : String(err),
         });
       }
     }
-    this.setStatus('cancelled');
+    this.setStatus("cancelled");
     this.currentRun = null;
   }
 
@@ -288,7 +288,7 @@ export class ChatOrchestrator {
 
   private onToolCallStart(toolCallId: string, toolName: string): void {
     const run = this.currentRun!;
-    const origin = this.toolExecutor.isClientTool(toolName) ? 'client' : 'server';
+    const origin = this.toolExecutor.isClientTool(toolName) ? "client" : "server";
     const toolCall: IAiToolCall = {
       toolCallId,
       toolName,
@@ -298,7 +298,7 @@ export class ChatOrchestrator {
     };
     this.store.addToolCall(run.threadId, run.assistantMessageId, toolCall);
     run.toolCallMessageIds.set(toolCallId, run.assistantMessageId);
-    run.argsBuffer.set(toolCallId, '');
+    run.argsBuffer.set(toolCallId, "");
     void this.events?.emit(AI_EVENTS.TOOL_CALLED, { toolCallId, toolName });
   }
 
@@ -340,7 +340,7 @@ export class ChatOrchestrator {
     if (outcome.aborted) {
       this.store.updateToolCall(run.threadId, messageId, toolCallId, {
         state: AiToolState.OutputError,
-        error: 'cancelled',
+        error: "cancelled",
       });
       void this.events?.emit(AI_EVENTS.TOOL_RESULT, { toolCallId, cancelled: true });
       return;
@@ -349,7 +349,7 @@ export class ChatOrchestrator {
     if (outcome.rejected) {
       this.store.updateToolCall(run.threadId, messageId, toolCallId, {
         state: AiToolState.OutputError,
-        error: 'rejected',
+        error: "rejected",
       });
       void this.events?.emit(AI_EVENTS.TOOL_RESULT, { toolCallId, rejected: true });
       return;
@@ -402,7 +402,7 @@ export class ChatOrchestrator {
     const thread = this.store.getThread(threadId);
     const message = thread?.messages.find((m) => m.id === messageId);
     const call = message?.toolCalls.find((c) => c.toolCallId === toolCallId);
-    return call?.toolName ?? '';
+    return call?.toolName ?? "";
   }
 
   // ────────────────────────────────────────────────────────────────────
@@ -414,7 +414,7 @@ export class ChatOrchestrator {
     if (!run) return;
     this.store.finishAssistantMessage(run.threadId, run.assistantMessageId);
     this.connection?.noteRunFinished();
-    this.setStatus('complete');
+    this.setStatus("complete");
     this.currentRun = null;
   }
 
@@ -427,7 +427,7 @@ export class ChatOrchestrator {
       const thread = this.store.getThread(run.threadId);
       if (thread) thread.status = AiRunStatus.Failed;
     }
-    this.setStatus('error');
+    this.setStatus("error");
     this.dispatchError({
       message: err instanceof Error ? err.message : String(err),
       recoverable: false,
@@ -442,7 +442,7 @@ export class ChatOrchestrator {
       try {
         listener(next);
       } catch (err) {
-        this.logger.warn('[ChatOrchestrator] status listener threw', {
+        this.logger.warn("[ChatOrchestrator] status listener threw", {
           error: err instanceof Error ? err.message : String(err),
         });
       }
@@ -454,7 +454,7 @@ export class ChatOrchestrator {
       try {
         listener(error);
       } catch (err) {
-        this.logger.warn('[ChatOrchestrator] error listener threw', {
+        this.logger.warn("[ChatOrchestrator] error listener threw", {
           error: err instanceof Error ? err.message : String(err),
         });
       }

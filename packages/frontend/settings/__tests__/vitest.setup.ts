@@ -1,4 +1,4 @@
-import '@stackra/testing/setup';
+import "@stackra/testing/setup";
 
 /**
  * jsdom polyfills for HeroUI compounds.
@@ -8,7 +8,7 @@ import '@stackra/testing/setup';
  * doesn't ship it, so stub the smallest surface we need — the code
  * only reads `matches` + adds/removes listeners.
  */
-if (typeof globalThis.window !== 'undefined' && !globalThis.window.matchMedia) {
+if (typeof globalThis.window !== "undefined" && !globalThis.window.matchMedia) {
   globalThis.window.matchMedia = (query: string): MediaQueryList => ({
     matches: false,
     media: query,

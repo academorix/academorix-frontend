@@ -4,4 +4,4 @@
  * @description Barrel export for Workbox runtime-caching utilities.
  */
 
-export { getRuntimeCaching } from './runtime-caching.util';
+export { getRuntimeCaching } from "./runtime-caching.util";

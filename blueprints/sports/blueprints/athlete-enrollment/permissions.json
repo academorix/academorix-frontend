@@ -6,29 +6,139 @@
   "isSystem": true,
   "description": "Two audiences. Tenant plane (sanctum) — enrollment CRUD by admin / hr / branch_manager / coach / reception, self-service via .own scope for guardians + adult athletes. Platform plane (platform_admin) — cross-tenant read + atomicity-audit.",
   "permissions": [
-    { "name": "enrollments.viewAny", "guard": "sanctum", "seededOn": ["hr", "coach", "reception", "branch_manager", "admin", "owner"] },
-    { "name": "enrollments.viewAny.own", "guard": "sanctum", "description": "Guardian + adult-athlete scoped listing.", "seededOn": ["guardian", "athlete"] },
-    { "name": "enrollments.view", "guard": "sanctum", "seededOn": ["hr", "coach", "reception", "branch_manager", "admin", "owner"] },
-    { "name": "enrollments.view.own", "guard": "sanctum", "seededOn": ["athlete", "guardian", "coach", "reception", "hr", "branch_manager", "admin", "owner"] },
-    { "name": "enrollments.create", "guard": "sanctum", "description": "Submit an enrollment. Consumes slot; may auto-waitlist.", "seededOn": ["reception", "hr", "branch_manager", "admin", "owner"] },
-    { "name": "enrollments.create.own", "guard": "sanctum", "description": "Guardians + adult athletes may self-submit enrollments.", "seededOn": ["athlete", "guardian"] },
-    { "name": "enrollments.update", "guard": "sanctum", "seededOn": ["hr", "coach", "branch_manager", "admin", "owner"] },
-    { "name": "enrollments.update.own", "guard": "sanctum", "description": "Guardians + adult athletes may update limited fields (position_preference, jersey_number_preference, enrollment_notes).", "seededOn": ["athlete", "guardian"] },
-    { "name": "enrollments.delete", "guard": "sanctum", "description": "Soft-delete. Precondition: terminal status.", "seededOn": ["admin", "owner"] },
-    { "name": "enrollments.confirm", "guard": "sanctum", "seededOn": ["hr", "reception", "branch_manager", "admin", "owner"] },
-    { "name": "enrollments.activate", "guard": "sanctum", "seededOn": ["hr", "branch_manager", "admin", "owner"] },
-    { "name": "enrollments.complete", "guard": "sanctum", "seededOn": ["hr", "coach", "branch_manager", "admin", "owner"] },
-    { "name": "enrollments.withdraw", "guard": "sanctum", "seededOn": ["hr", "coach", "branch_manager", "admin", "owner"] },
-    { "name": "enrollments.withdraw.own", "guard": "sanctum", "description": "Guardians + adult athletes may withdraw themselves.", "seededOn": ["athlete", "guardian"] },
-    { "name": "enrollments.expel", "guard": "sanctum", "description": "Disciplinary. HR + safeguarding_officer + admin only.", "seededOn": ["hr", "safeguarding_officer", "admin", "owner"] },
-    { "name": "enrollments.waitlist", "guard": "sanctum", "seededOn": ["hr", "branch_manager", "admin", "owner"] },
-    { "name": "enrollments.promote-from-waitlist", "guard": "sanctum", "seededOn": ["hr", "branch_manager", "admin", "owner"] },
-    { "name": "enrollments.assign-position", "guard": "sanctum", "seededOn": ["coach", "hr", "branch_manager", "admin", "owner"] },
-    { "name": "enrollments.assign-jersey", "guard": "sanctum", "seededOn": ["coach", "reception", "hr", "branch_manager", "admin", "owner"] },
-    { "name": "enrollments.audit.atomicity", "guard": "sanctum", "description": "Read the EnrollmentAtomicityFailed audit trail — compliance-critical.", "seededOn": ["hr", "safeguarding_officer", "owner"] },
+    {
+      "name": "enrollments.viewAny",
+      "guard": "sanctum",
+      "seededOn": ["hr", "coach", "reception", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "enrollments.viewAny.own",
+      "guard": "sanctum",
+      "description": "Guardian + adult-athlete scoped listing.",
+      "seededOn": ["guardian", "athlete"]
+    },
+    {
+      "name": "enrollments.view",
+      "guard": "sanctum",
+      "seededOn": ["hr", "coach", "reception", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "enrollments.view.own",
+      "guard": "sanctum",
+      "seededOn": [
+        "athlete",
+        "guardian",
+        "coach",
+        "reception",
+        "hr",
+        "branch_manager",
+        "admin",
+        "owner"
+      ]
+    },
+    {
+      "name": "enrollments.create",
+      "guard": "sanctum",
+      "description": "Submit an enrollment. Consumes slot; may auto-waitlist.",
+      "seededOn": ["reception", "hr", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "enrollments.create.own",
+      "guard": "sanctum",
+      "description": "Guardians + adult athletes may self-submit enrollments.",
+      "seededOn": ["athlete", "guardian"]
+    },
+    {
+      "name": "enrollments.update",
+      "guard": "sanctum",
+      "seededOn": ["hr", "coach", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "enrollments.update.own",
+      "guard": "sanctum",
+      "description": "Guardians + adult athletes may update limited fields (position_preference, jersey_number_preference, enrollment_notes).",
+      "seededOn": ["athlete", "guardian"]
+    },
+    {
+      "name": "enrollments.delete",
+      "guard": "sanctum",
+      "description": "Soft-delete. Precondition: terminal status.",
+      "seededOn": ["admin", "owner"]
+    },
+    {
+      "name": "enrollments.confirm",
+      "guard": "sanctum",
+      "seededOn": ["hr", "reception", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "enrollments.activate",
+      "guard": "sanctum",
+      "seededOn": ["hr", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "enrollments.complete",
+      "guard": "sanctum",
+      "seededOn": ["hr", "coach", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "enrollments.withdraw",
+      "guard": "sanctum",
+      "seededOn": ["hr", "coach", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "enrollments.withdraw.own",
+      "guard": "sanctum",
+      "description": "Guardians + adult athletes may withdraw themselves.",
+      "seededOn": ["athlete", "guardian"]
+    },
+    {
+      "name": "enrollments.expel",
+      "guard": "sanctum",
+      "description": "Disciplinary. HR + safeguarding_officer + admin only.",
+      "seededOn": ["hr", "safeguarding_officer", "admin", "owner"]
+    },
+    {
+      "name": "enrollments.waitlist",
+      "guard": "sanctum",
+      "seededOn": ["hr", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "enrollments.promote-from-waitlist",
+      "guard": "sanctum",
+      "seededOn": ["hr", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "enrollments.assign-position",
+      "guard": "sanctum",
+      "seededOn": ["coach", "hr", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "enrollments.assign-jersey",
+      "guard": "sanctum",
+      "seededOn": ["coach", "reception", "hr", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "enrollments.audit.atomicity",
+      "guard": "sanctum",
+      "description": "Read the EnrollmentAtomicityFailed audit trail — compliance-critical.",
+      "seededOn": ["hr", "safeguarding_officer", "owner"]
+    },
 
-    { "name": "platform.enrollments.viewAny", "guard": "platform_admin", "seededOn": ["super_admin", "ops", "support"] },
-    { "name": "platform.enrollments.view", "guard": "platform_admin", "seededOn": ["super_admin", "ops", "support"] },
-    { "name": "platform.enrollments.audit-atomicity", "guard": "platform_admin", "description": "Cross-tenant atomicity-failure audit. Super_admin only.", "seededOn": ["super_admin"] }
+    {
+      "name": "platform.enrollments.viewAny",
+      "guard": "platform_admin",
+      "seededOn": ["super_admin", "ops", "support"]
+    },
+    {
+      "name": "platform.enrollments.view",
+      "guard": "platform_admin",
+      "seededOn": ["super_admin", "ops", "support"]
+    },
+    {
+      "name": "platform.enrollments.audit-atomicity",
+      "guard": "platform_admin",
+      "description": "Cross-tenant atomicity-failure audit. Super_admin only.",
+      "seededOn": ["super_admin"]
+    }
   ]
 }

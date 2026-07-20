@@ -10,11 +10,11 @@
  *   `@stackra/notifications` (`PUSH_SUBSCRIPTION_MANAGER`).
  */
 
-import 'reflect-metadata';
+import "reflect-metadata";
 
-export { PushModule } from './push.module';
-export { WebPushAdapter } from './adapters';
-export { WebNotificationChannelDriver } from './channels';
-export { WEB_PUSH_CONFIG } from './constants';
-export { urlB64ToUint8Array } from './utils';
-export type { IWebPushConfig, IWebPushSubscription } from './interfaces';
+export { PushModule } from "./push.module";
+export { WebPushAdapter } from "./adapters";
+export { WebNotificationChannelDriver } from "./channels";
+export { WEB_PUSH_CONFIG } from "./constants";
+export { urlB64ToUint8Array } from "./utils";
+export type { IWebPushConfig, IWebPushSubscription } from "./interfaces";

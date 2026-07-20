@@ -58,8 +58,14 @@
             },
             {
               "kind": "Button",
-              "props": { "variant": "primary", "leadingIcon": "plus", "children": "Provision service account" },
-              "actions": { "onPress": { "kind": "navigate", "to": "/platform/service-accounts/create" } },
+              "props": {
+                "variant": "primary",
+                "leadingIcon": "plus",
+                "children": "Provision service account"
+              },
+              "actions": {
+                "onPress": { "kind": "navigate", "to": "/platform/service-accounts/create" }
+              },
               "requiresPermission": "platform.service_accounts.create"
             }
           ]
@@ -73,8 +79,16 @@
             },
             {
               "kind": "Select",
-              "props": { "name": "application_id", "placeholder": "All applications", "clearable": true },
-              "bindings": { "options": { "$expr": "applications.map(a => ({ key: a.id, label: a.slug + ' \u2014 ' + a.name }))" } }
+              "props": {
+                "name": "application_id",
+                "placeholder": "All applications",
+                "clearable": true
+              },
+              "bindings": {
+                "options": {
+                  "$expr": "applications.map(a => ({ key: a.id, label: a.slug + ' \u2014 ' + a.name }))"
+                }
+              }
             },
             {
               "kind": "Select",
@@ -94,9 +108,15 @@
                 { "key": "expired", "label": "Expired" }
               ]
             },
-            { "kind": "Toggle", "props": { "name": "expiring_soon", "label": "Expiring within 14 days" } },
+            {
+              "kind": "Toggle",
+              "props": { "name": "expiring_soon", "label": "Expiring within 14 days" }
+            },
             { "kind": "Toggle", "props": { "name": "dormant", "label": "Dormant (> 30 days)" } },
-            { "kind": "Toggle", "props": { "name": "include_deleted", "label": "Include soft-deleted" } }
+            {
+              "kind": "Toggle",
+              "props": { "name": "include_deleted", "label": "Include soft-deleted" }
+            }
           ]
         },
         {

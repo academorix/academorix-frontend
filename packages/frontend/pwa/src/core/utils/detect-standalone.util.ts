@@ -5,7 +5,7 @@
  *   as an installed PWA (standalone or TWA display mode).
  */
 
-import { detectDisplayMode } from './detect-display-mode.util';
+import { detectDisplayMode } from "./detect-display-mode.util";
 
 /**
  * Returns `true` when the current display mode is one of the
@@ -16,5 +16,5 @@ import { detectDisplayMode } from './detect-display-mode.util';
  */
 export function detectStandalone(): boolean {
   const mode = detectDisplayMode();
-  return mode === 'standalone' || mode === 'twa' || mode === 'fullscreen';
+  return mode === "standalone" || mode === "twa" || mode === "fullscreen";
 }

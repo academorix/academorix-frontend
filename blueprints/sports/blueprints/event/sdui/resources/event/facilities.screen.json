@@ -24,16 +24,29 @@
     {
       "kind": "PageHeader",
       "children": [
-        { "kind": "PageHeader.Title", "bindings": { "children": { "$expr": "'Facilities for ' + event.name" } } },
+        {
+          "kind": "PageHeader.Title",
+          "bindings": { "children": { "$expr": "'Facilities for ' + event.name" } }
+        },
         {
           "kind": "PageHeader.Actions",
           "children": [
             {
               "kind": "Button",
-              "props": { "variant": "solid", "leadingIcon": "plus-outline", "children": "Attach facility" },
+              "props": {
+                "variant": "solid",
+                "leadingIcon": "plus-outline",
+                "children": "Attach facility"
+              },
               "bindings": {
-                "onPress": { "$action": "modal.open", "modalId": "event.attach-facility", "propsExpr": "{ eventId: route.params.event }" },
-                "hidden": { "$expr": "!caller.can('events.facilities.attach') || (facilities.length >= 1 && !features.includes('sports_events.multi_facility'))" }
+                "onPress": {
+                  "$action": "modal.open",
+                  "modalId": "event.attach-facility",
+                  "propsExpr": "{ eventId: route.params.event }"
+                },
+                "hidden": {
+                  "$expr": "!caller.can('events.facilities.attach') || (facilities.length >= 1 && !features.includes('sports_events.multi_facility'))"
+                }
               }
             }
           ]
@@ -57,12 +70,33 @@
     },
     {
       "kind": "Table",
-      "bindings": { "items": { "$ref": "facilities" }, "hidden": { "$expr": "facilities.length === 0" } },
+      "bindings": {
+        "items": { "$ref": "facilities" },
+        "hidden": { "$expr": "facilities.length === 0" }
+      },
       "columns": [
-        { "kind": "TableColumn", "id": "facility_name", "header": "Facility", "cellExpr": "row.facility.name" },
-        { "kind": "TableColumn", "id": "facility_type", "header": "Type", "cellExpr": "row.facility.facility_type" },
+        {
+          "kind": "TableColumn",
+          "id": "facility_name",
+          "header": "Facility",
+          "cellExpr": "row.facility.name"
+        },
+        {
+          "kind": "TableColumn",
+          "id": "facility_type",
+          "header": "Type",
+          "cellExpr": "row.facility.facility_type"
+        },
         { "kind": "TableColumn", "id": "purpose", "header": "Purpose", "cellExpr": "row.purpose" },
-        { "kind": "TableColumn", "id": "is_primary", "header": "Primary", "cell": { "kind": "Chip", "propsExpr": "row.is_primary ? { variant: 'accent', size: 'sm', leadingIcon: 'star-solid', children: 'Primary' } : null" } },
+        {
+          "kind": "TableColumn",
+          "id": "is_primary",
+          "header": "Primary",
+          "cell": {
+            "kind": "Chip",
+            "propsExpr": "row.is_primary ? { variant: 'accent', size: 'sm', leadingIcon: 'star-solid', children: 'Primary' } : null"
+          }
+        },
         {
           "kind": "TableColumn",
           "id": "actions",
@@ -70,12 +104,32 @@
           "cell": {
             "kind": "Dropdown",
             "children": [
-              { "kind": "Dropdown.Trigger", "children": [{ "kind": "Button", "props": { "variant": "ghost", "size": "sm", "isIconOnly": true, "leadingIcon": "dots-vertical-outline", "aria-label": "Actions" } }] },
+              {
+                "kind": "Dropdown.Trigger",
+                "children": [
+                  {
+                    "kind": "Button",
+                    "props": {
+                      "variant": "ghost",
+                      "size": "sm",
+                      "isIconOnly": true,
+                      "leadingIcon": "dots-vertical-outline",
+                      "aria-label": "Actions"
+                    }
+                  }
+                ]
+              },
               {
                 "kind": "Dropdown.Menu",
                 "children": [
-                  { "kind": "Dropdown.Item", "propsExpr": "{ children: 'Set as primary', onPress: () => actions.post('/api/v1/events/' + route.params.event + '/facilities/' + row.id + '/set-primary'), hidden: row.is_primary || !caller.can('events.facilities.set_primary') }" },
-                  { "kind": "Dropdown.Item", "propsExpr": "{ children: 'Detach', danger: true, onPress: () => actions.delete('/api/v1/events/' + route.params.event + '/facilities/' + row.id), hidden: !caller.can('events.facilities.detach') }" }
+                  {
+                    "kind": "Dropdown.Item",
+                    "propsExpr": "{ children: 'Set as primary', onPress: () => actions.post('/api/v1/events/' + route.params.event + '/facilities/' + row.id + '/set-primary'), hidden: row.is_primary || !caller.can('events.facilities.set_primary') }"
+                  },
+                  {
+                    "kind": "Dropdown.Item",
+                    "propsExpr": "{ children: 'Detach', danger: true, onPress: () => actions.delete('/api/v1/events/' + route.params.event + '/facilities/' + row.id), hidden: !caller.can('events.facilities.detach') }"
+                  }
                 ]
               }
             ]

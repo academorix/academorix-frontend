@@ -4,7 +4,7 @@
  * @description Typed identity for authoring monitoring config in a file.
  */
 
-import type { IMonitoringModuleOptions } from '../interfaces';
+import type { IMonitoringModuleOptions } from "../interfaces";
 
 /**
  * Type-safe identity for a monitoring configuration object.

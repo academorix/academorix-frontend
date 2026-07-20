@@ -6,53 +6,234 @@
   "isSystem": true,
   "description": "Two audiences. Tenant plane (sanctum) — coach profile / assignment / certification / rating CRUD by admin + HR + branch_manager + coach-self via .own scope. Platform plane (platform_admin) — cross-tenant read for support tooling with PII + hourly-rate redacted.",
   "permissions": [
-    { "name": "coaching_profiles.viewAny", "guard": "sanctum", "seededOn": ["hr", "coach", "branch_manager", "admin", "owner"] },
-    { "name": "coaching_profiles.viewAny.own", "guard": "sanctum", "description": "Coach-scoped listing — narrows to the profile linked to the caller's Staff row.", "seededOn": ["coach"] },
-    { "name": "coaching_profiles.view", "guard": "sanctum", "seededOn": ["hr", "coach", "branch_manager", "admin", "owner"] },
-    { "name": "coaching_profiles.view.own", "guard": "sanctum", "description": "Self-view for the coach on their own profile.", "seededOn": ["coach"] },
-    { "name": "coaching_profiles.view.rate", "guard": "sanctum", "description": "View hourly_rate_cents + rate_currency. Distinct permission — regulated_financial-tier.", "seededOn": ["hr", "admin", "owner"] },
-    { "name": "coaching_profiles.view.pii", "guard": "sanctum", "description": "View bio + photo_url_signed at full resolution. Coaches see their own; admins see all.", "seededOn": ["hr", "coach", "admin", "owner"] },
-    { "name": "coaching_profiles.create", "guard": "sanctum", "description": "Elevate a Staff row to Coach.", "seededOn": ["hr", "branch_manager", "admin", "owner"] },
-    { "name": "coaching_profiles.update", "guard": "sanctum", "description": "Update profile fields (primary_sport, specializations, availability). Excludes hourly_rate (dedicated permission) + verified_by_admin_at (dedicated /verify route).", "seededOn": ["hr", "branch_manager", "admin", "owner"] },
-    { "name": "coaching_profiles.update.own", "guard": "sanctum", "description": "Coach updates their own bio, availability, is_accepting_new_athletes, photo_url_signed. Rate + verification remain admin-only.", "seededOn": ["coach"] },
-    { "name": "coaching_profiles.update.rate", "guard": "sanctum", "description": "Update hourly_rate_cents + rate_currency. Regulated_financial-tier permission.", "seededOn": ["hr", "admin", "owner"] },
-    { "name": "coaching_profiles.delete", "guard": "sanctum", "description": "Soft-delete the coaching profile. Coach remains as Staff.", "seededOn": ["hr", "admin", "owner"] },
-    { "name": "coaching_profiles.verify", "guard": "sanctum", "description": "Admin verifies a coaching profile. Sets verified_by_admin_at.", "seededOn": ["hr", "admin", "owner"] },
-    { "name": "coaching_profiles.deactivate", "guard": "sanctum", "description": "Flip is_active=false. Cascades to open assignments.", "seededOn": ["hr", "admin", "owner"] },
-    { "name": "coaching_profiles.reactivate", "guard": "sanctum", "description": "Flip is_active=true (re-verification required).", "seededOn": ["hr", "admin", "owner"] },
-    { "name": "coaching_profiles.export.own", "guard": "sanctum", "description": "Coach export their own record (CCPA compliance).", "seededOn": ["coach"] },
+    {
+      "name": "coaching_profiles.viewAny",
+      "guard": "sanctum",
+      "seededOn": ["hr", "coach", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "coaching_profiles.viewAny.own",
+      "guard": "sanctum",
+      "description": "Coach-scoped listing — narrows to the profile linked to the caller's Staff row.",
+      "seededOn": ["coach"]
+    },
+    {
+      "name": "coaching_profiles.view",
+      "guard": "sanctum",
+      "seededOn": ["hr", "coach", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "coaching_profiles.view.own",
+      "guard": "sanctum",
+      "description": "Self-view for the coach on their own profile.",
+      "seededOn": ["coach"]
+    },
+    {
+      "name": "coaching_profiles.view.rate",
+      "guard": "sanctum",
+      "description": "View hourly_rate_cents + rate_currency. Distinct permission — regulated_financial-tier.",
+      "seededOn": ["hr", "admin", "owner"]
+    },
+    {
+      "name": "coaching_profiles.view.pii",
+      "guard": "sanctum",
+      "description": "View bio + photo_url_signed at full resolution. Coaches see their own; admins see all.",
+      "seededOn": ["hr", "coach", "admin", "owner"]
+    },
+    {
+      "name": "coaching_profiles.create",
+      "guard": "sanctum",
+      "description": "Elevate a Staff row to Coach.",
+      "seededOn": ["hr", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "coaching_profiles.update",
+      "guard": "sanctum",
+      "description": "Update profile fields (primary_sport, specializations, availability). Excludes hourly_rate (dedicated permission) + verified_by_admin_at (dedicated /verify route).",
+      "seededOn": ["hr", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "coaching_profiles.update.own",
+      "guard": "sanctum",
+      "description": "Coach updates their own bio, availability, is_accepting_new_athletes, photo_url_signed. Rate + verification remain admin-only.",
+      "seededOn": ["coach"]
+    },
+    {
+      "name": "coaching_profiles.update.rate",
+      "guard": "sanctum",
+      "description": "Update hourly_rate_cents + rate_currency. Regulated_financial-tier permission.",
+      "seededOn": ["hr", "admin", "owner"]
+    },
+    {
+      "name": "coaching_profiles.delete",
+      "guard": "sanctum",
+      "description": "Soft-delete the coaching profile. Coach remains as Staff.",
+      "seededOn": ["hr", "admin", "owner"]
+    },
+    {
+      "name": "coaching_profiles.verify",
+      "guard": "sanctum",
+      "description": "Admin verifies a coaching profile. Sets verified_by_admin_at.",
+      "seededOn": ["hr", "admin", "owner"]
+    },
+    {
+      "name": "coaching_profiles.deactivate",
+      "guard": "sanctum",
+      "description": "Flip is_active=false. Cascades to open assignments.",
+      "seededOn": ["hr", "admin", "owner"]
+    },
+    {
+      "name": "coaching_profiles.reactivate",
+      "guard": "sanctum",
+      "description": "Flip is_active=true (re-verification required).",
+      "seededOn": ["hr", "admin", "owner"]
+    },
+    {
+      "name": "coaching_profiles.export.own",
+      "guard": "sanctum",
+      "description": "Coach export their own record (CCPA compliance).",
+      "seededOn": ["coach"]
+    },
 
-    { "name": "coach_assignments.viewAny", "guard": "sanctum", "seededOn": ["hr", "coach", "branch_manager", "admin", "owner"] },
-    { "name": "coach_assignments.viewAny.own", "guard": "sanctum", "description": "Coach-scoped listing — narrows to assignments on the caller's coaching_profile.", "seededOn": ["coach"] },
-    { "name": "coach_assignments.view", "guard": "sanctum", "seededOn": ["hr", "coach", "branch_manager", "admin", "owner"] },
+    {
+      "name": "coach_assignments.viewAny",
+      "guard": "sanctum",
+      "seededOn": ["hr", "coach", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "coach_assignments.viewAny.own",
+      "guard": "sanctum",
+      "description": "Coach-scoped listing — narrows to assignments on the caller's coaching_profile.",
+      "seededOn": ["coach"]
+    },
+    {
+      "name": "coach_assignments.view",
+      "guard": "sanctum",
+      "seededOn": ["hr", "coach", "branch_manager", "admin", "owner"]
+    },
     { "name": "coach_assignments.view.own", "guard": "sanctum", "seededOn": ["coach"] },
-    { "name": "coach_assignments.create", "guard": "sanctum", "description": "Create a CoachAssignment.", "seededOn": ["hr", "branch_manager", "admin", "owner"] },
-    { "name": "coach_assignments.update", "guard": "sanctum", "seededOn": ["hr", "branch_manager", "admin", "owner"] },
-    { "name": "coach_assignments.delete", "guard": "sanctum", "description": "Cancel an assignment (soft-delete).", "seededOn": ["hr", "admin", "owner"] },
-    { "name": "coach_assignments.end", "guard": "sanctum", "description": "Set end_date on an active assignment.", "seededOn": ["hr", "branch_manager", "admin", "owner"] },
+    {
+      "name": "coach_assignments.create",
+      "guard": "sanctum",
+      "description": "Create a CoachAssignment.",
+      "seededOn": ["hr", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "coach_assignments.update",
+      "guard": "sanctum",
+      "seededOn": ["hr", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "coach_assignments.delete",
+      "guard": "sanctum",
+      "description": "Cancel an assignment (soft-delete).",
+      "seededOn": ["hr", "admin", "owner"]
+    },
+    {
+      "name": "coach_assignments.end",
+      "guard": "sanctum",
+      "description": "Set end_date on an active assignment.",
+      "seededOn": ["hr", "branch_manager", "admin", "owner"]
+    },
 
-    { "name": "coach_certifications.viewAny", "guard": "sanctum", "seededOn": ["hr", "coach", "branch_manager", "admin", "owner"] },
+    {
+      "name": "coach_certifications.viewAny",
+      "guard": "sanctum",
+      "seededOn": ["hr", "coach", "branch_manager", "admin", "owner"]
+    },
     { "name": "coach_certifications.viewAny.own", "guard": "sanctum", "seededOn": ["coach"] },
-    { "name": "coach_certifications.view", "guard": "sanctum", "seededOn": ["hr", "coach", "branch_manager", "admin", "owner"] },
+    {
+      "name": "coach_certifications.view",
+      "guard": "sanctum",
+      "seededOn": ["hr", "coach", "branch_manager", "admin", "owner"]
+    },
     { "name": "coach_certifications.view.own", "guard": "sanctum", "seededOn": ["coach"] },
-    { "name": "coach_certifications.create", "guard": "sanctum", "seededOn": ["hr", "coach", "branch_manager", "admin", "owner"] },
-    { "name": "coach_certifications.create.own", "guard": "sanctum", "description": "Coach captures their own certifications.", "seededOn": ["coach"] },
-    { "name": "coach_certifications.update", "guard": "sanctum", "seededOn": ["hr", "admin", "owner"] },
-    { "name": "coach_certifications.delete", "guard": "sanctum", "seededOn": ["hr", "admin", "owner"] },
-    { "name": "coach_certifications.verify", "guard": "sanctum", "description": "Admin verifies a certification.", "seededOn": ["hr", "admin", "owner"] },
-    { "name": "coach_certifications.expiring", "guard": "sanctum", "description": "Read expiring-cert compliance surface.", "seededOn": ["hr", "safeguarding_officer", "admin", "owner"] },
+    {
+      "name": "coach_certifications.create",
+      "guard": "sanctum",
+      "seededOn": ["hr", "coach", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "coach_certifications.create.own",
+      "guard": "sanctum",
+      "description": "Coach captures their own certifications.",
+      "seededOn": ["coach"]
+    },
+    {
+      "name": "coach_certifications.update",
+      "guard": "sanctum",
+      "seededOn": ["hr", "admin", "owner"]
+    },
+    {
+      "name": "coach_certifications.delete",
+      "guard": "sanctum",
+      "seededOn": ["hr", "admin", "owner"]
+    },
+    {
+      "name": "coach_certifications.verify",
+      "guard": "sanctum",
+      "description": "Admin verifies a certification.",
+      "seededOn": ["hr", "admin", "owner"]
+    },
+    {
+      "name": "coach_certifications.expiring",
+      "guard": "sanctum",
+      "description": "Read expiring-cert compliance surface.",
+      "seededOn": ["hr", "safeguarding_officer", "admin", "owner"]
+    },
 
-    { "name": "coach_skill_ratings.viewAny", "guard": "sanctum", "seededOn": ["hr", "coach", "branch_manager", "admin", "owner"] },
-    { "name": "coach_skill_ratings.viewAny.own", "guard": "sanctum", "description": "Coach sees ratings on themselves.", "seededOn": ["coach"] },
-    { "name": "coach_skill_ratings.view", "guard": "sanctum", "seededOn": ["hr", "coach", "branch_manager", "admin", "owner"] },
+    {
+      "name": "coach_skill_ratings.viewAny",
+      "guard": "sanctum",
+      "seededOn": ["hr", "coach", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "coach_skill_ratings.viewAny.own",
+      "guard": "sanctum",
+      "description": "Coach sees ratings on themselves.",
+      "seededOn": ["coach"]
+    },
+    {
+      "name": "coach_skill_ratings.view",
+      "guard": "sanctum",
+      "seededOn": ["hr", "coach", "branch_manager", "admin", "owner"]
+    },
     { "name": "coach_skill_ratings.view.own", "guard": "sanctum", "seededOn": ["coach"] },
-    { "name": "coach_skill_ratings.create", "guard": "sanctum", "description": "Record a rating on a coach. Self-rating refused at the observer.", "seededOn": ["hr", "branch_manager", "admin", "owner"] },
-    { "name": "coach_skill_ratings.update", "guard": "sanctum", "description": "Update an existing rating's value.", "seededOn": ["hr", "branch_manager", "admin", "owner"] },
-    { "name": "coach_skill_ratings.delete", "guard": "sanctum", "seededOn": ["hr", "admin", "owner"] },
+    {
+      "name": "coach_skill_ratings.create",
+      "guard": "sanctum",
+      "description": "Record a rating on a coach. Self-rating refused at the observer.",
+      "seededOn": ["hr", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "coach_skill_ratings.update",
+      "guard": "sanctum",
+      "description": "Update an existing rating's value.",
+      "seededOn": ["hr", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "coach_skill_ratings.delete",
+      "guard": "sanctum",
+      "seededOn": ["hr", "admin", "owner"]
+    },
 
-    { "name": "coaches.report", "guard": "sanctum", "description": "Generate per-branch roster reports.", "seededOn": ["hr", "branch_manager", "admin", "owner"] },
+    {
+      "name": "coaches.report",
+      "guard": "sanctum",
+      "description": "Generate per-branch roster reports.",
+      "seededOn": ["hr", "branch_manager", "admin", "owner"]
+    },
 
-    { "name": "platform.coaching_profiles.viewAny", "guard": "platform_admin", "seededOn": ["super_admin", "ops", "support"] },
-    { "name": "platform.coaching_profiles.view", "guard": "platform_admin", "seededOn": ["super_admin", "ops", "support"], "description": "PII + hourly-rate always redacted on platform reads." }
+    {
+      "name": "platform.coaching_profiles.viewAny",
+      "guard": "platform_admin",
+      "seededOn": ["super_admin", "ops", "support"]
+    },
+    {
+      "name": "platform.coaching_profiles.view",
+      "guard": "platform_admin",
+      "seededOn": ["super_admin", "ops", "support"],
+      "description": "PII + hourly-rate always redacted on platform reads."
+    }
   ]
 }

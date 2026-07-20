@@ -9,7 +9,12 @@
   "resource": { "module": "staff", "entity": "staff", "action": "update" },
   "requiresPermission": "staff.update",
   "dataSources": [
-    { "name": "staff", "kind": "http.get", "urlExpr": "'/api/v1/staff/' + params.staffId", "unwrap": "data" },
+    {
+      "name": "staff",
+      "kind": "http.get",
+      "urlExpr": "'/api/v1/staff/' + params.staffId",
+      "unwrap": "data"
+    },
     { "name": "positions_catalog", "kind": "static", "src": "staff::data/position-catalog.json" }
   ],
   "nodes": [
@@ -54,16 +59,28 @@
                 {
                   "kind": "Button",
                   "props": { "variant": "ghost", "children": "Compensation" },
-                  "actions": { "onPress": { "kind": "navigate", "toExpr": "'/tenant/staff/' + params.staffId + '/compensation'" } },
+                  "actions": {
+                    "onPress": {
+                      "kind": "navigate",
+                      "toExpr": "'/tenant/staff/' + params.staffId + '/compensation'"
+                    }
+                  },
                   "requiresPermission": "staff.view.compensation"
                 },
                 {
                   "kind": "Button",
                   "props": { "variant": "danger", "children": "Offboard" },
-                  "actions": { "onPress": { "kind": "navigate", "toExpr": "'/tenant/staff/' + params.staffId + '/offboard'" } },
+                  "actions": {
+                    "onPress": {
+                      "kind": "navigate",
+                      "toExpr": "'/tenant/staff/' + params.staffId + '/offboard'"
+                    }
+                  },
                   "requiresPermission": "staff.offboard",
                   "bindings": {
-                    "hidden": { "$expr": "['offboarding', 'offboarded'].includes(staff.employment_status)" }
+                    "hidden": {
+                      "$expr": "['offboarding', 'offboarded'].includes(staff.employment_status)"
+                    }
                   }
                 }
               ]
@@ -76,7 +93,12 @@
           "children": [
             {
               "kind": "ComboBox",
-              "props": { "name": "position", "label": "Position", "menuTrigger": "input", "allowCustomValue": true },
+              "props": {
+                "name": "position",
+                "label": "Position",
+                "menuTrigger": "input",
+                "allowCustomValue": true
+              },
               "bindings": { "items": { "$ref": "positions_catalog.positions" } }
             },
             {
@@ -85,7 +107,13 @@
             },
             {
               "kind": "TextField",
-              "props": { "name": "weekly_hours", "type": "number", "label": "Weekly hours", "min": 0, "max": 168 }
+              "props": {
+                "name": "weekly_hours",
+                "type": "number",
+                "label": "Weekly hours",
+                "min": 0,
+                "max": 168
+              }
             },
             {
               "kind": "TextField",
@@ -115,7 +143,9 @@
             {
               "kind": "Button",
               "props": { "variant": "ghost", "children": "Cancel" },
-              "actions": { "onPress": { "kind": "navigate", "toExpr": "'/tenant/staff/' + params.staffId" } }
+              "actions": {
+                "onPress": { "kind": "navigate", "toExpr": "'/tenant/staff/' + params.staffId" }
+              }
             },
             {
               "kind": "Button",

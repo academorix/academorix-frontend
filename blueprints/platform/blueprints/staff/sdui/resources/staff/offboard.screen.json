@@ -9,8 +9,18 @@
   "resource": { "module": "staff", "entity": "staff", "action": "offboard" },
   "requiresPermission": "staff.offboard",
   "dataSources": [
-    { "name": "staff", "kind": "http.get", "urlExpr": "'/api/v1/staff/' + params.staffId", "unwrap": "data" },
-    { "name": "coach", "kind": "http.get", "urlExpr": "'/api/v1/coaches?filter[staff_id]=' + params.staffId", "unwrap": "data" }
+    {
+      "name": "staff",
+      "kind": "http.get",
+      "urlExpr": "'/api/v1/staff/' + params.staffId",
+      "unwrap": "data"
+    },
+    {
+      "name": "coach",
+      "kind": "http.get",
+      "urlExpr": "'/api/v1/coaches?filter[staff_id]=' + params.staffId",
+      "unwrap": "data"
+    }
   ],
   "nodes": [
     {
@@ -45,7 +55,12 @@
           "children": [
             {
               "kind": "ComboBox",
-              "props": { "name": "termination_reason", "label": "Termination reason", "required": true, "menuTrigger": "focus" },
+              "props": {
+                "name": "termination_reason",
+                "label": "Termination reason",
+                "required": true,
+                "menuTrigger": "focus"
+              },
               "props_items": [
                 { "id": "resigned", "label": "Resigned (voluntary)" },
                 { "id": "terminated", "label": "Terminated (involuntary)" },
@@ -57,7 +72,11 @@
             },
             {
               "kind": "TextArea",
-              "props": { "name": "termination_notes", "label": "Termination notes (HR-visible)", "rows": 3 }
+              "props": {
+                "name": "termination_notes",
+                "label": "Termination notes (HR-visible)",
+                "rows": 3
+              }
             },
             {
               "kind": "DatePicker",
@@ -69,7 +88,10 @@
               "children": [
                 {
                   "kind": "Text",
-                  "props": { "className": "text-sm font-medium mb-2", "children": "Cascade options" }
+                  "props": {
+                    "className": "text-sm font-medium mb-2",
+                    "children": "Cascade options"
+                  }
                 },
                 {
                   "kind": "Switch",
@@ -87,7 +109,10 @@
                     "hidden": { "$expr": "!coach || coach.length === 0" }
                   },
                   "children": [
-                    { "kind": "Text", "props": { "children": "This staff has a linked coach profile." } }
+                    {
+                      "kind": "Text",
+                      "props": { "children": "This staff has a linked coach profile." }
+                    }
                   ]
                 }
               ]
@@ -101,7 +126,9 @@
             {
               "kind": "Button",
               "props": { "variant": "ghost", "children": "Cancel" },
-              "actions": { "onPress": { "kind": "navigate", "toExpr": "'/tenant/staff/' + params.staffId" } }
+              "actions": {
+                "onPress": { "kind": "navigate", "toExpr": "'/tenant/staff/' + params.staffId" }
+              }
             },
             {
               "kind": "Button",

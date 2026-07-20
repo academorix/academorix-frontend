@@ -4,11 +4,11 @@
  * @description Native mirror of `useDevtoolsFrameState`.
  */
 
-import { useCallback, useSyncExternalStore } from 'react';
-import { useInject } from '@stackra/container/react';
+import { useCallback, useSyncExternalStore } from "react";
+import { useInject } from "@stackra/container/react";
 
-import type { IDevtoolsFrameState } from '@/core/interfaces';
-import { DevtoolsFrameStateService } from '@/core/services';
+import type { IDevtoolsFrameState } from "@/core/interfaces";
+import { DevtoolsFrameStateService } from "@/core/services";
 
 /** Result returned by {@link useNativeDevtoolsFrameState}. */
 export interface IUseNativeDevtoolsFrameStateResult {
@@ -25,13 +25,13 @@ export function useNativeDevtoolsFrameState(): IUseNativeDevtoolsFrameStateResul
   const frameState = useInject(DevtoolsFrameStateService);
   const subscribe = useCallback(
     (listener: () => void) => frameState.subscribe(listener),
-    [frameState]
+    [frameState],
   );
   const getSnapshot = useCallback(() => frameState.getSnapshot(), [frameState]);
   const state = useSyncExternalStore(subscribe, getSnapshot, getSnapshot);
   const update = useCallback(
     (partial: Partial<IDevtoolsFrameState>) => frameState.update(partial),
-    [frameState]
+    [frameState],
   );
   return { state, update };
 }

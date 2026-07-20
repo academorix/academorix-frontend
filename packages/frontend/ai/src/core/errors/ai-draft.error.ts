@@ -5,7 +5,7 @@
  *   remains pending on the client so the user can retry.
  */
 
-import { AiError } from './ai.error';
+import { AiError } from "./ai.error";
 
 /**
  * Thrown by `DraftService.confirm` when the backend rejects the confirm.
@@ -22,7 +22,7 @@ export class AiDraftError extends AiError {
   public constructor(
     message: string,
     public readonly draftId: string,
-    cause?: unknown
+    cause?: unknown,
   ) {
     super(message, cause);
   }

@@ -12,9 +12,7 @@
         "referrals::ReferralCode (required referral_program_id)",
         "referrals::Referral (required referral_program_id)"
       ],
-      "composition_notes": [
-        "Order: BelongsToTenant must appear BEFORE BelongsToReferralProgram."
-      ]
+      "composition_notes": ["Order: BelongsToTenant must appear BEFORE BelongsToReferralProgram."]
     },
     {
       "trait": "Academorix\\Growth\\Referrals\\Concerns\\BelongsToReferral",
@@ -66,16 +64,28 @@
       { "trait": "Academorix\\Foundation\\Concerns\\HasMetadata" },
       { "trait": "Academorix\\Foundation\\Concerns\\Filterable" },
       { "trait": "Academorix\\Foundation\\Concerns\\Searchable" },
-      { "trait": "Academorix\\Foundation\\Concerns\\HasSlug", "reason": "ReferralProgram only — unique per (tenant_id)." }
+      {
+        "trait": "Academorix\\Foundation\\Concerns\\HasSlug",
+        "reason": "ReferralProgram only — unique per (tenant_id)."
+      }
     ],
     "tenants": [
-      { "trait": "Academorix\\Tenancy\\Concerns\\BelongsToTenant", "reason": "Every owned row carries tenant_id per tenancy-columns.md §3." }
+      {
+        "trait": "Academorix\\Tenancy\\Concerns\\BelongsToTenant",
+        "reason": "Every owned row carries tenant_id per tenancy-columns.md §3."
+      }
     ],
     "audit": [
-      { "trait": "Academorix\\Audit\\Concerns\\Auditable", "reason": "Every write is compliance-relevant (financial-record 7-year retention)." }
+      {
+        "trait": "Academorix\\Audit\\Concerns\\Auditable",
+        "reason": "Every write is compliance-relevant (financial-record 7-year retention)."
+      }
     ],
     "activity": [
-      { "trait": "Academorix\\Activity\\Concerns\\HasActivityLog", "reason": "Referral + ReferralReward lifecycle transitions feed the staff-visible activity feed. NOT on ReferralFraudFlag (high volume + already surfaces via ReferralFraudDetected event)." }
+      {
+        "trait": "Academorix\\Activity\\Concerns\\HasActivityLog",
+        "reason": "Referral + ReferralReward lifecycle transitions feed the staff-visible activity feed. NOT on ReferralFraudFlag (high volume + already surfaces via ReferralFraudDetected event)."
+      }
     ]
   },
   "composition": {

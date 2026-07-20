@@ -73,7 +73,6 @@ export class MakeCommandCommand extends BaseCommand {
     let description = this.option<string>("description");
     const force = this.option<boolean>("force") ?? false;
     const outputPath = this.option<string>("path") ?? "src/commands";
-    const out = this.output as any;
 
     // Prompt for description if not provided
     if (!description) {
@@ -131,7 +130,7 @@ export class MakeCommandCommand extends BaseCommand {
     writeFileSync(filePath, content, "utf-8");
 
     this.output.success(`Command created: ${filePath}`);
-    out.pairs({
+    this.output.pairs({
       Name: name,
       Class: className,
       File: fileName,

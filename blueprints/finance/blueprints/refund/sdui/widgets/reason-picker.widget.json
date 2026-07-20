@@ -5,8 +5,16 @@
   "kind": "SduiWidget",
   "description": "ComboBox for selecting refund reason with audience-based filtering — customer path shows customer-allowed set only (4 reasons); admin shows the full set (10 reasons). Displays reason display_name + tooltip with regulator relevance. Loads options from data/reason-catalog.json at build time.",
   "props": {
-    "audience": { "type": "string", "required": true, "enum": ["customer", "admin"], "description": "Filters which reasons appear. customer = customer-allowed set (4); admin = full set (10)." },
-    "value": { "type": ["string", "null"], "description": "Selected reason. Bound by the parent form." },
+    "audience": {
+      "type": "string",
+      "required": true,
+      "enum": ["customer", "admin"],
+      "description": "Filters which reasons appear. customer = customer-allowed set (4); admin = full set (10)."
+    },
+    "value": {
+      "type": ["string", "null"],
+      "description": "Selected reason. Bound by the parent form."
+    },
     "label": { "type": "string", "default": "Reason" },
     "placeholder": { "type": "string", "default": "Choose why you're requesting a refund..." },
     "menuTrigger": { "type": "string", "default": "focus" }

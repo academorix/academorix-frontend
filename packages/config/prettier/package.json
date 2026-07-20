@@ -1,0 +1,26 @@
+{
+  "name": "@academorix/config-prettier",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Shared Prettier configuration preset for the academorix-frontend monorepo. Exports a canonical Prettier config with Tailwind v4 plugin wiring.",
+  "license": "MIT",
+  "type": "module",
+  "main": "./index.mjs",
+  "exports": {
+    ".": "./index.mjs"
+  },
+  "files": [
+    "index.mjs",
+    "README.md"
+  ],
+  "scripts": {
+    "lint": "echo 'Config only - no lint'",
+    "typecheck": "echo 'No TS sources'",
+    "test": "echo 'No tests'",
+    "build": "echo 'Static - nothing to build'"
+  },
+  "peerDependencies": {
+    "prettier": "catalog:",
+    "prettier-plugin-tailwindcss": "catalog:"
+  }
+}

@@ -9,7 +9,7 @@
  *   Does NOT support named days/months (use numbers: 0=Sun, 1=Mon, etc.).
  */
 
-import type { ICronFields } from '@/core/interfaces';
+import type { ICronFields } from "@/core/interfaces";
 
 /**
  * @deprecated Use {@link ICronFields} from `@/core/interfaces` instead.
@@ -143,19 +143,19 @@ export function matchesCron(date: Date, fields: ICronFields): boolean {
 export function parseField(field: string, min: number, max: number): number[] {
   const values = new Set<number>();
 
-  const parts = field.split(',');
+  const parts = field.split(",");
   for (const part of parts) {
-    if (part === '*') {
+    if (part === "*") {
       for (let i = min; i <= max; i++) values.add(i);
-    } else if (part.includes('/')) {
-      const [range, stepStr] = part.split('/');
+    } else if (part.includes("/")) {
+      const [range, stepStr] = part.split("/");
       const step = parseInt(stepStr!, 10);
       let start = min;
       let end = max;
 
-      if (range !== '*') {
-        if (range!.includes('-')) {
-          const [s, e] = range!.split('-');
+      if (range !== "*") {
+        if (range!.includes("-")) {
+          const [s, e] = range!.split("-");
           start = parseInt(s!, 10);
           end = parseInt(e!, 10);
         } else {
@@ -166,8 +166,8 @@ export function parseField(field: string, min: number, max: number): number[] {
       for (let i = start; i <= end; i += step) {
         values.add(i);
       }
-    } else if (part.includes('-')) {
-      const [s, e] = part.split('-');
+    } else if (part.includes("-")) {
+      const [s, e] = part.split("-");
       const start = parseInt(s!, 10);
       const end = parseInt(e!, 10);
       for (let i = start; i <= end; i++) values.add(i);

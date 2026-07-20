@@ -1,29 +1,9 @@
 /**
- * @see https://prettier.io/docs/configuration
- * @type {import("prettier").Config}
+ * Root Prettier config — thin re-exporter.
+ *
+ * The canonical config lives in `@academorix/config-prettier`. Every
+ * per-package prettier.config.mjs (if it exists) does the same.
+ *
+ * @see packages/config/prettier/index.mjs
  */
-export default {
-  semi: true,
-  singleQuote: false,
-  trailingComma: "all",
-  printWidth: 100,
-  tabWidth: 2,
-  useTabs: false,
-  arrowParens: "always",
-  endOfLine: "lf",
-  bracketSpacing: true,
-  bracketSameLine: false,
-  plugins: ["prettier-plugin-tailwindcss"],
-  // Tailwind v4 resolves its theme from the CSS entrypoint (not a JS config).
-  tailwindStylesheet: "./apps/dashboard/src/styles/globals.css",
-  overrides: [
-    {
-      files: ["*.json", "*.jsonc"],
-      options: { trailingComma: "none" },
-    },
-    {
-      files: ["*.md"],
-      options: { proseWrap: "always", printWidth: 80 },
-    },
-  ],
-};
+export { default } from "@academorix/config-prettier";

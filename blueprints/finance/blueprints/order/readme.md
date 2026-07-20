@@ -5,10 +5,10 @@ that composes multiple line items (products, memberships, passes, coupons) with
 totals, adjustments, and split-payment resolution.
 
 Per DL-2 (tasks.md): Orders reference `finance/wallet` (for credit/points
-application), `finance/coupon` (for discount codes), `finance/invoice` (once
-the order commits and generates an invoice), and `finance/payment` (for the
-gateway charge). The Order is the source of truth for what the customer
-intended to buy — the Invoice mirrors what actually happened for accounting.
+application), `finance/coupon` (for discount codes), `finance/invoice` (once the
+order commits and generates an invoice), and `finance/payment` (for the gateway
+charge). The Order is the source of truth for what the customer intended to buy
+— the Invoice mirrors what actually happened for accounting.
 
 ## Owned tables
 

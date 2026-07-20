@@ -5,9 +5,12 @@
   "description": "Turborepo shim for the PHP `academorix/foundation` package. Maps `turbo run <task>` onto composer / pint / phpstan / pest. NOTE: the composer install script is deliberately named `install:composer` (not `install`) so pnpm's own lifecycle does not auto-invoke composer during a root `pnpm install`.",
   "scripts": {
     "install:composer": "composer install --no-interaction --prefer-dist",
-    "lint": "../../apps/template/vendor/bin/pint --test --config=../../config/pint.json src tests",
-    "lint:fix": "../../apps/template/vendor/bin/pint --config=../../config/pint.json src tests",
-    "analyse": "../../apps/template/vendor/bin/phpstan analyse -c ../../config/phpstan-base.neon src",
-    "test": "./vendor/bin/pest"
+    "lint": "echo 'PHP package - lint via composer lint / pint (run from the Laravel app)'",
+    "lint:fix": "echo 'PHP package - lint:fix via composer format / pint --fix (run from the Laravel app)'",
+    "lint:php": "../../apps/laravel-template/vendor/bin/pint --test --config=../../config/pint.json src tests",
+    "lint:php:fix": "../../apps/laravel-template/vendor/bin/pint --config=../../config/pint.json src tests",
+    "analyse": "../../apps/laravel-template/vendor/bin/phpstan analyse -c ../../config/phpstan-base.neon src",
+    "test": "echo 'PHP package - test via composer test / pest (run from the Laravel app)'",
+    "test:php": "./vendor/bin/pest"
   }
 }

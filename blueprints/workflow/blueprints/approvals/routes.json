@@ -176,7 +176,11 @@
           "returns": "PaginatedResource<ApprovalInstanceData>",
           "description": "List the caller's own submitted requests. Default filter: requester_id=caller.id (admin can drop with filter[requester_id]=*).",
           "queryParams": [
-            { "name": "filter[status]", "type": "string|string[]", "enum": ["pending", "approved", "rejected", "executed", "expired", "cancelled"] },
+            {
+              "name": "filter[status]",
+              "type": "string|string[]",
+              "enum": ["pending", "approved", "rejected", "executed", "expired", "cancelled"]
+            },
             { "name": "filter[action_key]", "type": "string" },
             { "name": "filter[requester_id]", "type": "string" },
             { "name": "filter[submitted_since]", "type": "date-time" },
@@ -191,7 +195,14 @@
           "action": "Academorix\\Approval\\Http\\Controllers\\Tenant\\ApprovalInstanceController@show",
           "policy": "ApprovalInstancePolicy@view",
           "returns": "ApprovalInstanceData",
-          "includes": ["requirements", "decisions", "requester", "final_decider", "template", "subject"]
+          "includes": [
+            "requirements",
+            "decisions",
+            "requester",
+            "final_decider",
+            "template",
+            "subject"
+          ]
         },
         {
           "method": "POST",
@@ -217,7 +228,13 @@
           "returns": "PaginatedResource<ApprovalInstanceData>",
           "description": "Approvers' inbox — instances where the caller is in resolved_approvers on at least one PENDING requirement. Backed by a JSONB containment query (`resolved_approvers @> to_jsonb(auth_user.id)`) using the GIN index on approval_requirements.resolved_approvers.",
           "queryParams": [
-            { "name": "filter[urgency]", "type": "string", "enum": ["all", "expiring_soon"], "default": "all", "description": "'expiring_soon' filters to instances with expires_at within 24h." },
+            {
+              "name": "filter[urgency]",
+              "type": "string",
+              "enum": ["all", "expiring_soon"],
+              "default": "all",
+              "description": "'expiring_soon' filters to instances with expires_at within 24h."
+            },
             { "name": "filter[action_key]", "type": "string" },
             { "name": "sort", "type": "string", "example": "expires_at" },
             { "name": "per_page", "type": "integer", "default": 25 }
@@ -291,7 +308,11 @@
             { "name": "filter[status]", "type": "string|string[]" },
             { "name": "filter[action_key]", "type": "string" },
             { "name": "filter[requester_id]", "type": "string" },
-            { "name": "filter[submitted_between]", "type": "string", "example": "2026-06-01,2026-07-01" }
+            {
+              "name": "filter[submitted_between]",
+              "type": "string",
+              "example": "2026-06-01,2026-07-01"
+            }
           ]
         },
         {
@@ -301,7 +322,16 @@
           "action": "Academorix\\Approval\\Http\\Controllers\\Platform\\ApprovalInstanceController@show",
           "policy": "ApprovalInstancePolicy@platformView",
           "returns": "ApprovalInstanceData",
-          "includes": ["requirements", "decisions", "requester", "final_decider", "template", "subject", "tenant", "application"]
+          "includes": [
+            "requirements",
+            "decisions",
+            "requester",
+            "final_decider",
+            "template",
+            "subject",
+            "tenant",
+            "application"
+          ]
         },
         {
           "method": "POST",

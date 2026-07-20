@@ -10,7 +10,7 @@ import type {
   IHttpConnector,
   IHttpInterceptorRegistry,
   IHttpMiddlewareRegistry,
-} from '@stackra/contracts';
+} from "@stackra/contracts";
 
 /**
  * Pre-bound dependencies handed to the client by the manager.

@@ -15,7 +15,7 @@
  */
 export interface INativePushToken {
   /** Platform identifier — matches `Platform.OS`. */
-  readonly platform: 'ios' | 'android' | 'web' | (string & {});
+  readonly platform: "ios" | "android" | "web" | (string & {});
   /** The push token itself — `ExponentPushToken[...]` on Expo. */
   readonly token: string;
   /** Optional stable device identifier. */

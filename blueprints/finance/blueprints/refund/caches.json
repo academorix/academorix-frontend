@@ -31,7 +31,10 @@
       "description": "Pending-approvals queue for a tenant. Feeds the SDUI pending-approvals screen + the tenant.{id}.refunds.pending-approvals broadcast channel's initial payload.",
       "ttlSeconds": 30,
       "tags": ["refunds", "refunds.pending_approvals"],
-      "invalidatedBy": ["RefundObserver.created (awaiting_approval)", "RefundObserver.updated (leaving awaiting_approval)"]
+      "invalidatedBy": [
+        "RefundObserver.created (awaiting_approval)",
+        "RefundObserver.updated (leaving awaiting_approval)"
+      ]
     },
     {
       "pattern": "rfd:customer-refunds:{tenant_id}:{customer_id}",
@@ -59,14 +62,21 @@
       "description": "List of user_ids holding refunds.approve permission for a tenant. Read by NotifyRefundApprovalRequiredJob to seed approver notifications. Invalidated on permission changes.",
       "ttlSeconds": 600,
       "tags": ["refunds"],
-      "invalidatedBy": ["user::RolePermissionChanged", "user::UserRoleAssigned", "user::UserRoleRevoked"]
+      "invalidatedBy": [
+        "user::RolePermissionChanged",
+        "user::UserRoleAssigned",
+        "user::UserRoleRevoked"
+      ]
     },
     {
       "pattern": "rfd:report:{tenant_id}:{period_key}",
       "description": "Cached refund-volume report response. period_key = period_start-period_end in ISO 8601. Powers the /reports/refund-volume endpoint's non-hot path.",
       "ttlSeconds": 3600,
       "tags": ["refunds", "refunds.reports"],
-      "invalidatedBy": ["hourly boundary (natural expiry)", "manual purge by admin (RefundReportController@invalidate)"]
+      "invalidatedBy": [
+        "hourly boundary (natural expiry)",
+        "manual purge by admin (RefundReportController@invalidate)"
+      ]
     },
     {
       "pattern": "rfd:reconcile:{provider}:{run_key}",

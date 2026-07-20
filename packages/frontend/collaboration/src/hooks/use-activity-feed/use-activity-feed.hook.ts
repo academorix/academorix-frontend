@@ -4,14 +4,14 @@
  * @category Hooks
  */
 
-import { useState, useEffect, useCallback } from 'react';
-import { useInject } from '@stackra/container/react';
-import { Str } from '@stackra/support';
+import { useState, useEffect, useCallback } from "react";
+import { useInject } from "@stackra/container/react";
+import { Str } from "@stackra/support";
 
-import type { ActivityEntry } from '@/types/activity-entry.type';
-import type { RoomMember } from '@/interfaces/room-member.interface';
-import { RoomManager } from '@/services/room-manager.service';
-import { COLLABORATION_EVENTS } from '@stackra/contracts';
+import type { ActivityEntry } from "@/types/activity-entry.type";
+import type { RoomMember } from "@/interfaces/room-member.interface";
+import { RoomManager } from "@/services/room-manager.service";
+import { COLLABORATION_EVENTS } from "@stackra/contracts";
 
 /** Maximum number of activity entries to keep in memory. */
 const MAX_ENTRIES = 50;
@@ -25,7 +25,7 @@ interface UseActivityFeedReturn {
   isLoading: boolean;
 
   /** Manually add an activity entry. */
-  addActivity: (entry: Omit<ActivityEntry, 'id' | 'timestamp'>) => void;
+  addActivity: (entry: Omit<ActivityEntry, "id" | "timestamp">) => void;
 }
 
 /**
@@ -62,7 +62,7 @@ export function useActivityFeed(roomId: string): UseActivityFeedReturn {
   const [activities, setActivities] = useState<ActivityEntry[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  const pushEntry = useCallback((entry: Omit<ActivityEntry, 'id' | 'timestamp'>) => {
+  const pushEntry = useCallback((entry: Omit<ActivityEntry, "id" | "timestamp">) => {
     const full: ActivityEntry = {
       ...entry,
       // `Str.uuid()` per the workspace support-utilities policy.
@@ -80,7 +80,7 @@ export function useActivityFeed(roomId: string): UseActivityFeedReturn {
 
     const unsubJoin = transport.onMemberJoin(roomId, (member: RoomMember) => {
       pushEntry({
-        type: 'join',
+        type: "join",
         userId: member.userId,
         userName: member.name,
         message: `${member.name} joined the room`,
@@ -89,7 +89,7 @@ export function useActivityFeed(roomId: string): UseActivityFeedReturn {
 
     const unsubLeave = transport.onMemberLeave(roomId, (member: RoomMember) => {
       pushEntry({
-        type: 'leave',
+        type: "leave",
         userId: member.userId,
         userName: member.name,
         message: `${member.name} left the room`,
@@ -98,7 +98,7 @@ export function useActivityFeed(roomId: string): UseActivityFeedReturn {
 
     const unsubState = transport.onStateChange(roomId, (_state: unknown, updatedBy: RoomMember) => {
       pushEntry({
-        type: 'state_change',
+        type: "state_change",
         userId: updatedBy.userId,
         userName: updatedBy.name,
         message: `${updatedBy.name} updated the shared state`,
@@ -110,12 +110,12 @@ export function useActivityFeed(roomId: string): UseActivityFeedReturn {
       COLLABORATION_EVENTS.THREAD_CREATE,
       (_data: unknown, sender: RoomMember) => {
         pushEntry({
-          type: 'thread_create',
+          type: "thread_create",
           userId: sender.userId,
           userName: sender.name,
           message: `${sender.name} started a new thread`,
         });
-      }
+      },
     );
 
     const unsubResolve = transport.onBroadcast(
@@ -123,12 +123,12 @@ export function useActivityFeed(roomId: string): UseActivityFeedReturn {
       COLLABORATION_EVENTS.THREAD_RESOLVE,
       (_data: unknown, sender: RoomMember) => {
         pushEntry({
-          type: 'thread_resolve',
+          type: "thread_resolve",
           userId: sender.userId,
           userName: sender.name,
           message: `${sender.name} resolved a thread`,
         });
-      }
+      },
     );
 
     return () => {

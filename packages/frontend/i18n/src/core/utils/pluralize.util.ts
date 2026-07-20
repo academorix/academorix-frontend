@@ -5,8 +5,8 @@
  *   Selects the correct plural form from a translation object based on count.
  */
 
-import type { I18nPluralObject } from '../interfaces';
-import { PLURAL_KEYS } from '../constants';
+import type { I18nPluralObject } from "../interfaces";
+import { PLURAL_KEYS } from "../constants";
 
 // ============================================================================
 // Cache
@@ -41,7 +41,7 @@ function getPluralRules(locale: string): Intl.PluralRules {
  * @returns The plural object if it contains plural keys, undefined otherwise
  */
 export function getPluralObject(translation: unknown): I18nPluralObject | undefined {
-  if (typeof translation !== 'object' || translation === null || Array.isArray(translation)) {
+  if (typeof translation !== "object" || translation === null || Array.isArray(translation)) {
     return undefined;
   }
 
@@ -69,7 +69,7 @@ export function getPluralObject(translation: unknown): I18nPluralObject | undefi
 export function selectPlural(
   pluralObject: I18nPluralObject,
   count: number,
-  locale: string
+  locale: string,
 ): string | undefined {
   // Explicit zero form
   if (count === 0 && pluralObject.zero) {

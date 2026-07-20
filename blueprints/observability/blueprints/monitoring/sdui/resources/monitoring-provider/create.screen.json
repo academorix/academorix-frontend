@@ -10,7 +10,13 @@
   "requiresPermission": "monitoring.providers.create",
   "requiresEntitlement": "monitoring_capture",
   "dataSources": [
-    { "name": "provider_capabilities", "kind": "http.get", "url": "/api/v1/monitoring/providers/capabilities", "unwrap": "data", "cache": { "ttlSeconds": 3600 } }
+    {
+      "name": "provider_capabilities",
+      "kind": "http.get",
+      "url": "/api/v1/monitoring/providers/capabilities",
+      "unwrap": "data",
+      "cache": { "ttlSeconds": 3600 }
+    }
   ],
   "nodes": [
     {
@@ -26,28 +32,44 @@
               "kind": "Select",
               "props": { "label": "Provider" },
               "bindings": { "options": { "$ref": "provider_capabilities" } },
-              "actions": { "onSelectionChange": { "kind": "form.set", "field": "provider", "valueExpr": "$selectedKey" } }
+              "actions": {
+                "onSelectionChange": {
+                  "kind": "form.set",
+                  "field": "provider",
+                  "valueExpr": "$selectedKey"
+                }
+              }
             },
             {
               "kind": "Input",
               "props": { "label": "Display name", "placeholder": "Primary PagerDuty" },
-              "actions": { "onChange": { "kind": "form.set", "field": "name", "valueExpr": "$value" } }
+              "actions": {
+                "onChange": { "kind": "form.set", "field": "name", "valueExpr": "$value" }
+              }
             }
           ]
         },
         {
           "kind": "Step",
-          "props": { "title": "Credentials", "description": "Enter your provider credentials. Encrypted at rest." },
+          "props": {
+            "title": "Credentials",
+            "description": "Enter your provider credentials. Encrypted at rest."
+          },
           "children": [
             {
               "kind": "DynamicForm",
-              "bindings": { "schema": { "$expr": "provider_capabilities[form.provider].config_schema" } }
+              "bindings": {
+                "schema": { "$expr": "provider_capabilities[form.provider].config_schema" }
+              }
             }
           ]
         },
         {
           "kind": "Step",
-          "props": { "title": "Severities", "description": "Which alert severities dispatch to this provider?" },
+          "props": {
+            "title": "Severities",
+            "description": "Which alert severities dispatch to this provider?"
+          },
           "children": [
             {
               "kind": "MultiSelect",
@@ -60,7 +82,13 @@
                   { "value": "p4", "label": "P4 — Info" }
                 ]
               },
-              "actions": { "onSelectionChange": { "kind": "form.set", "field": "enabled_severities", "valueExpr": "$selectedKeys" } }
+              "actions": {
+                "onSelectionChange": {
+                  "kind": "form.set",
+                  "field": "enabled_severities",
+                  "valueExpr": "$selectedKeys"
+                }
+              }
             }
           ]
         },
@@ -70,8 +98,13 @@
           "children": [
             {
               "kind": "Switch",
-              "props": { "label": "Enable test mode", "description": "Test-mode dispatches to the provider's sandbox endpoint." },
-              "actions": { "onChange": { "kind": "form.set", "field": "test_mode", "valueExpr": "$value" } }
+              "props": {
+                "label": "Enable test mode",
+                "description": "Test-mode dispatches to the provider's sandbox endpoint."
+              },
+              "actions": {
+                "onChange": { "kind": "form.set", "field": "test_mode", "valueExpr": "$value" }
+              }
             }
           ]
         },
@@ -95,7 +128,10 @@
                   "kind": "http.post",
                   "url": "/api/v1/monitoring/providers",
                   "body": "{{form}}",
-                  "onSuccess": { "kind": "navigate", "toExpr": "'/tenant/monitoring/providers/' + response.data.id + '/edit'" }
+                  "onSuccess": {
+                    "kind": "navigate",
+                    "toExpr": "'/tenant/monitoring/providers/' + response.data.id + '/edit'"
+                  }
                 }
               }
             }

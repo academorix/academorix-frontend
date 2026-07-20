@@ -25,7 +25,12 @@
     }
   ],
   "broadcasts": [
-    { "channel": "tenant.{tenantId}.refunds", "onEvent": ["*"], "filter": { "refund_id": "{refund}" }, "action": "refresh" }
+    {
+      "channel": "tenant.{tenantId}.refunds",
+      "onEvent": ["*"],
+      "filter": { "refund_id": "{refund}" },
+      "action": "refresh"
+    }
   ],
   "nodes": [
     {
@@ -74,7 +79,12 @@
             {
               "kind": "Button",
               "props": { "variant": "primary", "leadingIcon": "check", "children": "Approve" },
-              "actions": { "onPress": { "kind": "navigate", "toExpr": "'/tenant/refunds/' + refund.id + '/approve'" } },
+              "actions": {
+                "onPress": {
+                  "kind": "navigate",
+                  "toExpr": "'/tenant/refunds/' + refund.id + '/approve'"
+                }
+              },
               "bindings": {
                 "hidden": {
                   "$expr": "refund.status !== 'awaiting_approval' || refund.initiated_by_user_id === auth.user.id"
@@ -85,7 +95,12 @@
             {
               "kind": "Button",
               "props": { "variant": "danger", "leadingIcon": "x-mark", "children": "Reject" },
-              "actions": { "onPress": { "kind": "navigate", "toExpr": "'/tenant/refunds/' + refund.id + '/reject'" } },
+              "actions": {
+                "onPress": {
+                  "kind": "navigate",
+                  "toExpr": "'/tenant/refunds/' + refund.id + '/reject'"
+                }
+              },
               "bindings": {
                 "hidden": {
                   "$expr": "refund.status !== 'awaiting_approval' || refund.initiated_by_user_id === auth.user.id"
@@ -112,8 +127,17 @@
             },
             {
               "kind": "Button",
-              "props": { "variant": "outline", "leadingIcon": "wrench-screwdriver", "children": "Force fail" },
-              "actions": { "onPress": { "kind": "navigate", "toExpr": "'/tenant/refunds/' + refund.id + '/force-fail'" } },
+              "props": {
+                "variant": "outline",
+                "leadingIcon": "wrench-screwdriver",
+                "children": "Force fail"
+              },
+              "actions": {
+                "onPress": {
+                  "kind": "navigate",
+                  "toExpr": "'/tenant/refunds/' + refund.id + '/force-fail'"
+                }
+              },
               "bindings": {
                 "hidden": { "$expr": "refund.status !== 'provider_error'" }
               },
@@ -155,16 +179,33 @@
             },
             {
               "kind": "Tab",
-              "props": { "id": "lines", "label": "Refund lines", "hidden_when": "refund.refund_type === 'full'" },
+              "props": {
+                "id": "lines",
+                "label": "Refund lines",
+                "hidden_when": "refund.refund_type === 'full'"
+              },
               "children": [
                 {
                   "kind": "Table",
                   "bindings": {
                     "items": { "$ref": "refund_lines" },
                     "columns": [
-                      { "key": "invoice_line_id", "label": "Invoice line", "renderer": "monospace-truncate" },
-                      { "key": "amount_cents", "label": "Amount", "renderer": "currency", "params": { "currency": "row.currency" } },
-                      { "key": "proration_config", "label": "Proration", "renderer": "expandable-json" },
+                      {
+                        "key": "invoice_line_id",
+                        "label": "Invoice line",
+                        "renderer": "monospace-truncate"
+                      },
+                      {
+                        "key": "amount_cents",
+                        "label": "Amount",
+                        "renderer": "currency",
+                        "params": { "currency": "row.currency" }
+                      },
+                      {
+                        "key": "proration_config",
+                        "label": "Proration",
+                        "renderer": "expandable-json"
+                      },
                       { "key": "reason_note", "label": "Note" }
                     ]
                   }
@@ -182,8 +223,16 @@
             }
           },
           "children": [
-            { "kind": "Text", "props": { "className": "font-medium", "children": "Finalization pending" } },
-            { "kind": "Text", "props": { "children": "The credit note or offsetting transaction is still being created. Refresh in a minute or contact support if this persists." } }
+            {
+              "kind": "Text",
+              "props": { "className": "font-medium", "children": "Finalization pending" }
+            },
+            {
+              "kind": "Text",
+              "props": {
+                "children": "The credit note or offsetting transaction is still being created. Refresh in a minute or contact support if this persists."
+              }
+            }
           ]
         }
       ]

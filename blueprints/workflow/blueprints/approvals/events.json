@@ -209,10 +209,7 @@
       "trigger": "Quorum reached on one requirement (after ApprovalDecisionRecorded's quorum-recompute). Downstream requirements with next sort_order may unblock.",
       "dispatchMode": "afterCommit",
       "queue": "notifications",
-      "consumers": [
-        "activity::WriteToActivityLog",
-        "broadcast::PublishToApprovalChannels"
-      ],
+      "consumers": ["activity::WriteToActivityLog", "broadcast::PublishToApprovalChannels"],
       "payload": {
         "approval_requirement_id": "ULID",
         "approval_instance_id": "ULID",

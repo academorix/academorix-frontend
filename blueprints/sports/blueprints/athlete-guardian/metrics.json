@@ -7,7 +7,16 @@
   "labelConventions": {
     "always": [],
     "commonlyAvailable": ["verification_method", "relationship_bucket", "trigger"],
-    "forbiddenAsLabels": ["tenant_id", "athlete_id", "user_id", "guardian_id", "first_name", "last_name", "dispute_reason", "revoke_reason"]
+    "forbiddenAsLabels": [
+      "tenant_id",
+      "athlete_id",
+      "user_id",
+      "guardian_id",
+      "first_name",
+      "last_name",
+      "dispute_reason",
+      "revoke_reason"
+    ]
   },
   "metrics": [
     {

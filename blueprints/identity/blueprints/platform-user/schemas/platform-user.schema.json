@@ -206,7 +206,18 @@
     "offboarding_reason": { "type": ["string", "null"], "minLength": 20, "maxLength": 1000 },
     "department": {
       "type": "string",
-      "enum": ["ops", "product", "engineering", "support", "sales", "finance", "legal", "security", "dpo", "hr"]
+      "enum": [
+        "ops",
+        "product",
+        "engineering",
+        "support",
+        "sales",
+        "finance",
+        "legal",
+        "security",
+        "dpo",
+        "hr"
+      ]
     },
     "employment_type": {
       "type": "string",
@@ -256,7 +267,16 @@
     "wrap": "data",
     "mapper": "SnakeCaseMapper",
     "hidden": ["identity_id", "profile_id"],
-    "computed": ["email", "email_verified", "mfa_enabled", "is_active", "is_offboarded", "tenure_days", "reports_count", "on_call_at"]
+    "computed": [
+      "email",
+      "email_verified",
+      "mfa_enabled",
+      "is_active",
+      "is_offboarded",
+      "tenure_days",
+      "reports_count",
+      "on_call_at"
+    ]
   },
   "x-route-binding": {
     "strategy": "resolveRouteBinding",

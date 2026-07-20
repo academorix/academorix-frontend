@@ -10,28 +10,153 @@
     "forbiddenAsLabels": ["event_id", "tenant_id", "primary_sport_key", "name", "slug"]
   },
   "metrics": [
-    { "name": "academorix.event.created.total", "kind": "counter", "unit": "events", "labels": ["event_type", "visibility"] },
-    { "name": "academorix.event.create.duration_ms", "kind": "histogram", "unit": "ms", "buckets": [50, 200, 1000, 5000], "labels": [] },
-    { "name": "academorix.event.status_transition.total", "kind": "counter", "unit": "transitions", "labels": ["from_status", "to_status", "trigger"] },
-    { "name": "academorix.event.cancelled.total", "kind": "counter", "unit": "cancellations", "labels": ["cancellation_category"], "description": "cancellation_category derived from cancellation_reason (weather / low_signups / staff_shortage / venue_conflict / regulatory / other)." },
-    { "name": "academorix.event.rescheduled.total", "kind": "counter", "unit": "reschedules", "labels": ["status"] },
-    { "name": "academorix.event.venue_changed.total", "kind": "counter", "unit": "changes", "labels": ["status"] },
-    { "name": "academorix.event.pricing_changed.total", "kind": "counter", "unit": "changes", "labels": ["audit_severity"] },
-    { "name": "academorix.event.eligibility_narrowed.total", "kind": "counter", "unit": "changes", "labels": [], "description": "Every fire is critical — feeds regulator-facing dashboard." },
-    { "name": "academorix.event.published.total", "kind": "counter", "unit": "publishes", "labels": [] },
-    { "name": "academorix.event.livestream_activated.total", "kind": "counter", "unit": "activations", "labels": ["is_password_protected"] },
-    { "name": "academorix.event.registration_opened.total", "kind": "counter", "unit": "opens", "labels": ["trigger"] },
-    { "name": "academorix.event.registration_closed.total", "kind": "counter", "unit": "closes", "labels": ["trigger"] },
-    { "name": "academorix.event.active.count", "kind": "gauge", "unit": "events", "labels": ["status", "event_type"] },
-    { "name": "academorix.event.slot_exhaustion.total", "kind": "counter", "unit": "refusals", "labels": [] },
-    { "name": "academorix.event.middleware_resolve.duration_ms", "kind": "histogram", "unit": "ms", "buckets": [1, 5, 20, 100], "labels": ["source"], "description": "event.resolve_active middleware latency." },
-    { "name": "academorix.event.middleware_reject.total", "kind": "counter", "unit": "rejects", "labels": ["reason"] },
-    { "name": "academorix.event.phase_roll.duration_ms", "kind": "histogram", "unit": "ms", "buckets": [200, 1000, 5000, 30000], "labels": [] },
-    { "name": "academorix.event.phase_roll.transitions", "kind": "counter", "unit": "transitions", "labels": ["to_status"] },
-    { "name": "academorix.event.reminder_notification.sent", "kind": "counter", "unit": "notifications", "labels": ["reminder_window"] },
-    { "name": "academorix.event.cancellation_broadcast.recipients", "kind": "histogram", "unit": "recipients", "buckets": [10, 100, 500, 2000], "labels": [], "description": "Distribution of broadcast fan-out sizes." },
-    { "name": "academorix.event.facility_booking_drift.count", "kind": "gauge", "unit": "rows", "labels": [], "description": "event_facilities rows without a matching resource_booking. Populated by ReconcileEventFacilityBookingsJob. Ideally 0." },
-    { "name": "academorix.event.purge_pending.count", "kind": "gauge", "unit": "events", "labels": [] },
-    { "name": "academorix.event.multi_facility.usage", "kind": "gauge", "unit": "events", "labels": [], "description": "How many active events have 2+ facilities. Feeds Enterprise-tier feature adoption dashboard." }
+    {
+      "name": "academorix.event.created.total",
+      "kind": "counter",
+      "unit": "events",
+      "labels": ["event_type", "visibility"]
+    },
+    {
+      "name": "academorix.event.create.duration_ms",
+      "kind": "histogram",
+      "unit": "ms",
+      "buckets": [50, 200, 1000, 5000],
+      "labels": []
+    },
+    {
+      "name": "academorix.event.status_transition.total",
+      "kind": "counter",
+      "unit": "transitions",
+      "labels": ["from_status", "to_status", "trigger"]
+    },
+    {
+      "name": "academorix.event.cancelled.total",
+      "kind": "counter",
+      "unit": "cancellations",
+      "labels": ["cancellation_category"],
+      "description": "cancellation_category derived from cancellation_reason (weather / low_signups / staff_shortage / venue_conflict / regulatory / other)."
+    },
+    {
+      "name": "academorix.event.rescheduled.total",
+      "kind": "counter",
+      "unit": "reschedules",
+      "labels": ["status"]
+    },
+    {
+      "name": "academorix.event.venue_changed.total",
+      "kind": "counter",
+      "unit": "changes",
+      "labels": ["status"]
+    },
+    {
+      "name": "academorix.event.pricing_changed.total",
+      "kind": "counter",
+      "unit": "changes",
+      "labels": ["audit_severity"]
+    },
+    {
+      "name": "academorix.event.eligibility_narrowed.total",
+      "kind": "counter",
+      "unit": "changes",
+      "labels": [],
+      "description": "Every fire is critical — feeds regulator-facing dashboard."
+    },
+    {
+      "name": "academorix.event.published.total",
+      "kind": "counter",
+      "unit": "publishes",
+      "labels": []
+    },
+    {
+      "name": "academorix.event.livestream_activated.total",
+      "kind": "counter",
+      "unit": "activations",
+      "labels": ["is_password_protected"]
+    },
+    {
+      "name": "academorix.event.registration_opened.total",
+      "kind": "counter",
+      "unit": "opens",
+      "labels": ["trigger"]
+    },
+    {
+      "name": "academorix.event.registration_closed.total",
+      "kind": "counter",
+      "unit": "closes",
+      "labels": ["trigger"]
+    },
+    {
+      "name": "academorix.event.active.count",
+      "kind": "gauge",
+      "unit": "events",
+      "labels": ["status", "event_type"]
+    },
+    {
+      "name": "academorix.event.slot_exhaustion.total",
+      "kind": "counter",
+      "unit": "refusals",
+      "labels": []
+    },
+    {
+      "name": "academorix.event.middleware_resolve.duration_ms",
+      "kind": "histogram",
+      "unit": "ms",
+      "buckets": [1, 5, 20, 100],
+      "labels": ["source"],
+      "description": "event.resolve_active middleware latency."
+    },
+    {
+      "name": "academorix.event.middleware_reject.total",
+      "kind": "counter",
+      "unit": "rejects",
+      "labels": ["reason"]
+    },
+    {
+      "name": "academorix.event.phase_roll.duration_ms",
+      "kind": "histogram",
+      "unit": "ms",
+      "buckets": [200, 1000, 5000, 30000],
+      "labels": []
+    },
+    {
+      "name": "academorix.event.phase_roll.transitions",
+      "kind": "counter",
+      "unit": "transitions",
+      "labels": ["to_status"]
+    },
+    {
+      "name": "academorix.event.reminder_notification.sent",
+      "kind": "counter",
+      "unit": "notifications",
+      "labels": ["reminder_window"]
+    },
+    {
+      "name": "academorix.event.cancellation_broadcast.recipients",
+      "kind": "histogram",
+      "unit": "recipients",
+      "buckets": [10, 100, 500, 2000],
+      "labels": [],
+      "description": "Distribution of broadcast fan-out sizes."
+    },
+    {
+      "name": "academorix.event.facility_booking_drift.count",
+      "kind": "gauge",
+      "unit": "rows",
+      "labels": [],
+      "description": "event_facilities rows without a matching resource_booking. Populated by ReconcileEventFacilityBookingsJob. Ideally 0."
+    },
+    {
+      "name": "academorix.event.purge_pending.count",
+      "kind": "gauge",
+      "unit": "events",
+      "labels": []
+    },
+    {
+      "name": "academorix.event.multi_facility.usage",
+      "kind": "gauge",
+      "unit": "events",
+      "labels": [],
+      "description": "How many active events have 2+ facilities. Feeds Enterprise-tier feature adoption dashboard."
+    }
   ]
 }

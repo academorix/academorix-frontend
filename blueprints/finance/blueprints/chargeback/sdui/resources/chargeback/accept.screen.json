@@ -24,9 +24,21 @@
         "kind": "View",
         "props": { "className": "flex flex-col gap-4 p-6 max-w-2xl mx-auto text-center py-12" },
         "children": [
-          { "kind": "Icon", "props": { "name": "x-circle", "className": "size-12 mx-auto text-danger" } },
-          { "kind": "Text", "props": { "className": "text-lg font-medium", "children": "RDR not available" } },
-          { "kind": "Text", "props": { "className": "text-sm text-muted", "children": "This chargeback is not eligible for Rapid Dispute Resolution. RDR requires: Visa network, chargeback below the configured threshold, tenant with the chargeback_rdr entitlement, and an unrefunded payment. The chargeback must also be in pending_evidence status." } }
+          {
+            "kind": "Icon",
+            "props": { "name": "x-circle", "className": "size-12 mx-auto text-danger" }
+          },
+          {
+            "kind": "Text",
+            "props": { "className": "text-lg font-medium", "children": "RDR not available" }
+          },
+          {
+            "kind": "Text",
+            "props": {
+              "className": "text-sm text-muted",
+              "children": "This chargeback is not eligible for Rapid Dispute Resolution. RDR requires: Visa network, chargeback below the configured threshold, tenant with the chargeback_rdr entitlement, and an unrefunded payment. The chargeback must also be in pending_evidence status."
+            }
+          }
         ]
       }
     }
@@ -60,15 +72,27 @@
           "kind": "Alert",
           "props": { "variant": "info" },
           "children": [
-            { "kind": "Text", "props": { "className": "font-medium", "children": "What accepting means" } },
-            { "kind": "Text", "props": { "className": "text-sm", "children": "A refund will be issued to the customer for the full disputed amount. The chargeback will close BEFORE fully filing. No network fee. No impact on your chargeback rate. This is the cheapest defense path for low-value disputes." } }
+            {
+              "kind": "Text",
+              "props": { "className": "font-medium", "children": "What accepting means" }
+            },
+            {
+              "kind": "Text",
+              "props": {
+                "className": "text-sm",
+                "children": "A refund will be issued to the customer for the full disputed amount. The chargeback will close BEFORE fully filing. No network fee. No impact on your chargeback rate. This is the cheapest defense path for low-value disputes."
+              }
+            }
           ]
         },
         {
           "kind": "Card",
           "props": { "className": "p-4" },
           "children": [
-            { "kind": "Text", "props": { "className": "font-medium mb-3", "children": "Cost comparison" } },
+            {
+              "kind": "Text",
+              "props": { "className": "font-medium mb-3", "children": "Cost comparison" }
+            },
             {
               "kind": "Table",
               "props": { "aria-label": "Cost comparison for chargeback outcomes" },
@@ -88,7 +112,10 @@
                     {
                       "kind": "Table.Row",
                       "children": [
-                        { "kind": "Table.Cell", "props": { "children": "Accept via RDR (recommended)" } },
+                        {
+                          "kind": "Table.Cell",
+                          "props": { "children": "Accept via RDR (recommended)" }
+                        },
                         {
                           "kind": "Table.Cell",
                           "bindings": {
@@ -121,7 +148,10 @@
                             }
                           }
                         },
-                        { "kind": "Table.Cell", "props": { "children": "+1 chargeback toward VDMP" } }
+                        {
+                          "kind": "Table.Cell",
+                          "props": { "children": "+1 chargeback toward VDMP" }
+                        }
                       ]
                     },
                     {
@@ -137,7 +167,10 @@
                             }
                           }
                         },
-                        { "kind": "Table.Cell", "props": { "children": "+1 chargeback toward VDMP" } }
+                        {
+                          "kind": "Table.Cell",
+                          "props": { "children": "+1 chargeback toward VDMP" }
+                        }
                       ]
                     }
                   ]
@@ -153,14 +186,22 @@
             "onSubmit": {
               "kind": "http.post",
               "url": "/api/v1/chargebacks/{route.chargeback}/accept",
-              "onSuccess": { "kind": "navigate", "toExpr": "'/tenant/chargebacks/' + chargeback.id" },
+              "onSuccess": {
+                "kind": "navigate",
+                "toExpr": "'/tenant/chargebacks/' + chargeback.id"
+              },
               "onError": { "kind": "toast", "variant": "danger", "messageFromError": true }
             }
           },
           "children": [
             {
               "kind": "TextArea",
-              "props": { "label": "Notes (optional)", "name": "notes", "placeholder": "Internal notes for the audit trail...", "maxLength": 256 }
+              "props": {
+                "label": "Notes (optional)",
+                "name": "notes",
+                "placeholder": "Internal notes for the audit trail...",
+                "maxLength": 256
+              }
             },
             {
               "kind": "View",
@@ -169,11 +210,20 @@
                 {
                   "kind": "Button",
                   "props": { "variant": "outline", "children": "Cancel" },
-                  "actions": { "onPress": { "kind": "navigate", "toExpr": "'/tenant/chargebacks/' + chargeback.id" } }
+                  "actions": {
+                    "onPress": {
+                      "kind": "navigate",
+                      "toExpr": "'/tenant/chargebacks/' + chargeback.id"
+                    }
+                  }
                 },
                 {
                   "kind": "Button",
-                  "props": { "variant": "primary", "type": "submit", "children": "Accept + issue refund" }
+                  "props": {
+                    "variant": "primary",
+                    "type": "submit",
+                    "children": "Accept + issue refund"
+                  }
                 }
               ]
             }

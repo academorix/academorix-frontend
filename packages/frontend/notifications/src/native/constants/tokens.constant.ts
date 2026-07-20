@@ -14,19 +14,19 @@
  * + experience id + application id). Bound by
  * `NativeNotificationModule.forRoot`.
  */
-export const EXPO_PUSH_CONFIG = Symbol.for('NOTIFICATIONS_EXPO_PUSH_CONFIG');
+export const EXPO_PUSH_CONFIG = Symbol.for("NOTIFICATIONS_EXPO_PUSH_CONFIG");
 
 /**
  * DI token for {@link NativeNotificationManager} — attaches the
  * received-notification listener at
  * `onApplicationBootstrap`.
  */
-export const NATIVE_NOTIFICATION_MANAGER = Symbol.for('NOTIFICATIONS_NATIVE_NOTIFICATION_MANAGER');
+export const NATIVE_NOTIFICATION_MANAGER = Symbol.for("NOTIFICATIONS_NATIVE_NOTIFICATION_MANAGER");
 
 /** DI token for {@link ExpoPushTokenAdapter}. */
-export const EXPO_PUSH_TOKEN_ADAPTER = Symbol.for('NOTIFICATIONS_EXPO_PUSH_TOKEN_ADAPTER');
+export const EXPO_PUSH_TOKEN_ADAPTER = Symbol.for("NOTIFICATIONS_EXPO_PUSH_TOKEN_ADAPTER");
 
 /** DI token for {@link ExpoNotificationListenerAdapter}. */
 export const EXPO_NOTIFICATION_LISTENER_ADAPTER = Symbol.for(
-  'NOTIFICATIONS_EXPO_NOTIFICATION_LISTENER_ADAPTER'
+  "NOTIFICATIONS_EXPO_NOTIFICATION_LISTENER_ADAPTER",
 );

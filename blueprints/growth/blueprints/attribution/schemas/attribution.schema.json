@@ -196,8 +196,14 @@
         "predicate": "deleted_at IS NULL"
       },
       { "columns": ["tenant_id", "lifecycle_state"], "name": "attributions_lifecycle_idx" },
-      { "columns": ["tenant_id", "first_touch_campaign"], "name": "attributions_first_touch_campaign_idx" },
-      { "columns": ["tenant_id", "last_touch_campaign"], "name": "attributions_last_touch_campaign_idx" },
+      {
+        "columns": ["tenant_id", "first_touch_campaign"],
+        "name": "attributions_first_touch_campaign_idx"
+      },
+      {
+        "columns": ["tenant_id", "last_touch_campaign"],
+        "name": "attributions_last_touch_campaign_idx"
+      },
       { "columns": ["tenant_id", "last_touch_at"], "name": "attributions_last_touch_at_idx" }
     ]
   },

@@ -4,54 +4,418 @@
   "title": "referrals — error codes",
   "namespace": "referrals",
   "errors": [
-    { "code": "REFERRAL_PROGRAM_NOT_FOUND", "http": 404, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "referrals.errors.program_not_found" },
-    { "code": "REFERRAL_CAPTURE_NOT_ENTITLED", "http": 402, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "referrals.errors.capture_not_entitled", "description": "Tenant lacks the `referrals_capture` gate. Response includes upgrade CTA." },
-    { "code": "REFERRAL_ADVANCED_REWARD_NOT_ENTITLED", "http": 402, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "referrals.errors.advanced_reward_not_entitled", "description": "Advanced reward types require Medium+ tier (`referrals_advanced_reward_types`)." },
-    { "code": "REFERRAL_DOUBLE_SIDED_NOT_ENTITLED", "http": 402, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "referrals.errors.double_sided_not_entitled" },
-    { "code": "REFERRAL_MANUAL_OVERRIDE_NOT_ENTITLED", "http": 402, "retryable": false, "user_facing": true, "audit_severity": "warn", "i18n_key": "referrals.errors.manual_override_not_entitled", "description": "force-vest + fraud manual-override require Enterprise `referrals_manual_override`." },
-    { "code": "REFERRAL_PROGRAM_BUDGET_CAP_NOT_ENTITLED", "http": 402, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "referrals.errors.program_budget_cap_not_entitled" },
-    { "code": "REFERRAL_PROGRAM_QUOTA_EXCEEDED", "http": 402, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "referrals.errors.program_quota_exceeded", "description": "Reached `referrals_program_slot` cap. Small: 1, Medium: 5, Enterprise: unlimited." },
-    { "code": "REFERRAL_CODE_QUOTA_EXCEEDED", "http": 402, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "referrals.errors.code_quota_exceeded", "description": "Small tenants cannot create campaign codes; only user_scoped codes are auto-issued." },
-    { "code": "REFERRAL_PROGRAM_INVALID_DATE_RANGE", "http": 422, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "referrals.errors.program_invalid_date_range" },
-    { "code": "REFERRAL_PROGRAM_INVALID_FRAUD_CONFIG", "http": 422, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "referrals.errors.program_invalid_fraud_config" },
-    { "code": "REFERRAL_PROGRAM_INVALID_ELIGIBILITY_CONFIG", "http": 422, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "referrals.errors.program_invalid_eligibility_config" },
-    { "code": "REFERRAL_PROGRAM_REWARD_TYPE_AMOUNT_MISMATCH", "http": 422, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "referrals.errors.program_reward_type_amount_mismatch", "description": "reward_type + reward_amount + reward_currency combination is invalid (e.g. percent_discount=150; fixed_amount without currency)." },
-    { "code": "REFERRAL_PROGRAM_VESTING_MISSING_DEPENDENCIES", "http": 422, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "referrals.errors.program_vesting_missing_dependencies", "description": "vesting_rule requires a companion field that wasn't provided (e.g. trigger_plus_hold_days without vesting_hold_days)." },
-    { "code": "REFERRAL_PROGRAM_REWARD_LOCKED", "http": 409, "retryable": false, "user_facing": true, "audit_severity": "warn", "i18n_key": "referrals.errors.program_reward_locked", "description": "Reward config cannot be edited while any referral is in-flight. Pause and complete existing referrals first." },
-    { "code": "REFERRAL_PROGRAM_NOT_ACTIVE", "http": 422, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "referrals.errors.program_not_active" },
-    { "code": "REFERRAL_PROGRAM_OUTSIDE_WINDOW", "http": 422, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "referrals.errors.program_outside_window" },
-    { "code": "REFERRAL_PROGRAM_BUDGET_EXHAUSTED", "http": 402, "retryable": false, "user_facing": true, "audit_severity": "warn", "i18n_key": "referrals.errors.program_budget_exhausted" },
-    { "code": "REFERRAL_CODE_NOT_FOUND", "http": 404, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "referrals.errors.code_not_found" },
-    { "code": "REFERRAL_CODE_DUPLICATE", "http": 409, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "referrals.errors.code_duplicate" },
-    { "code": "REFERRAL_CODE_INVALID_FORMAT", "http": 422, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "referrals.errors.code_invalid_format" },
-    { "code": "REFERRAL_CODE_OWNER_MISMATCH", "http": 422, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "referrals.errors.code_owner_mismatch" },
-    { "code": "REFERRAL_CODE_OWNER_IMMUTABLE", "http": 409, "retryable": false, "user_facing": true, "audit_severity": "warn", "i18n_key": "referrals.errors.code_owner_immutable" },
-    { "code": "REFERRAL_CODE_EXPIRED", "http": 410, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "referrals.errors.code_expired" },
-    { "code": "REFERRAL_CODE_USAGE_CAP_REACHED", "http": 429, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "referrals.errors.code_usage_cap_reached" },
-    { "code": "REFERRAL_CODE_INACTIVE", "http": 410, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "referrals.errors.code_inactive" },
-    { "code": "REFERRAL_NOT_FOUND", "http": 404, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "referrals.errors.referral_not_found" },
-    { "code": "REFERRAL_SELF_REFERRAL", "http": 422, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "referrals.errors.self_referral", "description": "Self-referral guard: referrer_id equals referred_id." },
-    { "code": "REFERRAL_ALREADY_EXISTS", "http": 409, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "referrals.errors.already_exists", "description": "The composite unique index refused the write — a referral for this (referrer, referred, program) already exists." },
-    { "code": "REFERRAL_REFERRED_NOT_NEW", "http": 422, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "referrals.errors.referred_not_new", "description": "program.eligibility_config.referred_must_be_new_user=true and the referred user pre-existed." },
-    { "code": "REFERRAL_REFERRER_CAP_REACHED", "http": 429, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "referrals.errors.referrer_cap_reached" },
-    { "code": "REFERRAL_FRAUD_HARD_BLOCK", "http": 403, "retryable": false, "user_facing": true, "audit_severity": "warn", "i18n_key": "referrals.errors.fraud_hard_block", "description": "FraudDetector fraud_score exceeded program.hard_block_threshold. Includes support-contact CTA in the response envelope." },
-    { "code": "REFERRAL_INVALID_STATUS_TRANSITION", "http": 409, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "referrals.errors.invalid_status_transition" },
-    { "code": "REFERRAL_ATTRIBUTION_SNAPSHOT_IMMUTABLE", "http": 409, "retryable": false, "user_facing": false, "audit_severity": "critical", "i18n_key": "referrals.errors.attribution_snapshot_immutable", "description": "Attempt to mutate the attribution_snapshot after create. Should never surface — the observer refuses." },
-    { "code": "REFERRAL_ATOMICITY_FAILED", "http": 500, "retryable": false, "user_facing": false, "audit_severity": "critical", "i18n_key": "referrals.errors.atomicity_failed", "description": "P1 signal. The vested-transition + reward creation transaction failed. Every fire is a data-integrity incident." },
-    { "code": "REFERRAL_REWARD_NOT_FOUND", "http": 404, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "referrals.errors.reward_not_found" },
-    { "code": "REFERRAL_REWARD_INVALID_PARENT_STATUS", "http": 409, "retryable": false, "user_facing": false, "audit_severity": "warn", "i18n_key": "referrals.errors.reward_invalid_parent_status" },
-    { "code": "REFERRAL_REWARD_DUPLICATE_ROLE", "http": 409, "retryable": false, "user_facing": false, "audit_severity": "warn", "i18n_key": "referrals.errors.reward_duplicate_role", "description": "The (referral_id, recipient_role) unique index refused a second reward for the same role. Prevents double-materialization on retry." },
-    { "code": "REFERRAL_REWARD_CONFIG_MISMATCH", "http": 422, "retryable": false, "user_facing": false, "audit_severity": "warn", "i18n_key": "referrals.errors.reward_config_mismatch" },
-    { "code": "REFERRAL_REWARD_TERMS_IMMUTABLE", "http": 409, "retryable": false, "user_facing": false, "audit_severity": "warn", "i18n_key": "referrals.errors.reward_terms_immutable" },
-    { "code": "REFERRAL_REWARD_INVALID_STATUS_TRANSITION", "http": 409, "retryable": false, "user_facing": false, "audit_severity": "info", "i18n_key": "referrals.errors.reward_invalid_status_transition" },
-    { "code": "REFERRAL_REWARD_DOUBLE_MATERIALIZATION", "http": 500, "retryable": false, "user_facing": false, "audit_severity": "critical", "i18n_key": "referrals.errors.reward_double_materialization", "description": "P1 signal. Attempted to set finance_credit_id twice on the same reward. Should never surface." },
-    { "code": "REFERRAL_REWARD_ALREADY_CLAWED_BACK", "http": 409, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "referrals.errors.reward_already_clawed_back" },
-    { "code": "REFERRAL_FRAUD_FLAG_NOT_FOUND", "http": 404, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "referrals.errors.fraud_flag_not_found" },
-    { "code": "REFERRAL_FRAUD_FLAG_IMMUTABLE", "http": 409, "retryable": false, "user_facing": false, "audit_severity": "warn", "i18n_key": "referrals.errors.fraud_flag_immutable", "description": "Detection findings are immutable — only disposition + reviewed fields are mutable." },
-    { "code": "REFERRAL_FRAUD_FLAG_ALREADY_REVIEWED", "http": 409, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "referrals.errors.fraud_flag_already_reviewed" },
-    { "code": "REFERRAL_INVITATION_RATE_LIMIT", "http": 429, "retryable": true, "user_facing": true, "audit_severity": "info", "i18n_key": "referrals.errors.invitation_rate_limit", "description": "> 100 invitations/day per user. Retry the next day." },
-    { "code": "REFERRAL_INVITATION_TO_EXISTING_USER", "http": 422, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "referrals.errors.invitation_to_existing_user", "description": "Silent-refuse: the recipient is already signed up. The invitation is not delivered but the API returns 200 (to avoid revealing user existence to potential enumeration)." },
-    { "code": "REFERRAL_INVITATION_SUPPRESSED", "http": 200, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "referrals.errors.invitation_suppressed", "description": "Silent-success. The recipient email is on the tenant's suppression list (previous unsubscribe). Returns 200 to avoid enumeration." },
-    { "code": "REFERRAL_INVITATION_DISPOSABLE_EMAIL", "http": 200, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "referrals.errors.invitation_disposable_email", "description": "Silent-success. Delivery refused because the recipient email is a known disposable-email domain." }
+    {
+      "code": "REFERRAL_PROGRAM_NOT_FOUND",
+      "http": 404,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "referrals.errors.program_not_found"
+    },
+    {
+      "code": "REFERRAL_CAPTURE_NOT_ENTITLED",
+      "http": 402,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "referrals.errors.capture_not_entitled",
+      "description": "Tenant lacks the `referrals_capture` gate. Response includes upgrade CTA."
+    },
+    {
+      "code": "REFERRAL_ADVANCED_REWARD_NOT_ENTITLED",
+      "http": 402,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "referrals.errors.advanced_reward_not_entitled",
+      "description": "Advanced reward types require Medium+ tier (`referrals_advanced_reward_types`)."
+    },
+    {
+      "code": "REFERRAL_DOUBLE_SIDED_NOT_ENTITLED",
+      "http": 402,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "referrals.errors.double_sided_not_entitled"
+    },
+    {
+      "code": "REFERRAL_MANUAL_OVERRIDE_NOT_ENTITLED",
+      "http": 402,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "warn",
+      "i18n_key": "referrals.errors.manual_override_not_entitled",
+      "description": "force-vest + fraud manual-override require Enterprise `referrals_manual_override`."
+    },
+    {
+      "code": "REFERRAL_PROGRAM_BUDGET_CAP_NOT_ENTITLED",
+      "http": 402,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "referrals.errors.program_budget_cap_not_entitled"
+    },
+    {
+      "code": "REFERRAL_PROGRAM_QUOTA_EXCEEDED",
+      "http": 402,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "referrals.errors.program_quota_exceeded",
+      "description": "Reached `referrals_program_slot` cap. Small: 1, Medium: 5, Enterprise: unlimited."
+    },
+    {
+      "code": "REFERRAL_CODE_QUOTA_EXCEEDED",
+      "http": 402,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "referrals.errors.code_quota_exceeded",
+      "description": "Small tenants cannot create campaign codes; only user_scoped codes are auto-issued."
+    },
+    {
+      "code": "REFERRAL_PROGRAM_INVALID_DATE_RANGE",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "referrals.errors.program_invalid_date_range"
+    },
+    {
+      "code": "REFERRAL_PROGRAM_INVALID_FRAUD_CONFIG",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "referrals.errors.program_invalid_fraud_config"
+    },
+    {
+      "code": "REFERRAL_PROGRAM_INVALID_ELIGIBILITY_CONFIG",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "referrals.errors.program_invalid_eligibility_config"
+    },
+    {
+      "code": "REFERRAL_PROGRAM_REWARD_TYPE_AMOUNT_MISMATCH",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "referrals.errors.program_reward_type_amount_mismatch",
+      "description": "reward_type + reward_amount + reward_currency combination is invalid (e.g. percent_discount=150; fixed_amount without currency)."
+    },
+    {
+      "code": "REFERRAL_PROGRAM_VESTING_MISSING_DEPENDENCIES",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "referrals.errors.program_vesting_missing_dependencies",
+      "description": "vesting_rule requires a companion field that wasn't provided (e.g. trigger_plus_hold_days without vesting_hold_days)."
+    },
+    {
+      "code": "REFERRAL_PROGRAM_REWARD_LOCKED",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "warn",
+      "i18n_key": "referrals.errors.program_reward_locked",
+      "description": "Reward config cannot be edited while any referral is in-flight. Pause and complete existing referrals first."
+    },
+    {
+      "code": "REFERRAL_PROGRAM_NOT_ACTIVE",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "referrals.errors.program_not_active"
+    },
+    {
+      "code": "REFERRAL_PROGRAM_OUTSIDE_WINDOW",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "referrals.errors.program_outside_window"
+    },
+    {
+      "code": "REFERRAL_PROGRAM_BUDGET_EXHAUSTED",
+      "http": 402,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "warn",
+      "i18n_key": "referrals.errors.program_budget_exhausted"
+    },
+    {
+      "code": "REFERRAL_CODE_NOT_FOUND",
+      "http": 404,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "referrals.errors.code_not_found"
+    },
+    {
+      "code": "REFERRAL_CODE_DUPLICATE",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "referrals.errors.code_duplicate"
+    },
+    {
+      "code": "REFERRAL_CODE_INVALID_FORMAT",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "referrals.errors.code_invalid_format"
+    },
+    {
+      "code": "REFERRAL_CODE_OWNER_MISMATCH",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "referrals.errors.code_owner_mismatch"
+    },
+    {
+      "code": "REFERRAL_CODE_OWNER_IMMUTABLE",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "warn",
+      "i18n_key": "referrals.errors.code_owner_immutable"
+    },
+    {
+      "code": "REFERRAL_CODE_EXPIRED",
+      "http": 410,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "referrals.errors.code_expired"
+    },
+    {
+      "code": "REFERRAL_CODE_USAGE_CAP_REACHED",
+      "http": 429,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "referrals.errors.code_usage_cap_reached"
+    },
+    {
+      "code": "REFERRAL_CODE_INACTIVE",
+      "http": 410,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "referrals.errors.code_inactive"
+    },
+    {
+      "code": "REFERRAL_NOT_FOUND",
+      "http": 404,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "referrals.errors.referral_not_found"
+    },
+    {
+      "code": "REFERRAL_SELF_REFERRAL",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "referrals.errors.self_referral",
+      "description": "Self-referral guard: referrer_id equals referred_id."
+    },
+    {
+      "code": "REFERRAL_ALREADY_EXISTS",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "referrals.errors.already_exists",
+      "description": "The composite unique index refused the write — a referral for this (referrer, referred, program) already exists."
+    },
+    {
+      "code": "REFERRAL_REFERRED_NOT_NEW",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "referrals.errors.referred_not_new",
+      "description": "program.eligibility_config.referred_must_be_new_user=true and the referred user pre-existed."
+    },
+    {
+      "code": "REFERRAL_REFERRER_CAP_REACHED",
+      "http": 429,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "referrals.errors.referrer_cap_reached"
+    },
+    {
+      "code": "REFERRAL_FRAUD_HARD_BLOCK",
+      "http": 403,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "warn",
+      "i18n_key": "referrals.errors.fraud_hard_block",
+      "description": "FraudDetector fraud_score exceeded program.hard_block_threshold. Includes support-contact CTA in the response envelope."
+    },
+    {
+      "code": "REFERRAL_INVALID_STATUS_TRANSITION",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "referrals.errors.invalid_status_transition"
+    },
+    {
+      "code": "REFERRAL_ATTRIBUTION_SNAPSHOT_IMMUTABLE",
+      "http": 409,
+      "retryable": false,
+      "user_facing": false,
+      "audit_severity": "critical",
+      "i18n_key": "referrals.errors.attribution_snapshot_immutable",
+      "description": "Attempt to mutate the attribution_snapshot after create. Should never surface — the observer refuses."
+    },
+    {
+      "code": "REFERRAL_ATOMICITY_FAILED",
+      "http": 500,
+      "retryable": false,
+      "user_facing": false,
+      "audit_severity": "critical",
+      "i18n_key": "referrals.errors.atomicity_failed",
+      "description": "P1 signal. The vested-transition + reward creation transaction failed. Every fire is a data-integrity incident."
+    },
+    {
+      "code": "REFERRAL_REWARD_NOT_FOUND",
+      "http": 404,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "referrals.errors.reward_not_found"
+    },
+    {
+      "code": "REFERRAL_REWARD_INVALID_PARENT_STATUS",
+      "http": 409,
+      "retryable": false,
+      "user_facing": false,
+      "audit_severity": "warn",
+      "i18n_key": "referrals.errors.reward_invalid_parent_status"
+    },
+    {
+      "code": "REFERRAL_REWARD_DUPLICATE_ROLE",
+      "http": 409,
+      "retryable": false,
+      "user_facing": false,
+      "audit_severity": "warn",
+      "i18n_key": "referrals.errors.reward_duplicate_role",
+      "description": "The (referral_id, recipient_role) unique index refused a second reward for the same role. Prevents double-materialization on retry."
+    },
+    {
+      "code": "REFERRAL_REWARD_CONFIG_MISMATCH",
+      "http": 422,
+      "retryable": false,
+      "user_facing": false,
+      "audit_severity": "warn",
+      "i18n_key": "referrals.errors.reward_config_mismatch"
+    },
+    {
+      "code": "REFERRAL_REWARD_TERMS_IMMUTABLE",
+      "http": 409,
+      "retryable": false,
+      "user_facing": false,
+      "audit_severity": "warn",
+      "i18n_key": "referrals.errors.reward_terms_immutable"
+    },
+    {
+      "code": "REFERRAL_REWARD_INVALID_STATUS_TRANSITION",
+      "http": 409,
+      "retryable": false,
+      "user_facing": false,
+      "audit_severity": "info",
+      "i18n_key": "referrals.errors.reward_invalid_status_transition"
+    },
+    {
+      "code": "REFERRAL_REWARD_DOUBLE_MATERIALIZATION",
+      "http": 500,
+      "retryable": false,
+      "user_facing": false,
+      "audit_severity": "critical",
+      "i18n_key": "referrals.errors.reward_double_materialization",
+      "description": "P1 signal. Attempted to set finance_credit_id twice on the same reward. Should never surface."
+    },
+    {
+      "code": "REFERRAL_REWARD_ALREADY_CLAWED_BACK",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "referrals.errors.reward_already_clawed_back"
+    },
+    {
+      "code": "REFERRAL_FRAUD_FLAG_NOT_FOUND",
+      "http": 404,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "referrals.errors.fraud_flag_not_found"
+    },
+    {
+      "code": "REFERRAL_FRAUD_FLAG_IMMUTABLE",
+      "http": 409,
+      "retryable": false,
+      "user_facing": false,
+      "audit_severity": "warn",
+      "i18n_key": "referrals.errors.fraud_flag_immutable",
+      "description": "Detection findings are immutable — only disposition + reviewed fields are mutable."
+    },
+    {
+      "code": "REFERRAL_FRAUD_FLAG_ALREADY_REVIEWED",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "referrals.errors.fraud_flag_already_reviewed"
+    },
+    {
+      "code": "REFERRAL_INVITATION_RATE_LIMIT",
+      "http": 429,
+      "retryable": true,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "referrals.errors.invitation_rate_limit",
+      "description": "> 100 invitations/day per user. Retry the next day."
+    },
+    {
+      "code": "REFERRAL_INVITATION_TO_EXISTING_USER",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "referrals.errors.invitation_to_existing_user",
+      "description": "Silent-refuse: the recipient is already signed up. The invitation is not delivered but the API returns 200 (to avoid revealing user existence to potential enumeration)."
+    },
+    {
+      "code": "REFERRAL_INVITATION_SUPPRESSED",
+      "http": 200,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "referrals.errors.invitation_suppressed",
+      "description": "Silent-success. The recipient email is on the tenant's suppression list (previous unsubscribe). Returns 200 to avoid enumeration."
+    },
+    {
+      "code": "REFERRAL_INVITATION_DISPOSABLE_EMAIL",
+      "http": 200,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "referrals.errors.invitation_disposable_email",
+      "description": "Silent-success. Delivery refused because the recipient email is a known disposable-email domain."
+    }
   ]
 }

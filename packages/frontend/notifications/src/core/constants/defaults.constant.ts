@@ -11,7 +11,7 @@
  *   fully-typed working configuration.
  */
 
-import type { INotificationModuleOptions } from '../interfaces';
+import type { INotificationModuleOptions } from "../interfaces";
 
 /**
  * The single source of default options for
@@ -30,8 +30,8 @@ import type { INotificationModuleOptions } from '../interfaces';
 export const DEFAULT_NOTIFICATIONS_CONFIG: INotificationModuleOptions = {
   centre: {
     storage: undefined,
-    storageKey: 'stackra:notifications:centre',
+    storageKey: "stackra:notifications:centre",
     maxItems: 100,
   },
-  defaultStack: ['in-app'],
+  defaultStack: ["in-app"],
 };

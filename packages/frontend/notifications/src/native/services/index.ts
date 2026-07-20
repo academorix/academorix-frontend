@@ -9,4 +9,4 @@
  *   bind an adapter and inject the same core manager.
  */
 
-export { NativeNotificationManager } from './native-notification-manager.service';
+export { NativeNotificationManager } from "./native-notification-manager.service";

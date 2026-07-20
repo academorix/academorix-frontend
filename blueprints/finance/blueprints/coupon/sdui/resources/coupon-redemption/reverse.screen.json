@@ -26,38 +26,93 @@
         {
           "kind": "View",
           "children": [
-            { "kind": "Text", "props": { "as": "h1", "className": "text-2xl font-semibold", "children": "Reverse redemption" } },
-            { "kind": "Text", "props": { "className": "text-sm text-muted", "children": "Reverse a coupon redemption. Financial reversal — audit-critical. Notifies the customer + Finance module." } }
+            {
+              "kind": "Text",
+              "props": {
+                "as": "h1",
+                "className": "text-2xl font-semibold",
+                "children": "Reverse redemption"
+              }
+            },
+            {
+              "kind": "Text",
+              "props": {
+                "className": "text-sm text-muted",
+                "children": "Reverse a coupon redemption. Financial reversal — audit-critical. Notifies the customer + Finance module."
+              }
+            }
           ]
         },
         {
           "kind": "Alert",
           "props": { "variant": "danger" },
           "children": [
-            { "kind": "Text", "props": { "className": "font-medium", "children": "Financial reversal warning" } },
-            { "kind": "Text", "props": { "className": "text-sm mt-1", "children": "This will decrement the coupon's usage_count, notify the customer that their discount has been reversed, and notify the Finance module to adjust revenue recognition on the underlying invoice line. This action is audit-logged with 7-year retention." } }
+            {
+              "kind": "Text",
+              "props": { "className": "font-medium", "children": "Financial reversal warning" }
+            },
+            {
+              "kind": "Text",
+              "props": {
+                "className": "text-sm mt-1",
+                "children": "This will decrement the coupon's usage_count, notify the customer that their discount has been reversed, and notify the Finance module to adjust revenue recognition on the underlying invoice line. This action is audit-logged with 7-year retention."
+              }
+            }
           ]
         },
         {
           "kind": "Card",
           "props": { "className": "p-4" },
           "children": [
-            { "kind": "Text", "props": { "as": "h3", "className": "font-medium mb-3", "children": "Redemption details" } },
+            {
+              "kind": "Text",
+              "props": {
+                "as": "h3",
+                "className": "font-medium mb-3",
+                "children": "Redemption details"
+              }
+            },
             {
               "kind": "DefinitionList",
               "children": [
-                { "kind": "DefinitionItem", "props": { "term": "Coupon code" }, "bindings": { "value": { "$ref": "redemption.coupon.code" } } },
-                { "kind": "DefinitionItem", "props": { "term": "Customer" }, "bindings": { "value": { "$expr": "redemption.customer_type + ': ' + (redemption.customer_display_name || redemption.customer_id)" } } },
-                { "kind": "DefinitionItem", "props": { "term": "Applied to" }, "bindings": { "value": { "$expr": "redemption.applied_to_type + ': ' + redemption.applied_to_id" } } },
+                {
+                  "kind": "DefinitionItem",
+                  "props": { "term": "Coupon code" },
+                  "bindings": { "value": { "$ref": "redemption.coupon.code" } }
+                },
+                {
+                  "kind": "DefinitionItem",
+                  "props": { "term": "Customer" },
+                  "bindings": {
+                    "value": {
+                      "$expr": "redemption.customer_type + ': ' + (redemption.customer_display_name || redemption.customer_id)"
+                    }
+                  }
+                },
+                {
+                  "kind": "DefinitionItem",
+                  "props": { "term": "Applied to" },
+                  "bindings": {
+                    "value": {
+                      "$expr": "redemption.applied_to_type + ': ' + redemption.applied_to_id"
+                    }
+                  }
+                },
                 {
                   "kind": "DefinitionItem",
                   "props": { "term": "Discount amount" },
                   "requiresPermission": "coupons.view-financials",
                   "bindings": {
-                    "value": { "$expr": "formatMoney(redemption.discount_amount_cents, redemption.source_currency)" }
+                    "value": {
+                      "$expr": "formatMoney(redemption.discount_amount_cents, redemption.source_currency)"
+                    }
                   }
                 },
-                { "kind": "DefinitionItem", "props": { "term": "Redeemed at" }, "bindings": { "value": { "$expr": "formatDate(redemption.redeemed_at, 'full')" } } }
+                {
+                  "kind": "DefinitionItem",
+                  "props": { "term": "Redeemed at" },
+                  "bindings": { "value": { "$expr": "formatDate(redemption.redeemed_at, 'full')" } }
+                }
               ]
             }
           ]
@@ -106,11 +161,17 @@
                 {
                   "kind": "Button",
                   "props": { "variant": "outline", "children": "Cancel" },
-                  "actions": { "onPress": { "kind": "navigate", "to": "/tenant/coupons/redemptions" } }
+                  "actions": {
+                    "onPress": { "kind": "navigate", "to": "/tenant/coupons/redemptions" }
+                  }
                 },
                 {
                   "kind": "Button",
-                  "props": { "variant": "danger", "type": "submit", "children": "Reverse redemption" }
+                  "props": {
+                    "variant": "danger",
+                    "type": "submit",
+                    "children": "Reverse redemption"
+                  }
                 }
               ]
             }

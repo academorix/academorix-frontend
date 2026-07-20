@@ -8,8 +8,8 @@
  *   future minor bump via the extractor described in `.kiro/specs/sdui/tasks.md`.
  */
 
-import { Alert, Badge, Button, Card, Chip, Input, Kbd, Spinner } from '@stackra/ui/react';
-import type { ComponentRegistry } from '@/core/registries/component.registry';
+import { Alert, Badge, Button, Card, Chip, Input, Kbd, Spinner } from "@stackra/ui/react";
+import type { ComponentRegistry } from "@/core/registries/component.registry";
 
 /**
  * Register the load-bearing HeroUI OSS components. Every entry is a
@@ -17,12 +17,12 @@ import type { ComponentRegistry } from '@/core/registries/component.registry';
  * generated manifest lands.
  */
 export function registerHeroUiComponents(registry: ComponentRegistry): void {
-  registry.register('Alert', { component: Alert, category: 'heroui' });
-  registry.register('Badge', { component: Badge, category: 'heroui' });
-  registry.register('Button', { component: Button, category: 'heroui' });
-  registry.register('Card', { component: Card, category: 'heroui' });
-  registry.register('Chip', { component: Chip, category: 'heroui' });
-  registry.register('Input', { component: Input, category: 'heroui', acceptsChildren: false });
-  registry.register('Kbd', { component: Kbd, category: 'heroui' });
-  registry.register('Spinner', { component: Spinner, category: 'heroui', acceptsChildren: false });
+  registry.register("Alert", { component: Alert, category: "heroui" });
+  registry.register("Badge", { component: Badge, category: "heroui" });
+  registry.register("Button", { component: Button, category: "heroui" });
+  registry.register("Card", { component: Card, category: "heroui" });
+  registry.register("Chip", { component: Chip, category: "heroui" });
+  registry.register("Input", { component: Input, category: "heroui", acceptsChildren: false });
+  registry.register("Kbd", { component: Kbd, category: "heroui" });
+  registry.register("Spinner", { component: Spinner, category: "heroui", acceptsChildren: false });
 }

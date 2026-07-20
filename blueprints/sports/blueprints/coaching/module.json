@@ -27,9 +27,7 @@
     "wave-3b"
   ],
   "priority": 68,
-  "providers": [
-    "Academorix\\Sports\\Coaching\\Providers\\CoachingServiceProvider"
-  ],
+  "providers": ["Academorix\\Sports\\Coaching\\Providers\\CoachingServiceProvider"],
   "files": [],
   "dependencies": [
     "foundation",
@@ -59,9 +57,7 @@
       "HasCoachCertifications",
       "HasCoachSkillRatings"
     ],
-    "attributes": [
-      "AsCoachingListener"
-    ],
+    "attributes": ["AsCoachingListener"],
     "blueprints": [
       "coaching-profile",
       "coach-assignment",
@@ -168,12 +164,8 @@
       "CoachRatableType"
     ],
     "views": [],
-    "lang": [
-      "coaching"
-    ],
-    "config": [
-      "coaching"
-    ],
+    "lang": ["coaching"],
+    "config": ["coaching"],
     "macros": [],
     "bindings": [
       "CoachingProfileRepository",

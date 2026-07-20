@@ -6,13 +6,13 @@
  * @module @stackra/http/utils/compose-base-url
  */
 
-import { Str } from '@stackra/support';
+import { Str } from "@stackra/support";
 
 /**
  * Trim leading and trailing slashes from a path segment.
  */
 function trimSlashes(segment: string): string {
-  return segment.replace(/^\/+|\/+$/g, '');
+  return segment.replace(/^\/+|\/+$/g, "");
 }
 
 /**
@@ -38,13 +38,13 @@ function trimSlashes(segment: string): string {
 export function composeBaseURL(
   baseURL?: string,
   apiPrefix?: string,
-  version?: string
+  version?: string,
 ): string | undefined {
   if (!baseURL || Str.trim(baseURL).length === 0) {
     return undefined;
   }
 
-  const root = baseURL.replace(/\/+$/, '');
+  const root = baseURL.replace(/\/+$/, "");
   const parts: string[] = [root];
 
   if (apiPrefix && Str.trim(apiPrefix).length > 0) {
@@ -55,5 +55,5 @@ export function composeBaseURL(
     parts.push(trimSlashes(version));
   }
 
-  return parts.join('/');
+  return parts.join("/");
 }

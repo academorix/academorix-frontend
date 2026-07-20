@@ -4,10 +4,10 @@
  * @description Factories returning assertable mock scope instances.
  */
 
-import { createAssertableProxy, type AssertableProxy } from '@stackra/testing';
-import { MockScopeService } from './mock-scope-service';
-import { MockScopeDataSource } from './mock-scope-data-source';
-import type { IScopeContext, IScopeNodeTreeNode } from '../core/interfaces';
+import { createAssertableProxy, type AssertableProxy } from "@stackra/testing";
+import { MockScopeService } from "./mock-scope-service";
+import { MockScopeDataSource } from "./mock-scope-data-source";
+import type { IScopeContext, IScopeNodeTreeNode } from "../core/interfaces";
 
 /** Options accepted by {@link createMockScopeService}. */
 export interface CreateMockScopeServiceOptions {
@@ -53,7 +53,7 @@ export interface CreateMockScopeDataSourceOptions {
  * ```
  */
 export function createMockScopeService(
-  options: CreateMockScopeServiceOptions = {}
+  options: CreateMockScopeServiceOptions = {},
 ): AssertableProxy<MockScopeService> {
   return createAssertableProxy(new MockScopeService(options));
 }
@@ -74,7 +74,7 @@ export function createMockScopeService(
  * ```
  */
 export function createMockScopeDataSource(
-  options: CreateMockScopeDataSourceOptions = {}
+  options: CreateMockScopeDataSourceOptions = {},
 ): AssertableProxy<MockScopeDataSource> {
   return createAssertableProxy(new MockScopeDataSource(options));
 }

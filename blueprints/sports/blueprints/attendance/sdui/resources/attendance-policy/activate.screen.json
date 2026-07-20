@@ -9,8 +9,18 @@
   "resource": { "module": "attendance", "entity": "attendance-policy", "action": "activate" },
   "requiresPermission": "attendance-policies.activate",
   "dataSources": [
-    { "name": "policy", "kind": "http.get", "urlTemplate": "/api/v1/attendance-policies/{policy}", "unwrap": "data" },
-    { "name": "collisions", "kind": "http.get", "urlTemplate": "/api/v1/attendance-policies?filter[branch_id]={policy.branch_id}&filter[membership_plan_id]={policy.membership_plan_id}&filter[is_active]=true", "unwrap": "data" }
+    {
+      "name": "policy",
+      "kind": "http.get",
+      "urlTemplate": "/api/v1/attendance-policies/{policy}",
+      "unwrap": "data"
+    },
+    {
+      "name": "collisions",
+      "kind": "http.get",
+      "urlTemplate": "/api/v1/attendance-policies?filter[branch_id]={policy.branch_id}&filter[membership_plan_id]={policy.membership_plan_id}&filter[is_active]=true",
+      "unwrap": "data"
+    }
   ],
   "nodes": [
     {
@@ -18,14 +28,27 @@
       "kind": "View",
       "props": { "className": "flex flex-col gap-4 p-6 max-w-3xl mx-auto" },
       "children": [
-        { "kind": "Text", "props": { "as": "h1", "className": "text-2xl font-semibold", "children": "Activate policy" } },
+        {
+          "kind": "Text",
+          "props": {
+            "as": "h1",
+            "className": "text-2xl font-semibold",
+            "children": "Activate policy"
+          }
+        },
         {
           "kind": "Alert",
           "props": { "variant": "warning" },
           "bindings": { "hidden": { "$expr": "collisions.length === 0" } },
           "children": [
-            { "kind": "Text", "props": { "className": "font-semibold", "children": "Collision detected" } },
-            { "kind": "Text", "propsExpr": "{ children: 'An active policy already exists at this (branch, plan) specificity. Activating will supersede it: ' + collisions[0].name }" }
+            {
+              "kind": "Text",
+              "props": { "className": "font-semibold", "children": "Collision detected" }
+            },
+            {
+              "kind": "Text",
+              "propsExpr": "{ children: 'An active policy already exists at this (branch, plan) specificity. Activating will supersede it: ' + collisions[0].name }"
+            }
           ]
         },
         {
@@ -41,9 +64,18 @@
               "kind": "Card.Content",
               "props": { "className": "flex flex-col gap-2" },
               "children": [
-                { "kind": "Text", "propsExpr": "{ children: 'Grace period: ' + policy.grace_period_minutes + ' minutes' }" },
-                { "kind": "Text", "propsExpr": "{ children: 'Max unexcused absences: ' + policy.max_unexcused_absences_per_period + ' in ' + policy.absence_freeze_period_days + '-day window' }" },
-                { "kind": "Text", "propsExpr": "{ children: 'Late penalty: ' + policy.late_arrival_penalty_type }" }
+                {
+                  "kind": "Text",
+                  "propsExpr": "{ children: 'Grace period: ' + policy.grace_period_minutes + ' minutes' }"
+                },
+                {
+                  "kind": "Text",
+                  "propsExpr": "{ children: 'Max unexcused absences: ' + policy.max_unexcused_absences_per_period + ' in ' + policy.absence_freeze_period_days + '-day window' }"
+                },
+                {
+                  "kind": "Text",
+                  "propsExpr": "{ children: 'Late penalty: ' + policy.late_arrival_penalty_type }"
+                }
               ]
             }
           ]

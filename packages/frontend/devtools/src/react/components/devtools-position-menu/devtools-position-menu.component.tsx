@@ -9,24 +9,24 @@
  *   ghost-variant Button" applies here.
  */
 
-import { type ReactElement } from 'react';
-import { Button, Dropdown, Tooltip } from '@stackra/ui/react';
-import { ViewColumnsIcon } from '@stackra/ui/icons/heroicon/outline';
+import { type ReactElement } from "react";
+import { Button, Dropdown, Tooltip } from "@stackra/ui/react";
+import { ViewColumnsIcon } from "@stackra/ui/icons/heroicon/outline";
 
-import type { DevtoolsShellPosition } from '@/core/types';
-import { useDevtoolsFrameState } from '../../hooks/use-devtools-frame-state.hook';
-import type { DevtoolsPositionMenuProps } from './devtools-position-menu.interface';
+import type { DevtoolsShellPosition } from "@/core/types";
+import { useDevtoolsFrameState } from "../../hooks/use-devtools-frame-state.hook";
+import type { DevtoolsPositionMenuProps } from "./devtools-position-menu.interface";
 
 /** Human-readable label for each position. */
 const POSITION_LABELS: Record<DevtoolsShellPosition, string> = {
-  left: 'Left',
-  right: 'Right',
-  top: 'Top',
-  bottom: 'Bottom',
+  left: "Left",
+  right: "Right",
+  top: "Top",
+  bottom: "Bottom",
 };
 
 /** Every position, in a stable render order. */
-const POSITIONS: readonly DevtoolsShellPosition[] = ['left', 'right', 'top', 'bottom'];
+const POSITIONS: readonly DevtoolsShellPosition[] = ["left", "right", "top", "bottom"];
 
 /**
  * Position selector.

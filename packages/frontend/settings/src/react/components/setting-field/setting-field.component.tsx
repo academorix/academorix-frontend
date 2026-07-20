@@ -14,7 +14,7 @@
  *   layer (a future `renderControl` prop can extend this shape).
  */
 
-import type { JSX, ReactNode } from 'react';
+import type { JSX, ReactNode } from "react";
 import {
   ColorArea,
   ColorPicker,
@@ -38,10 +38,10 @@ import {
   TextArea,
   TextField,
   TimeField,
-} from '@stackra/ui/react';
-import { ControlType, type ISettingField, type ISettingFieldOption } from '@stackra/contracts';
+} from "@stackra/ui/react";
+import { ControlType, type ISettingField, type ISettingFieldOption } from "@stackra/contracts";
 
-import type { ISettingFieldProps } from './setting-field.interface';
+import type { ISettingFieldProps } from "./setting-field.interface";
 
 /**
  * Render a single setting field by its resolved descriptor.
@@ -280,7 +280,7 @@ function TagsRenderer(props: ISettingFieldProps): JSX.Element {
       selectionMode="multiple"
       onSelectionChange={(keys) => {
         const next =
-          keys === 'all'
+          keys === "all"
             ? options.map((o) => String(o.value))
             : Array.from(keys).map((k) => String(k));
         onChange(next);
@@ -332,8 +332,8 @@ function ColorRenderer(props: ISettingFieldProps): JSX.Element {
   const { field, value: rawValue, onChange, isDisabled } = props;
   return (
     <ColorPicker
-      value={coerceString(rawValue) || '#000000'}
-      onChange={(color) => onChange(color.toString('hex'))}
+      value={coerceString(rawValue) || "#000000"}
+      onChange={(color) => onChange(color.toString("hex"))}
     >
       <ColorPicker.Trigger>
         <ColorSwatch size="lg" />
@@ -457,15 +457,15 @@ function renderDescriptionOrError(field: ISettingField): ReactNode {
 
 /** Coerce whatever the store returned into a string. */
 function coerceString(value: unknown): string {
-  if (typeof value === 'string') return value;
-  if (value === null || value === undefined) return '';
+  if (typeof value === "string") return value;
+  if (value === null || value === undefined) return "";
   return String(value);
 }
 
 /** Coerce into a number or undefined for `NumberField`. */
 function coerceNumber(value: unknown): number | undefined {
-  if (typeof value === 'number' && Number.isFinite(value)) return value;
-  if (typeof value === 'string' && value.length > 0) {
+  if (typeof value === "number" && Number.isFinite(value)) return value;
+  if (typeof value === "string" && value.length > 0) {
     const parsed = Number(value);
     return Number.isFinite(parsed) ? parsed : undefined;
   }
@@ -474,7 +474,7 @@ function coerceNumber(value: unknown): number | undefined {
 
 /** Coerce into the `Key` type ComboBox expects. */
 function coerceKey(value: unknown): string | number | undefined {
-  if (typeof value === 'string' || typeof value === 'number') return value;
+  if (typeof value === "string" || typeof value === "number") return value;
   return undefined;
 }
 
@@ -485,25 +485,25 @@ function coerceStringArray(value: unknown): string[] {
 }
 
 /** Normalise option list — the descriptor may carry no options. */
-function normalizeOptions(options: ISettingField['options']): readonly ISettingFieldOption[] {
+function normalizeOptions(options: ISettingField["options"]): readonly ISettingFieldOption[] {
   return options ?? [];
 }
 
 /** Read the field's validation for a `required` rule. */
 function hasRequiredRule(field: ISettingField): boolean {
-  return (field.validation ?? []).some((rule) => rule.type === 'required');
+  return (field.validation ?? []).some((rule) => rule.type === "required");
 }
 
 /** Text-input HTML type inferred from a text-family control. */
-function mapTextInputType(control: string): 'text' | 'password' | 'url' | 'email' {
+function mapTextInputType(control: string): "text" | "password" | "url" | "email" {
   switch (control) {
     case ControlType.Password:
-      return 'password';
+      return "password";
     case ControlType.Url:
-      return 'url';
+      return "url";
     case ControlType.Email:
-      return 'email';
+      return "email";
     default:
-      return 'text';
+      return "text";
   }
 }

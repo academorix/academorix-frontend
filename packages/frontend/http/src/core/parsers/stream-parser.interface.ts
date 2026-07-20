@@ -12,4 +12,4 @@
  * @module @stackra/http/parsers/stream-parser
  */
 
-export type { IStreamParser } from '../interfaces/stream-parser.interface';
+export type { IStreamParser } from "../interfaces/stream-parser.interface";

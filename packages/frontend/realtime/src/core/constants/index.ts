@@ -6,4 +6,4 @@
  *   imported directly from `@stackra/contracts`.
  */
 
-export { DEFAULT_REALTIME_CONFIG } from './default-realtime-config.constant';
+export { DEFAULT_REALTIME_CONFIG } from "./default-realtime-config.constant";

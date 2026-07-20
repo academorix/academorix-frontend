@@ -9,10 +9,10 @@
  * @module @stackra/http/middleware
  */
 
-export { AuthMiddleware } from './auth.middleware';
-export { TenantHeaderMiddleware } from './tenant-header.middleware';
-export { LocaleHeaderMiddleware } from './locale-header.middleware';
-export { RateLimitMiddleware } from './rate-limit.middleware';
-export { CircuitBreakerMiddleware } from './circuit-breaker.middleware';
-export { DeduplicationMiddleware } from './deduplication.middleware';
-export { ProgressMiddleware } from './progress.middleware';
+export { AuthMiddleware } from "./auth.middleware";
+export { TenantHeaderMiddleware } from "./tenant-header.middleware";
+export { LocaleHeaderMiddleware } from "./locale-header.middleware";
+export { RateLimitMiddleware } from "./rate-limit.middleware";
+export { CircuitBreakerMiddleware } from "./circuit-breaker.middleware";
+export { DeduplicationMiddleware } from "./deduplication.middleware";
+export { ProgressMiddleware } from "./progress.middleware";

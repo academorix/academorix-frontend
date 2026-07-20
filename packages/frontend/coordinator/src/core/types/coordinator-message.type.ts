@@ -4,7 +4,7 @@
  * @description Internal message shape exchanged between tabs via BroadcastChannel.
  */
 
-import { CoordinatorMessageKind } from '@/core/enums';
+import { CoordinatorMessageKind } from "@/core/enums";
 
 /**
  * Union of all coordinator message types exchanged between tabs.

@@ -58,7 +58,12 @@
   "x-database": {
     "engine": "postgres",
     "columns": {
-      "id": { "type": "string", "length": 64, "primary": true, "description": "Prefixed ULID: `rpg_<26>`." },
+      "id": {
+        "type": "string",
+        "length": 64,
+        "primary": true,
+        "description": "Prefixed ULID: `rpg_<26>`."
+      },
       "tenant_id": {
         "type": "string",
         "length": 64,
@@ -98,8 +103,18 @@
         "nullable": false,
         "description": "Interpretation depends on reward_type_referrer."
       },
-      "reward_currency_referrer": { "type": "string", "length": 3, "nullable": true, "description": "ISO 4217." },
-      "reward_type_referred": { "type": "string", "length": 32, "nullable": true, "description": "Null for single_sided programs." },
+      "reward_currency_referrer": {
+        "type": "string",
+        "length": 3,
+        "nullable": true,
+        "description": "ISO 4217."
+      },
+      "reward_type_referred": {
+        "type": "string",
+        "length": 32,
+        "nullable": true,
+        "description": "Null for single_sided programs."
+      },
       "reward_amount_referred": { "type": "integer", "nullable": true },
       "reward_currency_referred": { "type": "string", "length": 3, "nullable": true },
       "trigger_event": {
@@ -114,11 +129,31 @@
         "nullable": false,
         "description": "Enum: immediate / trigger_plus_hold_days / after_refund_window_closes / n_events_completed / manual_approval."
       },
-      "vesting_hold_days": { "type": "integer", "nullable": true, "description": "Required when vesting_rule=trigger_plus_hold_days. 1..365." },
-      "vesting_n_events": { "type": "integer", "nullable": true, "description": "Required when vesting_rule=n_events_completed. 1..100." },
-      "max_rewards_per_referrer": { "type": "integer", "nullable": true, "description": "Lifetime cap per referrer. Null = unlimited." },
-      "max_rewards_per_period": { "type": "integer", "nullable": true, "description": "Cap per referrer per rolling 30d window. Null = unlimited." },
-      "max_rewards_per_program": { "type": "integer", "nullable": true, "description": "Total program budget cap (rewards_issued_amount_cents ceiling). Null = unlimited. Requires `referrals_program_budget_cap` entitlement." },
+      "vesting_hold_days": {
+        "type": "integer",
+        "nullable": true,
+        "description": "Required when vesting_rule=trigger_plus_hold_days. 1..365."
+      },
+      "vesting_n_events": {
+        "type": "integer",
+        "nullable": true,
+        "description": "Required when vesting_rule=n_events_completed. 1..100."
+      },
+      "max_rewards_per_referrer": {
+        "type": "integer",
+        "nullable": true,
+        "description": "Lifetime cap per referrer. Null = unlimited."
+      },
+      "max_rewards_per_period": {
+        "type": "integer",
+        "nullable": true,
+        "description": "Cap per referrer per rolling 30d window. Null = unlimited."
+      },
+      "max_rewards_per_program": {
+        "type": "integer",
+        "nullable": true,
+        "description": "Total program budget cap (rewards_issued_amount_cents ceiling). Null = unlimited. Requires `referrals_program_budget_cap` entitlement."
+      },
       "rewards_issued_count": {
         "type": "integer",
         "nullable": false,
@@ -144,7 +179,11 @@
         "description": "Shape: { referrer_min_account_age_days: int|null, referred_must_be_new_user: bool, referred_must_verify_email: bool, referred_must_be_from_country: string[], referrer_min_ltv_cents: int|null, allowed_email_domains: string[]|null }."
       },
       "program_starts_at": { "type": "timestamptz", "nullable": false },
-      "program_ends_at": { "type": "timestamptz", "nullable": true, "description": "Null = open-ended program." },
+      "program_ends_at": {
+        "type": "timestamptz",
+        "nullable": true,
+        "description": "Null = open-ended program."
+      },
       "terms_url": { "type": "string", "length": 512, "nullable": true },
       "metadata": { "type": "jsonb", "nullable": true },
       "created_by": { "type": "string", "length": 64, "nullable": true },
@@ -162,7 +201,10 @@
         "predicate": "deleted_at IS NULL"
       },
       { "columns": ["tenant_id", "status"], "name": "referral_programs_status_idx" },
-      { "columns": ["tenant_id", "program_starts_at", "program_ends_at"], "name": "referral_programs_window_idx" }
+      {
+        "columns": ["tenant_id", "program_starts_at", "program_ends_at"],
+        "name": "referral_programs_window_idx"
+      }
     ]
   },
   "required": [
@@ -194,23 +236,53 @@
     "side": { "type": "string", "enum": ["single_sided", "double_sided"] },
     "reward_type_referrer": {
       "type": "string",
-      "enum": ["percent_discount", "fixed_amount", "free_months", "free_sessions", "credits", "point_award"]
+      "enum": [
+        "percent_discount",
+        "fixed_amount",
+        "free_months",
+        "free_sessions",
+        "credits",
+        "point_award"
+      ]
     },
     "reward_amount_referrer": { "type": "integer", "minimum": 1 },
     "reward_currency_referrer": { "type": ["string", "null"], "pattern": "^[A-Z]{3}$" },
     "reward_type_referred": {
       "type": ["string", "null"],
-      "enum": [null, "percent_discount", "fixed_amount", "free_months", "free_sessions", "credits", "point_award"]
+      "enum": [
+        null,
+        "percent_discount",
+        "fixed_amount",
+        "free_months",
+        "free_sessions",
+        "credits",
+        "point_award"
+      ]
     },
     "reward_amount_referred": { "type": ["integer", "null"], "minimum": 1 },
     "reward_currency_referred": { "type": ["string", "null"], "pattern": "^[A-Z]{3}$" },
     "trigger_event": {
       "type": "string",
-      "enum": ["signup", "trial_started", "first_payment", "subscription_renewal_1", "subscription_renewal_3", "lifetime_value_threshold_hit", "athlete_enrolled", "event_registered"]
+      "enum": [
+        "signup",
+        "trial_started",
+        "first_payment",
+        "subscription_renewal_1",
+        "subscription_renewal_3",
+        "lifetime_value_threshold_hit",
+        "athlete_enrolled",
+        "event_registered"
+      ]
     },
     "vesting_rule": {
       "type": "string",
-      "enum": ["immediate", "trigger_plus_hold_days", "after_refund_window_closes", "n_events_completed", "manual_approval"]
+      "enum": [
+        "immediate",
+        "trigger_plus_hold_days",
+        "after_refund_window_closes",
+        "n_events_completed",
+        "manual_approval"
+      ]
     },
     "vesting_hold_days": { "type": ["integer", "null"], "minimum": 1, "maximum": 365 },
     "vesting_n_events": { "type": ["integer", "null"], "minimum": 1, "maximum": 100 },
@@ -239,7 +311,11 @@
         "referrer_min_account_age_days": { "type": ["integer", "null"], "minimum": 0 },
         "referred_must_be_new_user": { "type": "boolean", "default": true },
         "referred_must_verify_email": { "type": "boolean", "default": false },
-        "referred_must_be_from_country": { "type": "array", "items": { "type": "string", "pattern": "^[A-Z]{2}$" }, "default": [] },
+        "referred_must_be_from_country": {
+          "type": "array",
+          "items": { "type": "string", "pattern": "^[A-Z]{2}$" },
+          "default": []
+        },
         "referrer_min_ltv_cents": { "type": ["integer", "null"], "minimum": 0 },
         "allowed_email_domains": { "type": ["array", "null"], "items": { "type": "string" } }
       },

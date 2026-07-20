@@ -36,9 +36,7 @@
       "Region.updated_at",
       "Region.deleted_at"
     ],
-    "confidential": [
-      "Region.tax_config.registration_number"
-    ],
+    "confidential": ["Region.tax_config.registration_number"],
     "restricted": [],
     "regulated_minor": [],
     "regulated_health": [],

@@ -57,7 +57,9 @@
     },
     {
       "entity": "Password history (JSONB on Identity)",
-      "hot": { "days": "rolling window \u2014 keeps last `identity.password.history_size` hashes (default 5)" },
+      "hot": {
+        "days": "rolling window \u2014 keeps last `identity.password.history_size` hashes (default 5)"
+      },
       "purge": {
         "trigger": "new password change \u2014 evicts oldest entry when window is full",
         "action": "JSONB array update inside the same transaction as the password change"

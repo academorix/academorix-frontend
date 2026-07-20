@@ -29,7 +29,14 @@
             {
               "kind": "CardHeader",
               "children": [
-                { "kind": "Text", "props": { "as": "h2", "className": "text-lg font-medium", "children": "Accept this dispute?" } }
+                {
+                  "kind": "Text",
+                  "props": {
+                    "as": "h2",
+                    "className": "text-lg font-medium",
+                    "children": "Accept this dispute?"
+                  }
+                }
               ]
             },
             {
@@ -71,12 +78,16 @@
                     {
                       "kind": "Button",
                       "props": { "variant": "ghost", "children": "Cancel" },
-                      "actions": { "onPress": { "kind": "navigate", "toExpr": "'/tenant/payment-disputes'" } }
+                      "actions": {
+                        "onPress": { "kind": "navigate", "toExpr": "'/tenant/payment-disputes'" }
+                      }
                     },
                     {
                       "kind": "Button",
                       "props": { "variant": "danger", "children": "Accept + refund" },
-                      "bindings": { "disabled": { "$expr": "!form.note || form.note.length < 10" } },
+                      "bindings": {
+                        "disabled": { "$expr": "!form.note || form.note.length < 10" }
+                      },
                       "actions": {
                         "onPress": {
                           "kind": "http.post",

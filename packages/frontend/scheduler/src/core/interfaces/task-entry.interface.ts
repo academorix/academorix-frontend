@@ -4,7 +4,7 @@
  * @description Task entry interface representing a registered scheduled task.
  */
 
-import type { ITaskOptions } from './task-options.interface';
+import type { ITaskOptions } from "./task-options.interface";
 
 export interface ITaskEntry {
   readonly name: string;

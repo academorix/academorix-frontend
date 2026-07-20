@@ -4,7 +4,7 @@
  * @description Mapper type for the `useActionChange` hook.
  */
 
-import type { IActionDescriptor } from '@stackra/contracts';
+import type { IActionDescriptor } from "@stackra/contracts";
 
 /**
  * Function invoked on every `onChange` event to produce the descriptor
@@ -18,5 +18,5 @@ import type { IActionDescriptor } from '@stackra/contracts';
  */
 export type ActionChangeMapper<V = unknown, D extends IActionDescriptor = IActionDescriptor> = (
   value: V,
-  base: D
+  base: D,
 ) => D;

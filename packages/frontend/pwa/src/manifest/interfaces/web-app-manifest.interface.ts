@@ -15,17 +15,17 @@
  *   without a cast at the call site.
  */
 
-import type { IFileHandler } from './file-handler.interface';
-import type { ILaunchHandler } from './launch-handler.interface';
-import type { IManifestIcon } from './manifest-icon.interface';
-import type { IManifestScreenshot } from './manifest-screenshot.interface';
-import type { IManifestShortcut } from './manifest-shortcut.interface';
-import type { IManifestTranslation } from './manifest-translation.interface';
-import type { IProtocolHandler } from './protocol-handler.interface';
-import type { IRelatedApplication } from './related-application.interface';
-import type { IShareTarget } from './share-target.interface';
-import type { IUrlHandler } from './url-handler.interface';
-import type { IWidget } from './widget.interface';
+import type { IFileHandler } from "./file-handler.interface";
+import type { ILaunchHandler } from "./launch-handler.interface";
+import type { IManifestIcon } from "./manifest-icon.interface";
+import type { IManifestScreenshot } from "./manifest-screenshot.interface";
+import type { IManifestShortcut } from "./manifest-shortcut.interface";
+import type { IManifestTranslation } from "./manifest-translation.interface";
+import type { IProtocolHandler } from "./protocol-handler.interface";
+import type { IRelatedApplication } from "./related-application.interface";
+import type { IShareTarget } from "./share-target.interface";
+import type { IUrlHandler } from "./url-handler.interface";
+import type { IWidget } from "./widget.interface";
 
 /**
  * Discriminated display-mode string used by the manifest.
@@ -35,7 +35,7 @@ import type { IWidget } from './widget.interface';
  * compile.
  */
 export type ManifestDisplayMode =
-  'standalone' | 'fullscreen' | 'minimal-ui' | 'browser' | 'window-controls-overlay';
+  "standalone" | "fullscreen" | "minimal-ui" | "browser" | "window-controls-overlay";
 
 /**
  * W3C-compliant Web App Manifest.
@@ -63,7 +63,7 @@ export interface IWebAppManifest {
   /** Primary language BCP-47 tag. */
   readonly lang?: string;
   /** Text direction. */
-  readonly dir?: 'ltr' | 'rtl' | 'auto';
+  readonly dir?: "ltr" | "rtl" | "auto";
   /** Per-locale translations, keyed by BCP-47 tag. */
   readonly translations?: Readonly<Record<string, IManifestTranslation>>;
 
@@ -81,27 +81,27 @@ export interface IWebAppManifest {
   // ── Display ─────────────────────────────────────────────────────
   /** Display mode. */
   readonly display?:
-    'fullscreen' | 'standalone' | 'minimal-ui' | 'browser' | 'window-controls-overlay';
+    "fullscreen" | "standalone" | "minimal-ui" | "browser" | "window-controls-overlay";
   /**
    * Preferred fallback display modes tried in order when `display`
    * isn't supported. Chromium 93+ reads this before `display`.
    */
   readonly display_override?: readonly (
-    'window-controls-overlay' | 'fullscreen' | 'standalone' | 'minimal-ui' | 'browser'
+    "window-controls-overlay" | "fullscreen" | "standalone" | "minimal-ui" | "browser"
   )[];
   /**
    * Orientation preference. Preserved from the legacy Magento
    * manifest, which pins the app to portrait for phones.
    */
   readonly orientation?:
-    | 'any'
-    | 'natural'
-    | 'landscape'
-    | 'landscape-primary'
-    | 'landscape-secondary'
-    | 'portrait'
-    | 'portrait-primary'
-    | 'portrait-secondary';
+    | "any"
+    | "natural"
+    | "landscape"
+    | "landscape-primary"
+    | "landscape-secondary"
+    | "portrait"
+    | "portrait-primary"
+    | "portrait-secondary";
 
   // ── Colors ──────────────────────────────────────────────────────
   /** Theme colour (browser chrome tint). */
@@ -167,9 +167,9 @@ export interface IWebAppManifest {
   /** Requested Permissions Policy directives. */
   readonly permissions?: readonly string[];
   /** Link-capture behaviour. */
-  readonly capture_links?: 'none' | 'new-client' | 'existing-client';
+  readonly capture_links?: "none" | "new-client" | "existing-client";
   /** Link-handling preference. */
-  readonly handle_links?: 'auto' | 'preferred';
+  readonly handle_links?: "auto" | "preferred";
   /**
    * Additional origins/patterns the installed app's scope extends
    * over — successor to `url_handlers`.

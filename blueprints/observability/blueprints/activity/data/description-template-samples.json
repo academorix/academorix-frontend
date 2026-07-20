@@ -18,7 +18,11 @@
       "event": "created",
       "template": "%s booked %s for %s",
       "example": "Alice Rivera booked Court 3 for tomorrow at 10:00 AM",
-      "properties_used": ["causer.display_name", "subject.facility.name", "subject.starts_at (formatted)"]
+      "properties_used": [
+        "causer.display_name",
+        "subject.facility.name",
+        "subject.starts_at (formatted)"
+      ]
     },
     {
       "log_name": "bookings",
@@ -32,28 +36,45 @@
       "event": "rescheduled",
       "template": "%s rescheduled the %s booking from %s to %s",
       "example": "Alice Rivera rescheduled the Court 3 booking from tomorrow 10:00 AM to Friday 2:00 PM",
-      "properties_used": ["causer.display_name", "subject.facility.name", "properties.previous_starts_at", "subject.starts_at"]
+      "properties_used": [
+        "causer.display_name",
+        "subject.facility.name",
+        "properties.previous_starts_at",
+        "subject.starts_at"
+      ]
     },
     {
       "log_name": "bookings",
       "event": "cancelled",
       "template": "%s cancelled their booking on %s (%s)",
       "example": "Alice Rivera cancelled their booking on Court 3 (weather)",
-      "properties_used": ["causer.display_name", "subject.facility.name", "properties.cancel_reason"]
+      "properties_used": [
+        "causer.display_name",
+        "subject.facility.name",
+        "properties.cancel_reason"
+      ]
     },
     {
       "log_name": "athletes",
       "event": "enrolled",
       "template": "%s enrolled %s in %s",
       "example": "Sofia Chen enrolled Marcus Chen in Junior Swim Team (Fall 2026 season)",
-      "properties_used": ["causer.display_name (guardian)", "subject.display_name (athlete)", "properties.team_name + properties.season_name"]
+      "properties_used": [
+        "causer.display_name (guardian)",
+        "subject.display_name (athlete)",
+        "properties.team_name + properties.season_name"
+      ]
     },
     {
       "log_name": "athletes",
       "event": "transferred",
       "template": "%s transferred from %s to %s",
       "example": "Marcus Chen transferred from Junior Swim Team to Intermediate Swim Team",
-      "properties_used": ["subject.display_name", "properties.from_team_name", "properties.to_team_name"]
+      "properties_used": [
+        "subject.display_name",
+        "properties.from_team_name",
+        "properties.to_team_name"
+      ]
     },
     {
       "log_name": "athletes",
@@ -67,7 +88,11 @@
       "event": "member_added",
       "template": "%s added %s to %s",
       "example": "Coach Marek added Sofia Chen to Junior Swim Team",
-      "properties_used": ["causer.display_name", "properties.added_member_name", "subject.name (team)"]
+      "properties_used": [
+        "causer.display_name",
+        "properties.added_member_name",
+        "subject.name (team)"
+      ]
     },
     {
       "log_name": "teams",
@@ -81,7 +106,12 @@
       "event": "session_scheduled",
       "template": "%s scheduled a %s session for %s on %s",
       "example": "Coach Marek scheduled a training session for Junior Swim Team on Wednesday 4:00 PM",
-      "properties_used": ["causer.display_name", "properties.session_kind", "subject.name", "properties.session_starts_at"]
+      "properties_used": [
+        "causer.display_name",
+        "properties.session_kind",
+        "subject.name",
+        "properties.session_starts_at"
+      ]
     },
     {
       "log_name": "branch-management",
@@ -95,14 +125,23 @@
       "event": "facility_added",
       "template": "%s added %s to %s",
       "example": "Manager Jamie added Court 4 to Riverside East",
-      "properties_used": ["causer.display_name", "properties.facility_name", "subject.name (branch)"]
+      "properties_used": [
+        "causer.display_name",
+        "properties.facility_name",
+        "subject.name (branch)"
+      ]
     },
     {
       "log_name": "branch-management",
       "event": "staff_assigned",
       "template": "%s assigned %s as %s at %s",
       "example": "Director Elena assigned Jamie Kaur as manager at Riverside East",
-      "properties_used": ["causer.display_name", "properties.assigned_staff_name", "properties.role_label", "subject.name (branch)"]
+      "properties_used": [
+        "causer.display_name",
+        "properties.assigned_staff_name",
+        "properties.role_label",
+        "subject.name (branch)"
+      ]
     },
     {
       "log_name": "auth",
@@ -130,7 +169,11 @@
       "event": "invoice_sent",
       "template": "%s sent invoice %s to %s",
       "example": "Manager Jamie sent invoice INV-2026-0142 to Sofia Chen",
-      "properties_used": ["causer.display_name", "subject.invoice_number", "properties.recipient_name"]
+      "properties_used": [
+        "causer.display_name",
+        "subject.invoice_number",
+        "properties.recipient_name"
+      ]
     },
     {
       "log_name": "billing",
@@ -151,28 +194,44 @@
       "event": "marked_present",
       "template": "%s marked %s present at %s",
       "example": "Coach Marek marked Marcus Chen present at Wednesday training",
-      "properties_used": ["causer.display_name", "properties.athlete_name", "properties.session_summary"]
+      "properties_used": [
+        "causer.display_name",
+        "properties.athlete_name",
+        "properties.session_summary"
+      ]
     },
     {
       "log_name": "attendance",
       "event": "marked_absent",
       "template": "%s marked %s absent from %s",
       "example": "Coach Marek marked Marcus Chen absent from Wednesday training",
-      "properties_used": ["causer.display_name", "properties.athlete_name", "properties.session_summary"]
+      "properties_used": [
+        "causer.display_name",
+        "properties.athlete_name",
+        "properties.session_summary"
+      ]
     },
     {
       "log_name": "communications",
       "event": "announcement_published",
       "template": "%s published an announcement to %s: %s",
       "example": "Director Elena published an announcement to Junior Swim Team: Summer camp registration open",
-      "properties_used": ["causer.display_name", "properties.recipient_group_name", "properties.subject_line"]
+      "properties_used": [
+        "causer.display_name",
+        "properties.recipient_group_name",
+        "properties.subject_line"
+      ]
     },
     {
       "log_name": "communications",
       "event": "message_broadcast",
       "template": "%s sent a message to %d recipients in %s",
       "example": "Coach Marek sent a message to 12 recipients in Junior Swim Team",
-      "properties_used": ["causer.display_name", "properties.recipient_count", "properties.recipient_group_name"]
+      "properties_used": [
+        "causer.display_name",
+        "properties.recipient_count",
+        "properties.recipient_group_name"
+      ]
     },
     {
       "log_name": "system",

@@ -4,9 +4,9 @@
 
 ## Scope
 
-Achievement + award tracking. Medals, certificates, MVP, Player of
-the Month, etc. Awards are tenant-configured (each tenant defines
-their own award catalog) and can be team-level or individual.
+Achievement + award tracking. Medals, certificates, MVP, Player of the Month,
+etc. Awards are tenant-configured (each tenant defines their own award catalog)
+and can be team-level or individual.
 
 ## What landed
 
@@ -17,10 +17,9 @@ their own award catalog) and can be team-level or individual.
 
 ### Actions
 
-- **`CreateAwardAction`** — POST /awards. Admin-defines an award
-  template.
-- **`GrantAction`** — POST /awards/{award}/grant. Payload: recipient
-  (Athlete or Team), season, evidence. Fires `AwardGranted`.
+- **`CreateAwardAction`** — POST /awards. Admin-defines an award template.
+- **`GrantAction`** — POST /awards/{award}/grant. Payload: recipient (Athlete or
+  Team), season, evidence. Fires `AwardGranted`.
 - **`ListMyAwardsAction`** — GET /athletes/my/awards.
 - **`RevokeAction`** — POST /awards/grants/{grant}/revoke.
 

@@ -67,7 +67,12 @@
                   "children": [
                     {
                       "kind": "Chip",
-                      "props": { "size": "sm", "variant": "accent", "leadingIcon": "star-solid", "children": "Default" },
+                      "props": {
+                        "size": "sm",
+                        "variant": "accent",
+                        "leadingIcon": "star-solid",
+                        "children": "Default"
+                      },
                       "bindings": { "hidden": { "$expr": "!region.is_default" } }
                     },
                     {
@@ -125,7 +130,11 @@
               "children": [
                 {
                   "kind": "Text",
-                  "props": { "as": "h2", "className": "text-lg font-medium", "children": "Identity" }
+                  "props": {
+                    "as": "h2",
+                    "className": "text-lg font-medium",
+                    "children": "Identity"
+                  }
                 },
                 {
                   "kind": "TextField",
@@ -134,7 +143,12 @@
                 },
                 {
                   "kind": "TextField",
-                  "props": { "name": "slug", "label": "URL slug", "required": true, "maxLength": 64 },
+                  "props": {
+                    "name": "slug",
+                    "label": "URL slug",
+                    "required": true,
+                    "maxLength": 64
+                  },
                   "bindings": { "defaultValue": { "$ref": "region.slug" } }
                 },
                 {
@@ -165,7 +179,11 @@
               "children": [
                 {
                   "kind": "Text",
-                  "props": { "as": "h2", "className": "text-lg font-medium", "children": "Commercial" }
+                  "props": {
+                    "as": "h2",
+                    "className": "text-lg font-medium",
+                    "children": "Commercial"
+                  }
                 },
                 {
                   "kind": "View",
@@ -183,7 +201,11 @@
                     },
                     {
                       "kind": "TextField",
-                      "props": { "name": "currency_symbol", "label": "Currency symbol", "maxLength": 8 },
+                      "props": {
+                        "name": "currency_symbol",
+                        "label": "Currency symbol",
+                        "maxLength": 8
+                      },
                       "bindings": { "defaultValue": { "$ref": "region.currency_symbol" } }
                     }
                   ]
@@ -202,7 +224,12 @@
                 },
                 {
                   "kind": "TextField",
-                  "props": { "name": "locale", "label": "Locale (BCP-47)", "required": true, "maxLength": 16 },
+                  "props": {
+                    "name": "locale",
+                    "label": "Locale (BCP-47)",
+                    "required": true,
+                    "maxLength": 16
+                  },
                   "bindings": { "defaultValue": { "$ref": "region.locale" } }
                 },
                 {
@@ -254,11 +281,19 @@
                   "children": [
                     {
                       "kind": "Text",
-                      "props": { "as": "h2", "className": "text-lg font-medium", "children": "Tax configuration (summary)" }
+                      "props": {
+                        "as": "h2",
+                        "className": "text-lg font-medium",
+                        "children": "Tax configuration (summary)"
+                      }
                     },
                     {
                       "kind": "Button",
-                      "props": { "variant": "ghost", "leadingIcon": "arrow-right", "children": "Open tax config editor" },
+                      "props": {
+                        "variant": "ghost",
+                        "leadingIcon": "arrow-right",
+                        "children": "Open tax config editor"
+                      },
                       "actions": {
                         "onPress": {
                           "kind": "navigate",
@@ -296,7 +331,11 @@
               "children": [
                 {
                   "kind": "Text",
-                  "props": { "as": "h2", "className": "text-lg font-medium", "children": "Ordering" }
+                  "props": {
+                    "as": "h2",
+                    "className": "text-lg font-medium",
+                    "children": "Ordering"
+                  }
                 },
                 {
                   "kind": "NumberField",
@@ -324,7 +363,9 @@
                         }
                       },
                       "requiresPermission": "regions.set_default",
-                      "bindings": { "hidden": { "$expr": "region.is_default || region.status !== 'active'" } }
+                      "bindings": {
+                        "hidden": { "$expr": "region.is_default || region.status !== 'active'" }
+                      }
                     }
                   ]
                 },
@@ -336,7 +377,10 @@
                       "kind": "Button",
                       "props": { "variant": "ghost", "children": "Cancel" },
                       "actions": {
-                        "onPress": { "kind": "navigate", "toExpr": "'/settings/regions/' + route.region_id" }
+                        "onPress": {
+                          "kind": "navigate",
+                          "toExpr": "'/settings/regions/' + route.region_id"
+                        }
                       }
                     },
                     {

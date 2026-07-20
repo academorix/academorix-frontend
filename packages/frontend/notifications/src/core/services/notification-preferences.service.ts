@@ -28,16 +28,16 @@
  *   the network round-trip settles.
  */
 
-import { Injectable, Optional } from '@stackra/container';
+import { Injectable, Optional } from "@stackra/container";
 
-import { MANDATORY_ON_MATRIX, NOTIFICATION_EVENTS, type NotificationEventName } from '../constants';
+import { MANDATORY_ON_MATRIX, NOTIFICATION_EVENTS, type NotificationEventName } from "../constants";
 import type {
   INotificationPreferences,
   IQuietHoursWindow,
   NotificationCategory,
-} from '../interfaces';
-import { isQuietHoursWindow } from '../utils';
-import { AnalyticsBridgeService } from './analytics-bridge.service';
+} from "../interfaces";
+import { isQuietHoursWindow } from "../utils";
+import { AnalyticsBridgeService } from "./analytics-bridge.service";
 
 /** Listener signature — receives no argument. */
 export type NotificationPreferencesListener = () => void;
@@ -58,7 +58,7 @@ function buildInitial(): INotificationPreferences {
  * `clearQuietHours(...)`; `per_child` is reserved for the future
  * per-child overrides bag.
  */
-type PreferencesChangeField = 'defaults' | 'quiet_hours' | 'per_child';
+type PreferencesChangeField = "defaults" | "quiet_hours" | "per_child";
 
 /**
  * Notification preferences store.
@@ -89,7 +89,7 @@ export class NotificationPreferencesService {
     // AnalyticsBridgeService is a peer within the same package — the
     // container resolves it optionally so tests can spin up the
     // service without wiring analytics.
-    @Optional() private readonly analytics?: AnalyticsBridgeService
+    @Optional() private readonly analytics?: AnalyticsBridgeService,
   ) {}
 
   // ── Reads ────────────────────────────────────────────────────────
@@ -144,11 +144,11 @@ export class NotificationPreferencesService {
     // and every modern browser + jsdom.
     let clock: string;
     try {
-      clock = new Intl.DateTimeFormat('en-GB', {
+      clock = new Intl.DateTimeFormat("en-GB", {
         timeZone: window.timezone,
-        hour: '2-digit',
-        minute: '2-digit',
-        hourCycle: 'h23',
+        hour: "2-digit",
+        minute: "2-digit",
+        hourCycle: "h23",
       }).format(now);
     } catch {
       // fail-soft — an unknown timezone falls through as
@@ -201,7 +201,7 @@ export class NotificationPreferencesService {
     // so listeners treat it as "everything may have changed"
     // rather than a targeted diff.
     this.emitAnalytics(NOTIFICATION_EVENTS.PREFERENCES_CHANGED, {
-      field: 'defaults',
+      field: "defaults",
     });
     // Re-arm the quiet-hours latch in case the new snapshot dropped
     // (or replaced) the window — the next `isInQuietHours(...)` call
@@ -220,7 +220,7 @@ export class NotificationPreferencesService {
     // per-channel granularity comes from `setChannelEnabled(...)`
     // which is the caller-friendly path for a single toggle.
     this.emitAnalytics(NOTIFICATION_EVENTS.PREFERENCES_CHANGED, {
-      field: 'defaults',
+      field: "defaults",
       changedKeys: Object.keys(defaults),
     });
     this.emit();
@@ -230,7 +230,7 @@ export class NotificationPreferencesService {
   public setChannelEnabled(
     category: NotificationCategory,
     channel: string,
-    enabled: boolean
+    enabled: boolean,
   ): void {
     // Mandatory pairs are locked ON — silently ignore attempts to
     // disable them so callers don't need to duplicate the check.
@@ -255,7 +255,7 @@ export class NotificationPreferencesService {
     // key the caller flipped so listeners can rebuild per-channel
     // views without re-reading the whole map.
     this.emitAnalytics(NOTIFICATION_EVENTS.PREFERENCES_CHANGED, {
-      field: 'defaults',
+      field: "defaults",
       changedKeys: [key],
     });
 
@@ -280,7 +280,7 @@ export class NotificationPreferencesService {
   public setQuietHours(window: IQuietHoursWindow): void {
     this.preferences = { ...this.preferences, quiet_hours: window };
     this.emitAnalytics(NOTIFICATION_EVENTS.PREFERENCES_CHANGED, {
-      field: 'quiet_hours',
+      field: "quiet_hours",
     });
     // Re-arm the quiet-hours latch — a new window may not match
     // the current wall-clock; the next `isInQuietHours(...)` call
@@ -293,7 +293,7 @@ export class NotificationPreferencesService {
   public clearQuietHours(): void {
     this.preferences = { ...this.preferences, quiet_hours: {} };
     this.emitAnalytics(NOTIFICATION_EVENTS.PREFERENCES_CHANGED, {
-      field: 'quiet_hours',
+      field: "quiet_hours",
     });
     // No window = never in quiet hours; reset the latch.
     this.quietHoursActive = false;
@@ -345,7 +345,7 @@ function parseWallClockMinutes(clock: string): number {
   // Accept both `HH:mm` (input) and `HH:mm` produced by
   // `Intl.DateTimeFormat.format(...)` — the format string is
   // consistent for `hour: '2-digit', minute: '2-digit'`.
-  const [hh, mm] = clock.split(':');
+  const [hh, mm] = clock.split(":");
   if (!hh || !mm) return -1;
   const hours = Number(hh);
   const minutes = Number(mm);

@@ -39,7 +39,9 @@
                 {
                   "kind": "Text",
                   "props": { "as": "h1", "className": "text-2xl font-semibold" },
-                  "bindings": { "children": { "$expr": "'Fraud flag — ' + flag.flag_type.replace(/_/g, ' ')" } }
+                  "bindings": {
+                    "children": { "$expr": "'Fraud flag — ' + flag.flag_type.replace(/_/g, ' ')" }
+                  }
                 },
                 {
                   "kind": "Text",
@@ -63,7 +65,10 @@
           "kind": "Card",
           "props": { "className": "p-4" },
           "children": [
-            { "kind": "Text", "props": { "as": "h3", "className": "font-semibold mb-3", "children": "Evidence" } },
+            {
+              "kind": "Text",
+              "props": { "as": "h3", "className": "font-semibold mb-3", "children": "Evidence" }
+            },
             {
               "kind": "View",
               "props": { "className": "flex flex-col gap-2 text-sm font-mono" },
@@ -92,7 +97,14 @@
           "props": { "className": "p-4" },
           "bindings": { "hidden": { "$expr": "!flag.reviewed_at" } },
           "children": [
-            { "kind": "Text", "props": { "as": "h3", "className": "font-semibold mb-3", "children": "Already reviewed" } },
+            {
+              "kind": "Text",
+              "props": {
+                "as": "h3",
+                "className": "font-semibold mb-3",
+                "children": "Already reviewed"
+              }
+            },
             {
               "kind": "Text",
               "bindings": {
@@ -108,7 +120,10 @@
           "props": { "className": "p-4" },
           "bindings": { "hidden": { "$expr": "flag.reviewed_at" } },
           "children": [
-            { "kind": "Text", "props": { "as": "h3", "className": "font-semibold mb-3", "children": "Decision" } },
+            {
+              "kind": "Text",
+              "props": { "as": "h3", "className": "font-semibold mb-3", "children": "Decision" }
+            },
             {
               "kind": "RadioGroup",
               "props": { "isRequired": true },

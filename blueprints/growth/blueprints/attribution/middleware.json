@@ -29,7 +29,10 @@
     { "middleware": "application::application.resolve" },
     { "middleware": "tenancy::tenant.resolve" },
     { "middleware": "entitlements::entitlement.enforce" },
-    { "middleware": "compliance::consent.resolve", "note": "Populates the ConsentGate state that AttributionMiddleware checks." },
+    {
+      "middleware": "compliance::consent.resolve",
+      "note": "Populates the ConsentGate state that AttributionMiddleware checks."
+    },
     {
       "middleware": "access::authorize",
       "note": "The permission-based authorize middleware wraps the ability checks defined in policies.json + permissions.json."

@@ -12,10 +12,10 @@
  *   so tests can construct it directly with a mock centre.
  */
 
-import { Injectable } from '@stackra/container';
+import { Injectable } from "@stackra/container";
 
-import type { INotificationChannelDriver, INotificationPayload } from '../interfaces';
-import { InAppNotificationCentre } from '../services/in-app-notification-centre.service';
+import type { INotificationChannelDriver, INotificationPayload } from "../interfaces";
+import { InAppNotificationCentre } from "../services/in-app-notification-centre.service";
 
 /**
  * The default in-app driver.
@@ -23,7 +23,7 @@ import { InAppNotificationCentre } from '../services/in-app-notification-centre.
 @Injectable()
 export class InAppChannelDriver implements INotificationChannelDriver {
   /** Channel id — matches `dispatch({ channels: ['in-app'] })`. */
-  public readonly id = 'in-app';
+  public readonly id = "in-app";
 
   public constructor(private readonly centre: InAppNotificationCentre) {}
 

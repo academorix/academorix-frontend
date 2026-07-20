@@ -8,18 +8,58 @@
       "model": "Chargeback",
       "class": "Academorix\\Finance\\Chargeback\\Policies\\ChargebackPolicy",
       "abilities": [
-        { "action": "viewAny", "permission": "chargebacks.viewAny", "scope": "finance + admin + owner + support" },
-        { "action": "view", "permission": "chargebacks.view", "scope": "finance + admin + owner + support" },
-        { "action": "submitEvidence", "permission": "chargebacks.submit-evidence", "scope": "finance + admin + owner + support. Only when parent chargeback.status IN ('pending_evidence', 'evidence_submitted') AND parent chargeback.evidence_due_by > NOW(). Requires `chargeback_evidence_submission` entitlement." },
-        { "action": "acceptRdr", "permission": "chargebacks.accept", "scope": "finance + admin + owner. Only when parent chargeback.rdr_eligible=true AND parent chargeback.status='pending_evidence'. Requires `chargeback_rdr` entitlement (Medium+)." },
-        { "action": "markLost", "permission": "chargebacks.mark-lost", "scope": "admin + owner. Escape hatch — manually mark a chargeback as lost after ops investigation determined defense is not viable. Only allowed when parent chargeback.status IN ('pending_evidence', 'evidence_submitted', 'under_bank_review'). Records decision_reason for audit trail." },
-        { "action": "reconcile", "permission": "chargebacks.reconcile", "scope": "admin + owner + finance. Dispatches ReconcileChargebacksJob (delegates to CheckChargebackStatusJob per-provider)." },
-        { "action": "viewReport", "permission": "chargebacks.view-report", "scope": "finance + admin + owner + marketing (read-only for fraud model tuning). Rate report + reason distribution + provider distribution." },
-        { "action": "viewFinancials", "permission": "chargebacks.view-financials", "scope": "finance + admin + owner + support. Confidential financial fields (amount_cents, currency, fee_cents, provider_metadata) are redacted for readers without this permission." },
-        { "action": "viewEvidence", "permission": "chargebacks.view-evidence", "scope": "finance + admin + owner + support. Evidence bundles may contain customer PII (IP address, device fingerprint hash, service dates, attendance records). Segregated permission — some support roles need chargeback context but not customer PII drill-down." },
+        {
+          "action": "viewAny",
+          "permission": "chargebacks.viewAny",
+          "scope": "finance + admin + owner + support"
+        },
+        {
+          "action": "view",
+          "permission": "chargebacks.view",
+          "scope": "finance + admin + owner + support"
+        },
+        {
+          "action": "submitEvidence",
+          "permission": "chargebacks.submit-evidence",
+          "scope": "finance + admin + owner + support. Only when parent chargeback.status IN ('pending_evidence', 'evidence_submitted') AND parent chargeback.evidence_due_by > NOW(). Requires `chargeback_evidence_submission` entitlement."
+        },
+        {
+          "action": "acceptRdr",
+          "permission": "chargebacks.accept",
+          "scope": "finance + admin + owner. Only when parent chargeback.rdr_eligible=true AND parent chargeback.status='pending_evidence'. Requires `chargeback_rdr` entitlement (Medium+)."
+        },
+        {
+          "action": "markLost",
+          "permission": "chargebacks.mark-lost",
+          "scope": "admin + owner. Escape hatch — manually mark a chargeback as lost after ops investigation determined defense is not viable. Only allowed when parent chargeback.status IN ('pending_evidence', 'evidence_submitted', 'under_bank_review'). Records decision_reason for audit trail."
+        },
+        {
+          "action": "reconcile",
+          "permission": "chargebacks.reconcile",
+          "scope": "admin + owner + finance. Dispatches ReconcileChargebacksJob (delegates to CheckChargebackStatusJob per-provider)."
+        },
+        {
+          "action": "viewReport",
+          "permission": "chargebacks.view-report",
+          "scope": "finance + admin + owner + marketing (read-only for fraud model tuning). Rate report + reason distribution + provider distribution."
+        },
+        {
+          "action": "viewFinancials",
+          "permission": "chargebacks.view-financials",
+          "scope": "finance + admin + owner + support. Confidential financial fields (amount_cents, currency, fee_cents, provider_metadata) are redacted for readers without this permission."
+        },
+        {
+          "action": "viewEvidence",
+          "permission": "chargebacks.view-evidence",
+          "scope": "finance + admin + owner + support. Evidence bundles may contain customer PII (IP address, device fingerprint hash, service dates, attendance records). Segregated permission — some support roles need chargeback context but not customer PII drill-down."
+        },
         { "action": "platformViewAny", "permission": "platform.chargebacks.viewAny" },
         { "action": "platformView", "permission": "platform.chargebacks.view" },
-        { "action": "platformViewRateAlerts", "permission": "platform.chargebacks.view-rate-alerts", "scope": "Academorix platform ops for cross-tenant merchant-account risk monitoring — surfaces every tenant approaching VDMP/MDMP thresholds." }
+        {
+          "action": "platformViewRateAlerts",
+          "permission": "platform.chargebacks.view-rate-alerts",
+          "scope": "Academorix platform ops for cross-tenant merchant-account risk monitoring — surfaces every tenant approaching VDMP/MDMP thresholds."
+        }
       ]
     },
     {

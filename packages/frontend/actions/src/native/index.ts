@@ -41,7 +41,7 @@ export {
   type IUseActionResult,
   type IUseActionSelectionResult,
   type IUseActionState,
-} from '../core/hooks';
+} from "../core/hooks";
 
 // ─── Cross-platform components (source of truth: ../core/components) ─
 export {
@@ -52,4 +52,4 @@ export {
   type IActionSlotProps,
   type IEnhanceOptions,
   type IEnhancedChildProps,
-} from '../core/components';
+} from "../core/components";

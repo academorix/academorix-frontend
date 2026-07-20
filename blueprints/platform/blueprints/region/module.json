@@ -21,19 +21,10 @@
     "regulatory-zone"
   ],
   "priority": 40,
-  "providers": [
-    "Academorix\\Region\\Providers\\RegionServiceProvider"
-  ],
+  "providers": ["Academorix\\Region\\Providers\\RegionServiceProvider"],
   "files": [],
-  "dependencies": [
-    "foundation",
-    "tenancy",
-    "application",
-    "entitlements"
-  ],
-  "extendedBy": [
-    "branch"
-  ],
+  "dependencies": ["foundation", "tenancy", "application", "entitlements"],
+  "extendedBy": ["branch"],
   "planned_consumers": [
     "branch",
     "facility",
@@ -44,16 +35,10 @@
     "activity"
   ],
   "contributes": {
-    "traits": [
-      "BelongsToRegion"
-    ],
-    "attributes": [
-      "AsRegionListener"
-    ],
+    "traits": ["BelongsToRegion"],
+    "attributes": ["AsRegionListener"],
     "blueprints": [],
-    "middleware": [
-      "region.resolve_active"
-    ],
+    "middleware": ["region.resolve_active"],
     "events": [
       "RegionCreated",
       "RegionUpdated",
@@ -67,13 +52,8 @@
       "RegionDeleted",
       "TenantDefaultRegionSeeded"
     ],
-    "policies": [
-      "RegionPolicy"
-    ],
-    "hooks": [
-      "SeedDefaultRegionOnTenantProvisioned",
-      "PreventRegionOrphansOnTenantErased"
-    ],
+    "policies": ["RegionPolicy"],
+    "hooks": ["SeedDefaultRegionOnTenantProvisioned", "PreventRegionOrphansOnTenantErased"],
     "commands": [
       "region:list",
       "region:describe",
@@ -97,9 +77,7 @@
       "RegionDefaultChangedNotification"
     ],
     "broadcasts": [],
-    "observers": [
-      "RegionObserver"
-    ],
+    "observers": ["RegionObserver"],
     "rules": [
       "valid_country_code",
       "valid_currency_code",
@@ -117,16 +95,9 @@
       "TaxConfig"
     ],
     "views": [],
-    "lang": [
-      "region"
-    ],
-    "config": [
-      "region"
-    ],
-    "macros": [
-      "Request::activeRegion",
-      "Request::activeRegionId"
-    ],
+    "lang": ["region"],
+    "config": ["region"],
+    "macros": ["Request::activeRegion", "Request::activeRegionId"],
     "bindings": [
       "RegionRepository",
       "RegionProvisioner",
@@ -135,9 +106,7 @@
       "TimezoneResolver",
       "CurrencyFormatter"
     ],
-    "resources": [
-      "region"
-    ]
+    "resources": ["region"]
   },
   "hosts": {
     "tenant": {

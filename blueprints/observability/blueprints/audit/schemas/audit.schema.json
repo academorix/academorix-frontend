@@ -19,12 +19,7 @@
       "OwenIt\\Auditing\\Contracts\\Audit"
     ],
     "extends": "OwenIt\\Auditing\\Models\\Audit",
-    "traits": [
-      "HasFactory",
-      "BelongsToTenant",
-      "IsRetentionAware",
-      "Filterable"
-    ],
+    "traits": ["HasFactory", "BelongsToTenant", "IsRetentionAware", "Filterable"],
     "casts": {
       "event": "AuditEventType",
       "old_values": "AuditFieldDiff",
@@ -117,7 +112,11 @@
         "length": 30,
         "nullable": false,
         "description": "OUR EXTENSION. ULID (ten_). NOT NULL. Populated by SnapshotApplicationIdOnAuditCreatingHook + AuditObserver::creating from the vendor row's inferred tenant context. Backfilled for pre-existing rows via `audit:backfill-tenant-id`.",
-        "foreign": { "table": "tenants", "column": "id", "onDelete": "no action (see PurgeAuditDataForErasedTenantHook — migrate-to-archive on TenantErased)" }
+        "foreign": {
+          "table": "tenants",
+          "column": "id",
+          "onDelete": "no action (see PurgeAuditDataForErasedTenantHook — migrate-to-archive on TenantErased)"
+        }
       },
       "application_id": {
         "type": "string",
@@ -178,14 +177,7 @@
       }
     ]
   },
-  "required": [
-    "id",
-    "event",
-    "auditable_type",
-    "auditable_id",
-    "tenant_id",
-    "created_at"
-  ],
+  "required": ["id", "event", "auditable_type", "auditable_id", "tenant_id", "created_at"],
   "properties": {
     "id": { "type": "integer", "minimum": 1 },
     "user_type": { "type": ["string", "null"] },

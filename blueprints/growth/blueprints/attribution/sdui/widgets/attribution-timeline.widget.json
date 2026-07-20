@@ -36,11 +36,16 @@
           },
           "emptyState": {
             "kind": "Text",
-            "props": { "className": "text-sm text-muted text-center py-6", "children": "No touchpoints yet." }
+            "props": {
+              "className": "text-sm text-muted text-center py-6",
+              "children": "No touchpoints yet."
+            }
           },
           "itemRenderer": {
             "kind": "View",
-            "props": { "className": "flex items-start gap-3 pb-3 border-b border-neutral-100 last:border-b-0" },
+            "props": {
+              "className": "flex items-start gap-3 pb-3 border-b border-neutral-100 last:border-b-0"
+            },
             "children": [
               {
                 "kind": "View",

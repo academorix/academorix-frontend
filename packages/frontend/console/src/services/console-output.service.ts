@@ -1,11 +1,24 @@
 /**
+/**
  * @file console-output.service.ts
  * @module @stackra/console/services
  * @description Enterprise-grade DI-injectable console output service.
  *   Wraps @clack/prompts for interactive prompts, picocolors for styling,
  *   cli-table3 for tables, boxen for styled panels, and terminal-link for
  *   clickable URLs. Supports theming, TTY detection, and non-interactive fallback.
+ *
+ *   ## Interop `any` disables
+ *
+ *   This file talks to `@clack/prompts` and `boxen`, both of which ship
+ *   loose types that change across minor versions (option shapes are
+ *   unstable, some union members are hidden). Rather than pin exact
+ *   third-party types (which would break at every dep bump), we cast at
+ *   the boundary with `as any` and disable the associated ESLint rules
+ *   file-wide. The RUNTIME shapes are validated by our own `ITextOptions`,
+ *   `ISelectOption<T>`, etc. — those types are the contract callers see.
  */
+
+/* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-redundant-type-constituents */
 
 import * as p from "@clack/prompts";
 import { Injectable } from "@stackra/container";
@@ -15,10 +28,9 @@ import terminalLink from "terminal-link";
 
 import { CommandCancelledError } from "../errors";
 
-import type { IConsoleTheme } from "../interfaces/console-theme.interface";
-
 import { getTheme } from "./theme.service";
 
+import type { IConsoleTheme } from "../interfaces/console-theme.interface";
 import type {
   IConsoleOutput,
   ITextOptions,
@@ -328,7 +340,7 @@ export class ConsoleOutput implements IConsoleOutput {
    * @param width - Width in characters (default: 60)
    * @param label - Optional centered label
    */
-  public separator(width: number = 60, label?: string): void {
+  public separator(width = 60, label?: string): void {
     const { icons, palette } = this.theme;
     const line = icons.line.repeat(width);
 
@@ -357,12 +369,15 @@ export class ConsoleOutput implements IConsoleOutput {
     }
 
     const formatted = JSON.stringify(data, null, 2);
+    // `String.prototype.replace`'s callback signature uses `any[]` for
+    // captures — annotate `string` explicitly so the palette calls
+    // stay type-safe.
     const highlighted = formatted
-      .replace(/"([^"]+)":/g, (_, key) => `${palette.primary(`"${key}"`)}:`)
-      .replace(/: "([^"]+)"/g, (_, val) => `: ${palette.success(`"${val}"`)}`)
-      .replace(/: (\d+)/g, (_, num) => `: ${palette.warning(num)}`)
-      .replace(/: (true|false)/g, (_, bool) => `: ${palette.info(bool)}`)
-      .replace(/: (null)/g, (_, n) => `: ${palette.muted(n)}`);
+      .replace(/"([^"]+)":/g, (_: string, key: string) => `${palette.primary(`"${key}"`)}:`)
+      .replace(/: "([^"]+)"/g, (_: string, val: string) => `: ${palette.success(`"${val}"`)}`)
+      .replace(/: (\d+)/g, (_: string, num: string) => `: ${palette.warning(num)}`)
+      .replace(/: (true|false)/g, (_: string, bool: string) => `: ${palette.info(bool)}`)
+      .replace(/: (null)/g, (_: string, n: string) => `: ${palette.muted(n)}`);
 
     for (const line of highlighted.split("\n")) {
       this.writeln(`  ${line}`);
@@ -448,7 +463,7 @@ export class ConsoleOutput implements IConsoleOutput {
    *
    * @param count - Number of blank lines (default: 1)
    */
-  public newLine(count: number = 1): void {
+  public newLine(count = 1): void {
     process.stdout.write("\n".repeat(count));
   }
 
@@ -635,7 +650,7 @@ export class ConsoleOutput implements IConsoleOutput {
     render();
 
     return {
-      increment(step: number = 1): void {
+      increment(step = 1): void {
         current = Math.min(current + step, total);
         render();
       },

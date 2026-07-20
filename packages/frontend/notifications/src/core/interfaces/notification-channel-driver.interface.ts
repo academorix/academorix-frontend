@@ -10,7 +10,7 @@
  *   requested channel set.
  */
 
-import type { INotificationPayload } from './notification-payload.interface';
+import type { INotificationPayload } from "./notification-payload.interface";
 
 /**
  * A channel driver.

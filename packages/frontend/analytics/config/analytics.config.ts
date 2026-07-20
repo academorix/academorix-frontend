@@ -5,7 +5,7 @@
  *   Consumed by `AnalyticsModule.forRoot()` at bootstrap.
  */
 
-import { defineConfig } from '@stackra/analytics';
+import { defineConfig } from "@stackra/analytics";
 
 export const analyticsConfig = defineConfig({
   /*
@@ -17,7 +17,7 @@ export const analyticsConfig = defineConfig({
   | no argument. Must be a key of `providers` below.
   |
   */
-  default: 'console',
+  default: "console",
 
   /*
   |--------------------------------------------------------------------------
@@ -33,7 +33,7 @@ export const analyticsConfig = defineConfig({
   |
   */
   providers: {
-    console: { driver: 'console' },
+    console: { driver: "console" },
     // ga4: {
     //   driver: 'ga4',
     //   measurementId: import.meta.env.VITE_GA4_ID,
@@ -55,7 +55,7 @@ export const analyticsConfig = defineConfig({
   | configured providers.
   |
   */
-  stack: ['console'],
+  stack: ["console"],
 
   /*
   |--------------------------------------------------------------------------

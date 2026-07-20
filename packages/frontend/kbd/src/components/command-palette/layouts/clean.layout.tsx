@@ -90,9 +90,9 @@ export function CleanPaletteLayout({
                       textValue={cmd.label}
                       isDisabled={cmd.disabled}
                     >
-                      <span className="flex-1 truncate text-sm text-foreground">{cmd.label}</span>
+                      <span className="text-foreground flex-1 truncate text-sm">{cmd.label}</span>
                       {cmd.shortcut && (
-                        <span className="shrink-0 text-xs text-default-400">
+                        <span className="text-default-400 shrink-0 text-xs">
                           {formatCombo(cmd.shortcut)}
                         </span>
                       )}

@@ -38,7 +38,11 @@
           "children": [
             {
               "kind": "Text",
-              "props": { "as": "h1", "className": "text-2xl font-semibold", "children": "My tenants" }
+              "props": {
+                "as": "h1",
+                "className": "text-2xl font-semibold",
+                "children": "My tenants"
+              }
             },
             {
               "kind": "Text",

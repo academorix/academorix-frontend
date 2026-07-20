@@ -5,7 +5,7 @@
  *   Supports push (upload source keys) and pull (download translations).
  */
 
-import type { II18nSyncProvider } from '../interfaces';
+import type { II18nSyncProvider } from "../interfaces";
 
 /**
  * Sync translations with an external TMS.
@@ -16,14 +16,14 @@ import type { II18nSyncProvider } from '../interfaces';
  */
 export async function syncTranslations(
   provider: II18nSyncProvider,
-  action: 'push' | 'pull',
+  action: "push" | "pull",
   options: {
     translationsPath: string;
     sourceLocale: string;
     targetLocales?: string[];
-  }
+  },
 ): Promise<void> {
-  if (action === 'push') {
+  if (action === "push") {
     console.log(`[i18n:sync] Pushing to ${provider.name}...`);
     // Push implementation would read local files and upload
     console.log(`[i18n:sync] Push complete.`);

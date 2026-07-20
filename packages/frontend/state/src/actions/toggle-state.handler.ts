@@ -4,17 +4,17 @@
  * @description `ToggleStateHandler` — flips a boolean at a dotted path.
  */
 
-import { Injectable } from '@stackra/container';
+import { Injectable } from "@stackra/container";
 import type {
   IActionContext,
   IActionHandler,
   IActionResponse,
   IToggleStateAction,
-} from '@stackra/contracts';
-import { ActionKind } from '@stackra/contracts';
-import { StateRegistry } from '../core/registries/state.registry';
-import { SetStateHandler } from './set-state.handler';
-import { getAtPath } from './utils/dotted-path.util';
+} from "@stackra/contracts";
+import { ActionKind } from "@stackra/contracts";
+import { StateRegistry } from "../core/registries/state.registry";
+import { SetStateHandler } from "./set-state.handler";
+import { getAtPath } from "./utils/dotted-path.util";
 
 /**
  * `ToggleStateHandler` — dispatch handler for `ActionKind.ToggleState`.
@@ -31,16 +31,16 @@ export class ToggleStateHandler implements IActionHandler<
 
   public constructor(
     private readonly registry: StateRegistry,
-    private readonly setter: SetStateHandler
+    private readonly setter: SetStateHandler,
   ) {}
 
   public execute(
     descriptor: IToggleStateAction,
-    context: IActionContext
+    context: IActionContext,
   ): IActionResponse<{ path: string; value: boolean }> {
-    if (context.signal?.aborted) return { success: false, message: 'Aborted' };
+    if (context.signal?.aborted) return { success: false, message: "Aborted" };
     if (!descriptor.storeToken) {
-      return { success: false, message: 'ToggleState requires a storeToken' };
+      return { success: false, message: "ToggleState requires a storeToken" };
     }
     const entry = this.registry.getAll().find((e) => e.token === descriptor.storeToken);
     if (!entry) {
@@ -59,7 +59,7 @@ export class ToggleStateHandler implements IActionHandler<
         path: descriptor.path,
         value: next,
       },
-      context
+      context,
     );
     if (!response.success) return response as IActionResponse<{ path: string; value: boolean }>;
     return { success: true, data: { path: descriptor.path, value: next } };

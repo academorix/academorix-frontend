@@ -36,8 +36,21 @@
             {
               "kind": "View",
               "children": [
-                { "kind": "Text", "props": { "as": "h1", "className": "text-2xl font-semibold", "children": "Revenue" } },
-                { "kind": "Text", "props": { "className": "text-sm text-muted", "children": "Invoiced vs collected revenue over time. Feeds monthly financial statements." } }
+                {
+                  "kind": "Text",
+                  "props": {
+                    "as": "h1",
+                    "className": "text-2xl font-semibold",
+                    "children": "Revenue"
+                  }
+                },
+                {
+                  "kind": "Text",
+                  "props": {
+                    "className": "text-sm text-muted",
+                    "children": "Invoiced vs collected revenue over time. Feeds monthly financial statements."
+                  }
+                }
               ]
             },
             {
@@ -47,7 +60,9 @@
                 {
                   "kind": "DateRangePicker",
                   "props": { "label": "Range" },
-                  "bindings": { "value": { "start": { "$state": "from" }, "end": { "$state": "to" } } },
+                  "bindings": {
+                    "value": { "start": { "$state": "from" }, "end": { "$state": "to" } }
+                  },
                   "actions": {
                     "onChange": {
                       "kind": "state.setMany",
@@ -65,7 +80,13 @@
                     { "id": "item_type", "label": "Item type" }
                   ],
                   "bindings": { "selectedKey": { "$state": "group_by" } },
-                  "actions": { "onSelectionChange": { "kind": "state.set", "field": "group_by", "valueExpr": "$selectedKey" } }
+                  "actions": {
+                    "onSelectionChange": {
+                      "kind": "state.set",
+                      "field": "group_by",
+                      "valueExpr": "$selectedKey"
+                    }
+                  }
                 }
               ]
             }
@@ -122,10 +143,31 @@
                 "columns": [
                   { "field": "period", "label": "Period", "width": 160 },
                   { "field": "invoice_count", "label": "Invoices", "width": 100, "align": "right" },
-                  { "field": "invoiced_cents", "label": "Invoiced", "width": 160, "renderer": { "kind": "Text", "formatter": "currency", "align": "right" } },
-                  { "field": "collected_cents", "label": "Collected", "width": 160, "renderer": { "kind": "Text", "formatter": "currency", "align": "right" } },
-                  { "field": "ar_balance_cents", "label": "AR balance", "width": 160, "renderer": { "kind": "Text", "formatter": "currency", "align": "right" } },
-                  { "field": "collection_rate", "label": "Collection %", "width": 120, "align": "right", "formatter": "percent" }
+                  {
+                    "field": "invoiced_cents",
+                    "label": "Invoiced",
+                    "width": 160,
+                    "renderer": { "kind": "Text", "formatter": "currency", "align": "right" }
+                  },
+                  {
+                    "field": "collected_cents",
+                    "label": "Collected",
+                    "width": 160,
+                    "renderer": { "kind": "Text", "formatter": "currency", "align": "right" }
+                  },
+                  {
+                    "field": "ar_balance_cents",
+                    "label": "AR balance",
+                    "width": 160,
+                    "renderer": { "kind": "Text", "formatter": "currency", "align": "right" }
+                  },
+                  {
+                    "field": "collection_rate",
+                    "label": "Collection %",
+                    "width": 120,
+                    "align": "right",
+                    "formatter": "percent"
+                  }
                 ]
               }
             }

@@ -14,9 +14,9 @@
  *   `onApplicationBootstrap`.
  */
 
-import { Inject, Injectable, Optional, OnApplicationBootstrap } from '@stackra/container';
-import { MultipleInstanceManager } from '@stackra/support';
-import { ANALYTICS_CONFIG, LOGGER_MANAGER } from '@stackra/contracts';
+import { Inject, Injectable, Optional, OnApplicationBootstrap } from "@stackra/container";
+import { MultipleInstanceManager } from "@stackra/support";
+import { ANALYTICS_CONFIG, LOGGER_MANAGER } from "@stackra/contracts";
 import type {
   IAnalyticsEvent,
   IAnalyticsIdentity,
@@ -24,26 +24,26 @@ import type {
   IAnalyticsPageView,
   IAnalyticsProvider,
   ILoggerManager,
-} from '@stackra/contracts';
+} from "@stackra/contracts";
 
 import type {
   IAnalyticsModuleOptions,
   IConsentGate,
   IGa4ProviderOptions,
   IPixelProviderOptions,
-} from '../interfaces';
-import { CONSENT_MANAGER_TOKEN } from '../constants';
-import { ConsoleAnalyticsProvider } from '../providers/console-analytics.provider';
-import { Ga4AnalyticsProvider } from '../providers/ga4-analytics.provider';
-import { MetaPixelProvider } from '../providers/meta-pixel.provider';
-import { TiktokPixelProvider } from '../providers/tiktok-pixel.provider';
-import { SnapchatPixelProvider } from '../providers/snapchat-pixel.provider';
+} from "../interfaces";
+import { CONSENT_MANAGER_TOKEN } from "../constants";
+import { ConsoleAnalyticsProvider } from "../providers/console-analytics.provider";
+import { Ga4AnalyticsProvider } from "../providers/ga4-analytics.provider";
+import { MetaPixelProvider } from "../providers/meta-pixel.provider";
+import { TiktokPixelProvider } from "../providers/tiktok-pixel.provider";
+import { SnapchatPixelProvider } from "../providers/snapchat-pixel.provider";
 
 /** A queued analytics call awaiting consent. */
 type QueuedCall =
-  | { kind: 'track'; event: IAnalyticsEvent }
-  | { kind: 'page'; view: IAnalyticsPageView }
-  | { kind: 'identify'; identity: IAnalyticsIdentity };
+  | { kind: "track"; event: IAnalyticsEvent }
+  | { kind: "page"; view: IAnalyticsPageView }
+  | { kind: "identify"; identity: IAnalyticsIdentity };
 
 /** A buffered call bound to the provider it targets. */
 interface BufferedEntry {
@@ -77,7 +77,7 @@ export class AnalyticsManager
   public constructor(
     @Inject(ANALYTICS_CONFIG) private readonly config: IAnalyticsModuleOptions,
     @Optional() @Inject(CONSENT_MANAGER_TOKEN) private readonly consent?: IConsentGate,
-    @Optional() @Inject(LOGGER_MANAGER) private readonly loggerManager?: ILoggerManager
+    @Optional() @Inject(LOGGER_MANAGER) private readonly loggerManager?: ILoggerManager,
   ) {
     super();
   }
@@ -87,7 +87,7 @@ export class AnalyticsManager
   // ══════════════════════════════════════════════════════════════════════════
 
   public getDefaultInstance(): string {
-    return this.config.default ?? Object.keys(this.config.providers ?? {})[0] ?? 'console';
+    return this.config.default ?? Object.keys(this.config.providers ?? {})[0] ?? "console";
   }
 
   public setDefaultInstance(name: string): void {
@@ -132,8 +132,8 @@ export class AnalyticsManager
       this.configuredProviders().map((provider) =>
         Promise.resolve()
           .then(() => provider.init?.())
-          .catch((error) => this.warn(`provider "${provider.name}" init failed`, error))
-      )
+          .catch((error) => this.warn(`provider "${provider.name}" init failed`, error)),
+      ),
     );
 
     // Replay buffered events as consent categories are granted.
@@ -159,7 +159,7 @@ export class AnalyticsManager
       .then(() => provider.init?.())
       .then(() => {
         if (this.identity && this.allowed(provider)) {
-          this.apply(provider, { kind: 'identify', identity: this.identity });
+          this.apply(provider, { kind: "identify", identity: this.identity });
         }
         this.flushBuffer();
       })
@@ -184,16 +184,16 @@ export class AnalyticsManager
   }
 
   public track(name: string, properties?: Record<string, unknown>): void {
-    this.dispatch({ kind: 'track', event: { name, properties } });
+    this.dispatch({ kind: "track", event: { name, properties } });
   }
 
   public page(view: IAnalyticsPageView): void {
-    this.dispatch({ kind: 'page', view });
+    this.dispatch({ kind: "page", view });
   }
 
   public identify(userId: string, traits?: Record<string, unknown>): void {
     this.identity = { userId, traits };
-    this.dispatch({ kind: 'identify', identity: this.identity });
+    this.dispatch({ kind: "identify", identity: this.identity });
   }
 
   public reset(): void {
@@ -266,13 +266,13 @@ export class AnalyticsManager
   private apply(provider: IAnalyticsProvider, call: QueuedCall): void {
     this.safe(provider, () => {
       switch (call.kind) {
-        case 'track':
+        case "track":
           provider.track(call.event);
           break;
-        case 'page':
+        case "page":
           provider.page?.(call.view);
           break;
-        case 'identify':
+        case "identify":
           provider.identify?.(call.identity);
           break;
       }
@@ -313,7 +313,7 @@ export class AnalyticsManager
   private warn(message: string, error: unknown): void {
     if (!this.loggerManager) return;
     try {
-      this.loggerManager.create('analytics').warn(`${message}: ${String(error)}`);
+      this.loggerManager.create("analytics").warn(`${message}: ${String(error)}`);
     } catch {
       /* never let internal logging throw */
     }

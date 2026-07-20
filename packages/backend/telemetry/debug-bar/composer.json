@@ -1,75 +1,75 @@
 {
-    "name": "academorix/laravel-debugbar",
-    "description": "Laravel Debugbar integration with automatic collector discovery for Academorix applications",
-    "type": "library",
-    "license": "MIT",
-    "authors": [
-        {
-            "name": "Academorix Team",
-            "email": "dev@academorix.com"
-        }
-    ],
-    "homepage": "https://github.com/academorix-inc/laravel-telemetry/debugbar",
-    "support": {
-        "issues": "https://github.com/academorix-inc/laravel-telemetry/debugbar/-/issues",
-        "source": "https://github.com/academorix-inc/laravel-telemetry/debugbar"
-    },
-    "keywords": [
-        "academorix",
-        "telemetry",
-        "debugbar",
-        "debug",
-        "profiling",
-        "development",
-        "laravel"
-    ],
-    "prefer-stable": true,
-    "minimum-stability": "dev",
-    "config": {
-        "optimize-autoloader": true,
-        "preferred-install": "dist",
-        "sort-packages": true,
-        "allow-plugins": {
-            "php-http/discovery": true
-        }
-    },
-    "require": {
-        "barryvdh/laravel-debugbar": "^3.13",
-        "php": "^8.4|^8.5",
-        "academorix/laravel-support": "@dev"
-    },
-    "require-dev": {
-        "mockery/mockery": "^1.6",
-        "orchestra/testbench": "^10.0",
-        "phpunit/phpunit": "^11.0"
-    },
-    "suggest": {
-        "academorix/laravel-telemetry-sentry": "For error tracking and monitoring"
-    },
-    "autoload": {
-        "psr-4": {
-            "Academorix\\Debugbar\\": "src/"
-        }
-    },
-    "autoload-dev": {
-        "psr-4": {
-            "Academorix\\Debugbar\\Tests\\": "tests/"
-        }
-    },
-    "extra": {
-        "laravel": {
-            "providers": [
-                "Academorix\\Debugbar\\Providers\\DebugbarServiceProvider"
-            ]
-        }
-    },
-    "repositories": [
-        {
-            "type": "path",
-            "url": "../../../framework/src/support",
-            "options": {
-                "symlink": true
-            }
-        }
-    ]
+  "name": "academorix/laravel-debugbar",
+  "description": "Laravel Debugbar integration with automatic collector discovery for Academorix applications",
+  "type": "library",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Academorix Team",
+      "email": "dev@academorix.com"
+    }
+  ],
+  "homepage": "https://github.com/academorix-inc/laravel-telemetry/debugbar",
+  "support": {
+    "issues": "https://github.com/academorix-inc/laravel-telemetry/debugbar/-/issues",
+    "source": "https://github.com/academorix-inc/laravel-telemetry/debugbar"
+  },
+  "keywords": [
+    "academorix",
+    "telemetry",
+    "debugbar",
+    "debug",
+    "profiling",
+    "development",
+    "laravel"
+  ],
+  "prefer-stable": true,
+  "minimum-stability": "dev",
+  "config": {
+    "optimize-autoloader": true,
+    "preferred-install": "dist",
+    "sort-packages": true,
+    "allow-plugins": {
+      "php-http/discovery": true
+    }
+  },
+  "require": {
+    "barryvdh/laravel-debugbar": "^3.13",
+    "php": "^8.4|^8.5",
+    "academorix/laravel-support": "@dev"
+  },
+  "require-dev": {
+    "mockery/mockery": "^1.6",
+    "orchestra/testbench": "^10.0",
+    "phpunit/phpunit": "^11.0"
+  },
+  "suggest": {
+    "academorix/laravel-telemetry-sentry": "For error tracking and monitoring"
+  },
+  "autoload": {
+    "psr-4": {
+      "Academorix\\Debugbar\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Academorix\\Debugbar\\Tests\\": "tests/"
+    }
+  },
+  "extra": {
+    "laravel": {
+      "providers": [
+        "Academorix\\Debugbar\\Providers\\DebugbarServiceProvider"
+      ]
+    }
+  },
+  "repositories": [
+    {
+      "type": "path",
+      "url": "../../../framework/src/support",
+      "options": {
+        "symlink": true
+      }
+    }
+  ]
 }

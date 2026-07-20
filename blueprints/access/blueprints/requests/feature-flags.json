@@ -51,7 +51,11 @@
       "kind": "rollout",
       "default": "off",
       "cohorts": [
-        { "name": "enterprise-canary", "predicate": "tenant.subscription.plan = 'enterprise' AND tenant.entitlements.access_request_bulk_approve = true", "state": "on" }
+        {
+          "name": "enterprise-canary",
+          "predicate": "tenant.subscription.plan = 'enterprise' AND tenant.entitlements.access_request_bulk_approve = true",
+          "state": "on"
+        }
       ],
       "description": "SDUI bulk-approve control in the pending-my-review list. Ships to enterprise-tier canary tenants first; broader rollout gated on real-world data."
     },
@@ -60,7 +64,11 @@
       "kind": "rollout",
       "default": "off",
       "cohorts": [
-        { "name": "internal-compliance-team", "predicate": "user.email ENDS WITH '@academorix.com' AND user.groups CONTAINS 'compliance'", "state": "on" }
+        {
+          "name": "internal-compliance-team",
+          "predicate": "user.email ENDS WITH '@academorix.com' AND user.groups CONTAINS 'compliance'",
+          "state": "on"
+        }
       ],
       "description": "Enhanced audit-report format with per-resource-type breakdowns + time-to-decision histograms. Off until the compliance team signs off on the shape."
     }

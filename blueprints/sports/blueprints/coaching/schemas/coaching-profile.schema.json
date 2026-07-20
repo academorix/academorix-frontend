@@ -56,25 +56,140 @@
   "x-database": {
     "engine": "postgres",
     "columns": {
-      "id": { "type": "string", "length": 30, "primary": true, "description": "Prefixed ULID: `cop_<26>`." },
-      "tenant_id": { "type": "string", "length": 30, "nullable": false, "foreign": { "table": "tenants", "column": "id", "onUpdate": "cascade", "onDelete": "cascade" } },
-      "staff_id": { "type": "string", "length": 30, "nullable": false, "foreign": { "table": "staff", "column": "id", "onUpdate": "cascade", "onDelete": "restrict" }, "description": "The parent Staff. RESTRICT — cannot hard-delete a Staff while a coaching profile references it. IMMUTABLE post-create." },
-      "branch_id": { "type": "string", "length": 30, "nullable": false, "foreign": { "table": "branches", "column": "id", "onUpdate": "cascade", "onDelete": "restrict" }, "description": "Coach's primary branch. RESTRICT — branch archive is refused." },
-      "primary_sport_id": { "type": "string", "length": 30, "nullable": true, "foreign": { "table": "sports", "column": "id", "onUpdate": "cascade", "onDelete": "restrict" }, "description": "Primary sport reference in sports_registry.sports. RESTRICT. NULL when the coach's primary sport isn't declared (e.g. general fitness)." },
-      "coaching_since_year": { "type": "integer", "nullable": true, "description": "Year the coach started coaching (1900..current year)." },
-      "bio": { "type": "text", "nullable": true, "description": "Coach-authored biography. Confidential-tier. Rendered on public directory (coaching_public_directory entitlement)." },
-      "photo_url_signed": { "type": "string", "length": 512, "nullable": true, "description": "Signed HTTPS S3 URL to the coach's photo. Confidential-tier." },
-      "availability": { "type": "jsonb", "nullable": true, "description": "Day-of-week availability map. Example: { monday: [{start_hhmm: '09:00', end_hhmm: '12:00'}], ... }. Strict validation configurable." },
-      "hourly_rate_cents": { "type": "bigint", "nullable": true, "description": "Reference hourly rate in cents. Regulated_financial-tier; NEVER surfaces on platform-admin reads. Payroll writeback is out-of-scope." },
-      "rate_currency": { "type": "string", "length": 3, "nullable": true, "description": "ISO 4217 currency for hourly_rate_cents. Both-or-neither invariant with hourly_rate_cents." },
-      "specializations": { "type": "jsonb", "nullable": true, "description": "Array of specialization slugs from the specializations-catalog." },
-      "is_accepting_new_athletes": { "type": "boolean", "nullable": false, "default": "true", "description": "Whether the coach accepts new athletes. Feeds customer-facing coach picker." },
-      "max_athletes_per_session": { "type": "integer", "nullable": true, "description": "Optional cap on athletes per session for this coach." },
-      "languages_spoken": { "type": "jsonb", "nullable": true, "description": "Array of ISO 639-1 codes." },
-      "verified_by_admin_at": { "type": "timestamptz", "nullable": true, "description": "When set, admin has verified the profile. Coach may accept assignments." },
-      "verified_by_admin_user_id": { "type": "string", "length": 30, "nullable": true, "foreign": { "table": "users", "column": "id", "onUpdate": "cascade", "onDelete": "set null" }, "description": "Admin User who verified. SET NULL for audit-trail preservation." },
-      "is_active": { "type": "boolean", "nullable": false, "default": "true", "description": "Master toggle. When false, no new assignments accepted; existing assignments cascade-cancelled." },
-      "metadata": { "type": "jsonb", "nullable": true, "description": "Freeform metadata. Reserved keys: on_leave, notify_on_rating." },
+      "id": {
+        "type": "string",
+        "length": 30,
+        "primary": true,
+        "description": "Prefixed ULID: `cop_<26>`."
+      },
+      "tenant_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": {
+          "table": "tenants",
+          "column": "id",
+          "onUpdate": "cascade",
+          "onDelete": "cascade"
+        }
+      },
+      "staff_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": {
+          "table": "staff",
+          "column": "id",
+          "onUpdate": "cascade",
+          "onDelete": "restrict"
+        },
+        "description": "The parent Staff. RESTRICT — cannot hard-delete a Staff while a coaching profile references it. IMMUTABLE post-create."
+      },
+      "branch_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": {
+          "table": "branches",
+          "column": "id",
+          "onUpdate": "cascade",
+          "onDelete": "restrict"
+        },
+        "description": "Coach's primary branch. RESTRICT — branch archive is refused."
+      },
+      "primary_sport_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": true,
+        "foreign": {
+          "table": "sports",
+          "column": "id",
+          "onUpdate": "cascade",
+          "onDelete": "restrict"
+        },
+        "description": "Primary sport reference in sports_registry.sports. RESTRICT. NULL when the coach's primary sport isn't declared (e.g. general fitness)."
+      },
+      "coaching_since_year": {
+        "type": "integer",
+        "nullable": true,
+        "description": "Year the coach started coaching (1900..current year)."
+      },
+      "bio": {
+        "type": "text",
+        "nullable": true,
+        "description": "Coach-authored biography. Confidential-tier. Rendered on public directory (coaching_public_directory entitlement)."
+      },
+      "photo_url_signed": {
+        "type": "string",
+        "length": 512,
+        "nullable": true,
+        "description": "Signed HTTPS S3 URL to the coach's photo. Confidential-tier."
+      },
+      "availability": {
+        "type": "jsonb",
+        "nullable": true,
+        "description": "Day-of-week availability map. Example: { monday: [{start_hhmm: '09:00', end_hhmm: '12:00'}], ... }. Strict validation configurable."
+      },
+      "hourly_rate_cents": {
+        "type": "bigint",
+        "nullable": true,
+        "description": "Reference hourly rate in cents. Regulated_financial-tier; NEVER surfaces on platform-admin reads. Payroll writeback is out-of-scope."
+      },
+      "rate_currency": {
+        "type": "string",
+        "length": 3,
+        "nullable": true,
+        "description": "ISO 4217 currency for hourly_rate_cents. Both-or-neither invariant with hourly_rate_cents."
+      },
+      "specializations": {
+        "type": "jsonb",
+        "nullable": true,
+        "description": "Array of specialization slugs from the specializations-catalog."
+      },
+      "is_accepting_new_athletes": {
+        "type": "boolean",
+        "nullable": false,
+        "default": "true",
+        "description": "Whether the coach accepts new athletes. Feeds customer-facing coach picker."
+      },
+      "max_athletes_per_session": {
+        "type": "integer",
+        "nullable": true,
+        "description": "Optional cap on athletes per session for this coach."
+      },
+      "languages_spoken": {
+        "type": "jsonb",
+        "nullable": true,
+        "description": "Array of ISO 639-1 codes."
+      },
+      "verified_by_admin_at": {
+        "type": "timestamptz",
+        "nullable": true,
+        "description": "When set, admin has verified the profile. Coach may accept assignments."
+      },
+      "verified_by_admin_user_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": true,
+        "foreign": {
+          "table": "users",
+          "column": "id",
+          "onUpdate": "cascade",
+          "onDelete": "set null"
+        },
+        "description": "Admin User who verified. SET NULL for audit-trail preservation."
+      },
+      "is_active": {
+        "type": "boolean",
+        "nullable": false,
+        "default": "true",
+        "description": "Master toggle. When false, no new assignments accepted; existing assignments cascade-cancelled."
+      },
+      "metadata": {
+        "type": "jsonb",
+        "nullable": true,
+        "description": "Freeform metadata. Reserved keys: on_leave, notify_on_rating."
+      },
       "created_by": { "type": "string", "length": 30, "nullable": true },
       "updated_by": { "type": "string", "length": 30, "nullable": true },
       "deleted_by": { "type": "string", "length": 30, "nullable": true },
@@ -90,10 +205,23 @@
         "predicate": "deleted_at IS NULL",
         "description": "One live coaching profile per Staff."
       },
-      { "columns": ["tenant_id", "branch_id", "is_active"], "name": "coaching_profiles_branch_active_idx" },
-      { "columns": ["tenant_id", "primary_sport_id", "is_active"], "name": "coaching_profiles_sport_active_idx", "description": "Feeds coach-by-sport cache + customer-facing directory." },
-      { "columns": ["tenant_id", "verified_by_admin_at"], "name": "coaching_profiles_verification_idx" },
-      { "columns": ["tenant_id", "is_accepting_new_athletes", "is_active"], "name": "coaching_profiles_accepting_idx" }
+      {
+        "columns": ["tenant_id", "branch_id", "is_active"],
+        "name": "coaching_profiles_branch_active_idx"
+      },
+      {
+        "columns": ["tenant_id", "primary_sport_id", "is_active"],
+        "name": "coaching_profiles_sport_active_idx",
+        "description": "Feeds coach-by-sport cache + customer-facing directory."
+      },
+      {
+        "columns": ["tenant_id", "verified_by_admin_at"],
+        "name": "coaching_profiles_verification_idx"
+      },
+      {
+        "columns": ["tenant_id", "is_accepting_new_athletes", "is_active"],
+        "name": "coaching_profiles_accepting_idx"
+      }
     ]
   },
   "required": [
@@ -121,13 +249,25 @@
     "specializations": { "type": ["array", "null"], "items": { "type": "string" } },
     "is_accepting_new_athletes": { "type": "boolean" },
     "max_athletes_per_session": { "type": ["integer", "null"], "minimum": 1, "maximum": 999 },
-    "languages_spoken": { "type": ["array", "null"], "items": { "type": "string", "minLength": 2, "maxLength": 2 } },
+    "languages_spoken": {
+      "type": ["array", "null"],
+      "items": { "type": "string", "minLength": 2, "maxLength": 2 }
+    },
     "verified_by_admin_at": { "type": ["string", "null"], "format": "date-time" },
-    "verified_by_admin_user_id": { "type": ["string", "null"], "pattern": "^usr_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "verified_by_admin_user_id": {
+      "type": ["string", "null"],
+      "pattern": "^usr_[0-9A-HJKMNP-TV-Z]{26}$"
+    },
     "is_active": { "type": "boolean" },
     "metadata": { "type": ["object", "null"] },
-    "display_name": { "type": "string", "description": "Computed. Delegated to staff->user->profile->display_name." },
-    "primary_sport_slug": { "type": ["string", "null"], "description": "Computed. Delegated to primarySport->slug." },
+    "display_name": {
+      "type": "string",
+      "description": "Computed. Delegated to staff->user->profile->display_name."
+    },
+    "primary_sport_slug": {
+      "type": ["string", "null"],
+      "description": "Computed. Delegated to primarySport->slug."
+    },
     "certification_count": { "type": "integer" },
     "active_assignment_count": { "type": "integer" },
     "has_expiring_certifications": { "type": "boolean" },

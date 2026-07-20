@@ -9,11 +9,11 @@
  * @category Transports
  */
 
-import { Logger } from '@stackra/logger';
+import { Logger } from "@stackra/logger";
 
-import type { CollaborationTransport } from '@/interfaces/transport.interface';
-import type { RoomMember } from '@/interfaces/room-member.interface';
-import { BroadcastChannelTransport } from './broadcast-channel.transport';
+import type { CollaborationTransport } from "@/interfaces/transport.interface";
+import type { RoomMember } from "@/interfaces/room-member.interface";
+import { BroadcastChannelTransport } from "./broadcast-channel.transport";
 
 /**
  * Reverb-based transport for remote collaboration via WebSockets.
@@ -49,7 +49,7 @@ export class ReverbTransport implements CollaborationTransport {
 
     if (!realtimeManager) {
       this.logger.warn(
-        'RealtimeManager not available. Falling back to BroadcastChannel transport.'
+        "RealtimeManager not available. Falling back to BroadcastChannel transport.",
       );
       this.usingFallback = true;
     }
@@ -69,7 +69,7 @@ export class ReverbTransport implements CollaborationTransport {
   public async connect(
     roomId: string,
     userId: string,
-    userInfo: Record<string, unknown>
+    userInfo: Record<string, unknown>,
   ): Promise<void> {
     if (this.usingFallback) {
       return this.fallback.connect(roomId, userId, userInfo);
@@ -78,7 +78,7 @@ export class ReverbTransport implements CollaborationTransport {
     // TODO: Implement Reverb presence channel join via RealtimeManager
     // For now, fall back to BroadcastChannel
     this.logger.info(
-      `Connecting to room "${roomId}" via Reverb (falling back to BroadcastChannel)`
+      `Connecting to room "${roomId}" via Reverb (falling back to BroadcastChannel)`,
     );
     this.usingFallback = true;
     return this.fallback.connect(roomId, userId, userInfo);
@@ -162,7 +162,7 @@ export class ReverbTransport implements CollaborationTransport {
   public onBroadcast(
     roomId: string,
     event: string,
-    callback: (data: unknown, sender: RoomMember) => void
+    callback: (data: unknown, sender: RoomMember) => void,
   ): () => void {
     return this.fallback.onBroadcast(roomId, event, callback);
   }
@@ -199,7 +199,7 @@ export class ReverbTransport implements CollaborationTransport {
    */
   public onStateChange<T>(
     roomId: string,
-    callback: (state: T, updatedBy: RoomMember) => void
+    callback: (state: T, updatedBy: RoomMember) => void,
   ): () => void {
     return this.fallback.onStateChange<T>(roomId, callback);
   }

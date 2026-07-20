@@ -4,4 +4,4 @@
  * @description Barrel for React-only pure utilities.
  */
 
-export { formatPanelBadge } from './format-panel-badge.util';
+export { formatPanelBadge } from "./format-panel-badge.util";

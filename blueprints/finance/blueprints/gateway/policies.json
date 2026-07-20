@@ -9,10 +9,18 @@
       "class": "Academorix\\Finance\\Gateway\\Policies\\PaymentGatewayConfigPolicy",
       "abilities": [
         { "action": "viewAny", "permission": "gateways.viewAny" },
-        { "action": "view", "permission": "gateways.view", "scope": "credentials never returned regardless of role." },
+        {
+          "action": "view",
+          "permission": "gateways.view",
+          "scope": "credentials never returned regardless of role."
+        },
         { "action": "create", "permission": "gateways.create" },
         { "action": "update", "permission": "gateways.update" },
-        { "action": "delete", "permission": "gateways.delete", "scope": "refuses when active payment_methods reference this gateway." },
+        {
+          "action": "delete",
+          "permission": "gateways.delete",
+          "scope": "refuses when active payment_methods reference this gateway."
+        },
         { "action": "test", "permission": "gateways.test" },
         { "action": "connectOauth", "permission": "gateways.connect-oauth" },
         { "action": "platformViewAny", "permission": "platform.gateways.viewAny" }
@@ -22,11 +30,23 @@
       "model": "PaymentMethod",
       "class": "Academorix\\Finance\\Gateway\\Policies\\PaymentMethodPolicy",
       "abilities": [
-        { "action": "viewAny", "permission": "payment-methods.viewAny", "scope": "guardian narrowed to own (owner_type='guardian' AND owner_id=current_user_id)." },
+        {
+          "action": "viewAny",
+          "permission": "payment-methods.viewAny",
+          "scope": "guardian narrowed to own (owner_type='guardian' AND owner_id=current_user_id)."
+        },
         { "action": "view", "permission": "payment-methods.view", "scope": "same narrowing." },
         { "action": "create", "permission": "payment-methods.create" },
-        { "action": "delete", "permission": "payment-methods.delete", "scope": "guardian can delete own; admin + owner can delete any." },
-        { "action": "setDefault", "permission": "payment-methods.set-default", "scope": "guardian can set own default; admin + owner + finance can set any." }
+        {
+          "action": "delete",
+          "permission": "payment-methods.delete",
+          "scope": "guardian can delete own; admin + owner can delete any."
+        },
+        {
+          "action": "setDefault",
+          "permission": "payment-methods.set-default",
+          "scope": "guardian can set own default; admin + owner + finance can set any."
+        }
       ]
     },
     {
@@ -35,7 +55,11 @@
       "abilities": [
         { "action": "viewAny", "permission": "gateway-webhooks.viewAny" },
         { "action": "view", "permission": "gateway-webhooks.view" },
-        { "action": "replay", "permission": "gateway-webhooks.replay", "scope": "refuses when status='processed' — idempotent replays only." },
+        {
+          "action": "replay",
+          "permission": "gateway-webhooks.replay",
+          "scope": "refuses when status='processed' — idempotent replays only."
+        },
         { "action": "platformViewAny", "permission": "platform.gateway-webhooks.viewAny" },
         { "action": "platformReplay", "permission": "platform.gateway-webhooks.replay" }
       ]

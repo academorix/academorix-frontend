@@ -10,7 +10,7 @@
  *   mutation in the app.
  */
 
-import type { MutationMode } from '@stackra/contracts';
+import type { MutationMode } from "@stackra/contracts";
 
 /** Mutation function shape returned by `useUpdateSettings`. */
 export type UpdateSettingsMutate<T> = (partial: Partial<T>) => Promise<void>;

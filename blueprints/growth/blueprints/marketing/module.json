@@ -59,16 +59,8 @@
     "notifications (Wave 5 — reads marketing failure signals for dashboard warnings)"
   ],
   "contributes": {
-    "traits": [
-      "BelongsToMarketingEvent",
-      "HasMarketingDeliveries",
-      "HasMarketingDeadLetters"
-    ],
-    "attributes": [
-      "AsMarketingListener",
-      "AsMarketingProvider",
-      "AsDomainEventMapper"
-    ],
+    "traits": ["BelongsToMarketingEvent", "HasMarketingDeliveries", "HasMarketingDeadLetters"],
+    "attributes": ["AsMarketingListener", "AsMarketingProvider", "AsDomainEventMapper"],
     "blueprints": [
       "marketing_events",
       "marketing_deliveries",

@@ -6,18 +6,18 @@
  *   runner, and the override path for a caller-supplied runner.
  */
 
-import 'reflect-metadata';
-import { describe, it, expect } from 'vitest';
-import { SCHEDULER_CONFIG, SCHEDULER_SERVICE, TASK_RUNNER } from '@stackra/contracts';
+import "reflect-metadata";
+import { describe, it, expect } from "vitest";
+import { SCHEDULER_CONFIG, SCHEDULER_SERVICE, TASK_RUNNER } from "@stackra/contracts";
 
-import { SchedulerModule } from '@/core/scheduler.module';
-import { SchedulerService } from '@/core/services/scheduler.service';
-import { DefaultTaskRunner } from '@/core/services/default-task-runner.service';
-import { ScheduledTaskLoader } from '@/core/services/scheduled-task-loader.service';
-import { MockTaskRunner } from '@/testing/mock-task-runner';
+import { SchedulerModule } from "@/core/scheduler.module";
+import { SchedulerService } from "@/core/services/scheduler.service";
+import { DefaultTaskRunner } from "@/core/services/default-task-runner.service";
+import { ScheduledTaskLoader } from "@/core/services/scheduled-task-loader.service";
+import { MockTaskRunner } from "@/testing/mock-task-runner";
 
-describe('SchedulerModule.forRoot', () => {
-  it('binds config, service, and the discovery loader globally', () => {
+describe("SchedulerModule.forRoot", () => {
+  it("binds config, service, and the discovery loader globally", () => {
     const dyn = SchedulerModule.forRoot();
 
     expect(dyn.module).toBe(SchedulerModule);
@@ -40,7 +40,7 @@ describe('SchedulerModule.forRoot', () => {
     expect(dyn.providers).toContain(ScheduledTaskLoader);
   });
 
-  it('exports config, service token, and service class', () => {
+  it("exports config, service token, and service class", () => {
     const dyn = SchedulerModule.forRoot();
     expect(dyn.exports).toContain(SCHEDULER_CONFIG);
     expect(dyn.exports).toContain(SCHEDULER_SERVICE);
@@ -48,7 +48,7 @@ describe('SchedulerModule.forRoot', () => {
     expect(dyn.exports).toContain(TASK_RUNNER);
   });
 
-  it('defaults to DefaultTaskRunner via useClass', () => {
+  it("defaults to DefaultTaskRunner via useClass", () => {
     const dyn = SchedulerModule.forRoot();
     const runnerProvider = dyn.providers!.find((p: any) => p.provide === TASK_RUNNER) as {
       useClass?: unknown;
@@ -59,7 +59,7 @@ describe('SchedulerModule.forRoot', () => {
     expect(runnerProvider.useValue).toBeUndefined();
   });
 
-  it('honours a caller-supplied runner via useValue', () => {
+  it("honours a caller-supplied runner via useValue", () => {
     const custom = new MockTaskRunner();
     const dyn = SchedulerModule.forRoot({ runner: custom });
     const runnerProvider = dyn.providers!.find((p: any) => p.provide === TASK_RUNNER) as {

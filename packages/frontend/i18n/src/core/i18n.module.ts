@@ -26,29 +26,29 @@
  *   implement lifecycle hooks and holds no runtime state.
  */
 
-import { Module, type DynamicModule, type Provider } from '@stackra/container';
+import { Module, type DynamicModule, type Provider } from "@stackra/container";
 import {
   I18N_LOCALE_SERVICE,
   I18N_LOCALE_STORAGE,
   I18N_MANAGER,
   I18N_DIRECTION_SERVICE,
-} from '@stackra/contracts';
-import { createSeedLoader, seedLoaderToken } from '@stackra/support';
+} from "@stackra/contracts";
+import { createSeedLoader, seedLoaderToken } from "@stackra/support";
 
-import { StorageBackedLocaleAdapter } from './adapters/storage-backed-locale.adapter';
-import { I18N_CONFIG } from './constants';
-import type { II18nConfig, I18nFeatureOptions } from './interfaces';
-import { I18nManager } from './services/i18n-manager.service';
-import { I18nLocaleService } from './services/i18n-locale.service';
-import { DirectionService } from './services/direction.service';
-import { mergeConfig } from './utils/merge-config.util';
+import { StorageBackedLocaleAdapter } from "./adapters/storage-backed-locale.adapter";
+import { I18N_CONFIG } from "./constants";
+import type { II18nConfig, I18nFeatureOptions } from "./interfaces";
+import { I18nManager } from "./services/i18n-manager.service";
+import { I18nLocaleService } from "./services/i18n-locale.service";
+import { DirectionService } from "./services/direction.service";
+import { mergeConfig } from "./utils/merge-config.util";
 
 /**
  * Decide whether the caller opted into durable locale persistence.
  * `undefined` and `'memory'` both mean "no persistence".
  */
-function needsStorageBacking(storage: II18nConfig['storage']): boolean {
-  return !!storage && storage !== 'memory';
+function needsStorageBacking(storage: II18nConfig["storage"]): boolean {
+  return !!storage && storage !== "memory";
 }
 
 /**

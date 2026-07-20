@@ -17,9 +17,7 @@
       "trait": "Academorix\\Sports\\Attendance\\Concerns\\BelongsToAttendancePolicy",
       "description": "Mixed into downstream models that carry a `policy_id` FK. Adds `attendancePolicy()` belongsTo + query scope.",
       "public": true,
-      "usedBy": [
-        "attendance::LateArrival (policy_id at check-in snapshot)"
-      ]
+      "usedBy": ["attendance::LateArrival (policy_id at check-in snapshot)"]
     },
     {
       "trait": "Academorix\\Sports\\Attendance\\Concerns\\HasAttendanceHistory",
@@ -54,9 +52,7 @@
       { "trait": "Academorix\\Sports\\AthleteEnrollment\\Concerns\\BelongsToAthleteEnrollment" }
     ],
     "session": [{ "trait": "Academorix\\Sports\\Session\\Concerns\\BelongsToSession" }],
-    "membership": [
-      { "trait": "Academorix\\Finance\\Membership\\Concerns\\BelongsToMembership" }
-    ],
+    "membership": [{ "trait": "Academorix\\Finance\\Membership\\Concerns\\BelongsToMembership" }],
     "audit": [{ "trait": "Academorix\\Audit\\Concerns\\Auditable" }],
     "activity": [{ "trait": "Academorix\\Activity\\Concerns\\HasActivityLog" }]
   },

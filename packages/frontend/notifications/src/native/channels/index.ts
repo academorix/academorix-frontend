@@ -4,4 +4,4 @@
  * @description Barrel export for native channel drivers.
  */
 
-export { ExpoNotificationChannelDriver } from './expo-notification-channel.driver';
+export { ExpoNotificationChannelDriver } from "./expo-notification-channel.driver";

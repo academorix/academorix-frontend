@@ -26,7 +26,14 @@
         {
           "kind": "View",
           "children": [
-            { "kind": "Text", "props": { "as": "h1", "className": "text-2xl font-semibold", "children": "Reset attribution (GDPR)" } },
+            {
+              "kind": "Text",
+              "props": {
+                "as": "h1",
+                "className": "text-2xl font-semibold",
+                "children": "Reset attribution (GDPR)"
+              }
+            },
             {
               "kind": "Text",
               "props": {
@@ -40,7 +47,10 @@
           "kind": "Alert",
           "props": { "variant": "danger" },
           "children": [
-            { "kind": "Text", "props": { "className": "font-medium", "children": "Immediate + irreversible." } },
+            {
+              "kind": "Text",
+              "props": { "className": "font-medium", "children": "Immediate + irreversible." }
+            },
             {
               "kind": "Text",
               "props": {
@@ -54,14 +64,41 @@
           "kind": "Card",
           "props": { "className": "p-4" },
           "children": [
-            { "kind": "Text", "props": { "className": "text-sm font-semibold uppercase text-muted mb-3", "children": "What will be erased" } },
+            {
+              "kind": "Text",
+              "props": {
+                "className": "text-sm font-semibold uppercase text-muted mb-3",
+                "children": "What will be erased"
+              }
+            },
             {
               "kind": "View",
               "props": { "className": "flex flex-col gap-1 text-sm" },
               "children": [
-                { "kind": "Text", "bindings": { "children": { "$expr": "'Subject: ' + attribution.subject_type + ' ' + attribution.subject_id" } } },
-                { "kind": "Text", "bindings": { "children": { "$expr": "'First-touch: ' + attribution.first_touch_source + ' / ' + (attribution.first_touch_campaign || 'no campaign') + ' at ' + attribution.first_touch_at" } } },
-                { "kind": "Text", "bindings": { "children": { "$expr": "attribution.touchpoint_count + ' touchpoints scheduled for hard-delete on ' + computeDate(90, 'days')" } } }
+                {
+                  "kind": "Text",
+                  "bindings": {
+                    "children": {
+                      "$expr": "'Subject: ' + attribution.subject_type + ' ' + attribution.subject_id"
+                    }
+                  }
+                },
+                {
+                  "kind": "Text",
+                  "bindings": {
+                    "children": {
+                      "$expr": "'First-touch: ' + attribution.first_touch_source + ' / ' + (attribution.first_touch_campaign || 'no campaign') + ' at ' + attribution.first_touch_at"
+                    }
+                  }
+                },
+                {
+                  "kind": "Text",
+                  "bindings": {
+                    "children": {
+                      "$expr": "attribution.touchpoint_count + ' touchpoints scheduled for hard-delete on ' + computeDate(90, 'days')"
+                    }
+                  }
+                }
               ]
             }
           ]
@@ -83,7 +120,11 @@
             "label": "I confirm this is a valid data-subject erasure request (GDPR Art. 17 / CCPA § 1798.105)."
           },
           "actions": {
-            "onChange": { "kind": "form.set", "field": "subject_confirms_gdpr_request", "valueExpr": "$value" }
+            "onChange": {
+              "kind": "form.set",
+              "field": "subject_confirms_gdpr_request",
+              "valueExpr": "$value"
+            }
           }
         },
         {
@@ -102,7 +143,11 @@
             },
             {
               "kind": "Button",
-              "props": { "variant": "danger", "leadingIcon": "trash", "children": "Reset attribution" },
+              "props": {
+                "variant": "danger",
+                "leadingIcon": "trash",
+                "children": "Reset attribution"
+              },
               "bindings": {
                 "disabled": {
                   "$expr": "!form.subject_confirms_gdpr_request || !form.reason || form.reason.trim().length === 0"

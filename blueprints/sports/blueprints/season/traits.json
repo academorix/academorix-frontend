@@ -48,20 +48,30 @@
       { "trait": "Academorix\\Foundation\\Concerns\\Filterable" },
       { "trait": "Academorix\\Foundation\\Concerns\\Searchable" }
     ],
-    "tenancy": [
-      { "trait": "Academorix\\Tenancy\\Concerns\\BelongsToTenant" }
-    ],
+    "tenancy": [{ "trait": "Academorix\\Tenancy\\Concerns\\BelongsToTenant" }],
     "organization": [
-      { "trait": "Academorix\\Organization\\Concerns\\BelongsToOrganization", "reason": "Optional FK — Season may be org-scoped." }
+      {
+        "trait": "Academorix\\Organization\\Concerns\\BelongsToOrganization",
+        "reason": "Optional FK — Season may be org-scoped."
+      }
     ],
     "branch": [
-      { "trait": "Academorix\\Branch\\Concerns\\BelongsToBranch", "reason": "Optional FK — Season may be branch-scoped." }
+      {
+        "trait": "Academorix\\Branch\\Concerns\\BelongsToBranch",
+        "reason": "Optional FK — Season may be branch-scoped."
+      }
     ],
     "audit": [
-      { "trait": "Academorix\\Audit\\Concerns\\Auditable", "reason": "Season mutations (rename, status transitions, is_current flip, date shifts, sport_key changes) write to the `audits` table — every one of them is compliance-relevant." }
+      {
+        "trait": "Academorix\\Audit\\Concerns\\Auditable",
+        "reason": "Season mutations (rename, status transitions, is_current flip, date shifts, sport_key changes) write to the `audits` table — every one of them is compliance-relevant."
+      }
     ],
     "activity": [
-      { "trait": "Academorix\\Activity\\Concerns\\HasActivityLog", "reason": "Season lifecycle events feed the tenant admin's product-facing activity feed." }
+      {
+        "trait": "Academorix\\Activity\\Concerns\\HasActivityLog",
+        "reason": "Season lifecycle events feed the tenant admin's product-facing activity feed."
+      }
     ]
   },
   "composition": {

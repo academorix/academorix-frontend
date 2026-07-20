@@ -39,9 +39,7 @@
     "wave-3b"
   ],
   "priority": 65,
-  "providers": [
-    "Academorix\\Sports\\Session\\Providers\\SessionServiceProvider"
-  ],
+  "providers": ["Academorix\\Sports\\Session\\Providers\\SessionServiceProvider"],
   "files": [],
   "dependencies": [
     "foundation",
@@ -60,28 +58,12 @@
     "staff"
   ],
   "extendedBy": [],
-  "planned_consumers": [
-    "attendance",
-    "finance",
-    "notifications",
-    "coaching",
-    "scheduling"
-  ],
+  "planned_consumers": ["attendance", "finance", "notifications", "coaching", "scheduling"],
   "contributes": {
-    "traits": [
-      "BelongsToSession",
-      "HasSessionAttendance"
-    ],
-    "attributes": [
-      "AsSessionListener"
-    ],
-    "blueprints": [
-      "sessions",
-      "session_attendance"
-    ],
-    "middleware": [
-      "session.resolve_active"
-    ],
+    "traits": ["BelongsToSession", "HasSessionAttendance"],
+    "attributes": ["AsSessionListener"],
+    "blueprints": ["sessions", "session_attendance"],
+    "middleware": ["session.resolve_active"],
     "events": [
       "SessionScheduled",
       "SessionConfirmed",
@@ -106,10 +88,7 @@
       "SessionRestored",
       "SessionDeleted"
     ],
-    "policies": [
-      "SessionPolicy",
-      "SessionAttendancePolicy"
-    ],
+    "policies": ["SessionPolicy", "SessionAttendancePolicy"],
     "hooks": [
       "PreventSessionOrphansOnTenantErased",
       "CancelSessionsOnFacilityRetired",
@@ -161,10 +140,7 @@
       "coach.{coachId}.sessions",
       "athlete.{athleteId}.sessions"
     ],
-    "observers": [
-      "SessionObserver",
-      "SessionAttendanceObserver"
-    ],
+    "observers": ["SessionObserver", "SessionAttendanceObserver"],
     "rules": [
       "valid_session_type",
       "valid_session_gender_category",
@@ -180,23 +156,11 @@
       "no_overlapping_sessions_per_coach",
       "attendance_capacity_not_exceeded"
     ],
-    "casts": [
-      "SessionType",
-      "SessionStatus",
-      "SessionGenderCategory",
-      "AttendanceStatus"
-    ],
+    "casts": ["SessionType", "SessionStatus", "SessionGenderCategory", "AttendanceStatus"],
     "views": [],
-    "lang": [
-      "session"
-    ],
-    "config": [
-      "session"
-    ],
-    "macros": [
-      "Request::activeSession",
-      "Request::activeSessionId"
-    ],
+    "lang": ["session"],
+    "config": ["session"],
+    "macros": ["Request::activeSession", "Request::activeSessionId"],
     "bindings": [
       "SessionRepository",
       "SessionAttendanceRepository",
@@ -208,10 +172,7 @@
       "SessionCapacityGate",
       "SessionCancellationBroadcaster"
     ],
-    "resources": [
-      "session",
-      "session-attendance"
-    ]
+    "resources": ["session", "session-attendance"]
   },
   "hosts": {
     "tenant": {

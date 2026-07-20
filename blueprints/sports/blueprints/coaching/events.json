@@ -114,10 +114,7 @@
       "class": "Academorix\\Sports\\Coaching\\Events\\CoachAssignmentUpdated",
       "trigger": "role change OR notes mutation OR end_date extension.",
       "queue": "coaching",
-      "consumers": [
-        "audit::WriteToAuditLog",
-        "activity::WriteToActivityLog"
-      ],
+      "consumers": ["audit::WriteToAuditLog", "activity::WriteToActivityLog"],
       "payload": {
         "assignment_id": "ULID",
         "tenant_id": "ULID",
@@ -195,10 +192,7 @@
       "class": "Academorix\\Sports\\Coaching\\Events\\CoachCertificationVerified",
       "trigger": "Admin invoked /verify on the certification. verified_by_admin_user_id + verified_at set.",
       "queue": "coaching",
-      "consumers": [
-        "audit::WriteToAuditLog (retention: 7 years)",
-        "activity::WriteToActivityLog"
-      ],
+      "consumers": ["audit::WriteToAuditLog (retention: 7 years)", "activity::WriteToActivityLog"],
       "payload": {
         "certification_id": "ULID",
         "tenant_id": "ULID",

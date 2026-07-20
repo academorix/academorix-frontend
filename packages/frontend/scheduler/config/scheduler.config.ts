@@ -5,7 +5,7 @@
  *   Consumed by `SchedulerModule.forRoot()` at bootstrap.
  */
 
-import { defineConfig } from '@stackra/scheduler';
+import { defineConfig } from "@stackra/scheduler";
 
 export const schedulerConfig = defineConfig({
   /*

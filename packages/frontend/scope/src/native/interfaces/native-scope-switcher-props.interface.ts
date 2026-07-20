@@ -39,5 +39,5 @@ export interface NativeScopeSwitcherProps {
    * is the mobile-first default; `'popover'` fits tablet layouts;
    * `'dialog'` centres the picker. See HeroUI Native `Select` docs.
    */
-  readonly presentation?: 'bottom-sheet' | 'popover' | 'dialog';
+  readonly presentation?: "bottom-sheet" | "popover" | "dialog";
 }

@@ -1,8 +1,49 @@
+# ── Lockfiles ───────────────────────────────────────────────────────
 pnpm-lock.yaml
-**/dist/
-**/coverage/
-**/.turbo/
-**/.next/
+package-lock.json
+yarn.lock
+bun.lockb
+
+# ── Dependencies ────────────────────────────────────────────────────
 **/node_modules/
-.vercel/
+
+# ── Build output ────────────────────────────────────────────────────
+**/dist/
+**/build/
+**/.next/
+**/.turbo/
+**/.vercel/
+
+# ── Generated type declarations ────────────────────────────────────
+**/*.d.ts
+**/*.d.mts
+**/*.d.cts
+**/*.tsbuildinfo
+
+# ── Coverage + caches ──────────────────────────────────────────────
+**/coverage/
+**/.eslintcache
+**/.prettiercache
+**/.stylelintcache
+**/.parcel-cache/
+**/.swc/
+
+# ── React Native native build artefacts ────────────────────────────
+apps/*/ios/build/
+apps/*/ios/Pods/
+apps/*/android/build/
+apps/*/android/.gradle/
+apps/*/android/app/build/
+apps/*/.expo/
+
+# ── Laravel PHP artifacts ──────────────────────────────────────────
+apps/*/vendor/
+apps/*/bootstrap/cache/
+apps/*/storage/framework/
+
+# ── Third-party reference material ─────────────────────────────────
+.ref/
+
+# ── Editor / IDE ───────────────────────────────────────────────────
 .vscode/
+.idea/

@@ -9,32 +9,32 @@
  *   sentinel-returning `useFactory`.
  */
 
-import { Global, Module, type DynamicModule, type Type } from '@stackra/container';
-import { PipelineModule } from '@stackra/pipeline';
-import { createSeedLoader, seedLoaderToken } from '@stackra/support';
+import { Global, Module, type DynamicModule, type Type } from "@stackra/container";
+import { PipelineModule } from "@stackra/pipeline";
+import { createSeedLoader, seedLoaderToken } from "@stackra/support";
 import type {
   IActionDispatcher,
   IActionHandler,
   IActionsConfig,
   IActionsModuleOptions,
   IAsyncModuleOptions,
-} from '@stackra/contracts';
+} from "@stackra/contracts";
 import {
   ACTION_CONFIG,
   ACTION_DISPATCHER,
   ACTION_REGISTRY,
   PERMISSION_RESOLVER,
-} from '@stackra/contracts';
+} from "@stackra/contracts";
 
-import { ActionRegistry } from './registries/action.registry';
-import { ActionDispatcherService } from './services/action-dispatcher.service';
-import { HandlerLoader } from './services/handler-loader.service';
-import { AuthorizeMiddleware } from './pipeline/authorize.middleware';
-import { LogMiddleware } from './pipeline/log.middleware';
-import { TraceMiddleware } from './pipeline/trace.middleware';
-import { CompositeHandler } from './handlers/composite.handler';
-import { DispatchHandler } from './handlers/dispatch.handler';
-import { mergeConfig } from './utils/merge-config.util';
+import { ActionRegistry } from "./registries/action.registry";
+import { ActionDispatcherService } from "./services/action-dispatcher.service";
+import { HandlerLoader } from "./services/handler-loader.service";
+import { AuthorizeMiddleware } from "./pipeline/authorize.middleware";
+import { LogMiddleware } from "./pipeline/log.middleware";
+import { TraceMiddleware } from "./pipeline/trace.middleware";
+import { CompositeHandler } from "./handlers/composite.handler";
+import { DispatchHandler } from "./handlers/dispatch.handler";
+import { mergeConfig } from "./utils/merge-config.util";
 
 /**
  * The Actions module.
@@ -72,11 +72,11 @@ export class ActionsModule {
         CompositeHandler,
         DispatchHandler,
         {
-          provide: seedLoaderToken('actions:built-in'),
+          provide: seedLoaderToken("actions:built-in"),
           useFactory: (
             dispatcher: IActionDispatcher,
             composite: CompositeHandler,
-            dispatch: DispatchHandler
+            dispatch: DispatchHandler,
           ) =>
             createSeedLoader(() => {
               dispatcher.register(composite as unknown as IActionHandler);
@@ -122,11 +122,11 @@ export class ActionsModule {
         CompositeHandler,
         DispatchHandler,
         {
-          provide: seedLoaderToken('actions:built-in-async'),
+          provide: seedLoaderToken("actions:built-in-async"),
           useFactory: (
             dispatcher: IActionDispatcher,
             composite: CompositeHandler,
-            dispatch: DispatchHandler
+            dispatch: DispatchHandler,
           ) =>
             createSeedLoader(() => {
               dispatcher.register(composite as unknown as IActionHandler);
@@ -144,19 +144,19 @@ export class ActionsModule {
    * by the container) or already-constructed instances.
    */
   public static forFeature(
-    handlers: ReadonlyArray<Type<IActionHandler> | IActionHandler>
+    handlers: ReadonlyArray<Type<IActionHandler> | IActionHandler>,
   ): DynamicModule {
     const classHandlers = handlers.filter(
-      (h): h is Type<IActionHandler> => typeof h === 'function'
+      (h): h is Type<IActionHandler> => typeof h === "function",
     );
-    const instanceHandlers = handlers.filter((h): h is IActionHandler => typeof h !== 'function');
+    const instanceHandlers = handlers.filter((h): h is IActionHandler => typeof h !== "function");
 
     return {
       module: ActionsModule,
       providers: [
         ...classHandlers,
         {
-          provide: seedLoaderToken('actions:feature'),
+          provide: seedLoaderToken("actions:feature"),
           useFactory: (dispatcher: IActionDispatcher, ...instances: IActionHandler[]) =>
             createSeedLoader(() => {
               for (const instance of instances) dispatcher.register(instance);

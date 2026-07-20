@@ -49,7 +49,9 @@
                 {
                   "kind": "Text",
                   "props": { "className": "text-sm text-muted" },
-                  "bindings": { "children": { "$expr": "branch.organization_name + ' · ' + branch.region_name" } }
+                  "bindings": {
+                    "children": { "$expr": "branch.organization_name + ' · ' + branch.region_name" }
+                  }
                 }
               ]
             },
@@ -71,7 +73,9 @@
           "props": { "variant": "warning" },
           "bindings": {
             "hidden": { "$expr": "branch.status === 'active'" },
-            "children": { "$expr": "branch.status === 'paused' ? 'This branch is paused. Edits go through but bookings are refused.' : 'This branch is closed. Read-only.'" }
+            "children": {
+              "$expr": "branch.status === 'paused' ? 'This branch is paused. Edits go through but bookings are refused.' : 'This branch is closed. Read-only.'"
+            }
           }
         },
         {
@@ -86,20 +90,57 @@
               "kind": "Fieldset",
               "props": { "legend": "Identity" },
               "children": [
-                { "kind": "TextField", "props": { "name": "name", "label": "Name", "required": true }, "bindings": { "defaultValue": { "$ref": "branch.name" } } },
-                { "kind": "TextField", "props": { "name": "slug", "label": "Slug" }, "bindings": { "defaultValue": { "$ref": "branch.slug" } } },
-                { "kind": "TextField", "props": { "name": "code", "label": "Internal code" }, "bindings": { "defaultValue": { "$ref": "branch.code" } } },
-                { "kind": "TextArea", "props": { "name": "description", "label": "Description", "rows": 3 }, "bindings": { "defaultValue": { "$ref": "branch.description" } } },
-                { "kind": "NumberField", "props": { "name": "sort_order", "label": "Sort order", "min": 0, "helpText": "Lower runs first in list views." }, "bindings": { "defaultValue": { "$ref": "branch.sort_order" } } }
+                {
+                  "kind": "TextField",
+                  "props": { "name": "name", "label": "Name", "required": true },
+                  "bindings": { "defaultValue": { "$ref": "branch.name" } }
+                },
+                {
+                  "kind": "TextField",
+                  "props": { "name": "slug", "label": "Slug" },
+                  "bindings": { "defaultValue": { "$ref": "branch.slug" } }
+                },
+                {
+                  "kind": "TextField",
+                  "props": { "name": "code", "label": "Internal code" },
+                  "bindings": { "defaultValue": { "$ref": "branch.code" } }
+                },
+                {
+                  "kind": "TextArea",
+                  "props": { "name": "description", "label": "Description", "rows": 3 },
+                  "bindings": { "defaultValue": { "$ref": "branch.description" } }
+                },
+                {
+                  "kind": "NumberField",
+                  "props": {
+                    "name": "sort_order",
+                    "label": "Sort order",
+                    "min": 0,
+                    "helpText": "Lower runs first in list views."
+                  },
+                  "bindings": { "defaultValue": { "$ref": "branch.sort_order" } }
+                }
               ]
             },
             {
               "kind": "Fieldset",
               "props": { "legend": "Contact" },
               "children": [
-                { "kind": "TextField", "props": { "name": "phone", "label": "Phone (E.164)" }, "bindings": { "defaultValue": { "$ref": "branch.phone" } } },
-                { "kind": "TextField", "props": { "name": "email", "label": "Email", "inputMode": "email" }, "bindings": { "defaultValue": { "$ref": "branch.email" } } },
-                { "kind": "TextField", "props": { "name": "website_url", "label": "Website" }, "bindings": { "defaultValue": { "$ref": "branch.website_url" } } }
+                {
+                  "kind": "TextField",
+                  "props": { "name": "phone", "label": "Phone (E.164)" },
+                  "bindings": { "defaultValue": { "$ref": "branch.phone" } }
+                },
+                {
+                  "kind": "TextField",
+                  "props": { "name": "email", "label": "Email", "inputMode": "email" },
+                  "bindings": { "defaultValue": { "$ref": "branch.email" } }
+                },
+                {
+                  "kind": "TextField",
+                  "props": { "name": "website_url", "label": "Website" },
+                  "bindings": { "defaultValue": { "$ref": "branch.website_url" } }
+                }
               ]
             },
             {
@@ -108,7 +149,12 @@
               "children": [
                 {
                   "kind": "NumberField",
-                  "props": { "name": "capacity", "label": "Maximum concurrent occupants", "min": 1, "helpText": "Fire-safety cap. Blank = no cap." },
+                  "props": {
+                    "name": "capacity",
+                    "label": "Maximum concurrent occupants",
+                    "min": 1,
+                    "helpText": "Fire-safety cap. Blank = no cap."
+                  },
                   "bindings": { "defaultValue": { "$ref": "branch.capacity" } }
                 },
                 {
@@ -119,7 +165,9 @@
                       "value_field": "amenities",
                       "defaultValue": { "$ref": "branch.amenities" },
                       "catalog": { "$ref": "amenityCatalog" },
-                      "allow_custom": { "$expr": "me.features.indexOf('branch.custom_amenities') > -1" }
+                      "allow_custom": {
+                        "$expr": "me.features.indexOf('branch.custom_amenities') > -1"
+                      }
                     }
                   }
                 }
@@ -135,19 +183,40 @@
                   "children": [
                     {
                       "kind": "Button",
-                      "props": { "variant": "ghost", "leadingIcon": "clock", "children": "Edit hours" },
-                      "actions": { "onPress": { "kind": "navigate", "toExpr": "'/branches/' + route.branch_id + '/hours'" } },
+                      "props": {
+                        "variant": "ghost",
+                        "leadingIcon": "clock",
+                        "children": "Edit hours"
+                      },
+                      "actions": {
+                        "onPress": {
+                          "kind": "navigate",
+                          "toExpr": "'/branches/' + route.branch_id + '/hours'"
+                        }
+                      },
                       "requiresPermission": "branches.update_hours"
                     },
                     {
                       "kind": "Button",
-                      "props": { "variant": "ghost", "leadingIcon": "map-pin", "children": "Edit address & map" },
-                      "actions": { "onPress": { "kind": "navigate", "toExpr": "'/branches/map?focus=' + route.branch_id" } },
+                      "props": {
+                        "variant": "ghost",
+                        "leadingIcon": "map-pin",
+                        "children": "Edit address & map"
+                      },
+                      "actions": {
+                        "onPress": {
+                          "kind": "navigate",
+                          "toExpr": "'/branches/map?focus=' + route.branch_id"
+                        }
+                      },
                       "requiresPermission": "branches.update_address"
                     }
                   ]
                 },
-                { "kind": "SubmitButton", "props": { "variant": "primary", "children": "Save changes" } }
+                {
+                  "kind": "SubmitButton",
+                  "props": { "variant": "primary", "children": "Save changes" }
+                }
               ]
             }
           ]

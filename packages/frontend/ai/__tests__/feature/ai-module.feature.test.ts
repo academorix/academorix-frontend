@@ -14,9 +14,9 @@
  *      hooks, orchestrator, client, or components (Req 3.3, 23.7).
  */
 
-import 'reflect-metadata';
-import { describe, expect, it } from 'vitest';
-import { ApplicationFactory, Injectable, Module, type DynamicModule } from '@stackra/container';
+import "reflect-metadata";
+import { describe, expect, it } from "vitest";
+import { ApplicationFactory, Injectable, Module, type DynamicModule } from "@stackra/container";
 import {
   AI_AGENT_REGISTRY,
   AI_AUTH_PROVIDER,
@@ -43,24 +43,24 @@ import {
   type IAiTransport,
   type IHttpClient,
   type IHttpManager,
-} from '@stackra/contracts';
+} from "@stackra/contracts";
 
-import { AiModule } from '@/core/ai.module';
-import { AiClientService } from '@/core/services/ai-client.service';
-import { ChatOrchestrator } from '@/core/services/chat-orchestrator.service';
-import { ConnectionManager } from '@/core/services/connection-manager.service';
-import { ContextCollector } from '@/core/services/context-collector.service';
-import { ConversationStore } from '@/core/services/conversation-store.service';
-import { DraftService } from '@/core/services/draft.service';
-import { PiiRedactor } from '@/core/services/pii-redactor.service';
-import { ToolConverter } from '@/core/services/tool-converter.service';
-import { ToolExecutor } from '@/core/services/tool-executor.service';
-import { StreamDecoder } from '@/core/decoder/stream-decoder';
-import { SseTransport } from '@/core/transport/sse.transport';
-import { AgentRegistry } from '@/core/registries/agent.registry';
-import { ContextRegistry } from '@/core/registries/context.registry';
-import { ToolRegistry } from '@/core/registries/tool.registry';
-import { WebAiModule } from '@/react/web-ai.module';
+import { AiModule } from "@/core/ai.module";
+import { AiClientService } from "@/core/services/ai-client.service";
+import { ChatOrchestrator } from "@/core/services/chat-orchestrator.service";
+import { ConnectionManager } from "@/core/services/connection-manager.service";
+import { ContextCollector } from "@/core/services/context-collector.service";
+import { ConversationStore } from "@/core/services/conversation-store.service";
+import { DraftService } from "@/core/services/draft.service";
+import { PiiRedactor } from "@/core/services/pii-redactor.service";
+import { ToolConverter } from "@/core/services/tool-converter.service";
+import { ToolExecutor } from "@/core/services/tool-executor.service";
+import { StreamDecoder } from "@/core/decoder/stream-decoder";
+import { SseTransport } from "@/core/transport/sse.transport";
+import { AgentRegistry } from "@/core/registries/agent.registry";
+import { ContextRegistry } from "@/core/registries/context.registry";
+import { ToolRegistry } from "@/core/registries/tool.registry";
+import { WebAiModule } from "@/react/web-ai.module";
 
 // ── Fixtures ─────────────────────────────────────────────────────────────
 
@@ -76,16 +76,16 @@ class StubHttpManager implements IHttpManager {
     return false;
   }
   public getMiddlewareRegistry(): Promise<never> {
-    throw new Error('stub');
+    throw new Error("stub");
   }
   public getInterceptorRegistry(): Promise<never> {
-    throw new Error('stub');
+    throw new Error("stub");
   }
   public getConnectionNames(): string[] {
     return [];
   }
   public getDefaultConnectionName(): string {
-    return 'default';
+    return "default";
   }
   public setDefaultConnectionName(): void {}
   public isConnectionActive(): boolean {
@@ -100,7 +100,7 @@ class StubHttpManager implements IHttpManager {
   public extend(): void {}
 }
 
-import { Global } from '@stackra/container';
+import { Global } from "@stackra/container";
 
 @Global()
 @Module({
@@ -114,19 +114,19 @@ const authProvider = {
   refresh: (): Promise<IAiCredentials> => Promise.resolve({ headers: {} }),
 };
 
-const options = { baseUrl: 'https://api.example.com', authProvider };
+const options = { baseUrl: "https://api.example.com", authProvider };
 
 // ── Tests ────────────────────────────────────────────────────────────────
 
-describe('WebAiModule — token bindings', () => {
-  it('binds every AI service to both its class and its DI token', async () => {
+describe("WebAiModule — token bindings", () => {
+  it("binds every AI service to both its class and its DI token", async () => {
     @Module({ imports: [StubHttpModule, WebAiModule.forRoot(options)] })
     class AppModule {}
 
     const app = await ApplicationFactory.create(AppModule);
 
     // Config + auth are useValue providers.
-    expect(app.get<IAiConfig>(AI_CONFIG).baseUrl).toBe('https://api.example.com');
+    expect(app.get<IAiConfig>(AI_CONFIG).baseUrl).toBe("https://api.example.com");
     expect(app.get(AI_AUTH_PROVIDER)).toBe(authProvider);
 
     // Each service resolves through both channels — token AND class.
@@ -155,7 +155,7 @@ describe('WebAiModule — token bindings', () => {
     await app.close();
   });
 
-  it('binds AI_TRANSPORT to SseTransport in the web platform module', async () => {
+  it("binds AI_TRANSPORT to SseTransport in the web platform module", async () => {
     @Module({ imports: [StubHttpModule, WebAiModule.forRoot(options)] })
     class AppModule {}
 
@@ -167,16 +167,16 @@ describe('WebAiModule — token bindings', () => {
   });
 });
 
-describe('AiModule.forFeature — persona seeding via createSeedLoader', () => {
-  it('seeds forFeature personas into the AgentRegistry at bootstrap', async () => {
+describe("AiModule.forFeature — persona seeding via createSeedLoader", () => {
+  it("seeds forFeature personas into the AgentRegistry at bootstrap", async () => {
     @Module({
       imports: [
         StubHttpModule,
         WebAiModule.forRoot(options),
         AiModule.forFeature({
           personas: [
-            { slug: 'analyst', title: 'Analyst' },
-            { slug: 'coach', title: 'Coach' },
+            { slug: "analyst", title: "Analyst" },
+            { slug: "coach", title: "Coach" },
           ],
         }),
       ],
@@ -185,14 +185,14 @@ describe('AiModule.forFeature — persona seeding via createSeedLoader', () => {
 
     const app = await ApplicationFactory.create(AppModule);
     const registry = app.get(AgentRegistry);
-    expect(registry.get('analyst')?.title).toBe('Analyst');
-    expect(registry.get('coach')?.title).toBe('Coach');
+    expect(registry.get("analyst")?.title).toBe("Analyst");
+    expect(registry.get("coach")?.title).toBe("Coach");
     await app.close();
   });
 });
 
-describe('Transport swap guarantee (Req 3.3, 23.7)', () => {
-  it('swaps the AI_TRANSPORT binding without changing orchestrator / client code', async () => {
+describe("Transport swap guarantee (Req 3.3, 23.7)", () => {
+  it("swaps the AI_TRANSPORT binding without changing orchestrator / client code", async () => {
     // A completely custom transport — implements IAiTransport differently
     // (in-memory, no HTTP required). The AI stack keeps working because
     // consumers only depend on the interface.

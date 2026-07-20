@@ -5,9 +5,9 @@
  *   interfaces.
  */
 
-export { useStorageValue } from './use-storage-value.hook';
+export { useStorageValue } from "./use-storage-value.hook";
 export type {
   UseStorageValueOptions,
   UseStorageValueMeta,
   UseStorageValueResult,
-} from './use-storage-value.interface';
+} from "./use-storage-value.interface";

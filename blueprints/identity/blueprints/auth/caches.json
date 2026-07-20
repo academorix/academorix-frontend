@@ -64,7 +64,13 @@
       "description": "Resolved (user_id, application_id, tenant_id, roles, permissions) for a Sanctum PAT. Populated on first request; invalidated on SessionRevoked / user.state_change.",
       "ttlSeconds": 60,
       "tags": ["auth"],
-      "invalidatedBy": ["SessionRevoked", "User.suspended", "User.disabled", "PasswordChanged", "TTL expiry"],
+      "invalidatedBy": [
+        "SessionRevoked",
+        "User.suspended",
+        "User.disabled",
+        "PasswordChanged",
+        "TTL expiry"
+      ],
       "notes": "Short TTL is deliberate \u2014 session revocation must propagate within 60 seconds regardless of the invalidation event."
     },
     {

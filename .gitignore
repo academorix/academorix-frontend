@@ -1,21 +1,33 @@
-# Dependencies
+# ── Dependencies ────────────────────────────────────────────────────
 node_modules
 .pnpm-store
 
-# Build output
+# ── Build output ────────────────────────────────────────────────────
 dist
 dist-ssr
 build
 *.local
 
-# Turborepo
+# ── TypeScript incremental build cache ──────────────────────────────
+*.tsbuildinfo
+
+# ── Turborepo ───────────────────────────────────────────────────────
 .turbo
 
-# Test / coverage
+# ── Toolchain caches ────────────────────────────────────────────────
+.eslintcache
+.prettiercache
+.stylelintcache
+.parcel-cache
+.swc
+.rollup.cache
+
+# ── Test / coverage ─────────────────────────────────────────────────
 coverage
 *.lcov
+.nyc_output
 
-# Logs
+# ── Logs ────────────────────────────────────────────────────────────
 logs
 *.log
 npm-debug.log*
@@ -24,13 +36,19 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
-# Env files: keep .env.example and .env.production (public VITE_* config),
-# ignore local/secret env files.
+# ── Env files ───────────────────────────────────────────────────────
+# Keep .env.example and .env.production (public VITE_* config), ignore
+# local/secret env files.
 .env
 .env.local
 .env.*.local
+.env*.local
 
-# Editor / OS
+# ── Doppler local state ─────────────────────────────────────────────
+# Doppler CLI keeps per-project state locally that MUST NOT be committed.
+.doppler/
+
+# ── Editor / OS ─────────────────────────────────────────────────────
 .idea
 .DS_Store
 *.suo
@@ -40,25 +58,33 @@ lerna-debug.log*
 *.sw?
 !.vscode/extensions.json
 
-# Vercel
+# ── Deploy artefacts ────────────────────────────────────────────────
 .vercel
+.netlify
 
-# Tauri / Rust build artefacts under src-tauri/ — the compiled binary and
-# generated codegen (mobile scaffolds, capability schemas) are deterministic
-# outputs and must never be committed. Local per-crate .gitignores also
-# cover this, but the workspace-level match keeps things safe for
-# contributors who bypass the crate ignores.
-apps/dashboard/src-tauri/target
-apps/dashboard/src-tauri/gen
+# ── React Native native build artefacts ─────────────────────────────
+apps/*/ios/build
+apps/*/ios/Pods
+apps/*/android/build
+apps/*/android/.gradle
+apps/*/android/app/build
+apps/*/android/app/release
+apps/*/.expo
+apps/*/.metro-cache
 
-# Lockfiles from other package managers (this repo standardizes on pnpm)
+# ── Tauri / Rust build artefacts ────────────────────────────────────
+# Compiled binaries + generated codegen (mobile scaffolds, capability
+# schemas) are deterministic outputs — never committed.
+apps/*/src-tauri/target
+apps/*/src-tauri/gen
+
+# ── Lockfiles from other package managers (this repo standardizes on pnpm) ─
 yarn.lock
 package-lock.json
 bun.lockb
 
-# Kiro MCP config holds secret tokens (heroui-pro personal token) — keep local
+# ── Kiro MCP config holds secret tokens (heroui-pro personal token) — keep local ─
 .kiro/settings/mcp.json
-.env*.local
 
-# Third-party reference material — never committed
+# ── Third-party reference material — never committed ────────────────
 .ref/

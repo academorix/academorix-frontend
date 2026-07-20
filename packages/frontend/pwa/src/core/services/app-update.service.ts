@@ -26,8 +26,8 @@ import {
   Optional,
   type OnApplicationBootstrap,
   type OnModuleInit,
-} from '@stackra/container';
-import { Uri, retry } from '@stackra/support';
+} from "@stackra/container";
+import { Uri, retry } from "@stackra/support";
 import {
   HTTP_MANAGER,
   LOGGER_MANAGER,
@@ -35,16 +35,16 @@ import {
   type IHttpManager,
   type ILoggerManager,
   type IRealtimeManager,
-} from '@stackra/contracts';
+} from "@stackra/contracts";
 
-import { PWA_CONFIG, PWA_EVENTS } from '../constants';
+import { PWA_CONFIG, PWA_EVENTS } from "../constants";
 import type {
   IAppUpdateConfig,
   IAppUpdateManifest,
   IAppUpdateState,
   IPwaModuleOptions,
-} from '../interfaces';
-import { AnalyticsBridgeService } from './analytics-bridge.service';
+} from "../interfaces";
+import { AnalyticsBridgeService } from "./analytics-bridge.service";
 
 /** Listener signature — receives no argument. */
 export type AppUpdateListener = () => void;
@@ -53,10 +53,10 @@ export type AppUpdateListener = () => void;
  * Default endpoint path — matches the Laravel `AppVersionController`
  * convention.
  */
-const DEFAULT_ENDPOINT = '/api/v1/app/version';
+const DEFAULT_ENDPOINT = "/api/v1/app/version";
 
 /** Default realtime channel name — matches Laravel's `AppUpdateEvent`. */
-const DEFAULT_CHANNEL = 'app.updates';
+const DEFAULT_CHANNEL = "app.updates";
 
 /**
  * App-update reactive service.
@@ -101,7 +101,7 @@ export class AppUpdateService implements OnModuleInit, OnApplicationBootstrap {
     @Optional()
     @Inject(LOGGER_MANAGER)
     private readonly logger?: ILoggerManager,
-    @Optional() private readonly analytics?: AnalyticsBridgeService
+    @Optional() private readonly analytics?: AnalyticsBridgeService,
   ) {
     // Prime the state with the current version so first-render UI
     // can display it before any check completes.
@@ -155,32 +155,32 @@ export class AppUpdateService implements OnModuleInit, OnApplicationBootstrap {
     if (!this.appUpdate.broadcasting?.enabled) return;
 
     if (!this.realtimeManager) {
-      this.warn('appUpdate.broadcasting.enabled is true but @stackra/realtime is not installed.');
+      this.warn("appUpdate.broadcasting.enabled is true but @stackra/realtime is not installed.");
       return;
     }
 
     try {
       const connection = await this.realtimeManager.connection(
-        this.appUpdate.broadcasting.connection
+        this.appUpdate.broadcasting.connection,
       );
       const channelName = this.appUpdate.broadcasting.channel ?? DEFAULT_CHANNEL;
       const channel = connection.channel(channelName);
 
       const listener = (payload: unknown): void => {
-        this.applyManifest(payload as IAppUpdateManifest, 'broadcast');
+        this.applyManifest(payload as IAppUpdateManifest, "broadcast");
       };
 
       // The Laravel `AppUpdateEvent` broadcasts under the event name
       // `.app.updates` (leading dot = "any namespace") — subscribe
       // to both the raw name and the canonical dot-prefixed variant
       // so we work with either broadcaster shape.
-      channel.on('app.updates', listener);
-      channel.on('.app.updates', listener);
+      channel.on("app.updates", listener);
+      channel.on(".app.updates", listener);
 
-      this.cleanups.push(() => channel.off('app.updates', listener));
-      this.cleanups.push(() => channel.off('.app.updates', listener));
+      this.cleanups.push(() => channel.off("app.updates", listener));
+      this.cleanups.push(() => channel.off(".app.updates", listener));
     } catch (error) {
-      this.warn('Failed to subscribe to app.updates channel.', error);
+      this.warn("Failed to subscribe to app.updates channel.", error);
     }
   }
 
@@ -195,7 +195,7 @@ export class AppUpdateService implements OnModuleInit, OnApplicationBootstrap {
    */
   public async check(): Promise<void> {
     if (!this.httpManager) {
-      this.warn('AppUpdateService.check() called but @stackra/http is not installed.');
+      this.warn("AppUpdateService.check() called but @stackra/http is not installed.");
       return;
     }
 
@@ -210,7 +210,7 @@ export class AppUpdateService implements OnModuleInit, OnApplicationBootstrap {
         return res.data;
       });
 
-      this.applyManifest(manifest, 'poll');
+      this.applyManifest(manifest, "poll");
     } catch (error) {
       const err = error instanceof Error ? error : new Error(String(error));
       this.state = { ...this.state, isChecking: false, error: err };
@@ -218,7 +218,7 @@ export class AppUpdateService implements OnModuleInit, OnApplicationBootstrap {
         error: err.message,
       });
       this.emit();
-      this.warn('AppUpdateService.check() failed.', err);
+      this.warn("AppUpdateService.check() failed.", err);
     }
   }
 
@@ -236,8 +236,8 @@ export class AppUpdateService implements OnModuleInit, OnApplicationBootstrap {
       mandatory: this.state.mandatory,
     });
 
-    if (openWindow && this.state.downloadUrl && typeof window !== 'undefined') {
-      window.open(this.state.downloadUrl, '_blank', 'noopener,noreferrer');
+    if (openWindow && this.state.downloadUrl && typeof window !== "undefined") {
+      window.open(this.state.downloadUrl, "_blank", "noopener,noreferrer");
     }
   }
 
@@ -298,13 +298,13 @@ export class AppUpdateService implements OnModuleInit, OnApplicationBootstrap {
    *   analytics event to make dashboards distinguish polling from
    *   push signal.
    */
-  private applyManifest(manifest: IAppUpdateManifest, source: 'poll' | 'broadcast'): void {
-    if (!manifest || typeof manifest !== 'object') {
+  private applyManifest(manifest: IAppUpdateManifest, source: "poll" | "broadcast"): void {
+    if (!manifest || typeof manifest !== "object") {
       // Defensive — broadcast payloads can arrive malformed.
       return;
     }
 
-    const platform = this.appUpdate.platform ?? 'web';
+    const platform = this.appUpdate.platform ?? "web";
     const downloadUrl = pickDownloadUrl(manifest, platform);
     const availableFlag = pickAvailableFlag(manifest, platform);
     const latest = manifest.current_version;
@@ -317,7 +317,7 @@ export class AppUpdateService implements OnModuleInit, OnApplicationBootstrap {
     // Fallback to (2) preserves compatibility with servers that
     // don't ship the availability flags.
     const hasUpdate =
-      typeof availableFlag === 'boolean'
+      typeof availableFlag === "boolean"
         ? availableFlag
         : latest !== undefined && current !== undefined && latest !== current;
 
@@ -372,8 +372,8 @@ export class AppUpdateService implements OnModuleInit, OnApplicationBootstrap {
   private warn(message: string, cause?: unknown): void {
     if (!this.logger) return;
     try {
-      const suffix = cause ? `: ${String(cause)}` : '';
-      this.logger.create('pwa.app-update').warn(`${message}${suffix}`);
+      const suffix = cause ? `: ${String(cause)}` : "";
+      this.logger.create("pwa.app-update").warn(`${message}${suffix}`);
     } catch {
       // fail-soft
     }
@@ -387,12 +387,12 @@ export class AppUpdateService implements OnModuleInit, OnApplicationBootstrap {
 /** Pick the platform-specific download URL from a manifest. */
 function pickDownloadUrl(
   manifest: IAppUpdateManifest,
-  platform: 'web' | 'desktop' | 'mobile'
+  platform: "web" | "desktop" | "mobile",
 ): string | undefined {
   switch (platform) {
-    case 'desktop':
+    case "desktop":
       return manifest.desktop_update_url;
-    case 'mobile':
+    case "mobile":
       return manifest.mobile_update_url;
     default:
       return manifest.web_update_url;
@@ -402,12 +402,12 @@ function pickDownloadUrl(
 /** Pick the platform-specific availability flag from a manifest. */
 function pickAvailableFlag(
   manifest: IAppUpdateManifest,
-  platform: 'web' | 'desktop' | 'mobile'
+  platform: "web" | "desktop" | "mobile",
 ): boolean | undefined {
   switch (platform) {
-    case 'desktop':
+    case "desktop":
       return manifest.desktop_update_available;
-    case 'mobile':
+    case "mobile":
       return manifest.mobile_update_available;
     default:
       return manifest.web_update_available;

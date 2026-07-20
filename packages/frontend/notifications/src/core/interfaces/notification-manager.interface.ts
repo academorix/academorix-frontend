@@ -10,11 +10,11 @@
  *   dependency graph.
  */
 
-import type { IDeliveryReport } from './delivery-report.interface';
-import type { INotificationChannelDriver } from './notification-channel-driver.interface';
-import type { INotificationManagerSnapshot } from './notification-manager-snapshot.interface';
-import type { INotificationPayload } from './notification-payload.interface';
-import type { INotificationPermissionState } from './notification-permission-state.interface';
+import type { IDeliveryReport } from "./delivery-report.interface";
+import type { INotificationChannelDriver } from "./notification-channel-driver.interface";
+import type { INotificationManagerSnapshot } from "./notification-manager-snapshot.interface";
+import type { INotificationPayload } from "./notification-payload.interface";
+import type { INotificationPermissionState } from "./notification-permission-state.interface";
 
 /**
  * Listener signature emitted on every snapshot change.
@@ -43,7 +43,7 @@ export interface INotificationManager {
    */
   dispatch(
     payload: INotificationPayload,
-    options?: { readonly channels?: readonly string[] }
+    options?: { readonly channels?: readonly string[] },
   ): Promise<readonly IDeliveryReport[]>;
 
   /** Snapshot of the manager's permission + channels state. */

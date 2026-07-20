@@ -8,8 +8,8 @@
  *   always structurally uniform.
  */
 
-import { DEFAULT_PWA_CONFIG } from '../constants/defaults.constant';
-import type { IPwaModuleOptions } from '../interfaces';
+import { DEFAULT_PWA_CONFIG } from "../constants/defaults.constant";
+import type { IPwaModuleOptions } from "../interfaces";
 
 /**
  * Merge user options over {@link DEFAULT_PWA_CONFIG}.

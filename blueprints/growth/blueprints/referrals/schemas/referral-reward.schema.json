@@ -46,7 +46,12 @@
   "x-database": {
     "engine": "postgres",
     "columns": {
-      "id": { "type": "string", "length": 64, "primary": true, "description": "Prefixed ULID: `rrw_<26>`." },
+      "id": {
+        "type": "string",
+        "length": 64,
+        "primary": true,
+        "description": "Prefixed ULID: `rrw_<26>`."
+      },
       "tenant_id": {
         "type": "string",
         "length": 64,
@@ -87,7 +92,12 @@
         "nullable": false,
         "description": "Frozen at reward-create time. Interpretation depends on reward_type."
       },
-      "reward_currency": { "type": "string", "length": 3, "nullable": true, "description": "ISO 4217." },
+      "reward_currency": {
+        "type": "string",
+        "length": 3,
+        "nullable": true,
+        "description": "ISO 4217."
+      },
       "status": {
         "type": "string",
         "length": 16,
@@ -95,16 +105,28 @@
         "default": "'pending'",
         "description": "Enum: pending / vesting / vested / materialized / paid / cancelled / clawback."
       },
-      "vesting_starts_at": { "type": "timestamptz", "nullable": false, "description": "Denormalised from parent Referral at reward-create." },
+      "vesting_starts_at": {
+        "type": "timestamptz",
+        "nullable": false,
+        "description": "Denormalised from parent Referral at reward-create."
+      },
       "vesting_completes_at": { "type": "timestamptz", "nullable": false },
-      "materialized_at": { "type": "timestamptz", "nullable": true, "description": "Set by MaterializeVestedRewardsJob when Finance credit is created." },
+      "materialized_at": {
+        "type": "timestamptz",
+        "nullable": true,
+        "description": "Set by MaterializeVestedRewardsJob when Finance credit is created."
+      },
       "finance_credit_id": {
         "type": "string",
         "length": 64,
         "nullable": true,
         "description": "Wave 4 finance FK. Set atomically with materialized_at."
       },
-      "paid_at": { "type": "timestamptz", "nullable": true, "description": "Set when the recipient actually redeems / receives the credit." },
+      "paid_at": {
+        "type": "timestamptz",
+        "nullable": true,
+        "description": "Set when the recipient actually redeems / receives the credit."
+      },
       "clawback_reason": {
         "type": "string",
         "length": 32,
@@ -128,9 +150,18 @@
         "predicate": "deleted_at IS NULL",
         "description": "Prevents double-materialization on retry. One row per (referral, role)."
       },
-      { "columns": ["tenant_id", "recipient_type", "recipient_id", "status"], "name": "referral_rewards_by_recipient_idx" },
-      { "columns": ["tenant_id", "status", "vesting_completes_at"], "name": "referral_rewards_vesting_idx" },
-      { "columns": ["tenant_id", "status", "materialized_at"], "name": "referral_rewards_materialized_idx" }
+      {
+        "columns": ["tenant_id", "recipient_type", "recipient_id", "status"],
+        "name": "referral_rewards_by_recipient_idx"
+      },
+      {
+        "columns": ["tenant_id", "status", "vesting_completes_at"],
+        "name": "referral_rewards_vesting_idx"
+      },
+      {
+        "columns": ["tenant_id", "status", "materialized_at"],
+        "name": "referral_rewards_materialized_idx"
+      }
     ]
   },
   "required": [
@@ -157,17 +188,30 @@
     "recipient_role": { "type": "string", "enum": ["referrer", "referred"] },
     "reward_type": {
       "type": "string",
-      "enum": ["percent_discount", "fixed_amount", "free_months", "free_sessions", "credits", "point_award"]
+      "enum": [
+        "percent_discount",
+        "fixed_amount",
+        "free_months",
+        "free_sessions",
+        "credits",
+        "point_award"
+      ]
     },
     "reward_amount": { "type": "integer", "minimum": 1 },
     "reward_currency": { "type": ["string", "null"], "pattern": "^[A-Z]{3}$" },
-    "status": { "type": "string", "enum": ["pending", "vesting", "vested", "materialized", "paid", "cancelled", "clawback"] },
+    "status": {
+      "type": "string",
+      "enum": ["pending", "vesting", "vested", "materialized", "paid", "cancelled", "clawback"]
+    },
     "vesting_starts_at": { "type": "string", "format": "date-time" },
     "vesting_completes_at": { "type": "string", "format": "date-time" },
     "materialized_at": { "type": ["string", "null"], "format": "date-time" },
     "finance_credit_id": { "type": ["string", "null"] },
     "paid_at": { "type": ["string", "null"], "format": "date-time" },
-    "clawback_reason": { "type": ["string", "null"], "enum": [null, "refund", "chargeback", "fraud", "program_archived"] },
+    "clawback_reason": {
+      "type": ["string", "null"],
+      "enum": [null, "refund", "chargeback", "fraud", "program_archived"]
+    },
     "clawback_at": { "type": ["string", "null"], "format": "date-time" },
     "metadata": { "type": ["object", "null"] },
     "created_at": { "type": "string", "format": "date-time" },

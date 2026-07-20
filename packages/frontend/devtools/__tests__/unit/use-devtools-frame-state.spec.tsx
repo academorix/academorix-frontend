@@ -7,16 +7,16 @@
  *   state service.
  */
 
-import { act, cleanup, renderHook } from '@testing-library/react';
-import { afterEach, describe, expect, it } from 'vitest';
-import { type ReactNode } from 'react';
+import { act, cleanup, renderHook } from "@testing-library/react";
+import { afterEach, describe, expect, it } from "vitest";
+import { type ReactNode } from "react";
 
-import { DevtoolsContext } from '@/react/contexts/devtools.context';
-import type { IDevtoolsContextValue } from '@/react/contexts/devtools-context-value.interface';
-import { DevtoolsFrameStateService } from '@/core/services/devtools-frame-state.service';
-import { useDevtoolsFrameState } from '@/react/hooks/use-devtools-frame-state.hook';
-import { mergeConfig } from '@/core/utils/merge-config.util';
-import { MockDevtoolsPanelsRegistry } from '@/testing/mock-devtools-panels-registry';
+import { DevtoolsContext } from "@/react/contexts/devtools.context";
+import type { IDevtoolsContextValue } from "@/react/contexts/devtools-context-value.interface";
+import { DevtoolsFrameStateService } from "@/core/services/devtools-frame-state.service";
+import { useDevtoolsFrameState } from "@/react/hooks/use-devtools-frame-state.hook";
+import { mergeConfig } from "@/core/utils/merge-config.util";
+import { MockDevtoolsPanelsRegistry } from "@/testing/mock-devtools-panels-registry";
 
 afterEach(() => {
   cleanup();
@@ -32,9 +32,9 @@ function makeContext(): {
   const value: IDevtoolsContextValue = {
     config: mergeConfig(),
     panels: new MockDevtoolsPanelsRegistry(),
-    inspector: null as unknown as IDevtoolsContextValue['inspector'],
+    inspector: null as unknown as IDevtoolsContextValue["inspector"],
     frameState,
-    analytics: null as unknown as IDevtoolsContextValue['analytics'],
+    analytics: null as unknown as IDevtoolsContextValue["analytics"],
     mountedAt: Date.now(),
   };
   const wrapper = ({ children }: { readonly children: ReactNode }): React.JSX.Element => (
@@ -43,25 +43,25 @@ function makeContext(): {
   return { wrapper, frameState };
 }
 
-describe('useDevtoolsFrameState', () => {
-  it('reads the current snapshot', () => {
+describe("useDevtoolsFrameState", () => {
+  it("reads the current snapshot", () => {
     const { wrapper } = makeContext();
     const { result } = renderHook(() => useDevtoolsFrameState(), { wrapper });
     expect(result.current.state.isOpen).toBe(false);
     expect(result.current.state.activePanelId).toBeNull();
   });
 
-  it('updates the shared state when update() is called', () => {
+  it("updates the shared state when update() is called", () => {
     const { wrapper } = makeContext();
     const { result } = renderHook(() => useDevtoolsFrameState(), { wrapper });
     act(() => {
-      result.current.update({ isOpen: true, activePanelId: 'my-panel' });
+      result.current.update({ isOpen: true, activePanelId: "my-panel" });
     });
     expect(result.current.state.isOpen).toBe(true);
-    expect(result.current.state.activePanelId).toBe('my-panel');
+    expect(result.current.state.activePanelId).toBe("my-panel");
   });
 
-  it('two hooks stay in sync via the same underlying service', () => {
+  it("two hooks stay in sync via the same underlying service", () => {
     const { wrapper } = makeContext();
     const { result: a } = renderHook(() => useDevtoolsFrameState(), { wrapper });
     const { result: b } = renderHook(() => useDevtoolsFrameState(), { wrapper });

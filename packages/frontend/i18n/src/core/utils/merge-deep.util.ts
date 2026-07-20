@@ -14,7 +14,7 @@
  */
 export function mergeDeep(
   target: Record<string, unknown>,
-  source: Record<string, unknown>
+  source: Record<string, unknown>,
 ): Record<string, unknown> {
   const result: Record<string, unknown> = { ...target };
 
@@ -25,7 +25,7 @@ export function mergeDeep(
     if (isPlainObject(targetValue) && isPlainObject(sourceValue)) {
       result[key] = mergeDeep(
         targetValue as Record<string, unknown>,
-        sourceValue as Record<string, unknown>
+        sourceValue as Record<string, unknown>,
       );
     } else {
       result[key] = sourceValue;
@@ -39,5 +39,5 @@ export function mergeDeep(
  * Check if a value is a plain object (not array, not null).
  */
 function isPlainObject(value: unknown): value is Record<string, unknown> {
-  return typeof value === 'object' && value !== null && !Array.isArray(value);
+  return typeof value === "object" && value !== null && !Array.isArray(value);
 }

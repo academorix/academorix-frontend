@@ -23,20 +23,20 @@ export const DEFAULT_NOTIFICATION_CHANNELS = {
    * Routes payloads to the {@link InAppNotificationCentre} — the
    * durable in-memory queue backed by `@stackra/storage`.
    */
-  IN_APP: 'in-app',
+  IN_APP: "in-app",
   /**
    * Marks a payload for server-side Web Push delivery. The manager
    * emits `WEB_PUSH_SUBSCRIBED` events on `subscribe(...)` — the
    * actual delivery is performed by the app's backend against the
    * stored subscription.
    */
-  WEB_PUSH: 'web-push',
+  WEB_PUSH: "web-push",
   /**
    * Marks a payload for native (Expo) push delivery via a device
    * token. Delivery is again server-side; the manager just records
    * intent.
    */
-  NATIVE_PUSH: 'native-push',
+  NATIVE_PUSH: "native-push",
 } as const;
 
 /** Union of every built-in channel identifier. */

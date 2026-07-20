@@ -6,10 +6,10 @@
  *   every workspace testing subpath ships.
  */
 
-import { createAssertableProxy, type AssertableProxy } from '@stackra/testing';
+import { createAssertableProxy, type AssertableProxy } from "@stackra/testing";
 
-import { MockStorage } from './mock-storage';
-import { MockStorageManager } from './mock-storage-manager';
+import { MockStorage } from "./mock-storage";
+import { MockStorageManager } from "./mock-storage-manager";
 
 /**
  * Create an assertable mock `IStorage`.

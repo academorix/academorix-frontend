@@ -29,20 +29,61 @@
         }
       },
       "children": [
-        { "kind": "Text", "props": { "as": "h1", "className": "text-2xl font-semibold", "children": "Create custom sport" } },
+        {
+          "kind": "Text",
+          "props": {
+            "as": "h1",
+            "className": "text-2xl font-semibold",
+            "children": "Create custom sport"
+          }
+        },
         {
           "kind": "Card",
           "children": [
-            { "kind": "Card.Header", "children": [{ "kind": "Text", "props": { "as": "h2", "className": "text-lg font-medium", "children": "Identity" } }] },
+            {
+              "kind": "Card.Header",
+              "children": [
+                {
+                  "kind": "Text",
+                  "props": {
+                    "as": "h2",
+                    "className": "text-lg font-medium",
+                    "children": "Identity"
+                  }
+                }
+              ]
+            },
             {
               "kind": "Card.Content",
               "props": { "className": "flex flex-col gap-4" },
               "children": [
-                { "kind": "TextField", "props": { "name": "name", "label": "Name", "required": true, "helpText": "Display name shown in pickers and enrollment forms." } },
-                { "kind": "TextField", "props": { "name": "slug", "label": "Slug", "required": true, "helpText": "Lowercase snake_case. Immutable after creation. Cannot match a platform sport slug.", "placeholder": "e.g. acme_kabaddi" } },
+                {
+                  "kind": "TextField",
+                  "props": {
+                    "name": "name",
+                    "label": "Name",
+                    "required": true,
+                    "helpText": "Display name shown in pickers and enrollment forms."
+                  }
+                },
+                {
+                  "kind": "TextField",
+                  "props": {
+                    "name": "slug",
+                    "label": "Slug",
+                    "required": true,
+                    "helpText": "Lowercase snake_case. Immutable after creation. Cannot match a platform sport slug.",
+                    "placeholder": "e.g. acme_kabaddi"
+                  }
+                },
                 {
                   "kind": "Select",
-                  "props": { "name": "category", "label": "Category", "required": true, "placeholder": "Pick a category" },
+                  "props": {
+                    "name": "category",
+                    "label": "Category",
+                    "required": true,
+                    "placeholder": "Pick a category"
+                  },
                   "options": [
                     { "key": "team_sport", "label": "Team sports" },
                     { "key": "individual_sport", "label": "Individual sports" },
@@ -63,16 +104,46 @@
         {
           "kind": "Card",
           "children": [
-            { "kind": "Card.Header", "children": [{ "kind": "Text", "props": { "as": "h2", "className": "text-lg font-medium", "children": "Metadata" } }] },
+            {
+              "kind": "Card.Header",
+              "children": [
+                {
+                  "kind": "Text",
+                  "props": {
+                    "as": "h2",
+                    "className": "text-lg font-medium",
+                    "children": "Metadata"
+                  }
+                }
+              ]
+            },
             {
               "kind": "Card.Content",
               "props": { "className": "flex flex-col gap-4" },
               "children": [
-                { "kind": "TextArea", "props": { "name": "description", "label": "Description", "helpText": "Free-form; shown in the sport detail view." } },
-                { "kind": "TextField", "props": { "name": "governing_body", "label": "Governing body", "helpText": "Official body — FIFA, FIBA, FINA, your national federation, etc." } },
+                {
+                  "kind": "TextArea",
+                  "props": {
+                    "name": "description",
+                    "label": "Description",
+                    "helpText": "Free-form; shown in the sport detail view."
+                  }
+                },
+                {
+                  "kind": "TextField",
+                  "props": {
+                    "name": "governing_body",
+                    "label": "Governing body",
+                    "helpText": "Official body — FIFA, FIBA, FINA, your national federation, etc."
+                  }
+                },
                 {
                   "kind": "Select",
-                  "props": { "name": "gender_typical", "label": "Gender profile", "defaultValue": "any" },
+                  "props": {
+                    "name": "gender_typical",
+                    "label": "Gender profile",
+                    "defaultValue": "any"
+                  },
                   "options": [
                     { "key": "any", "label": "Any" },
                     { "key": "male_only", "label": "Male-only" },
@@ -84,8 +155,24 @@
                   "kind": "View",
                   "props": { "className": "grid grid-cols-2 gap-4" },
                   "children": [
-                    { "kind": "NumberField", "props": { "name": "age_range_min", "label": "Minimum age", "min": 3, "max": 99 } },
-                    { "kind": "NumberField", "props": { "name": "age_range_max", "label": "Maximum age", "min": 3, "max": 99 } }
+                    {
+                      "kind": "NumberField",
+                      "props": {
+                        "name": "age_range_min",
+                        "label": "Minimum age",
+                        "min": 3,
+                        "max": 99
+                      }
+                    },
+                    {
+                      "kind": "NumberField",
+                      "props": {
+                        "name": "age_range_max",
+                        "label": "Maximum age",
+                        "min": 3,
+                        "max": 99
+                      }
+                    }
                   ]
                 }
               ]
@@ -95,14 +182,51 @@
         {
           "kind": "Card",
           "children": [
-            { "kind": "Card.Header", "children": [{ "kind": "Text", "props": { "as": "h2", "className": "text-lg font-medium", "children": "Presentation" } }] },
+            {
+              "kind": "Card.Header",
+              "children": [
+                {
+                  "kind": "Text",
+                  "props": {
+                    "as": "h2",
+                    "className": "text-lg font-medium",
+                    "children": "Presentation"
+                  }
+                }
+              ]
+            },
             {
               "kind": "Card.Content",
               "props": { "className": "flex flex-col gap-4" },
               "children": [
-                { "kind": "ColorField", "props": { "name": "primary_color", "label": "Primary color", "helpText": "Hex code — used for the sport chip in the tenant UI." } },
-                { "kind": "TextField", "props": { "name": "icon", "label": "Icon", "helpText": "Iconify identifier — e.g. mdi:soccer, game-icons:basketball-ball.", "placeholder": "mdi:trophy" } },
-                { "kind": "NumberField", "props": { "name": "sort_order", "label": "Sort order", "defaultValue": 500, "min": 0, "max": 9999, "helpText": "Lower renders first in pickers." } }
+                {
+                  "kind": "ColorField",
+                  "props": {
+                    "name": "primary_color",
+                    "label": "Primary color",
+                    "helpText": "Hex code — used for the sport chip in the tenant UI."
+                  }
+                },
+                {
+                  "kind": "TextField",
+                  "props": {
+                    "name": "icon",
+                    "label": "Icon",
+                    "helpText": "Iconify identifier — e.g. mdi:soccer, game-icons:basketball-ball.",
+                    "placeholder": "mdi:trophy"
+                  }
+                },
+                {
+                  "kind": "NumberField",
+                  "props": {
+                    "name": "sort_order",
+                    "label": "Sort order",
+                    "defaultValue": 500,
+                    "min": 0,
+                    "max": 9999,
+                    "helpText": "Lower renders first in pickers."
+                  }
+                }
               ]
             }
           ]
@@ -111,8 +235,15 @@
           "kind": "View",
           "props": { "className": "flex items-center justify-end gap-2" },
           "children": [
-            { "kind": "Button", "props": { "variant": "ghost", "children": "Cancel" }, "actions": { "onPress": { "kind": "navigate", "to": "/settings/sports" } } },
-            { "kind": "Button", "props": { "variant": "primary", "type": "submit", "children": "Create sport" } }
+            {
+              "kind": "Button",
+              "props": { "variant": "ghost", "children": "Cancel" },
+              "actions": { "onPress": { "kind": "navigate", "to": "/settings/sports" } }
+            },
+            {
+              "kind": "Button",
+              "props": { "variant": "primary", "type": "submit", "children": "Create sport" }
+            }
           ]
         }
       ]

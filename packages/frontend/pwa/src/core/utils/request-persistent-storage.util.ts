@@ -26,10 +26,10 @@
  */
 export async function requestPersistentStorage(): Promise<boolean> {
   // SSR guard.
-  if (typeof navigator === 'undefined' || !navigator.storage) return false;
+  if (typeof navigator === "undefined" || !navigator.storage) return false;
   // `navigator.storage.persist` is a stage-3 API and might not
   // be present on older Safari builds; check before invoking.
-  if (typeof navigator.storage.persist !== 'function') return false;
+  if (typeof navigator.storage.persist !== "function") return false;
 
   try {
     return await navigator.storage.persist();

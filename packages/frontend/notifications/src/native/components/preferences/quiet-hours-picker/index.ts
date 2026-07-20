@@ -5,5 +5,5 @@
  *   component + its owned props interface.
  */
 
-export { QuietHoursPicker } from './quiet-hours-picker.component';
-export type { QuietHoursPickerProps } from './quiet-hours-picker.interface';
+export { QuietHoursPicker } from "./quiet-hours-picker.component";
+export type { QuietHoursPickerProps } from "./quiet-hours-picker.interface";

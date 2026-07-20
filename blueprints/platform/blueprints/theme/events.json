@@ -10,9 +10,7 @@
       "class": "Academorix\\Platform\\Theme\\Events\\ThemeCreated",
       "trigger": "New Theme row inserted. Row starts is_active=false; a separate ThemeActivated fires once someone flips is_active=true.",
       "queue": "notifications",
-      "consumers": [
-        "activity::WriteThemeCreatedToActivity"
-      ],
+      "consumers": ["activity::WriteThemeCreatedToActivity"],
       "payload": {
         "theme_id": "thm_ULID",
         "tenant_id": "ten_ULID",
@@ -48,9 +46,7 @@
       "class": "Academorix\\Platform\\Theme\\Events\\ThemeDeactivated",
       "trigger": "Theme.is_active transitions true → false. Typically fires alongside a sibling ThemeActivated for the replacement theme in the same DB txn.",
       "queue": "notifications",
-      "consumers": [
-        "activity::WriteThemeDeactivatedToActivity"
-      ],
+      "consumers": ["activity::WriteThemeDeactivatedToActivity"],
       "payload": {
         "theme_id": "thm_ULID",
         "tenant_id": "ten_ULID",
@@ -63,9 +59,7 @@
       "class": "Academorix\\Platform\\Theme\\Events\\ThemePresetCreated",
       "trigger": "New ThemePreset row inserted. tenant_id NULL = platform preset (fires only during platform-admin operations); non-null = tenant custom preset.",
       "queue": "notifications",
-      "consumers": [
-        "activity::WriteThemePresetCreatedToActivity"
-      ],
+      "consumers": ["activity::WriteThemePresetCreatedToActivity"],
       "payload": {
         "preset_id": "tps_ULID",
         "tenant_id": "ten_ULID | null",
@@ -151,10 +145,7 @@
       "class": "Academorix\\Platform\\Theme\\Events\\ThemeCacheInvalidated",
       "trigger": "Fires post-RegenerateRenderedCssJob completion. Downstream consumers (CDN purge, SSR cache) key off this to bust their own caches.",
       "queue": "notifications",
-      "consumers": [
-        "observability::MetricsCollector",
-        "storage::PurgeCdnCache (planned)"
-      ],
+      "consumers": ["observability::MetricsCollector", "storage::PurgeCdnCache (planned)"],
       "payload": {
         "tenant_id": "ten_ULID",
         "theme_id": "thm_ULID",
@@ -168,9 +159,7 @@
       "class": "Academorix\\Platform\\Theme\\Events\\UserThemePreferenceUpdated",
       "trigger": "user::user_theme_preferences row updated — mode preference (light/dark/auto) OR accessibility overrides. Event fires HERE (not in user module) because theme is the resolver — user module owns the ROW, theme owns the SEMANTICS.",
       "queue": "notifications",
-      "consumers": [
-        "activity::WriteUserThemePreferenceUpdatedToActivity"
-      ],
+      "consumers": ["activity::WriteUserThemePreferenceUpdatedToActivity"],
       "payload": {
         "user_id": "usr_ULID",
         "tenant_id": "ten_ULID",

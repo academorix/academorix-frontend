@@ -10,13 +10,13 @@
  *   doesn't reach into `../react/`.
  */
 
-import { useMemo } from 'react';
+import { useMemo } from "react";
 
-import type { IRenderableNotification } from '@/core/interfaces';
-import { deriveNotificationPriority } from '@/core/utils';
+import type { IRenderableNotification } from "@/core/interfaces";
+import { deriveNotificationPriority } from "@/core/utils";
 
-import { useInAppNotifications } from './use-in-app-notifications.hook';
-import { useSnoozeStore } from './use-snooze-store.hook';
+import { useInAppNotifications } from "./use-in-app-notifications.hook";
+import { useSnoozeStore } from "./use-snooze-store.hook";
 
 /**
  * Return shape for the native

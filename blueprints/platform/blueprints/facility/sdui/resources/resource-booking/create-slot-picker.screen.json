@@ -114,7 +114,11 @@
           "children": [
             {
               "kind": "Text",
-              "props": { "as": "h3", "className": "font-semibold mb-3", "children": "Confirm details" }
+              "props": {
+                "as": "h3",
+                "className": "font-semibold mb-3",
+                "children": "Confirm details"
+              }
             },
             {
               "kind": "View",
@@ -155,7 +159,10 @@
                 {
                   "kind": "View",
                   "children": [
-                    { "kind": "Text", "props": { "className": "text-sm text-muted", "children": "Total" } },
+                    {
+                      "kind": "Text",
+                      "props": { "className": "text-sm text-muted", "children": "Total" }
+                    },
                     {
                       "kind": "Text",
                       "props": { "className": "text-xl font-semibold" },

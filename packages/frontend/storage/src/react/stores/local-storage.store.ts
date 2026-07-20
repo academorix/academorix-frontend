@@ -5,7 +5,7 @@
  *   default for values that must survive tab close and reload.
  */
 
-import { WebStorageBase } from './web-storage-base.store';
+import { WebStorageBase } from "./web-storage-base.store";
 
 /**
  * `IStorage` implementation persisting to `window.localStorage`.
@@ -36,7 +36,7 @@ export class LocalStorageStore extends WebStorageBase {
     // throw on access, some environments proxy the API and return
     // null-like values. All handled by the base class's fail-soft
     // paths — we only need to gate the reference itself.
-    if (typeof window === 'undefined') return null;
+    if (typeof window === "undefined") return null;
     try {
       return window.localStorage;
     } catch {

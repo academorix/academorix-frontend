@@ -16,7 +16,15 @@
     "model": "Academorix\\Finance\\Gateway\\Models\\PaymentGatewayConfig",
     "interface": "Academorix\\Finance\\Gateway\\Contracts\\Data\\PaymentGatewayConfigInterface",
     "implements": ["Academorix\\Finance\\Gateway\\Contracts\\Data\\PaymentGatewayConfigInterface"],
-    "traits": ["HasFactory", "HasUlids", "BelongsToTenant", "HasMetadata", "HasUserstamps", "Auditable", "SoftDeletes"],
+    "traits": [
+      "HasFactory",
+      "HasUlids",
+      "BelongsToTenant",
+      "HasMetadata",
+      "HasUserstamps",
+      "Auditable",
+      "SoftDeletes"
+    ],
     "casts": {
       "provider": "PaymentGatewayProvider",
       "mode": "PaymentGatewayMode",
@@ -32,17 +40,66 @@
   "x-database": {
     "engine": "postgres",
     "columns": {
-      "id": { "type": "string", "length": 64, "primary": true, "description": "Prefixed ULID: `pgc_<26>`." },
-      "tenant_id": { "type": "string", "length": 64, "nullable": false, "foreign": { "table": "tenants", "column": "id", "onDelete": "cascade" } },
-      "provider": { "type": "string", "length": 32, "nullable": false, "description": "Enum: stripe / paddle / checkout_com / square / razorpay / custom." },
-      "mode": { "type": "string", "length": 16, "nullable": false, "default": "'direct'", "description": "Enum: direct (tenant's own account) / connect (Stripe Connect marketplace flow)." },
+      "id": {
+        "type": "string",
+        "length": 64,
+        "primary": true,
+        "description": "Prefixed ULID: `pgc_<26>`."
+      },
+      "tenant_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "foreign": { "table": "tenants", "column": "id", "onDelete": "cascade" }
+      },
+      "provider": {
+        "type": "string",
+        "length": 32,
+        "nullable": false,
+        "description": "Enum: stripe / paddle / checkout_com / square / razorpay / custom."
+      },
+      "mode": {
+        "type": "string",
+        "length": 16,
+        "nullable": false,
+        "default": "'direct'",
+        "description": "Enum: direct (tenant's own account) / connect (Stripe Connect marketplace flow)."
+      },
       "is_active": { "type": "boolean", "nullable": false, "default": true },
-      "credentials_encrypted": { "type": "text", "nullable": false, "description": "Encrypted JSON blob of provider credentials (secret_key, public_key, account_id, ...). Provider-specific shape." },
-      "connect_account_id": { "type": "string", "length": 128, "nullable": true, "description": "Stripe Connect account ID when mode=connect. NULL for direct mode." },
-      "webhook_secret_encrypted": { "type": "text", "nullable": true, "description": "Encrypted webhook signing secret. Used by WebhookHandler for HMAC verification." },
-      "supported_currencies_json": { "type": "jsonb", "nullable": false, "default": "'[]'::jsonb", "description": "Array of ISO 4217 currency codes this gateway can process for this tenant." },
-      "supported_payment_methods_json": { "type": "jsonb", "nullable": false, "default": "'[]'::jsonb", "description": "Array of payment-method types: card / apple_pay / google_pay / bank_transfer / wallet / cash." },
-      "display_name": { "type": "string", "length": 255, "nullable": true, "description": "Tenant-authored label (e.g. 'UAE Stripe', 'EU Paddle')." },
+      "credentials_encrypted": {
+        "type": "text",
+        "nullable": false,
+        "description": "Encrypted JSON blob of provider credentials (secret_key, public_key, account_id, ...). Provider-specific shape."
+      },
+      "connect_account_id": {
+        "type": "string",
+        "length": 128,
+        "nullable": true,
+        "description": "Stripe Connect account ID when mode=connect. NULL for direct mode."
+      },
+      "webhook_secret_encrypted": {
+        "type": "text",
+        "nullable": true,
+        "description": "Encrypted webhook signing secret. Used by WebhookHandler for HMAC verification."
+      },
+      "supported_currencies_json": {
+        "type": "jsonb",
+        "nullable": false,
+        "default": "'[]'::jsonb",
+        "description": "Array of ISO 4217 currency codes this gateway can process for this tenant."
+      },
+      "supported_payment_methods_json": {
+        "type": "jsonb",
+        "nullable": false,
+        "default": "'[]'::jsonb",
+        "description": "Array of payment-method types: card / apple_pay / google_pay / bank_transfer / wallet / cash."
+      },
+      "display_name": {
+        "type": "string",
+        "length": 255,
+        "nullable": true,
+        "description": "Tenant-authored label (e.g. 'UAE Stripe', 'EU Paddle')."
+      },
       "metadata": { "type": "jsonb", "nullable": true },
       "created_by": { "type": "string", "length": 64, "nullable": true },
       "updated_by": { "type": "string", "length": 64, "nullable": true },
@@ -52,20 +109,48 @@
       "updated_at": { "type": "timestamptz", "nullable": false }
     },
     "indexes": [
-      { "columns": ["tenant_id", "provider", "is_active"], "unique": true, "name": "payment_gateway_configs_tenant_provider_active_unique", "predicate": "is_active = TRUE AND deleted_at IS NULL" },
+      {
+        "columns": ["tenant_id", "provider", "is_active"],
+        "unique": true,
+        "name": "payment_gateway_configs_tenant_provider_active_unique",
+        "predicate": "is_active = TRUE AND deleted_at IS NULL"
+      },
       { "columns": ["tenant_id", "mode"], "name": "payment_gateway_configs_tenant_mode_idx" }
     ]
   },
-  "required": ["id", "tenant_id", "provider", "mode", "is_active", "credentials_encrypted", "supported_currencies_json", "supported_payment_methods_json", "created_at", "updated_at"],
+  "required": [
+    "id",
+    "tenant_id",
+    "provider",
+    "mode",
+    "is_active",
+    "credentials_encrypted",
+    "supported_currencies_json",
+    "supported_payment_methods_json",
+    "created_at",
+    "updated_at"
+  ],
   "properties": {
     "id": { "type": "string", "pattern": "^pgc_[0-9A-HJKMNP-TV-Z]{26}$" },
     "tenant_id": { "type": "string", "pattern": "^ten_[0-9A-HJKMNP-TV-Z]{26}$" },
-    "provider": { "type": "string", "enum": ["stripe", "paddle", "checkout_com", "square", "razorpay", "custom"] },
+    "provider": {
+      "type": "string",
+      "enum": ["stripe", "paddle", "checkout_com", "square", "razorpay", "custom"]
+    },
     "mode": { "type": "string", "enum": ["direct", "connect"] },
     "is_active": { "type": "boolean" },
     "connect_account_id": { "type": ["string", "null"], "maxLength": 128 },
-    "supported_currencies_json": { "type": "array", "items": { "type": "string", "pattern": "^[A-Z]{3}$" } },
-    "supported_payment_methods_json": { "type": "array", "items": { "type": "string", "enum": ["card", "apple_pay", "google_pay", "bank_transfer", "wallet", "cash"] } },
+    "supported_currencies_json": {
+      "type": "array",
+      "items": { "type": "string", "pattern": "^[A-Z]{3}$" }
+    },
+    "supported_payment_methods_json": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": ["card", "apple_pay", "google_pay", "bank_transfer", "wallet", "cash"]
+      }
+    },
     "display_name": { "type": ["string", "null"], "maxLength": 255 },
     "metadata": { "type": ["object", "null"] },
     "created_at": { "type": "string", "format": "date-time" },

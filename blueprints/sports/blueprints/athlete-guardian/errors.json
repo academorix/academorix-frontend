@@ -4,23 +4,160 @@
   "title": "athlete-guardian — error codes",
   "namespace": "athlete_guardian",
   "errors": [
-    { "code": "GUARDIAN_NOT_FOUND", "http": 404, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "athlete_guardian.errors.guardian_not_found" },
-    { "code": "GUARDIAN_ATHLETE_INACTIVE", "http": 422, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "athlete_guardian.errors.guardian_athlete_inactive", "description": "Cannot add guardian to a withdrawn/archived athlete." },
-    { "code": "GUARDIAN_USER_NOT_ACTIVE", "http": 422, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "athlete_guardian.errors.guardian_user_not_active" },
-    { "code": "GUARDIAN_DUPLICATE", "http": 409, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "athlete_guardian.errors.guardian_duplicate", "description": "This user is already an active guardian for this athlete." },
-    { "code": "GUARDIAN_TIER_LIMIT_EXCEEDED", "http": 402, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "athlete_guardian.errors.guardian_tier_limit_exceeded", "description": "Reached the per-athlete guardian cap. Small: 1, Medium: 4, Enterprise: unlimited." },
-    { "code": "GUARDIAN_MEDICAL_AUTHORISATION_REQUIRES_CUSTODY", "http": 422, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "athlete_guardian.errors.guardian_medical_authorisation_requires_custody" },
-    { "code": "GUARDIAN_ATHLETE_ID_IMMUTABLE", "http": 422, "retryable": false, "user_facing": true, "audit_severity": "warn", "i18n_key": "athlete_guardian.errors.guardian_athlete_id_immutable" },
-    { "code": "GUARDIAN_USER_ID_IMMUTABLE", "http": 422, "retryable": false, "user_facing": true, "audit_severity": "warn", "i18n_key": "athlete_guardian.errors.guardian_user_id_immutable" },
-    { "code": "GUARDIAN_ATHLETE_ALREADY_HAS_PRIMARY", "http": 409, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "athlete_guardian.errors.guardian_athlete_already_has_primary", "description": "Another guardian is already primary. Use /set-primary for the atomic swap." },
-    { "code": "PRIMARY_GUARDIAN_MUST_BE_VERIFIED", "http": 422, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "athlete_guardian.errors.primary_guardian_must_be_verified", "description": "Only verified guardians can be set as primary." },
-    { "code": "GUARDIAN_ATHLETE_WOULD_HAVE_NO_PRIMARY", "http": 422, "retryable": false, "user_facing": true, "audit_severity": "warn", "i18n_key": "athlete_guardian.errors.guardian_athlete_would_have_no_primary", "description": "Demoting this guardian would leave the athlete with no primary. Set another as primary first, or use /set-primary." },
-    { "code": "GUARDIAN_MINOR_LAST_GUARDIAN", "http": 409, "retryable": false, "user_facing": true, "audit_severity": "warn", "i18n_key": "athlete_guardian.errors.guardian_minor_last_guardian", "description": "Cannot remove the sole guardian of a minor athlete. Add a replacement first." },
-    { "code": "GUARDIAN_VERIFICATION_DOCUMENT_REQUIRED", "http": 422, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "athlete_guardian.errors.guardian_verification_document_required", "description": "HR verification requires a signed document upload when the athlete_guardian_verification entitlement is on." },
-    { "code": "GUARDIAN_VERIFICATION_WORKFLOW_NOT_ENABLED", "http": 402, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "athlete_guardian.errors.guardian_verification_workflow_not_enabled", "description": "The HR-verified workflow is Enterprise-only. Silent-acceptance path applies for non-Enterprise tiers." },
-    { "code": "GUARDIAN_DISPUTE_REASON_REQUIRED", "http": 422, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "athlete_guardian.errors.guardian_dispute_reason_required" },
-    { "code": "GUARDIAN_REVOKE_REASON_REQUIRED", "http": 422, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "athlete_guardian.errors.guardian_revoke_reason_required" },
-    { "code": "GUARDIAN_REVOKE_IS_TERMINAL", "http": 422, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "athlete_guardian.errors.guardian_revoke_is_terminal", "description": "Revoked is terminal — cannot un-revoke. Add a new guardian row." },
-    { "code": "USER_HOLDS_MINOR_GUARDIANSHIP", "http": 409, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "athlete_guardian.errors.user_holds_minor_guardianship", "description": "User archive refused because this user is the sole guardian for a minor athlete." }
+    {
+      "code": "GUARDIAN_NOT_FOUND",
+      "http": 404,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "athlete_guardian.errors.guardian_not_found"
+    },
+    {
+      "code": "GUARDIAN_ATHLETE_INACTIVE",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "athlete_guardian.errors.guardian_athlete_inactive",
+      "description": "Cannot add guardian to a withdrawn/archived athlete."
+    },
+    {
+      "code": "GUARDIAN_USER_NOT_ACTIVE",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "athlete_guardian.errors.guardian_user_not_active"
+    },
+    {
+      "code": "GUARDIAN_DUPLICATE",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "athlete_guardian.errors.guardian_duplicate",
+      "description": "This user is already an active guardian for this athlete."
+    },
+    {
+      "code": "GUARDIAN_TIER_LIMIT_EXCEEDED",
+      "http": 402,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "athlete_guardian.errors.guardian_tier_limit_exceeded",
+      "description": "Reached the per-athlete guardian cap. Small: 1, Medium: 4, Enterprise: unlimited."
+    },
+    {
+      "code": "GUARDIAN_MEDICAL_AUTHORISATION_REQUIRES_CUSTODY",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "athlete_guardian.errors.guardian_medical_authorisation_requires_custody"
+    },
+    {
+      "code": "GUARDIAN_ATHLETE_ID_IMMUTABLE",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "warn",
+      "i18n_key": "athlete_guardian.errors.guardian_athlete_id_immutable"
+    },
+    {
+      "code": "GUARDIAN_USER_ID_IMMUTABLE",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "warn",
+      "i18n_key": "athlete_guardian.errors.guardian_user_id_immutable"
+    },
+    {
+      "code": "GUARDIAN_ATHLETE_ALREADY_HAS_PRIMARY",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "athlete_guardian.errors.guardian_athlete_already_has_primary",
+      "description": "Another guardian is already primary. Use /set-primary for the atomic swap."
+    },
+    {
+      "code": "PRIMARY_GUARDIAN_MUST_BE_VERIFIED",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "athlete_guardian.errors.primary_guardian_must_be_verified",
+      "description": "Only verified guardians can be set as primary."
+    },
+    {
+      "code": "GUARDIAN_ATHLETE_WOULD_HAVE_NO_PRIMARY",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "warn",
+      "i18n_key": "athlete_guardian.errors.guardian_athlete_would_have_no_primary",
+      "description": "Demoting this guardian would leave the athlete with no primary. Set another as primary first, or use /set-primary."
+    },
+    {
+      "code": "GUARDIAN_MINOR_LAST_GUARDIAN",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "warn",
+      "i18n_key": "athlete_guardian.errors.guardian_minor_last_guardian",
+      "description": "Cannot remove the sole guardian of a minor athlete. Add a replacement first."
+    },
+    {
+      "code": "GUARDIAN_VERIFICATION_DOCUMENT_REQUIRED",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "athlete_guardian.errors.guardian_verification_document_required",
+      "description": "HR verification requires a signed document upload when the athlete_guardian_verification entitlement is on."
+    },
+    {
+      "code": "GUARDIAN_VERIFICATION_WORKFLOW_NOT_ENABLED",
+      "http": 402,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "athlete_guardian.errors.guardian_verification_workflow_not_enabled",
+      "description": "The HR-verified workflow is Enterprise-only. Silent-acceptance path applies for non-Enterprise tiers."
+    },
+    {
+      "code": "GUARDIAN_DISPUTE_REASON_REQUIRED",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "athlete_guardian.errors.guardian_dispute_reason_required"
+    },
+    {
+      "code": "GUARDIAN_REVOKE_REASON_REQUIRED",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "athlete_guardian.errors.guardian_revoke_reason_required"
+    },
+    {
+      "code": "GUARDIAN_REVOKE_IS_TERMINAL",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "athlete_guardian.errors.guardian_revoke_is_terminal",
+      "description": "Revoked is terminal — cannot un-revoke. Add a new guardian row."
+    },
+    {
+      "code": "USER_HOLDS_MINOR_GUARDIANSHIP",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "athlete_guardian.errors.user_holds_minor_guardianship",
+      "description": "User archive refused because this user is the sole guardian for a minor athlete."
+    }
   ]
 }

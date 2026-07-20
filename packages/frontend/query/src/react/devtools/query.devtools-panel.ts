@@ -13,21 +13,21 @@
  *   `DevtoolsModule.forFeature([...])`.
  */
 
-import { createElement, type ReactNode } from 'react';
-import { MagnifyingGlassCircleIcon } from '@stackra/ui/icons/heroicon/outline';
-import { Inject, Injectable, Optional } from '@stackra/container';
-import { QueryClient } from '@tanstack/query-core';
+import { createElement, type ReactNode } from "react";
+import { MagnifyingGlassCircleIcon } from "@stackra/ui/icons/heroicon/outline";
+import { Inject, Injectable, Optional } from "@stackra/container";
+import { QueryClient } from "@tanstack/query-core";
 import {
   UNDOABLE_QUEUE,
   type DevtoolsCategory,
   type IDevtoolsPanel,
   type IDevtoolsView,
   type IUndoableQueue,
-} from '@stackra/contracts';
+} from "@stackra/contracts";
 
-import { DevtoolsPanel } from '@stackra/devtools';
+import { DevtoolsPanel } from "@stackra/devtools";
 
-import { QueryDevtoolsPanelView } from './query-devtools-panel-view';
+import { QueryDevtoolsPanelView } from "./query-devtools-panel-view";
 
 /**
  * The devtools query panel.
@@ -43,23 +43,23 @@ import { QueryDevtoolsPanelView } from './query-devtools-panel-view';
  */
 @Injectable()
 @DevtoolsPanel({
-  id: 'query',
-  title: 'Query',
-  category: 'data',
+  id: "query",
+  title: "Query",
+  category: "data",
   order: 60,
 })
 export class QueryDevtoolsPanel implements IDevtoolsPanel {
   /** @inheritdoc */
-  public readonly id = 'query';
+  public readonly id = "query";
   /** @inheritdoc */
-  public readonly title = 'Query';
+  public readonly title = "Query";
   /** @inheritdoc */
-  public readonly category: DevtoolsCategory = 'data';
+  public readonly category: DevtoolsCategory = "data";
   /** @inheritdoc */
   public readonly order = 60;
   /** @inheritdoc */
   public readonly icon: ReactNode = createElement(MagnifyingGlassCircleIcon, {
-    className: 'size-4',
+    className: "size-4",
   });
   /** @inheritdoc */
   public readonly view: IDevtoolsView;
@@ -73,10 +73,10 @@ export class QueryDevtoolsPanel implements IDevtoolsPanel {
    */
   public constructor(
     @Optional() @Inject(QueryClient) private readonly queryClient?: QueryClient,
-    @Optional() @Inject(UNDOABLE_QUEUE) private readonly undoable?: IUndoableQueue
+    @Optional() @Inject(UNDOABLE_QUEUE) private readonly undoable?: IUndoableQueue,
   ) {
     this.view = {
-      type: 'component',
+      type: "component",
       render: (): ReactNode =>
         createElement(QueryDevtoolsPanelView, {
           queryClient: this.queryClient,
@@ -96,7 +96,7 @@ export class QueryDevtoolsPanel implements IDevtoolsPanel {
     try {
       const mutations = this.queryClient?.getMutationCache().getAll() ?? [];
       // TanStack Query v5 mutation states: 'idle' | 'pending' | 'success' | 'error'.
-      const pending = mutations.filter((m) => m.state.status === 'pending').length;
+      const pending = mutations.filter((m) => m.state.status === "pending").length;
       // Also count queued undoable mutations — they represent
       // pending writes from the user's perspective even though the
       // network request hasn't started yet.

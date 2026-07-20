@@ -4,9 +4,9 @@
  * @description Factories returning assertable mock CSP instances.
  */
 
-import { createAssertableProxy, type AssertableProxy } from '@stackra/testing';
-import { MockCspService, type MockCspServiceOptions } from './mock-csp-service';
-import { MockNonceGenerator, type MockNonceGeneratorOptions } from './mock-nonce-generator';
+import { createAssertableProxy, type AssertableProxy } from "@stackra/testing";
+import { MockCspService, type MockCspServiceOptions } from "./mock-csp-service";
+import { MockNonceGenerator, type MockNonceGeneratorOptions } from "./mock-nonce-generator";
 
 /**
  * Create an assertable mock CSP service.
@@ -20,7 +20,7 @@ import { MockNonceGenerator, type MockNonceGeneratorOptions } from './mock-nonce
  * ```
  */
 export function createMockCspService(
-  options: MockCspServiceOptions = {}
+  options: MockCspServiceOptions = {},
 ): AssertableProxy<MockCspService> {
   return createAssertableProxy(new MockCspService(options));
 }
@@ -35,7 +35,7 @@ export function createMockCspService(
  * ```
  */
 export function createMockNonceGenerator(
-  options: MockNonceGeneratorOptions = {}
+  options: MockNonceGeneratorOptions = {},
 ): AssertableProxy<MockNonceGenerator> {
   return createAssertableProxy(new MockNonceGenerator(options));
 }
@@ -48,7 +48,7 @@ export function createMockNonceGenerator(
  * call time so consumers can pass a stable nonce into the provider.
  */
 export function createMockNonceProvider(
-  options: MockNonceGeneratorOptions = {}
+  options: MockNonceGeneratorOptions = {},
 ): AssertableProxy<MockNonceGenerator> & { readonly nonce: string } {
   const generator = createMockNonceGenerator(options);
   const nonce = generator.generate();

@@ -17,7 +17,10 @@
       "description": "Code -> {coupon_id, is_active, valid_from, valid_until, usage_count, usage_cap, discount config} lookup. Read hot on every validate / preview / redeem path.",
       "ttlSeconds": 60,
       "tags": ["coupons"],
-      "invalidatedBy": ["CouponObserver.*", "CouponRedemptionObserver.created (invalidates usage_count freshness)"]
+      "invalidatedBy": [
+        "CouponObserver.*",
+        "CouponRedemptionObserver.created (invalidates usage_count freshness)"
+      ]
     },
     {
       "pattern": "cpn:coupon:{coupon_id}",
@@ -31,7 +34,10 @@
       "description": "Per-customer redemption count for a specific coupon (used to enforce per_customer_limit). Read on every validate/preview/redeem call.",
       "ttlSeconds": 120,
       "tags": ["coupons", "coupons.redemptions"],
-      "invalidatedBy": ["CouponRedemptionObserver.created", "CouponRedemptionObserver.updated (reversed_at flip)"]
+      "invalidatedBy": [
+        "CouponRedemptionObserver.created",
+        "CouponRedemptionObserver.updated (reversed_at flip)"
+      ]
     },
     {
       "pattern": "cpn:target-redemptions:{tenant_id}:{applied_to_type}:{applied_to_id}",

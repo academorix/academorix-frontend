@@ -26,7 +26,7 @@ headless API backends.
 | `pixielity/stub-generator`       | ^1.0    | Code generation            |
 | `spatie/backtrace`               | ^1.6    | Stack trace analysis       |
 | `spatie/laravel-error-solutions` | ^1.1    | Error solution suggestions |
-| `academorix/laravel-framework`      | @dev    | Core framework             |
+| `academorix/laravel-framework`   | @dev    | Core framework             |
 
 ## Key Components
 

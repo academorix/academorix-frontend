@@ -81,12 +81,18 @@
                     {
                       "kind": "Text",
                       "props": { "as": "h1", "className": "text-2xl font-semibold" },
-                      "bindings": { "children": { "$expr": "'Tax configuration — ' + region.name" } }
+                      "bindings": {
+                        "children": { "$expr": "'Tax configuration — ' + region.name" }
+                      }
                     },
                     {
                       "kind": "Text",
                       "props": { "className": "text-sm text-muted" },
-                      "bindings": { "children": { "$expr": "region.country_code + ' · ' + region.currency + ' · ' + region.timezone" } }
+                      "bindings": {
+                        "children": {
+                          "$expr": "region.country_code + ' · ' + region.currency + ' · ' + region.timezone"
+                        }
+                      }
                     }
                   ]
                 },
@@ -131,7 +137,11 @@
               "children": [
                 {
                   "kind": "Text",
-                  "props": { "as": "h2", "className": "text-lg font-medium", "children": "Standard rate" }
+                  "props": {
+                    "as": "h2",
+                    "className": "text-lg font-medium",
+                    "children": "Standard rate"
+                  }
                 },
                 {
                   "kind": "View",
@@ -179,13 +189,19 @@
               "children": [
                 {
                   "kind": "Text",
-                  "props": { "as": "h2", "className": "text-lg font-medium", "children": "Registration number" }
+                  "props": {
+                    "as": "h2",
+                    "className": "text-lg font-medium",
+                    "children": "Registration number"
+                  }
                 },
                 {
                   "kind": "View",
                   "props": { "className": "flex items-center gap-2" },
                   "bindings": {
-                    "hidden": { "$expr": "me.permissions.includes('regions.view.tax_registration')" }
+                    "hidden": {
+                      "$expr": "me.permissions.includes('regions.view.tax_registration')"
+                    }
                   },
                   "children": [
                     {
@@ -203,7 +219,10 @@
                       "children": [
                         {
                           "kind": "Icon",
-                          "props": { "name": "information-circle", "className": "size-4 text-muted" }
+                          "props": {
+                            "name": "information-circle",
+                            "className": "size-4 text-muted"
+                          }
                         }
                       ]
                     }
@@ -218,7 +237,9 @@
                     "helpText": "Tenant's tax registration ID for this jurisdiction. Confidential — visible only to admins + owners."
                   },
                   "bindings": {
-                    "hidden": { "$expr": "!me.permissions.includes('regions.view.tax_registration')" },
+                    "hidden": {
+                      "$expr": "!me.permissions.includes('regions.view.tax_registration')"
+                    },
                     "defaultValue": { "$ref": "taxConfig.registration_number" }
                   }
                 }
@@ -233,7 +254,11 @@
               "children": [
                 {
                   "kind": "Text",
-                  "props": { "as": "h2", "className": "text-lg font-medium", "children": "Custom rates" }
+                  "props": {
+                    "as": "h2",
+                    "className": "text-lg font-medium",
+                    "children": "Custom rates"
+                  }
                 },
                 {
                   "kind": "Text",
@@ -305,7 +330,11 @@
               "children": [
                 {
                   "kind": "Text",
-                  "props": { "as": "h2", "className": "text-lg font-medium text-warning", "children": "Retroactive edits" }
+                  "props": {
+                    "as": "h2",
+                    "className": "text-lg font-medium text-warning",
+                    "children": "Retroactive edits"
+                  }
                 },
                 {
                   "kind": "InfoBanner",
@@ -341,7 +370,10 @@
                   "kind": "Button",
                   "props": { "variant": "ghost", "children": "Cancel" },
                   "actions": {
-                    "onPress": { "kind": "navigate", "toExpr": "'/settings/regions/' + route.region_id" }
+                    "onPress": {
+                      "kind": "navigate",
+                      "toExpr": "'/settings/regions/' + route.region_id"
+                    }
                   }
                 },
                 {
@@ -358,7 +390,11 @@
           "children": [
             {
               "kind": "Text",
-              "props": { "as": "h2", "className": "text-lg font-medium", "children": "Recent changes" }
+              "props": {
+                "as": "h2",
+                "className": "text-lg font-medium",
+                "children": "Recent changes"
+              }
             },
             {
               "kind": "Text",

@@ -4,7 +4,7 @@
  * @description Typed identity for authoring query config in a file.
  */
 
-import type { QueryModuleOptions } from '../interfaces/query-module-options.interface';
+import type { QueryModuleOptions } from "../interfaces/query-module-options.interface";
 
 /**
  * Type-safe identity for a query configuration object.

@@ -23,11 +23,7 @@ export { Widget } from "./decorators";
 export { hasWidget, readWidgetMetadata } from "./metadata";
 
 // ── Registries ─────────────────────────────────────────────────
-export {
-  WidgetCohortRegistry,
-  WidgetRegistry,
-  WidgetRendererRegistry,
-} from "./registries";
+export { WidgetCohortRegistry, WidgetRegistry, WidgetRendererRegistry } from "./registries";
 
 /**
  * @deprecated Renamed to `WidgetRendererRegistry` in v0.2. The alias

@@ -4,4 +4,4 @@
  * @description Types re-exported by the install-source hook.
  */
 
-export type { IPwaAttribution } from '@/core/interfaces';
+export type { IPwaAttribution } from "@/core/interfaces";

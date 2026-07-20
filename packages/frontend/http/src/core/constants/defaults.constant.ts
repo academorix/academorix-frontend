@@ -6,7 +6,7 @@
  * @module @stackra/http/constants/defaults
  */
 
-import type { IHttpCircuitBreakerConfig, IHttpRateLimitEndpointConfig } from '@stackra/contracts';
+import type { IHttpCircuitBreakerConfig, IHttpRateLimitEndpointConfig } from "@stackra/contracts";
 
 /**
  * Default rate-limit settings.

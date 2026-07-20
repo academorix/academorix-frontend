@@ -1,8 +1,8 @@
-import { defineBaseConfig } from '../../tsup.config.base';
+import { defineBaseConfig } from "@academorix/config-tsup";
 
 export default defineBaseConfig({
-  index: 'src/core/index.ts',
-  react: 'src/react/index.ts',
-  actions: 'src/actions/index.ts',
-  testing: 'src/testing/index.ts',
+  index: "src/core/index.ts",
+  react: "src/react/index.ts",
+  actions: "src/actions/index.ts",
+  testing: "src/testing/index.ts",
 });

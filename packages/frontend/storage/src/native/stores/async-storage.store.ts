@@ -10,10 +10,10 @@
  *   Storage drivers.
  */
 
-import type { IStorage, IStorageSetOptions } from '@stackra/contracts';
+import type { IStorage, IStorageSetOptions } from "@stackra/contracts";
 
-import { prefixKey, stripPrefix } from '@/core/utils/prefix-key.util';
-import { unwrapTtl, wrapTtl } from '@/core/utils/ttl-envelope.util';
+import { prefixKey, stripPrefix } from "@/core/utils/prefix-key.util";
+import { unwrapTtl, wrapTtl } from "@/core/utils/ttl-envelope.util";
 
 /**
  * Constructor config accepted by `AsyncStorageStore`.
@@ -71,7 +71,7 @@ export class AsyncStorageStore implements IStorage {
    * @param config - Optional prefix override.
    */
   public constructor(config: AsyncStorageStoreConfig = {}) {
-    this.prefix = config.prefix ?? '';
+    this.prefix = config.prefix ?? "";
   }
 
   // ── IStorage ─────────────────────────────────────────────────────
@@ -159,7 +159,7 @@ export class AsyncStorageStore implements IStorage {
           } catch {
             return { raw, expired: true as const };
           }
-        })
+        }),
       );
 
       const expired = rows.filter((r) => r.expired).map((r) => r.raw);
@@ -189,19 +189,19 @@ export class AsyncStorageStore implements IStorage {
       let mod: { default: AsyncStorageLike } | AsyncStorageLike;
       try {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        mod = (await import(/* @vite-ignore */ '@react-native-async-storage/async-storage')) as any;
+        mod = (await import(/* @vite-ignore */ "@react-native-async-storage/async-storage")) as any;
       } catch (cause) {
         throw new Error(
-          '[@stackra/storage] AsyncStorageStore requires the ' +
-            '`@react-native-async-storage/async-storage` peer. ' +
-            'Install it with `pnpm add @react-native-async-storage/async-storage`.',
-          { cause: cause as Error }
+          "[@stackra/storage] AsyncStorageStore requires the " +
+            "`@react-native-async-storage/async-storage` peer. " +
+            "Install it with `pnpm add @react-native-async-storage/async-storage`.",
+          { cause: cause as Error },
         );
       }
 
       // Handle both ESM default and CJS module.exports shapes.
       const resolved =
-        typeof (mod as { default?: unknown }).default === 'object'
+        typeof (mod as { default?: unknown }).default === "object"
           ? (mod as { default: AsyncStorageLike }).default
           : (mod as AsyncStorageLike);
       return resolved;

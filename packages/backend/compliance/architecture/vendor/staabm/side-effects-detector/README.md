@@ -1,7 +1,9 @@
 Analyzes php-code for side-effects.
 
-When code has no side-effects it can e.g. be used with `eval($code)` in the same process without interfering.
-[Side-effects are classified](https://github.com/staabm/side-effects-detector/blob/main/lib/SideEffect.php) into categories to filter them more easily depending on your use-case.
+When code has no side-effects it can e.g. be used with `eval($code)` in the same
+process without interfering.
+[Side-effects are classified](https://github.com/staabm/side-effects-detector/blob/main/lib/SideEffect.php)
+into categories to filter them more easily depending on your use-case.
 
 ## Install
 
@@ -21,7 +23,8 @@ $detector = new SideEffectsDetector();
 var_dump($detector->getSideEffects($code));
 ```
 
-In case functions are called which are not known to have side-effects - e.g. userland functions - `null` is returned.
+In case functions are called which are not known to have side-effects - e.g.
+userland functions - `null` is returned.
 
 ```php
 use staabm\SideEffectsDetector\SideEffectsDetector;
@@ -45,13 +48,15 @@ $detector = new SideEffectsDetector();
 var_dump($detector->getSideEffects($code));
 ```
 
-
 ## Disclaimer
 
 Non goals are:
+
 - find the best possible answer for all cases
 - add runtime dependencies
 
-If you are in need of a fully fledged side-effect analysis, use more advanced tools like PHPStan.
+If you are in need of a fully fledged side-effect analysis, use more advanced
+tools like PHPStan.
 
-Look at the test-suite to get an idea of [supported use-cases](https://github.com/staabm/side-effects-detector/blob/main/tests/SideEffectsDetectorTest.php).
+Look at the test-suite to get an idea of
+[supported use-cases](https://github.com/staabm/side-effects-detector/blob/main/tests/SideEffectsDetectorTest.php).

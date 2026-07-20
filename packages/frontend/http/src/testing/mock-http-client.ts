@@ -17,7 +17,7 @@ import type {
   ISseConfig,
   ISseEvent,
   IStreamConfig,
-} from '@stackra/contracts';
+} from "@stackra/contracts";
 
 /** A recorded request. */
 export interface RecordedRequest {
@@ -52,55 +52,55 @@ export class MockHttpClient implements IHttpClient {
 
   public async get<T = unknown>(
     url: string,
-    config?: IHttpRequestConfig
+    config?: IHttpRequestConfig,
   ): Promise<IHttpResponse<T>> {
-    return this.record<T>('GET', url, undefined, config);
+    return this.record<T>("GET", url, undefined, config);
   }
 
   public async post<T = unknown>(
     url: string,
     data?: unknown,
-    config?: IHttpRequestConfig
+    config?: IHttpRequestConfig,
   ): Promise<IHttpResponse<T>> {
-    return this.record<T>('POST', url, data, config);
+    return this.record<T>("POST", url, data, config);
   }
 
   public async put<T = unknown>(
     url: string,
     data?: unknown,
-    config?: IHttpRequestConfig
+    config?: IHttpRequestConfig,
   ): Promise<IHttpResponse<T>> {
-    return this.record<T>('PUT', url, data, config);
+    return this.record<T>("PUT", url, data, config);
   }
 
   public async patch<T = unknown>(
     url: string,
     data?: unknown,
-    config?: IHttpRequestConfig
+    config?: IHttpRequestConfig,
   ): Promise<IHttpResponse<T>> {
-    return this.record<T>('PATCH', url, data, config);
+    return this.record<T>("PATCH", url, data, config);
   }
 
   public async delete<T = unknown>(
     url: string,
-    config?: IHttpRequestConfig
+    config?: IHttpRequestConfig,
   ): Promise<IHttpResponse<T>> {
-    return this.record<T>('DELETE', url, undefined, config);
+    return this.record<T>("DELETE", url, undefined, config);
   }
 
   public async request<T = unknown>(config: IHttpRequestConfig): Promise<IHttpResponse<T>> {
-    return this.record<T>(config.method ?? 'GET', config.url ?? '', config.data, config);
+    return this.record<T>(config.method ?? "GET", config.url ?? "", config.data, config);
   }
 
   public stream<T = unknown>(url: string, config?: IStreamConfig): IHttpStream<T> {
-    const method = config?.method ?? 'GET';
+    const method = config?.method ?? "GET";
     this.requests.push({ method, url, config, requestedAt: Date.now() });
     const values = (this.streamStubs.get(this.key(method, url)) ?? []) as T[];
     return MockHttpClient.toStream<T>(values);
   }
 
   public sse<T = unknown>(url: string, config?: ISseConfig): IHttpStream<ISseEvent<T>> {
-    const method = config?.method ?? 'GET';
+    const method = config?.method ?? "GET";
     this.requests.push({ method, url, config, requestedAt: Date.now() });
     const values = (this.streamStubs.get(this.key(method, url)) ?? []) as ISseEvent<T>[];
     return MockHttpClient.toStream<ISseEvent<T>>(values);
@@ -136,7 +136,7 @@ export class MockHttpClient implements IHttpClient {
     method: string,
     url: string,
     data: unknown,
-    config?: IHttpRequestConfig
+    config?: IHttpRequestConfig,
   ): Promise<IHttpResponse<T>> {
     const upper = method.toUpperCase();
     this.requests.push({ method: upper, url, data, config, requestedAt: Date.now() });
@@ -144,7 +144,7 @@ export class MockHttpClient implements IHttpClient {
     return {
       data: (stub?.data ?? {}) as T,
       status: stub?.status ?? 200,
-      statusText: stub?.statusText ?? 'OK',
+      statusText: stub?.statusText ?? "OK",
       headers: stub?.headers ?? {},
       config,
     };

@@ -127,9 +127,11 @@ export function A11yAnnouncer(): ReactElement {
 
     // Walk from leaf to root — first match with a resolvable
     // announcement wins. Explicit `announce` wins over auto-derived
-    // labels (SEO title, breadcrumb, pathname).
+    // labels (SEO title, breadcrumb, pathname). Loop bound guarantees
+    // `matches[i]` is defined; guard for noUncheckedIndexedAccess.
     for (let i = matches.length - 1; i >= 0; i -= 1) {
       const match = matches[i];
+      if (!match) continue;
       const stackra = (match.handle as Record<string | symbol, unknown> | undefined)?.[
         STACKRA_HANDLE
       ] as { readonly announce?: unknown; readonly seo?: unknown } | undefined;
@@ -161,7 +163,7 @@ export function A11yAnnouncer(): ReactElement {
 
     // 2. Fall back to the leaf's SEO title.
     if (matches.length > 0) {
-      const leaf = matches[matches.length - 1];
+      const leaf = matches[matches.length - 1]!;
       const stackra = (leaf.handle as Record<string | symbol, unknown> | undefined)?.[
         STACKRA_HANDLE
       ] as { readonly seo?: unknown } | undefined;
@@ -184,6 +186,7 @@ export function A11yAnnouncer(): ReactElement {
     // 3. Fall back to the current breadcrumb (walk leaf → root).
     for (let i = matches.length - 1; i >= 0; i -= 1) {
       const match = matches[i];
+      if (!match) continue;
       const breadcrumb = (match.handle as { breadcrumb?: unknown } | undefined)?.breadcrumb;
       if (breadcrumb) {
         const context = {

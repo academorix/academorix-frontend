@@ -40,7 +40,12 @@
   "x-database": {
     "engine": "postgres",
     "columns": {
-      "id": { "type": "string", "length": 64, "primary": true, "description": "Prefixed ULID: `rfr_<26>`." },
+      "id": {
+        "type": "string",
+        "length": 64,
+        "primary": true,
+        "description": "Prefixed ULID: `rfr_<26>`."
+      },
       "tenant_id": {
         "type": "string",
         "length": 64,
@@ -96,10 +101,23 @@
       "updated_at": { "type": "timestamptz", "nullable": false }
     },
     "indexes": [
-      { "columns": ["tenant_id", "referral_id", "flag_type"], "name": "referral_fraud_flags_referral_type_idx" },
-      { "columns": ["tenant_id", "severity", "disposition"], "name": "referral_fraud_flags_review_queue_idx", "predicate": "disposition IS NULL" },
-      { "columns": ["tenant_id", "flag_type", "created_at"], "name": "referral_fraud_flags_type_recent_idx" },
-      { "columns": ["tenant_id", "reviewed_by_user_id"], "name": "referral_fraud_flags_reviewer_idx" }
+      {
+        "columns": ["tenant_id", "referral_id", "flag_type"],
+        "name": "referral_fraud_flags_referral_type_idx"
+      },
+      {
+        "columns": ["tenant_id", "severity", "disposition"],
+        "name": "referral_fraud_flags_review_queue_idx",
+        "predicate": "disposition IS NULL"
+      },
+      {
+        "columns": ["tenant_id", "flag_type", "created_at"],
+        "name": "referral_fraud_flags_type_recent_idx"
+      },
+      {
+        "columns": ["tenant_id", "reviewed_by_user_id"],
+        "name": "referral_fraud_flags_reviewer_idx"
+      }
     ]
   },
   "required": [
@@ -119,7 +137,17 @@
     "referral_id": { "type": "string", "pattern": "^ref_[0-9A-HJKMNP-TV-Z]{26}$" },
     "flag_type": {
       "type": "string",
-      "enum": ["self_ip_match", "device_fingerprint_match", "disposable_email", "self_email_variant", "velocity_exceeded", "click_storm_pattern", "blacklist_domain", "geographic_mismatch", "behavioral_anomaly"]
+      "enum": [
+        "self_ip_match",
+        "device_fingerprint_match",
+        "disposable_email",
+        "self_email_variant",
+        "velocity_exceeded",
+        "click_storm_pattern",
+        "blacklist_domain",
+        "geographic_mismatch",
+        "behavioral_anomaly"
+      ]
     },
     "severity": { "type": "string", "enum": ["warn", "block", "critical"] },
     "confidence": { "type": "integer", "minimum": 0, "maximum": 100 },
@@ -128,7 +156,10 @@
       "description": "Per-flag_type evidence shape. See data/fraud-flag-catalog.json for the per-type spec."
     },
     "reviewed_at": { "type": ["string", "null"], "format": "date-time" },
-    "reviewed_by_user_id": { "type": ["string", "null"], "pattern": "^usr_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "reviewed_by_user_id": {
+      "type": ["string", "null"],
+      "pattern": "^usr_[0-9A-HJKMNP-TV-Z]{26}$"
+    },
     "disposition": {
       "type": ["string", "null"],
       "enum": [null, "confirmed_fraud", "false_positive", "manual_override_approved"]

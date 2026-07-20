@@ -10,7 +10,13 @@
       "typical_range_percentage": [0.05, 0.27],
       "typical_jurisdictions": ["GB", "DE", "FR", "IT", "ES", "NL", "SE", "NO", "PL", "IE"],
       "applies_to_defaults": ["all"],
-      "typical_provider_support": ["taxjar", "avalara", "stripe_tax", "native_calculator", "custom_webhook"]
+      "typical_provider_support": [
+        "taxjar",
+        "avalara",
+        "stripe_tax",
+        "native_calculator",
+        "custom_webhook"
+      ]
     },
     {
       "rate_type": "gst",
@@ -19,16 +25,28 @@
       "typical_range_percentage": [0.05, 0.18],
       "typical_jurisdictions": ["CA", "AU", "IN", "SG", "NZ", "MY"],
       "applies_to_defaults": ["all"],
-      "typical_provider_support": ["taxjar", "avalara", "stripe_tax", "native_calculator", "custom_webhook"]
+      "typical_provider_support": [
+        "taxjar",
+        "avalara",
+        "stripe_tax",
+        "native_calculator",
+        "custom_webhook"
+      ]
     },
     {
       "rate_type": "sales_tax",
       "display_name": "Sales Tax",
       "description": "US-specific consumption tax collected by state + local jurisdictions. Requires nexus tracking per US Wayfair. Rates vary by state (0-10%) + city + zip.",
-      "typical_range_percentage": [0.0, 0.10],
+      "typical_range_percentage": [0.0, 0.1],
       "typical_jurisdictions": ["US"],
       "applies_to_defaults": ["services", "goods", "physical"],
-      "typical_provider_support": ["taxjar", "avalara", "stripe_tax", "native_calculator", "custom_webhook"]
+      "typical_provider_support": [
+        "taxjar",
+        "avalara",
+        "stripe_tax",
+        "native_calculator",
+        "custom_webhook"
+      ]
     },
     {
       "rate_type": "consumption_tax",
@@ -52,7 +70,7 @@
       "rate_type": "withholding_tax",
       "display_name": "Withholding Tax",
       "description": "Tax withheld at source (typically on cross-border payments to service providers). Applies in many jurisdictions on payments to foreign entities. Not commonly automated — usually calculated per-payout in transaction module.",
-      "typical_range_percentage": [0.05, 0.30],
+      "typical_range_percentage": [0.05, 0.3],
       "typical_jurisdictions": ["ANY"],
       "applies_to_defaults": ["services"],
       "typical_provider_support": ["avalara", "custom_webhook"]

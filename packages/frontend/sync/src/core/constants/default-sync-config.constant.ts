@@ -5,7 +5,7 @@
  *   a field from {@link ISyncModuleOptions}.
  */
 
-import { ConflictStrategy, type ISyncModuleOptions } from '@stackra/contracts';
+import { ConflictStrategy, type ISyncModuleOptions } from "@stackra/contracts";
 
 /**
  * Defaults applied by `mergeConfig` to any {@link ISyncModuleOptions}.
@@ -18,12 +18,12 @@ export const DEFAULT_SYNC_CONFIG: Readonly<
   Required<
     Omit<
       ISyncModuleOptions,
-      'localStorageAdapter' | 'endpoints' | 'strategies' | 'networkDetector' | 'headers'
+      "localStorageAdapter" | "endpoints" | "strategies" | "networkDetector" | "headers"
     >
   >
 > &
-  Pick<ISyncModuleOptions, 'endpoints' | 'strategies' | 'networkDetector' | 'headers'> = {
-  baseUrl: '',
+  Pick<ISyncModuleOptions, "endpoints" | "strategies" | "networkDetector" | "headers"> = {
+  baseUrl: "",
   endpoints: {},
   strategies: {},
   headers: {},
@@ -34,6 +34,6 @@ export const DEFAULT_SYNC_CONFIG: Readonly<
   timeout: 30_000,
   enableQueuePersistence: true,
   maxRetries: 3,
-  storage: 'indexedDB',
+  storage: "indexedDB",
   networkDetector: {},
 };

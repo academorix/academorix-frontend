@@ -4,4 +4,4 @@
  * @description Barrel for the useLiveSubscription hook.
  */
 
-export { useLiveSubscription, type UseLiveSubscriptionOptions } from './use-live-subscription.hook';
+export { useLiveSubscription, type UseLiveSubscriptionOptions } from "./use-live-subscription.hook";

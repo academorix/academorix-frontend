@@ -5,9 +5,9 @@
  *   Zero network requests — translations are already available at config time.
  */
 
-import type { II18nLoader, I18nTranslation } from '@stackra/contracts';
+import type { II18nLoader, I18nTranslation } from "@stackra/contracts";
 
-import type { StaticLoaderOptions } from '../interfaces';
+import type { StaticLoaderOptions } from "../interfaces";
 
 /**
  * Loads translations from a static in-memory object.

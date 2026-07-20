@@ -19,8 +19,14 @@
   "retention": [
     {
       "entity": "Payment",
-      "hot": { "days": 365, "description": "Active + first year for support queries, refund window, dispute deadlines" },
-      "cold": { "days": "2555 (7 years)", "description": "Financial-audit retention. Enterprise tenants with payment_extended_retention entitlement: 3650 (10 years)." },
+      "hot": {
+        "days": 365,
+        "description": "Active + first year for support queries, refund window, dispute deadlines"
+      },
+      "cold": {
+        "days": "2555 (7 years)",
+        "description": "Financial-audit retention. Enterprise tenants with payment_extended_retention entitlement: 3650 (10 years)."
+      },
       "purge": {
         "trigger": "> 7 years past created_at (10 years for Enterprise) AND no open refunds AND no open disputes",
         "action": "hard delete via PurgeExpiredPaymentDataJob + emit financial-record-archive event (Art. 17 §3 — archived not deleted)",
@@ -30,7 +36,10 @@
     {
       "entity": "PaymentMethod",
       "hot": { "days": "while active" },
-      "cold": { "days": 90, "description": "Grace period after soft-delete for audit / rollback / re-attach detection." },
+      "cold": {
+        "days": 90,
+        "description": "Grace period after soft-delete for audit / rollback / re-attach detection."
+      },
       "purge": {
         "trigger": "soft-deleted > 90 days ago AND no active payment_intents references",
         "action": "hard delete",
@@ -40,7 +49,10 @@
     {
       "entity": "PaymentIntent",
       "hot": { "days": 30 },
-      "cold": { "days": 90, "description": "Transient state — succeeded intents produce a Payment row that carries the financial record forward. Failed/cancelled intents retain briefly for audit correlation, then purge." },
+      "cold": {
+        "days": 90,
+        "description": "Transient state — succeeded intents produce a Payment row that carries the financial record forward. Failed/cancelled intents retain briefly for audit correlation, then purge."
+      },
       "purge": {
         "trigger": "> 90 days past created_at AND status IN ('cancelled', 'failed', 'succeeded')",
         "action": "hard delete",
@@ -50,7 +62,10 @@
     {
       "entity": "PaymentDispute",
       "hot": { "days": 365 },
-      "cold": { "days": "2555 (7 years)", "description": "Financial + regulator audit. 10 years for Enterprise with payment_extended_retention." },
+      "cold": {
+        "days": "2555 (7 years)",
+        "description": "Financial + regulator audit. 10 years for Enterprise with payment_extended_retention."
+      },
       "purge": {
         "trigger": "> 7 years (10 years Enterprise) past created_at AND status IS terminal AND no escalated Chargeback references (chargebacks may cascade delete via FK RESTRICT)",
         "action": "hard delete",

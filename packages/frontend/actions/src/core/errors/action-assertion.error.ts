@@ -8,12 +8,12 @@
  *   catching test-only signals by accident.
  */
 
-import { ActionError } from './action.error';
+import { ActionError } from "./action.error";
 
 /** Raised by test doubles when an assertion fails. */
 export class ActionAssertionError extends ActionError {
   public constructor(message: string, context?: Record<string, unknown>) {
-    super(message, 'ACTION_ASSERTION_ERROR', context);
-    this.name = 'ActionAssertionError';
+    super(message, "ACTION_ASSERTION_ERROR", context);
+    this.name = "ActionAssertionError";
   }
 }

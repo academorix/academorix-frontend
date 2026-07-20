@@ -47,24 +47,32 @@
       { "trait": "Academorix\\Foundation\\Concerns\\HasMetadata" },
       { "trait": "Academorix\\Foundation\\Concerns\\Filterable" }
     ],
-    "tenants": [
-      { "trait": "Academorix\\Tenancy\\Concerns\\BelongsToTenant" }
-    ],
+    "tenants": [{ "trait": "Academorix\\Tenancy\\Concerns\\BelongsToTenant" }],
     "staff": [
-      { "trait": "Academorix\\Staff\\Concerns\\BelongsToStaff", "reason": "CoachingProfile carries staff_id — cascades tenant + branch through the parent Staff." }
+      {
+        "trait": "Academorix\\Staff\\Concerns\\BelongsToStaff",
+        "reason": "CoachingProfile carries staff_id — cascades tenant + branch through the parent Staff."
+      }
     ],
     "branch": [
-      { "trait": "Academorix\\Branch\\Concerns\\BelongsToBranch", "reason": "CoachingProfile.branch_id direct — cascades organization + region + tenant through the branch." }
+      {
+        "trait": "Academorix\\Branch\\Concerns\\BelongsToBranch",
+        "reason": "CoachingProfile.branch_id direct — cascades organization + region + tenant through the branch."
+      }
     ],
     "user": [
-      { "trait": "Academorix\\User\\Concerns\\BelongsToUser", "reason": "CoachSkillRating carries rated_by_user_id; CoachCertification carries verified_by_admin_user_id; CoachAssignment carries assigned_by_user_id — enables audit-trail joins." }
+      {
+        "trait": "Academorix\\User\\Concerns\\BelongsToUser",
+        "reason": "CoachSkillRating carries rated_by_user_id; CoachCertification carries verified_by_admin_user_id; CoachAssignment carries assigned_by_user_id — enables audit-trail joins."
+      }
     ],
     "audit": [
-      { "trait": "Academorix\\Audit\\Concerns\\Auditable", "reason": "Every state mutation (verification, deactivation, rating value change, certification verify) is compliance-relevant." }
+      {
+        "trait": "Academorix\\Audit\\Concerns\\Auditable",
+        "reason": "Every state mutation (verification, deactivation, rating value change, certification verify) is compliance-relevant."
+      }
     ],
-    "activity": [
-      { "trait": "Academorix\\Activity\\Concerns\\HasActivityLog" }
-    ]
+    "activity": [{ "trait": "Academorix\\Activity\\Concerns\\HasActivityLog" }]
   },
   "composition": {
     "coachingProfile": {

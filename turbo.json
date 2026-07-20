@@ -1,38 +1,103 @@
 {
   "ui": "tui",
+  "globalDependencies": [
+    "tsconfig.json",
+    "eslint.config.mjs",
+    "prettier.config.mjs",
+    ".prettierignore",
+    "pnpm-lock.yaml",
+    "pnpm-workspace.yaml",
+    ".npmrc",
+    ".nvmrc"
+  ],
   "globalEnv": ["NODE_ENV", "CI"],
-  "globalPassThroughEnv": ["PATH", "HOME", "NODE_OPTIONS"],
+  "globalPassThroughEnv": [
+    "PATH",
+    "HOME",
+    "NODE_OPTIONS",
+    "TERM",
+    "COLORTERM",
+    "FORCE_COLOR",
+    "DOPPLER_TOKEN",
+    "TURBO_TOKEN",
+    "TURBO_TEAM",
+    "HEROUI_AUTH_TOKEN",
+    "HEROUI_PERSONAL_TOKEN",
+    "CHANGESET_TOKEN",
+    "GITHUB_TOKEN",
+    "GH_TOKEN"
+  ],
   "tasks": {
     "build": {
       "dependsOn": ["^build"],
-      "inputs": ["$TURBO_DEFAULT$", "environments/.env*"],
-      "outputs": ["dist/**", ".next/**", "!.next/cache/**"],
-      "env": ["VITE_*", "NODE_ENV", "HEROUI_AUTH_TOKEN", "HEROUI_PERSONAL_TOKEN"]
+      "inputs": [
+        "$TURBO_DEFAULT$",
+        "environments/.env*",
+        "tsconfig.json",
+        "tsup.config.ts",
+        "vite.config.ts"
+      ],
+      "outputs": ["dist/**", "build/**", ".next/**", "!.next/cache/**"],
+      "env": [
+        "VITE_*",
+        "EXPO_PUBLIC_*",
+        "NEXT_PUBLIC_*",
+        "NODE_ENV",
+        "HEROUI_AUTH_TOKEN",
+        "HEROUI_PERSONAL_TOKEN"
+      ]
     },
     "dev": {
       "cache": false,
-      "persistent": true
+      "persistent": true,
+      "env": ["VITE_*", "EXPO_PUBLIC_*", "NEXT_PUBLIC_*", "NODE_ENV"]
     },
     "lint": {
-      "dependsOn": ["^build"]
+      "dependsOn": ["^build"],
+      "inputs": ["$TURBO_DEFAULT$", "eslint.config.mjs", ".eslintrc*"],
+      "outputs": []
     },
     "lint:fix": {
-      "cache": false
+      "cache": false,
+      "inputs": ["$TURBO_DEFAULT$", "eslint.config.mjs", ".eslintrc*"]
     },
     "typecheck": {
-      "dependsOn": ["^build"]
+      "dependsOn": ["^build"],
+      "inputs": ["$TURBO_DEFAULT$", "tsconfig.json"],
+      "outputs": []
+    },
+    "format": {
+      "cache": false,
+      "inputs": ["$TURBO_DEFAULT$", "prettier.config.mjs", ".prettierignore"]
+    },
+    "format:check": {
+      "inputs": ["$TURBO_DEFAULT$", "prettier.config.mjs", ".prettierignore"],
+      "outputs": []
     },
     "test": {
       "dependsOn": ["^build"],
-      "inputs": ["$TURBO_DEFAULT$", "environments/.env*"],
+      "inputs": ["$TURBO_DEFAULT$", "environments/.env*", "vitest.config.ts", "jest.config.*"],
+      "outputs": [],
       "env": ["VITE_*", "NODE_ENV"]
     },
     "test:watch": {
       "cache": false,
       "persistent": true
     },
+    "test:coverage": {
+      "dependsOn": ["^build"],
+      "inputs": ["$TURBO_DEFAULT$", "vitest.config.ts", "jest.config.*"],
+      "outputs": ["coverage/**"],
+      "env": ["VITE_*", "NODE_ENV"]
+    },
+    "size": {
+      "dependsOn": ["build"],
+      "inputs": ["dist/**", ".size-limit.json"],
+      "outputs": []
+    },
     "clean": {
-      "cache": false
+      "cache": false,
+      "outputs": []
     }
   }
 }

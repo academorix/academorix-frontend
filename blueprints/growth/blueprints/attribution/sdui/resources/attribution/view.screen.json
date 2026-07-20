@@ -90,7 +90,9 @@
                   },
                   "requiresPermission": "attribution.merge",
                   "requiresEntitlement": "attribution_merge",
-                  "bindings": { "hidden": { "$expr": "attribution.subject_type === 'anonymous_session'" } }
+                  "bindings": {
+                    "hidden": { "$expr": "attribution.subject_type === 'anonymous_session'" }
+                  }
                 },
                 {
                   "kind": "Button",
@@ -119,7 +121,13 @@
               "kind": "Card",
               "props": { "className": "p-4" },
               "children": [
-                { "kind": "Text", "props": { "className": "text-sm font-semibold uppercase text-muted mb-3", "children": "First touch" } },
+                {
+                  "kind": "Text",
+                  "props": {
+                    "className": "text-sm font-semibold uppercase text-muted mb-3",
+                    "children": "First touch"
+                  }
+                },
                 {
                   "kind": "Widget",
                   "widget": "attribution.attribution-source-chip",
@@ -132,12 +140,50 @@
                   "kind": "View",
                   "props": { "className": "flex flex-col gap-1 mt-3 text-sm" },
                   "children": [
-                    { "kind": "Text", "bindings": { "children": { "$expr": "'Medium: ' + (attribution.first_touch_medium || '—')" } } },
-                    { "kind": "Text", "bindings": { "children": { "$expr": "'Campaign: ' + (attribution.first_touch_campaign || '—')" } } },
-                    { "kind": "Text", "bindings": { "children": { "$expr": "'Content: ' + (attribution.first_touch_content || '—')" } } },
-                    { "kind": "Text", "bindings": { "children": { "$expr": "'Term: ' + (attribution.first_touch_term || '—')" } } },
-                    { "kind": "Text", "props": { "className": "text-xs text-muted mt-2 truncate" }, "bindings": { "children": { "$expr": "'Landing: ' + attribution.first_touch_landing_page" } } },
-                    { "kind": "Text", "props": { "className": "text-xs text-muted" }, "bindings": { "children": { "$expr": "'At: ' + attribution.first_touch_at" } } }
+                    {
+                      "kind": "Text",
+                      "bindings": {
+                        "children": {
+                          "$expr": "'Medium: ' + (attribution.first_touch_medium || '—')"
+                        }
+                      }
+                    },
+                    {
+                      "kind": "Text",
+                      "bindings": {
+                        "children": {
+                          "$expr": "'Campaign: ' + (attribution.first_touch_campaign || '—')"
+                        }
+                      }
+                    },
+                    {
+                      "kind": "Text",
+                      "bindings": {
+                        "children": {
+                          "$expr": "'Content: ' + (attribution.first_touch_content || '—')"
+                        }
+                      }
+                    },
+                    {
+                      "kind": "Text",
+                      "bindings": {
+                        "children": { "$expr": "'Term: ' + (attribution.first_touch_term || '—')" }
+                      }
+                    },
+                    {
+                      "kind": "Text",
+                      "props": { "className": "text-xs text-muted mt-2 truncate" },
+                      "bindings": {
+                        "children": {
+                          "$expr": "'Landing: ' + attribution.first_touch_landing_page"
+                        }
+                      }
+                    },
+                    {
+                      "kind": "Text",
+                      "props": { "className": "text-xs text-muted" },
+                      "bindings": { "children": { "$expr": "'At: ' + attribution.first_touch_at" } }
+                    }
                   ]
                 }
               ]
@@ -146,7 +192,13 @@
               "kind": "Card",
               "props": { "className": "p-4" },
               "children": [
-                { "kind": "Text", "props": { "className": "text-sm font-semibold uppercase text-muted mb-3", "children": "Last touch" } },
+                {
+                  "kind": "Text",
+                  "props": {
+                    "className": "text-sm font-semibold uppercase text-muted mb-3",
+                    "children": "Last touch"
+                  }
+                },
                 {
                   "kind": "Widget",
                   "widget": "attribution.attribution-source-chip",
@@ -159,10 +211,34 @@
                   "kind": "View",
                   "props": { "className": "flex flex-col gap-1 mt-3 text-sm" },
                   "children": [
-                    { "kind": "Text", "bindings": { "children": { "$expr": "'Medium: ' + (attribution.last_touch_medium || '—')" } } },
-                    { "kind": "Text", "bindings": { "children": { "$expr": "'Campaign: ' + (attribution.last_touch_campaign || '—')" } } },
-                    { "kind": "Text", "props": { "className": "text-xs text-muted mt-2 truncate" }, "bindings": { "children": { "$expr": "'Landing: ' + attribution.last_touch_landing_page" } } },
-                    { "kind": "Text", "props": { "className": "text-xs text-muted" }, "bindings": { "children": { "$expr": "'At: ' + attribution.last_touch_at" } } }
+                    {
+                      "kind": "Text",
+                      "bindings": {
+                        "children": {
+                          "$expr": "'Medium: ' + (attribution.last_touch_medium || '—')"
+                        }
+                      }
+                    },
+                    {
+                      "kind": "Text",
+                      "bindings": {
+                        "children": {
+                          "$expr": "'Campaign: ' + (attribution.last_touch_campaign || '—')"
+                        }
+                      }
+                    },
+                    {
+                      "kind": "Text",
+                      "props": { "className": "text-xs text-muted mt-2 truncate" },
+                      "bindings": {
+                        "children": { "$expr": "'Landing: ' + attribution.last_touch_landing_page" }
+                      }
+                    },
+                    {
+                      "kind": "Text",
+                      "props": { "className": "text-xs text-muted" },
+                      "bindings": { "children": { "$expr": "'At: ' + attribution.last_touch_at" } }
+                    }
                   ]
                 }
               ]
@@ -177,7 +253,13 @@
               "kind": "View",
               "props": { "className": "flex items-center justify-between mb-3" },
               "children": [
-                { "kind": "Text", "props": { "className": "text-sm font-semibold uppercase text-muted", "children": "Touchpoint timeline" } },
+                {
+                  "kind": "Text",
+                  "props": {
+                    "className": "text-sm font-semibold uppercase text-muted",
+                    "children": "Touchpoint timeline"
+                  }
+                },
                 {
                   "kind": "Text",
                   "props": { "className": "text-xs text-muted" },
@@ -200,19 +282,77 @@
           "kind": "Card",
           "props": { "className": "p-4" },
           "children": [
-            { "kind": "Text", "props": { "className": "text-sm font-semibold uppercase text-muted mb-3", "children": "Device + consent snapshot" } },
+            {
+              "kind": "Text",
+              "props": {
+                "className": "text-sm font-semibold uppercase text-muted mb-3",
+                "children": "Device + consent snapshot"
+              }
+            },
             {
               "kind": "Grid",
               "props": { "className": "grid grid-cols-2 gap-2 text-sm" },
               "children": [
-                { "kind": "Text", "bindings": { "children": { "$expr": "'Device: ' + attribution.last_touch_device.device_type" } } },
-                { "kind": "Text", "bindings": { "children": { "$expr": "'Browser: ' + attribution.last_touch_device.browser" } } },
-                { "kind": "Text", "bindings": { "children": { "$expr": "'OS: ' + attribution.last_touch_device.os" } } },
-                { "kind": "Text", "bindings": { "children": { "$expr": "'Mobile: ' + (attribution.last_touch_device.is_mobile ? 'Yes' : 'No')" } } },
-                { "kind": "Text", "bindings": { "children": { "$expr": "'Marketing consent: ' + (attribution.consent_at_capture.marketing ? '✓' : '✗')" } } },
-                { "kind": "Text", "bindings": { "children": { "$expr": "'Advertising consent: ' + (attribution.consent_at_capture.advertising ? '✓' : '✗')" } } },
-                { "kind": "Text", "bindings": { "children": { "$expr": "'Personalized ads: ' + (attribution.consent_at_capture.personalized_advertising ? '✓' : '✗')" } } },
-                { "kind": "Text", "bindings": { "children": { "$expr": "'Functional: ' + (attribution.consent_at_capture.functional ? '✓' : '✗')" } } }
+                {
+                  "kind": "Text",
+                  "bindings": {
+                    "children": {
+                      "$expr": "'Device: ' + attribution.last_touch_device.device_type"
+                    }
+                  }
+                },
+                {
+                  "kind": "Text",
+                  "bindings": {
+                    "children": { "$expr": "'Browser: ' + attribution.last_touch_device.browser" }
+                  }
+                },
+                {
+                  "kind": "Text",
+                  "bindings": {
+                    "children": { "$expr": "'OS: ' + attribution.last_touch_device.os" }
+                  }
+                },
+                {
+                  "kind": "Text",
+                  "bindings": {
+                    "children": {
+                      "$expr": "'Mobile: ' + (attribution.last_touch_device.is_mobile ? 'Yes' : 'No')"
+                    }
+                  }
+                },
+                {
+                  "kind": "Text",
+                  "bindings": {
+                    "children": {
+                      "$expr": "'Marketing consent: ' + (attribution.consent_at_capture.marketing ? '✓' : '✗')"
+                    }
+                  }
+                },
+                {
+                  "kind": "Text",
+                  "bindings": {
+                    "children": {
+                      "$expr": "'Advertising consent: ' + (attribution.consent_at_capture.advertising ? '✓' : '✗')"
+                    }
+                  }
+                },
+                {
+                  "kind": "Text",
+                  "bindings": {
+                    "children": {
+                      "$expr": "'Personalized ads: ' + (attribution.consent_at_capture.personalized_advertising ? '✓' : '✗')"
+                    }
+                  }
+                },
+                {
+                  "kind": "Text",
+                  "bindings": {
+                    "children": {
+                      "$expr": "'Functional: ' + (attribution.consent_at_capture.functional ? '✓' : '✗')"
+                    }
+                  }
+                }
               ]
             }
           ]

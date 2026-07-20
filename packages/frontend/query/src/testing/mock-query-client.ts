@@ -16,16 +16,16 @@
  *   this mock trades accuracy for inspectability.
  */
 
-import type { IQueryClient } from '@stackra/contracts';
+import type { IQueryClient } from "@stackra/contracts";
 
 /** A recorded query-client call. */
 export type RecordedQueryCall =
-  | { kind: 'fetch'; key: readonly unknown[] }
-  | { kind: 'invalidate'; key: readonly unknown[] }
-  | { kind: 'refetch'; key: readonly unknown[] }
-  | { kind: 'getData'; key: readonly unknown[] }
-  | { kind: 'setData'; key: readonly unknown[] }
-  | { kind: 'remove'; key: readonly unknown[] };
+  | { kind: "fetch"; key: readonly unknown[] }
+  | { kind: "invalidate"; key: readonly unknown[] }
+  | { kind: "refetch"; key: readonly unknown[] }
+  | { kind: "getData"; key: readonly unknown[] }
+  | { kind: "setData"; key: readonly unknown[] }
+  | { kind: "remove"; key: readonly unknown[] };
 
 /** Serialize a query key to a stable string for `Map` lookup. */
 function hashKey(key: readonly unknown[]): string {
@@ -58,9 +58,9 @@ export class MockQueryClient implements IQueryClient {
   public async fetch<T = unknown>(
     key: readonly unknown[],
     fetcher: () => Promise<T>,
-    _options?: { readonly staleTime?: number }
+    _options?: { readonly staleTime?: number },
   ): Promise<T> {
-    this.calls.push({ kind: 'fetch', key: [...key] });
+    this.calls.push({ kind: "fetch", key: [...key] });
     const hash = hashKey(key);
     if (this.cache.has(hash)) {
       return this.cache.get(hash) as T;
@@ -77,12 +77,12 @@ export class MockQueryClient implements IQueryClient {
     // Match TanStack semantics — invalidating removes the cached data
     // so the next fetch runs the fetcher again.
     this.cache.delete(hash);
-    this.calls.push({ kind: 'invalidate', key: [...key] });
+    this.calls.push({ kind: "invalidate", key: [...key] });
   }
 
   /** @inheritDoc */
   public async refetch<T = unknown>(key: readonly unknown[]): Promise<T | undefined> {
-    this.calls.push({ kind: 'refetch', key: [...key] });
+    this.calls.push({ kind: "refetch", key: [...key] });
     // The mock doesn't remember the last fetcher — tests that need
     // refetch semantics should call fetch again with an explicit
     // fetcher. Returns the cached value as of the last fetch.
@@ -91,20 +91,20 @@ export class MockQueryClient implements IQueryClient {
 
   /** @inheritDoc */
   public getData<T = unknown>(key: readonly unknown[]): T | undefined {
-    this.calls.push({ kind: 'getData', key: [...key] });
+    this.calls.push({ kind: "getData", key: [...key] });
     return this.cache.get(hashKey(key)) as T | undefined;
   }
 
   /** @inheritDoc */
   public setData<T = unknown>(key: readonly unknown[], data: T): void {
     this.cache.set(hashKey(key), data);
-    this.calls.push({ kind: 'setData', key: [...key] });
+    this.calls.push({ kind: "setData", key: [...key] });
   }
 
   /** @inheritDoc */
   public remove(key: readonly unknown[]): void {
     this.cache.delete(hashKey(key));
-    this.calls.push({ kind: 'remove', key: [...key] });
+    this.calls.push({ kind: "remove", key: [...key] });
   }
 
   /** @inheritDoc */
@@ -120,8 +120,8 @@ export class MockQueryClient implements IQueryClient {
   }
 
   /** Filter recorded calls by kind — sugar over `.calls.filter()`. */
-  public callsOf<K extends RecordedQueryCall['kind']>(
-    kind: K
+  public callsOf<K extends RecordedQueryCall["kind"]>(
+    kind: K,
   ): Array<Extract<RecordedQueryCall, { kind: K }>> {
     return this.calls.filter((c) => c.kind === kind) as Array<
       Extract<RecordedQueryCall, { kind: K }>

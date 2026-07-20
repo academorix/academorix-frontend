@@ -1,7 +1,7 @@
 {
   "name": "@stackra/csp",
   "version": "0.1.0",
-  "description": "Content-Security-Policy runtime for the Stackra framework — nonce generation, policy header building, feature-scoped source registry with discovery, and React bindings (NonceProvider, useNonce, Script, CspMeta).",
+  "description": "Content-Security-Policy runtime for the Stackra framework \u2014 nonce generation, policy header building, feature-scoped source registry with discovery, and React bindings (NonceProvider, useNonce, Script, CspMeta).",
   "license": "MIT",
   "author": {
     "name": "Stackra L.L.C",
@@ -88,6 +88,8 @@
     }
   },
   "devDependencies": {
+    "@academorix/config-tsconfig": "workspace:*",
+    "@academorix/config-tsup": "workspace:*",
     "@stackra/container": "workspace:*",
     "@stackra/contracts": "workspace:*",
     "@stackra/support": "workspace:*",

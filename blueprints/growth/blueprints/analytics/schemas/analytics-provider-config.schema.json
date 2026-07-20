@@ -14,7 +14,9 @@
     "incrementing": false,
     "model": "Academorix\\Growth\\Analytics\\Models\\AnalyticsProviderConfig",
     "interface": "Academorix\\Growth\\Analytics\\Contracts\\Data\\AnalyticsProviderConfigInterface",
-    "implements": ["Academorix\\Growth\\Analytics\\Contracts\\Data\\AnalyticsProviderConfigInterface"],
+    "implements": [
+      "Academorix\\Growth\\Analytics\\Contracts\\Data\\AnalyticsProviderConfigInterface"
+    ],
     "traits": [
       "HasFactory",
       "HasUlids",

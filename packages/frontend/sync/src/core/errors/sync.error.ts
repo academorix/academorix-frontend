@@ -17,17 +17,17 @@ export class SyncError extends Error {
 
   public constructor(
     message: string,
-    code: string = 'SYNC_ERROR',
-    context?: Record<string, unknown>
+    code: string = "SYNC_ERROR",
+    context?: Record<string, unknown>,
   ) {
     super(message);
-    this.name = 'SyncError';
+    this.name = "SyncError";
     this.code = code;
     this.context = context;
 
     // Preserve the stack trace where the error was thrown (V8 only).
     if (
-      typeof (Error as unknown as { captureStackTrace?: unknown }).captureStackTrace === 'function'
+      typeof (Error as unknown as { captureStackTrace?: unknown }).captureStackTrace === "function"
     ) {
       (
         Error as unknown as { captureStackTrace: (target: object, ctor: Function) => void }

@@ -5,14 +5,14 @@
  *   applies correct classes before React hydrates to prevent FOUC.
  */
 
-import type { ReactElement } from 'react';
-import type { ColorMode } from '@stackra/contracts';
+import type { ReactElement } from "react";
+import type { ColorMode } from "@stackra/contracts";
 import {
   DEFAULT_MODE_STORAGE_KEY,
   DEFAULT_THEME_STORAGE_KEY,
   DEFAULT_THEME_ID,
   THEME_DATA_ATTRIBUTE,
-} from '../../../core/constants';
+} from "../../../core/constants";
 
 // ============================================================================
 // Props
@@ -47,7 +47,7 @@ export interface ThemeScriptProps {
 export function ThemeScript({
   storageKey = DEFAULT_MODE_STORAGE_KEY,
   themeKey = DEFAULT_THEME_STORAGE_KEY,
-  defaultMode = 'system',
+  defaultMode = "system",
   nonce,
 }: ThemeScriptProps = {}): ReactElement {
   const script = `(function(){try{var d=document.documentElement;var m=localStorage.getItem('${storageKey}')||'${defaultMode}';var t=localStorage.getItem('${themeKey}');var r=m;if(m==='system'){r=window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light';}d.classList.add(r);d.setAttribute('data-theme',r);d.style.colorScheme=r;if(t&&t!=='${DEFAULT_THEME_ID}'){d.setAttribute('${THEME_DATA_ATTRIBUTE}',t);}}catch(e){}})();`;

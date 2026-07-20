@@ -10,9 +10,9 @@
  *   causing the whole shell to re-render.
  */
 
-import { createContext } from 'react';
+import { createContext } from "react";
 
-import type { IDevtoolsInspectorContextValue } from './devtools-inspector-context-value.interface';
+import type { IDevtoolsInspectorContextValue } from "./devtools-inspector-context-value.interface";
 
 /**
  * Inspector-scope React context — `null` by default when the
@@ -21,4 +21,4 @@ import type { IDevtoolsInspectorContextValue } from './devtools-inspector-contex
 export const DevtoolsInspectorContext = createContext<IDevtoolsInspectorContextValue | null>(null);
 
 /** Display name for React DevTools introspection. */
-DevtoolsInspectorContext.displayName = 'DevtoolsInspectorContext';
+DevtoolsInspectorContext.displayName = "DevtoolsInspectorContext";

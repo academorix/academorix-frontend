@@ -37,16 +37,28 @@
       { "trait": "Academorix\\Foundation\\Concerns\\Searchable" }
     ],
     "tenants": [
-      { "trait": "Academorix\\Tenancy\\Concerns\\BelongsToTenant", "reason": "Every owned row carries tenant_id per tenancy-columns.md §3." }
+      {
+        "trait": "Academorix\\Tenancy\\Concerns\\BelongsToTenant",
+        "reason": "Every owned row carries tenant_id per tenancy-columns.md §3."
+      }
     ],
     "audit": [
-      { "trait": "Academorix\\Audit\\Concerns\\Auditable", "reason": "Every write is compliance-relevant (financial-record + card network audit 7-year retention). Every state transition on Chargeback (status, evidence_submitted_at, decision_at, credit_note_id, transaction_id, fee_transaction_id, refund_id) + every ChargebackEvidence creation is audit-critical." }
+      {
+        "trait": "Academorix\\Audit\\Concerns\\Auditable",
+        "reason": "Every write is compliance-relevant (financial-record + card network audit 7-year retention). Every state transition on Chargeback (status, evidence_submitted_at, decision_at, credit_note_id, transaction_id, fee_transaction_id, refund_id) + every ChargebackEvidence creation is audit-critical."
+      }
     ],
     "activity": [
-      { "trait": "Academorix\\Activity\\Concerns\\HasActivityLog", "reason": "Chargeback lifecycle transitions (filed / evidence_submitted / under_review / won / lost / expired / accepted_refund) feed the staff-visible activity feed. NOT on ChargebackEvidence (immutable append-only row — already covered by parent chargeback activity log)." }
+      {
+        "trait": "Academorix\\Activity\\Concerns\\HasActivityLog",
+        "reason": "Chargeback lifecycle transitions (filed / evidence_submitted / under_review / won / lost / expired / accepted_refund) feed the staff-visible activity feed. NOT on ChargebackEvidence (immutable append-only row — already covered by parent chargeback activity log)."
+      }
     ],
     "encryption": [
-      { "trait": "Academorix\\Foundation\\Concerns\\EncryptsSensitiveFields", "reason": "Applied on Chargeback for provider_reference_id + provider_metadata (encrypted at rest). Applied on ChargebackEvidence for provider_response (encrypted at rest). NOT on the whole row — column-level encryption via cast." }
+      {
+        "trait": "Academorix\\Foundation\\Concerns\\EncryptsSensitiveFields",
+        "reason": "Applied on Chargeback for provider_reference_id + provider_metadata (encrypted at rest). Applied on ChargebackEvidence for provider_response (encrypted at rest). NOT on the whole row — column-level encryption via cast."
+      }
     ]
   },
   "composition": {

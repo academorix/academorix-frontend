@@ -32,10 +32,7 @@
       "class": "Academorix\\Branch\\Events\\BranchUpdated",
       "trigger": "Any mutable field on Branch was updated. Distinct from the specific-field events below (BranchAddressUpdated, BranchCoordinatesUpdated, …) — this one fires for everything else (name, description, phone, email, website, sort_order, logo_url).",
       "queue": "notifications",
-      "consumers": [
-        "audit::WriteToAuditLog",
-        "activity::WriteToActivityLog"
-      ],
+      "consumers": ["audit::WriteToAuditLog", "activity::WriteToActivityLog"],
       "payload": {
         "branch_id": "ULID",
         "tenant_id": "ULID",
@@ -48,10 +45,7 @@
       "class": "Academorix\\Branch\\Events\\BranchStatusChanged",
       "trigger": "Branch.status transitioned to any new value. A superset event; the specific-state events below fire alongside for the routing case that cares.",
       "queue": "notifications",
-      "consumers": [
-        "audit::WriteToAuditLog",
-        "activity::WriteToActivityLog"
-      ],
+      "consumers": ["audit::WriteToAuditLog", "activity::WriteToActivityLog"],
       "payload": {
         "branch_id": "ULID",
         "tenant_id": "ULID",
@@ -84,10 +78,7 @@
       "class": "Academorix\\Branch\\Events\\BranchResumed",
       "trigger": "Branch.status transitioned paused → active.",
       "queue": "notifications",
-      "consumers": [
-        "audit::WriteToAuditLog",
-        "activity::WriteToActivityLog"
-      ],
+      "consumers": ["audit::WriteToAuditLog", "activity::WriteToActivityLog"],
       "payload": {
         "branch_id": "ULID",
         "tenant_id": "ULID",
@@ -120,10 +111,7 @@
       "class": "Academorix\\Branch\\Events\\BranchReopened",
       "trigger": "Branch.status transitioned closed → active. Refused when a successor branch was created under the same (tenant, organization) after the close event.",
       "queue": "notifications",
-      "consumers": [
-        "audit::WriteToAuditLog",
-        "activity::WriteToActivityLog"
-      ],
+      "consumers": ["audit::WriteToAuditLog", "activity::WriteToActivityLog"],
       "payload": {
         "branch_id": "ULID",
         "tenant_id": "ULID",
@@ -137,10 +125,7 @@
       "class": "Academorix\\Branch\\Events\\BranchDefaultChanged",
       "trigger": "The default branch for a (tenant, organization) tuple was reassigned. Fires with both the newly-default row + the previously-default row so downstream caches can drop keys keyed on both.",
       "queue": "notifications",
-      "consumers": [
-        "audit::WriteToAuditLog",
-        "activity::WriteToActivityLog"
-      ],
+      "consumers": ["audit::WriteToAuditLog", "activity::WriteToActivityLog"],
       "payload": {
         "tenant_id": "ULID",
         "organization_id": "ULID",
@@ -171,10 +156,7 @@
       "class": "Academorix\\Branch\\Events\\BranchCapacityChanged",
       "trigger": "Branch.capacity was updated (set, changed, or cleared).",
       "queue": "notifications",
-      "consumers": [
-        "audit::WriteToAuditLog",
-        "activity::WriteToActivityLog"
-      ],
+      "consumers": ["audit::WriteToAuditLog", "activity::WriteToActivityLog"],
       "payload": {
         "branch_id": "ULID",
         "tenant_id": "ULID",

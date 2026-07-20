@@ -44,23 +44,50 @@
             {
               "kind": "View",
               "children": [
-                { "kind": "Text", "props": { "as": "h1", "className": "text-2xl font-semibold", "children": "Coaching profiles" } },
-                { "kind": "Text", "props": { "className": "text-sm text-muted", "children": "Staff members marked as active coaches with sport-specific expertise." } }
+                {
+                  "kind": "Text",
+                  "props": {
+                    "as": "h1",
+                    "className": "text-2xl font-semibold",
+                    "children": "Coaching profiles"
+                  }
+                },
+                {
+                  "kind": "Text",
+                  "props": {
+                    "className": "text-sm text-muted",
+                    "children": "Staff members marked as active coaches with sport-specific expertise."
+                  }
+                }
               ]
             },
             {
               "kind": "Button",
-              "props": { "variant": "primary", "leadingIcon": "user-plus", "children": "Elevate staff to coach" },
-              "actions": { "onPress": { "kind": "navigate", "toExpr": "'/tenant/coaching-profiles/create'" } },
-              "bindings": { "disabled": { "$expr": "$ref('entitlements.coaching_profile_slot.remaining') <= 0" } },
+              "props": {
+                "variant": "primary",
+                "leadingIcon": "user-plus",
+                "children": "Elevate staff to coach"
+              },
+              "actions": {
+                "onPress": { "kind": "navigate", "toExpr": "'/tenant/coaching-profiles/create'" }
+              },
+              "bindings": {
+                "disabled": { "$expr": "$ref('entitlements.coaching_profile_slot.remaining') <= 0" }
+              },
               "requiresPermission": "coaching_profiles.create"
             }
           ]
         },
         {
           "kind": "Alert",
-          "props": { "variant": "warning", "title": "Slot cap reached", "children": "Your tier's coaching profile cap has been reached. Deactivate an existing profile or upgrade to add more." },
-          "bindings": { "hidden": { "$expr": "$ref('entitlements.coaching_profile_slot.remaining') > 0" } }
+          "props": {
+            "variant": "warning",
+            "title": "Slot cap reached",
+            "children": "Your tier's coaching profile cap has been reached. Deactivate an existing profile or upgrade to add more."
+          },
+          "bindings": {
+            "hidden": { "$expr": "$ref('entitlements.coaching_profile_slot.remaining') > 0" }
+          }
         },
         {
           "kind": "Table",
@@ -73,9 +100,24 @@
             "kind": "View",
             "props": { "className": "text-center py-12" },
             "children": [
-              { "kind": "Icon", "props": { "name": "user-group", "className": "size-12 mx-auto text-muted" } },
-              { "kind": "Text", "props": { "className": "mt-4 text-lg font-medium", "children": "No coaching profiles yet" } },
-              { "kind": "Text", "props": { "className": "text-sm text-muted", "children": "Elevate a Staff row to Coach by creating a coaching profile." } }
+              {
+                "kind": "Icon",
+                "props": { "name": "user-group", "className": "size-12 mx-auto text-muted" }
+              },
+              {
+                "kind": "Text",
+                "props": {
+                  "className": "mt-4 text-lg font-medium",
+                  "children": "No coaching profiles yet"
+                }
+              },
+              {
+                "kind": "Text",
+                "props": {
+                  "className": "text-sm text-muted",
+                  "children": "Elevate a Staff row to Coach by creating a coaching profile."
+                }
+              }
             ]
           },
           "columns": [
@@ -86,11 +128,22 @@
                 "kind": "View",
                 "props": { "className": "flex items-center gap-3" },
                 "children": [
-                  { "kind": "Avatar", "props": { "size": "sm" }, "bindings": { "src": { "$ref": "row.photo_url_signed" }, "name": { "$ref": "row.display_name" } } },
+                  {
+                    "kind": "Avatar",
+                    "props": { "size": "sm" },
+                    "bindings": {
+                      "src": { "$ref": "row.photo_url_signed" },
+                      "name": { "$ref": "row.display_name" }
+                    }
+                  },
                   {
                     "kind": "View",
                     "children": [
-                      { "kind": "Text", "props": { "className": "font-medium" }, "bindings": { "children": { "$ref": "row.display_name" } } },
+                      {
+                        "kind": "Text",
+                        "props": { "className": "font-medium" },
+                        "bindings": { "children": { "$ref": "row.display_name" } }
+                      },
                       {
                         "kind": "Widget",
                         "widget": "coaching.coach-status-chip",
@@ -137,11 +190,19 @@
                 "kind": "View",
                 "props": { "className": "flex items-center gap-2" },
                 "children": [
-                  { "kind": "Text", "bindings": { "children": { "$expr": "row.certification_count + ' verified'" } } },
+                  {
+                    "kind": "Text",
+                    "bindings": { "children": { "$expr": "row.certification_count + ' verified'" } }
+                  },
                   {
                     "kind": "Widget",
                     "widget": "coaching.certification-expiration-badge",
-                    "bindings": { "days_until_expiry": { "$expr": "row.has_expiring_certifications ? 60 : 999" }, "compact": { "$value": true } },
+                    "bindings": {
+                      "days_until_expiry": {
+                        "$expr": "row.has_expiring_certifications ? 60 : 999"
+                      },
+                      "compact": { "$value": true }
+                    },
                     "hidden": { "$expr": "!row.has_expiring_certifications" }
                   }
                 ]
@@ -168,20 +229,50 @@
                 "children": [
                   {
                     "kind": "Button",
-                    "props": { "size": "sm", "variant": "flat", "leadingIcon": "eye", "children": "View" },
-                    "actions": { "onPress": { "kind": "navigate", "toExpr": "'/tenant/coaching-profiles/' + row.id" } }
+                    "props": {
+                      "size": "sm",
+                      "variant": "flat",
+                      "leadingIcon": "eye",
+                      "children": "View"
+                    },
+                    "actions": {
+                      "onPress": {
+                        "kind": "navigate",
+                        "toExpr": "'/tenant/coaching-profiles/' + row.id"
+                      }
+                    }
                   },
                   {
                     "kind": "Button",
-                    "props": { "size": "sm", "variant": "flat", "leadingIcon": "check-circle", "children": "Verify" },
-                    "actions": { "onPress": { "kind": "navigate", "toExpr": "'/tenant/coaching-profiles/' + row.id + '/verify'" } },
+                    "props": {
+                      "size": "sm",
+                      "variant": "flat",
+                      "leadingIcon": "check-circle",
+                      "children": "Verify"
+                    },
+                    "actions": {
+                      "onPress": {
+                        "kind": "navigate",
+                        "toExpr": "'/tenant/coaching-profiles/' + row.id + '/verify'"
+                      }
+                    },
                     "bindings": { "hidden": { "$expr": "row.verified_by_admin_at != null" } },
                     "requiresPermission": "coaching_profiles.verify"
                   },
                   {
                     "kind": "Button",
-                    "props": { "size": "sm", "variant": "flat", "leadingIcon": "pause-circle", "children": "Deactivate" },
-                    "actions": { "onPress": { "kind": "navigate", "toExpr": "'/tenant/coaching-profiles/' + row.id + '/deactivate'" } },
+                    "props": {
+                      "size": "sm",
+                      "variant": "flat",
+                      "leadingIcon": "pause-circle",
+                      "children": "Deactivate"
+                    },
+                    "actions": {
+                      "onPress": {
+                        "kind": "navigate",
+                        "toExpr": "'/tenant/coaching-profiles/' + row.id + '/deactivate'"
+                      }
+                    },
                     "bindings": { "hidden": { "$expr": "!row.is_active" } },
                     "requiresPermission": "coaching_profiles.deactivate"
                   }

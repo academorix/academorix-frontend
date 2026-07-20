@@ -25,7 +25,7 @@ export interface IGetAssetsGeneratorConfigInput {
    *
    * @default 'minimal-2023'
    */
-  readonly preset?: 'minimal-2023' | 'minimal' | 'nothing';
+  readonly preset?: "minimal-2023" | "minimal" | "nothing";
   /**
    * Directory (relative to the app's `public/`) the emitted images
    * are placed under.

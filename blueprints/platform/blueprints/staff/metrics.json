@@ -6,8 +6,23 @@
   "namespace": "academorix.staff",
   "labelConventions": {
     "always": [],
-    "commonlyAvailable": ["employment_type", "employment_status", "position_bucket", "coaching_level", "sport_key_bucket", "termination_reason"],
-    "forbiddenAsLabels": ["tenant_id", "staff_id", "coach_id", "user_id", "compensation_amount_cents", "employee_number", "emergency_contact_phone"]
+    "commonlyAvailable": [
+      "employment_type",
+      "employment_status",
+      "position_bucket",
+      "coaching_level",
+      "sport_key_bucket",
+      "termination_reason"
+    ],
+    "forbiddenAsLabels": [
+      "tenant_id",
+      "staff_id",
+      "coach_id",
+      "user_id",
+      "compensation_amount_cents",
+      "employee_number",
+      "emergency_contact_phone"
+    ]
   },
   "metrics": [
     {

@@ -14,7 +14,7 @@ import type {
   SettingsSubscriber,
   SettingsUnsubscribe,
   Type,
-} from '@stackra/contracts';
+} from "@stackra/contracts";
 
 /**
  * Ephemeral, purely in-memory `ISettingsService` for tests.
@@ -55,7 +55,7 @@ export class MockSettingsService implements ISettingsService {
       readonly all: () => readonly ISettingDefinition[];
       readonly has: (key: string) => boolean;
     },
-    seed: Record<string, Record<string, unknown>> = {}
+    seed: Record<string, Record<string, unknown>> = {},
   ) {
     this.cache = new Map(Object.entries(seed));
   }
@@ -90,7 +90,7 @@ export class MockSettingsService implements ISettingsService {
    */
   private snapshotFor(
     groupKey: string,
-    definition: ISettingDefinition
+    definition: ISettingDefinition,
   ): Readonly<Record<string, unknown>> {
     const cached = this.snapshots.get(groupKey);
     if (cached) return cached;

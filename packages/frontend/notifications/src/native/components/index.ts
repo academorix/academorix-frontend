@@ -10,25 +10,25 @@
  *   experience.
  */
 
-export { NotificationBadge, type NotificationBadgeProps } from './notification-badge';
-export { NotificationBell, type NotificationBellProps } from './notification-bell';
+export { NotificationBadge, type NotificationBadgeProps } from "./notification-badge";
+export { NotificationBell, type NotificationBellProps } from "./notification-bell";
 export {
   NotificationDrawer,
   type NotificationDrawerCategoryFilter,
   type NotificationDrawerProps,
   type NotificationDrawerSection,
-} from './notification-drawer';
+} from "./notification-drawer";
 export {
   NotificationEmptyState,
   type NotificationEmptyStateProps,
-} from './notification-empty-state';
-export { NotificationList, type NotificationListProps } from './notification-list';
-export { NotificationRow, type NotificationRowProps } from './notification-row';
-export { PushPermissionBanner, type PushPermissionBannerProps } from './push-permission-banner';
-export { ChannelToggle, type ChannelToggleProps } from './preferences/channel-toggle';
-export { QuietHoursPicker, type QuietHoursPickerProps } from './preferences/quiet-hours-picker';
+} from "./notification-empty-state";
+export { NotificationList, type NotificationListProps } from "./notification-list";
+export { NotificationRow, type NotificationRowProps } from "./notification-row";
+export { PushPermissionBanner, type PushPermissionBannerProps } from "./push-permission-banner";
+export { ChannelToggle, type ChannelToggleProps } from "./preferences/channel-toggle";
+export { QuietHoursPicker, type QuietHoursPickerProps } from "./preferences/quiet-hours-picker";
 export {
   CategoryPreferencesPanel,
   type CategoryPreferencesPanelProps,
   type ChannelDescriptor,
-} from './preferences/category-preferences-panel';
+} from "./preferences/category-preferences-panel";

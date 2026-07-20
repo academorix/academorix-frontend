@@ -18,7 +18,7 @@
  * @module @stackra/http/services/http-client
  */
 
-import { Logger } from '@stackra/logger';
+import { Logger } from "@stackra/logger";
 
 import {
   HTTP_EVENTS,
@@ -36,16 +36,16 @@ import {
   type ISseConfig,
   type ISseEvent,
   type IStreamConfig,
-} from '@stackra/contracts';
+} from "@stackra/contracts";
 
-import { DEFAULT_TIMEOUT_MS } from '../constants';
-import { HttpStreamError } from '../errors';
-import type { IHttpClientDeps } from '../interfaces/http-client-deps.interface';
-import { createStreamParser, SseStreamParser } from '../parsers';
-import { composeBaseURL } from '../utils';
+import { DEFAULT_TIMEOUT_MS } from "../constants";
+import { HttpStreamError } from "../errors";
+import type { IHttpClientDeps } from "../interfaces/http-client-deps.interface";
+import { createStreamParser, SseStreamParser } from "../parsers";
+import { composeBaseURL } from "../utils";
 
-import { InterceptorPipeline } from './interceptor-pipeline.service';
-import { MiddlewarePipeline } from './middleware-pipeline.service';
+import { InterceptorPipeline } from "./interceptor-pipeline.service";
+import { MiddlewarePipeline } from "./middleware-pipeline.service";
 
 /**
  * Concrete `IHttpClient` implementation.
@@ -96,7 +96,7 @@ export class HttpClient implements IHttpClient {
     this.effectiveBaseURL = composeBaseURL(
       deps.config.baseURL,
       deps.config.apiPrefix,
-      deps.config.version
+      deps.config.version,
     );
   }
 
@@ -107,44 +107,44 @@ export class HttpClient implements IHttpClient {
   /** @inheritdoc */
   public async get<T = unknown>(
     url: string,
-    config?: IHttpRequestConfig
+    config?: IHttpRequestConfig,
   ): Promise<IHttpResponse<T>> {
-    return this.executeRequest<T>({ ...config, url, method: 'GET' });
+    return this.executeRequest<T>({ ...config, url, method: "GET" });
   }
 
   /** @inheritdoc */
   public async post<T = unknown>(
     url: string,
     data?: unknown,
-    config?: IHttpRequestConfig
+    config?: IHttpRequestConfig,
   ): Promise<IHttpResponse<T>> {
-    return this.executeRequest<T>({ ...config, url, method: 'POST', data });
+    return this.executeRequest<T>({ ...config, url, method: "POST", data });
   }
 
   /** @inheritdoc */
   public async put<T = unknown>(
     url: string,
     data?: unknown,
-    config?: IHttpRequestConfig
+    config?: IHttpRequestConfig,
   ): Promise<IHttpResponse<T>> {
-    return this.executeRequest<T>({ ...config, url, method: 'PUT', data });
+    return this.executeRequest<T>({ ...config, url, method: "PUT", data });
   }
 
   /** @inheritdoc */
   public async patch<T = unknown>(
     url: string,
     data?: unknown,
-    config?: IHttpRequestConfig
+    config?: IHttpRequestConfig,
   ): Promise<IHttpResponse<T>> {
-    return this.executeRequest<T>({ ...config, url, method: 'PATCH', data });
+    return this.executeRequest<T>({ ...config, url, method: "PATCH", data });
   }
 
   /** @inheritdoc */
   public async delete<T = unknown>(
     url: string,
-    config?: IHttpRequestConfig
+    config?: IHttpRequestConfig,
   ): Promise<IHttpResponse<T>> {
-    return this.executeRequest<T>({ ...config, url, method: 'DELETE' });
+    return this.executeRequest<T>({ ...config, url, method: "DELETE" });
   }
 
   /** @inheritdoc */
@@ -159,7 +159,7 @@ export class HttpClient implements IHttpClient {
   /** @inheritdoc */
   public stream<T = unknown>(url: string, config?: IStreamConfig): IHttpStream<T> {
     const format = config?.format ?? HttpStreamFormat.Sse;
-    return this.openStream<T>({ ...config, url, method: config?.method ?? 'GET' }, format);
+    return this.openStream<T>({ ...config, url, method: config?.method ?? "GET" }, format);
   }
 
   /** @inheritdoc */
@@ -168,10 +168,10 @@ export class HttpClient implements IHttpClient {
       {
         ...config,
         url,
-        method: config?.method ?? 'GET',
-        headers: { Accept: 'text/event-stream', ...config?.headers },
+        method: config?.method ?? "GET",
+        headers: { Accept: "text/event-stream", ...config?.headers },
       },
-      HttpStreamFormat.Sse
+      HttpStreamFormat.Sse,
     );
   }
 
@@ -203,8 +203,8 @@ export class HttpClient implements IHttpClient {
         context,
         (ctx) =>
           this.interceptorPipeline.execute(this.interceptorRegistry.getSorted(), ctx, (innerCtx) =>
-            this.connector.send(innerCtx)
-          )
+            this.connector.send(innerCtx),
+          ),
       )) as IHttpResponse<T>;
 
       this.emitEvent(HTTP_EVENTS.REQUEST_SUCCESS, {
@@ -254,7 +254,7 @@ export class HttpClient implements IHttpClient {
     if (merged.signal) {
       // Combine the external signal with our cancellation handle.
       if (merged.signal.aborted) controller.abort();
-      else merged.signal.addEventListener('abort', () => controller.abort(), { once: true });
+      else merged.signal.addEventListener("abort", () => controller.abort(), { once: true });
     }
 
     const startedAt = Date.now();
@@ -291,19 +291,19 @@ export class HttpClient implements IHttpClient {
               async () => ({
                 data: undefined,
                 status: 0,
-                statusText: 'STREAM_PENDING',
+                statusText: "STREAM_PENDING",
                 headers: {},
                 config: ctx.request,
-              })
+              }),
             );
             return {
               data: undefined,
               status: 0,
-              statusText: 'STREAM_PENDING',
+              statusText: "STREAM_PENDING",
               headers: {},
               config: ctx.request,
             };
-          }
+          },
         );
 
         const iterable = await self.connector.stream(context);

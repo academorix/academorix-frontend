@@ -9,8 +9,19 @@
   "resource": { "module": "sports-registry", "entity": "position", "action": "list" },
   "requiresPermission": "positions.viewAny",
   "dataSources": [
-    { "name": "positions", "kind": "http.get", "urlExpr": "'/api/v1/positions?include=downstream_reference_count&sort=discipline_id,sort_order,name'", "unwrap": "data" },
-    { "name": "me", "kind": "http.get", "url": "/api/auth/me", "unwrap": "data", "cache": { "ttlSeconds": 60 } }
+    {
+      "name": "positions",
+      "kind": "http.get",
+      "urlExpr": "'/api/v1/positions?include=downstream_reference_count&sort=discipline_id,sort_order,name'",
+      "unwrap": "data"
+    },
+    {
+      "name": "me",
+      "kind": "http.get",
+      "url": "/api/auth/me",
+      "unwrap": "data",
+      "cache": { "ttlSeconds": 60 }
+    }
   ],
   "nodes": [
     {
@@ -25,15 +36,30 @@
             {
               "kind": "View",
               "children": [
-                { "kind": "Text", "props": { "as": "h1", "className": "text-2xl font-semibold", "children": "Positions" } },
-                { "kind": "Text", "props": { "className": "text-sm text-muted", "children": "Roles within each discipline (goalkeeper, point guard, freestyler, etc.). Platform-seeded plus your customs." } }
+                {
+                  "kind": "Text",
+                  "props": {
+                    "as": "h1",
+                    "className": "text-2xl font-semibold",
+                    "children": "Positions"
+                  }
+                },
+                {
+                  "kind": "Text",
+                  "props": {
+                    "className": "text-sm text-muted",
+                    "children": "Roles within each discipline (goalkeeper, point guard, freestyler, etc.). Platform-seeded plus your customs."
+                  }
+                }
               ]
             },
             {
               "kind": "Button",
               "props": { "variant": "primary", "leadingIcon": "plus", "children": "Add position" },
               "actions": { "onPress": { "kind": "navigate", "to": "/settings/positions/create" } },
-              "bindings": { "props": { "isDisabled": { "$expr": "!me.entitlements.sports_registry_custom" } } },
+              "bindings": {
+                "props": { "isDisabled": { "$expr": "!me.entitlements.sports_registry_custom" } }
+              },
               "requiresPermission": "positions.create"
             }
           ]
@@ -41,18 +67,50 @@
         {
           "kind": "Toolbar",
           "children": [
-            { "kind": "SearchField", "props": { "placeholder": "Search position name or slug", "name": "q" } },
-            { "kind": "$ref", "target": "sports-registry.discipline-picker", "props": { "name": "discipline_id", "label": "Discipline", "clearable": true } },
-            { "kind": "Toggle", "props": { "name": "is_field_position", "label": "Field positions only" } },
+            {
+              "kind": "SearchField",
+              "props": { "placeholder": "Search position name or slug", "name": "q" }
+            },
+            {
+              "kind": "$ref",
+              "target": "sports-registry.discipline-picker",
+              "props": { "name": "discipline_id", "label": "Discipline", "clearable": true }
+            },
+            {
+              "kind": "Toggle",
+              "props": { "name": "is_field_position", "label": "Field positions only" }
+            },
             { "kind": "Toggle", "props": { "name": "is_active", "label": "Active only" } }
           ]
         },
         {
           "kind": "Table",
           "columns": [
-            { "key": "name", "header": "Position", "cell": { "kind": "Link", "propsExpr": "{ to: '/settings/positions/' + row.id, children: row.name, className: 'font-medium' }" } },
-            { "key": "slug", "header": "Slug", "cell": { "kind": "Text", "props": { "className": "font-mono text-xs" }, "bindings": { "children": { "$ref": "row.slug" } } } },
-            { "key": "discipline", "header": "Discipline", "cell": { "kind": "Text", "bindings": { "children": { "$ref": "row.discipline.name" } } } },
+            {
+              "key": "name",
+              "header": "Position",
+              "cell": {
+                "kind": "Link",
+                "propsExpr": "{ to: '/settings/positions/' + row.id, children: row.name, className: 'font-medium' }"
+              }
+            },
+            {
+              "key": "slug",
+              "header": "Slug",
+              "cell": {
+                "kind": "Text",
+                "props": { "className": "font-mono text-xs" },
+                "bindings": { "children": { "$ref": "row.slug" } }
+              }
+            },
+            {
+              "key": "discipline",
+              "header": "Discipline",
+              "cell": {
+                "kind": "Text",
+                "bindings": { "children": { "$ref": "row.discipline.name" } }
+              }
+            },
             {
               "key": "role_flags",
               "header": "Role",
@@ -60,9 +118,21 @@
                 "kind": "View",
                 "props": { "className": "flex items-center gap-1" },
                 "children": [
-                  { "kind": "Chip", "props": { "size": "xs", "variant": "danger", "children": "Offensive" }, "bindings": { "hidden": { "$expr": "!row.is_offensive" } } },
-                  { "kind": "Chip", "props": { "size": "xs", "variant": "info", "children": "Defensive" }, "bindings": { "hidden": { "$expr": "!row.is_defensive" } } },
-                  { "kind": "Chip", "props": { "size": "xs", "variant": "warning", "children": "Bench" }, "bindings": { "hidden": { "$expr": "row.is_field_position" } } }
+                  {
+                    "kind": "Chip",
+                    "props": { "size": "xs", "variant": "danger", "children": "Offensive" },
+                    "bindings": { "hidden": { "$expr": "!row.is_offensive" } }
+                  },
+                  {
+                    "kind": "Chip",
+                    "props": { "size": "xs", "variant": "info", "children": "Defensive" },
+                    "bindings": { "hidden": { "$expr": "!row.is_defensive" } }
+                  },
+                  {
+                    "kind": "Chip",
+                    "props": { "size": "xs", "variant": "warning", "children": "Bench" },
+                    "bindings": { "hidden": { "$expr": "row.is_field_position" } }
+                  }
                 ]
               }
             },
@@ -72,7 +142,11 @@
               "cell": {
                 "kind": "Text",
                 "props": { "className": "text-xs text-muted font-mono" },
-                "bindings": { "children": { "$expr": "row.typical_jersey_range_min ? (row.typical_jersey_range_min + '-' + row.typical_jersey_range_max) : ''" } }
+                "bindings": {
+                  "children": {
+                    "$expr": "row.typical_jersey_range_min ? (row.typical_jersey_range_min + '-' + row.typical_jersey_range_max) : ''"
+                  }
+                }
               }
             },
             {
@@ -82,9 +156,21 @@
                 "kind": "View",
                 "props": { "className": "flex items-center gap-1" },
                 "children": [
-                  { "kind": "Chip", "props": { "size": "xs", "variant": "info", "children": "Platform" }, "bindings": { "hidden": { "$expr": "!row.is_platform_seeded" } } },
-                  { "kind": "Chip", "props": { "size": "xs", "variant": "accent", "children": "Custom" }, "bindings": { "hidden": { "$expr": "row.is_platform_seeded" } } },
-                  { "kind": "Chip", "props": { "size": "xs", "variant": "success", "children": "Active" }, "bindings": { "hidden": { "$expr": "!row.is_active" } } }
+                  {
+                    "kind": "Chip",
+                    "props": { "size": "xs", "variant": "info", "children": "Platform" },
+                    "bindings": { "hidden": { "$expr": "!row.is_platform_seeded" } }
+                  },
+                  {
+                    "kind": "Chip",
+                    "props": { "size": "xs", "variant": "accent", "children": "Custom" },
+                    "bindings": { "hidden": { "$expr": "row.is_platform_seeded" } }
+                  },
+                  {
+                    "kind": "Chip",
+                    "props": { "size": "xs", "variant": "success", "children": "Active" },
+                    "bindings": { "hidden": { "$expr": "!row.is_active" } }
+                  }
                 ]
               }
             }

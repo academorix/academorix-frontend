@@ -1,10 +1,13 @@
 {
-  "extends": "../../tsconfig.base.json",
+  "extends": "@academorix/config-tsconfig/base",
   "compilerOptions": {
     "types": ["node"],
     "rootDir": ".",
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      "@stackra/routing/react": ["./src/react/index.ts"],
+      "@stackra/routing/native": ["./src/native/index.ts"],
+      "@stackra/routing/testing": ["./src/testing/index.ts"]
     },
     "outDir": "./dist"
   },

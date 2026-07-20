@@ -46,7 +46,13 @@
     "social_only": {
       "label": "Social",
       "description": "No competitive or instructional component. Community-building.",
-      "compatible_event_types": ["showcase", "social", "graduation", "awards_ceremony", "open_house"]
+      "compatible_event_types": [
+        "showcase",
+        "social",
+        "graduation",
+        "awards_ceremony",
+        "open_house"
+      ]
     }
   }
 }

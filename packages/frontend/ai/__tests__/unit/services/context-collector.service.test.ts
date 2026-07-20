@@ -6,12 +6,12 @@
  *   (Req 12.7/12.8).
  */
 
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import type { IAiClient, IAiConfig, IPiiRule, IUiContextSnapshot } from '@stackra/contracts';
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import type { IAiClient, IAiConfig, IPiiRule, IUiContextSnapshot } from "@stackra/contracts";
 
-import { ContextRegistry } from '@/core/registries/context.registry';
-import { PiiRedactor } from '@/core/services/pii-redactor.service';
-import { ContextCollector } from '@/core/services/context-collector.service';
+import { ContextRegistry } from "@/core/registries/context.registry";
+import { PiiRedactor } from "@/core/services/pii-redactor.service";
+import { ContextCollector } from "@/core/services/context-collector.service";
 
 // ── Fixtures ─────────────────────────────────────────────────────────────
 
@@ -39,10 +39,10 @@ function makeHarness(
     maxFrameBytes?: number;
     maxSnapshotBytes?: number;
     leaderGated?: boolean;
-  } = {}
+  } = {},
 ): IHarness {
   const config: IAiConfig = {
-    baseUrl: 'https://x',
+    baseUrl: "https://x",
     authProvider: {
       getCredentials: () => Promise.resolve({}),
       refresh: () => Promise.resolve({}),
@@ -65,76 +65,76 @@ function makeHarness(
 
 // ── Tests ────────────────────────────────────────────────────────────────
 
-describe('ContextCollector debounce + serialization (Req 12.2, 11.4)', () => {
+describe("ContextCollector debounce + serialization (Req 12.2, 11.4)", () => {
   beforeEach(() => vi.useFakeTimers());
   afterEach(() => vi.useRealTimers());
 
-  it('debounces multiple registrations to at most one sync per window', async () => {
+  it("debounces multiple registrations to at most one sync per window", async () => {
     const { registry, collector, synced } = makeHarness();
-    registry.register({ key: 'a', snapshot: 1 });
-    registry.register({ key: 'b', snapshot: 2 });
-    registry.register({ key: 'c', snapshot: 3 });
+    registry.register({ key: "a", snapshot: 1 });
+    registry.register({ key: "b", snapshot: 2 });
+    registry.register({ key: "c", snapshot: 3 });
     expect(synced).toHaveLength(0);
 
     await vi.advanceTimersByTimeAsync(500);
     await collector.flush(); // ensure any pending microtasks settle
     expect(synced).toHaveLength(1);
-    expect(synced[0]!.focusStack.map((f) => f.key)).toEqual(['c', 'b', 'a']);
+    expect(synced[0]!.focusStack.map((f) => f.key)).toEqual(["c", "b", "a"]);
   });
 
-  it('preserves the focus-stack order (topmost first) in the emitted snapshot', async () => {
+  it("preserves the focus-stack order (topmost first) in the emitted snapshot", async () => {
     const { registry, collector, synced } = makeHarness();
-    registry.register({ key: 'page', snapshot: null, priority: 0 });
-    registry.register({ key: 'drawer', snapshot: null, priority: 1 });
-    registry.register({ key: 'popup', snapshot: null, priority: 2 });
+    registry.register({ key: "page", snapshot: null, priority: 0 });
+    registry.register({ key: "drawer", snapshot: null, priority: 1 });
+    registry.register({ key: "popup", snapshot: null, priority: 2 });
     await collector.flush();
-    expect(synced[0]!.focusStack.map((f) => f.key)).toEqual(['popup', 'drawer', 'page']);
+    expect(synced[0]!.focusStack.map((f) => f.key)).toEqual(["popup", "drawer", "page"]);
   });
 });
 
-describe('ContextCollector diff-suppression (Req 12.3)', () => {
-  it('suppresses re-emission when the snapshot is unchanged', async () => {
+describe("ContextCollector diff-suppression (Req 12.3)", () => {
+  it("suppresses re-emission when the snapshot is unchanged", async () => {
     const { registry, collector, synced } = makeHarness();
-    registry.register({ key: 'a', snapshot: { v: 1 } });
+    registry.register({ key: "a", snapshot: { v: 1 } });
     await collector.flush();
     await collector.flush();
     expect(synced).toHaveLength(1);
   });
 
-  it('re-emits when the snapshot content actually changes', async () => {
+  it("re-emits when the snapshot content actually changes", async () => {
     const { registry, collector, synced } = makeHarness();
-    registry.register({ key: 'a', snapshot: { v: 1 } });
+    registry.register({ key: "a", snapshot: { v: 1 } });
     await collector.flush();
-    registry.update('a', { v: 2 });
+    registry.update("a", { v: 2 });
     await collector.flush();
     expect(synced).toHaveLength(2);
   });
 });
 
-describe('ContextCollector PII redaction (Req 12.4)', () => {
-  it('runs every frame through the redactor before including it', async () => {
+describe("ContextCollector PII redaction (Req 12.4)", () => {
+  it("runs every frame through the redactor before including it", async () => {
     const { registry, collector, synced } = makeHarness({
-      piiRules: [{ field: 'email' }],
+      piiRules: [{ field: "email" }],
     });
-    registry.register({ key: 'user', snapshot: { email: 'ada@example.com', name: 'Ada' } });
+    registry.register({ key: "user", snapshot: { email: "ada@example.com", name: "Ada" } });
     await collector.flush();
-    expect(synced[0]!.focusStack[0]!.snapshot).toEqual({ email: '[REDACTED]', name: 'Ada' });
+    expect(synced[0]!.focusStack[0]!.snapshot).toEqual({ email: "[REDACTED]", name: "Ada" });
   });
 });
 
-describe('ContextCollector leader gate (Req 13)', () => {
-  it('suppresses syncs while not leader', async () => {
+describe("ContextCollector leader gate (Req 13)", () => {
+  it("suppresses syncs while not leader", async () => {
     const { registry, collector, synced } = makeHarness();
     collector.setLeader(false);
-    registry.register({ key: 'a', snapshot: 1 });
+    registry.register({ key: "a", snapshot: 1 });
     await collector.flush();
     expect(synced).toHaveLength(0);
   });
 
-  it('resumes syncs on the newly-elected leader (Req 13.4)', async () => {
+  it("resumes syncs on the newly-elected leader (Req 13.4)", async () => {
     const { registry, collector, synced } = makeHarness();
     collector.setLeader(false);
-    registry.register({ key: 'a', snapshot: 1 });
+    registry.register({ key: "a", snapshot: 1 });
     await collector.flush();
     expect(synced).toHaveLength(0);
 
@@ -144,42 +144,42 @@ describe('ContextCollector leader gate (Req 13)', () => {
     expect(synced).toHaveLength(1);
   });
 
-  it('ignores leader state when leaderGated is disabled', async () => {
+  it("ignores leader state when leaderGated is disabled", async () => {
     const { registry, collector, synced } = makeHarness({ leaderGated: false });
     collector.setLeader(false); // should be a no-op
-    registry.register({ key: 'a', snapshot: 1 });
+    registry.register({ key: "a", snapshot: 1 });
     await collector.flush();
     expect(synced).toHaveLength(1);
   });
 });
 
-describe('ContextCollector size caps (Req 12.7, 12.8)', () => {
-  it('truncates oversized frames', async () => {
+describe("ContextCollector size caps (Req 12.7, 12.8)", () => {
+  it("truncates oversized frames", async () => {
     const { registry, collector, synced } = makeHarness({ maxFrameBytes: 32 });
-    registry.register({ key: 'big', snapshot: { field: 'x'.repeat(1000) } });
+    registry.register({ key: "big", snapshot: { field: "x".repeat(1000) } });
     await collector.flush();
     const emitted = synced[0]!.focusStack[0]!.snapshot as { _truncated?: boolean };
     expect(emitted._truncated).toBe(true);
   });
 
-  it('omits frames that exceed the aggregate cap', async () => {
+  it("omits frames that exceed the aggregate cap", async () => {
     const { registry, collector, synced } = makeHarness({
       maxFrameBytes: 100_000,
       maxSnapshotBytes: 100,
     });
-    registry.register({ key: 'a', snapshot: { field: 'x'.repeat(60) } });
-    registry.register({ key: 'b', snapshot: { field: 'x'.repeat(60) } });
+    registry.register({ key: "a", snapshot: { field: "x".repeat(60) } });
+    registry.register({ key: "b", snapshot: { field: "x".repeat(60) } });
     await collector.flush();
     // Only the higher-priority one (later-mounted at same priority) fits.
     expect(synced[0]!.focusStack).toHaveLength(1);
   });
 });
 
-describe('ContextCollector — sync failure recovery', () => {
-  it('does not update lastSynced when the sync fails (allows retry)', async () => {
+describe("ContextCollector — sync failure recovery", () => {
+  it("does not update lastSynced when the sync fails (allows retry)", async () => {
     const registry = new ContextRegistry();
     const config: IAiConfig = {
-      baseUrl: 'https://x',
+      baseUrl: "https://x",
       authProvider: {
         getCredentials: () => Promise.resolve({}),
         refresh: () => Promise.resolve({}),
@@ -194,7 +194,7 @@ describe('ContextCollector — sync failure recovery', () => {
         calls.push(s);
         if (firstAttempt) {
           firstAttempt = false;
-          return Promise.reject(new Error('network flake'));
+          return Promise.reject(new Error("network flake"));
         }
         return Promise.resolve();
       }),
@@ -202,7 +202,7 @@ describe('ContextCollector — sync failure recovery', () => {
     const collector = new ContextCollector(registry, redactor, client, config);
     collector.onModuleInit();
 
-    registry.register({ key: 'a', snapshot: 1 });
+    registry.register({ key: "a", snapshot: 1 });
     await collector.flush();
     await collector.flush();
 

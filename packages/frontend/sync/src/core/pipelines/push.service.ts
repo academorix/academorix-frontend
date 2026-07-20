@@ -6,11 +6,11 @@
  *   retries, or authorization without editing the service.
  */
 
-import { Pipeline } from '@stackra/pipeline';
-import type { IPushOptions, IPushPipelineContext, IPushResult } from '@stackra/contracts';
+import { Pipeline } from "@stackra/pipeline";
+import type { IPushOptions, IPushPipelineContext, IPushResult } from "@stackra/contracts";
 
-import type { CheckpointService } from '../services/checkpoint.service';
-import type { PushService } from '../services/push.service';
+import type { CheckpointService } from "../services/checkpoint.service";
+import type { PushService } from "../services/push.service";
 
 /**
  * Execute a single-collection push through the pipeline.
@@ -24,7 +24,7 @@ export async function executePushPipeline(
   pushService: PushService,
   checkpointService: CheckpointService,
   collection: string,
-  options: IPushOptions
+  options: IPushOptions,
 ): Promise<IPushResult> {
   const context: IPushPipelineContext = {
     collection,
@@ -37,22 +37,22 @@ export async function executePushPipeline(
     .through([
       async (
         ctx: IPushPipelineContext,
-        next: (c: IPushPipelineContext) => Promise<IPushPipelineContext>
+        next: (c: IPushPipelineContext) => Promise<IPushPipelineContext>,
       ) => {
-        if (!ctx.collection) throw new Error('Collection is required for push');
-        if (!ctx.options.baseUrl) throw new Error('baseUrl is required for push');
+        if (!ctx.collection) throw new Error("Collection is required for push");
+        if (!ctx.options.baseUrl) throw new Error("baseUrl is required for push");
         return next(ctx);
       },
       async (
         ctx: IPushPipelineContext,
-        next: (c: IPushPipelineContext) => Promise<IPushPipelineContext>
+        next: (c: IPushPipelineContext) => Promise<IPushPipelineContext>,
       ) => {
         ctx.result = await pushService.push(ctx.collection, ctx.options);
         return next(ctx);
       },
       async (
         ctx: IPushPipelineContext,
-        next: (c: IPushPipelineContext) => Promise<IPushPipelineContext>
+        next: (c: IPushPipelineContext) => Promise<IPushPipelineContext>,
       ) => {
         if (ctx.result.pushed > 0) {
           ctx.checkpoint = {
@@ -70,7 +70,7 @@ export async function executePushPipeline(
       },
       async (
         ctx: IPushPipelineContext,
-        next: (c: IPushPipelineContext) => Promise<IPushPipelineContext>
+        next: (c: IPushPipelineContext) => Promise<IPushPipelineContext>,
       ) => {
         if (ctx.checkpoint) {
           await checkpointService.save(ctx.collection, ctx.checkpoint);

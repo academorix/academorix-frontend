@@ -14,4 +14,4 @@ export {
   useUpdateSettings,
   type IUseUpdateSettingsResult,
   type UpdateSettingsMutate,
-} from './use-update-settings';
+} from "./use-update-settings";

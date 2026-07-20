@@ -5,5 +5,5 @@
  *   component + its owned props interface.
  */
 
-export { NotificationRow } from './notification-row.component';
-export type { NotificationRowProps } from './notification-row.interface';
+export { NotificationRow } from "./notification-row.component";
+export type { NotificationRowProps } from "./notification-row.interface";

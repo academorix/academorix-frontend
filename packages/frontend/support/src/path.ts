@@ -68,7 +68,6 @@ import path from "path-browserify";
 
 import type { ParsedPath, FormatInputPathObject } from "node:path";
 
-
 /**
  * Convert an `import.meta.url` value into an absolute filesystem path
  * that works on both Node and browser runtimes.

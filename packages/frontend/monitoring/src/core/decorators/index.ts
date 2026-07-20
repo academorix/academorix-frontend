@@ -6,4 +6,4 @@
 export {
   MonitoringProvider,
   type MonitoringProviderOptions,
-} from './monitoring-provider.decorator';
+} from "./monitoring-provider.decorator";

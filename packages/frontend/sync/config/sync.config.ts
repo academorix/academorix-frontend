@@ -5,8 +5,8 @@
  *   Consumed by `SyncModule.forRoot()` at bootstrap.
  */
 
-import { defineConfig } from '@stackra/sync';
-import { ConflictStrategy } from '@stackra/contracts';
+import { defineConfig } from "@stackra/sync";
+import { ConflictStrategy } from "@stackra/contracts";
 
 export const syncConfig = defineConfig({
   /*
@@ -18,7 +18,7 @@ export const syncConfig = defineConfig({
   | collection URL is resolved relative to this base.
   |
   */
-  baseUrl: '/api/sync',
+  baseUrl: "/api/sync",
 
   /*
   |--------------------------------------------------------------------------
@@ -97,7 +97,7 @@ export const syncConfig = defineConfig({
   | `memory` is fine for tests.
   |
   */
-  storage: 'indexedDB',
+  storage: "indexedDB",
 
   /*
   |--------------------------------------------------------------------------

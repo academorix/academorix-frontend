@@ -15,4 +15,4 @@
  */
 
 /** Token for the merged i18n module configuration provided by `I18nModule`. */
-export const I18N_CONFIG = Symbol.for('I18N_CONFIG');
+export const I18N_CONFIG = Symbol.for("I18N_CONFIG");

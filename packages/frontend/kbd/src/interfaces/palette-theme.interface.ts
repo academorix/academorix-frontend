@@ -29,12 +29,7 @@ export type PaletteSurfaceTone = "default" | "elevated" | "inset" | "glass";
  * Search input visual variant.
  */
 export type PaletteSearchVariant =
-  | "flat"
-  | "bordered"
-  | "faded"
-  | "underlined"
-  | "primary"
-  | "secondary";
+  "flat" | "bordered" | "faded" | "underlined" | "primary" | "secondary";
 
 /**
  * Item density in the command list.

@@ -5,8 +5,15 @@
   "kind": "SduiWidget",
   "description": "Horizontal timeline visualising a referral's status journey: claimed -> signed_up -> trigger_pending -> vesting -> vested -> rewarded. Current stage highlighted; expected next stage annotated with 'expected by <date>' when a vesting_completes_at is set.",
   "props": {
-    "referral": { "type": "object", "required": true, "description": "Full Referral row including status, claimed_at, signed_up_at, trigger_event_at, vested_at, rewarded_at, cancelled_at." },
-    "reward": { "type": "object", "description": "Optional first ReferralReward row for vesting_completes_at." },
+    "referral": {
+      "type": "object",
+      "required": true,
+      "description": "Full Referral row including status, claimed_at, signed_up_at, trigger_event_at, vested_at, rewarded_at, cancelled_at."
+    },
+    "reward": {
+      "type": "object",
+      "description": "Optional first ReferralReward row for vesting_completes_at."
+    },
     "size": { "type": "string", "default": "md", "enum": ["sm", "md", "lg"] }
   },
   "nodes": [
@@ -21,7 +28,11 @@
           "children": [
             {
               "kind": "Text",
-              "props": { "as": "h4", "className": "font-medium text-sm", "children": "Referral journey" }
+              "props": {
+                "as": "h4",
+                "className": "font-medium text-sm",
+                "children": "Referral journey"
+              }
             },
             {
               "kind": "Widget",
@@ -40,7 +51,9 @@
               "children": [
                 {
                   "kind": "View",
-                  "props": { "className": "size-8 rounded-full flex items-center justify-center border-2" },
+                  "props": {
+                    "className": "size-8 rounded-full flex items-center justify-center border-2"
+                  },
                   "bindings": {
                     "className": {
                       "$expr": "'size-8 rounded-full flex items-center justify-center border-2 ' + (props.referral.claimed_at ? 'border-success bg-success-subtle' : 'border-muted bg-transparent')"
@@ -53,11 +66,18 @@
                     }
                   ]
                 },
-                { "kind": "Text", "props": { "className": "text-xs font-medium", "children": "Claimed" } },
+                {
+                  "kind": "Text",
+                  "props": { "className": "text-xs font-medium", "children": "Claimed" }
+                },
                 {
                   "kind": "Text",
                   "props": { "className": "text-xs text-muted" },
-                  "bindings": { "children": { "$expr": "props.referral.claimed_at ? formatDate(props.referral.claimed_at) : '—'" } }
+                  "bindings": {
+                    "children": {
+                      "$expr": "props.referral.claimed_at ? formatDate(props.referral.claimed_at) : '—'"
+                    }
+                  }
                 }
               ]
             },
@@ -72,13 +92,22 @@
                       "$expr": "'size-8 rounded-full flex items-center justify-center border-2 ' + (props.referral.signed_up_at ? 'border-success bg-success-subtle' : 'border-muted bg-transparent')"
                     }
                   },
-                  "children": [{ "kind": "Icon", "props": { "name": "user-plus", "className": "size-4" } }]
+                  "children": [
+                    { "kind": "Icon", "props": { "name": "user-plus", "className": "size-4" } }
+                  ]
                 },
-                { "kind": "Text", "props": { "className": "text-xs font-medium", "children": "Signed up" } },
+                {
+                  "kind": "Text",
+                  "props": { "className": "text-xs font-medium", "children": "Signed up" }
+                },
                 {
                   "kind": "Text",
                   "props": { "className": "text-xs text-muted" },
-                  "bindings": { "children": { "$expr": "props.referral.signed_up_at ? formatDate(props.referral.signed_up_at) : '—'" } }
+                  "bindings": {
+                    "children": {
+                      "$expr": "props.referral.signed_up_at ? formatDate(props.referral.signed_up_at) : '—'"
+                    }
+                  }
                 }
               ]
             },
@@ -93,13 +122,22 @@
                       "$expr": "'size-8 rounded-full flex items-center justify-center border-2 ' + (props.referral.trigger_event_at ? 'border-success bg-success-subtle' : 'border-muted bg-transparent')"
                     }
                   },
-                  "children": [{ "kind": "Icon", "props": { "name": "bolt", "className": "size-4" } }]
+                  "children": [
+                    { "kind": "Icon", "props": { "name": "bolt", "className": "size-4" } }
+                  ]
                 },
-                { "kind": "Text", "props": { "className": "text-xs font-medium", "children": "Triggered" } },
+                {
+                  "kind": "Text",
+                  "props": { "className": "text-xs font-medium", "children": "Triggered" }
+                },
                 {
                   "kind": "Text",
                   "props": { "className": "text-xs text-muted" },
-                  "bindings": { "children": { "$expr": "props.referral.trigger_event_at ? formatDate(props.referral.trigger_event_at) : '—'" } }
+                  "bindings": {
+                    "children": {
+                      "$expr": "props.referral.trigger_event_at ? formatDate(props.referral.trigger_event_at) : '—'"
+                    }
+                  }
                 }
               ]
             },
@@ -114,9 +152,14 @@
                       "$expr": "'size-8 rounded-full flex items-center justify-center border-2 ' + (props.referral.status === 'vesting' ? 'border-warning bg-warning-subtle animate-pulse' : (props.referral.vested_at ? 'border-success bg-success-subtle' : 'border-muted bg-transparent'))"
                     }
                   },
-                  "children": [{ "kind": "Icon", "props": { "name": "hourglass", "className": "size-4" } }]
+                  "children": [
+                    { "kind": "Icon", "props": { "name": "hourglass", "className": "size-4" } }
+                  ]
                 },
-                { "kind": "Text", "props": { "className": "text-xs font-medium", "children": "Vesting" } },
+                {
+                  "kind": "Text",
+                  "props": { "className": "text-xs font-medium", "children": "Vesting" }
+                },
                 {
                   "kind": "Text",
                   "props": { "className": "text-xs text-muted" },
@@ -139,13 +182,22 @@
                       "$expr": "'size-8 rounded-full flex items-center justify-center border-2 ' + (props.referral.vested_at ? 'border-success bg-success-subtle' : 'border-muted bg-transparent')"
                     }
                   },
-                  "children": [{ "kind": "Icon", "props": { "name": "check", "className": "size-4" } }]
+                  "children": [
+                    { "kind": "Icon", "props": { "name": "check", "className": "size-4" } }
+                  ]
                 },
-                { "kind": "Text", "props": { "className": "text-xs font-medium", "children": "Vested" } },
+                {
+                  "kind": "Text",
+                  "props": { "className": "text-xs font-medium", "children": "Vested" }
+                },
                 {
                   "kind": "Text",
                   "props": { "className": "text-xs text-muted" },
-                  "bindings": { "children": { "$expr": "props.referral.vested_at ? formatDate(props.referral.vested_at) : '—'" } }
+                  "bindings": {
+                    "children": {
+                      "$expr": "props.referral.vested_at ? formatDate(props.referral.vested_at) : '—'"
+                    }
+                  }
                 }
               ]
             },
@@ -160,13 +212,22 @@
                       "$expr": "'size-8 rounded-full flex items-center justify-center border-2 ' + (props.referral.rewarded_at ? 'border-success bg-success' : 'border-muted bg-transparent')"
                     }
                   },
-                  "children": [{ "kind": "Icon", "props": { "name": "gift", "className": "size-4" } }]
+                  "children": [
+                    { "kind": "Icon", "props": { "name": "gift", "className": "size-4" } }
+                  ]
                 },
-                { "kind": "Text", "props": { "className": "text-xs font-medium", "children": "Rewarded" } },
+                {
+                  "kind": "Text",
+                  "props": { "className": "text-xs font-medium", "children": "Rewarded" }
+                },
                 {
                   "kind": "Text",
                   "props": { "className": "text-xs text-muted" },
-                  "bindings": { "children": { "$expr": "props.referral.rewarded_at ? formatDate(props.referral.rewarded_at) : '—'" } }
+                  "bindings": {
+                    "children": {
+                      "$expr": "props.referral.rewarded_at ? formatDate(props.referral.rewarded_at) : '—'"
+                    }
+                  }
                 }
               ]
             }
@@ -175,7 +236,9 @@
         {
           "kind": "Alert",
           "bindings": {
-            "hidden": { "$expr": "!['cancelled','expired','fraudulent'].includes(props.referral.status)" },
+            "hidden": {
+              "$expr": "!['cancelled','expired','fraudulent'].includes(props.referral.status)"
+            },
             "variant": {
               "$expr": "props.referral.status === 'fraudulent' ? 'danger' : 'neutral'"
             },

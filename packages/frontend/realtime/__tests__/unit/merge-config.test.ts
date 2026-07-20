@@ -6,49 +6,49 @@
  *   Guard against silent drift.
  */
 
-import { describe, it, expect } from 'vitest';
-import { mergeConfig } from '@/core/utils/merge-config.util';
-import { DEFAULT_REALTIME_CONFIG } from '@/core/constants';
+import { describe, it, expect } from "vitest";
+import { mergeConfig } from "@/core/utils/merge-config.util";
+import { DEFAULT_REALTIME_CONFIG } from "@/core/constants";
 
-describe('mergeConfig', () => {
-  it('passes user options through unchanged', () => {
+describe("mergeConfig", () => {
+  it("passes user options through unchanged", () => {
     const options = {
-      default: 'main',
+      default: "main",
       connections: {
-        main: { driver: 'socketio', url: 'wss://x' },
+        main: { driver: "socketio", url: "wss://x" },
       },
     };
 
     const merged = mergeConfig(options);
-    expect(merged.default).toBe('main');
+    expect(merged.default).toBe("main");
     expect(merged.connections).toEqual({
-      main: { driver: 'socketio', url: 'wss://x' },
+      main: { driver: "socketio", url: "wss://x" },
     });
   });
 
-  it('overlays user options on top of DEFAULT_REALTIME_CONFIG', () => {
+  it("overlays user options on top of DEFAULT_REALTIME_CONFIG", () => {
     // DEFAULT is empty today; adding this test locks the merge order in place
     // so if defaults appear later, user options still override them.
     const merged = mergeConfig({
-      default: 'main',
+      default: "main",
       connections: {},
     });
-    expect(merged.default).toBe('main');
+    expect(merged.default).toBe("main");
   });
 
-  it('does not mutate DEFAULT_REALTIME_CONFIG', () => {
+  it("does not mutate DEFAULT_REALTIME_CONFIG", () => {
     const before = { ...DEFAULT_REALTIME_CONFIG };
     mergeConfig({
-      default: 'main',
-      connections: { main: { driver: 'x' } },
+      default: "main",
+      connections: { main: { driver: "x" } },
     });
     expect(DEFAULT_REALTIME_CONFIG).toEqual(before);
   });
 
-  it('preserves the emitLifecycleEvents flag', () => {
+  it("preserves the emitLifecycleEvents flag", () => {
     const merged = mergeConfig({
-      default: 'main',
-      connections: { main: { driver: 'test' } },
+      default: "main",
+      connections: { main: { driver: "test" } },
       emitLifecycleEvents: false,
     });
     expect(merged.emitLifecycleEvents).toBe(false);

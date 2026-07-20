@@ -37,7 +37,11 @@
               "children": [
                 {
                   "kind": "Text",
-                  "props": { "as": "h1", "className": "text-2xl font-semibold", "children": "Delegation" }
+                  "props": {
+                    "as": "h1",
+                    "className": "text-2xl font-semibold",
+                    "children": "Delegation"
+                  }
                 },
                 {
                   "kind": "View",
@@ -91,14 +95,18 @@
                   "label": "Delegator",
                   "value": {
                     "kind": "Text",
-                    "bindings": { "children": { "$expr": "delegation.delegator.profile.display_name" } }
+                    "bindings": {
+                      "children": { "$expr": "delegation.delegator.profile.display_name" }
+                    }
                   }
                 },
                 {
                   "label": "Delegate",
                   "value": {
                     "kind": "Text",
-                    "bindings": { "children": { "$expr": "delegation.delegate.profile.display_name" } }
+                    "bindings": {
+                      "children": { "$expr": "delegation.delegate.profile.display_name" }
+                    }
                   }
                 },
                 {
@@ -151,7 +159,11 @@
           "children": [
             {
               "kind": "Text",
-              "props": { "as": "h2", "className": "text-lg font-semibold mb-2", "children": "Activity" }
+              "props": {
+                "as": "h2",
+                "className": "text-lg font-semibold mb-2",
+                "children": "Activity"
+              }
             },
             {
               "kind": "List",

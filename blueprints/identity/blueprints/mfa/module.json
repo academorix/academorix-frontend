@@ -21,33 +21,15 @@
     "aal2"
   ],
   "priority": 20,
-  "providers": [
-    "Academorix\\Mfa\\Providers\\MfaServiceProvider"
-  ],
+  "providers": ["Academorix\\Mfa\\Providers\\MfaServiceProvider"],
   "files": [],
-  "dependencies": [
-    "foundation",
-    "identity"
-  ],
-  "extendedBy": [
-    "auth",
-    "user",
-    "platform-user"
-  ],
+  "dependencies": ["foundation", "identity"],
+  "extendedBy": ["auth", "user", "platform-user"],
   "contributes": {
-    "traits": [
-      "HasMfa"
-    ],
-    "attributes": [
-      "AsMfaListener"
-    ],
-    "blueprints": [
-      "webauthn-credentials"
-    ],
-    "middleware": [
-      "mfa.require_challenge_complete",
-      "mfa.require_recent_challenge"
-    ],
+    "traits": ["HasMfa"],
+    "attributes": ["AsMfaListener"],
+    "blueprints": ["webauthn-credentials"],
+    "middleware": ["mfa.require_challenge_complete", "mfa.require_recent_challenge"],
     "events": [
       "MfaEnrollmentPreviewIssued",
       "MfaEnrollmentConfirmed",
@@ -64,10 +46,7 @@
       "MfaBackupCodeCountLow",
       "MfaDisabled"
     ],
-    "policies": [
-      "MfaPolicy",
-      "WebauthnCredentialPolicy"
-    ],
+    "policies": ["MfaPolicy", "WebauthnCredentialPolicy"],
     "hooks": [],
     "commands": [
       "mfa:list-methods",
@@ -91,26 +70,12 @@
       "MfaChallengeSuspiciousActivityNotification"
     ],
     "broadcasts": [],
-    "observers": [
-      "WebauthnCredentialObserver",
-      "MfaChallengeObserver"
-    ],
-    "rules": [
-      "valid_totp_code",
-      "valid_recovery_code_format",
-      "valid_webauthn_credential_id"
-    ],
-    "casts": [
-      "WebauthnCredentialId",
-      "WebauthnPublicKey"
-    ],
+    "observers": ["WebauthnCredentialObserver", "MfaChallengeObserver"],
+    "rules": ["valid_totp_code", "valid_recovery_code_format", "valid_webauthn_credential_id"],
+    "casts": ["WebauthnCredentialId", "WebauthnPublicKey"],
     "views": [],
-    "lang": [
-      "mfa"
-    ],
-    "config": [
-      "mfa"
-    ],
+    "lang": ["mfa"],
+    "config": ["mfa"],
     "macros": [],
     "bindings": [
       "TotpChallenger",
@@ -126,10 +91,7 @@
       "WebauthnAttestationVerifier",
       "MfaSuspiciousActivityDetector"
     ],
-    "resources": [
-      "mfa-method",
-      "webauthn-credential"
-    ]
+    "resources": ["mfa-method", "webauthn-credential"]
   },
   "wraps": {
     "packages": [

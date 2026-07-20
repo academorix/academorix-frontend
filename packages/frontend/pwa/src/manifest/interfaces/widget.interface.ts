@@ -9,8 +9,8 @@
  *   ignore it.
  */
 
-import type { IManifestIcon } from './manifest-icon.interface';
-import type { IManifestScreenshot } from './manifest-screenshot.interface';
+import type { IManifestIcon } from "./manifest-icon.interface";
+import type { IManifestScreenshot } from "./manifest-screenshot.interface";
 
 /**
  * One widget declaration.

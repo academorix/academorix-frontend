@@ -139,12 +139,8 @@ describe("ShortcutCustomizationService", () => {
     // Pass registry + storage manager as the injected dependencies.
     // The service accepts both as constructor args.
     service = new ShortcutCustomizationService(
-      registry as unknown as ConstructorParameters<
-        typeof ShortcutCustomizationService
-      >[0],
-      storage as unknown as ConstructorParameters<
-        typeof ShortcutCustomizationService
-      >[1],
+      registry as unknown as ConstructorParameters<typeof ShortcutCustomizationService>[0],
+      storage as unknown as ConstructorParameters<typeof ShortcutCustomizationService>[1],
     );
   });
 
@@ -223,8 +219,7 @@ describe("ShortcutCustomizationService", () => {
       await flushMicrotasks();
 
       const stored = storage.instance("localStorage").snapshot().get("kbd:overrides") as
-        | Record<string, unknown>
-        | undefined;
+        Record<string, unknown> | undefined;
       expect(stored?.["editor.save"]).toBeUndefined();
     });
 
@@ -262,8 +257,7 @@ describe("ShortcutCustomizationService", () => {
       await flushMicrotasks();
 
       const stored = storage.instance("localStorage").snapshot().get("kbd:overrides") as
-        | Record<string, unknown>
-        | undefined;
+        Record<string, unknown> | undefined;
       expect(Object.keys(stored ?? {})).toHaveLength(0);
     });
   });
@@ -449,12 +443,8 @@ describe("ShortcutCustomizationService", () => {
       freshRegistry.seed([saveShortcut, copyShortcut, pasteShortcut]);
 
       const freshService = new ShortcutCustomizationService(
-        freshRegistry as unknown as ConstructorParameters<
-          typeof ShortcutCustomizationService
-        >[0],
-        seededStorage as unknown as ConstructorParameters<
-          typeof ShortcutCustomizationService
-        >[1],
+        freshRegistry as unknown as ConstructorParameters<typeof ShortcutCustomizationService>[0],
+        seededStorage as unknown as ConstructorParameters<typeof ShortcutCustomizationService>[1],
       );
 
       await freshService.onModuleInit();
@@ -473,12 +463,8 @@ describe("ShortcutCustomizationService", () => {
       freshRegistry.seed([saveShortcut, copyShortcut, pasteShortcut]);
 
       const freshService = new ShortcutCustomizationService(
-        freshRegistry as unknown as ConstructorParameters<
-          typeof ShortcutCustomizationService
-        >[0],
-        seededStorage as unknown as ConstructorParameters<
-          typeof ShortcutCustomizationService
-        >[1],
+        freshRegistry as unknown as ConstructorParameters<typeof ShortcutCustomizationService>[0],
+        seededStorage as unknown as ConstructorParameters<typeof ShortcutCustomizationService>[1],
       );
       await freshService.onModuleInit();
 
@@ -487,9 +473,7 @@ describe("ShortcutCustomizationService", () => {
 
     it("handles a missing storage manager gracefully (headless test)", async () => {
       const headlessService = new ShortcutCustomizationService(
-        registry as unknown as ConstructorParameters<
-          typeof ShortcutCustomizationService
-        >[0],
+        registry as unknown as ConstructorParameters<typeof ShortcutCustomizationService>[0],
       );
       await expect(headlessService.onModuleInit()).resolves.toBeUndefined();
     });

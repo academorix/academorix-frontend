@@ -48,7 +48,13 @@
           "kind": "Card",
           "props": { "className": "p-4 space-y-2" },
           "children": [
-            { "kind": "Text", "props": { "className": "text-xs text-muted uppercase", "children": "Evaluation notes" } },
+            {
+              "kind": "Text",
+              "props": {
+                "className": "text-xs text-muted uppercase",
+                "children": "Evaluation notes"
+              }
+            },
             { "kind": "Text", "bindings": { "children": { "$ref": "trial.evaluation_notes" } } }
           ]
         },
@@ -78,12 +84,22 @@
                       "kind": "Alert",
                       "props": { "variant": "info", "className": "text-sm mb-3" },
                       "children": [
-                        { "kind": "Text", "props": { "children": "Confirming will atomically create a TeamMember row and mark this trial converted. If capacity is exceeded or the person is already on the team, the whole transaction rolls back." } }
+                        {
+                          "kind": "Text",
+                          "props": {
+                            "children": "Confirming will atomically create a TeamMember row and mark this trial converted. If capacity is exceeded or the person is already on the team, the whole transaction rolls back."
+                          }
+                        }
                       ]
                     },
                     {
                       "kind": "ComboBox",
-                      "props": { "name": "role_on_team", "label": "Role on team", "menuTrigger": "focus", "defaultValue": "player" },
+                      "props": {
+                        "name": "role_on_team",
+                        "label": "Role on team",
+                        "menuTrigger": "focus",
+                        "defaultValue": "player"
+                      },
                       "props_items": [
                         { "id": "player", "label": "Player" },
                         { "id": "captain", "label": "Captain" },
@@ -94,12 +110,37 @@
                       "kind": "View",
                       "props": { "className": "grid grid-cols-2 gap-3" },
                       "children": [
-                        { "kind": "NumberField", "props": { "name": "jersey_number", "label": "Jersey number", "min": 0, "max": 999 } },
-                        { "kind": "TextField", "props": { "name": "position", "label": "Position", "maxLength": 64 } }
+                        {
+                          "kind": "NumberField",
+                          "props": {
+                            "name": "jersey_number",
+                            "label": "Jersey number",
+                            "min": 0,
+                            "max": 999
+                          }
+                        },
+                        {
+                          "kind": "TextField",
+                          "props": { "name": "position", "label": "Position", "maxLength": 64 }
+                        }
                       ]
                     },
-                    { "kind": "TextArea", "props": { "name": "notes", "label": "Decision notes (audit-only)", "rows": 3 } },
-                    { "kind": "Button", "props": { "type": "submit", "variant": "success", "children": "Convert to member" } }
+                    {
+                      "kind": "TextArea",
+                      "props": {
+                        "name": "notes",
+                        "label": "Decision notes (audit-only)",
+                        "rows": 3
+                      }
+                    },
+                    {
+                      "kind": "Button",
+                      "props": {
+                        "type": "submit",
+                        "variant": "success",
+                        "children": "Convert to member"
+                      }
+                    }
                   ]
                 }
               ]
@@ -117,7 +158,10 @@
                       "onSuccess": {
                         "kind": "toast.success",
                         "message": "Trial rejected. Trialist notified with standard template.",
-                        "then": { "kind": "navigate", "toExpr": "'/tenant/teams/' + team.id + '/trials'" }
+                        "then": {
+                          "kind": "navigate",
+                          "toExpr": "'/tenant/teams/' + team.id + '/trials'"
+                        }
                       },
                       "onError": { "kind": "toast.error" }
                     }
@@ -127,14 +171,28 @@
                       "kind": "Alert",
                       "props": { "variant": "warning", "className": "text-sm mb-3" },
                       "children": [
-                        { "kind": "Text", "props": { "children": "Decision notes are required. They are the audit + anti-discrimination defence record (retained 3 years). The trialist receives a fixed-template notification — decision_notes is NEVER surfaced to them." } }
+                        {
+                          "kind": "Text",
+                          "props": {
+                            "children": "Decision notes are required. They are the audit + anti-discrimination defence record (retained 3 years). The trialist receives a fixed-template notification — decision_notes is NEVER surfaced to them."
+                          }
+                        }
                       ]
                     },
                     {
                       "kind": "TextArea",
-                      "props": { "name": "notes", "label": "Decision notes", "required": true, "rows": 6, "helpText": "Clear, professional rationale. Describe skill / fit / age-eligibility observations. Never invoke protected characteristics as the basis." }
+                      "props": {
+                        "name": "notes",
+                        "label": "Decision notes",
+                        "required": true,
+                        "rows": 6,
+                        "helpText": "Clear, professional rationale. Describe skill / fit / age-eligibility observations. Never invoke protected characteristics as the basis."
+                      }
                     },
-                    { "kind": "Button", "props": { "type": "submit", "variant": "danger", "children": "Reject trial" } }
+                    {
+                      "kind": "Button",
+                      "props": { "type": "submit", "variant": "danger", "children": "Reject trial" }
+                    }
                   ]
                 }
               ]

@@ -11,11 +11,11 @@
  *   feature-detect.
  */
 
-import { Injectable, type OnModuleDestroy } from '@stackra/container';
-import type { ITabTransport, ITabTransportManager } from '@stackra/contracts';
+import { Injectable, type OnModuleDestroy } from "@stackra/container";
+import type { ITabTransport, ITabTransportManager } from "@stackra/contracts";
 
-import { BroadcastChannelTabTransport } from '@/core/transports/broadcast-channel-tab.transport';
-import { NoopTabTransport } from '@/core/transports/noop-tab.transport';
+import { BroadcastChannelTabTransport } from "@/core/transports/broadcast-channel-tab.transport";
+import { NoopTabTransport } from "@/core/transports/noop-tab.transport";
 
 /**
  * Cross-tab transport manager.
@@ -47,7 +47,7 @@ export class TabTransportManager implements ITabTransportManager, OnModuleDestro
 
   /** @inheritdoc */
   public isSupported(): boolean {
-    return typeof BroadcastChannel !== 'undefined';
+    return typeof BroadcastChannel !== "undefined";
   }
 
   /** @inheritdoc */

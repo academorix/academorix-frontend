@@ -6,14 +6,14 @@
  *   `@AnalyticsProvider()`-decorated instance with the manager.
  */
 
-import 'reflect-metadata';
-import { describe, it, expect, vi } from 'vitest';
-import type { IAnalyticsEvent, IAnalyticsManager, IAnalyticsProvider } from '@stackra/contracts';
+import "reflect-metadata";
+import { describe, it, expect, vi } from "vitest";
+import type { IAnalyticsEvent, IAnalyticsManager, IAnalyticsProvider } from "@stackra/contracts";
 
-import { AnalyticsProvider } from '@/core/decorators/analytics-provider.decorator';
-import { AnalyticsProviderLoader } from '@/core/services/analytics-provider-loader.service';
+import { AnalyticsProvider } from "@/core/decorators/analytics-provider.decorator";
+import { AnalyticsProviderLoader } from "@/core/services/analytics-provider-loader.service";
 
-import { MockDiscoveryService } from '../support/mock-discovery';
+import { MockDiscoveryService } from "../support/mock-discovery";
 
 // ════════════════════════════════════════════════════════════════════════════
 // Helpers
@@ -39,18 +39,18 @@ function makeStubManager(): IAnalyticsManager & { registered: IAnalyticsProvider
 // Test providers — decorated with the real @AnalyticsProvider() decorator.
 // ════════════════════════════════════════════════════════════════════════════
 
-@AnalyticsProvider({ name: 'good-provider' })
+@AnalyticsProvider({ name: "good-provider" })
 class GoodProvider implements IAnalyticsProvider {
-  public readonly name = 'good-provider';
+  public readonly name = "good-provider";
   public tracked: IAnalyticsEvent[] = [];
   public track(event: IAnalyticsEvent): void {
     this.tracked.push(event);
   }
 }
 
-@AnalyticsProvider({ name: 'another-provider' })
+@AnalyticsProvider({ name: "another-provider" })
 class AnotherProvider implements IAnalyticsProvider {
-  public readonly name = 'another-provider';
+  public readonly name = "another-provider";
   public track(): void {
     /* noop */
   }
@@ -58,16 +58,16 @@ class AnotherProvider implements IAnalyticsProvider {
 
 /** Undecorated class — must be ignored by the loader. */
 class UndecoratedProvider implements IAnalyticsProvider {
-  public readonly name = 'undecorated';
+  public readonly name = "undecorated";
   public track(): void {
     /* noop */
   }
 }
 
 /** Decorated but shaped wrong — no `.track()` — must be ignored. */
-@AnalyticsProvider({ name: 'malformed' })
+@AnalyticsProvider({ name: "malformed" })
 class MalformedProvider {
-  public readonly name = 'malformed';
+  public readonly name = "malformed";
   // No `track` method — loader rejects it.
 }
 
@@ -75,8 +75,8 @@ class MalformedProvider {
 // Specs
 // ════════════════════════════════════════════════════════════════════════════
 
-describe('AnalyticsProviderLoader', () => {
-  it('registers every @AnalyticsProvider()-decorated instance on bootstrap', () => {
+describe("AnalyticsProviderLoader", () => {
+  it("registers every @AnalyticsProvider()-decorated instance on bootstrap", () => {
     const manager = makeStubManager();
     const discovery = new MockDiscoveryService([
       { instance: new GoodProvider() },
@@ -87,10 +87,10 @@ describe('AnalyticsProviderLoader', () => {
     loader.onApplicationBootstrap();
 
     const names = manager.registered.map((p) => p.name).sort();
-    expect(names).toEqual(['another-provider', 'good-provider']);
+    expect(names).toEqual(["another-provider", "good-provider"]);
   });
 
-  it('is a no-op when the discovery service is not available', () => {
+  it("is a no-op when the discovery service is not available", () => {
     const manager = makeStubManager();
     // Simulates the `@Optional() @Inject(DISCOVERY_SERVICE)` path in a
     // container that has not bound the discovery service.
@@ -100,7 +100,7 @@ describe('AnalyticsProviderLoader', () => {
     expect(manager.registered).toHaveLength(0);
   });
 
-  it('skips instances that lack a `.track` method', () => {
+  it("skips instances that lack a `.track` method", () => {
     const manager = makeStubManager();
     const discovery = new MockDiscoveryService([
       { instance: new MalformedProvider() },
@@ -111,10 +111,10 @@ describe('AnalyticsProviderLoader', () => {
     loader.onApplicationBootstrap();
 
     // Malformed dropped, good survives.
-    expect(manager.registered.map((p) => p.name)).toEqual(['good-provider']);
+    expect(manager.registered.map((p) => p.name)).toEqual(["good-provider"]);
   });
 
-  it('ignores undecorated providers even when returned by discovery', () => {
+  it("ignores undecorated providers even when returned by discovery", () => {
     const manager = makeStubManager();
     // The mock returns only what matches the metadata key — an undecorated
     // class is filtered out at the discovery layer.

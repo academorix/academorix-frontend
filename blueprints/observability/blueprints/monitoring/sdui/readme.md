@@ -25,9 +25,9 @@ Tenant-facing alert policy CRUD. Owner + admin + ops.
 
 - `list.screen.json` — active policies with severity chip + last-triggered
   count.
-- `create.screen.json` — multi-step wizard: signal_type picker → signal_source
-  → threshold (operator + value + unit) → severity + window + consecutive
-  breaches → notification routing (provider picker) → suppression config.
+- `create.screen.json` — multi-step wizard: signal_type picker → signal_source →
+  threshold (operator + value + unit) → severity + window + consecutive breaches
+  → notification routing (provider picker) → suppression config.
 - `edit.screen.json` — same fields as create.
 
 ### `resources/monitoring-alert/`
@@ -45,10 +45,10 @@ Tenant-facing incident timeline management. Ops + admin + owner + support.
 
 - `list.screen.json` — filterable incident grid with severity chip + duration +
   attached alert count.
-- `detail.screen.json` — full timeline of the incident: attached alerts,
-  status transitions, ops actions. Postmortem link (P1 only).
-- `resolve.screen.json` — dedicated resolve flow with required note +
-  optional postmortem URL.
+- `detail.screen.json` — full timeline of the incident: attached alerts, status
+  transitions, ops actions. Postmortem link (P1 only).
+- `resolve.screen.json` — dedicated resolve flow with required note + optional
+  postmortem URL.
 
 ### `resources/monitoring-provider/`
 
@@ -67,20 +67,20 @@ Tenant-facing provider CRUD. Owner + admin.
 
 Tenant-facing aggregated monitoring dashboard. Ops + admin + owner + support.
 
-- `dashboard.screen.json` — top-level ops dashboard: health check summary
-  chart, active alerts by severity, open incidents count, MTTR trend, top 5
-  failing checks, provider health widget.
+- `dashboard.screen.json` — top-level ops dashboard: health check summary chart,
+  active alerts by severity, open incidents count, MTTR trend, top 5 failing
+  checks, provider health widget.
 
 ### `widgets/`
 
-- `severity-chip.widget.json` — colour-coded chip for severity (p1 danger,
-  p2 warning, p3 info, p4 neutral).
+- `severity-chip.widget.json` — colour-coded chip for severity (p1 danger, p2
+  warning, p3 info, p4 neutral).
 - `status-badge.widget.json` — colour-coded badge for alert status (firing
-  danger, acknowledged warning, resolved success, suppressed neutral) +
-  incident status (open danger, acknowledged warning, investigating info,
-  mitigating info, resolved success, postmortem neutral).
+  danger, acknowledged warning, resolved success, suppressed neutral) + incident
+  status (open danger, acknowledged warning, investigating info, mitigating
+  info, resolved success, postmortem neutral).
 - `provider-status-chip.widget.json` — colour-coded chip for provider health
-  (active + circuit-closed / active + circuit-half-open / active +
-  circuit-open / inactive).
+  (active + circuit-closed / active + circuit-half-open / active + circuit-open
+  / inactive).
 - `circuit-breaker-badge.widget.json` — dedicated badge showing circuit state
-  + open-until timestamp + consecutive_failure_count.
+  - open-until timestamp + consecutive_failure_count.

@@ -9,7 +9,13 @@
       "name": "Guardian Added",
       "kind": "track",
       "consent_required": "functional",
-      "properties": ["tenant_id", "relationship_bucket", "has_legal_custody", "is_primary_at_create", "athlete_is_minor"]
+      "properties": [
+        "tenant_id",
+        "relationship_bucket",
+        "has_legal_custody",
+        "is_primary_at_create",
+        "athlete_is_minor"
+      ]
     },
     {
       "name": "Guardian Removed",

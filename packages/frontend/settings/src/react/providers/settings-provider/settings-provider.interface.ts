@@ -4,8 +4,8 @@
  * @description Props accepted by `SettingsProvider`.
  */
 
-import type { ReactNode } from 'react';
-import type { ISettingDefinition } from '@stackra/contracts';
+import type { ReactNode } from "react";
+import type { ISettingDefinition } from "@stackra/contracts";
 
 /** Props accepted by `SettingsProvider`. */
 export interface ISettingsProviderProps {
@@ -37,7 +37,7 @@ export interface ISettingsProviderProps {
    *   loader is enabled and the UI must not render field
    *   descriptors that don't exist yet.
    */
-  readonly ready?: 'immediate' | 'waitSchema';
+  readonly ready?: "immediate" | "waitSchema";
 
   /**
    * Optional fallback rendered while `ready` is `false`. Only

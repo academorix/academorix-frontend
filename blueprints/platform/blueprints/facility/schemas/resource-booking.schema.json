@@ -47,7 +47,12 @@
   "x-database": {
     "engine": "postgres",
     "columns": {
-      "id": { "type": "string", "length": 64, "primary": true, "description": "Prefixed ULID: `bkg_<26>`." },
+      "id": {
+        "type": "string",
+        "length": 64,
+        "primary": true,
+        "description": "Prefixed ULID: `bkg_<26>`."
+      },
       "tenant_id": {
         "type": "string",
         "length": 64,
@@ -80,7 +85,12 @@
         "nullable": true,
         "description": "Wave 3 — team-level bookings. FK deferred until Teams module lands."
       },
-      "purpose": { "type": "string", "length": 500, "nullable": true, "description": "Free-form booker note." },
+      "purpose": {
+        "type": "string",
+        "length": 500,
+        "nullable": true,
+        "description": "Free-form booker note."
+      },
       "starts_at": {
         "type": "timestamptz",
         "nullable": false,
@@ -155,13 +165,34 @@
         "predicate": "status IN ('pending','confirmed') AND deleted_at IS NULL",
         "description": "COVERING INDEX for the SERIALIZABLE overlap check. Missing this index makes booking-create O(N) per facility — a p99 blowup."
       },
-      { "columns": ["tenant_id", "booked_by_user_id", "starts_at"], "name": "resource_bookings_by_booker_idx" },
-      { "columns": ["tenant_id", "booked_for_user_id", "starts_at"], "name": "resource_bookings_by_bookedfor_idx" },
+      {
+        "columns": ["tenant_id", "booked_by_user_id", "starts_at"],
+        "name": "resource_bookings_by_booker_idx"
+      },
+      {
+        "columns": ["tenant_id", "booked_for_user_id", "starts_at"],
+        "name": "resource_bookings_by_bookedfor_idx"
+      },
       { "columns": ["tenant_id", "status", "starts_at"], "name": "resource_bookings_status_idx" },
       { "columns": ["tenant_id", "created_at"], "name": "resource_bookings_recent_idx" }
     ]
   },
-  "required": ["id", "tenant_id", "facility_id", "booked_by_user_id", "starts_at", "ends_at", "duration_minutes", "status", "price_amount_cents", "price_currency", "payment_status", "attendees_count", "created_at", "updated_at"],
+  "required": [
+    "id",
+    "tenant_id",
+    "facility_id",
+    "booked_by_user_id",
+    "starts_at",
+    "ends_at",
+    "duration_minutes",
+    "status",
+    "price_amount_cents",
+    "price_currency",
+    "payment_status",
+    "attendees_count",
+    "created_at",
+    "updated_at"
+  ],
   "properties": {
     "id": { "type": "string", "pattern": "^bkg_[0-9A-HJKMNP-TV-Z]{26}$" },
     "tenant_id": { "type": "string", "pattern": "^ten_[0-9A-HJKMNP-TV-Z]{26}$" },
@@ -179,7 +210,10 @@
     },
     "cancellation_reason": { "type": ["string", "null"] },
     "cancelled_at": { "type": ["string", "null"], "format": "date-time" },
-    "cancelled_by_user_id": { "type": ["string", "null"], "pattern": "^usr_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "cancelled_by_user_id": {
+      "type": ["string", "null"],
+      "pattern": "^usr_[0-9A-HJKMNP-TV-Z]{26}$"
+    },
     "checked_in_at": { "type": ["string", "null"], "format": "date-time" },
     "completed_at": { "type": ["string", "null"], "format": "date-time" },
     "price_amount_cents": { "type": "integer", "minimum": 0 },

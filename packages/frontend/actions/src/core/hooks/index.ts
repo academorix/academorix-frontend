@@ -8,16 +8,16 @@
  *   `../../react/components/`, not here.
  */
 
-export { useActionDispatcher, type ActionDispatchCallback } from './use-action-dispatcher';
-export { useAction } from './use-action';
-export type { IUseActionResult, IUseActionState } from './use-action';
-export { useActionPress } from './use-action-press';
-export type { IUseActionPressOptions, IUseActionPressResult } from './use-action-press';
-export { useActionChange } from './use-action-change';
-export type { ActionChangeMapper, IUseActionChangeResult } from './use-action-change';
-export { useActionSelection } from './use-action-selection';
+export { useActionDispatcher, type ActionDispatchCallback } from "./use-action-dispatcher";
+export { useAction } from "./use-action";
+export type { IUseActionResult, IUseActionState } from "./use-action";
+export { useActionPress } from "./use-action-press";
+export type { IUseActionPressOptions, IUseActionPressResult } from "./use-action-press";
+export { useActionChange } from "./use-action-change";
+export type { ActionChangeMapper, IUseActionChangeResult } from "./use-action-change";
+export { useActionSelection } from "./use-action-selection";
 export type {
   ActionSelection,
   ActionSelectionMapper,
   IUseActionSelectionResult,
-} from './use-action-selection';
+} from "./use-action-selection";

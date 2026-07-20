@@ -42,7 +42,13 @@
       "outcome": "PaymentDisputeOutcome"
     },
     "observers": ["PaymentDisputeObserver"],
-    "appends": ["days_until_evidence_due", "is_closed", "is_won", "evidence_submitted", "escalated_to_chargeback"]
+    "appends": [
+      "days_until_evidence_due",
+      "is_closed",
+      "is_won",
+      "evidence_submitted",
+      "escalated_to_chargeback"
+    ]
   },
   "x-database": {
     "engine": "postgres",
@@ -161,11 +167,23 @@
       "updated_at": { "type": "timestamptz", "nullable": false }
     },
     "indexes": [
-      { "columns": ["tenant_id", "status", "evidence_due_by"], "name": "payment_disputes_evidence_due_idx", "description": "For NotifyDisputeEvidenceDueJob 3-day-lookahead sweep." },
+      {
+        "columns": ["tenant_id", "status", "evidence_due_by"],
+        "name": "payment_disputes_evidence_due_idx",
+        "description": "For NotifyDisputeEvidenceDueJob 3-day-lookahead sweep."
+      },
       { "columns": ["tenant_id", "payment_id"], "name": "payment_disputes_payment_idx" },
-      { "columns": ["tenant_id", "opened_at"], "name": "payment_disputes_opened_idx", "description": "For recent-disputes queries + monthly reporting." },
+      {
+        "columns": ["tenant_id", "opened_at"],
+        "name": "payment_disputes_opened_idx",
+        "description": "For recent-disputes queries + monthly reporting."
+      },
       { "columns": ["tenant_id", "status"], "name": "payment_disputes_status_idx" },
-      { "columns": ["provider_reference_id"], "name": "payment_disputes_provider_reference_idx", "description": "For webhook dispatch lookup." }
+      {
+        "columns": ["provider_reference_id"],
+        "name": "payment_disputes_provider_reference_idx",
+        "description": "For webhook dispatch lookup."
+      }
     ]
   },
   "required": [
@@ -193,11 +211,30 @@
     "provider_reference_id": { "type": "string", "minLength": 1, "maxLength": 128 },
     "reason": {
       "type": "string",
-      "enum": ["fraudulent", "duplicate", "product_not_received", "product_unacceptable", "subscription_canceled", "credit_not_processed", "general", "customer_initiated", "unrecognized"]
+      "enum": [
+        "fraudulent",
+        "duplicate",
+        "product_not_received",
+        "product_unacceptable",
+        "subscription_canceled",
+        "credit_not_processed",
+        "general",
+        "customer_initiated",
+        "unrecognized"
+      ]
     },
     "status": {
       "type": "string",
-      "enum": ["warning_needs_response", "warning_under_review", "warning_closed", "needs_response", "under_review", "charge_refunded", "won", "lost"]
+      "enum": [
+        "warning_needs_response",
+        "warning_under_review",
+        "warning_closed",
+        "needs_response",
+        "under_review",
+        "charge_refunded",
+        "won",
+        "lost"
+      ]
     },
     "amount_cents": { "type": "integer", "minimum": 0 },
     "currency": { "type": "string", "pattern": "^[A-Z]{3}$" },

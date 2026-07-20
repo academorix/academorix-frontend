@@ -6,5 +6,5 @@
  *   the active client.
  */
 
-export { AiDevtoolsPanel } from './ai.devtools-panel';
-export { AiDevtoolsPanelView, type AiDevtoolsPanelViewProps } from './ai-devtools-panel-view';
+export { AiDevtoolsPanel } from "./ai.devtools-panel";
+export { AiDevtoolsPanelView, type AiDevtoolsPanelViewProps } from "./ai-devtools-panel-view";

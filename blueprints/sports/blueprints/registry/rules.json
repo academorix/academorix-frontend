@@ -57,7 +57,12 @@
       "signature": "sport_key_registered[:scope]",
       "description": "Verifies that the sport_key exists in the tenant's merged catalog (platform-seeded + own tenant customs). Delegates to SportKeyResolver::resolve(). Default scope: `active` (rejects deactivated slugs). `historical` scope also accepts deactivated slugs (used when validating historical enrollment writes that reference an old sport_key).",
       "params": [
-        { "name": "scope", "type": "'active' | 'historical'", "default": "active", "description": "active = must be is_active=true; historical = accepts deactivated as well." }
+        {
+          "name": "scope",
+          "type": "'active' | 'historical'",
+          "default": "active",
+          "description": "active = must be is_active=true; historical = accepts deactivated as well."
+        }
       ],
       "example_field_rule": "sport_key: ['required', 'valid_sport_key', 'sport_key_registered']",
       "error_message_key": "sports_registry::validation.sport_key_registered",
@@ -69,7 +74,12 @@
       "signature": "discipline_belongs_to_sport:sport_key_field",
       "description": "Cross-field validator. Ensures the discipline_key is a real Discipline slug belonging to the Sport identified by the sport_key_field (e.g. `discipline_key=basketball_5v5` under `sport_key=basketball` — valid; `discipline_key=basketball_5v5` under `sport_key=football` — invalid).",
       "params": [
-        { "name": "sport_key_field", "type": "string", "default": "sport_key", "description": "Field name on the Data object holding the parent sport_key." }
+        {
+          "name": "sport_key_field",
+          "type": "string",
+          "default": "sport_key",
+          "description": "Field name on the Data object holding the parent sport_key."
+        }
       ],
       "example_field_rule": "discipline_key: ['nullable', 'valid_discipline_key', 'discipline_belongs_to_sport:sport_key']",
       "error_message_key": "sports_registry::validation.discipline_belongs_to_sport",
@@ -80,9 +90,7 @@
       "class": "Academorix\\Sports\\Registry\\Rules\\PositionBelongsToDiscipline",
       "signature": "position_belongs_to_discipline:discipline_key_field",
       "description": "Cross-field validator. Ensures the position_key is a real Position slug belonging to the Discipline identified by the discipline_key_field.",
-      "params": [
-        { "name": "discipline_key_field", "type": "string", "default": "discipline_key" }
-      ],
+      "params": [{ "name": "discipline_key_field", "type": "string", "default": "discipline_key" }],
       "example_field_rule": "position_key: ['nullable', 'valid_position_key', 'position_belongs_to_discipline:discipline_key']"
     }
   ]

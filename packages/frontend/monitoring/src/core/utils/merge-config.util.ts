@@ -5,12 +5,12 @@
  *   provider instances that are disabled or missing a required field.
  */
 
-import type { IMonitoringInstanceConfig, IMonitoringModuleOptions } from '../interfaces';
-import { DEFAULT_MONITORING_CONFIG, MONITORING_REQUIRED_FIELDS } from '../constants';
+import type { IMonitoringInstanceConfig, IMonitoringModuleOptions } from "../interfaces";
+import { DEFAULT_MONITORING_CONFIG, MONITORING_REQUIRED_FIELDS } from "../constants";
 
 /** Whether a value counts as "present" for a required field. */
 function isPresent(value: unknown): boolean {
-  return value !== undefined && value !== null && value !== '';
+  return value !== undefined && value !== null && value !== "";
 }
 
 /**

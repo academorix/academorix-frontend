@@ -43,7 +43,9 @@
     },
     {
       "entity": "cache keys (rgn:*)",
-      "hot": { "days": "seconds — TTL-driven (default_region_ttl_seconds=600, list_ttl_seconds=300)" },
+      "hot": {
+        "days": "seconds — TTL-driven (default_region_ttl_seconds=600, list_ttl_seconds=300)"
+      },
       "purge": {
         "trigger": "TTL expiry OR invalidation on Region mutation",
         "action": "Redis EXPIRE"

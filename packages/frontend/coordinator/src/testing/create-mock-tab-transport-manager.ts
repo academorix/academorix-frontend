@@ -5,9 +5,9 @@
  *   manager.
  */
 
-import { createAssertableProxy, type AssertableProxy } from '@stackra/testing';
+import { createAssertableProxy, type AssertableProxy } from "@stackra/testing";
 
-import { MockTabTransportManager } from './mock-tab-transport-manager';
+import { MockTabTransportManager } from "./mock-tab-transport-manager";
 
 /**
  * Create an assertable mock `ITabTransportManager`.

@@ -15,22 +15,22 @@
  *   `.kiro/steering/contract-reexports.md`.
  */
 
-import 'reflect-metadata';
+import "reflect-metadata";
 
 // ════════════════════════════════════════════════════════════════════
 // Module
 // ════════════════════════════════════════════════════════════════════
-export { DevtoolsModule } from './devtools.module';
+export { DevtoolsModule } from "./devtools.module";
 
 // ════════════════════════════════════════════════════════════════════
 // Decorators
 // ════════════════════════════════════════════════════════════════════
-export { DevtoolsPanel, DevtoolsInspectorSource } from './decorators';
+export { DevtoolsPanel, DevtoolsInspectorSource } from "./decorators";
 
 // ════════════════════════════════════════════════════════════════════
 // Registries — concrete classes (contract tokens live in contracts)
 // ════════════════════════════════════════════════════════════════════
-export { DevtoolsPanelsRegistry, DevtoolsInspectorRegistry } from './registries';
+export { DevtoolsPanelsRegistry, DevtoolsInspectorRegistry } from "./registries";
 
 // ════════════════════════════════════════════════════════════════════
 // Services
@@ -41,7 +41,7 @@ export {
   DevtoolsInspectorLoaderService,
   DevtoolsPanelsLoaderService,
   type DevtoolsFrameStateListener,
-} from './services';
+} from "./services";
 
 // ════════════════════════════════════════════════════════════════════
 // Constants — package-owned only
@@ -55,7 +55,7 @@ export {
   DEVTOOLS_FRAME_STATE_SERVICE,
   DEVTOOLS_PINNED_PANELS_KEY,
   DEVTOOLS_SIZE_BOUNDS,
-} from './constants';
+} from "./constants";
 
 // ════════════════════════════════════════════════════════════════════
 // Utilities
@@ -66,7 +66,7 @@ export {
   readInspectorSourceMetadata,
   readPanelMetadata,
   shouldEnableDevtools,
-} from './utils';
+} from "./utils";
 
 // ════════════════════════════════════════════════════════════════════
 // Interfaces + types — package-owned only
@@ -79,5 +79,5 @@ export type {
   IDevtoolsPanelOptions,
   IDevtoolsShellProps,
   IDevtoolsShortcut,
-} from './interfaces';
-export type { DevtoolsShellPosition } from './types';
+} from "./interfaces";
+export type { DevtoolsShellPosition } from "./types";

@@ -14,7 +14,7 @@
  *   a Node script generating the manifest at build time.
  */
 
-import type { IBuildManifestInput, IManifestShortcut, IWebAppManifest } from '../interfaces';
+import type { IBuildManifestInput, IManifestShortcut, IWebAppManifest } from "../interfaces";
 
 /**
  * Strip the caller's internal `id` field from every shortcut. Fresh
@@ -54,12 +54,12 @@ export function buildManifest(input: IBuildManifestInput): IWebAppManifest {
     version,
     author,
     lang,
-    dir = 'auto',
+    dir = "auto",
     translations,
-    startUrl = '/',
-    scope = '/',
+    startUrl = "/",
+    scope = "/",
     id,
-    display = 'standalone',
+    display = "standalone",
     displayOverride,
     orientation,
     themeColor,

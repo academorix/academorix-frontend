@@ -8,8 +8,8 @@
  * @category Transports
  */
 
-import type { CollaborationTransport } from '@/interfaces/transport.interface';
-import type { RoomMember } from '@/interfaces/room-member.interface';
+import type { CollaborationTransport } from "@/interfaces/transport.interface";
+import type { RoomMember } from "@/interfaces/room-member.interface";
 
 /**
  * In-memory mock transport for unit testing.
@@ -46,7 +46,7 @@ export class MockTransport implements CollaborationTransport {
   public async connect(
     roomId: string,
     _userId: string,
-    _userInfo: Record<string, unknown>
+    _userInfo: Record<string, unknown>,
   ): Promise<void> {
     this.connectedRooms.add(roomId);
   }
@@ -122,7 +122,7 @@ export class MockTransport implements CollaborationTransport {
   public onBroadcast(
     _roomId: string,
     _event: string,
-    _callback: (data: unknown, sender: RoomMember) => void
+    _callback: (data: unknown, sender: RoomMember) => void,
   ): () => void {
     return () => {};
   }
@@ -160,7 +160,7 @@ export class MockTransport implements CollaborationTransport {
    */
   public onStateChange<T>(
     _roomId: string,
-    _callback: (state: T, updatedBy: RoomMember) => void
+    _callback: (state: T, updatedBy: RoomMember) => void,
   ): () => void {
     return () => {};
   }

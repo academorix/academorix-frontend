@@ -5,4 +5,4 @@
  *   `@stackra/scope` (core) and `@stackra/scope/react` (web bindings).
  */
 
-export * from './core';
+export * from "./core";

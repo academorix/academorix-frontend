@@ -7,7 +7,14 @@
   "props": {
     "rewardType": {
       "type": "string",
-      "enum": ["percent_discount", "fixed_amount", "free_months", "free_sessions", "credits", "point_award"],
+      "enum": [
+        "percent_discount",
+        "fixed_amount",
+        "free_months",
+        "free_sessions",
+        "credits",
+        "point_award"
+      ],
       "required": true
     },
     "rewardAmount": { "type": "integer", "required": true, "minimum": 1 },

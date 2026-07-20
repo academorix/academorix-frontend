@@ -22,12 +22,12 @@
  * @module @stackra/http/connectors/fetch-connector
  */
 
-import { Injectable } from '@stackra/container';
-import { Str } from '@stackra/support';
+import { Injectable } from "@stackra/container";
+import { Str } from "@stackra/support";
 
-import type { IHttpConnector, IHttpContext, IHttpResponse } from '@stackra/contracts';
+import type { IHttpConnector, IHttpContext, IHttpResponse } from "@stackra/contracts";
 
-import { HttpDriverError } from '../errors';
+import { HttpDriverError } from "../errors";
 
 /**
  * Resolve the global `fetch`. Throws when the runtime doesn't ship
@@ -35,9 +35,9 @@ import { HttpDriverError } from '../errors';
  */
 function getFetch(): typeof fetch {
   const g = globalThis as { fetch?: typeof fetch };
-  if (typeof g.fetch !== 'function') {
+  if (typeof g.fetch !== "function") {
     throw new HttpDriverError(
-      "[FetchConnector] global 'fetch' is unavailable. Run on Node ≥ 18 or polyfill before use."
+      "[FetchConnector] global 'fetch' is unavailable. Run on Node ≥ 18 or polyfill before use.",
     );
   }
   return g.fetch;
@@ -76,13 +76,13 @@ export class FetchConnector implements IHttpConnector {
 
     if (!response.ok && response.status >= 400) {
       throw new HttpDriverError(
-        `[FetchConnector] streaming request failed with HTTP ${response.status} ${response.statusText}`
+        `[FetchConnector] streaming request failed with HTTP ${response.status} ${response.statusText}`,
       );
     }
 
     if (!response.body) {
       throw new HttpDriverError(
-        '[FetchConnector] response.body is missing — runtime does not expose a ReadableStream.'
+        "[FetchConnector] response.body is missing — runtime does not expose a ReadableStream.",
       );
     }
 
@@ -95,7 +95,7 @@ export class FetchConnector implements IHttpConnector {
    * @param body - `ReadableStream<Uint8Array>` from `fetch`.
    */
   private static async *streamFromBody(
-    body: ReadableStream<Uint8Array>
+    body: ReadableStream<Uint8Array>,
   ): AsyncIterable<Uint8Array> {
     const reader = body.getReader();
     try {
@@ -115,14 +115,14 @@ export class FetchConnector implements IHttpConnector {
    */
   private static buildUrl(context: IHttpContext): string {
     const { request } = context;
-    const path = request.url ?? '';
-    const base = request.baseURL ?? '';
+    const path = request.url ?? "";
+    const base = request.baseURL ?? "";
 
     let url: string;
-    if (path.startsWith('http://') || path.startsWith('https://')) {
+    if (path.startsWith("http://") || path.startsWith("https://")) {
       url = path;
     } else {
-      url = `${base.replace(/\/+$/, '')}/${path.replace(/^\/+/, '')}`;
+      url = `${base.replace(/\/+$/, "")}/${path.replace(/^\/+/, "")}`;
     }
 
     if (request.params && Object.keys(request.params).length > 0) {
@@ -135,7 +135,7 @@ export class FetchConnector implements IHttpConnector {
           search.append(key, String(value));
         }
       }
-      const sep = url.includes('?') ? '&' : '?';
+      const sep = url.includes("?") ? "&" : "?";
       url = `${url}${sep}${search.toString()}`;
     }
 
@@ -156,7 +156,7 @@ export class FetchConnector implements IHttpConnector {
     const body = FetchConnector.encodeBody(request.data, headers);
 
     const init: RequestInit = {
-      method: Str.upper(request.method ?? 'GET'),
+      method: Str.upper(request.method ?? "GET"),
       headers,
       signal: FetchConnector.combineTimeoutSignal(request.signal, request.timeout),
     };
@@ -188,14 +188,14 @@ export class FetchConnector implements IHttpConnector {
       data instanceof URLSearchParams ||
       data instanceof Blob ||
       data instanceof ArrayBuffer ||
-      typeof data === 'string' ||
+      typeof data === "string" ||
       ArrayBuffer.isView(data)
     ) {
       return data as BodyInit;
     }
 
-    if (!headers.has('Content-Type')) {
-      headers.set('Content-Type', 'application/json');
+    if (!headers.has("Content-Type")) {
+      headers.set("Content-Type", "application/json");
     }
     return JSON.stringify(data);
   }
@@ -205,15 +205,15 @@ export class FetchConnector implements IHttpConnector {
    */
   private static async decodeBody(response: Response, responseType?: string): Promise<unknown> {
     switch (responseType) {
-      case 'text':
+      case "text":
         return response.text();
-      case 'blob':
+      case "blob":
         return response.blob();
-      case 'arraybuffer':
+      case "arraybuffer":
         return response.arrayBuffer();
-      case 'stream':
+      case "stream":
         return response.body;
-      case 'json':
+      case "json":
       case undefined: {
         const text = await response.text();
         if (text.length === 0) return null;
@@ -234,7 +234,7 @@ export class FetchConnector implements IHttpConnector {
    */
   private static combineTimeoutSignal(
     signal: AbortSignal | undefined,
-    timeoutMs: number | undefined
+    timeoutMs: number | undefined,
   ): AbortSignal | undefined {
     if (!timeoutMs && !signal) return undefined;
     if (!timeoutMs) return signal;
@@ -246,7 +246,7 @@ export class FetchConnector implements IHttpConnector {
       if (signal.aborted) {
         controller.abort();
       } else {
-        signal.addEventListener('abort', onAbort, { once: true });
+        signal.addEventListener("abort", onAbort, { once: true });
       }
     }
 

@@ -7,12 +7,12 @@
  *   text block since React Native has no `<iframe>`.
  */
 
-import { type ReactElement, type ReactNode } from 'react';
-import { ScrollView, Text, View } from 'react-native';
-import { Button, Card } from '@stackra/ui/native';
-import type { IDevtoolsAction } from '@stackra/contracts';
+import { type ReactElement, type ReactNode } from "react";
+import { ScrollView, Text, View } from "react-native";
+import { Button, Card } from "@stackra/ui/native";
+import type { IDevtoolsAction } from "@stackra/contracts";
 
-import type { DevtoolsPanelViewProps } from './devtools-panel-view.interface';
+import type { DevtoolsPanelViewProps } from "./devtools-panel-view.interface";
 
 /** Safe cast — see the web version for the rationale. */
 function asReactNode(value: unknown): ReactNode {
@@ -24,14 +24,14 @@ function asReactNode(value: unknown): ReactNode {
  */
 export function DevtoolsPanelView({ panel }: DevtoolsPanelViewProps): ReactElement {
   switch (panel.view.type) {
-    case 'component': {
+    case "component": {
       return (
         <ScrollView>
           <View style={{ padding: 16 }}>{asReactNode(panel.view.render())}</View>
         </ScrollView>
       );
     }
-    case 'action': {
+    case "action": {
       return (
         <ScrollView>
           <View style={{ gap: 12, padding: 16 }}>
@@ -45,7 +45,7 @@ export function DevtoolsPanelView({ panel }: DevtoolsPanelViewProps): ReactEleme
                 </Card.Header>
                 <Card.Footer>
                   <Button
-                    variant={action.variant === 'danger' ? 'danger' : 'primary'}
+                    variant={action.variant === "danger" ? "danger" : "primary"}
                     onPress={() => {
                       void action.handle();
                     }}
@@ -59,7 +59,7 @@ export function DevtoolsPanelView({ panel }: DevtoolsPanelViewProps): ReactEleme
         </ScrollView>
       );
     }
-    case 'iframe':
+    case "iframe":
     default: {
       return (
         <View style={{ padding: 16 }}>

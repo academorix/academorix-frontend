@@ -6,21 +6,153 @@
   "isSystem": true,
   "description": "Every staff role sees + comments on tasks they're assigned to or watching. Only managers create/assign to other users. Guardians never touch tasks (internal-only concept).",
   "permissions": [
-    { "name": "tasks.viewAny", "guard": "sanctum", "description": "Narrows by assignment: user sees tasks they're an assignee/collaborator/watcher of, unless they hold viewAll below.", "seededOn": ["admin", "owner", "manager", "staff", "coach", "receptionist", "finance", "support"] },
-    { "name": "tasks.viewAll", "guard": "sanctum", "description": "See every task in the tenant regardless of assignment.", "seededOn": ["admin", "owner", "manager"] },
-    { "name": "tasks.view", "guard": "sanctum", "seededOn": ["admin", "owner", "manager", "staff", "coach", "receptionist", "finance", "support"] },
-    { "name": "tasks.create", "guard": "sanctum", "seededOn": ["admin", "owner", "manager", "staff", "coach", "receptionist", "finance"] },
-    { "name": "tasks.update", "guard": "sanctum", "description": "Update task fields (title/description/priority/due).", "seededOn": ["admin", "owner", "manager", "staff", "coach", "receptionist", "finance"] },
-    { "name": "tasks.delete", "guard": "sanctum", "description": "Soft-delete.", "seededOn": ["admin", "owner", "manager"] },
-    { "name": "tasks.complete", "guard": "sanctum", "seededOn": ["admin", "owner", "manager", "staff", "coach", "receptionist", "finance"] },
+    {
+      "name": "tasks.viewAny",
+      "guard": "sanctum",
+      "description": "Narrows by assignment: user sees tasks they're an assignee/collaborator/watcher of, unless they hold viewAll below.",
+      "seededOn": [
+        "admin",
+        "owner",
+        "manager",
+        "staff",
+        "coach",
+        "receptionist",
+        "finance",
+        "support"
+      ]
+    },
+    {
+      "name": "tasks.viewAll",
+      "guard": "sanctum",
+      "description": "See every task in the tenant regardless of assignment.",
+      "seededOn": ["admin", "owner", "manager"]
+    },
+    {
+      "name": "tasks.view",
+      "guard": "sanctum",
+      "seededOn": [
+        "admin",
+        "owner",
+        "manager",
+        "staff",
+        "coach",
+        "receptionist",
+        "finance",
+        "support"
+      ]
+    },
+    {
+      "name": "tasks.create",
+      "guard": "sanctum",
+      "seededOn": ["admin", "owner", "manager", "staff", "coach", "receptionist", "finance"]
+    },
+    {
+      "name": "tasks.update",
+      "guard": "sanctum",
+      "description": "Update task fields (title/description/priority/due).",
+      "seededOn": ["admin", "owner", "manager", "staff", "coach", "receptionist", "finance"]
+    },
+    {
+      "name": "tasks.delete",
+      "guard": "sanctum",
+      "description": "Soft-delete.",
+      "seededOn": ["admin", "owner", "manager"]
+    },
+    {
+      "name": "tasks.complete",
+      "guard": "sanctum",
+      "seededOn": ["admin", "owner", "manager", "staff", "coach", "receptionist", "finance"]
+    },
     { "name": "tasks.cancel", "guard": "sanctum", "seededOn": ["admin", "owner", "manager"] },
-    { "name": "task-assignments.create", "guard": "sanctum", "description": "Assign a task to a user.", "seededOn": ["admin", "owner", "manager"] },
-    { "name": "task-assignments.update", "guard": "sanctum", "seededOn": ["admin", "owner", "manager"] },
-    { "name": "task-assignments.delete", "guard": "sanctum", "seededOn": ["admin", "owner", "manager"] },
-    { "name": "task-assignments.accept", "guard": "sanctum", "description": "Assignee accepts their own assignment.", "seededOn": ["admin", "owner", "manager", "staff", "coach", "receptionist", "finance", "support"] },
-    { "name": "task-assignments.decline", "guard": "sanctum", "seededOn": ["admin", "owner", "manager", "staff", "coach", "receptionist", "finance", "support"] },
-    { "name": "task-comments.create", "guard": "sanctum", "description": "Comment on tasks user has access to.", "seededOn": ["admin", "owner", "manager", "staff", "coach", "receptionist", "finance", "support"] },
-    { "name": "task-comments.update", "guard": "sanctum", "description": "Edit own comment within 15 minutes of creation.", "seededOn": ["admin", "owner", "manager", "staff", "coach", "receptionist", "finance", "support"] },
-    { "name": "task-comments.delete", "guard": "sanctum", "description": "Soft-delete own comment.", "seededOn": ["admin", "owner", "manager", "staff", "coach", "receptionist", "finance", "support"] }
+    {
+      "name": "task-assignments.create",
+      "guard": "sanctum",
+      "description": "Assign a task to a user.",
+      "seededOn": ["admin", "owner", "manager"]
+    },
+    {
+      "name": "task-assignments.update",
+      "guard": "sanctum",
+      "seededOn": ["admin", "owner", "manager"]
+    },
+    {
+      "name": "task-assignments.delete",
+      "guard": "sanctum",
+      "seededOn": ["admin", "owner", "manager"]
+    },
+    {
+      "name": "task-assignments.accept",
+      "guard": "sanctum",
+      "description": "Assignee accepts their own assignment.",
+      "seededOn": [
+        "admin",
+        "owner",
+        "manager",
+        "staff",
+        "coach",
+        "receptionist",
+        "finance",
+        "support"
+      ]
+    },
+    {
+      "name": "task-assignments.decline",
+      "guard": "sanctum",
+      "seededOn": [
+        "admin",
+        "owner",
+        "manager",
+        "staff",
+        "coach",
+        "receptionist",
+        "finance",
+        "support"
+      ]
+    },
+    {
+      "name": "task-comments.create",
+      "guard": "sanctum",
+      "description": "Comment on tasks user has access to.",
+      "seededOn": [
+        "admin",
+        "owner",
+        "manager",
+        "staff",
+        "coach",
+        "receptionist",
+        "finance",
+        "support"
+      ]
+    },
+    {
+      "name": "task-comments.update",
+      "guard": "sanctum",
+      "description": "Edit own comment within 15 minutes of creation.",
+      "seededOn": [
+        "admin",
+        "owner",
+        "manager",
+        "staff",
+        "coach",
+        "receptionist",
+        "finance",
+        "support"
+      ]
+    },
+    {
+      "name": "task-comments.delete",
+      "guard": "sanctum",
+      "description": "Soft-delete own comment.",
+      "seededOn": [
+        "admin",
+        "owner",
+        "manager",
+        "staff",
+        "coach",
+        "receptionist",
+        "finance",
+        "support"
+      ]
+    }
   ]
 }

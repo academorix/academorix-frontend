@@ -1,9 +1,11 @@
 {
-  "extends": "../../tsconfig.base.json",
+  "extends": "@academorix/config-tsconfig/base",
   "compilerOptions": {
     "types": ["node"],
     "rootDir": ".",
-    "paths": { "@/*": ["./src/*"] },
+    "paths": {
+      "@/*": ["./src/*"]
+    },
     "outDir": "./dist"
   },
   "include": ["src/**/*"],

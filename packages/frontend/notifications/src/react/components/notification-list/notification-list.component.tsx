@@ -10,11 +10,11 @@
  *   screen readers announce "list of N notifications".
  */
 
-import type { ReactElement } from 'react';
+import type { ReactElement } from "react";
 
-import { NotificationEmptyState } from '../notification-empty-state';
-import { NotificationRow } from '../notification-row';
-import type { NotificationListProps } from './notification-list.interface';
+import { NotificationEmptyState } from "../notification-empty-state";
+import { NotificationRow } from "../notification-row";
+import type { NotificationListProps } from "./notification-list.interface";
 
 /**
  * The list body.
@@ -32,7 +32,7 @@ import type { NotificationListProps } from './notification-list.interface';
 export function NotificationList({
   entries,
   onRowAction,
-  emptyVariant = 'drawer',
+  emptyVariant = "drawer",
   writer,
   now,
   className,
@@ -48,7 +48,7 @@ export function NotificationList({
   return (
     <ul
       aria-label="Notifications"
-      className={`divide-y divide-border overflow-y-auto${className ? ` ${className}` : ''}`}
+      className={`divide-border divide-y overflow-y-auto${className ? ` ${className}` : ""}`}
       data-notifications-list=""
     >
       {entries.map((entry) => (

@@ -88,10 +88,7 @@
       "class": "Academorix\\Finance\\Invoice\\Events\\InvoiceViewed",
       "trigger": "POST /invoices/{invoice}/mark-viewed OR the email-tracking pixel fired. Sets invoices.viewed_by_customer_at on FIRST view; subsequent views are idempotent (no re-fire).",
       "queue": "invoice",
-      "consumers": [
-        "activity::WriteToActivityLog",
-        "monitoring::MetricsCollector"
-      ],
+      "consumers": ["activity::WriteToActivityLog", "monitoring::MetricsCollector"],
       "payload": {
         "invoice_id": "ULID",
         "tenant_id": "ULID",
@@ -273,10 +270,7 @@
       "class": "Academorix\\Finance\\Invoice\\Events\\InvoiceDunningEscalated",
       "trigger": "DispatchDunningRemindersJob progressed to a later stage of the dunning cadence (day+3 → day+7 → day+14 → day+30 → day+60). Each escalation fires once.",
       "queue": "invoice",
-      "consumers": [
-        "audit::WriteToAuditLog",
-        "monitoring::MetricsCollector"
-      ],
+      "consumers": ["audit::WriteToAuditLog", "monitoring::MetricsCollector"],
       "payload": {
         "invoice_id": "ULID",
         "tenant_id": "ULID",

@@ -6,7 +6,7 @@
  *   extension.
  */
 
-import type { IManifestIcon } from './manifest-icon.interface';
+import type { IManifestIcon } from "./manifest-icon.interface";
 
 /**
  * One entry in the `file_handlers` array.
@@ -30,5 +30,5 @@ export interface IFileHandler {
    * `'multiple-clients'` opens one instance per file. Chromium
    * defaults to `'single-client'` when omitted.
    */
-  readonly launch_type?: 'single-client' | 'multiple-clients';
+  readonly launch_type?: "single-client" | "multiple-clients";
 }

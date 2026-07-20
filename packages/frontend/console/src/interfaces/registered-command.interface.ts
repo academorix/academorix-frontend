@@ -6,6 +6,7 @@
 
 import type { IArgumentDefinition } from "./argument-definition.interface";
 import type { IOptionDefinition } from "./option-definition.interface";
+import type { Type } from "@stackra/contracts";
 
 /**
  * A fully resolved and registered command entry.
@@ -29,8 +30,13 @@ export interface IRegisteredCommand {
   /** Named option definitions. */
   options: IOptionDefinition[];
 
-  /** Reference to the command class constructor. */
-  classRef: Function;
+  /**
+   * Reference to the command class constructor. Typed as `Type<unknown>`
+   * because the registry stores every `@Command`-decorated class and
+   * consumers narrow to `BaseCommand` at the dispatch site — importing
+   * `BaseCommand` here would create a cycle (registry → base → registry).
+   */
+  classRef: Type<unknown>;
 
   /** Source package name for attribution in help output. */
   sourcePackage?: string;

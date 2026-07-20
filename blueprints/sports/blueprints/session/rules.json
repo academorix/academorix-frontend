@@ -69,9 +69,7 @@
       "class": "Academorix\\Sports\\Session\\Rules\\ValidSessionStatusTransition",
       "signature": "valid_session_status_transition:from",
       "description": "Ensures target status is a valid transition from the current status per the state machine.",
-      "params": [
-        { "name": "from", "type": "string", "description": "Current status." }
-      ],
+      "params": [{ "name": "from", "type": "string", "description": "Current status." }],
       "example_field_rule": "status: ['required', 'valid_session_status_transition:scheduled']"
     },
     {

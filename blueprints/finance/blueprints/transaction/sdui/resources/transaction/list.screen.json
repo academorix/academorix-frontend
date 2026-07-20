@@ -37,8 +37,21 @@
             {
               "kind": "View",
               "children": [
-                { "kind": "Text", "props": { "as": "h1", "className": "text-2xl font-semibold", "children": "Transactions" } },
-                { "kind": "Text", "props": { "className": "text-sm text-muted", "children": "Every money movement recorded to the ledger. Immutable after post — corrections happen via new offsetting transactions." } }
+                {
+                  "kind": "Text",
+                  "props": {
+                    "as": "h1",
+                    "className": "text-2xl font-semibold",
+                    "children": "Transactions"
+                  }
+                },
+                {
+                  "kind": "Text",
+                  "props": {
+                    "className": "text-sm text-muted",
+                    "children": "Every money movement recorded to the ledger. Immutable after post — corrections happen via new offsetting transactions."
+                  }
+                }
               ]
             },
             {
@@ -46,7 +59,12 @@
               "bindings": { "hidden": { "$expr": "!$ref('halt_flag')" } },
               "props": { "variant": "danger", "title": "Ledger halted", "className": "max-w-md" },
               "children": [
-                { "kind": "Text", "props": { "children": "New transactions are refused until the current imbalance is resolved. Contact ops." } }
+                {
+                  "kind": "Text",
+                  "props": {
+                    "children": "New transactions are refused until the current imbalance is resolved. Contact ops."
+                  }
+                }
               ]
             }
           ]
@@ -60,7 +78,11 @@
               "props": { "label": "Kind", "menuTrigger": "focus", "className": "min-w-56" },
               "props_items_source": "transaction.kind-catalog",
               "actions": {
-                "onSelectionChange": { "kind": "filter.set", "field": "kind", "valueExpr": "$selectedKey" }
+                "onSelectionChange": {
+                  "kind": "filter.set",
+                  "field": "kind",
+                  "valueExpr": "$selectedKey"
+                }
               }
             },
             {
@@ -68,12 +90,20 @@
               "props": { "label": "Currency", "menuTrigger": "focus", "className": "min-w-32" },
               "props_items_source": "iso4217.currencies",
               "actions": {
-                "onSelectionChange": { "kind": "filter.set", "field": "currency", "valueExpr": "$selectedKey" }
+                "onSelectionChange": {
+                  "kind": "filter.set",
+                  "field": "currency",
+                  "valueExpr": "$selectedKey"
+                }
               }
             },
             {
               "kind": "ComboBox",
-              "props": { "label": "Reference type", "menuTrigger": "focus", "className": "min-w-48" },
+              "props": {
+                "label": "Reference type",
+                "menuTrigger": "focus",
+                "className": "min-w-48"
+              },
               "props_items": [
                 { "id": "Invoice", "label": "Invoice" },
                 { "id": "Payment", "label": "Payment" },
@@ -83,7 +113,11 @@
                 { "id": "TaxRemittance", "label": "Tax remittance" }
               ],
               "actions": {
-                "onSelectionChange": { "kind": "filter.set", "field": "reference_type", "valueExpr": "$selectedKey" }
+                "onSelectionChange": {
+                  "kind": "filter.set",
+                  "field": "reference_type",
+                  "valueExpr": "$selectedKey"
+                }
               }
             },
             {
@@ -107,14 +141,65 @@
           "props": {
             "className": "w-full",
             "columns": [
-              { "field": "transaction_number", "label": "Number", "sortable": true, "width": 180, "renderer": { "kind": "Text", "className": "font-mono text-sm" } },
-              { "field": "kind", "label": "Kind", "sortable": true, "width": 160, "renderer": { "widget": "transaction.kind-chip" } },
-              { "field": "amount_cents", "label": "Amount", "sortable": true, "width": 140, "renderer": { "kind": "Text", "formatter": "currency", "className": "text-right font-mono" } },
+              {
+                "field": "transaction_number",
+                "label": "Number",
+                "sortable": true,
+                "width": 180,
+                "renderer": { "kind": "Text", "className": "font-mono text-sm" }
+              },
+              {
+                "field": "kind",
+                "label": "Kind",
+                "sortable": true,
+                "width": 160,
+                "renderer": { "widget": "transaction.kind-chip" }
+              },
+              {
+                "field": "amount_cents",
+                "label": "Amount",
+                "sortable": true,
+                "width": 140,
+                "renderer": {
+                  "kind": "Text",
+                  "formatter": "currency",
+                  "className": "text-right font-mono"
+                }
+              },
               { "field": "currency", "label": "Currency", "width": 90 },
               { "field": "reference_type", "label": "Reference", "width": 140 },
-              { "field": "reversal_reason", "label": "Reversal", "width": 140, "renderer": { "kind": "Text", "conditionalClass": { "$ref": "row.reversal_reason", "map": { "refund": "text-warning", "chargeback": "text-danger", "error_correction": "text-info", "accounting_adjustment": "text-neutral" } } } },
-              { "field": "effective_date", "label": "Effective", "sortable": true, "defaultSort": "desc", "width": 140, "formatter": "date" },
-              { "field": "posted_at", "label": "Posted", "sortable": true, "width": 160, "formatter": "datetime-relative" }
+              {
+                "field": "reversal_reason",
+                "label": "Reversal",
+                "width": 140,
+                "renderer": {
+                  "kind": "Text",
+                  "conditionalClass": {
+                    "$ref": "row.reversal_reason",
+                    "map": {
+                      "refund": "text-warning",
+                      "chargeback": "text-danger",
+                      "error_correction": "text-info",
+                      "accounting_adjustment": "text-neutral"
+                    }
+                  }
+                }
+              },
+              {
+                "field": "effective_date",
+                "label": "Effective",
+                "sortable": true,
+                "defaultSort": "desc",
+                "width": 140,
+                "formatter": "date"
+              },
+              {
+                "field": "posted_at",
+                "label": "Posted",
+                "sortable": true,
+                "width": 160,
+                "formatter": "datetime-relative"
+              }
             ],
             "onRowPress": {
               "kind": "navigate",
@@ -125,9 +210,24 @@
             "kind": "View",
             "props": { "className": "text-center py-12" },
             "children": [
-              { "kind": "Icon", "props": { "name": "banknotes", "className": "size-12 mx-auto text-muted" } },
-              { "kind": "Text", "props": { "className": "mt-4 text-lg font-medium", "children": "No transactions yet" } },
-              { "kind": "Text", "props": { "className": "text-sm text-muted", "children": "Transactions appear here as money moves through invoices, refunds, chargebacks, and coupon redemptions." } }
+              {
+                "kind": "Icon",
+                "props": { "name": "banknotes", "className": "size-12 mx-auto text-muted" }
+              },
+              {
+                "kind": "Text",
+                "props": {
+                  "className": "mt-4 text-lg font-medium",
+                  "children": "No transactions yet"
+                }
+              },
+              {
+                "kind": "Text",
+                "props": {
+                  "className": "text-sm text-muted",
+                  "children": "Transactions appear here as money moves through invoices, refunds, chargebacks, and coupon redemptions."
+                }
+              }
             ]
           }
         }

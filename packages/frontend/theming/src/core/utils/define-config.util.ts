@@ -4,7 +4,7 @@
  * @description Identity passthrough utility for type-safe config files.
  */
 
-import type { IThemingModuleOptions } from '../interfaces';
+import type { IThemingModuleOptions } from "../interfaces";
 
 // ============================================================================
 // Utility

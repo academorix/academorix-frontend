@@ -58,7 +58,7 @@ export const JsonViewSection = React.memo(function JsonViewSection({
       onExpandedChange={setIsExpanded}
     >
       <Disclosure.Heading>
-        <Disclosure.Trigger className="border-default-200 hover:bg-default-50 flex w-full items-center justify-between rounded-lg border px-4 py-3 text-sm font-medium text-foreground transition-colors">
+        <Disclosure.Trigger className="border-default-200 hover:bg-default-50 text-foreground flex w-full items-center justify-between rounded-lg border px-4 py-3 text-sm font-medium transition-colors">
           <span>{title}</span>
           <Disclosure.Indicator />
         </Disclosure.Trigger>

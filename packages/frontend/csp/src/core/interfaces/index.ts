@@ -4,5 +4,5 @@
  * @description Interfaces barrel export.
  */
 
-export type { CspModuleOptions } from './csp-module-options.interface';
-export type { CspFeaturePolicy } from './csp-feature-policy.interface';
+export type { CspModuleOptions } from "./csp-module-options.interface";
+export type { CspFeaturePolicy } from "./csp-feature-policy.interface";

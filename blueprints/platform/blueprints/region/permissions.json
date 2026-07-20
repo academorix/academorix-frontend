@@ -6,22 +6,99 @@
   "isSystem": true,
   "scope_suffix_convention": "Every read permission may be seeded WITH a scope suffix (`.any`, `.tenant`). The base permission (no suffix) is the highest-tier variant, effectively `.tenant`. The ScopeSuffixResolver (shipped by the user module, consumed by every base repository) applies the corresponding WHERE clause at query build time. Region has no `.branch` / `.own` variants — regions are tenant-wide reference data + not branch-scoped.",
   "permissions": [
-    { "name": "regions.viewAny", "guard": "sanctum", "seededOn": ["admin", "owner", "member", "coach", "reception", "athlete", "guardian"], "description": "Every tenant role reads the region list — regions are UI reference data (every currency + timezone + tax dropdown reads them)." },
-    { "name": "regions.viewAny.tenant", "guard": "sanctum", "seededOn": ["admin", "owner", "member", "coach", "reception", "athlete", "guardian"] },
-    { "name": "regions.view", "guard": "sanctum", "seededOn": ["admin", "owner", "member", "coach", "reception", "athlete", "guardian"], "description": "Single-row read. tax_config.registration_number is redacted unless the caller ALSO carries `regions.view.tax_registration`." },
-    { "name": "regions.view.tax_registration", "guard": "sanctum", "seededOn": ["admin", "owner"], "description": "Unredacted read of `tax_config.registration_number` (confidential-tier). Admin + owner only." },
-    { "name": "regions.create", "guard": "sanctum", "seededOn": ["admin", "owner"], "description": "Consumes 1 unit of the region_slot entitlement." },
-    { "name": "regions.update", "guard": "sanctum", "seededOn": ["admin", "owner"], "description": "Mutable fields: name, slug, timezone, locale, weekend_days, sort_order, subdivision_code, fiscal_year_start_month. tax_config edits require the higher `regions.update.tax_config` permission." },
-    { "name": "regions.update.tax_config", "guard": "sanctum", "seededOn": ["admin", "owner"], "description": "Separated from base update — tax_config mutations produce financial-record audit rows (7-year retention). Admin + owner." },
-    { "name": "regions.set_default", "guard": "sanctum", "seededOn": ["owner"], "description": "Flip is_default. Owner-only — the default region drives invoice calculations for legacy rows." },
-    { "name": "regions.pause", "guard": "sanctum", "seededOn": ["admin", "owner"], "description": "Status → paused. Refused when is_default=true." },
+    {
+      "name": "regions.viewAny",
+      "guard": "sanctum",
+      "seededOn": ["admin", "owner", "member", "coach", "reception", "athlete", "guardian"],
+      "description": "Every tenant role reads the region list — regions are UI reference data (every currency + timezone + tax dropdown reads them)."
+    },
+    {
+      "name": "regions.viewAny.tenant",
+      "guard": "sanctum",
+      "seededOn": ["admin", "owner", "member", "coach", "reception", "athlete", "guardian"]
+    },
+    {
+      "name": "regions.view",
+      "guard": "sanctum",
+      "seededOn": ["admin", "owner", "member", "coach", "reception", "athlete", "guardian"],
+      "description": "Single-row read. tax_config.registration_number is redacted unless the caller ALSO carries `regions.view.tax_registration`."
+    },
+    {
+      "name": "regions.view.tax_registration",
+      "guard": "sanctum",
+      "seededOn": ["admin", "owner"],
+      "description": "Unredacted read of `tax_config.registration_number` (confidential-tier). Admin + owner only."
+    },
+    {
+      "name": "regions.create",
+      "guard": "sanctum",
+      "seededOn": ["admin", "owner"],
+      "description": "Consumes 1 unit of the region_slot entitlement."
+    },
+    {
+      "name": "regions.update",
+      "guard": "sanctum",
+      "seededOn": ["admin", "owner"],
+      "description": "Mutable fields: name, slug, timezone, locale, weekend_days, sort_order, subdivision_code, fiscal_year_start_month. tax_config edits require the higher `regions.update.tax_config` permission."
+    },
+    {
+      "name": "regions.update.tax_config",
+      "guard": "sanctum",
+      "seededOn": ["admin", "owner"],
+      "description": "Separated from base update — tax_config mutations produce financial-record audit rows (7-year retention). Admin + owner."
+    },
+    {
+      "name": "regions.set_default",
+      "guard": "sanctum",
+      "seededOn": ["owner"],
+      "description": "Flip is_default. Owner-only — the default region drives invoice calculations for legacy rows."
+    },
+    {
+      "name": "regions.pause",
+      "guard": "sanctum",
+      "seededOn": ["admin", "owner"],
+      "description": "Status → paused. Refused when is_default=true."
+    },
     { "name": "regions.resume", "guard": "sanctum", "seededOn": ["admin", "owner"] },
-    { "name": "regions.archive", "guard": "sanctum", "seededOn": ["admin", "owner"], "description": "Refused when is_default=true OR when inbound rows exist." },
-    { "name": "regions.restore", "guard": "sanctum", "seededOn": ["admin", "owner"], "description": "Reverse of archive. Only within the 730-day retention window." },
-    { "name": "regions.delete", "guard": "sanctum", "seededOn": ["owner"], "description": "Owner only. Same guards as archive — plus the hard-delete happens only via PurgeArchivedRegionsJob after retention window." },
-    { "name": "regions.manage", "guard": "sanctum", "seededOn": ["admin", "owner"], "description": "Umbrella permission for the settings blueprint gate. Admin + owner." },
-    { "name": "platform.regions.viewAny", "guard": "platform_admin", "seededOn": ["super_admin", "ops", "support"] },
-    { "name": "platform.regions.view", "guard": "platform_admin", "seededOn": ["super_admin", "ops", "support"] },
-    { "name": "platform.regions.view.tax_registration", "guard": "platform_admin", "seededOn": ["super_admin", "ops"], "description": "Support-tier does NOT carry unredacted tax registration reads." }
+    {
+      "name": "regions.archive",
+      "guard": "sanctum",
+      "seededOn": ["admin", "owner"],
+      "description": "Refused when is_default=true OR when inbound rows exist."
+    },
+    {
+      "name": "regions.restore",
+      "guard": "sanctum",
+      "seededOn": ["admin", "owner"],
+      "description": "Reverse of archive. Only within the 730-day retention window."
+    },
+    {
+      "name": "regions.delete",
+      "guard": "sanctum",
+      "seededOn": ["owner"],
+      "description": "Owner only. Same guards as archive — plus the hard-delete happens only via PurgeArchivedRegionsJob after retention window."
+    },
+    {
+      "name": "regions.manage",
+      "guard": "sanctum",
+      "seededOn": ["admin", "owner"],
+      "description": "Umbrella permission for the settings blueprint gate. Admin + owner."
+    },
+    {
+      "name": "platform.regions.viewAny",
+      "guard": "platform_admin",
+      "seededOn": ["super_admin", "ops", "support"]
+    },
+    {
+      "name": "platform.regions.view",
+      "guard": "platform_admin",
+      "seededOn": ["super_admin", "ops", "support"]
+    },
+    {
+      "name": "platform.regions.view.tax_registration",
+      "guard": "platform_admin",
+      "seededOn": ["super_admin", "ops"],
+      "description": "Support-tier does NOT carry unredacted tax registration reads."
+    }
   ]
 }

@@ -35,14 +35,8 @@
       "consumed_at": "datetime",
       "refunded_at": "datetime"
     },
-    "observers": [
-      "PassObserver"
-    ],
-    "appends": [
-      "is_available",
-      "is_expired",
-      "is_consumed"
-    ]
+    "observers": ["PassObserver"],
+    "appends": ["is_available", "is_expired", "is_consumed"]
   },
   "x-database": {
     "engine": "postgres",
@@ -52,7 +46,12 @@
         "type": "string",
         "length": 30,
         "nullable": false,
-        "foreign": { "table": "tenants", "column": "id", "onUpdate": "cascade", "onDelete": "cascade" }
+        "foreign": {
+          "table": "tenants",
+          "column": "id",
+          "onUpdate": "cascade",
+          "onDelete": "cascade"
+        }
       },
       "membership_id": {
         "type": "string",
@@ -114,10 +113,26 @@
       "updated_at": { "type": "timestamptz", "nullable": false }
     },
     "indexes": [
-      { "columns": ["tenant_id", "membership_id", "valid_from"], "name": "passes_by_membership_period_idx" },
-      { "columns": ["tenant_id", "membership_id", "consumed_at"], "name": "passes_availability_idx", "predicate": "deleted_at IS NULL" },
-      { "columns": ["tenant_id", "valid_until"], "name": "passes_expiry_sweep_idx", "predicate": "consumed_at IS NULL AND deleted_at IS NULL", "description": "Feeds ExpireStalePassesJob's nightly sweep." },
-      { "columns": ["tenant_id", "consumed_by_session_id"], "name": "passes_session_idx", "predicate": "consumed_by_session_id IS NOT NULL" }
+      {
+        "columns": ["tenant_id", "membership_id", "valid_from"],
+        "name": "passes_by_membership_period_idx"
+      },
+      {
+        "columns": ["tenant_id", "membership_id", "consumed_at"],
+        "name": "passes_availability_idx",
+        "predicate": "deleted_at IS NULL"
+      },
+      {
+        "columns": ["tenant_id", "valid_until"],
+        "name": "passes_expiry_sweep_idx",
+        "predicate": "consumed_at IS NULL AND deleted_at IS NULL",
+        "description": "Feeds ExpireStalePassesJob's nightly sweep."
+      },
+      {
+        "columns": ["tenant_id", "consumed_by_session_id"],
+        "name": "passes_session_idx",
+        "predicate": "consumed_by_session_id IS NOT NULL"
+      }
     ]
   },
   "required": [
@@ -141,7 +156,10 @@
     "valid_from": { "type": "string", "format": "date-time" },
     "valid_until": { "type": "string", "format": "date-time" },
     "consumed_at": { "type": ["string", "null"], "format": "date-time" },
-    "consumed_by_session_id": { "type": ["string", "null"], "pattern": "^ses_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "consumed_by_session_id": {
+      "type": ["string", "null"],
+      "pattern": "^ses_[0-9A-HJKMNP-TV-Z]{26}$"
+    },
     "refunded_at": { "type": ["string", "null"], "format": "date-time" },
     "refund_reason": { "type": ["string", "null"], "maxLength": 128 },
     "metadata": { "type": ["object", "null"] },

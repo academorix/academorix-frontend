@@ -9,4 +9,4 @@
  *   cleanup) must not leak into their neighbours.
  */
 
-import '@stackra/testing/setup';
+import "@stackra/testing/setup";

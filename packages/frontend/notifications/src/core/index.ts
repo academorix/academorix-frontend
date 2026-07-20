@@ -17,17 +17,17 @@
  *   in `@stackra/notifications/testing`.
  */
 
-import 'reflect-metadata';
+import "reflect-metadata";
 
 // ════════════════════════════════════════════════════════════════════
 // Module
 // ════════════════════════════════════════════════════════════════════
-export { NotificationModule } from './notification.module';
+export { NotificationModule } from "./notification.module";
 
 // ════════════════════════════════════════════════════════════════════
 // Channel drivers
 // ════════════════════════════════════════════════════════════════════
-export { InAppChannelDriver } from './channels';
+export { InAppChannelDriver } from "./channels";
 
 // ════════════════════════════════════════════════════════════════════
 // Services
@@ -39,7 +39,7 @@ export {
   NotificationPreferencesService,
   PushSubscriptionManager,
   type InAppNotificationCentreListener,
-} from './services';
+} from "./services";
 
 // ════════════════════════════════════════════════════════════════════
 // Constants / Tokens
@@ -61,7 +61,7 @@ export {
   type DefaultNotificationChannel,
   type INotificationCategoryDescriptor,
   type NotificationEventName,
-} from './constants';
+} from "./constants";
 
 // ════════════════════════════════════════════════════════════════════
 // Errors
@@ -71,7 +71,7 @@ export {
   NotificationError,
   NotificationPermissionDeniedError,
   PushNotSupportedError,
-} from './errors';
+} from "./errors";
 
 // ════════════════════════════════════════════════════════════════════
 // Utilities
@@ -85,7 +85,7 @@ export {
   mergeConfig,
   normalizeNotificationPayload,
   type NotificationToastVariant,
-} from './utils';
+} from "./utils";
 
 // ════════════════════════════════════════════════════════════════════
 // Interfaces
@@ -114,4 +114,4 @@ export type {
   NotificationManagerListener,
   NotificationPriority,
   SnoozePreset,
-} from './interfaces';
+} from "./interfaces";

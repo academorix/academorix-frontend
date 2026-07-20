@@ -42,7 +42,7 @@ export {
   type PageVisibilityCallback,
   type IUseAdaptiveLoadingResult,
   type IUseSafeAreaInsetsResult,
-} from './hooks';
+} from "./hooks";
 
 // ════════════════════════════════════════════════════════════════════════════════
 // Components
@@ -60,12 +60,12 @@ export {
   type PwaHeadProps,
   type IPwaHeadAppleIcon,
   type IPwaHeadAppleStartupImage,
-} from './components';
+} from "./components";
 
 // ════════════════════════════════════════════════════════════════════════════════
 // Convenience re-exports from @stackra/network (network detection is
 // theirs — the re-export lets consumers pull every PWA piece from a
 // single subpath).
 // ════════════════════════════════════════════════════════════════════════════════
-export { useNetworkStatus, OfflineBanner } from '@stackra/network/react';
-export type { UseNetworkStatusResult, OfflineBannerProps } from '@stackra/network/react';
+export { useNetworkStatus, OfflineBanner } from "@stackra/network/react";
+export type { UseNetworkStatusResult, OfflineBannerProps } from "@stackra/network/react";

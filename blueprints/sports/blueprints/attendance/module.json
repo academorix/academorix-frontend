@@ -33,9 +33,7 @@
     "wave-7"
   ],
   "priority": 69,
-  "providers": [
-    "Academorix\\Sports\\Attendance\\Providers\\AttendanceServiceProvider"
-  ],
+  "providers": ["Academorix\\Sports\\Attendance\\Providers\\AttendanceServiceProvider"],
   "files": [],
   "dependencies": [
     "foundation",
@@ -65,19 +63,9 @@
       "HasAttendanceHistory",
       "HasAbsenceHistory"
     ],
-    "attributes": [
-      "AsAttendanceListener"
-    ],
-    "blueprints": [
-      "attendance-record",
-      "attendance-policy",
-      "absence-record",
-      "late-arrival"
-    ],
-    "middleware": [
-      "attendance.rate_limit",
-      "attendance.geofence_verify"
-    ],
+    "attributes": ["AsAttendanceListener"],
+    "blueprints": ["attendance-record", "attendance-policy", "absence-record", "late-arrival"],
+    "middleware": ["attendance.rate_limit", "attendance.geofence_verify"],
     "events": [
       "AttendanceRecorded",
       "AttendanceStatusUpdated",
@@ -175,19 +163,10 @@
       "no_check_in_after_session_end_plus_grace",
       "pass_available_when_required"
     ],
-    "casts": [
-      "AttendanceStatus",
-      "CheckInVia",
-      "AbsenceStatus",
-      "LatePenaltyType"
-    ],
+    "casts": ["AttendanceStatus", "CheckInVia", "AbsenceStatus", "LatePenaltyType"],
     "views": [],
-    "lang": [
-      "attendance"
-    ],
-    "config": [
-      "attendance"
-    ],
+    "lang": ["attendance"],
+    "config": ["attendance"],
     "macros": [],
     "bindings": [
       "AttendanceRecordRepository",
@@ -202,12 +181,7 @@
       "GeofenceValidator",
       "AttendanceReporter"
     ],
-    "resources": [
-      "attendance-record",
-      "attendance-policy",
-      "absence-record",
-      "late-arrival"
-    ]
+    "resources": ["attendance-record", "attendance-policy", "absence-record", "late-arrival"]
   },
   "hosts": {
     "tenant": {
@@ -241,10 +215,7 @@
     },
     "platform-admin": {
       "description": "Cross-tenant read for support tooling — attendance history + no-show-fee dispute investigations. Minor athlete names + device fingerprints redacted at the platform plane.",
-      "routes": [
-        "GET /api/v1/platform/attendance",
-        "GET /api/v1/platform/attendance/{record}"
-      ]
+      "routes": ["GET /api/v1/platform/attendance", "GET /api/v1/platform/attendance/{record}"]
     }
   }
 }

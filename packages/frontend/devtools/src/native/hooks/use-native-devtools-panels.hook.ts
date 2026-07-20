@@ -10,14 +10,14 @@
  *   `../react`. React Native doesn't consume the web-DOM tree.
  */
 
-import { useCallback, useMemo, useSyncExternalStore } from 'react';
-import { useInject } from '@stackra/container/react';
+import { useCallback, useMemo, useSyncExternalStore } from "react";
+import { useInject } from "@stackra/container/react";
 import {
   DEVTOOLS_REGISTRY,
   type DevtoolsCategory,
   type IDevtoolsPanel,
   type IDevtoolsPanelsRegistry,
-} from '@stackra/contracts';
+} from "@stackra/contracts";
 
 /** Result returned by {@link useNativeDevtoolsPanels}. */
 export interface IUseNativeDevtoolsPanelsResult {
@@ -42,7 +42,7 @@ export function useNativeDevtoolsPanels(): IUseNativeDevtoolsPanelsResult {
     // registry.byCategory is derived from `panels` (the snapshot);
     // recompute when the snapshot identity changes.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [registry, panels]
+    [registry, panels],
   );
   const find = useCallback((id: string) => registry.find(id), [registry]);
   return { panels, byCategory, find };

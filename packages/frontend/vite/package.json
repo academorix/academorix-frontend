@@ -1,7 +1,7 @@
 {
   "name": "@stackra/vite",
   "version": "0.1.0",
-  "description": "Neutral Vite-config orchestrator for the Stackra workspace — typed defineConfig helper and { enabled, factory, options } plugin-map envelope. Consumers bring their own plugin factories.",
+  "description": "Neutral Vite-config orchestrator for the Stackra workspace \u2014 typed defineConfig helper and { enabled, factory, options } plugin-map envelope. Consumers bring their own plugin factories.",
   "license": "MIT",
   "author": {
     "name": "Stackra L.L.C",
@@ -66,6 +66,8 @@
     }
   },
   "devDependencies": {
+    "@academorix/config-tsconfig": "workspace:*",
+    "@academorix/config-tsup": "workspace:*",
     "@stackra/testing": "workspace:*",
     "@types/node": "catalog:",
     "reflect-metadata": "catalog:",

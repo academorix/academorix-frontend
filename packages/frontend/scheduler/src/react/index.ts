@@ -3,4 +3,4 @@
  * @module @stackra/scheduler/react
  * @description Public API for the scheduler React subpath.
  */
-export { useScheduler, type UseSchedulerResult } from './hooks';
+export { useScheduler, type UseSchedulerResult } from "./hooks";

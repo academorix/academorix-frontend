@@ -27,8 +27,17 @@
         {
           "kind": "View",
           "children": [
-            { "kind": "Text", "props": { "as": "h1", "className": "text-2xl font-semibold", "children": "Payments" } },
-            { "kind": "Text", "props": { "className": "text-sm text-muted", "children": "Every captured payment across all your invoices." } }
+            {
+              "kind": "Text",
+              "props": { "as": "h1", "className": "text-2xl font-semibold", "children": "Payments" }
+            },
+            {
+              "kind": "Text",
+              "props": {
+                "className": "text-sm text-muted",
+                "children": "Every captured payment across all your invoices."
+              }
+            }
           ]
         },
         {
@@ -40,7 +49,11 @@
               "props": { "label": "Provider", "menuTrigger": "focus", "className": "min-w-48" },
               "props_items_source": "payment.providers",
               "actions": {
-                "onSelectionChange": { "kind": "filter.set", "field": "provider", "valueExpr": "$selectedKey" }
+                "onSelectionChange": {
+                  "kind": "filter.set",
+                  "field": "provider",
+                  "valueExpr": "$selectedKey"
+                }
               }
             },
             {
@@ -56,7 +69,11 @@
                 { "id": "check", "label": "Check" }
               ],
               "actions": {
-                "onSelectionChange": { "kind": "filter.set", "field": "payment_method_type", "valueExpr": "$selectedKey" }
+                "onSelectionChange": {
+                  "kind": "filter.set",
+                  "field": "payment_method_type",
+                  "valueExpr": "$selectedKey"
+                }
               }
             },
             {
@@ -81,13 +98,46 @@
             "className": "w-full",
             "columns": [
               { "field": "payment_number", "label": "Number", "sortable": true, "width": 160 },
-              { "field": "provider", "label": "Provider", "width": 100, "renderer": { "kind": "Text", "formatter": "titlecase" } },
-              { "field": "amount_cents", "label": "Amount", "sortable": true, "width": 120, "renderer": { "kind": "Text", "formatter": "currency" } },
+              {
+                "field": "provider",
+                "label": "Provider",
+                "width": 100,
+                "renderer": { "kind": "Text", "formatter": "titlecase" }
+              },
+              {
+                "field": "amount_cents",
+                "label": "Amount",
+                "sortable": true,
+                "width": 120,
+                "renderer": { "kind": "Text", "formatter": "currency" }
+              },
               { "field": "currency", "label": "Currency", "width": 80 },
-              { "field": "payment_method_type", "label": "Method", "width": 100, "renderer": { "widget": "payment.method-brand-badge" } },
-              { "field": "three_ds_result", "label": "3DS", "width": 80, "renderer": { "widget": "payment.3ds-badge" } },
-              { "field": "risk_score", "label": "Risk", "width": 90, "renderer": { "widget": "payment.risk-score-indicator" } },
-              { "field": "captured_at", "label": "Captured", "sortable": true, "defaultSort": "desc", "width": 160, "formatter": "datetime-relative" }
+              {
+                "field": "payment_method_type",
+                "label": "Method",
+                "width": 100,
+                "renderer": { "widget": "payment.method-brand-badge" }
+              },
+              {
+                "field": "three_ds_result",
+                "label": "3DS",
+                "width": 80,
+                "renderer": { "widget": "payment.3ds-badge" }
+              },
+              {
+                "field": "risk_score",
+                "label": "Risk",
+                "width": 90,
+                "renderer": { "widget": "payment.risk-score-indicator" }
+              },
+              {
+                "field": "captured_at",
+                "label": "Captured",
+                "sortable": true,
+                "defaultSort": "desc",
+                "width": 160,
+                "formatter": "datetime-relative"
+              }
             ],
             "onRowPress": {
               "kind": "navigate",
@@ -98,9 +148,21 @@
             "kind": "View",
             "props": { "className": "text-center py-12" },
             "children": [
-              { "kind": "Icon", "props": { "name": "credit-card", "className": "size-12 mx-auto text-muted" } },
-              { "kind": "Text", "props": { "className": "mt-4 text-lg font-medium", "children": "No payments yet" } },
-              { "kind": "Text", "props": { "className": "text-sm text-muted", "children": "Payments appear here as customers pay their invoices." } }
+              {
+                "kind": "Icon",
+                "props": { "name": "credit-card", "className": "size-12 mx-auto text-muted" }
+              },
+              {
+                "kind": "Text",
+                "props": { "className": "mt-4 text-lg font-medium", "children": "No payments yet" }
+              },
+              {
+                "kind": "Text",
+                "props": {
+                  "className": "text-sm text-muted",
+                  "children": "Payments appear here as customers pay their invoices."
+                }
+              }
             ]
           }
         }

@@ -7,14 +7,14 @@
  * @module @stackra/http/parsers/text-parser
  */
 
-import type { IStreamParser } from './stream-parser.interface';
+import type { IStreamParser } from "./stream-parser.interface";
 
 /**
  * UTF-8 text parser.
  */
 export class TextStreamParser implements IStreamParser<string> {
   /** Streaming UTF-8 decoder. */
-  private readonly decoder: TextDecoder = new TextDecoder('utf-8', { fatal: false });
+  private readonly decoder: TextDecoder = new TextDecoder("utf-8", { fatal: false });
 
   /** @inheritdoc */
   public *feed(chunk: Uint8Array): Iterable<string> {

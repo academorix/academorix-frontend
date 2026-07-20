@@ -7,11 +7,11 @@
  *   exercise the install/update flows without a real browser.
  */
 
-export { MockPwaService } from './mock-pwa-service';
-export { MockBeforeInstallPromptEvent } from './mock-before-install-prompt-event';
+export { MockPwaService } from "./mock-pwa-service";
+export { MockBeforeInstallPromptEvent } from "./mock-before-install-prompt-event";
 export {
   MockServiceWorkerRegistration,
   type IMockServiceWorker,
-} from './mock-service-worker-registration';
-export { MockAnalyticsClient, type IRecordedAnalyticsCall } from './mock-analytics-client';
-export { createMockPwa, type ICreateMockPwaOptions } from './create-mock-pwa';
+} from "./mock-service-worker-registration";
+export { MockAnalyticsClient, type IRecordedAnalyticsCall } from "./mock-analytics-client";
+export { createMockPwa, type ICreateMockPwaOptions } from "./create-mock-pwa";

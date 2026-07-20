@@ -36,21 +36,26 @@
       { "trait": "Academorix\\Foundation\\Concerns\\HasMetadata" },
       { "trait": "Academorix\\Foundation\\Concerns\\Filterable" }
     ],
-    "tenants": [
-      { "trait": "Academorix\\Tenancy\\Concerns\\BelongsToTenant" }
-    ],
+    "tenants": [{ "trait": "Academorix\\Tenancy\\Concerns\\BelongsToTenant" }],
     "athlete": [
-      { "trait": "Academorix\\Sports\\Athlete\\Concerns\\BelongsToAthlete", "reason": "AthleteGuardian carries athlete_id — cascades tenant + branch through the athlete." }
+      {
+        "trait": "Academorix\\Sports\\Athlete\\Concerns\\BelongsToAthlete",
+        "reason": "AthleteGuardian carries athlete_id — cascades tenant + branch through the athlete."
+      }
     ],
     "user": [
-      { "trait": "Academorix\\User\\Concerns\\BelongsToUser", "reason": "AthleteGuardian carries user_id — enables .own scoping for guardians managing their own guardianships." }
+      {
+        "trait": "Academorix\\User\\Concerns\\BelongsToUser",
+        "reason": "AthleteGuardian carries user_id — enables .own scoping for guardians managing their own guardianships."
+      }
     ],
     "audit": [
-      { "trait": "Academorix\\Audit\\Concerns\\Auditable", "reason": "Every state mutation (verification, primary flip, role flags) is compliance-relevant." }
+      {
+        "trait": "Academorix\\Audit\\Concerns\\Auditable",
+        "reason": "Every state mutation (verification, primary flip, role flags) is compliance-relevant."
+      }
     ],
-    "activity": [
-      { "trait": "Academorix\\Activity\\Concerns\\HasActivityLog" }
-    ]
+    "activity": [{ "trait": "Academorix\\Activity\\Concerns\\HasActivityLog" }]
   },
   "composition": {
     "athleteGuardian": {

@@ -9,7 +9,7 @@
  *   for the caching layer).
  */
 
-import type { ITabTransport, TabTransportListener } from '@stackra/contracts';
+import type { ITabTransport, TabTransportListener } from "@stackra/contracts";
 
 /**
  * `ITabTransport` backed by the browser `BroadcastChannel` API.

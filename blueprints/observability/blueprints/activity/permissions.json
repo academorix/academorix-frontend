@@ -10,7 +10,11 @@
       "name": "activity.viewAny",
       "guard": "sanctum",
       "description": "List + show activities in the caller's tenant. RBAC-narrowed by `activity.enforce_scope` middleware — the caller sees only activities on entities they hold viewing permissions for. Every authenticated tenant user gets this by default (baseline read).",
-      "grantsPolicies": ["ActivityPolicy@viewAny", "ActivityPolicy@view", "ActivityPolicy@subscribeFeed"],
+      "grantsPolicies": [
+        "ActivityPolicy@viewAny",
+        "ActivityPolicy@view",
+        "ActivityPolicy@subscribeFeed"
+      ],
       "seededOn": ["owner", "admin", "member", "coach", "staff"]
     },
     {

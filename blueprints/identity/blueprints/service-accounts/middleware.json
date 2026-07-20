@@ -23,12 +23,8 @@
       "priority": 10,
       "description": "Extracts the `Authorization: Bearer <jwt>` header, decodes + verifies the signature via auth::JwtVerifier (keyed by the JWT's `kid` claim), then loads the SA row via `X-Service-Account-Id` header (or the `sub` claim if header absent). Confirms: is_enabled=true, expires_at IS NULL OR > now(), signer_kid matches JWT header kid, `iss` + `aud` + `exp` pass verification. Populates RequestContext with the resolved ServiceAccount + parsed claims. On failure returns 401 with generic SERVICE_ACCOUNT_JWT_INVALID payload (no enumeration signal).",
       "auto_applied": true,
-      "auto_applied_on": [
-        "Every route composing the `auth:service_account` guard alias."
-      ],
-      "consumed_by": [
-        "every downstream service that trusts SA JWTs"
-      ]
+      "auto_applied_on": ["Every route composing the `auth:service_account` guard alias."],
+      "consumed_by": ["every downstream service that trusts SA JWTs"]
     },
     {
       "alias": "service_account.enforce_scope",
@@ -36,12 +32,8 @@
       "priority": 11,
       "description": "Confirms request-context headers match JWT claims. Rejects with 403 APPLICATION_MISMATCH when JWT `app` != request's resolved application context. Rejects with 403 TENANT_MISMATCH when JWT `tid` is populated AND != request's resolved tenant context. Rejects with 403 SERVICE_ACCOUNT_IP_NOT_ALLOWED when the SA has an IP allowlist in metadata AND the source IP isn't allowed (enterprise entitlement + Wave 1b enforcement). Runs AFTER `service_account.verify_jwt` (needs the JWT claims) and AFTER `application::ResolveApplication` (needs the request-context application).",
       "auto_applied": true,
-      "auto_applied_on": [
-        "Every route composing the `auth:service_account` guard alias."
-      ],
-      "consumed_by": [
-        "every downstream service that trusts SA JWTs"
-      ]
+      "auto_applied_on": ["Every route composing the `auth:service_account` guard alias."],
+      "consumed_by": ["every downstream service that trusts SA JWTs"]
     }
   ],
   "consumed": [

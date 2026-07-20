@@ -34,15 +34,30 @@
             {
               "kind": "View",
               "children": [
-                { "kind": "Text", "props": { "as": "h1", "className": "text-2xl font-semibold", "children": "Invoice aging" } },
-                { "kind": "Text", "props": { "className": "text-sm text-muted", "children": "Outstanding balances bucketed by days past due. Feeds AR management + collections prioritisation." } }
+                {
+                  "kind": "Text",
+                  "props": {
+                    "as": "h1",
+                    "className": "text-2xl font-semibold",
+                    "children": "Invoice aging"
+                  }
+                },
+                {
+                  "kind": "Text",
+                  "props": {
+                    "className": "text-sm text-muted",
+                    "children": "Outstanding balances bucketed by days past due. Feeds AR management + collections prioritisation."
+                  }
+                }
               ]
             },
             {
               "kind": "DatePicker",
               "props": { "label": "As of" },
               "bindings": { "value": { "$state": "as_of" } },
-              "actions": { "onChange": { "kind": "state.set", "field": "as_of", "valueExpr": "$value" } }
+              "actions": {
+                "onChange": { "kind": "state.set", "field": "as_of", "valueExpr": "$value" }
+              }
             }
           ]
         },
@@ -59,7 +74,11 @@
             {
               "kind": "StatCard",
               "bindings": { "value": { "$ref": "aging.current_cents" } },
-              "props": { "label": "Current (not past due)", "formatter": "currency", "variant": "success" }
+              "props": {
+                "label": "Current (not past due)",
+                "formatter": "currency",
+                "variant": "success"
+              }
             },
             {
               "kind": "StatCard",
@@ -94,12 +113,47 @@
                 "className": "w-full",
                 "columns": [
                   { "field": "customer_display", "label": "Customer", "width": 260 },
-                  { "field": "current_cents", "label": "Current", "width": 120, "renderer": { "kind": "Text", "formatter": "currency", "align": "right" } },
-                  { "field": "past_due_1_30_cents", "label": "1-30d", "width": 120, "renderer": { "kind": "Text", "formatter": "currency", "align": "right" } },
-                  { "field": "past_due_31_60_cents", "label": "31-60d", "width": 120, "renderer": { "kind": "Text", "formatter": "currency", "align": "right" } },
-                  { "field": "past_due_61_90_cents", "label": "61-90d", "width": 120, "renderer": { "kind": "Text", "formatter": "currency", "align": "right" } },
-                  { "field": "past_due_91_plus_cents", "label": "91+d", "width": 120, "renderer": { "kind": "Text", "formatter": "currency", "align": "right" } },
-                  { "field": "total_owed_cents", "label": "Total", "width": 140, "renderer": { "kind": "Text", "formatter": "currency", "align": "right", "emphasized": true } }
+                  {
+                    "field": "current_cents",
+                    "label": "Current",
+                    "width": 120,
+                    "renderer": { "kind": "Text", "formatter": "currency", "align": "right" }
+                  },
+                  {
+                    "field": "past_due_1_30_cents",
+                    "label": "1-30d",
+                    "width": 120,
+                    "renderer": { "kind": "Text", "formatter": "currency", "align": "right" }
+                  },
+                  {
+                    "field": "past_due_31_60_cents",
+                    "label": "31-60d",
+                    "width": 120,
+                    "renderer": { "kind": "Text", "formatter": "currency", "align": "right" }
+                  },
+                  {
+                    "field": "past_due_61_90_cents",
+                    "label": "61-90d",
+                    "width": 120,
+                    "renderer": { "kind": "Text", "formatter": "currency", "align": "right" }
+                  },
+                  {
+                    "field": "past_due_91_plus_cents",
+                    "label": "91+d",
+                    "width": 120,
+                    "renderer": { "kind": "Text", "formatter": "currency", "align": "right" }
+                  },
+                  {
+                    "field": "total_owed_cents",
+                    "label": "Total",
+                    "width": 140,
+                    "renderer": {
+                      "kind": "Text",
+                      "formatter": "currency",
+                      "align": "right",
+                      "emphasized": true
+                    }
+                  }
                 ],
                 "onRowPress": {
                   "kind": "navigate",

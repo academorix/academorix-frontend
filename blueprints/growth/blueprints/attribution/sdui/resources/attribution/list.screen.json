@@ -87,7 +87,10 @@
               "kind": "Card",
               "props": { "className": "p-4" },
               "children": [
-                { "kind": "Text", "props": { "className": "text-xs text-muted uppercase", "children": "Anonymous" } },
+                {
+                  "kind": "Text",
+                  "props": { "className": "text-xs text-muted uppercase", "children": "Anonymous" }
+                },
                 {
                   "kind": "Text",
                   "props": { "className": "text-2xl font-semibold mt-1" },
@@ -99,7 +102,10 @@
               "kind": "Card",
               "props": { "className": "p-4" },
               "children": [
-                { "kind": "Text", "props": { "className": "text-xs text-muted uppercase", "children": "Identified" } },
+                {
+                  "kind": "Text",
+                  "props": { "className": "text-xs text-muted uppercase", "children": "Identified" }
+                },
                 {
                   "kind": "Text",
                   "props": { "className": "text-2xl font-semibold mt-1" },
@@ -111,7 +117,10 @@
               "kind": "Card",
               "props": { "className": "p-4" },
               "children": [
-                { "kind": "Text", "props": { "className": "text-xs text-muted uppercase", "children": "Converted" } },
+                {
+                  "kind": "Text",
+                  "props": { "className": "text-xs text-muted uppercase", "children": "Converted" }
+                },
                 {
                   "kind": "Text",
                   "props": { "className": "text-2xl font-semibold mt-1 text-success" },
@@ -123,7 +132,10 @@
               "kind": "Card",
               "props": { "className": "p-4" },
               "children": [
-                { "kind": "Text", "props": { "className": "text-xs text-muted uppercase", "children": "Churned" } },
+                {
+                  "kind": "Text",
+                  "props": { "className": "text-xs text-muted uppercase", "children": "Churned" }
+                },
                 {
                   "kind": "Text",
                   "props": { "className": "text-2xl font-semibold mt-1 text-muted" },
@@ -173,7 +185,11 @@
             },
             {
               "kind": "ComboBox",
-              "props": { "label": "First-touch source", "menuTrigger": "input", "className": "min-w-56" },
+              "props": {
+                "label": "First-touch source",
+                "menuTrigger": "input",
+                "className": "min-w-56"
+              },
               "actions": {
                 "onSelectionChange": {
                   "kind": "filter.set",
@@ -209,8 +225,17 @@
             "kind": "View",
             "props": { "className": "col-span-full text-center py-12" },
             "children": [
-              { "kind": "Icon", "props": { "name": "chart-bar", "className": "size-12 mx-auto text-muted" } },
-              { "kind": "Text", "props": { "className": "mt-4 text-lg font-medium", "children": "No attributions yet" } },
+              {
+                "kind": "Icon",
+                "props": { "name": "chart-bar", "className": "size-12 mx-auto text-muted" }
+              },
+              {
+                "kind": "Text",
+                "props": {
+                  "className": "mt-4 text-lg font-medium",
+                  "children": "No attributions yet"
+                }
+              },
               {
                 "kind": "Text",
                 "props": {

@@ -4,20 +4,21 @@
 
 ## Implementation plan
 
-Marketplace fee = Academorix platform take-rate. Every tenant-collected
-payment carries a `platform_fee_minor` that Stripe routes to the platform
-account via Stripe Connect's `application_fee_amount` parameter.
+Marketplace fee = Academorix platform take-rate. Every tenant-collected payment
+carries a `platform_fee_minor` that Stripe routes to the platform account via
+Stripe Connect's `application_fee_amount` parameter.
 
 This module owns:
+
 1. The fee rate config per tenant (rate_percent + fixed_minor + waived).
 2. The fee row that mirrors Stripe's `application_fee` object per payment.
-3. Refund cascade — when a payment is refunded, the corresponding
-   marketplace fee is refunded back to the tenant.
+3. Refund cascade — when a payment is refunded, the corresponding marketplace
+   fee is refunded back to the tenant.
 
 ### Actions to fill (13 total)
 
-Standard CRUD on `marketplace_fee_configs` + `marketplace_fees`
-(tenant-facing read + platform-admin read/write).
+Standard CRUD on `marketplace_fee_configs` + `marketplace_fees` (tenant-facing
+read + platform-admin read/write).
 
 - `ListMarketplaceFeeConfigAction` — GET tenant's fee configs.
 - `CreateMarketplaceFeeConfigAction` — platform-admin only.
@@ -33,8 +34,8 @@ Standard CRUD on `marketplace_fee_configs` + `marketplace_fees`
 ### Support services
 
 - `MarketplaceFeeCalculator` (Services/) — computes the fee for a payment
-  amount + tenant fee config. Called by `finance/payment::CreatePayment`
-  to populate `application_fee_amount`.
+  amount + tenant fee config. Called by `finance/payment::CreatePayment` to
+  populate `application_fee_amount`.
 - `MarketplaceFeeReconciler` (Services/) — nightly job that cross-checks
   collected fees against Stripe's `application_fees` list.
 
@@ -47,5 +48,5 @@ Standard CRUD on `marketplace_fee_configs` + `marketplace_fees`
 ### Integration point
 
 `finance/payment::CreatePayment` MUST read the fee config + populate
-`PaymentIntentRequest.platformFeeMinor` before handing to the gateway.
-Never compute fees ad-hoc at the payment site.
+`PaymentIntentRequest.platformFeeMinor` before handing to the gateway. Never
+compute fees ad-hoc at the payment site.

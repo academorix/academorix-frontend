@@ -1,7 +1,7 @@
 {
   "name": "@stackra/theming",
   "version": "0.1.0",
-  "description": "Unified theming system — color mode, named presets, design tokens, runtime switching across web and native.",
+  "description": "Unified theming system \u2014 color mode, named presets, design tokens, runtime switching across web and native.",
   "license": "MIT",
   "author": {
     "name": "Stackra L.L.C",
@@ -100,6 +100,8 @@
     }
   },
   "devDependencies": {
+    "@academorix/config-tsconfig": "workspace:*",
+    "@academorix/config-tsup": "workspace:*",
     "@heroui/react": "catalog:",
     "@stackra/container": "workspace:*",
     "@stackra/contracts": "workspace:*",

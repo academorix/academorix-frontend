@@ -9,7 +9,13 @@
       "name": "Facility Created",
       "kind": "track",
       "consent_required": "functional",
-      "properties": ["tenant_id", "branch_id", "facility_type", "sport_category", "capacity_persons"],
+      "properties": [
+        "tenant_id",
+        "branch_id",
+        "facility_type",
+        "sport_category",
+        "capacity_persons"
+      ],
       "description": "Admin created a facility. Powers onboarding funnel + facility-mix insight."
     },
     {
@@ -35,14 +41,29 @@
       "name": "Booking Created",
       "kind": "track",
       "consent_required": "functional",
-      "properties": ["tenant_id", "facility_id", "duration_minutes", "price_amount_cents_bucket", "days_in_advance_bucket", "for_self", "attendees_count", "used_pass"],
+      "properties": [
+        "tenant_id",
+        "facility_id",
+        "duration_minutes",
+        "price_amount_cents_bucket",
+        "days_in_advance_bucket",
+        "for_self",
+        "attendees_count",
+        "used_pass"
+      ],
       "description": "Booking created. price_amount_cents_bucket + days_in_advance_bucket are pre-computed bins to avoid high-cardinality labels."
     },
     {
       "name": "Booking Cancelled",
       "kind": "track",
       "consent_required": "functional",
-      "properties": ["tenant_id", "facility_id", "cascade_trigger", "was_within_notice_window", "hours_before_starts_at_bucket"]
+      "properties": [
+        "tenant_id",
+        "facility_id",
+        "cascade_trigger",
+        "was_within_notice_window",
+        "hours_before_starts_at_bucket"
+      ]
     },
     {
       "name": "Booking Rescheduled",
@@ -73,7 +94,14 @@
       "name": "Day Pass Sold",
       "kind": "track",
       "consent_required": "functional",
-      "properties": ["tenant_id", "branch_id", "payment_method", "price_amount_cents_bucket", "age_band", "is_anonymous"]
+      "properties": [
+        "tenant_id",
+        "branch_id",
+        "payment_method",
+        "price_amount_cents_bucket",
+        "age_band",
+        "is_anonymous"
+      ]
     },
     {
       "name": "Day Pass Consumed",
@@ -91,7 +119,13 @@
       "name": "Pass Issued",
       "kind": "track",
       "consent_required": "functional",
-      "properties": ["tenant_id", "branch_id", "facility_specific", "total_credits_bucket", "is_transferable"]
+      "properties": [
+        "tenant_id",
+        "branch_id",
+        "facility_specific",
+        "total_credits_bucket",
+        "is_transferable"
+      ]
     },
     {
       "name": "Pass Credit Consumed",

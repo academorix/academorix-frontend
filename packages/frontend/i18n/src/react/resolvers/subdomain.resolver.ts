@@ -11,8 +11,8 @@
  *   Returns `undefined` when `window.location` is not available.
  */
 
-import type { II18nResolver } from '@/core/interfaces';
-import type { SubdomainResolverOptions } from '../interfaces';
+import type { II18nResolver } from "@/core/interfaces";
+import type { SubdomainResolverOptions } from "../interfaces";
 
 /**
  * Resolves locale from the URL subdomain.
@@ -36,7 +36,7 @@ export class SubdomainResolver implements II18nResolver {
    */
   public constructor(options?: SubdomainResolverOptions) {
     this.exclude = new Set(
-      options?.exclude ?? ['www', 'app', 'api', 'admin', 'cdn', 'staging', 'dev']
+      options?.exclude ?? ["www", "app", "api", "admin", "cdn", "staging", "dev"],
     );
   }
 
@@ -47,10 +47,10 @@ export class SubdomainResolver implements II18nResolver {
    */
   public resolve(): string | undefined {
     try {
-      if (typeof window === 'undefined') return undefined;
+      if (typeof window === "undefined") return undefined;
 
       const hostname = window.location.hostname;
-      const parts = hostname.split('.');
+      const parts = hostname.split(".");
 
       // Need at least 3 parts (sub.domain.tld)
       if (parts.length < 3) return undefined;

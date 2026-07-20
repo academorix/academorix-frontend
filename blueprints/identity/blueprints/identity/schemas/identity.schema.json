@@ -43,7 +43,14 @@
       "mfa_recovery_codes_hashed": "HashedRecoveryCodes",
       "password_history_hashed": "array"
     },
-    "appends": ["email_fingerprint", "mfa_enabled", "email_verified", "is_locked", "recovery_codes_remaining", "password_age_days"],
+    "appends": [
+      "email_fingerprint",
+      "mfa_enabled",
+      "email_verified",
+      "is_locked",
+      "recovery_codes_remaining",
+      "password_age_days"
+    ],
     "observers": ["IdentityObserver"],
     "hidden": [
       "password_hash",
@@ -152,10 +159,18 @@
         "nullable": true,
         "description": "Free-form metadata bag from HasMetadata. Never used for security-critical state."
       },
-      "created_by": { "type": "uuid", "nullable": true, "description": "Actor who created the row (platform-admin CLI OR self-signup marker)." },
+      "created_by": {
+        "type": "uuid",
+        "nullable": true,
+        "description": "Actor who created the row (platform-admin CLI OR self-signup marker)."
+      },
       "updated_by": { "type": "uuid", "nullable": true },
       "deleted_by": { "type": "uuid", "nullable": true },
-      "deleted_at": { "type": "timestamptz", "nullable": true, "description": "Soft-delete marker. GDPR erasure hold-period begins here." },
+      "deleted_at": {
+        "type": "timestamptz",
+        "nullable": true,
+        "description": "Soft-delete marker. GDPR erasure hold-period begins here."
+      },
       "created_at": { "type": "timestamptz", "nullable": false },
       "updated_at": { "type": "timestamptz", "nullable": false }
     },
@@ -216,12 +231,30 @@
     "locked_until": { "type": ["string", "null"], "format": "date-time" },
     "failed_attempts_count": { "type": "integer", "minimum": 0 },
     "dob": { "type": ["string", "null"], "format": "date" },
-    "email_fingerprint": { "type": "string", "description": "Computed. SHA-256 of the normalised email." },
-    "mfa_enabled": { "type": "boolean", "description": "Computed. mfa_secret_encrypted IS NOT NULL." },
-    "email_verified": { "type": "boolean", "description": "Computed. email_verified_at IS NOT NULL." },
-    "is_locked": { "type": "boolean", "description": "Computed. locked_until IS NOT NULL AND > now()." },
-    "recovery_codes_remaining": { "type": "integer", "description": "Computed. Count of non-consumed entries in mfa_recovery_codes_hashed." },
-    "password_age_days": { "type": "integer", "description": "Computed. Days since password_changed_at." },
+    "email_fingerprint": {
+      "type": "string",
+      "description": "Computed. SHA-256 of the normalised email."
+    },
+    "mfa_enabled": {
+      "type": "boolean",
+      "description": "Computed. mfa_secret_encrypted IS NOT NULL."
+    },
+    "email_verified": {
+      "type": "boolean",
+      "description": "Computed. email_verified_at IS NOT NULL."
+    },
+    "is_locked": {
+      "type": "boolean",
+      "description": "Computed. locked_until IS NOT NULL AND > now()."
+    },
+    "recovery_codes_remaining": {
+      "type": "integer",
+      "description": "Computed. Count of non-consumed entries in mfa_recovery_codes_hashed."
+    },
+    "password_age_days": {
+      "type": "integer",
+      "description": "Computed. Days since password_changed_at."
+    },
     "metadata": { "type": ["object", "null"] },
     "created_by": { "type": ["string", "null"], "format": "uuid" },
     "updated_by": { "type": ["string", "null"], "format": "uuid" },
@@ -250,10 +283,7 @@
       "mfa_recovery_codes_hashed",
       "email_verification_token_hash"
     ],
-    "redacted_by_default": [
-      "email",
-      "dob"
-    ],
+    "redacted_by_default": ["email", "dob"],
     "redaction_unmute_permission": "platform.identity.view.pii"
   },
   "x-route-binding": {

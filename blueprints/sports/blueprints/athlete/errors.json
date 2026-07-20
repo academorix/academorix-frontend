@@ -4,34 +4,262 @@
   "title": "athlete — error codes",
   "namespace": "athlete",
   "errors": [
-    { "code": "ATHLETE_NOT_FOUND", "http": 404, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "athlete.errors.athlete_not_found" },
-    { "code": "ATHLETE_BRANCH_NOT_ACTIVE", "http": 422, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "athlete.errors.athlete_branch_not_active", "description": "Attempted to create an athlete in a branch that is closed or archived." },
-    { "code": "ATHLETE_USER_ALREADY_HAS_ACTIVE_ROW", "http": 409, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "athlete.errors.athlete_user_already_has_active_row", "description": "The user already has an active Athlete row in this tenant. Archive the existing before creating a new one." },
-    { "code": "ATHLETE_EXTERNAL_ID_TAKEN", "http": 409, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "athlete.errors.athlete_external_id_taken" },
-    { "code": "ATHLETE_QUOTA_EXCEEDED", "http": 402, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "athlete.errors.athlete_quota_exceeded", "description": "Reached athlete_slot cap. Small: 15, Medium: 250. Response includes upgrade path." },
-    { "code": "ATHLETE_DOB_OUT_OF_BOUNDS", "http": 422, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "athlete.errors.athlete_dob_out_of_bounds", "description": "date_of_birth is in the future or more than 100 years in the past." },
-    { "code": "ATHLETE_DOB_IMMUTABLE", "http": 422, "retryable": false, "user_facing": true, "audit_severity": "warn", "i18n_key": "athlete.errors.athlete_dob_immutable", "description": "date_of_birth cannot be edited post-create. Typo fixes: archive + recreate (or wait for the super_admin override event in Wave 3+)." },
-    { "code": "ATHLETE_USER_ID_IMMUTABLE", "http": 422, "retryable": false, "user_facing": true, "audit_severity": "warn", "i18n_key": "athlete.errors.athlete_user_id_immutable", "description": "You cannot repoint an Athlete at a different User. Archive the old + create a new one." },
-    { "code": "ATHLETE_USER_UNLINK_FORBIDDEN", "http": 422, "retryable": false, "user_facing": true, "audit_severity": "warn", "i18n_key": "athlete.errors.athlete_user_unlink_forbidden", "description": "Unlinking a user from an Athlete is an audit-trail launder. Archive the row instead." },
-    { "code": "ATHLETE_BRANCH_IMMUTABLE_WAVE_3A", "http": 422, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "athlete.errors.athlete_branch_immutable_wave_3a", "description": "Branch transfer lands in Wave 3b. Archive + create at the new branch for now." },
-    { "code": "ATHLETE_AGE_OUT_OF_BOUNDS", "http": 422, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "athlete.errors.athlete_age_out_of_bounds", "description": "Athlete age must be between 3 and 100 years (platform bounds)." },
-    { "code": "ATHLETE_MEDICAL_TRACKING_NOT_ENABLED", "http": 402, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "athlete.errors.athlete_medical_tracking_not_enabled", "description": "Tenant has not enabled medical tracking. Turn on the athlete_medical_tracking entitlement (Medium+) in HR settings first." },
-    { "code": "ATHLETE_MEDICAL_PERMISSION_REQUIRED", "http": 403, "retryable": false, "user_facing": true, "audit_severity": "warn", "i18n_key": "athlete.errors.athlete_medical_permission_required", "description": "Medical writes require `athletes.manage.medical` — distinct from `athletes.update`." },
-    { "code": "ATHLETE_EMERGENCY_CONTACT_PERMISSION_REQUIRED", "http": 403, "retryable": false, "user_facing": true, "audit_severity": "warn", "i18n_key": "athlete.errors.athlete_emergency_contact_permission_required" },
-    { "code": "ATHLETE_CONSENT_WORKFLOW_NOT_ENABLED", "http": 402, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "athlete.errors.athlete_consent_workflow_not_enabled", "description": "Full consent workflow (recordable events, expiry reminders) is Enterprise-only." },
-    { "code": "ATHLETE_CONSENT_RECORDER_UNAUTHORISED", "http": 422, "retryable": false, "user_facing": true, "audit_severity": "warn", "i18n_key": "athlete.errors.athlete_consent_recorder_unauthorised", "description": "For minor athletes, consent must be recorded by a User with an active AthleteGuardian row on the athlete + has_legal_custody=true." },
-    { "code": "ATHLETE_CONSENT_MISSING_RECORDER", "http": 422, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "athlete.errors.athlete_consent_missing_recorder", "description": "consent_recorded_by_user_id required when any consent_* is true." },
-    { "code": "ATHLETE_PAUSE_REASON_REQUIRED", "http": 422, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "athlete.errors.athlete_pause_reason_required", "description": "A pause reason is required — safeguarding audit event." },
-    { "code": "ATHLETE_WITHDRAWAL_REASON_REQUIRED", "http": 422, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "athlete.errors.athlete_withdrawal_reason_required", "description": "A withdrawal reason is required — parent/HR must document." },
-    { "code": "ATHLETE_STATUS_TRANSITION_INVALID", "http": 422, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "athlete.errors.athlete_status_transition_invalid", "description": "The submitted status transition is not allowed. Valid: active ↔ paused; active → graduated (terminal); active → withdrawn (terminal); any → archived; archived → active (restore)." },
-    { "code": "ATHLETE_HAS_ACTIVE_ENROLLMENTS", "http": 409, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "athlete.errors.athlete_has_active_enrollments", "description": "The athlete has active enrollments. Cancel them (or pass cascade=true when calling /graduate or /withdraw)." },
-    { "code": "ATHLETE_MUST_BE_ARCHIVED_BEFORE_DELETE", "http": 422, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "athlete.errors.athlete_must_be_archived_before_delete" },
-    { "code": "ATHLETE_AGE_GROUP_SNAPSHOT_WRITE_FORBIDDEN", "http": 403, "retryable": false, "user_facing": false, "audit_severity": "warn", "i18n_key": "athlete.errors.athlete_age_group_snapshot_write_forbidden", "description": "current_age_group_id is written exclusively by RollAthleteAgeGroupSnapshotJob + SetAgeGroupSnapshotOnAthleteCreated hook. Every manual write attempt is a P2 signal." },
-    { "code": "ATHLETE_MEDICAL_NOTES_TOO_LONG", "http": 422, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "athlete.errors.athlete_medical_notes_too_long", "description": "Medical text fields cannot exceed 8192 characters. Split into multiple entries or trim the notes." },
-    { "code": "ATHLETE_RESTORE_OUTSIDE_WINDOW", "http": 422, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "athlete.errors.athlete_restore_outside_window", "description": "Cannot restore an athlete archived more than 7 years ago — retention window elapsed." },
-    { "code": "ATHLETE_RESTORE_DUPLICATE_USER", "http": 409, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "athlete.errors.athlete_restore_duplicate_user", "description": "Cannot restore — another live Athlete row now references the same (tenant, user) pair." },
-    { "code": "BRANCH_HAS_ACTIVE_ATHLETES", "http": 409, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "athlete.errors.branch_has_active_athletes", "description": "Branch archive refused because active athletes exist. Archive them first." },
-    { "code": "USER_HAS_ACTIVE_ATHLETE", "http": 409, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "athlete.errors.user_has_active_athlete", "description": "User archive refused because the user has an active Athlete row. Archive the athlete first." },
-    { "code": "USER_IS_MINOR_CONSENT_RECORDER", "http": 409, "retryable": false, "user_facing": true, "audit_severity": "warn", "i18n_key": "athlete.errors.user_is_minor_consent_recorder", "description": "User archive refused because the user is the consent recorder for one or more active minor athletes. Guardian handoff must complete first." }
+    {
+      "code": "ATHLETE_NOT_FOUND",
+      "http": 404,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "athlete.errors.athlete_not_found"
+    },
+    {
+      "code": "ATHLETE_BRANCH_NOT_ACTIVE",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "athlete.errors.athlete_branch_not_active",
+      "description": "Attempted to create an athlete in a branch that is closed or archived."
+    },
+    {
+      "code": "ATHLETE_USER_ALREADY_HAS_ACTIVE_ROW",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "athlete.errors.athlete_user_already_has_active_row",
+      "description": "The user already has an active Athlete row in this tenant. Archive the existing before creating a new one."
+    },
+    {
+      "code": "ATHLETE_EXTERNAL_ID_TAKEN",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "athlete.errors.athlete_external_id_taken"
+    },
+    {
+      "code": "ATHLETE_QUOTA_EXCEEDED",
+      "http": 402,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "athlete.errors.athlete_quota_exceeded",
+      "description": "Reached athlete_slot cap. Small: 15, Medium: 250. Response includes upgrade path."
+    },
+    {
+      "code": "ATHLETE_DOB_OUT_OF_BOUNDS",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "athlete.errors.athlete_dob_out_of_bounds",
+      "description": "date_of_birth is in the future or more than 100 years in the past."
+    },
+    {
+      "code": "ATHLETE_DOB_IMMUTABLE",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "warn",
+      "i18n_key": "athlete.errors.athlete_dob_immutable",
+      "description": "date_of_birth cannot be edited post-create. Typo fixes: archive + recreate (or wait for the super_admin override event in Wave 3+)."
+    },
+    {
+      "code": "ATHLETE_USER_ID_IMMUTABLE",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "warn",
+      "i18n_key": "athlete.errors.athlete_user_id_immutable",
+      "description": "You cannot repoint an Athlete at a different User. Archive the old + create a new one."
+    },
+    {
+      "code": "ATHLETE_USER_UNLINK_FORBIDDEN",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "warn",
+      "i18n_key": "athlete.errors.athlete_user_unlink_forbidden",
+      "description": "Unlinking a user from an Athlete is an audit-trail launder. Archive the row instead."
+    },
+    {
+      "code": "ATHLETE_BRANCH_IMMUTABLE_WAVE_3A",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "athlete.errors.athlete_branch_immutable_wave_3a",
+      "description": "Branch transfer lands in Wave 3b. Archive + create at the new branch for now."
+    },
+    {
+      "code": "ATHLETE_AGE_OUT_OF_BOUNDS",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "athlete.errors.athlete_age_out_of_bounds",
+      "description": "Athlete age must be between 3 and 100 years (platform bounds)."
+    },
+    {
+      "code": "ATHLETE_MEDICAL_TRACKING_NOT_ENABLED",
+      "http": 402,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "athlete.errors.athlete_medical_tracking_not_enabled",
+      "description": "Tenant has not enabled medical tracking. Turn on the athlete_medical_tracking entitlement (Medium+) in HR settings first."
+    },
+    {
+      "code": "ATHLETE_MEDICAL_PERMISSION_REQUIRED",
+      "http": 403,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "warn",
+      "i18n_key": "athlete.errors.athlete_medical_permission_required",
+      "description": "Medical writes require `athletes.manage.medical` — distinct from `athletes.update`."
+    },
+    {
+      "code": "ATHLETE_EMERGENCY_CONTACT_PERMISSION_REQUIRED",
+      "http": 403,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "warn",
+      "i18n_key": "athlete.errors.athlete_emergency_contact_permission_required"
+    },
+    {
+      "code": "ATHLETE_CONSENT_WORKFLOW_NOT_ENABLED",
+      "http": 402,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "athlete.errors.athlete_consent_workflow_not_enabled",
+      "description": "Full consent workflow (recordable events, expiry reminders) is Enterprise-only."
+    },
+    {
+      "code": "ATHLETE_CONSENT_RECORDER_UNAUTHORISED",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "warn",
+      "i18n_key": "athlete.errors.athlete_consent_recorder_unauthorised",
+      "description": "For minor athletes, consent must be recorded by a User with an active AthleteGuardian row on the athlete + has_legal_custody=true."
+    },
+    {
+      "code": "ATHLETE_CONSENT_MISSING_RECORDER",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "athlete.errors.athlete_consent_missing_recorder",
+      "description": "consent_recorded_by_user_id required when any consent_* is true."
+    },
+    {
+      "code": "ATHLETE_PAUSE_REASON_REQUIRED",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "athlete.errors.athlete_pause_reason_required",
+      "description": "A pause reason is required — safeguarding audit event."
+    },
+    {
+      "code": "ATHLETE_WITHDRAWAL_REASON_REQUIRED",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "athlete.errors.athlete_withdrawal_reason_required",
+      "description": "A withdrawal reason is required — parent/HR must document."
+    },
+    {
+      "code": "ATHLETE_STATUS_TRANSITION_INVALID",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "athlete.errors.athlete_status_transition_invalid",
+      "description": "The submitted status transition is not allowed. Valid: active ↔ paused; active → graduated (terminal); active → withdrawn (terminal); any → archived; archived → active (restore)."
+    },
+    {
+      "code": "ATHLETE_HAS_ACTIVE_ENROLLMENTS",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "athlete.errors.athlete_has_active_enrollments",
+      "description": "The athlete has active enrollments. Cancel them (or pass cascade=true when calling /graduate or /withdraw)."
+    },
+    {
+      "code": "ATHLETE_MUST_BE_ARCHIVED_BEFORE_DELETE",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "athlete.errors.athlete_must_be_archived_before_delete"
+    },
+    {
+      "code": "ATHLETE_AGE_GROUP_SNAPSHOT_WRITE_FORBIDDEN",
+      "http": 403,
+      "retryable": false,
+      "user_facing": false,
+      "audit_severity": "warn",
+      "i18n_key": "athlete.errors.athlete_age_group_snapshot_write_forbidden",
+      "description": "current_age_group_id is written exclusively by RollAthleteAgeGroupSnapshotJob + SetAgeGroupSnapshotOnAthleteCreated hook. Every manual write attempt is a P2 signal."
+    },
+    {
+      "code": "ATHLETE_MEDICAL_NOTES_TOO_LONG",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "athlete.errors.athlete_medical_notes_too_long",
+      "description": "Medical text fields cannot exceed 8192 characters. Split into multiple entries or trim the notes."
+    },
+    {
+      "code": "ATHLETE_RESTORE_OUTSIDE_WINDOW",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "athlete.errors.athlete_restore_outside_window",
+      "description": "Cannot restore an athlete archived more than 7 years ago — retention window elapsed."
+    },
+    {
+      "code": "ATHLETE_RESTORE_DUPLICATE_USER",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "athlete.errors.athlete_restore_duplicate_user",
+      "description": "Cannot restore — another live Athlete row now references the same (tenant, user) pair."
+    },
+    {
+      "code": "BRANCH_HAS_ACTIVE_ATHLETES",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "athlete.errors.branch_has_active_athletes",
+      "description": "Branch archive refused because active athletes exist. Archive them first."
+    },
+    {
+      "code": "USER_HAS_ACTIVE_ATHLETE",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "athlete.errors.user_has_active_athlete",
+      "description": "User archive refused because the user has an active Athlete row. Archive the athlete first."
+    },
+    {
+      "code": "USER_IS_MINOR_CONSENT_RECORDER",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "warn",
+      "i18n_key": "athlete.errors.user_is_minor_consent_recorder",
+      "description": "User archive refused because the user is the consent recorder for one or more active minor athletes. Guardian handoff must complete first."
+    }
   ]
 }

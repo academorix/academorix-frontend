@@ -48,10 +48,10 @@ admin + marketing role.
 ### `widgets/`
 
 - `provider-status-chip.widget.json` — colour-coded chip for provider health
-  (active + circuit-closed / active + circuit-half-open / active +
-  circuit-open / inactive).
+  (active + circuit-closed / active + circuit-half-open / active + circuit-open
+  / inactive).
 - `circuit-breaker-badge.widget.json` — dedicated badge showing circuit state
-  + open-until timestamp + consecutive_failure_count.
+  - open-until timestamp + consecutive_failure_count.
 - `event-type-picker.widget.json` — multi-select for enabled_event_types with
   provider-capability-matrix filtering (hides unsupported types per selected
   provider).

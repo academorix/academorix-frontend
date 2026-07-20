@@ -42,35 +42,165 @@
       "metadata": "array"
     },
     "observers": ["AttendanceRecordObserver"],
-    "appends": [
-      "was_late",
-      "was_left_early",
-      "minutes_late",
-      "is_within_correction_window"
-    ]
+    "appends": ["was_late", "was_left_early", "minutes_late", "is_within_correction_window"]
   },
   "x-database": {
     "engine": "postgres",
     "columns": {
-      "id": { "type": "string", "length": 30, "primary": true, "description": "Prefixed ULID: `atd_<26>`." },
-      "tenant_id": { "type": "string", "length": 30, "nullable": false, "foreign": { "table": "tenants", "column": "id", "onUpdate": "cascade", "onDelete": "cascade" } },
-      "session_id": { "type": "string", "length": 30, "nullable": false, "foreign": { "table": "sessions", "column": "id", "onUpdate": "cascade", "onDelete": "restrict" }, "description": "The session being attended. IMMUTABLE post-create." },
-      "athlete_id": { "type": "string", "length": 30, "nullable": false, "foreign": { "table": "athletes", "column": "id", "onUpdate": "cascade", "onDelete": "restrict" }, "description": "The attendee. IMMUTABLE post-create." },
-      "athlete_enrollment_id": { "type": "string", "length": 30, "nullable": false, "foreign": { "table": "athlete_enrollments", "column": "id", "onUpdate": "cascade", "onDelete": "restrict" }, "description": "The roster row the athlete is attending via. IMMUTABLE post-create." },
-      "consumed_pass_id": { "type": "string", "length": 30, "nullable": true, "foreign": { "table": "passes", "column": "id", "onUpdate": "cascade", "onDelete": "restrict" }, "description": "The Pass atomically consumed at check-in. NULL when session.requires_pass=false OR trial/free/drop-in path. RESTRICT — the money-side reference cannot be lost. IMMUTABLE once set." },
-      "membership_id": { "type": "string", "length": 30, "nullable": true, "foreign": { "table": "memberships", "column": "id", "onUpdate": "cascade", "onDelete": "restrict" }, "description": "The membership from which the Pass was consumed. Denormalised for indexed filtering. NULL for trial/free/drop-in." },
-      "status": { "type": "string", "length": 24, "nullable": false, "default": "'present'", "description": "Enum: not_yet_checked_in / present / late / left_early / present_with_note." },
-      "checked_in_at": { "type": "timestamptz", "nullable": false, "description": "IMMUTABLE. The event fingerprint — the moment the check-in was recorded." },
-      "checked_in_via": { "type": "string", "length": 24, "nullable": false, "description": "Enum: self_kiosk / coach_verified / admin_recorded / geofence / qr_scan. IMMUTABLE." },
-      "checked_in_by_user_id": { "type": "string", "length": 30, "nullable": true, "foreign": { "table": "users", "column": "id", "onUpdate": "cascade", "onDelete": "restrict" }, "description": "The User (coach / admin / kiosk-authed athlete) who performed the check-in. NULL for anonymous kiosk sessions." },
-      "checked_out_at": { "type": "timestamptz", "nullable": true, "description": "For sessions with mandatory check-out or partial-attendance tracking. Idempotent — cannot be set twice." },
-      "left_early_reason": { "type": "string", "length": 256, "nullable": true, "description": "Free-text reason when athlete left early." },
-      "session_notes": { "type": "text", "nullable": true, "description": "Coach-only per-attendance note. NEVER surfaced to guardians / athletes / peers." },
-      "signature_url_signed": { "type": "string", "length": 512, "nullable": true, "description": "S3 signed URL for coach signature on paper roster. Optional per policy." },
-      "device_fingerprint_hash": { "type": "string", "length": 64, "nullable": true, "description": "SHA-256 hash of client-side device fingerprint. REQUIRED for checked_in_via='self_kiosk' or 'qr_scan'. Used for fraud correlation." },
-      "ip_address": { "type": "inet", "nullable": true, "description": "Source IP address of the check-in. Fraud-correlation only; never surfaced to analytics." },
-      "gps_lat": { "type": "decimal", "precision": 10, "scale": 7, "nullable": true, "description": "Latitude in decimal degrees. REQUIRED for checked_in_via='geofence'." },
-      "gps_lng": { "type": "decimal", "precision": 10, "scale": 7, "nullable": true, "description": "Longitude in decimal degrees. REQUIRED for checked_in_via='geofence'." },
+      "id": {
+        "type": "string",
+        "length": 30,
+        "primary": true,
+        "description": "Prefixed ULID: `atd_<26>`."
+      },
+      "tenant_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": {
+          "table": "tenants",
+          "column": "id",
+          "onUpdate": "cascade",
+          "onDelete": "cascade"
+        }
+      },
+      "session_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": {
+          "table": "sessions",
+          "column": "id",
+          "onUpdate": "cascade",
+          "onDelete": "restrict"
+        },
+        "description": "The session being attended. IMMUTABLE post-create."
+      },
+      "athlete_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": {
+          "table": "athletes",
+          "column": "id",
+          "onUpdate": "cascade",
+          "onDelete": "restrict"
+        },
+        "description": "The attendee. IMMUTABLE post-create."
+      },
+      "athlete_enrollment_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": {
+          "table": "athlete_enrollments",
+          "column": "id",
+          "onUpdate": "cascade",
+          "onDelete": "restrict"
+        },
+        "description": "The roster row the athlete is attending via. IMMUTABLE post-create."
+      },
+      "consumed_pass_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": true,
+        "foreign": {
+          "table": "passes",
+          "column": "id",
+          "onUpdate": "cascade",
+          "onDelete": "restrict"
+        },
+        "description": "The Pass atomically consumed at check-in. NULL when session.requires_pass=false OR trial/free/drop-in path. RESTRICT — the money-side reference cannot be lost. IMMUTABLE once set."
+      },
+      "membership_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": true,
+        "foreign": {
+          "table": "memberships",
+          "column": "id",
+          "onUpdate": "cascade",
+          "onDelete": "restrict"
+        },
+        "description": "The membership from which the Pass was consumed. Denormalised for indexed filtering. NULL for trial/free/drop-in."
+      },
+      "status": {
+        "type": "string",
+        "length": 24,
+        "nullable": false,
+        "default": "'present'",
+        "description": "Enum: not_yet_checked_in / present / late / left_early / present_with_note."
+      },
+      "checked_in_at": {
+        "type": "timestamptz",
+        "nullable": false,
+        "description": "IMMUTABLE. The event fingerprint — the moment the check-in was recorded."
+      },
+      "checked_in_via": {
+        "type": "string",
+        "length": 24,
+        "nullable": false,
+        "description": "Enum: self_kiosk / coach_verified / admin_recorded / geofence / qr_scan. IMMUTABLE."
+      },
+      "checked_in_by_user_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": true,
+        "foreign": {
+          "table": "users",
+          "column": "id",
+          "onUpdate": "cascade",
+          "onDelete": "restrict"
+        },
+        "description": "The User (coach / admin / kiosk-authed athlete) who performed the check-in. NULL for anonymous kiosk sessions."
+      },
+      "checked_out_at": {
+        "type": "timestamptz",
+        "nullable": true,
+        "description": "For sessions with mandatory check-out or partial-attendance tracking. Idempotent — cannot be set twice."
+      },
+      "left_early_reason": {
+        "type": "string",
+        "length": 256,
+        "nullable": true,
+        "description": "Free-text reason when athlete left early."
+      },
+      "session_notes": {
+        "type": "text",
+        "nullable": true,
+        "description": "Coach-only per-attendance note. NEVER surfaced to guardians / athletes / peers."
+      },
+      "signature_url_signed": {
+        "type": "string",
+        "length": 512,
+        "nullable": true,
+        "description": "S3 signed URL for coach signature on paper roster. Optional per policy."
+      },
+      "device_fingerprint_hash": {
+        "type": "string",
+        "length": 64,
+        "nullable": true,
+        "description": "SHA-256 hash of client-side device fingerprint. REQUIRED for checked_in_via='self_kiosk' or 'qr_scan'. Used for fraud correlation."
+      },
+      "ip_address": {
+        "type": "inet",
+        "nullable": true,
+        "description": "Source IP address of the check-in. Fraud-correlation only; never surfaced to analytics."
+      },
+      "gps_lat": {
+        "type": "decimal",
+        "precision": 10,
+        "scale": 7,
+        "nullable": true,
+        "description": "Latitude in decimal degrees. REQUIRED for checked_in_via='geofence'."
+      },
+      "gps_lng": {
+        "type": "decimal",
+        "precision": 10,
+        "scale": 7,
+        "nullable": true,
+        "description": "Longitude in decimal degrees. REQUIRED for checked_in_via='geofence'."
+      },
       "metadata": { "type": "jsonb", "nullable": true },
       "created_by": { "type": "string", "length": 30, "nullable": true },
       "updated_by": { "type": "string", "length": 30, "nullable": true },
@@ -87,10 +217,27 @@
         "predicate": "deleted_at IS NULL",
         "description": "One AttendanceRecord per (session, athlete). Cancel + re-create to correct."
       },
-      { "columns": ["tenant_id", "session_id", "checked_in_at"], "name": "attendance_records_by_session_time_idx" },
-      { "columns": ["tenant_id", "athlete_id", "checked_in_at"], "name": "attendance_records_by_athlete_time_idx", "description": "Feeds athlete detail page + guardian dashboard reverse-chronological view." },
-      { "columns": ["tenant_id", "consumed_pass_id"], "name": "attendance_records_consumed_pass_idx", "predicate": "consumed_pass_id IS NOT NULL", "description": "Reverse lookup for CleanupOrphanCheckinsJob — given a Pass, find its consuming attendance." },
-      { "columns": ["tenant_id", "device_fingerprint_hash"], "name": "attendance_records_fingerprint_idx", "predicate": "device_fingerprint_hash IS NOT NULL", "description": "Fraud-correlation lookup — same fingerprint across N athletes flags for review." },
+      {
+        "columns": ["tenant_id", "session_id", "checked_in_at"],
+        "name": "attendance_records_by_session_time_idx"
+      },
+      {
+        "columns": ["tenant_id", "athlete_id", "checked_in_at"],
+        "name": "attendance_records_by_athlete_time_idx",
+        "description": "Feeds athlete detail page + guardian dashboard reverse-chronological view."
+      },
+      {
+        "columns": ["tenant_id", "consumed_pass_id"],
+        "name": "attendance_records_consumed_pass_idx",
+        "predicate": "consumed_pass_id IS NOT NULL",
+        "description": "Reverse lookup for CleanupOrphanCheckinsJob — given a Pass, find its consuming attendance."
+      },
+      {
+        "columns": ["tenant_id", "device_fingerprint_hash"],
+        "name": "attendance_records_fingerprint_idx",
+        "predicate": "device_fingerprint_hash IS NOT NULL",
+        "description": "Fraud-correlation lookup — same fingerprint across N athletes flags for review."
+      },
       { "columns": ["tenant_id", "status"], "name": "attendance_records_status_idx" }
     ]
   },
@@ -123,11 +270,18 @@
       "type": "string",
       "enum": ["self_kiosk", "coach_verified", "admin_recorded", "geofence", "qr_scan"]
     },
-    "checked_in_by_user_id": { "type": ["string", "null"], "pattern": "^usr_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "checked_in_by_user_id": {
+      "type": ["string", "null"],
+      "pattern": "^usr_[0-9A-HJKMNP-TV-Z]{26}$"
+    },
     "checked_out_at": { "type": ["string", "null"], "format": "date-time" },
     "left_early_reason": { "type": ["string", "null"], "maxLength": 256 },
     "session_notes": { "type": ["string", "null"], "maxLength": 4096 },
-    "signature_url_signed": { "type": ["string", "null"], "maxLength": 512, "pattern": "^https://" },
+    "signature_url_signed": {
+      "type": ["string", "null"],
+      "maxLength": 512,
+      "pattern": "^https://"
+    },
     "device_fingerprint_hash": { "type": ["string", "null"], "pattern": "^[a-f0-9]{64}$" },
     "ip_address": { "type": ["string", "null"] },
     "gps_lat": { "type": ["number", "null"], "minimum": -90, "maximum": 90 },

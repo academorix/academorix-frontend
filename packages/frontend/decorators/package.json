@@ -1,7 +1,7 @@
 {
   "name": "@stackra/decorators",
   "version": "0.1.0",
-  "description": "Centralised decorator library for the Stackra framework — generic factories for class-level, method-level, and property-level metadata decorators, plus domain wrappers (@DevtoolsPanel, @DevtoolsInspectorSource, ...). Feature packages import from here to stay decoupled from the runtime loaders that read the stamped metadata.",
+  "description": "Centralised decorator library for the Stackra framework \u2014 generic factories for class-level, method-level, and property-level metadata decorators, plus domain wrappers (@DevtoolsPanel, @DevtoolsInspectorSource, ...). Feature packages import from here to stay decoupled from the runtime loaders that read the stamped metadata.",
   "license": "MIT",
   "author": {
     "name": "Stackra L.L.C",
@@ -107,6 +107,8 @@
     }
   },
   "devDependencies": {
+    "@academorix/config-tsconfig": "workspace:*",
+    "@academorix/config-tsup": "workspace:*",
     "@stackra/container": "workspace:*",
     "@stackra/contracts": "workspace:*",
     "@stackra/testing": "workspace:*",

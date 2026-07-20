@@ -14,15 +14,15 @@
   (identity + user + profile + roles + permissions + features + terminology +
   memberships). Cached briefly with an aggressive invalidation matrix.
 - Profile PII cluster + redactor pipeline. `profile.view.pii` gates adult PII;
-  `profile.view.pii.child` gates minor PII AND requires a live
-  `AthleteGuardian` relationship (Wave 7).
+  `profile.view.pii.child` gates minor PII AND requires a live `AthleteGuardian`
+  relationship (Wave 7).
 - Avatar upload pipeline via `POST /me/avatar`. Multipart; JPEG / PNG / WEBP
   only; per-tier size caps via the `avatar_upload` entitlement.
 - Multi-tenant memberships via `TenantMember` pivot. `is_default` enforced by
   observer + partial unique index. Cross-application memberships refused with a
   hard 422.
-- `/me/tenants/{tenant}/switch` for the tenant-switcher UX. Sanctum PAT
-  claims either re-issued or rotated per `auth::session.rotate_on_tenant_switch`
+- `/me/tenants/{tenant}/switch` for the tenant-switcher UX. Sanctum PAT claims
+  either re-issued or rotated per `auth::session.rotate_on_tenant_switch`
   config.
 - Row-level ownership via the shipped `ScopeSuffixResolver` service \u2014 base
   repositories consume it at query build time. Suffixes `.own`, `.tenant`,
@@ -35,8 +35,8 @@
 - Batched last-active-at updates via `UpdateLastActiveJob` \u2014 buffered in
   Redis, flushed to DB every 60s.
 - Notifications: `UserProvisionedNotification`, `UserSuspendedNotification`,
-  `UserAddedToTenantNotification`, `UserRemovedFromTenantNotification`,
-  optional `ProfileUpdatedConfirmationNotification`.
+  `UserAddedToTenantNotification`, `UserRemovedFromTenantNotification`, optional
+  `ProfileUpdatedConfirmationNotification`.
 - Analytics: 9 Segment `track` events. `user_id` (ULID) is the anonymised
   identifier; `email` + phone are never Segment properties.
 - Entitlements published: `multi_tenant_membership`, `custom_display_name`,

@@ -5,8 +5,8 @@
  *   the React body of the `@stackra/devtools` sync panel.
  */
 
-import type { OperationQueue } from '@/core/services/operation-queue.service';
-import type { SyncEngine } from '@/core/services/sync-engine.service';
+import type { OperationQueue } from "@/core/services/operation-queue.service";
+import type { SyncEngine } from "@/core/services/sync-engine.service";
 
 /**
  * Props accepted by {@link SyncDevtoolsPanelView}.

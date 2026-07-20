@@ -16,7 +16,7 @@ import type {
   IHttpMiddleware,
   IHttpNextFunction,
   IHttpResponse,
-} from '@stackra/contracts';
+} from "@stackra/contracts";
 
 /**
  * Stateless pipeline executor — one instance per connection.
@@ -35,13 +35,13 @@ export class MiddlewarePipeline {
   public async execute(
     middlewares: IHttpMiddleware[],
     context: IHttpContext,
-    terminal: IHttpNextFunction
+    terminal: IHttpNextFunction,
   ): Promise<IHttpResponse> {
     let index = -1;
 
     const dispatch = async (i: number): Promise<IHttpResponse> => {
       if (i <= index) {
-        throw new Error('next() called multiple times');
+        throw new Error("next() called multiple times");
       }
       index = i;
 

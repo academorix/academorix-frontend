@@ -10,13 +10,13 @@
  *   augmentation in `../types/uniwind.d.ts`.
  */
 
-import { type ReactElement } from 'react';
-import { View } from 'react-native';
-import { Chip, PressableFeedback } from '@stackra/ui/native';
+import { type ReactElement } from "react";
+import { View } from "react-native";
+import { Chip, PressableFeedback } from "@stackra/ui/native";
 
-import { useNativeDevtoolsFrameState } from '../../hooks/use-native-devtools-frame-state.hook';
-import { useNativeDevtoolsPanels } from '../../hooks/use-native-devtools-panels.hook';
-import type { DevtoolsLauncherProps } from './devtools-launcher.interface';
+import { useNativeDevtoolsFrameState } from "../../hooks/use-native-devtools-frame-state.hook";
+import { useNativeDevtoolsPanels } from "../../hooks/use-native-devtools-panels.hook";
+import type { DevtoolsLauncherProps } from "./devtools-launcher.interface";
 
 /**
  * The native devtools launcher.
@@ -43,7 +43,7 @@ export function DevtoolsLauncher({ className }: DevtoolsLauncherProps): ReactEle
     <View
       className={className}
       style={{
-        position: 'absolute',
+        position: "absolute",
         bottom: 16,
         right: 16,
         zIndex: 999_999,

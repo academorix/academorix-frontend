@@ -11,7 +11,7 @@
  * @module @stackra/http/middleware/circuit-breaker
  */
 
-import { Inject } from '@stackra/container';
+import { Inject } from "@stackra/container";
 
 import {
   HTTP_CONFIG,
@@ -21,16 +21,16 @@ import {
   type IHttpNextFunction,
   type IHttpRequestConfig,
   type IHttpResponse,
-} from '@stackra/contracts';
+} from "@stackra/contracts";
 
-import { HttpMiddleware } from '../decorators/http-middleware.decorator';
-import { CircuitBreakerOpenError } from '../errors';
-import { CircuitBreakerService } from '../services/circuit-breaker.service';
+import { HttpMiddleware } from "../decorators/http-middleware.decorator";
+import { CircuitBreakerOpenError } from "../errors";
+import { CircuitBreakerService } from "../services/circuit-breaker.service";
 
 /**
  * Circuit-breaker middleware.
  */
-@HttpMiddleware({ priority: 40, name: 'circuit-breaker' })
+@HttpMiddleware({ priority: 40, name: "circuit-breaker" })
 export class CircuitBreakerMiddleware implements IHttpMiddleware {
   /**
    * @param config   - Module options.
@@ -38,7 +38,7 @@ export class CircuitBreakerMiddleware implements IHttpMiddleware {
    */
   public constructor(
     @Inject(HTTP_CONFIG) private readonly config: IHttpModuleOptions,
-    private readonly breakers: CircuitBreakerService
+    private readonly breakers: CircuitBreakerService,
   ) {}
 
   /** @inheritdoc */
@@ -48,7 +48,7 @@ export class CircuitBreakerMiddleware implements IHttpMiddleware {
       return next(context);
     }
 
-    if (context.request.meta?.['skipCircuitBreaker'] === true) {
+    if (context.request.meta?.["skipCircuitBreaker"] === true) {
       return next(context);
     }
 
@@ -71,6 +71,6 @@ export class CircuitBreakerMiddleware implements IHttpMiddleware {
 
   /** Build the `"{METHOD}:{URL}"` lookup key. */
   private static endpointKey(request: IHttpRequestConfig): string {
-    return `${request.method ?? 'GET'}:${request.url ?? ''}`;
+    return `${request.method ?? "GET"}:${request.url ?? ""}`;
   }
 }

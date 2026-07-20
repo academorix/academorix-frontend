@@ -7,14 +7,14 @@
  *   Native `Card` + `Chip` primitives.
  */
 
-import { useEffect, useState, type ReactElement } from 'react';
-import { ScrollView, Text, View } from 'react-native';
-import { Card, Chip } from '@stackra/ui/native';
-import { Env, Num } from '@stackra/support';
+import { useEffect, useState, type ReactElement } from "react";
+import { ScrollView, Text, View } from "react-native";
+import { Card, Chip } from "@stackra/ui/native";
+import { Env, Num } from "@stackra/support";
 
-import { useNativeDevtoolsContext } from '../../hooks/use-native-devtools-context.hook';
-import { useNativeDevtoolsPanels } from '../../hooks/use-native-devtools-panels.hook';
-import type { OverviewPanelProps } from './overview-panel.interface';
+import { useNativeDevtoolsContext } from "../../hooks/use-native-devtools-context.hook";
+import { useNativeDevtoolsPanels } from "../../hooks/use-native-devtools-panels.hook";
+import type { OverviewPanelProps } from "./overview-panel.interface";
 
 /**
  * Format a millisecond-uptime value as a short human-readable
@@ -46,7 +46,7 @@ function StatCard({
       </Card.Header>
       {hint ? (
         <Card.Body>
-          <Text className="text-xs text-muted">{hint}</Text>
+          <Text className="text-muted text-xs">{hint}</Text>
         </Card.Body>
       ) : null}
     </Card>
@@ -75,14 +75,14 @@ export function OverviewPanel({ className }: OverviewPanelProps): ReactElement {
   }, []);
 
   const uptime = nowTick - mountedAt;
-  const nodeEnv = Env.get('NODE_ENV', 'development');
+  const nodeEnv = Env.get("NODE_ENV", "development");
 
   return (
     <ScrollView className={className} contentContainerStyle={{ padding: 16, gap: 12 }}>
       <View className="flex-row items-center justify-between">
         <View className="flex-1 gap-1">
-          <Text className="text-base font-semibold text-foreground">Stackra Devtools</Text>
-          <Text className="text-xs text-muted">
+          <Text className="text-foreground text-base font-semibold">Stackra Devtools</Text>
+          <Text className="text-muted text-xs">
             Panels + inspector sources contributed by every module in this app.
           </Text>
         </View>
@@ -95,7 +95,7 @@ export function OverviewPanel({ className }: OverviewPanelProps): ReactElement {
         <StatCard
           label="Panels"
           value={Num.abbreviate(panels.length)}
-          hint={`${byCategory.size} categor${byCategory.size === 1 ? 'y' : 'ies'}`}
+          hint={`${byCategory.size} categor${byCategory.size === 1 ? "y" : "ies"}`}
         />
         <StatCard label="Uptime" value={formatUptime(uptime)} />
       </View>

@@ -4,8 +4,8 @@
  * @description Chainable assertions over an {@link IMockDispatcher}.
  */
 
-import { ActionAssertionError } from '../core/errors';
-import type { IMockDispatcher } from './create-mock-dispatcher';
+import { ActionAssertionError } from "../core/errors";
+import type { IMockDispatcher } from "./create-mock-dispatcher";
 
 /**
  * Return shape of {@link assertActionDispatched}.
@@ -35,13 +35,13 @@ export interface IActionDispatchedAssertion {
  */
 export function assertActionDispatched(
   mock: IMockDispatcher,
-  kind: string
+  kind: string,
 ): IActionDispatchedAssertion {
   let matching = mock.calls.filter((c) => c.descriptor.kind === kind);
 
   const api: IActionDispatchedAssertion = {
     withPayload(matcher) {
-      if (typeof matcher === 'function') {
+      if (typeof matcher === "function") {
         matching = matching.filter((c) => (matcher as (d: unknown) => boolean)(c.descriptor));
       } else {
         const serialized = JSON.stringify(matcher);
@@ -53,7 +53,7 @@ export function assertActionDispatched(
       if (matching.length !== n) {
         throw new ActionAssertionError(
           `Expected action "${kind}" to be dispatched ${n} time(s); was ${matching.length}.`,
-          { kind, expected: n, actual: matching.length, calls: mock.calls }
+          { kind, expected: n, actual: matching.length, calls: mock.calls },
         );
       }
     },
@@ -61,7 +61,7 @@ export function assertActionDispatched(
       if (matching.length < 1) {
         throw new ActionAssertionError(
           `Expected action "${kind}" to be dispatched at least once; was never.`,
-          { kind, calls: mock.calls }
+          { kind, calls: mock.calls },
         );
       }
     },

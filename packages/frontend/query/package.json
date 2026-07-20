@@ -1,7 +1,7 @@
 {
   "name": "@stackra/query",
   "version": "0.2.0",
-  "description": "Store-backed data fetching for the Stackra framework — TanStack Query-backed cache + fetcher registry, DI-integrated. Composable with @stackra/state stores for cross-app reactive reads.",
+  "description": "Store-backed data fetching for the Stackra framework \u2014 TanStack Query-backed cache + fetcher registry, DI-integrated. Composable with @stackra/state stores for cross-app reactive reads.",
   "license": "MIT",
   "author": {
     "name": "Stackra L.L.C",
@@ -126,6 +126,8 @@
     }
   },
   "devDependencies": {
+    "@academorix/config-tsconfig": "workspace:*",
+    "@academorix/config-tsup": "workspace:*",
     "@stackra/actions": "workspace:*",
     "@stackra/container": "workspace:*",
     "@stackra/contracts": "workspace:*",

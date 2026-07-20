@@ -4,16 +4,59 @@
   "title": "membership — helper functions",
   "namespace": "Academorix\\Finance\\Membership\\Support",
   "helpers": [
-    { "signature": "current_memberships_for_athlete(Athlete $athlete): Collection<Membership>", "purpose": "Returns active + paused memberships for an athlete.", "delegates_to": "MembershipRepository::currentForAthlete()" },
-    { "signature": "current_memberships_for_user(User $user): Collection<Membership>", "purpose": "Returns memberships where the user is the primary_guardian OR the athlete's underlying user.", "delegates_to": "MembershipRepository::currentForUser()" },
-    { "signature": "plan_catalog_for_branch(Branch $branch): Collection<MembershipPlan>", "purpose": "Returns the active + effective plan catalog for a branch, ordered by price.", "delegates_to": "MembershipPlanRepository::catalogForBranch()" },
-    { "signature": "available_passes_for_membership(Membership $membership): Collection<Pass>", "purpose": "Passes with consumed_at IS NULL AND now() BETWEEN valid_from AND valid_until AND parent membership is active.", "delegates_to": "PassRepository::availableFor()" },
-    { "signature": "membership_requires_renewal_soon(Membership $membership, int $days = 7): bool", "purpose": "True when status = 'active' AND next_renewal_at BETWEEN now() AND now() + $days days.", "delegates_to": "MembershipReporter::renewalSoon()" },
-    { "signature": "membership_is_in_dunning(Membership $membership): bool", "purpose": "True when consecutive_failed_renewal_count > 0 AND status = 'active'.", "delegates_to": "DunningScheduler::inDunning()" },
-    { "signature": "compute_prorated_refund(Membership $membership): int", "purpose": "Returns prorated refund amount in cents = price_snapshot_cents * (days_remaining_in_period / total_period_days). Zero for lapsed / non-Enterprise tenants.", "delegates_to": "CalculateProratedRefundOnHardCancel::compute()" },
-    { "signature": "next_period_bounds(Membership $membership): array{starts_at: string, ends_at: string}", "purpose": "Computes the next billing period's start + end from current_period_ends_at + billing_interval * billing_interval_count." },
-    { "signature": "coupon_applies_to_renewal(Coupon $coupon, Membership $membership): bool", "purpose": "Checks coupon.applies_to_renewals + max_redemptions_per_customer + expiry to decide whether a coupon should re-apply at renewal.", "delegates_to": "coupon::CouponRedeemer::isRenewalEligible()" },
-    { "signature": "tenant_active_membership_count(Tenant $tenant): int", "purpose": "Counts memberships in status IN (pending, active, paused).", "delegates_to": "MembershipRepository::activeCount()" },
-    { "signature": "membership_mrr(Tenant $tenant, ?string $currency = null): int", "purpose": "Sum of price_snapshot_cents normalized to monthly for all active memberships. Currency-scoped when set.", "delegates_to": "MembershipReporter::mrr()" }
+    {
+      "signature": "current_memberships_for_athlete(Athlete $athlete): Collection<Membership>",
+      "purpose": "Returns active + paused memberships for an athlete.",
+      "delegates_to": "MembershipRepository::currentForAthlete()"
+    },
+    {
+      "signature": "current_memberships_for_user(User $user): Collection<Membership>",
+      "purpose": "Returns memberships where the user is the primary_guardian OR the athlete's underlying user.",
+      "delegates_to": "MembershipRepository::currentForUser()"
+    },
+    {
+      "signature": "plan_catalog_for_branch(Branch $branch): Collection<MembershipPlan>",
+      "purpose": "Returns the active + effective plan catalog for a branch, ordered by price.",
+      "delegates_to": "MembershipPlanRepository::catalogForBranch()"
+    },
+    {
+      "signature": "available_passes_for_membership(Membership $membership): Collection<Pass>",
+      "purpose": "Passes with consumed_at IS NULL AND now() BETWEEN valid_from AND valid_until AND parent membership is active.",
+      "delegates_to": "PassRepository::availableFor()"
+    },
+    {
+      "signature": "membership_requires_renewal_soon(Membership $membership, int $days = 7): bool",
+      "purpose": "True when status = 'active' AND next_renewal_at BETWEEN now() AND now() + $days days.",
+      "delegates_to": "MembershipReporter::renewalSoon()"
+    },
+    {
+      "signature": "membership_is_in_dunning(Membership $membership): bool",
+      "purpose": "True when consecutive_failed_renewal_count > 0 AND status = 'active'.",
+      "delegates_to": "DunningScheduler::inDunning()"
+    },
+    {
+      "signature": "compute_prorated_refund(Membership $membership): int",
+      "purpose": "Returns prorated refund amount in cents = price_snapshot_cents * (days_remaining_in_period / total_period_days). Zero for lapsed / non-Enterprise tenants.",
+      "delegates_to": "CalculateProratedRefundOnHardCancel::compute()"
+    },
+    {
+      "signature": "next_period_bounds(Membership $membership): array{starts_at: string, ends_at: string}",
+      "purpose": "Computes the next billing period's start + end from current_period_ends_at + billing_interval * billing_interval_count."
+    },
+    {
+      "signature": "coupon_applies_to_renewal(Coupon $coupon, Membership $membership): bool",
+      "purpose": "Checks coupon.applies_to_renewals + max_redemptions_per_customer + expiry to decide whether a coupon should re-apply at renewal.",
+      "delegates_to": "coupon::CouponRedeemer::isRenewalEligible()"
+    },
+    {
+      "signature": "tenant_active_membership_count(Tenant $tenant): int",
+      "purpose": "Counts memberships in status IN (pending, active, paused).",
+      "delegates_to": "MembershipRepository::activeCount()"
+    },
+    {
+      "signature": "membership_mrr(Tenant $tenant, ?string $currency = null): int",
+      "purpose": "Sum of price_snapshot_cents normalized to monthly for all active memberships. Currency-scoped when set.",
+      "delegates_to": "MembershipReporter::mrr()"
+    }
   ]
 }

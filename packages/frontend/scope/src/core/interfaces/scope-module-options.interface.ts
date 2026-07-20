@@ -4,8 +4,8 @@
  * @description Client-side scope configuration shape.
  */
 
-import type { IScopeContext } from './scope-context.interface';
-import type { IScopeNodeTreeNode } from './scope-node-tree-node.interface';
+import type { IScopeContext } from "./scope-context.interface";
+import type { IScopeNodeTreeNode } from "./scope-node-tree-node.interface";
 
 /**
  * Scope configuration options.
@@ -33,7 +33,7 @@ export interface IScopeModuleOptions {
    * and are consumed the same way — just name them in `stores` and set
    * `storage` here to that instance name.
    */
-  readonly storage?: 'localStorage' | 'sessionStorage' | 'memory' | 'asyncStorage' | (string & {});
+  readonly storage?: "localStorage" | "sessionStorage" | "memory" | "asyncStorage" | (string & {});
 
   /**
    * Storage key under the resolved `IStorage` instance.
@@ -73,7 +73,7 @@ export interface IScopeModuleOptions {
 
   /** Seed hints — backend only; carried here for a shared config file. */
   readonly seeds?: {
-    readonly strategy?: 'skip_existing' | 'overwrite' | 'fail_on_conflict';
+    readonly strategy?: "skip_existing" | "overwrite" | "fail_on_conflict";
     readonly definitions?: readonly unknown[];
   };
 }

@@ -9,9 +9,9 @@ Tenant-facing AgeGroup management.
 - `list.screen.json` — filterable + sortable table. Columns: sort_order, name,
   bounds (via the shared `age-group-badge` widget), cutoff_kind, sport_key,
   gender_category, is_youth chip, is_default chip, is_seeded chip, status.
-  Filters: is_seeded, sport_key, is_youth, gender_category, status. Row
-  actions: edit, edit bounds (separate route + higher permission), edit cutoff
-  (same), set-default, archive/restore.
+  Filters: is_seeded, sport_key, is_youth, gender_category, status. Row actions:
+  edit, edit bounds (separate route + higher permission), edit cutoff (same),
+  set-default, archive/restore.
 - `create.screen.json` — 3-card form. Card 1: identity (name + slug + optional
   organization_id + optional sport_key). Card 2: bounds + cutoff (min_age +
   max_age + cutoff_date_kind + conditional cutoff_month + cutoff_day depending
@@ -27,27 +27,27 @@ Tenant-facing AgeGroup management.
 
 ### `widgets/`
 
-- `age-group-picker.widget.json` — HeroUI `ComboBox` (per the ui-components
-  rule — searchable single-select is essential across catalogs that may grow
-  to 30+ entries on Enterprise tenants). Options group by youth/adult
+- `age-group-picker.widget.json` — HeroUI `ComboBox` (per the ui-components rule
+  — searchable single-select is essential across catalogs that may grow to 30+
+  entries on Enterprise tenants). Options group by youth/adult
   (`ListBox.Section`). Filters to `filter[status]=active` by default. Consumed
   by the Team edit form + AthleteEnrollment form + roster preview widgets.
-- `age-group-badge.widget.json` — compact chip showing `<name> · <bounds>`
-  (e.g. "U12 · Ages 10-11", "Adult · Ages 18-34"). Rendered in team detail +
-  roster rows + enrollment previews. The chip color is driven by the AgeGroup's
-  color field; when a group is is_youth=true, a subscript "youth"
-  chip renders in the safeguarding-yellow variant.
+- `age-group-badge.widget.json` — compact chip showing `<name> · <bounds>` (e.g.
+  "U12 · Ages 10-11", "Adult · Ages 18-34"). Rendered in team detail + roster
+  rows + enrollment previews. The chip color is driven by the AgeGroup's color
+  field; when a group is is_youth=true, a subscript "youth" chip renders in the
+  safeguarding-yellow variant.
 
 ## Notes on `ComboBox` over `Select`
 
 Every picker on this module (age-group, sport-key, cutoff-kind) uses HeroUI
 `ComboBox` — not `Select` — per the `ui-components.md` rule. Reasoning:
 
-- **Age-group picker** — Small tenants have 10 seeded rows; Enterprise
-  tenants may add many customs. Search is essential.
+- **Age-group picker** — Small tenants have 10 seeded rows; Enterprise tenants
+  may add many customs. Search is essential.
 - **Sport-key picker** (embedded in create/edit forms) — Wave 3c will introduce
-  a formal sports registry with 20+ entries. Search is essential from day one
-  so the migration is a no-op.
+  a formal sports registry with 20+ entries. Search is essential from day one so
+  the migration is a no-op.
 - **Cutoff-kind picker** — only 4 options, so `Select` would be defensible, but
   we standardise on `ComboBox` to keep every picker consistent + to leave room
   for future kinds without a widget rewrite.
@@ -89,7 +89,7 @@ rendering fields:
 - `sport_key` field is disabled + shows an "Enterprise required" chip when
   `entitlements.age_group_sport_specific=false`
 - Bounds fields on a seeded row are disabled + show a "Custom groups required"
-  chip when `entitlements.age_group_custom=false` (Small tier can rename but
-  not reshape bounds even on seeded rows)
-- The "Create custom age group" button on the list screen is disabled + shows
-  a slot-usage bar with an upgrade prompt when `age_group_slot.is_exceeded=true`
+  chip when `entitlements.age_group_custom=false` (Small tier can rename but not
+  reshape bounds even on seeded rows)
+- The "Create custom age group" button on the list screen is disabled + shows a
+  slot-usage bar with an upgrade prompt when `age_group_slot.is_exceeded=true`

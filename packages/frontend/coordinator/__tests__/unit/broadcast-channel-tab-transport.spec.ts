@@ -7,9 +7,9 @@
  *   spec never depends on `jsdom` or a real DOM.
  */
 
-import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
 
-import { BroadcastChannelTabTransport } from '@/core/transports/broadcast-channel-tab.transport';
+import { BroadcastChannelTabTransport } from "@/core/transports/broadcast-channel-tab.transport";
 
 // ════════════════════════════════════════════════════════════════════════════════
 // In-memory BroadcastChannel shim
@@ -37,7 +37,7 @@ class MockBroadcastChannel {
   }
 
   public postMessage(data: unknown): void {
-    if (this.closed) throw new Error('closed');
+    if (this.closed) throw new Error("closed");
     const pool = MockBroadcastChannel.instances.get(this.name);
     if (!pool) return;
     // Deliver synchronously to every peer except the sender.
@@ -57,7 +57,7 @@ class MockBroadcastChannel {
 
 const originalBroadcastChannel = (globalThis as { BroadcastChannel?: unknown }).BroadcastChannel;
 
-describe('BroadcastChannelTabTransport', () => {
+describe("BroadcastChannelTabTransport", () => {
   beforeEach(() => {
     // Reset the static pool so tests don't leak into each other.
     MockBroadcastChannel.instances.clear();
@@ -69,10 +69,10 @@ describe('BroadcastChannelTabTransport', () => {
     (globalThis as { BroadcastChannel?: unknown }).BroadcastChannel = originalBroadcastChannel;
   });
 
-  describe('subscribe', () => {
-    it('returns an unsubscribe function that removes the listener', () => {
-      const a = new BroadcastChannelTabTransport('room');
-      const b = new BroadcastChannelTabTransport('room');
+  describe("subscribe", () => {
+    it("returns an unsubscribe function that removes the listener", () => {
+      const a = new BroadcastChannelTabTransport("room");
+      const b = new BroadcastChannelTabTransport("room");
       const listener = vi.fn();
 
       const unsub = a.subscribe(listener);
@@ -84,9 +84,9 @@ describe('BroadcastChannelTabTransport', () => {
       expect(listener).toHaveBeenCalledTimes(1);
     });
 
-    it('supports multiple subscribers on the same transport', () => {
-      const a = new BroadcastChannelTabTransport('room');
-      const b = new BroadcastChannelTabTransport('room');
+    it("supports multiple subscribers on the same transport", () => {
+      const a = new BroadcastChannelTabTransport("room");
+      const b = new BroadcastChannelTabTransport("room");
       const l1 = vi.fn();
       const l2 = vi.fn();
       a.subscribe(l1);
@@ -97,8 +97,8 @@ describe('BroadcastChannelTabTransport', () => {
       expect(l2).toHaveBeenCalledWith({ hello: true });
     });
 
-    it('does not deliver a sender its own broadcasts', () => {
-      const a = new BroadcastChannelTabTransport('room');
+    it("does not deliver a sender its own broadcasts", () => {
+      const a = new BroadcastChannelTabTransport("room");
       const listener = vi.fn();
       a.subscribe(listener);
       a.broadcast({ mine: true });
@@ -106,11 +106,11 @@ describe('BroadcastChannelTabTransport', () => {
     });
   });
 
-  describe('broadcast', () => {
-    it('delivers to every peer on the same channel', () => {
-      const a = new BroadcastChannelTabTransport('room');
-      const b = new BroadcastChannelTabTransport('room');
-      const c = new BroadcastChannelTabTransport('room');
+  describe("broadcast", () => {
+    it("delivers to every peer on the same channel", () => {
+      const a = new BroadcastChannelTabTransport("room");
+      const b = new BroadcastChannelTabTransport("room");
+      const c = new BroadcastChannelTabTransport("room");
       const lB = vi.fn();
       const lC = vi.fn();
       b.subscribe(lB);
@@ -122,9 +122,9 @@ describe('BroadcastChannelTabTransport', () => {
       expect(lC).toHaveBeenCalledWith({ v: 42 });
     });
 
-    it('does not deliver to peers on a different channel', () => {
-      const a = new BroadcastChannelTabTransport('rooms:1');
-      const b = new BroadcastChannelTabTransport('rooms:2');
+    it("does not deliver to peers on a different channel", () => {
+      const a = new BroadcastChannelTabTransport("rooms:1");
+      const b = new BroadcastChannelTabTransport("rooms:2");
       const listener = vi.fn();
       b.subscribe(listener);
 
@@ -133,20 +133,20 @@ describe('BroadcastChannelTabTransport', () => {
       expect(listener).not.toHaveBeenCalled();
     });
 
-    it('swallows serialisation / postMessage failures (fail-soft)', () => {
-      const a = new BroadcastChannelTabTransport('room');
+    it("swallows serialisation / postMessage failures (fail-soft)", () => {
+      const a = new BroadcastChannelTabTransport("room");
       // Force `postMessage` to throw — the transport must swallow it.
-      const spy = vi.spyOn(MockBroadcastChannel.prototype, 'postMessage').mockImplementation(() => {
-        throw new Error('structured-clone failure');
+      const spy = vi.spyOn(MockBroadcastChannel.prototype, "postMessage").mockImplementation(() => {
+        throw new Error("structured-clone failure");
       });
 
       expect(() => a.broadcast({ x: 1 })).not.toThrow();
       spy.mockRestore();
     });
 
-    it('is a no-op after close()', () => {
-      const a = new BroadcastChannelTabTransport('room');
-      const b = new BroadcastChannelTabTransport('room');
+    it("is a no-op after close()", () => {
+      const a = new BroadcastChannelTabTransport("room");
+      const b = new BroadcastChannelTabTransport("room");
       const listener = vi.fn();
       b.subscribe(listener);
 
@@ -157,12 +157,12 @@ describe('BroadcastChannelTabTransport', () => {
     });
   });
 
-  describe('listener isolation', () => {
-    it('a throwing listener does not block other listeners on the same transport', () => {
-      const a = new BroadcastChannelTabTransport('room');
-      const b = new BroadcastChannelTabTransport('room');
+  describe("listener isolation", () => {
+    it("a throwing listener does not block other listeners on the same transport", () => {
+      const a = new BroadcastChannelTabTransport("room");
+      const b = new BroadcastChannelTabTransport("room");
       const bad = vi.fn(() => {
-        throw new Error('bad handler');
+        throw new Error("bad handler");
       });
       const good = vi.fn();
       a.subscribe(bad);
@@ -175,16 +175,16 @@ describe('BroadcastChannelTabTransport', () => {
     });
   });
 
-  describe('close', () => {
-    it('is idempotent — calling twice does not throw', () => {
-      const a = new BroadcastChannelTabTransport('room');
+  describe("close", () => {
+    it("is idempotent — calling twice does not throw", () => {
+      const a = new BroadcastChannelTabTransport("room");
       a.close();
       expect(() => a.close()).not.toThrow();
     });
 
-    it('drops every subscriber', () => {
-      const a = new BroadcastChannelTabTransport('room');
-      const b = new BroadcastChannelTabTransport('room');
+    it("drops every subscriber", () => {
+      const a = new BroadcastChannelTabTransport("room");
+      const b = new BroadcastChannelTabTransport("room");
       const listener = vi.fn();
       a.subscribe(listener);
 

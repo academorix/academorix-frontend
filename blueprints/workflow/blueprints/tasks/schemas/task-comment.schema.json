@@ -16,7 +16,15 @@
     "model": "Academorix\\Workflow\\Tasks\\Models\\TaskComment",
     "interface": "Academorix\\Workflow\\Tasks\\Contracts\\Data\\TaskCommentInterface",
     "implements": ["Academorix\\Workflow\\Tasks\\Contracts\\Data\\TaskCommentInterface"],
-    "traits": ["HasFactory", "HasUlids", "BelongsToTenant", "HasMetadata", "HasUserstamps", "Auditable", "SoftDeletes"],
+    "traits": [
+      "HasFactory",
+      "HasUlids",
+      "BelongsToTenant",
+      "HasMetadata",
+      "HasUserstamps",
+      "Auditable",
+      "SoftDeletes"
+    ],
     "casts": {
       "mentioned_user_ids": "array",
       "attachments_json": "array",
@@ -28,13 +36,48 @@
   "x-database": {
     "engine": "postgres",
     "columns": {
-      "id": { "type": "string", "length": 64, "primary": true, "description": "Prefixed ULID: `tcm_<26>`." },
-      "tenant_id": { "type": "string", "length": 64, "nullable": false, "foreign": { "table": "tenants", "column": "id", "onDelete": "cascade" } },
-      "task_id": { "type": "string", "length": 64, "nullable": false, "foreign": { "table": "tasks", "column": "id", "onDelete": "cascade" } },
-      "user_id": { "type": "string", "length": 64, "nullable": false, "foreign": { "table": "users", "column": "id", "onDelete": "restrict" }, "description": "Author. Restrict on delete so we never orphan authorship." },
-      "body": { "type": "text", "nullable": false, "description": "Markdown-friendly comment body." },
-      "mentioned_user_ids": { "type": "jsonb", "nullable": false, "default": "'[]'::jsonb", "description": "Array of user IDs @-mentioned in this comment. Drives TaskCommentMentionedNotification." },
-      "attachments_json": { "type": "jsonb", "nullable": false, "default": "'[]'::jsonb", "description": "References to platform/storage.files: [{'file_id': 'fil_...', 'name': 'invoice.pdf'}]." },
+      "id": {
+        "type": "string",
+        "length": 64,
+        "primary": true,
+        "description": "Prefixed ULID: `tcm_<26>`."
+      },
+      "tenant_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "foreign": { "table": "tenants", "column": "id", "onDelete": "cascade" }
+      },
+      "task_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "foreign": { "table": "tasks", "column": "id", "onDelete": "cascade" }
+      },
+      "user_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "foreign": { "table": "users", "column": "id", "onDelete": "restrict" },
+        "description": "Author. Restrict on delete so we never orphan authorship."
+      },
+      "body": {
+        "type": "text",
+        "nullable": false,
+        "description": "Markdown-friendly comment body."
+      },
+      "mentioned_user_ids": {
+        "type": "jsonb",
+        "nullable": false,
+        "default": "'[]'::jsonb",
+        "description": "Array of user IDs @-mentioned in this comment. Drives TaskCommentMentionedNotification."
+      },
+      "attachments_json": {
+        "type": "jsonb",
+        "nullable": false,
+        "default": "'[]'::jsonb",
+        "description": "References to platform/storage.files: [{'file_id': 'fil_...', 'name': 'invoice.pdf'}]."
+      },
       "edited_at": { "type": "timestamptz", "nullable": true },
       "metadata": { "type": "jsonb", "nullable": true },
       "created_by": { "type": "string", "length": 64, "nullable": true },
@@ -49,7 +92,17 @@
       { "columns": ["tenant_id", "user_id"], "name": "task_comments_user_idx" }
     ]
   },
-  "required": ["id", "tenant_id", "task_id", "user_id", "body", "mentioned_user_ids", "attachments_json", "created_at", "updated_at"],
+  "required": [
+    "id",
+    "tenant_id",
+    "task_id",
+    "user_id",
+    "body",
+    "mentioned_user_ids",
+    "attachments_json",
+    "created_at",
+    "updated_at"
+  ],
   "properties": {
     "id": { "type": "string", "pattern": "^tcm_[0-9A-HJKMNP-TV-Z]{26}$" },
     "tenant_id": { "type": "string", "pattern": "^ten_[0-9A-HJKMNP-TV-Z]{26}$" },

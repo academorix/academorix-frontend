@@ -30,7 +30,9 @@
     },
     {
       "entity": "ServiceAccount (expired, not manually deleted)",
-      "hot": { "days": "expires_at + service-accounts.rotation.grace_days_after_expiry (default 7)" },
+      "hot": {
+        "days": "expires_at + service-accounts.rotation.grace_days_after_expiry (default 7)"
+      },
       "purge": {
         "trigger": "expires_at + grace_days_after_expiry < now() AND is_enabled = true",
         "action": "soft-disable (is_enabled=false); fires ServiceAccountExpired; then follows the soft-deleted retention flow",

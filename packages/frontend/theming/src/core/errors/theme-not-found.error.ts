@@ -19,8 +19,8 @@ export class ThemeNotFoundError extends Error {
    * @param available - Array of registered theme IDs.
    */
   public constructor(id: string, available: string[] = []) {
-    const availableList = available.length > 0 ? ` Available: ${available.join(', ')}.` : '';
+    const availableList = available.length > 0 ? ` Available: ${available.join(", ")}.` : "";
     super(`[Theming] Theme "${id}" is not registered in the ThemeRegistry.${availableList}`);
-    this.name = 'ThemeNotFoundError';
+    this.name = "ThemeNotFoundError";
   }
 }

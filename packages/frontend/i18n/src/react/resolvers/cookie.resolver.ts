@@ -24,8 +24,8 @@
  *   (Node runtime, worker, hardened iframe).
  */
 
-import type { II18nResolver } from '@/core/interfaces';
-import type { CookieResolverOptions } from '../interfaces';
+import type { II18nResolver } from "@/core/interfaces";
+import type { CookieResolverOptions } from "../interfaces";
 
 /**
  * Legacy locale resolver that reads bare-string cookie values.
@@ -52,7 +52,7 @@ export class CookieResolver implements II18nResolver {
    * @param options - Configuration with cookie names.
    */
   public constructor(options?: CookieResolverOptions) {
-    this.cookieNames = options?.cookieNames ?? ['lang', 'locale'];
+    this.cookieNames = options?.cookieNames ?? ["lang", "locale"];
   }
 
   /**
@@ -69,7 +69,7 @@ export class CookieResolver implements II18nResolver {
    */
   public resolve(): string | undefined {
     // Fail-soft — SSR / non-DOM environments have no cookies.
-    if (typeof document === 'undefined') return undefined;
+    if (typeof document === "undefined") return undefined;
 
     try {
       const cookieString = document.cookie;
@@ -103,7 +103,7 @@ export class CookieResolver implements II18nResolver {
  */
 function readCookieValue(cookieString: string, name: string): string | undefined {
   const target = `${name}=`;
-  for (const part of cookieString.split(';')) {
+  for (const part of cookieString.split(";")) {
     const trimmed = part.trim();
     if (trimmed.startsWith(target)) {
       return decodeURIComponent(trimmed.slice(target.length));

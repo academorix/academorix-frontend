@@ -27,7 +27,7 @@
  *   different built-ins).
  */
 
-import { Module, type DynamicModule, type Type } from '@stackra/container';
+import { Module, type DynamicModule, type Type } from "@stackra/container";
 import {
   DEVTOOLS_INSPECTOR_REGISTRY,
   DEVTOOLS_REGISTRY,
@@ -36,18 +36,18 @@ import {
   type IDevtoolsPanel,
   type IDevtoolsPanelsRegistry,
   type IAsyncModuleOptions,
-} from '@stackra/contracts';
-import { createSeedLoader, seedLoaderToken } from '@stackra/support';
+} from "@stackra/contracts";
+import { createSeedLoader, seedLoaderToken } from "@stackra/support";
 
-import { DEVTOOLS_CONFIG } from './constants';
-import type { IDevtoolsModuleOptions } from './interfaces/devtools-module-options.interface';
-import { DevtoolsPanelsRegistry } from './registries/devtools-panels.registry';
-import { DevtoolsInspectorRegistry } from './registries/devtools-inspector.registry';
-import { DevtoolsPanelsLoaderService } from './services/devtools-panels-loader.service';
-import { DevtoolsInspectorLoaderService } from './services/devtools-inspector-loader.service';
-import { DevtoolsFrameStateService } from './services/devtools-frame-state.service';
-import { DevtoolsAnalyticsService } from './services/devtools-analytics.service';
-import { mergeConfig } from './utils/merge-config.util';
+import { DEVTOOLS_CONFIG } from "./constants";
+import type { IDevtoolsModuleOptions } from "./interfaces/devtools-module-options.interface";
+import { DevtoolsPanelsRegistry } from "./registries/devtools-panels.registry";
+import { DevtoolsInspectorRegistry } from "./registries/devtools-inspector.registry";
+import { DevtoolsPanelsLoaderService } from "./services/devtools-panels-loader.service";
+import { DevtoolsInspectorLoaderService } from "./services/devtools-inspector-loader.service";
+import { DevtoolsFrameStateService } from "./services/devtools-frame-state.service";
+import { DevtoolsAnalyticsService } from "./services/devtools-analytics.service";
+import { mergeConfig } from "./utils/merge-config.util";
 
 /**
  * The devtools DI module.
@@ -186,7 +186,7 @@ export class DevtoolsModule {
    * ```
    */
   public static forFeature(
-    panels: Type<IDevtoolsPanel> | readonly Type<IDevtoolsPanel>[]
+    panels: Type<IDevtoolsPanel> | readonly Type<IDevtoolsPanel>[],
   ): DynamicModule {
     const classes = Array.isArray(panels) ? panels : [panels as Type<IDevtoolsPanel>];
     return {
@@ -224,7 +224,7 @@ export class DevtoolsModule {
    * root.
    */
   public static forInspectorSource(
-    sources: Type<IDevtoolsInspectorRegionSource> | readonly Type<IDevtoolsInspectorRegionSource>[]
+    sources: Type<IDevtoolsInspectorRegionSource> | readonly Type<IDevtoolsInspectorRegionSource>[],
   ): DynamicModule {
     const classes = Array.isArray(sources)
       ? sources
@@ -237,7 +237,7 @@ export class DevtoolsModule {
           provide: seedLoaderToken(`devtools:inspector:${sourceClass.name}`),
           useFactory: (
             registry: IDevtoolsInspectorRegistry | undefined,
-            instance: IDevtoolsInspectorRegionSource
+            instance: IDevtoolsInspectorRegionSource,
           ) => {
             // Fail-soft — see `forFeature` above.
             if (!registry) return createSeedLoader(() => {});

@@ -1,7 +1,13 @@
 {
   "name": "psr/clock",
   "description": "Common interface for reading the clock.",
-  "keywords": ["psr", "psr-20", "time", "clock", "now"],
+  "keywords": [
+    "psr",
+    "psr-20",
+    "time",
+    "clock",
+    "now"
+  ],
   "homepage": "https://github.com/php-fig/clock",
   "license": "MIT",
   "authors": [

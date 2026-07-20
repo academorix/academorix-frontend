@@ -5,8 +5,8 @@
  *   component.
  */
 
-import type { IRenderableNotification } from '@/core/interfaces';
-import type { NotificationWriter } from '../../hooks';
+import type { IRenderableNotification } from "@/core/interfaces";
+import type { NotificationWriter } from "../../hooks";
 
 /**
  * Props accepted by the native {@link NotificationRow}.

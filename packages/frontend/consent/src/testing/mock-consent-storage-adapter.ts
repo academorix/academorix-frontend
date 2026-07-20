@@ -9,11 +9,11 @@
  *   `clear` call on `.calls` for assertions.
  */
 
-import type { IConsentStorageAdapter } from '@stackra/contracts';
+import type { IConsentStorageAdapter } from "@stackra/contracts";
 
 /** A recorded storage-adapter call. */
 export type RecordedStorageCall =
-  { kind: 'load' } | { kind: 'save'; prefs: Record<string, boolean> } | { kind: 'clear' };
+  { kind: "load" } | { kind: "save"; prefs: Record<string, boolean> } | { kind: "clear" };
 
 /**
  * In-memory consent storage adapter for testing.
@@ -38,17 +38,17 @@ export class MockConsentStorageAdapter implements IConsentStorageAdapter {
   }
 
   public async load(): Promise<Record<string, boolean> | null> {
-    this.calls.push({ kind: 'load' });
+    this.calls.push({ kind: "load" });
     return this.store ? { ...this.store } : null;
   }
 
   public async save(prefs: Record<string, boolean>): Promise<void> {
-    this.calls.push({ kind: 'save', prefs: { ...prefs } });
+    this.calls.push({ kind: "save", prefs: { ...prefs } });
     this.store = { ...prefs };
   }
 
   public async clear(): Promise<void> {
-    this.calls.push({ kind: 'clear' });
+    this.calls.push({ kind: "clear" });
     this.store = null;
   }
 

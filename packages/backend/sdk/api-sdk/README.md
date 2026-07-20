@@ -1,16 +1,15 @@
 # academorix/api-sdk
 
-Typed, attribute-driven SDK for the `apps/api` HTTP surface.
-Built on [Saloon v3](https://docs.saloon.dev). Every domain
-module ships its own sibling SDK package under
-`apps/api/src/modules/<domain>/sdk/`; this package auto-discovers
-them at boot so `$api->tenancy()->find($id)` resolves without a
+Typed, attribute-driven SDK for the `apps/api` HTTP surface. Built on
+[Saloon v3](https://docs.saloon.dev). Every domain module ships its own sibling
+SDK package under `apps/api/src/modules/<domain>/sdk/`; this package
+auto-discovers them at boot so `$api->tenancy()->find($id)` resolves without a
 hard-coded resource list.
 
 ## Install
 
-The consuming app requires the meta-package which transitively
-pulls in every module's SDK sibling:
+The consuming app requires the meta-package which transitively pulls in every
+module's SDK sibling:
 
 ```bash
 composer require academorix/api-sdk
@@ -126,8 +125,8 @@ final class TenancySdkResource extends BaseSdkResource
 }
 ```
 
-Every `Request` extends `Academorix\ApiSdk\Requests\BaseSdkRequest`
-or Saloon's `Saloon\Http\Request` directly:
+Every `Request` extends `Academorix\ApiSdk\Requests\BaseSdkRequest` or Saloon's
+`Saloon\Http\Request` directly:
 
 ```php
 namespace Academorix\ApiTenancySdk\Requests;
@@ -157,9 +156,9 @@ final class FindTenantRequest extends BaseSdkRequest
 }
 ```
 
-Nothing else to wire — `composer dump-autoload` rebuilds the
-attribute index, discovery runs at the next boot, and
-`$api->tenancy()->find($id)` starts working.
+Nothing else to wire — `composer dump-autoload` rebuilds the attribute index,
+discovery runs at the next boot, and `$api->tenancy()->find($id)` starts
+working.
 
 ## Exception handling
 
@@ -227,34 +226,32 @@ it('reads the tenant', function () {
 Every outbound request flows through:
 
 1. **Correlation-id injection** — reads
-   `Academorix\Foundation\Support\CorrelationId::current()` and
-   stamps `X-Correlation-ID` (or whatever
-   `sdk.api.correlation_id.header` is set to).
+   `Academorix\Foundation\Support\CorrelationId::current()` and stamps
+   `X-Correlation-ID` (or whatever `sdk.api.correlation_id.header` is set to).
 
-2. **Retry** — 5xx and 429 responses trigger exponential
-   backoff + jitter, up to `sdk.api.retry.max_attempts`.
-   Respects `Retry-After` on 429 when configured.
+2. **Retry** — 5xx and 429 responses trigger exponential backoff + jitter, up to
+   `sdk.api.retry.max_attempts`. Respects `Retry-After` on 429 when configured.
 
-3. **Logging** — structured logs with method / URL / status /
-   duration_ms / redacted headers. Level configurable via
-   `sdk.api.logging.level` (`off` / `errors` / `all`).
+3. **Logging** — structured logs with method / URL / status / duration_ms /
+   redacted headers. Level configurable via `sdk.api.logging.level` (`off` /
+   `errors` / `all`).
 
-4. **Throw-on-failure** — every non-2xx response is converted
-   to the matching typed exception (see the hierarchy above).
+4. **Throw-on-failure** — every non-2xx response is converted to the matching
+   typed exception (see the hierarchy above).
 
 ## Configuration reference
 
 Every knob defaults to a sane production value. Full list in
 `config/sdk-api.php`; here are the ones you'll touch most:
 
-| Env | Default | What it does |
-|---|---|---|
-| `SDK_API_BASE_URL` | `http://api.academorix.test` | Base URL of the api. |
-| `SDK_API_TOKEN` | — | Bearer token or API key value. |
-| `SDK_API_AUTH_STRATEGY` | `bearer` | `bearer` / `api-key` / `none`. |
-| `SDK_API_TIMEOUT_REQUEST` | `10.0` | Full round-trip timeout, seconds. |
-| `SDK_API_TIMEOUT_CONNECT` | `3.0` | TCP handshake timeout, seconds. |
-| `SDK_API_RETRY_ENABLED` | `true` | Toggle the retry middleware. |
-| `SDK_API_RETRY_MAX_ATTEMPTS` | `3` | Total attempts including the first. |
-| `SDK_API_LOG_LEVEL` | `errors` | `off` / `errors` / `all`. |
-| `SDK_API_FAKE` | `false` | Bind `ApiFake` — for tests. |
+| Env                          | Default                      | What it does                        |
+| ---------------------------- | ---------------------------- | ----------------------------------- |
+| `SDK_API_BASE_URL`           | `http://api.academorix.test` | Base URL of the api.                |
+| `SDK_API_TOKEN`              | —                            | Bearer token or API key value.      |
+| `SDK_API_AUTH_STRATEGY`      | `bearer`                     | `bearer` / `api-key` / `none`.      |
+| `SDK_API_TIMEOUT_REQUEST`    | `10.0`                       | Full round-trip timeout, seconds.   |
+| `SDK_API_TIMEOUT_CONNECT`    | `3.0`                        | TCP handshake timeout, seconds.     |
+| `SDK_API_RETRY_ENABLED`      | `true`                       | Toggle the retry middleware.        |
+| `SDK_API_RETRY_MAX_ATTEMPTS` | `3`                          | Total attempts including the first. |
+| `SDK_API_LOG_LEVEL`          | `errors`                     | `off` / `errors` / `all`.           |
+| `SDK_API_FAKE`               | `false`                      | Bind `ApiFake` — for tests.         |

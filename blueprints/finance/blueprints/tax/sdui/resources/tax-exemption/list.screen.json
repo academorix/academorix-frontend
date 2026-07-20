@@ -32,13 +32,30 @@
             {
               "kind": "View",
               "children": [
-                { "kind": "Text", "props": { "as": "h1", "className": "text-2xl font-semibold", "children": "Tax exemptions" } },
-                { "kind": "Text", "props": { "className": "text-sm text-muted", "children": "Reseller / non-profit / diplomatic / educational exemption certificates." } }
+                {
+                  "kind": "Text",
+                  "props": {
+                    "as": "h1",
+                    "className": "text-2xl font-semibold",
+                    "children": "Tax exemptions"
+                  }
+                },
+                {
+                  "kind": "Text",
+                  "props": {
+                    "className": "text-sm text-muted",
+                    "children": "Reseller / non-profit / diplomatic / educational exemption certificates."
+                  }
+                }
               ]
             },
             {
               "kind": "Button",
-              "props": { "variant": "primary", "leadingIcon": "plus", "children": "Submit exemption" },
+              "props": {
+                "variant": "primary",
+                "leadingIcon": "plus",
+                "children": "Submit exemption"
+              },
               "requiresPermission": "tax.exemptions.create",
               "actions": {
                 "onPress": { "kind": "navigate", "to": "/tenant/tax/exemptions/new" }
@@ -52,7 +69,11 @@
           "children": [
             {
               "kind": "ComboBox",
-              "props": { "label": "Verification status", "menuTrigger": "focus", "className": "min-w-56" },
+              "props": {
+                "label": "Verification status",
+                "menuTrigger": "focus",
+                "className": "min-w-56"
+              },
               "props_items": [
                 { "id": "pending", "label": "Pending" },
                 { "id": "verified", "label": "Verified" },
@@ -60,22 +81,42 @@
                 { "id": "expired", "label": "Expired" }
               ],
               "actions": {
-                "onSelectionChange": { "kind": "filter.set", "field": "verification_status", "valueExpr": "$selectedKey" }
+                "onSelectionChange": {
+                  "kind": "filter.set",
+                  "field": "verification_status",
+                  "valueExpr": "$selectedKey"
+                }
               }
             },
             {
               "kind": "ComboBox",
-              "props": { "label": "Exemption type", "menuTrigger": "focus", "className": "min-w-56" },
+              "props": {
+                "label": "Exemption type",
+                "menuTrigger": "focus",
+                "className": "min-w-56"
+              },
               "props_items_source": "tax.exemption-type-catalog",
               "actions": {
-                "onSelectionChange": { "kind": "filter.set", "field": "exemption_type", "valueExpr": "$selectedKey" }
+                "onSelectionChange": {
+                  "kind": "filter.set",
+                  "field": "exemption_type",
+                  "valueExpr": "$selectedKey"
+                }
               }
             },
             {
               "kind": "NumberField",
-              "props": { "label": "Expiring within days", "placeholder": "60", "className": "min-w-48" },
+              "props": {
+                "label": "Expiring within days",
+                "placeholder": "60",
+                "className": "min-w-48"
+              },
               "actions": {
-                "onChange": { "kind": "filter.set", "field": "expiring_within_days", "valueExpr": "$value" }
+                "onChange": {
+                  "kind": "filter.set",
+                  "field": "expiring_within_days",
+                  "valueExpr": "$value"
+                }
               }
             }
           ]
@@ -91,10 +132,33 @@
               { "field": "exemption_type", "label": "Type", "sortable": true, "width": 160 },
               { "field": "customer_type", "label": "Customer type", "width": 140 },
               { "field": "issuing_jurisdiction_id", "label": "Jurisdiction", "width": 140 },
-              { "field": "verification_status", "label": "Status", "sortable": true, "width": 160, "renderer": { "widget": "tax.exemption-status-chip" } },
-              { "field": "valid_from", "label": "Valid from", "sortable": true, "width": 130, "formatter": "date" },
-              { "field": "valid_until", "label": "Valid until", "sortable": true, "width": 130, "formatter": "date" },
-              { "field": "verified_at", "label": "Verified at", "width": 160, "formatter": "datetime-relative" }
+              {
+                "field": "verification_status",
+                "label": "Status",
+                "sortable": true,
+                "width": 160,
+                "renderer": { "widget": "tax.exemption-status-chip" }
+              },
+              {
+                "field": "valid_from",
+                "label": "Valid from",
+                "sortable": true,
+                "width": 130,
+                "formatter": "date"
+              },
+              {
+                "field": "valid_until",
+                "label": "Valid until",
+                "sortable": true,
+                "width": 130,
+                "formatter": "date"
+              },
+              {
+                "field": "verified_at",
+                "label": "Verified at",
+                "width": 160,
+                "formatter": "datetime-relative"
+              }
             ],
             "onRowPress": {
               "kind": "navigate",
@@ -105,9 +169,24 @@
             "kind": "View",
             "props": { "className": "text-center py-12" },
             "children": [
-              { "kind": "Icon", "props": { "name": "shield-check", "className": "size-12 mx-auto text-muted" } },
-              { "kind": "Text", "props": { "className": "mt-4 text-lg font-medium", "children": "No exemptions found" } },
-              { "kind": "Text", "props": { "className": "text-sm text-muted", "children": "Customers with reseller, non-profit, diplomatic, or educational status can submit exemption certificates here." } }
+              {
+                "kind": "Icon",
+                "props": { "name": "shield-check", "className": "size-12 mx-auto text-muted" }
+              },
+              {
+                "kind": "Text",
+                "props": {
+                  "className": "mt-4 text-lg font-medium",
+                  "children": "No exemptions found"
+                }
+              },
+              {
+                "kind": "Text",
+                "props": {
+                  "className": "text-sm text-muted",
+                  "children": "Customers with reseller, non-profit, diplomatic, or educational status can submit exemption certificates here."
+                }
+              }
             ]
           }
         }

@@ -159,12 +159,21 @@
                               },
                               {
                                 "kind": "Chip",
-                                "props": { "size": "xs", "variant": "warning", "children": "Youth" },
+                                "props": {
+                                  "size": "xs",
+                                  "variant": "warning",
+                                  "children": "Youth"
+                                },
                                 "bindings": { "hidden": { "$expr": "!item.is_youth" } }
                               },
                               {
                                 "kind": "Chip",
-                                "props": { "size": "xs", "variant": "accent", "leadingIcon": "star-solid", "children": "Default" },
+                                "props": {
+                                  "size": "xs",
+                                  "variant": "accent",
+                                  "leadingIcon": "star-solid",
+                                  "children": "Default"
+                                },
                                 "bindings": { "hidden": { "$expr": "!item.is_default" } }
                               },
                               {
@@ -193,7 +202,10 @@
                           }
                         ]
                       },
-                      { "kind": "ListBox.ItemIndicator", "props": { "className": "size-4 text-accent" } }
+                      {
+                        "kind": "ListBox.ItemIndicator",
+                        "props": { "className": "size-4 text-accent" }
+                      }
                     ]
                   }
                 ]

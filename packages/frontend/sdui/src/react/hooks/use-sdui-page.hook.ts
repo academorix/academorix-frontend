@@ -5,10 +5,10 @@
  *   DI-managed {@link SduiPageRegistry}.
  */
 
-import { useOptionalInject } from '@stackra/container/react';
-import type { ISduiPageDescriptor } from '@stackra/contracts';
-import { SDUI_PAGE_REGISTRY } from '@stackra/contracts';
-import type { SduiPageRegistry } from '@/core/registries/sdui-page.registry';
+import { useOptionalInject } from "@stackra/container/react";
+import type { ISduiPageDescriptor } from "@stackra/contracts";
+import { SDUI_PAGE_REGISTRY } from "@stackra/contracts";
+import type { SduiPageRegistry } from "@/core/registries/sdui-page.registry";
 
 /**
  * Resolve a page descriptor by URL path.

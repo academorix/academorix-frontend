@@ -4,7 +4,7 @@
  * @description CLI command to generate TypeScript type definitions from translation files.
  */
 
-import { generateI18nTypes } from '../utils/type-generator.util';
+import { generateI18nTypes } from "../utils/type-generator.util";
 
 /**
  * Generate i18n TypeScript types.

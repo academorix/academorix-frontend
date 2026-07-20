@@ -10,12 +10,12 @@
  * @module @stackra/http/decorators/http-middleware
  */
 
-import { Injectable } from '@stackra/container';
-import { defineMetadata, getMetadata } from '@vivtel/metadata';
+import { Injectable } from "@stackra/container";
+import { defineMetadata, getMetadata } from "@vivtel/metadata";
 
-import type { IHttpMiddlewareOptions } from '@stackra/contracts';
+import type { IHttpMiddlewareOptions } from "@stackra/contracts";
 
-import { HTTP_MIDDLEWARE_METADATA } from '../constants';
+import { HTTP_MIDDLEWARE_METADATA } from "../constants";
 
 /**
  * Decorator that marks a class as an HTTP middleware.
@@ -41,7 +41,7 @@ export function HttpMiddleware(options: IHttpMiddlewareOptions = {}): ClassDecor
         priority: options.priority ?? 50,
         name: options.name ?? target.name,
       },
-      target as object
+      target as object,
     );
   };
 }

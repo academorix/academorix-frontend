@@ -10,14 +10,14 @@
  *   order and merge in `@Group()` / `@Section()` associations.
  */
 
-import { defineMetadata, getMetadata } from '@vivtel/metadata';
+import { defineMetadata, getMetadata } from "@vivtel/metadata";
 import {
   FIELD_METADATA_KEY,
   type ISettingField,
   type ISettingFieldOption,
   type ISettingValidationRule,
   type Type,
-} from '@stackra/contracts';
+} from "@stackra/contracts";
 
 /**
  * Options accepted by the `@Field()` property decorator.
@@ -25,13 +25,13 @@ import {
  * Mirrors `ISettingField` minus the auto-derived `key`, `group`, and
  * `section` fields.
  */
-export type IFieldOptions = Omit<ISettingField, 'key' | 'group' | 'section'> & {
+export type IFieldOptions = Omit<ISettingField, "key" | "group" | "section"> & {
   /**
    * UI control type. Accepts a {@link ControlType} case for the
    * built-ins or any custom string for a bespoke renderer. Defaults
    * to `ControlType.Text` (`'text'`) when omitted.
    */
-  readonly control?: ISettingField['control'];
+  readonly control?: ISettingField["control"];
   /** Default value used when no stored value exists yet. */
   readonly defaultValue: unknown;
   /** Static options for select-family fields. */
@@ -78,8 +78,8 @@ export function Field(options: IFieldOptions): PropertyDecorator {
 
     const descriptor: ISettingField = {
       key: String(propertyKey),
-      control: options.control ?? 'text',
-      label: options.label ?? '',
+      control: options.control ?? "text",
+      label: options.label ?? "",
       description: options.description,
       placeholder: options.placeholder,
       defaultValue: options.defaultValue,

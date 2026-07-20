@@ -4,8 +4,8 @@
  * @description Factory returning an assertable mock query client.
  */
 
-import { createAssertableProxy, type AssertableProxy } from '@stackra/testing';
-import { MockQueryClient } from './mock-query-client';
+import { createAssertableProxy, type AssertableProxy } from "@stackra/testing";
+import { MockQueryClient } from "./mock-query-client";
 
 /**
  * Create an assertable mock query client.

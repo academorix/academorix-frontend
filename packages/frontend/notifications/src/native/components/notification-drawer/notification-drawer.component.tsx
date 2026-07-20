@@ -20,28 +20,28 @@
  *   web, deep link on native) can drive it.
  */
 
-import { useMemo, useState, type ReactElement } from 'react';
-import { View, Text } from 'react-native';
-import { BottomSheet, Button, Chip, PressableFeedback, Separator, Tabs } from '@stackra/ui/native';
+import { useMemo, useState, type ReactElement } from "react";
+import { View, Text } from "react-native";
+import { BottomSheet, Button, Chip, PressableFeedback, Separator, Tabs } from "@stackra/ui/native";
 
-import { NOTIFICATION_CATEGORIES } from '@/core/constants';
-import type { IRenderableNotification } from '@/core/interfaces';
+import { NOTIFICATION_CATEGORIES } from "@/core/constants";
+import type { IRenderableNotification } from "@/core/interfaces";
 
-import { useNotificationWrites, useRenderableNotifications } from '../../hooks';
-import { NotificationList } from '../notification-list';
-import { PushPermissionBanner } from '../push-permission-banner';
+import { useNotificationWrites, useRenderableNotifications } from "../../hooks";
+import { NotificationList } from "../notification-list";
+import { PushPermissionBanner } from "../push-permission-banner";
 import type {
   NotificationDrawerCategoryFilter,
   NotificationDrawerProps,
   NotificationDrawerSection,
-} from './notification-drawer.interface';
+} from "./notification-drawer.interface";
 
 /** Category chips the drawer exposes. */
 const CATEGORY_FILTERS: readonly {
   readonly key: NotificationDrawerCategoryFilter;
   readonly label: string;
 }[] = [
-  { key: 'all', label: 'All' },
+  { key: "all", label: "All" },
   ...(Object.values(NOTIFICATION_CATEGORIES).map((c) => ({
     key: c.key,
     label: c.label,
@@ -59,9 +59,9 @@ const CATEGORY_FILTERS: readonly {
  */
 function matchesCategory(
   entry: IRenderableNotification,
-  category: NotificationDrawerCategoryFilter
+  category: NotificationDrawerCategoryFilter,
 ): boolean {
-  if (category === 'all') return true;
+  if (category === "all") return true;
   return entry.notification.payload.category === category;
 }
 
@@ -87,14 +87,14 @@ export function NotificationDrawer({
 
   // Local filter state — reset intentionally when the drawer
   // closes; a saved filter would leak between navigations.
-  const [section, setSection] = useState<NotificationDrawerSection>('unread');
-  const [category, setCategory] = useState<NotificationDrawerCategoryFilter>('all');
+  const [section, setSection] = useState<NotificationDrawerSection>("unread");
+  const [category, setCategory] = useState<NotificationDrawerCategoryFilter>("all");
 
   // Filter pipeline — hide snoozed, apply section + category.
   const filtered = useMemo<readonly IRenderableNotification[]>(() => {
     return entries.filter((entry) => {
       if (entry.isSnoozed) return false;
-      if (section === 'unread' && entry.isRead) return false;
+      if (section === "unread" && entry.isRead) return false;
       if (!matchesCategory(entry, category)) return false;
       return true;
     });
@@ -111,13 +111,13 @@ export function NotificationDrawer({
         <BottomSheet.Content>
           <View className="flex-1">
             {/* Header — title + unread count + mark all */}
-            <View className="flex-row items-center justify-between gap-3 border-b border-border px-4 pb-3">
+            <View className="border-border flex-row items-center justify-between gap-3 border-b px-4 pb-3">
               <View className="flex-1 flex-col">
                 <BottomSheet.Title>Notifications</BottomSheet.Title>
-                <Text className="text-xs text-muted">
+                <Text className="text-muted text-xs">
                   {unreadCount === 0
-                    ? 'No unread'
-                    : `${unreadCount} unread notification${unreadCount === 1 ? '' : 's'}`}
+                    ? "No unread"
+                    : `${unreadCount} unread notification${unreadCount === 1 ? "" : "s"}`}
                 </Text>
               </View>
               <Button
@@ -134,14 +134,14 @@ export function NotificationDrawer({
             <PushPermissionBanner />
 
             {/* Section tabs — Unread / All via HeroUI Native Tabs. */}
-            <View className="gap-3 border-b border-border px-4 py-3">
+            <View className="border-border gap-3 border-b px-4 py-3">
               <Tabs
                 value={section}
-                onValueChange={(v: string) => setSection(v === 'all' ? 'all' : 'unread')}
+                onValueChange={(v: string) => setSection(v === "all" ? "all" : "unread")}
               >
                 <Tabs.List>
                   <Tabs.Trigger value="unread">
-                    <Tabs.Label>{`Unread${unreadCount > 0 ? ` (${unreadCount})` : ''}`}</Tabs.Label>
+                    <Tabs.Label>{`Unread${unreadCount > 0 ? ` (${unreadCount})` : ""}`}</Tabs.Label>
                   </Tabs.Trigger>
                   <Tabs.Trigger value="all">
                     <Tabs.Label>All</Tabs.Label>
@@ -161,9 +161,9 @@ export function NotificationDrawer({
                       onPress={() => setCategory(filter.key)}
                     >
                       <Chip
-                        color={isActive ? 'accent' : 'default'}
+                        color={isActive ? "accent" : "default"}
                         size="sm"
-                        variant={isActive ? 'primary' : 'secondary'}
+                        variant={isActive ? "primary" : "secondary"}
                       >
                         <Chip.Label>{filter.label}</Chip.Label>
                       </Chip>
@@ -185,7 +185,7 @@ export function NotificationDrawer({
 
             {/* Footer — optional Preferences affordance. */}
             {onOpenPreferences ? (
-              <View className="border-t border-border px-4 py-3">
+              <View className="border-border border-t px-4 py-3">
                 <Separator />
                 <Button
                   className="mt-3"

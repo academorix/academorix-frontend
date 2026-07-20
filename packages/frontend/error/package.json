@@ -1,7 +1,7 @@
 {
   "name": "@stackra/error",
   "version": "0.1.0",
-  "description": "Error-boundary system for the Stackra framework — app/route/component boundaries, default HeroUI fallbacks, imperative escalation, and contract-based FATAL logging.",
+  "description": "Error-boundary system for the Stackra framework \u2014 app/route/component boundaries, default HeroUI fallbacks, imperative escalation, and contract-based FATAL logging.",
   "license": "MIT",
   "author": {
     "name": "Stackra L.L.C",
@@ -94,6 +94,8 @@
     }
   },
   "devDependencies": {
+    "@academorix/config-tsconfig": "workspace:*",
+    "@academorix/config-tsup": "workspace:*",
     "@heroui/react": "catalog:",
     "@stackra/contracts": "workspace:*",
     "@stackra/testing": "workspace:*",

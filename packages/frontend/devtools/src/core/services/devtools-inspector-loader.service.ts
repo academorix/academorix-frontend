@@ -5,7 +5,7 @@
  *   classes.
  */
 
-import { Inject, Injectable, Optional, type OnApplicationBootstrap } from '@stackra/container';
+import { Inject, Injectable, Optional, type OnApplicationBootstrap } from "@stackra/container";
 import {
   DEVTOOLS_INSPECTOR_REGISTRY,
   DEVTOOLS_INSPECTOR_SOURCE_METADATA_KEY,
@@ -13,20 +13,20 @@ import {
   type IDevtoolsInspectorRegionSource,
   type IDevtoolsInspectorRegistry,
   type IDiscoveryService,
-} from '@stackra/contracts';
+} from "@stackra/contracts";
 
 /**
  * Structural type-guard for the `IDevtoolsInspectorRegionSource`
  * shape.
  */
 function isInspectorSource(value: unknown): value is IDevtoolsInspectorRegionSource {
-  if (!value || typeof value !== 'object') return false;
+  if (!value || typeof value !== "object") return false;
   const cast = value as Partial<IDevtoolsInspectorRegionSource>;
   return (
-    typeof cast.id === 'string' &&
-    typeof cast.label === 'string' &&
-    typeof cast.panelId === 'string' &&
-    typeof cast.collect === 'function'
+    typeof cast.id === "string" &&
+    typeof cast.label === "string" &&
+    typeof cast.panelId === "string" &&
+    typeof cast.collect === "function"
   );
 }
 
@@ -39,7 +39,7 @@ export class DevtoolsInspectorLoaderService implements OnApplicationBootstrap {
   public constructor(
     @Inject(DEVTOOLS_INSPECTOR_REGISTRY)
     private readonly registry: IDevtoolsInspectorRegistry,
-    @Optional() @Inject(DISCOVERY_SERVICE) private readonly discovery?: IDiscoveryService
+    @Optional() @Inject(DISCOVERY_SERVICE) private readonly discovery?: IDiscoveryService,
   ) {}
 
   /** Scan + register after every module has initialised. */

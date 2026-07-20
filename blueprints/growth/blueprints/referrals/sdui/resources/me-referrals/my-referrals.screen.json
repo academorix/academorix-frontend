@@ -45,7 +45,14 @@
         {
           "kind": "View",
           "children": [
-            { "kind": "Text", "props": { "as": "h1", "className": "text-2xl font-semibold", "children": "Invite friends, earn rewards" } },
+            {
+              "kind": "Text",
+              "props": {
+                "as": "h1",
+                "className": "text-2xl font-semibold",
+                "children": "Invite friends, earn rewards"
+              }
+            },
             {
               "kind": "Text",
               "props": { "className": "text-sm text-muted" },
@@ -70,18 +77,26 @@
           "kind": "Card",
           "props": { "className": "p-4" },
           "children": [
-            { "kind": "Text", "props": { "as": "h3", "className": "font-semibold mb-3", "children": "Your rewards" } },
+            {
+              "kind": "Text",
+              "props": { "as": "h3", "className": "font-semibold mb-3", "children": "Your rewards" }
+            },
             {
               "kind": "View",
               "props": { "className": "flex flex-col gap-2" },
               "bindings": { "items": { "$ref": "myRewards" } },
               "emptyState": {
                 "kind": "Text",
-                "props": { "className": "text-sm text-muted text-center py-4", "children": "No rewards yet. Invite friends to earn some!" }
+                "props": {
+                  "className": "text-sm text-muted text-center py-4",
+                  "children": "No rewards yet. Invite friends to earn some!"
+                }
               },
               "itemRenderer": {
                 "kind": "View",
-                "props": { "className": "flex items-center justify-between border-b py-2 last:border-0" },
+                "props": {
+                  "className": "flex items-center justify-between border-b py-2 last:border-0"
+                },
                 "children": [
                   {
                     "kind": "Widget",
@@ -112,18 +127,30 @@
           "kind": "Card",
           "props": { "className": "p-4" },
           "children": [
-            { "kind": "Text", "props": { "as": "h3", "className": "font-semibold mb-3", "children": "Your referrals" } },
+            {
+              "kind": "Text",
+              "props": {
+                "as": "h3",
+                "className": "font-semibold mb-3",
+                "children": "Your referrals"
+              }
+            },
             {
               "kind": "View",
               "props": { "className": "flex flex-col gap-2" },
               "bindings": { "items": { "$ref": "myReferrals" } },
               "emptyState": {
                 "kind": "Text",
-                "props": { "className": "text-sm text-muted text-center py-4", "children": "No referrals yet. Share your code above!" }
+                "props": {
+                  "className": "text-sm text-muted text-center py-4",
+                  "children": "No referrals yet. Share your code above!"
+                }
               },
               "itemRenderer": {
                 "kind": "View",
-                "props": { "className": "flex items-center justify-between border-b py-2 last:border-0" },
+                "props": {
+                  "className": "flex items-center justify-between border-b py-2 last:border-0"
+                },
                 "children": [
                   {
                     "kind": "View",

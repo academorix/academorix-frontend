@@ -23,6 +23,6 @@
  * ```
  */
 
-export { MockHttpManager } from './mock-http-manager';
-export { MockHttpClient, type RecordedRequest, type ResponseStub } from './mock-http-client';
-export { createMockHttp, createMockHttpClient } from './create-mock-http';
+export { MockHttpManager } from "./mock-http-manager";
+export { MockHttpClient, type RecordedRequest, type ResponseStub } from "./mock-http-client";
+export { createMockHttp, createMockHttpClient } from "./create-mock-http";

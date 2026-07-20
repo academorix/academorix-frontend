@@ -4,4 +4,4 @@
  * @description Framework action handlers shipped by `@stackra/realtime`.
  */
 
-export { RealtimeHandler } from './realtime.handler';
+export { RealtimeHandler } from "./realtime.handler";

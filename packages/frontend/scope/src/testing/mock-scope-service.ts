@@ -8,8 +8,8 @@
  *   state without going through the real backend contract.
  */
 
-import type { IScopeContext, IScopeNodeTreeNode, IScopeSnapshot } from '../core/interfaces';
-import type { ScopeListener } from '../core/services';
+import type { IScopeContext, IScopeNodeTreeNode, IScopeSnapshot } from "../core/interfaces";
+import type { ScopeListener } from "../core/services";
 
 /**
  * In-memory scope service for testing.

@@ -10,9 +10,9 @@
  *   the two contexts can't share a single instance.
  */
 
-import { createContext } from 'react';
+import { createContext } from "react";
 
-import type { IDevtoolsNativeContextValue } from '../interfaces/devtools-context-value.interface';
+import type { IDevtoolsNativeContextValue } from "../interfaces/devtools-context-value.interface";
 
 /**
  * The native devtools React context — `null` by default so
@@ -22,4 +22,4 @@ import type { IDevtoolsNativeContextValue } from '../interfaces/devtools-context
 export const DevtoolsContext = createContext<IDevtoolsNativeContextValue | null>(null);
 
 /** Display name for React DevTools introspection. */
-DevtoolsContext.displayName = 'DevtoolsNativeContext';
+DevtoolsContext.displayName = "DevtoolsNativeContext";

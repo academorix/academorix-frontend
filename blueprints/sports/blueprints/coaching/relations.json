@@ -158,12 +158,20 @@
   "morphs": [
     {
       "from": "CoachAssignment.assignable",
-      "types": ["Academorix\\Sports\\Session\\Models\\Session", "Academorix\\Sports\\Team\\Models\\Team", "Academorix\\Sports\\Event\\Models\\Event"],
+      "types": [
+        "Academorix\\Sports\\Session\\Models\\Session",
+        "Academorix\\Sports\\Team\\Models\\Team",
+        "Academorix\\Sports\\Event\\Models\\Event"
+      ],
       "description": "The thing being coached. Enforced string enum in the assignable_type column: 'Session' | 'Team' | 'Event'."
     },
     {
       "from": "CoachSkillRating.ratable",
-      "types": ["Academorix\\Sports\\Registry\\Models\\Sport", "Academorix\\Sports\\Registry\\Models\\Discipline", "Academorix\\Sports\\Registry\\Models\\Position"],
+      "types": [
+        "Academorix\\Sports\\Registry\\Models\\Sport",
+        "Academorix\\Sports\\Registry\\Models\\Discipline",
+        "Academorix\\Sports\\Registry\\Models\\Position"
+      ],
       "description": "The skill dimension being rated. Enforced string enum in the ratable_type column: 'Sport' | 'Discipline' | 'Position'."
     }
   ],

@@ -4,5 +4,5 @@
  * @description Barrel export for `@stackra/ai/react` providers.
  */
 
-export { AiProvider, LeaderGate } from './ai';
-export type { IAiProviderProps } from './ai';
+export { AiProvider, LeaderGate } from "./ai";
+export type { IAiProviderProps } from "./ai";

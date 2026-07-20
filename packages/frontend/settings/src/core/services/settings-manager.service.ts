@@ -11,8 +11,8 @@
  *   `manager.extend(name, creator)` at runtime.
  */
 
-import { Injectable, Inject, Optional } from '@stackra/container';
-import { MultipleInstanceManager } from '@stackra/support';
+import { Injectable, Inject, Optional } from "@stackra/container";
+import { MultipleInstanceManager } from "@stackra/support";
 import {
   HTTP_MANAGER,
   SETTINGS_CONFIG,
@@ -24,12 +24,12 @@ import {
   type ISettingsStore,
   type IApiStoreDriverConfig,
   type IStorageStoreDriverConfig,
-} from '@stackra/contracts';
+} from "@stackra/contracts";
 
-import { SettingsDriverNotRegisteredError } from '@/core/errors';
-import { ApiSettingsStore } from '@/core/stores/api-settings.store';
-import { MemorySettingsStore } from '@/core/stores/memory-settings.store';
-import { StorageSettingsStore } from '@/core/stores/storage-settings.store';
+import { SettingsDriverNotRegisteredError } from "@/core/errors";
+import { ApiSettingsStore } from "@/core/stores/api-settings.store";
+import { MemorySettingsStore } from "@/core/stores/memory-settings.store";
+import { StorageSettingsStore } from "@/core/stores/storage-settings.store";
 
 /**
  * `ISettingsManager` implementation — resolves named
@@ -51,7 +51,7 @@ export class SettingsStoreManager
   public constructor(
     @Inject(SETTINGS_CONFIG) private readonly config: ISettingsConfig,
     @Optional() @Inject(STORAGE_MANAGER) private readonly storageManager?: IStorageManager,
-    @Optional() @Inject(HTTP_MANAGER) private readonly httpManager?: IHttpManager
+    @Optional() @Inject(HTTP_MANAGER) private readonly httpManager?: IHttpManager,
   ) {
     super();
   }
@@ -111,7 +111,7 @@ export class SettingsStoreManager
   protected createStorageDriver(config: Record<string, unknown>): ISettingsStore {
     if (!this.storageManager) {
       throw new SettingsDriverNotRegisteredError(
-        'storage — @stackra/storage peer is not installed'
+        "storage — @stackra/storage peer is not installed",
       );
     }
     const typed = config as unknown as IStorageStoreDriverConfig;
@@ -131,7 +131,7 @@ export class SettingsStoreManager
    */
   protected createApiDriver(config: Record<string, unknown>): ISettingsStore {
     if (!this.httpManager) {
-      throw new SettingsDriverNotRegisteredError('api — @stackra/http peer is not installed');
+      throw new SettingsDriverNotRegisteredError("api — @stackra/http peer is not installed");
     }
     const typed = config as unknown as IApiStoreDriverConfig;
 

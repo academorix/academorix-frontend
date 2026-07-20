@@ -8,58 +8,182 @@
       "model": "CoachingProfile",
       "class": "Academorix\\Sports\\Coaching\\Policies\\CoachingProfilePolicy",
       "abilities": [
-        { "action": "viewAny", "permission": "coaching_profiles.viewAny", "scope": "admin + HR see the full roster; coach sees only their own via .own" },
-        { "action": "view", "permission": "coaching_profiles.view", "scope": "admin + HR see any; coach sees their own via .own" },
-        { "action": "viewRate", "permission": "coaching_profiles.view.rate", "scope": "admin + HR + owner only. Regulated_financial-tier." },
-        { "action": "viewPii", "permission": "coaching_profiles.view.pii", "scope": "admin + HR + owner see any; coach sees their own bio + photo." },
-        { "action": "create", "permission": "coaching_profiles.create", "scope": "admin + HR + branch_manager + owner" },
-        { "action": "update", "permission": "coaching_profiles.update", "scope": "admin + HR + branch_manager. Coach may update their own via .own (excluding rate + verified_by_admin_at)." },
-        { "action": "updateOwn", "permission": "coaching_profiles.update.own", "scope": "Coach on their own row. Fields limited: bio, availability, photo_url_signed, is_accepting_new_athletes, languages_spoken, specializations. Rate + verification never." },
-        { "action": "updateRate", "permission": "coaching_profiles.update.rate", "scope": "admin + HR + owner only. Distinct permission." },
-        { "action": "delete", "permission": "coaching_profiles.delete", "scope": "admin + HR + owner" },
-        { "action": "verify", "permission": "coaching_profiles.verify", "scope": "admin + HR + owner" },
-        { "action": "deactivate", "permission": "coaching_profiles.deactivate", "scope": "admin + HR + owner" },
-        { "action": "reactivate", "permission": "coaching_profiles.reactivate", "scope": "admin + HR + owner" },
-        { "action": "exportOwn", "permission": "coaching_profiles.export.own", "scope": "Coach exports their own data (CCPA compliance)" },
-        { "action": "platformViewAny", "permission": "platform.coaching_profiles.viewAny", "guard": "platform_admin" },
-        { "action": "platformView", "permission": "platform.coaching_profiles.view", "guard": "platform_admin" }
+        {
+          "action": "viewAny",
+          "permission": "coaching_profiles.viewAny",
+          "scope": "admin + HR see the full roster; coach sees only their own via .own"
+        },
+        {
+          "action": "view",
+          "permission": "coaching_profiles.view",
+          "scope": "admin + HR see any; coach sees their own via .own"
+        },
+        {
+          "action": "viewRate",
+          "permission": "coaching_profiles.view.rate",
+          "scope": "admin + HR + owner only. Regulated_financial-tier."
+        },
+        {
+          "action": "viewPii",
+          "permission": "coaching_profiles.view.pii",
+          "scope": "admin + HR + owner see any; coach sees their own bio + photo."
+        },
+        {
+          "action": "create",
+          "permission": "coaching_profiles.create",
+          "scope": "admin + HR + branch_manager + owner"
+        },
+        {
+          "action": "update",
+          "permission": "coaching_profiles.update",
+          "scope": "admin + HR + branch_manager. Coach may update their own via .own (excluding rate + verified_by_admin_at)."
+        },
+        {
+          "action": "updateOwn",
+          "permission": "coaching_profiles.update.own",
+          "scope": "Coach on their own row. Fields limited: bio, availability, photo_url_signed, is_accepting_new_athletes, languages_spoken, specializations. Rate + verification never."
+        },
+        {
+          "action": "updateRate",
+          "permission": "coaching_profiles.update.rate",
+          "scope": "admin + HR + owner only. Distinct permission."
+        },
+        {
+          "action": "delete",
+          "permission": "coaching_profiles.delete",
+          "scope": "admin + HR + owner"
+        },
+        {
+          "action": "verify",
+          "permission": "coaching_profiles.verify",
+          "scope": "admin + HR + owner"
+        },
+        {
+          "action": "deactivate",
+          "permission": "coaching_profiles.deactivate",
+          "scope": "admin + HR + owner"
+        },
+        {
+          "action": "reactivate",
+          "permission": "coaching_profiles.reactivate",
+          "scope": "admin + HR + owner"
+        },
+        {
+          "action": "exportOwn",
+          "permission": "coaching_profiles.export.own",
+          "scope": "Coach exports their own data (CCPA compliance)"
+        },
+        {
+          "action": "platformViewAny",
+          "permission": "platform.coaching_profiles.viewAny",
+          "guard": "platform_admin"
+        },
+        {
+          "action": "platformView",
+          "permission": "platform.coaching_profiles.view",
+          "guard": "platform_admin"
+        }
       ]
     },
     {
       "model": "CoachAssignment",
       "class": "Academorix\\Sports\\Coaching\\Policies\\CoachAssignmentPolicy",
       "abilities": [
-        { "action": "viewAny", "permission": "coach_assignments.viewAny", "scope": "admin + HR + branch_manager see all; coach sees own via .own" },
+        {
+          "action": "viewAny",
+          "permission": "coach_assignments.viewAny",
+          "scope": "admin + HR + branch_manager see all; coach sees own via .own"
+        },
         { "action": "view", "permission": "coach_assignments.view", "scope": "same + .own" },
-        { "action": "create", "permission": "coach_assignments.create", "scope": "admin + HR + branch_manager + owner" },
-        { "action": "update", "permission": "coach_assignments.update", "scope": "admin + HR + branch_manager + owner" },
-        { "action": "end", "permission": "coach_assignments.end", "scope": "admin + HR + branch_manager + owner" },
-        { "action": "delete", "permission": "coach_assignments.delete", "scope": "admin + HR + owner (soft-cancel)" }
+        {
+          "action": "create",
+          "permission": "coach_assignments.create",
+          "scope": "admin + HR + branch_manager + owner"
+        },
+        {
+          "action": "update",
+          "permission": "coach_assignments.update",
+          "scope": "admin + HR + branch_manager + owner"
+        },
+        {
+          "action": "end",
+          "permission": "coach_assignments.end",
+          "scope": "admin + HR + branch_manager + owner"
+        },
+        {
+          "action": "delete",
+          "permission": "coach_assignments.delete",
+          "scope": "admin + HR + owner (soft-cancel)"
+        }
       ]
     },
     {
       "model": "CoachCertification",
       "class": "Academorix\\Sports\\Coaching\\Policies\\CoachCertificationPolicy",
       "abilities": [
-        { "action": "viewAny", "permission": "coach_certifications.viewAny", "scope": "admin + HR + branch_manager see all; coach sees own via .own" },
+        {
+          "action": "viewAny",
+          "permission": "coach_certifications.viewAny",
+          "scope": "admin + HR + branch_manager see all; coach sees own via .own"
+        },
         { "action": "view", "permission": "coach_certifications.view", "scope": "same + .own" },
-        { "action": "create", "permission": "coach_certifications.create", "scope": "admin + HR + branch_manager + owner. Coach may capture their own via .create.own." },
-        { "action": "createOwn", "permission": "coach_certifications.create.own", "scope": "Coach captures a cert on their own profile. Verification step remains admin-only." },
-        { "action": "update", "permission": "coach_certifications.update", "scope": "admin + HR + owner" },
-        { "action": "verify", "permission": "coach_certifications.verify", "scope": "admin + HR + owner" },
-        { "action": "delete", "permission": "coach_certifications.delete", "scope": "admin + HR + owner" },
-        { "action": "viewExpiring", "permission": "coach_certifications.expiring", "scope": "admin + HR + safeguarding_officer + owner. Compliance surface." }
+        {
+          "action": "create",
+          "permission": "coach_certifications.create",
+          "scope": "admin + HR + branch_manager + owner. Coach may capture their own via .create.own."
+        },
+        {
+          "action": "createOwn",
+          "permission": "coach_certifications.create.own",
+          "scope": "Coach captures a cert on their own profile. Verification step remains admin-only."
+        },
+        {
+          "action": "update",
+          "permission": "coach_certifications.update",
+          "scope": "admin + HR + owner"
+        },
+        {
+          "action": "verify",
+          "permission": "coach_certifications.verify",
+          "scope": "admin + HR + owner"
+        },
+        {
+          "action": "delete",
+          "permission": "coach_certifications.delete",
+          "scope": "admin + HR + owner"
+        },
+        {
+          "action": "viewExpiring",
+          "permission": "coach_certifications.expiring",
+          "scope": "admin + HR + safeguarding_officer + owner. Compliance surface."
+        }
       ]
     },
     {
       "model": "CoachSkillRating",
       "class": "Academorix\\Sports\\Coaching\\Policies\\CoachSkillRatingPolicy",
       "abilities": [
-        { "action": "viewAny", "permission": "coach_skill_ratings.viewAny", "scope": "admin + HR + branch_manager see all; coach sees ratings on themselves via .own" },
+        {
+          "action": "viewAny",
+          "permission": "coach_skill_ratings.viewAny",
+          "scope": "admin + HR + branch_manager see all; coach sees ratings on themselves via .own"
+        },
         { "action": "view", "permission": "coach_skill_ratings.view", "scope": "same + .own" },
-        { "action": "create", "permission": "coach_skill_ratings.create", "scope": "admin + HR + branch_manager + owner. Self-rating refused at the observer." },
-        { "action": "update", "permission": "coach_skill_ratings.update", "scope": "admin + HR + branch_manager + owner" },
-        { "action": "delete", "permission": "coach_skill_ratings.delete", "scope": "admin + HR + owner" }
+        {
+          "action": "create",
+          "permission": "coach_skill_ratings.create",
+          "scope": "admin + HR + branch_manager + owner. Self-rating refused at the observer."
+        },
+        {
+          "action": "update",
+          "permission": "coach_skill_ratings.update",
+          "scope": "admin + HR + branch_manager + owner"
+        },
+        {
+          "action": "delete",
+          "permission": "coach_skill_ratings.delete",
+          "scope": "admin + HR + owner"
+        }
       ]
     }
   ]

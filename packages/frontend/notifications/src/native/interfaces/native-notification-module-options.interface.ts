@@ -15,8 +15,8 @@
  *   the inner shape is only used in service of the outer.
  */
 
-import type { IInAppNotificationCentreConfig } from '@/core/interfaces';
-import type { IExpoPushConfig } from './expo-push-config.interface';
+import type { IInAppNotificationCentreConfig } from "@/core/interfaces";
+import type { IExpoPushConfig } from "./expo-push-config.interface";
 
 /**
  * Native (Expo) push configuration.

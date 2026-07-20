@@ -38,10 +38,7 @@
       "class": "Academorix\\Sports\\Attendance\\Events\\AttendanceStatusUpdated",
       "trigger": "Attendance status mutated within the 48h post-session correction window (present → late-marked-explicitly, or notes added).",
       "queue": "attendance",
-      "consumers": [
-        "audit::WriteToAuditLog",
-        "activity::WriteToActivityLog"
-      ],
+      "consumers": ["audit::WriteToAuditLog", "activity::WriteToActivityLog"],
       "payload": {
         "attendance_record_id": "ULID",
         "tenant_id": "ULID",
@@ -56,10 +53,7 @@
       "class": "Academorix\\Sports\\Attendance\\Events\\AttendanceCheckedOut",
       "trigger": "checked_out_at set on an AttendanceRecord. Optional field — only sessions with mandatory check-out or partial-attendance tracking use it.",
       "queue": "attendance",
-      "consumers": [
-        "audit::WriteToAuditLog",
-        "activity::WriteToActivityLog"
-      ],
+      "consumers": ["audit::WriteToAuditLog", "activity::WriteToActivityLog"],
       "payload": {
         "attendance_record_id": "ULID",
         "tenant_id": "ULID",
@@ -161,9 +155,7 @@
       "class": "Academorix\\Sports\\Attendance\\Events\\AbsenceReasonUpdated",
       "trigger": "absence_reason OR explanation mutated on an existing AbsenceRecord. Distinct from AbsenceExcused which flips the STATUS.",
       "queue": "attendance",
-      "consumers": [
-        "audit::WriteToAuditLog"
-      ],
+      "consumers": ["audit::WriteToAuditLog"],
       "payload": {
         "absence_record_id": "ULID",
         "tenant_id": "ULID",
@@ -271,9 +263,7 @@
       "class": "Academorix\\Sports\\Attendance\\Events\\PassConsumedViaAttendance",
       "trigger": "Bridges finance::PassConsumed to attendance context. Fires alongside AttendanceRecorded when a Pass was consumed as part of the check-in. Distinct from finance's own PassConsumed which is the raw money-side event.",
       "queue": "attendance",
-      "consumers": [
-        "audit::WriteToAuditLog"
-      ],
+      "consumers": ["audit::WriteToAuditLog"],
       "payload": {
         "attendance_record_id": "ULID",
         "consumed_pass_id": "ULID (pss_*)",

@@ -47,7 +47,7 @@ export const SectionContainer = React.memo(function SectionContainer({
       {/* Header */}
       <div className="flex items-start justify-between gap-4 px-6 pt-6 pb-4">
         <div className="flex flex-col gap-1">
-          <h3 className="text-base font-semibold text-foreground">{title}</h3>
+          <h3 className="text-foreground text-base font-semibold">{title}</h3>
           {description && <p className="text-foreground-500 text-sm">{description}</p>}
         </div>
         {action && <div className="shrink-0">{action}</div>}

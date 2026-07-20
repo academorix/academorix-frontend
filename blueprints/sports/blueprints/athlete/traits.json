@@ -40,7 +40,10 @@
         "trait": "Illuminate\\Database\\Eloquent\\SoftDeletes",
         "reason": "Archived athletes soft-delete for the retention window (see retention.json) before hard-purge."
       },
-      { "trait": "Illuminate\\Notifications\\Notifiable", "reason": "Athlete receives lifecycle notifications (welcome / consent-recorded / age-group-changed / graduated / withdrawn) — addressed to the athlete's user_id when set, else the primary guardian's user via routing." }
+      {
+        "trait": "Illuminate\\Notifications\\Notifiable",
+        "reason": "Athlete receives lifecycle notifications (welcome / consent-recorded / age-group-changed / graduated / withdrawn) — addressed to the athlete's user_id when set, else the primary guardian's user via routing."
+      }
     ],
     "foundation": [
       { "trait": "Academorix\\Foundation\\Concerns\\HasPrefixedUlid" },
@@ -50,19 +53,34 @@
       { "trait": "Academorix\\Foundation\\Concerns\\Searchable" }
     ],
     "tenants": [
-      { "trait": "Academorix\\Tenancy\\Concerns\\BelongsToTenant", "reason": "Every owned row carries tenant_id per tenancy-columns.md §3." }
+      {
+        "trait": "Academorix\\Tenancy\\Concerns\\BelongsToTenant",
+        "reason": "Every owned row carries tenant_id per tenancy-columns.md §3."
+      }
     ],
     "branch": [
-      { "trait": "Academorix\\Branch\\Concerns\\BelongsToBranch", "reason": "Athlete carries branch_id directly." }
+      {
+        "trait": "Academorix\\Branch\\Concerns\\BelongsToBranch",
+        "reason": "Athlete carries branch_id directly."
+      }
     ],
     "user": [
-      { "trait": "Academorix\\User\\Concerns\\BelongsToUser", "reason": "Athlete carries user_id (nullable) + composes BelongsToUser for the .own scope suffix. `athletes.view.own` narrows to `WHERE user_id = current_user_id`." }
+      {
+        "trait": "Academorix\\User\\Concerns\\BelongsToUser",
+        "reason": "Athlete carries user_id (nullable) + composes BelongsToUser for the .own scope suffix. `athletes.view.own` narrows to `WHERE user_id = current_user_id`."
+      }
     ],
     "audit": [
-      { "trait": "Academorix\\Audit\\Concerns\\Auditable", "reason": "Every mutation is compliance-relevant. Medical columns write to a SEPARATE audit table (`athlete_medical_history`) with 7-year retention." }
+      {
+        "trait": "Academorix\\Audit\\Concerns\\Auditable",
+        "reason": "Every mutation is compliance-relevant. Medical columns write to a SEPARATE audit table (`athlete_medical_history`) with 7-year retention."
+      }
     ],
     "activity": [
-      { "trait": "Academorix\\Activity\\Concerns\\HasActivityLog", "reason": "Lifecycle transitions + consent recording + age-group snapshot flips feed the tenant activity feed. Medical changes DO NOT feed activity (private-tier)." }
+      {
+        "trait": "Academorix\\Activity\\Concerns\\HasActivityLog",
+        "reason": "Lifecycle transitions + consent recording + age-group snapshot flips feed the tenant activity feed. Medical changes DO NOT feed activity (private-tier)."
+      }
     ]
   },
   "composition": {

@@ -9,10 +9,33 @@
   "resource": { "module": "membership", "entity": "membership", "action": "list" },
   "requiresPermission": "memberships.viewAny",
   "dataSources": [
-    { "name": "memberships", "kind": "http.get", "url": "/api/v1/memberships", "unwrap": "data", "queryFromFilters": true },
-    { "name": "branches", "kind": "http.get", "url": "/api/v1/branches?filter[is_active]=true", "unwrap": "data", "cache": { "ttlSeconds": 300 } },
-    { "name": "plans", "kind": "http.get", "url": "/api/v1/membership-plans?filter[is_active]=true", "unwrap": "data", "cache": { "ttlSeconds": 300 } },
-    { "name": "slot_entitlement", "kind": "http.get", "url": "/api/v1/entitlements/membership_slot", "unwrap": "data" }
+    {
+      "name": "memberships",
+      "kind": "http.get",
+      "url": "/api/v1/memberships",
+      "unwrap": "data",
+      "queryFromFilters": true
+    },
+    {
+      "name": "branches",
+      "kind": "http.get",
+      "url": "/api/v1/branches?filter[is_active]=true",
+      "unwrap": "data",
+      "cache": { "ttlSeconds": 300 }
+    },
+    {
+      "name": "plans",
+      "kind": "http.get",
+      "url": "/api/v1/membership-plans?filter[is_active]=true",
+      "unwrap": "data",
+      "cache": { "ttlSeconds": 300 }
+    },
+    {
+      "name": "slot_entitlement",
+      "kind": "http.get",
+      "url": "/api/v1/entitlements/membership_slot",
+      "unwrap": "data"
+    }
   ],
   "nodes": [
     {
@@ -27,8 +50,21 @@
             {
               "kind": "View",
               "children": [
-                { "kind": "Text", "props": { "as": "h1", "className": "text-2xl font-semibold", "children": "Memberships" } },
-                { "kind": "Text", "props": { "className": "text-sm text-muted", "children": "Customer subscriptions to your academy — active families, dunning, and terminal history." } }
+                {
+                  "kind": "Text",
+                  "props": {
+                    "as": "h1",
+                    "className": "text-2xl font-semibold",
+                    "children": "Memberships"
+                  }
+                },
+                {
+                  "kind": "Text",
+                  "props": {
+                    "className": "text-sm text-muted",
+                    "children": "Customer subscriptions to your academy — active families, dunning, and terminal history."
+                  }
+                }
               ]
             },
             {
@@ -38,18 +74,35 @@
                 {
                   "kind": "Widget",
                   "widget": "entitlements.entitlement-usage-bar",
-                  "props": { "cap": { "$ref": "slot_entitlement.value_cap" }, "used": { "$ref": "slot_entitlement.value_used" }, "size": "sm", "label": "Active memberships" }
+                  "props": {
+                    "cap": { "$ref": "slot_entitlement.value_cap" },
+                    "used": { "$ref": "slot_entitlement.value_used" },
+                    "size": "sm",
+                    "label": "Active memberships"
+                  }
                 },
                 {
                   "kind": "Button",
-                  "props": { "variant": "secondary", "leadingIcon": "chart-bar", "children": "Report" },
-                  "actions": { "onPress": { "kind": "navigate", "to": "/tenant/memberships/report" } },
+                  "props": {
+                    "variant": "secondary",
+                    "leadingIcon": "chart-bar",
+                    "children": "Report"
+                  },
+                  "actions": {
+                    "onPress": { "kind": "navigate", "to": "/tenant/memberships/report" }
+                  },
                   "requiresPermission": "memberships.report"
                 },
                 {
                   "kind": "Button",
-                  "props": { "variant": "primary", "leadingIcon": "plus", "children": "New membership" },
-                  "actions": { "onPress": { "kind": "navigate", "to": "/tenant/memberships/create" } },
+                  "props": {
+                    "variant": "primary",
+                    "leadingIcon": "plus",
+                    "children": "New membership"
+                  },
+                  "actions": {
+                    "onPress": { "kind": "navigate", "to": "/tenant/memberships/create" }
+                  },
                   "bindings": { "disabled": { "$ref": "slot_entitlement.is_exceeded" } },
                   "requiresPermission": "memberships.create"
                 }
@@ -65,13 +118,25 @@
               "kind": "ComboBox",
               "props": { "label": "Branch", "menuTrigger": "focus", "className": "min-w-56" },
               "bindings": { "items": { "$ref": "branches" } },
-              "actions": { "onSelectionChange": { "kind": "filter.set", "field": "branch_id", "valueExpr": "$selectedKey" } }
+              "actions": {
+                "onSelectionChange": {
+                  "kind": "filter.set",
+                  "field": "branch_id",
+                  "valueExpr": "$selectedKey"
+                }
+              }
             },
             {
               "kind": "ComboBox",
               "props": { "label": "Plan", "menuTrigger": "focus", "className": "min-w-56" },
               "bindings": { "items": { "$ref": "plans" } },
-              "actions": { "onSelectionChange": { "kind": "filter.set", "field": "membership_plan_id", "valueExpr": "$selectedKey" } }
+              "actions": {
+                "onSelectionChange": {
+                  "kind": "filter.set",
+                  "field": "membership_plan_id",
+                  "valueExpr": "$selectedKey"
+                }
+              }
             },
             {
               "kind": "ComboBox",
@@ -85,26 +150,53 @@
                 { "id": "refunded", "label": "Refunded" },
                 { "id": "expired", "label": "Expired" }
               ],
-              "actions": { "onSelectionChange": { "kind": "filter.set", "field": "status", "valueExpr": "$selectedKey" } }
+              "actions": {
+                "onSelectionChange": {
+                  "kind": "filter.set",
+                  "field": "status",
+                  "valueExpr": "$selectedKey"
+                }
+              }
             },
             {
               "kind": "Switch",
               "props": { "label": "In dunning only" },
-              "actions": { "onChange": { "kind": "filter.set", "field": "has_open_dunning", "valueExpr": "$value ? true : null" } }
+              "actions": {
+                "onChange": {
+                  "kind": "filter.set",
+                  "field": "has_open_dunning",
+                  "valueExpr": "$value ? true : null"
+                }
+              }
             }
           ]
         },
         {
           "kind": "Table",
           "props": { "aria-label": "Memberships table" },
-          "bindings": { "rows": { "$ref": "memberships" }, "isLoading": { "$ref": "memberships.isLoading" } },
+          "bindings": {
+            "rows": { "$ref": "memberships" },
+            "isLoading": { "$ref": "memberships.isLoading" }
+          },
           "emptyState": {
             "kind": "View",
             "props": { "className": "text-center py-12" },
             "children": [
-              { "kind": "Icon", "props": { "name": "credit-card", "className": "size-12 mx-auto text-muted" } },
-              { "kind": "Text", "props": { "className": "mt-4 text-lg font-medium", "children": "No memberships" } },
-              { "kind": "Text", "props": { "className": "mt-1 text-sm text-muted", "children": "Membership signups appear here once families subscribe." } }
+              {
+                "kind": "Icon",
+                "props": { "name": "credit-card", "className": "size-12 mx-auto text-muted" }
+              },
+              {
+                "kind": "Text",
+                "props": { "className": "mt-4 text-lg font-medium", "children": "No memberships" }
+              },
+              {
+                "kind": "Text",
+                "props": {
+                  "className": "mt-1 text-sm text-muted",
+                  "children": "Membership signups appear here once families subscribe."
+                }
+              }
             ]
           },
           "columns": [
@@ -115,12 +207,27 @@
                 "kind": "View",
                 "props": { "className": "flex items-center gap-2" },
                 "children": [
-                  { "kind": "Text", "props": { "className": "font-medium" }, "bindings": { "children": { "$ref": "row.athlete_display_name" } } },
-                  { "kind": "Widget", "widget": "athlete.minor-badge", "bindings": { "hidden": { "$expr": "!row.athlete.is_minor" } } }
+                  {
+                    "kind": "Text",
+                    "props": { "className": "font-medium" },
+                    "bindings": { "children": { "$ref": "row.athlete_display_name" } }
+                  },
+                  {
+                    "kind": "Widget",
+                    "widget": "athlete.minor-badge",
+                    "bindings": { "hidden": { "$expr": "!row.athlete.is_minor" } }
+                  }
                 ]
               }
             },
-            { "key": "plan", "label": "Plan", "renderer": { "kind": "Text", "bindings": { "children": { "$ref": "row.plan_display_name" } } } },
+            {
+              "key": "plan",
+              "label": "Plan",
+              "renderer": {
+                "kind": "Text",
+                "bindings": { "children": { "$ref": "row.plan_display_name" } }
+              }
+            },
             {
               "key": "status",
               "label": "Status",
@@ -130,7 +237,9 @@
                 "bindings": {
                   "status": { "$ref": "row.status" },
                   "show_dunning_indicator": true,
-                  "consecutive_failed_renewal_count": { "$ref": "row.consecutive_failed_renewal_count" }
+                  "consecutive_failed_renewal_count": {
+                    "$ref": "row.consecutive_failed_renewal_count"
+                  }
                 }
               }
             },
@@ -160,7 +269,9 @@
               "renderer": {
                 "kind": "Text",
                 "props": { "className": "tabular-nums text-sm" },
-                "bindings": { "childrenExpr": "$formatCurrency(row.lifetime_value_cents, row.currency)" }
+                "bindings": {
+                  "childrenExpr": "$formatCurrency(row.lifetime_value_cents, row.currency)"
+                }
               }
             },
             {
@@ -173,7 +284,9 @@
               }
             }
           ],
-          "rowActions": { "onPress": { "kind": "navigate", "toExpr": "'/tenant/memberships/' + row.id" } }
+          "rowActions": {
+            "onPress": { "kind": "navigate", "toExpr": "'/tenant/memberships/' + row.id" }
+          }
         }
       ]
     }

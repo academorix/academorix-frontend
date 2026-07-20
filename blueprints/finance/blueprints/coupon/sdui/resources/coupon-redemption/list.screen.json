@@ -27,8 +27,21 @@
         {
           "kind": "View",
           "children": [
-            { "kind": "Text", "props": { "as": "h1", "className": "text-2xl font-semibold", "children": "Coupon redemptions" } },
-            { "kind": "Text", "props": { "className": "text-sm text-muted", "children": "The full ledger of coupon uses across your tenant. Financial columns require the view-financials permission." } }
+            {
+              "kind": "Text",
+              "props": {
+                "as": "h1",
+                "className": "text-2xl font-semibold",
+                "children": "Coupon redemptions"
+              }
+            },
+            {
+              "kind": "Text",
+              "props": {
+                "className": "text-sm text-muted",
+                "children": "The full ledger of coupon uses across your tenant. Financial columns require the view-financials permission."
+              }
+            }
           ]
         },
         {
@@ -37,7 +50,11 @@
           "children": [
             {
               "kind": "TextField",
-              "props": { "label": "Coupon code", "placeholder": "Filter by code", "className": "min-w-56" },
+              "props": {
+                "label": "Coupon code",
+                "placeholder": "Filter by code",
+                "className": "min-w-56"
+              },
               "actions": {
                 "onChange": { "kind": "filter.set", "field": "code", "valueExpr": "$value" }
               }
@@ -51,7 +68,11 @@
                 { "id": "transaction", "label": "Transaction" }
               ],
               "actions": {
-                "onSelectionChange": { "kind": "filter.set", "field": "applied_to_type", "valueExpr": "$selectedKey" }
+                "onSelectionChange": {
+                  "kind": "filter.set",
+                  "field": "applied_to_type",
+                  "valueExpr": "$selectedKey"
+                }
               }
             },
             {
@@ -62,7 +83,11 @@
                 { "id": "true", "label": "Reversed" }
               ],
               "actions": {
-                "onSelectionChange": { "kind": "filter.set", "field": "reversed", "valueExpr": "$selectedKey" }
+                "onSelectionChange": {
+                  "kind": "filter.set",
+                  "field": "reversed",
+                  "valueExpr": "$selectedKey"
+                }
               }
             },
             {
@@ -136,7 +161,10 @@
               "id": "discount",
               "label": "Discount",
               "requiresPermission": "coupons.view-financials",
-              "redactedFallback": { "kind": "Text", "props": { "className": "text-muted", "children": "••••" } },
+              "redactedFallback": {
+                "kind": "Text",
+                "props": { "className": "text-muted", "children": "••••" }
+              },
               "cell": {
                 "kind": "Text",
                 "bindings": {
@@ -150,7 +178,10 @@
               "id": "final",
               "label": "Final",
               "requiresPermission": "coupons.view-financials",
-              "redactedFallback": { "kind": "Text", "props": { "className": "text-muted", "children": "••••" } },
+              "redactedFallback": {
+                "kind": "Text",
+                "props": { "className": "text-muted", "children": "••••" }
+              },
               "cell": {
                 "kind": "Text",
                 "bindings": {

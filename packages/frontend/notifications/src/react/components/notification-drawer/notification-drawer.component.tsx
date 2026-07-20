@@ -18,28 +18,28 @@
  *   the drawer without wiring extra state.
  */
 
-import { useMemo, useState, type ReactElement } from 'react';
-import { Button, Chip, Drawer } from '@stackra/ui/react';
-import { CheckIcon, Cog6ToothIcon } from '@stackra/ui/icons/heroicon/outline';
+import { useMemo, useState, type ReactElement } from "react";
+import { Button, Chip, Drawer } from "@stackra/ui/react";
+import { CheckIcon, Cog6ToothIcon } from "@stackra/ui/icons/heroicon/outline";
 
-import { NOTIFICATION_CATEGORIES } from '@/core/constants';
-import type { IRenderableNotification } from '@/core/interfaces';
-import { useRenderableNotifications } from '../../hooks/use-renderable-notifications';
-import { useNotificationWrites } from '../../hooks/use-notification-writes';
-import { NotificationList } from '../notification-list';
-import { PushPermissionBanner } from '../push-permission-banner';
+import { NOTIFICATION_CATEGORIES } from "@/core/constants";
+import type { IRenderableNotification } from "@/core/interfaces";
+import { useRenderableNotifications } from "../../hooks/use-renderable-notifications";
+import { useNotificationWrites } from "../../hooks/use-notification-writes";
+import { NotificationList } from "../notification-list";
+import { PushPermissionBanner } from "../push-permission-banner";
 import type {
   NotificationDrawerCategoryFilter,
   NotificationDrawerProps,
   NotificationDrawerSection,
-} from './notification-drawer.interface';
+} from "./notification-drawer.interface";
 
 /** The category chips the drawer exposes. */
 const CATEGORY_FILTERS: readonly {
   readonly key: NotificationDrawerCategoryFilter;
   readonly label: string;
 }[] = [
-  { key: 'all', label: 'All' },
+  { key: "all", label: "All" },
   ...(Object.values(NOTIFICATION_CATEGORIES).map((c) => ({
     key: c.key,
     label: c.label,
@@ -57,9 +57,9 @@ const CATEGORY_FILTERS: readonly {
  */
 function matchesCategory(
   entry: IRenderableNotification,
-  category: NotificationDrawerCategoryFilter
+  category: NotificationDrawerCategoryFilter,
 ): boolean {
-  if (category === 'all') return true;
+  if (category === "all") return true;
   return entry.notification.payload.category === category;
 }
 
@@ -85,14 +85,14 @@ export function NotificationDrawer({
   // Local filter state — reset when the drawer closes is intentional
   // (the drawer is transient; a saved filter would leak between
   // navigations).
-  const [section, setSection] = useState<NotificationDrawerSection>('unread');
-  const [category, setCategory] = useState<NotificationDrawerCategoryFilter>('all');
+  const [section, setSection] = useState<NotificationDrawerSection>("unread");
+  const [category, setCategory] = useState<NotificationDrawerCategoryFilter>("all");
 
   // Filter pipeline — hide snoozed, apply section + category.
   const filtered = useMemo<readonly IRenderableNotification[]>(() => {
     return entries.filter((entry) => {
       if (entry.isSnoozed) return false;
-      if (section === 'unread' && entry.isRead) return false;
+      if (section === "unread" && entry.isRead) return false;
       if (!matchesCategory(entry, category)) return false;
       return true;
     });
@@ -107,13 +107,13 @@ export function NotificationDrawer({
       <Drawer.Content placement="right">
         <Drawer.Dialog className="flex h-full w-full max-w-md flex-col md:w-[420px]">
           <Drawer.CloseTrigger />
-          <Drawer.Header className="flex items-center justify-between gap-3 border-b border-border pb-3">
+          <Drawer.Header className="border-border flex items-center justify-between gap-3 border-b pb-3">
             <div className="flex min-w-0 flex-col">
               <Drawer.Heading>Notifications</Drawer.Heading>
-              <span className="text-xs text-muted">
+              <span className="text-muted text-xs">
                 {unreadCount === 0
-                  ? 'No unread'
-                  : `${unreadCount} unread notification${unreadCount === 1 ? '' : 's'}`}
+                  ? "No unread"
+                  : `${unreadCount} unread notification${unreadCount === 1 ? "" : "s"}`}
               </span>
             </div>
             <Button
@@ -131,7 +131,7 @@ export function NotificationDrawer({
 
           <PushPermissionBanner />
 
-          <div className="flex flex-col gap-3 border-b border-border px-4 py-3">
+          <div className="border-border flex flex-col gap-3 border-b px-4 py-3">
             {/*
               Section tabs — kept as a bare-bones segmented control
               on top of HeroUI Chips so the compound stays
@@ -141,16 +141,16 @@ export function NotificationDrawer({
             */}
             <div
               aria-label="Sections"
-              className="inline-flex rounded-lg bg-surface-secondary p-0.5"
+              className="bg-surface-secondary inline-flex rounded-lg p-0.5"
               role="tablist"
               data-notifications-drawer-sections=""
             >
               {[
                 {
-                  key: 'unread' as const,
-                  label: `Unread${unreadCount > 0 ? ` (${unreadCount})` : ''}`,
+                  key: "unread" as const,
+                  label: `Unread${unreadCount > 0 ? ` (${unreadCount})` : ""}`,
                 },
-                { key: 'all' as const, label: 'All' },
+                { key: "all" as const, label: "All" },
               ].map((tab) => (
                 <button
                   key={tab.key}
@@ -159,8 +159,8 @@ export function NotificationDrawer({
                   aria-selected={section === tab.key}
                   className={
                     section === tab.key
-                      ? 'rounded-md bg-surface px-3 py-1 text-sm font-medium text-foreground shadow-surface'
-                      : 'rounded-md px-3 py-1 text-sm text-muted hover:text-foreground'
+                      ? "bg-surface text-foreground shadow-surface rounded-md px-3 py-1 text-sm font-medium"
+                      : "text-muted hover:text-foreground rounded-md px-3 py-1 text-sm"
                   }
                   onClick={() => setSection(tab.key)}
                 >
@@ -184,13 +184,13 @@ export function NotificationDrawer({
                     key={filter.key}
                     type="button"
                     aria-pressed={isActive}
-                    className="focus:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+                    className="focus-visible:ring-accent focus:outline-none focus-visible:ring-2"
                     onClick={() => setCategory(filter.key)}
                   >
                     <Chip
-                      color={isActive ? 'accent' : 'default'}
+                      color={isActive ? "accent" : "default"}
                       size="sm"
-                      variant={isActive ? 'primary' : 'secondary'}
+                      variant={isActive ? "primary" : "secondary"}
                     >
                       <Chip.Label>{filter.label}</Chip.Label>
                     </Chip>
@@ -210,7 +210,7 @@ export function NotificationDrawer({
           </Drawer.Body>
 
           {onOpenPreferences ? (
-            <Drawer.Footer className="border-t border-border">
+            <Drawer.Footer className="border-border border-t">
               <Button
                 size="sm"
                 variant="tertiary"

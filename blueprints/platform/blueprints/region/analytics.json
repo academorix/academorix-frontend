@@ -16,14 +16,26 @@
       "name": "Region Default Changed",
       "kind": "track",
       "consent_required": "essential",
-      "properties": ["tenant_id", "from_region_id", "to_region_id", "from_country_code", "to_country_code"],
+      "properties": [
+        "tenant_id",
+        "from_region_id",
+        "to_region_id",
+        "from_country_code",
+        "to_country_code"
+      ],
       "description": "The default flag flipped. Feeds the compliance dashboard — default changes are audit-critical."
     },
     {
       "name": "Region Tax Config Updated",
       "kind": "track",
       "consent_required": "essential",
-      "properties": ["tenant_id", "region_id", "country_code", "changed_fields_count", "rate_delta"],
+      "properties": [
+        "tenant_id",
+        "region_id",
+        "country_code",
+        "changed_fields_count",
+        "rate_delta"
+      ],
       "description": "`changed_fields_count` only + `rate_delta` (numeric change in default_rate_percent). Full field names + registration_number are financial-tier + NEVER Segment properties."
     },
     {

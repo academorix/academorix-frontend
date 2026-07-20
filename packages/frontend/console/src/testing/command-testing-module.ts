@@ -10,15 +10,16 @@
  */
 
 import { Module, ApplicationFactory } from "@stackra/container";
-import type { ApplicationContext } from "@stackra/container";
 import { CONSOLE_CONFIG, CONSOLE_OUTPUT, DISCOVERY_SERVICE } from "@stackra/contracts";
 
 import { DEFAULT_BINARY_NAME, DEFAULT_COMMANDS_DIRECTORY, DEFAULT_VERBOSE } from "../constants";
-import type { ICommandTestingModuleOptions } from "../interfaces";
 import { CommandRegistry } from "../registries";
 import { CommandLoader } from "../services/command-loader.service";
 
 import { TestConsoleOutput } from "./test-console-output";
+
+import type { ICommandTestingModuleOptions } from "../interfaces";
+import type { ApplicationContext } from "@stackra/container";
 
 /**
  * The shape returned by `createCommandTestingModule(...)`.

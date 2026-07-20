@@ -7,7 +7,13 @@
   "labelConventions": {
     "always": [],
     "commonlyAvailable": ["application_id", "trigger", "outcome", "signal_type"],
-    "forbiddenAsLabels": ["service_account_id", "signer_kid", "tenant_id (full ULID)", "ip", "user_agent"],
+    "forbiddenAsLabels": [
+      "service_account_id",
+      "signer_kid",
+      "tenant_id (full ULID)",
+      "ip",
+      "user_agent"
+    ],
     "note": "service_account_id, signer_kid, and tenant_id as full ULIDs are cardinality bombs \u2014 tens of thousands of SAs across every tenant. Use aggregated dimensions (application_id, trigger, outcome) instead. IP + user_agent belong in audit logs, never on metric labels."
   },
   "metrics": [

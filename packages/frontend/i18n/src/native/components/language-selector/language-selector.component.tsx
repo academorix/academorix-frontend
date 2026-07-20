@@ -10,15 +10,15 @@
  *   `react-native` are always resolvable on the target platform.
  */
 
-'use client';
+"use client";
 
-import { useCallback } from 'react';
-import type { ReactElement } from 'react';
-import { View } from 'react-native';
-import { Select, Text } from '@stackra/ui/native';
+import { useCallback } from "react";
+import type { ReactElement } from "react";
+import { View } from "react-native";
+import { Select, Text } from "@stackra/ui/native";
 
-import { useI18n } from '@/react/hooks';
-import type { NativeLanguageSelectorProps, NativeLocaleItem } from '@/native/interfaces';
+import { useI18n } from "@/react/hooks";
+import type { NativeLanguageSelectorProps, NativeLocaleItem } from "@/native/interfaces";
 
 /**
  * Shape HeroUI Native's `Select` uses for its controlled `value` /
@@ -39,7 +39,7 @@ interface ISelectOption {
  * ```
  */
 export function NativeLanguageSelector({
-  label = 'Language',
+  label = "Language",
   locales,
   className,
 }: NativeLanguageSelectorProps): ReactElement {
@@ -61,7 +61,7 @@ export function NativeLanguageSelector({
       const value = next.value;
       if (value && value !== locale) void setLocale(value);
     },
-    [locale, setLocale]
+    [locale, setLocale],
   );
 
   return (

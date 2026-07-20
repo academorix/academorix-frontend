@@ -53,10 +53,7 @@
       "description": "Materialised revenue report per (tenant, date range, grouping). Fed by GET /reports/revenue + the monthly-report scheduled job. Long TTL because paid-invoice history is append-only for delivered periods.",
       "ttlSeconds": 3600,
       "tags": ["invoice", "invoice.reports", "invoice.tenant"],
-      "invalidatedBy": [
-        "manual: invoice:invalidate-reports (rare — bulk correction)",
-        "TTL"
-      ]
+      "invalidatedBy": ["manual: invoice:invalidate-reports (rare — bulk correction)", "TTL"]
     },
     {
       "pattern": "inv:tax-collected:{tenant_id}:{from}:{to}:{jurisdiction}",
@@ -95,20 +92,14 @@
       "description": "Tenant's active dunning schedule (day+3/7/14/30/60 default or Enterprise-customized). Read by DispatchDunningRemindersJob.",
       "ttlSeconds": 3600,
       "tags": ["invoice", "invoice.tenant"],
-      "invalidatedBy": [
-        "settings::SettingChanged for group='invoice'",
-        "TTL"
-      ]
+      "invalidatedBy": ["settings::SettingChanged for group='invoice'", "TTL"]
     },
     {
       "pattern": "inv:template:{tenant_id}:{template_slug}",
       "description": "Rendered PDF template (Blade view compilation). Read at every PDF render. Cached across renders for a tenant.",
       "ttlSeconds": 86400,
       "tags": ["invoice"],
-      "invalidatedBy": [
-        "tenant::BrandingUpdated",
-        "manual"
-      ]
+      "invalidatedBy": ["tenant::BrandingUpdated", "manual"]
     },
     {
       "pattern": "inv:eligible-item-types:{tenant_id}",

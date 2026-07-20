@@ -16,18 +16,18 @@
  *   contexts and every read returns a defaulted snapshot.
  */
 
-import { Inject, Injectable, Optional } from '@stackra/container';
-import type { OnModuleInit } from '@stackra/contracts';
-import { optional, tap } from '@stackra/support';
+import { Inject, Injectable, Optional } from "@stackra/container";
+import type { OnModuleInit } from "@stackra/contracts";
+import { optional, tap } from "@stackra/support";
 
-import { PWA_CONFIG, PWA_EVENTS } from '../constants';
+import { PWA_CONFIG, PWA_EVENTS } from "../constants";
 import {
   detectDisplayMode,
   detectIosSafari,
   detectStandalone,
   parseUtmParams,
   requestPersistentStorage,
-} from '../utils';
+} from "../utils";
 import type {
   IPwaAttribution,
   IPwaInstallState,
@@ -35,8 +35,8 @@ import type {
   IPwaSnapshot,
   IPwaUpdateState,
   PwaDisplayMode,
-} from '../interfaces';
-import { AnalyticsBridgeService } from './analytics-bridge.service';
+} from "../interfaces";
+import { AnalyticsBridgeService } from "./analytics-bridge.service";
 
 /**
  * Extension of the `Event` shape for the browser's install prompt.
@@ -48,7 +48,7 @@ export interface IBeforeInstallPromptEvent extends Event {
   /** Show the browser's install UI. Resolves once the user picks. */
   prompt(): Promise<void>;
   /** User's decision. */
-  readonly userChoice: Promise<{ readonly outcome: 'accepted' | 'dismissed' }>;
+  readonly userChoice: Promise<{ readonly outcome: "accepted" | "dismissed" }>;
 }
 
 /** Listener signature — receives no argument. */
@@ -101,7 +101,7 @@ export class PwaService implements OnModuleInit {
     @Inject(PWA_CONFIG) private readonly config: IPwaModuleOptions,
     // Bridge is optional so consumers without analytics wired can still
     // resolve PwaService — it just skips every dispatch.
-    @Optional() private readonly analytics?: AnalyticsBridgeService
+    @Optional() private readonly analytics?: AnalyticsBridgeService,
   ) {
     // Detect the display + standalone state at construction so first
     // paint reads correctly even without a subscribe. SSR-safe:
@@ -129,7 +129,7 @@ export class PwaService implements OnModuleInit {
    * SSR-safe: every guarded on `typeof window !== 'undefined'`.
    */
   public async onModuleInit(): Promise<void> {
-    if (typeof window === 'undefined') return;
+    if (typeof window === "undefined") return;
 
     // 1) Emit `standalone.launched` if we booted directly into an
     //    installed context (matters for first-run funnels).
@@ -156,7 +156,7 @@ export class PwaService implements OnModuleInit {
     // 5) Service-worker binding — best-effort. Consumers wanting more
     //    control call `bindServiceWorker` explicitly with a specific
     //    registration.
-    if ('serviceWorker' in navigator) {
+    if ("serviceWorker" in navigator) {
       try {
         const reg = await navigator.serviceWorker.getRegistration();
         if (reg) this.bindServiceWorker(reg);
@@ -223,7 +223,7 @@ export class PwaService implements OnModuleInit {
       // task, which is the caller's responsibility — button `onClick`.
       await promptEvent.prompt();
       const choice = await promptEvent.userChoice;
-      const accepted = choice.outcome === 'accepted';
+      const accepted = choice.outcome === "accepted";
       this.deferredPrompt = null;
       this.updateInstall({
         isSupported: this.install.isSupported,
@@ -275,9 +275,9 @@ export class PwaService implements OnModuleInit {
     // null — matches the workspace's support-utilities standard.
     const waiting = optional(this.registration).waiting;
     if (!waiting) return;
-    waiting.postMessage({ type: 'SKIP_WAITING' });
+    waiting.postMessage({ type: "SKIP_WAITING" });
     this.analytics?.emit(PWA_EVENTS.UPDATE_ACCEPTED);
-    if (typeof window !== 'undefined') {
+    if (typeof window !== "undefined") {
       // The controller change fires after SKIP_WAITING; a hard reload
       // is the workspace-standard pattern (matches vite-plugin-pwa).
       window.location.reload();
@@ -316,16 +316,16 @@ export class PwaService implements OnModuleInit {
         // A new worker reaching `installed` while the current one is
         // active means an update is ready. The `!controller` case
         // (first-ever install) is deliberately excluded.
-        if (nw.state === 'installed' && navigator.serviceWorker.controller) {
+        if (nw.state === "installed" && navigator.serviceWorker.controller) {
           this.updateUpdate({ isAvailable: true, isVisible: true });
           this.analytics?.emit(PWA_EVENTS.UPDATE_AVAILABLE);
         }
       };
-      nw.addEventListener('statechange', onState);
-      this.cleanups.push(() => nw.removeEventListener('statechange', onState));
+      nw.addEventListener("statechange", onState);
+      this.cleanups.push(() => nw.removeEventListener("statechange", onState));
     };
-    registration.addEventListener('updatefound', onUpdateFound);
-    this.cleanups.push(() => registration.removeEventListener('updatefound', onUpdateFound));
+    registration.addEventListener("updatefound", onUpdateFound);
+    this.cleanups.push(() => registration.removeEventListener("updatefound", onUpdateFound));
 
     // Kick off periodic polling — Chromium's own polling isn't
     // aggressive enough for many apps.
@@ -348,7 +348,7 @@ export class PwaService implements OnModuleInit {
   public async requestPersistentStorage(): Promise<boolean> {
     const granted = await requestPersistentStorage();
     this.analytics?.emit(
-      granted ? PWA_EVENTS.PERSISTENT_STORAGE_GRANTED : PWA_EVENTS.PERSISTENT_STORAGE_DENIED
+      granted ? PWA_EVENTS.PERSISTENT_STORAGE_GRANTED : PWA_EVENTS.PERSISTENT_STORAGE_DENIED,
     );
     return granted;
   }
@@ -392,7 +392,7 @@ export class PwaService implements OnModuleInit {
 
   /** Bind the `beforeinstallprompt` + `appinstalled` listeners. */
   private bindInstallPrompt(): void {
-    if (typeof window === 'undefined') return;
+    if (typeof window === "undefined") return;
 
     // Respect the caller's `maxDismissals` — if they've already
     // dismissed too many times, we still capture the deferred prompt
@@ -443,19 +443,19 @@ export class PwaService implements OnModuleInit {
       this.analytics?.emit(PWA_EVENTS.INSTALL_ACCEPTED);
     };
 
-    window.addEventListener('beforeinstallprompt', onBeforeInstallPrompt);
-    window.addEventListener('appinstalled', onAppInstalled);
+    window.addEventListener("beforeinstallprompt", onBeforeInstallPrompt);
+    window.addEventListener("appinstalled", onAppInstalled);
     this.cleanups.push(() =>
-      window.removeEventListener('beforeinstallprompt', onBeforeInstallPrompt)
+      window.removeEventListener("beforeinstallprompt", onBeforeInstallPrompt),
     );
-    this.cleanups.push(() => window.removeEventListener('appinstalled', onAppInstalled));
+    this.cleanups.push(() => window.removeEventListener("appinstalled", onAppInstalled));
   }
 
   /** Watch `display-mode: standalone` for post-install changes. */
   private bindDisplayModeWatcher(): void {
-    if (typeof window === 'undefined' || typeof window.matchMedia !== 'function') return;
+    if (typeof window === "undefined" || typeof window.matchMedia !== "function") return;
 
-    const mq = window.matchMedia('(display-mode: standalone)');
+    const mq = window.matchMedia("(display-mode: standalone)");
     const onChange = (): void => {
       const nextStandalone = detectStandalone();
       const nextMode = detectDisplayMode();
@@ -472,15 +472,15 @@ export class PwaService implements OnModuleInit {
     // Both event forms — Chrome uses `addEventListener`, older Safari
     // pre-14 used `addListener`. `addEventListener` first because it's
     // the modern surface.
-    mq.addEventListener('change', onChange);
-    this.cleanups.push(() => mq.removeEventListener('change', onChange));
+    mq.addEventListener("change", onChange);
+    this.cleanups.push(() => mq.removeEventListener("change", onChange));
   }
 
   /** Read the dismiss count from `localStorage`. Fail-soft on SSR. */
   private readDismissCount(): number {
-    if (typeof window === 'undefined' || !window.localStorage) return 0;
+    if (typeof window === "undefined" || !window.localStorage) return 0;
     try {
-      const key = this.config.install?.dismissKey ?? 'stackra:pwa:install-dismissed';
+      const key = this.config.install?.dismissKey ?? "stackra:pwa:install-dismissed";
       const value = window.localStorage.getItem(key);
       const parsed = value ? Number(value) : 0;
       return Number.isFinite(parsed) && parsed >= 0 ? parsed : 0;
@@ -493,9 +493,9 @@ export class PwaService implements OnModuleInit {
 
   /** Persist the dismiss count to `localStorage`. Fail-soft on SSR. */
   private persistDismissCount(next: number): void {
-    if (typeof window === 'undefined' || !window.localStorage) return;
+    if (typeof window === "undefined" || !window.localStorage) return;
     try {
-      const key = this.config.install?.dismissKey ?? 'stackra:pwa:install-dismissed';
+      const key = this.config.install?.dismissKey ?? "stackra:pwa:install-dismissed";
       window.localStorage.setItem(key, String(next));
     } catch {
       // fail-soft — private mode.
@@ -505,8 +505,8 @@ export class PwaService implements OnModuleInit {
   /** Compose the attribution snapshot from parsed UTM + display mode. */
   private buildAttribution(): IPwaAttribution {
     const utm = parseUtmParams();
-    const referrer = typeof document !== 'undefined' && document.referrer ? document.referrer : '';
-    const isInstalledContext = this.displayMode === 'standalone' || this.displayMode === 'twa';
+    const referrer = typeof document !== "undefined" && document.referrer ? document.referrer : "";
+    const isInstalledContext = this.displayMode === "standalone" || this.displayMode === "twa";
     return { utm, displayMode: this.displayMode, referrer, isInstalledContext };
   }
 

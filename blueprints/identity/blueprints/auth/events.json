@@ -36,10 +36,7 @@
       "class": "Academorix\\Auth\\Events\\UserLoggedOut",
       "trigger": "POST /auth/logout OR platform equivalent. Sanctum PAT revoked + paired refresh token consumed in the same transaction.",
       "queue": "notifications",
-      "consumers": [
-        "activity::WriteToActivityLog",
-        "observability::EmitLogoutMetric"
-      ],
+      "consumers": ["activity::WriteToActivityLog", "observability::EmitLogoutMetric"],
       "payload": {
         "user_id": "ULID",
         "identity_id": "ULID",
@@ -54,10 +51,7 @@
       "class": "Academorix\\Auth\\Events\\SessionRevoked",
       "trigger": "A single PAT was revoked (via HasSessionRevocation trait, direct API call, or platform-admin action). Distinguished from UserLoggedOut because it does NOT require the user to be the actor.",
       "queue": "notifications",
-      "consumers": [
-        "activity::WriteToActivityLog",
-        "observability::EmitSessionRevokedMetric"
-      ],
+      "consumers": ["activity::WriteToActivityLog", "observability::EmitSessionRevokedMetric"],
       "payload": {
         "user_id": "ULID",
         "token_id": "integer",
@@ -124,9 +118,7 @@
       "class": "Academorix\\Auth\\Events\\PasswordResetInitiated",
       "trigger": "POST /auth/password/forgot passed rate-limit + resolved a real Identity. NEVER fired when email is unknown (enumeration safety). This is the AUTH surface's version of identity::PasswordResetRequested \u2014 fires alongside identity's event, since auth OWNS the endpoint.",
       "queue": "notifications",
-      "consumers": [
-        "notifications::DispatchPasswordResetLinkNotification"
-      ],
+      "consumers": ["notifications::DispatchPasswordResetLinkNotification"],
       "payload": {
         "identity_id": "ULID",
         "reset_token_id": "ULID",
@@ -155,9 +147,7 @@
       "class": "Academorix\\Auth\\Events\\EmailVerificationRequested",
       "trigger": "New EmailVerification token issued (registration OR email-change flow OR explicit resend). Debounced 60s per identity_id.",
       "queue": "notifications",
-      "consumers": [
-        "notifications::DispatchEmailVerificationLinkNotification"
-      ],
+      "consumers": ["notifications::DispatchEmailVerificationLinkNotification"],
       "payload": {
         "identity_id": "ULID",
         "verification_token_id": "ULID",
@@ -170,9 +160,7 @@
       "class": "Academorix\\Auth\\Events\\EmailVerificationCompleted",
       "trigger": "EmailVerification token exchanged for identity.email_verified_at = now(). Token consumed atomically. Fires alongside identity::IdentityEmailVerified \u2014 auth OWNS the endpoint, identity OWNS the substrate mutation.",
       "queue": "notifications",
-      "consumers": [
-        "activity::WriteToActivityLog"
-      ],
+      "consumers": ["activity::WriteToActivityLog"],
       "payload": {
         "identity_id": "ULID",
         "verification_token_id": "ULID",
@@ -222,9 +210,7 @@
       "class": "Academorix\\Auth\\Events\\CrossAppGrantExpired",
       "trigger": "Grant was NOT exchanged before expires_at. Fired by PurgeExpiredCrossAppGrantsJob when it hard-deletes an unconsumed row.",
       "queue": "notifications",
-      "consumers": [
-        "observability::EmitCrossAppGrantExpiredMetric"
-      ],
+      "consumers": ["observability::EmitCrossAppGrantExpiredMetric"],
       "payload": {
         "identity_id": "ULID",
         "grant_id": "ULID",
@@ -267,10 +253,7 @@
       "class": "Academorix\\Auth\\Events\\MfaChallengeFailed",
       "trigger": "MFA verification failed \u2014 wrong code / expired / already consumed. Third failure hard-deletes the challenge; the login flow restarts from step 1.",
       "queue": "notifications",
-      "consumers": [
-        "activity::WriteToActivityLog",
-        "observability::EmitMfaChallengeFailedMetric"
-      ],
+      "consumers": ["activity::WriteToActivityLog", "observability::EmitMfaChallengeFailedMetric"],
       "payload": {
         "identity_id": "ULID",
         "challenge_id": "ULID",
@@ -324,10 +307,7 @@
       "class": "Academorix\\Auth\\Events\\JwtSigningKeyRotated",
       "trigger": "New JwtSigningKey row inserted with is_active=true; previous key marked retired_at=now() (kept for verification during rotation window).",
       "queue": "notifications-critical",
-      "consumers": [
-        "activity::WriteToActivityLog",
-        "observability::EmitJwtKeyRotatedMetric"
-      ],
+      "consumers": ["activity::WriteToActivityLog", "observability::EmitJwtKeyRotatedMetric"],
       "payload": {
         "new_key_id": "ULID",
         "new_kid": "string",
@@ -343,10 +323,7 @@
       "class": "Academorix\\Auth\\Events\\JwtRevoked",
       "trigger": "Specific `jti` added to the deny list \u2014 revoke a JWT immediately, before natural expiry. Used on password-change, user-suspend, breach response.",
       "queue": "notifications-critical",
-      "consumers": [
-        "activity::WriteToActivityLog",
-        "observability::EmitJwtRevokedMetric"
-      ],
+      "consumers": ["activity::WriteToActivityLog", "observability::EmitJwtRevokedMetric"],
       "payload": {
         "jti": "UUID",
         "reason": "'password_change' | 'user_suspended' | 'manual_revocation' | 'breach_response'",

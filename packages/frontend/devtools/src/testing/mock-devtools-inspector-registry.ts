@@ -8,7 +8,7 @@ import type {
   IDevtoolsInspectorRegion,
   IDevtoolsInspectorRegionSource,
   IDevtoolsInspectorRegistry,
-} from '@stackra/contracts';
+} from "@stackra/contracts";
 
 /**
  * A predictable, in-memory `IDevtoolsInspectorRegistry` shipped by

@@ -20,7 +20,13 @@
       "urlExpr": "'/api/v1/sports?include=downstream_reference_count,discipline_count&sort=category,sort_order,name'",
       "unwrap": "data"
     },
-    { "name": "me", "kind": "http.get", "url": "/api/auth/me", "unwrap": "data", "cache": { "ttlSeconds": 60 } }
+    {
+      "name": "me",
+      "kind": "http.get",
+      "url": "/api/auth/me",
+      "unwrap": "data",
+      "cache": { "ttlSeconds": 60 }
+    }
   ],
   "nodes": [
     {
@@ -35,8 +41,21 @@
             {
               "kind": "View",
               "children": [
-                { "kind": "Text", "props": { "as": "h1", "className": "text-2xl font-semibold", "children": "Sports catalog" } },
-                { "kind": "Text", "props": { "className": "text-sm text-muted", "children": "Platform-seeded sports plus any custom sports your team has added. Enterprise-only for customs." } }
+                {
+                  "kind": "Text",
+                  "props": {
+                    "as": "h1",
+                    "className": "text-2xl font-semibold",
+                    "children": "Sports catalog"
+                  }
+                },
+                {
+                  "kind": "Text",
+                  "props": {
+                    "className": "text-sm text-muted",
+                    "children": "Platform-seeded sports plus any custom sports your team has added. Enterprise-only for customs."
+                  }
+                }
               ]
             },
             {
@@ -54,13 +73,19 @@
         },
         {
           "kind": "Alert",
-          "props": { "variant": "info", "children": "Custom sports are Enterprise-only. Upgrade your plan to add sports beyond the platform catalog." },
+          "props": {
+            "variant": "info",
+            "children": "Custom sports are Enterprise-only. Upgrade your plan to add sports beyond the platform catalog."
+          },
           "bindings": { "hidden": { "$expr": "!!me.entitlements.sports_registry_custom" } }
         },
         {
           "kind": "Toolbar",
           "children": [
-            { "kind": "SearchField", "props": { "placeholder": "Search sport name, slug, governing body", "name": "q" } },
+            {
+              "kind": "SearchField",
+              "props": { "placeholder": "Search sport name, slug, governing body", "name": "q" }
+            },
             {
               "kind": "Select",
               "props": { "name": "category", "placeholder": "All categories", "clearable": true },
@@ -79,7 +104,11 @@
             },
             {
               "kind": "Select",
-              "props": { "name": "gender_typical", "placeholder": "All genders", "clearable": true },
+              "props": {
+                "name": "gender_typical",
+                "placeholder": "All genders",
+                "clearable": true
+              },
               "options": [
                 { "key": "any", "label": "Any" },
                 { "key": "male_only", "label": "Male-only" },
@@ -89,7 +118,11 @@
             },
             {
               "kind": "Select",
-              "props": { "name": "is_platform_seeded", "placeholder": "Platform + custom", "clearable": true },
+              "props": {
+                "name": "is_platform_seeded",
+                "placeholder": "Platform + custom",
+                "clearable": true
+              },
               "options": [
                 { "key": "true", "label": "Platform-seeded only" },
                 { "key": "false", "label": "Custom only" }
@@ -112,7 +145,9 @@
                     "kind": "View",
                     "props": { "className": "size-4 rounded-full flex-shrink-0" },
                     "bindings": {
-                      "props": { "style": { "$expr": "{ backgroundColor: row.primary_color || '#94A3B8' }" } }
+                      "props": {
+                        "style": { "$expr": "{ backgroundColor: row.primary_color || '#94A3B8' }" }
+                      }
                     }
                   },
                   {

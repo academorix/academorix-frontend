@@ -1,7 +1,7 @@
 {
   "name": "@stackra/scope",
   "version": "0.1.0",
-  "description": "Client-side hierarchical scope runtime for the Stackra framework — active-scope store, emulation, cascading value resolution, and React bindings. Backend-agnostic (talks to your API via a data source).",
+  "description": "Client-side hierarchical scope runtime for the Stackra framework \u2014 active-scope store, emulation, cascading value resolution, and React bindings. Backend-agnostic (talks to your API via a data source).",
   "license": "MIT",
   "author": {
     "name": "Stackra L.L.C",
@@ -105,6 +105,8 @@
     }
   },
   "devDependencies": {
+    "@academorix/config-tsconfig": "workspace:*",
+    "@academorix/config-tsup": "workspace:*",
     "@stackra/container": "workspace:*",
     "@stackra/contracts": "workspace:*",
     "@stackra/devtools": "workspace:*",

@@ -5,12 +5,12 @@
  *   mock.
  */
 
-import { MANDATORY_ON_MATRIX } from '@/core/constants';
+import { MANDATORY_ON_MATRIX } from "@/core/constants";
 import type {
   INotificationPreferences,
   IQuietHoursWindow,
   NotificationCategory,
-} from '@/core/interfaces';
+} from "@/core/interfaces";
 
 /** Listener signature. */
 export type MockNotificationPreferencesListener = () => void;
@@ -80,7 +80,7 @@ export class MockNotificationPreferences {
   public setChannelEnabled(
     category: NotificationCategory,
     channel: string,
-    enabled: boolean
+    enabled: boolean,
   ): void {
     const mandatory = MANDATORY_ON_MATRIX[category] ?? [];
     if (mandatory.includes(channel) && !enabled) return;

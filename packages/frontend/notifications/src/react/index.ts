@@ -34,7 +34,7 @@ export {
   type IUseRenderableNotificationsResult,
   type IUseSnoozeStoreResult,
   type NotificationWriter,
-} from './hooks';
+} from "./hooks";
 
 // ════════════════════════════════════════════════════════════════════
 // Components
@@ -62,7 +62,7 @@ export {
   type ChannelToggleProps,
   type QuietHoursPickerProps,
   type CategoryPreferencesPanelProps,
-} from './components';
+} from "./components";
 
 // ════════════════════════════════════════════════════════════════════
 // Pages
@@ -72,4 +72,4 @@ export {
   NotificationPreferencesPage,
   type InboxPageProps,
   type NotificationPreferencesPageProps,
-} from './pages';
+} from "./pages";

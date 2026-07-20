@@ -6,7 +6,12 @@
     {
       "name": "packed",
       "description": "The most common attestation format in the modern ecosystem — used by YubiKeys, Google Titan, and many mobile authenticators. Contains a signature over the authenticator data + client-data-hash, optionally with an X.509 certificate chain.",
-      "authenticators": ["YubiKey 5 / 5C / 5C NFC / Bio", "Google Titan Security Key", "Feitian ePass FIDO", "SoloKeys"],
+      "authenticators": [
+        "YubiKey 5 / 5C / 5C NFC / Bio",
+        "Google Titan Security Key",
+        "Feitian ePass FIDO",
+        "SoloKeys"
+      ],
       "verifier_module": "web-auth/webauthn-lib (Webauthn\\AttestationStatement\\PackedAttestationStatementSupport)",
       "aaguid_reported": "yes (identifies the model)",
       "certificate_chain_verifiable": "yes",
@@ -33,7 +38,11 @@
     {
       "name": "apple",
       "description": "Attestation format emitted by Apple's platform authenticators (Touch ID / Face ID / Apple Watch double-click). Uses an ECDSA P-256 signature + Apple's attestation extension.",
-      "authenticators": ["iOS Touch ID / Face ID (Safari + Chrome + Firefox on iOS)", "macOS Touch ID", "watchOS double-click"],
+      "authenticators": [
+        "iOS Touch ID / Face ID (Safari + Chrome + Firefox on iOS)",
+        "macOS Touch ID",
+        "watchOS double-click"
+      ],
       "verifier_module": "web-auth/webauthn-lib (Webauthn\\AttestationStatement\\AppleAttestationStatementSupport)",
       "aaguid_reported": "yes (identifies iCloud-Keychain-synced vs device-bound)",
       "certificate_chain_verifiable": "yes (chain roots at Apple's WebAuthn Root CA)",
@@ -42,7 +51,10 @@
     {
       "name": "tpm",
       "description": "Attestation format emitted by Windows Hello + other TPM-backed authenticators. Uses an RSA / ECDSA signature + the TPM's endorsement key certificate.",
-      "authenticators": ["Windows Hello (with a TPM 2.0)", "any TPM-backed WebAuthn implementation"],
+      "authenticators": [
+        "Windows Hello (with a TPM 2.0)",
+        "any TPM-backed WebAuthn implementation"
+      ],
       "verifier_module": "web-auth/webauthn-lib (Webauthn\\AttestationStatement\\TPMAttestationStatementSupport)",
       "aaguid_reported": "yes",
       "certificate_chain_verifiable": "yes (chain roots at the TPM vendor's Endorsement CA — Intel / Infineon / NXP / etc.)",
@@ -51,7 +63,10 @@
     {
       "name": "none",
       "description": "No attestation. The authenticator emits only the public key + credential ID. Privacy-preserving: does not identify the device model. Recommended by W3C for most consumer applications.",
-      "authenticators": ["Any authenticator when config('mfa.webauthn.attestation_conveyance')='none' (our default)", "synced passkeys (iCloud Keychain / Google Password Manager) — these ALWAYS emit 'none' because syncing across devices makes device attestation meaningless"],
+      "authenticators": [
+        "Any authenticator when config('mfa.webauthn.attestation_conveyance')='none' (our default)",
+        "synced passkeys (iCloud Keychain / Google Password Manager) — these ALWAYS emit 'none' because syncing across devices makes device attestation meaningless"
+      ],
       "verifier_module": "web-auth/webauthn-lib (Webauthn\\AttestationStatement\\NoneAttestationStatementSupport — pass-through)",
       "aaguid_reported": "no (all-zeros)",
       "certificate_chain_verifiable": "n/a",

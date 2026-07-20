@@ -18,8 +18,8 @@
  *   `NativeStorageModule.forRoot({ stores })`.
  */
 
-import { Injectable, Inject, Optional } from '@stackra/container';
-import type { OnModuleInit } from '@stackra/container';
+import { Injectable, Inject, Optional } from "@stackra/container";
+import type { OnModuleInit } from "@stackra/container";
 import {
   EVENT_EMITTER,
   STATE_EVENTS,
@@ -28,20 +28,20 @@ import {
   type IStorage,
   type IStorageManager,
   type PersistenceTarget,
-} from '@stackra/contracts';
-import { Logger } from '@stackra/logger';
-import type { Store } from '@tanstack/store';
-import { StateRegistry } from '../registries/state.registry';
+} from "@stackra/contracts";
+import { Logger } from "@stackra/logger";
+import type { Store } from "@tanstack/store";
+import { StateRegistry } from "../registries/state.registry";
 
 /** Storage key prefix for persisted state. */
-const STORAGE_PREFIX = '__stackra_state_';
+const STORAGE_PREFIX = "__stackra_state_";
 
 /**
  * Persists store state through `@stackra/storage` and hydrates on load.
  */
 @Injectable()
 export class PersistenceBroadcaster implements OnModuleInit {
-  private readonly logger = new Logger('PersistenceBroadcaster');
+  private readonly logger = new Logger("PersistenceBroadcaster");
 
   /** Store names mapped to their `IStorage` instance name. */
   private readonly enabledStores = new Map<string, string>();
@@ -55,7 +55,7 @@ export class PersistenceBroadcaster implements OnModuleInit {
   public constructor(
     @Optional() @Inject(EVENT_EMITTER) private readonly events?: IEventEmitter,
     @Optional() @Inject(StateRegistry) private readonly registry?: StateRegistry,
-    @Optional() @Inject(STORAGE_MANAGER) private readonly storage?: IStorageManager
+    @Optional() @Inject(STORAGE_MANAGER) private readonly storage?: IStorageManager,
   ) {}
 
   /**
@@ -75,7 +75,7 @@ export class PersistenceBroadcaster implements OnModuleInit {
    */
   public onModuleInit(): void {
     if (!this.events) {
-      this.logger.debug('No EventEmitter — persistence disabled');
+      this.logger.debug("No EventEmitter — persistence disabled");
       return;
     }
 
@@ -85,9 +85,9 @@ export class PersistenceBroadcaster implements OnModuleInit {
       // is a no-op — surface the reason once at startup so consumers
       // aren't confused about missing state on reload.
       this.logger.warn(
-        '[PersistenceBroadcaster] Persistence requested but STORAGE_MANAGER ' +
-          'is not provided. Import WebStorageModule / NativeStorageModule ' +
-          'upstream to enable persistence.'
+        "[PersistenceBroadcaster] Persistence requested but STORAGE_MANAGER " +
+          "is not provided. Import WebStorageModule / NativeStorageModule " +
+          "upstream to enable persistence.",
       );
     }
 
@@ -102,21 +102,21 @@ export class PersistenceBroadcaster implements OnModuleInit {
     // listener type.
     this.events.on(
       `*.${STATE_EVENTS.CHANGED}`,
-      this.handleChange.bind(this) as (payload: unknown) => void
+      this.handleChange.bind(this) as (payload: unknown) => void,
     );
 
-    if (typeof window !== 'undefined') {
-      window.addEventListener('storage', this.handleStorageEvent.bind(this));
+    if (typeof window !== "undefined") {
+      window.addEventListener("storage", this.handleStorageEvent.bind(this));
     }
 
-    this.logger.debug('Persistence broadcaster active');
+    this.logger.debug("Persistence broadcaster active");
   }
 
   /**
    * Handle a store change — persist to storage (debounced).
    */
   private handleChange(eventName: string, payload: unknown): void {
-    const storeName = eventName.replace(`.${STATE_EVENTS.CHANGED}`, '');
+    const storeName = eventName.replace(`.${STATE_EVENTS.CHANGED}`, "");
     if (!this.enabledStores.has(storeName)) return;
 
     const existing = this.debounceTimers.get(storeName);
@@ -128,7 +128,7 @@ export class PersistenceBroadcaster implements OnModuleInit {
       setTimeout(() => {
         void this.persist(storeName, state);
         this.debounceTimers.delete(storeName);
-      }, this.debounceMs)
+      }, this.debounceMs),
     );
   }
 
@@ -236,7 +236,7 @@ export class PersistenceBroadcaster implements OnModuleInit {
     try {
       const parsed = JSON.parse(event.newValue) as unknown;
       const state =
-        typeof parsed === 'object' && parsed !== null && 'v' in parsed
+        typeof parsed === "object" && parsed !== null && "v" in parsed
           ? (parsed as { v: unknown }).v
           : parsed;
       store.setState(() => state);

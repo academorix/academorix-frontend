@@ -18,14 +18,26 @@
       "name": "Attribution Subject Identified",
       "kind": "track",
       "consent_required": "functional",
-      "properties": ["tenant_id", "was_subject_type", "new_subject_type", "days_since_first_touch_bucket"],
+      "properties": [
+        "tenant_id",
+        "was_subject_type",
+        "new_subject_type",
+        "days_since_first_touch_bucket"
+      ],
       "description": "Anonymous → identified transition. days_since_first_touch_bucket: <1d / 1-7d / 7-30d / 30-90d / >90d."
     },
     {
       "name": "Attribution Converted",
       "kind": "track",
       "consent_required": "functional",
-      "properties": ["tenant_id", "first_touch_source_bucket", "last_touch_source_bucket", "days_since_first_touch_bucket", "touchpoint_count_bucket", "conversion_value_cents_bucket"],
+      "properties": [
+        "tenant_id",
+        "first_touch_source_bucket",
+        "last_touch_source_bucket",
+        "days_since_first_touch_bucket",
+        "touchpoint_count_bucket",
+        "conversion_value_cents_bucket"
+      ],
       "description": "Identified → converted transition. Powers first-touch vs last-touch revenue-attribution analysis. conversion_value_cents_bucket: 0 / 1-999 / 1000-9999 / 10000+."
     },
     {
@@ -59,7 +71,13 @@
       "name": "Attribution Touchpoint Captured",
       "kind": "track",
       "consent_required": "functional",
-      "properties": ["tenant_id", "touchpoint_type", "source_bucket", "was_first_touch", "was_authenticated"],
+      "properties": [
+        "tenant_id",
+        "touchpoint_type",
+        "source_bucket",
+        "was_first_touch",
+        "was_authenticated"
+      ],
       "description": "High-volume event. Sampled at 10% by default (see feature-flags.json)."
     },
     {
@@ -73,7 +91,12 @@
       "name": "Attribution Campaign Rollup Computed",
       "kind": "track",
       "consent_required": "functional",
-      "properties": ["tenant_id", "campaign_count_bucket", "conversion_count_bucket", "computation_duration_ms_bucket"],
+      "properties": [
+        "tenant_id",
+        "campaign_count_bucket",
+        "conversion_count_bucket",
+        "computation_duration_ms_bucket"
+      ],
       "description": "Medium+. Signals rollup pipeline health."
     }
   ],

@@ -4,7 +4,7 @@
  * @description RTL/LTR direction detection utility.
  */
 
-import { RTL_LOCALES } from '../constants';
+import { RTL_LOCALES } from "../constants";
 
 /**
  * Check if a locale uses right-to-left script.
@@ -14,7 +14,7 @@ import { RTL_LOCALES } from '../constants';
  */
 export function isRtlLocale(locale: string): boolean {
   if (RTL_LOCALES.has(locale)) return true;
-  const base = locale.split('-')[0]!.split('_')[0]!;
+  const base = locale.split("-")[0]!.split("_")[0]!;
   return RTL_LOCALES.has(base);
 }
 
@@ -24,6 +24,6 @@ export function isRtlLocale(locale: string): boolean {
  * @param locale - The locale code
  * @returns `"rtl"` or `"ltr"`
  */
-export function getDirection(locale: string): 'ltr' | 'rtl' {
-  return isRtlLocale(locale) ? 'rtl' : 'ltr';
+export function getDirection(locale: string): "ltr" | "rtl" {
+  return isRtlLocale(locale) ? "rtl" : "ltr";
 }

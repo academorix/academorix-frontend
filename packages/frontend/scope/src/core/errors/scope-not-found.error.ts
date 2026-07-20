@@ -4,7 +4,7 @@
  * @description Thrown when a scope definition, node, or value is not found.
  */
 
-import { ScopeError } from './scope.error';
+import { ScopeError } from "./scope.error";
 
 /**
  * Thrown when a scope definition, node, or value is not found.
@@ -12,5 +12,5 @@ import { ScopeError } from './scope.error';
  * Maps to HTTP 404 Not Found in NestJS exception filters.
  */
 export class ScopeNotFoundError extends ScopeError {
-  public readonly code = 'SCOPE_NOT_FOUND' as const;
+  public readonly code = "SCOPE_NOT_FOUND" as const;
 }

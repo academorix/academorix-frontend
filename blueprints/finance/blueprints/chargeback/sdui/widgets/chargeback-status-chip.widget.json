@@ -5,9 +5,29 @@
   "kind": "SduiWidget",
   "description": "Composite chip showing the chargeback's overall state — combines status + optional RDR-eligible indicator + optional CE3-eligible indicator into a single at-a-glance signal. Colour + icon + text label. Never colour-alone. Priority order: 'Lost' > 'Expired' > 'Won' > 'Accepted refund' > 'Under bank review' > 'Evidence submitted' > 'Pending evidence'.",
   "props": {
-    "status": { "type": "string", "required": true, "enum": ["pending_evidence", "evidence_submitted", "under_bank_review", "won", "lost", "expired", "accepted_refund"] },
-    "rdrEligible": { "type": "boolean", "default": false, "description": "When status='pending_evidence' + rdrEligible=true, show an 'RDR available' variant." },
-    "ce3Eligible": { "type": "boolean", "default": false, "description": "When status IN ('pending_evidence', 'evidence_submitted') + ce3Eligible=true, show a 'CE3.0 available' variant." },
+    "status": {
+      "type": "string",
+      "required": true,
+      "enum": [
+        "pending_evidence",
+        "evidence_submitted",
+        "under_bank_review",
+        "won",
+        "lost",
+        "expired",
+        "accepted_refund"
+      ]
+    },
+    "rdrEligible": {
+      "type": "boolean",
+      "default": false,
+      "description": "When status='pending_evidence' + rdrEligible=true, show an 'RDR available' variant."
+    },
+    "ce3Eligible": {
+      "type": "boolean",
+      "default": false,
+      "description": "When status IN ('pending_evidence', 'evidence_submitted') + ce3Eligible=true, show a 'CE3.0 available' variant."
+    },
     "size": { "type": "string", "default": "sm", "enum": ["xs", "sm", "md", "lg"] },
     "showIcon": { "type": "boolean", "default": true }
   },

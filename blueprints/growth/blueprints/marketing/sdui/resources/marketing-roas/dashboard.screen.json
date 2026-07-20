@@ -32,8 +32,21 @@
             {
               "kind": "View",
               "children": [
-                { "kind": "Text", "props": { "as": "h1", "className": "text-2xl font-semibold", "children": "Return on Ad Spend" } },
-                { "kind": "Text", "props": { "className": "text-sm text-muted", "children": "Delivered marketing conversions attributed to your campaigns." } }
+                {
+                  "kind": "Text",
+                  "props": {
+                    "as": "h1",
+                    "className": "text-2xl font-semibold",
+                    "children": "Return on Ad Spend"
+                  }
+                },
+                {
+                  "kind": "Text",
+                  "props": {
+                    "className": "text-sm text-muted",
+                    "children": "Delivered marketing conversions attributed to your campaigns."
+                  }
+                }
               ]
             }
           ]
@@ -61,7 +74,11 @@
                 { "id": "medium", "label": "Medium" }
               ],
               "actions": {
-                "onSelectionChange": { "kind": "filter.set", "field": "group_by", "valueExpr": "$selectedKey" }
+                "onSelectionChange": {
+                  "kind": "filter.set",
+                  "field": "group_by",
+                  "valueExpr": "$selectedKey"
+                }
               }
             },
             {
@@ -69,7 +86,11 @@
               "props": { "label": "Provider", "menuTrigger": "focus", "className": "min-w-48" },
               "props_items_source": "marketing.providers",
               "actions": {
-                "onSelectionChange": { "kind": "filter.set", "field": "provider", "valueExpr": "$selectedKey" }
+                "onSelectionChange": {
+                  "kind": "filter.set",
+                  "field": "provider",
+                  "valueExpr": "$selectedKey"
+                }
               }
             }
           ]
@@ -82,24 +103,55 @@
               "kind": "Card",
               "props": { "className": "p-6" },
               "children": [
-                { "kind": "Text", "props": { "className": "text-sm text-muted", "children": "Total delivered revenue" } },
-                { "kind": "Text", "props": { "className": "text-3xl font-bold mt-1" }, "bindings": { "children": { "$ref": "roas.totals.value_delivered", "formatter": "currency" } } }
+                {
+                  "kind": "Text",
+                  "props": {
+                    "className": "text-sm text-muted",
+                    "children": "Total delivered revenue"
+                  }
+                },
+                {
+                  "kind": "Text",
+                  "props": { "className": "text-3xl font-bold mt-1" },
+                  "bindings": {
+                    "children": { "$ref": "roas.totals.value_delivered", "formatter": "currency" }
+                  }
+                }
               ]
             },
             {
               "kind": "Card",
               "props": { "className": "p-6" },
               "children": [
-                { "kind": "Text", "props": { "className": "text-sm text-muted", "children": "Conversion events" } },
-                { "kind": "Text", "props": { "className": "text-3xl font-bold mt-1" }, "bindings": { "children": { "$ref": "roas.totals.event_count" } } }
+                {
+                  "kind": "Text",
+                  "props": { "className": "text-sm text-muted", "children": "Conversion events" }
+                },
+                {
+                  "kind": "Text",
+                  "props": { "className": "text-3xl font-bold mt-1" },
+                  "bindings": { "children": { "$ref": "roas.totals.event_count" } }
+                }
               ]
             },
             {
               "kind": "Card",
               "props": { "className": "p-6" },
               "children": [
-                { "kind": "Text", "props": { "className": "text-sm text-muted", "children": "Delivery success rate" } },
-                { "kind": "Text", "props": { "className": "text-3xl font-bold mt-1" }, "bindings": { "children": { "$ref": "roas.totals.success_rate", "formatter": "percent" } } }
+                {
+                  "kind": "Text",
+                  "props": {
+                    "className": "text-sm text-muted",
+                    "children": "Delivery success rate"
+                  }
+                },
+                {
+                  "kind": "Text",
+                  "props": { "className": "text-3xl font-bold mt-1" },
+                  "bindings": {
+                    "children": { "$ref": "roas.totals.success_rate", "formatter": "percent" }
+                  }
+                }
               ]
             }
           ]
@@ -108,14 +160,28 @@
           "kind": "Card",
           "props": { "className": "p-6" },
           "children": [
-            { "kind": "Text", "props": { "as": "h2", "className": "text-lg font-semibold mb-4", "children": "Attribution breakdown" } },
+            {
+              "kind": "Text",
+              "props": {
+                "as": "h2",
+                "className": "text-lg font-semibold mb-4",
+                "children": "Attribution breakdown"
+              }
+            },
             {
               "kind": "DataGrid",
               "bindings": { "items": { "$ref": "roas.rows" } },
               "props": {
                 "columns": [
                   { "field": "grouping_key", "label": "Group", "sortable": true, "width": 320 },
-                  { "field": "value_delivered", "label": "Revenue", "sortable": true, "defaultSort": "desc", "width": 160, "formatter": "currency" },
+                  {
+                    "field": "value_delivered",
+                    "label": "Revenue",
+                    "sortable": true,
+                    "defaultSort": "desc",
+                    "width": 160,
+                    "formatter": "currency"
+                  },
                   { "field": "event_count", "label": "Events", "sortable": true, "width": 120 },
                   { "field": "delivered_count", "label": "Delivered", "width": 120 },
                   { "field": "failed_count", "label": "Failed", "width": 100 },

@@ -11,10 +11,10 @@
  *   OS-listener wiring.
  */
 
-import { Injectable } from '@stackra/container';
-import type { OnApplicationBootstrap } from '@stackra/contracts';
+import { Injectable } from "@stackra/container";
+import type { OnApplicationBootstrap } from "@stackra/contracts";
 
-import { ExpoNotificationListenerAdapter } from '../adapters';
+import { ExpoNotificationListenerAdapter } from "../adapters";
 
 /**
  * React Native notification manager.

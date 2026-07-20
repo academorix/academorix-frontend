@@ -1,2 +1,2 @@
-export { CompositeHandler } from './composite.handler';
-export { DispatchHandler } from './dispatch.handler';
+export { CompositeHandler } from "./composite.handler";
+export { DispatchHandler } from "./dispatch.handler";

@@ -7,12 +7,12 @@
  *   injected {@link ISduiClient}. Successful loads populate the cache.
  */
 
-import { Inject, Injectable } from '@stackra/container';
-import type { IEventEmitter, ISduiClient, ISduiScreen } from '@stackra/contracts';
-import { EVENT_EMITTER, SDUI_CLIENT, SDUI_EVENTS } from '@stackra/contracts';
-import { Optional } from '@stackra/container';
+import { Inject, Injectable } from "@stackra/container";
+import type { IEventEmitter, ISduiClient, ISduiScreen } from "@stackra/contracts";
+import { EVENT_EMITTER, SDUI_CLIENT, SDUI_EVENTS } from "@stackra/contracts";
+import { Optional } from "@stackra/container";
 
-import { SchemaCache } from './schema-cache.service';
+import { SchemaCache } from "./schema-cache.service";
 
 /**
  * SduiService — the runtime's primary screen-fetch surface.
@@ -27,7 +27,7 @@ export class SduiService {
   public constructor(
     @Inject(SDUI_CLIENT) private readonly client: ISduiClient,
     private readonly cache: SchemaCache,
-    @Optional() @Inject(EVENT_EMITTER) private readonly events?: IEventEmitter
+    @Optional() @Inject(EVENT_EMITTER) private readonly events?: IEventEmitter,
   ) {}
 
   public async loadScreen(path: string, options: { force?: boolean } = {}): Promise<ISduiScreen> {
@@ -43,10 +43,10 @@ export class SduiService {
 
   public async resolveScreen(
     input: { resource: string; view: string },
-    options: { force?: boolean } = {}
+    options: { force?: boolean } = {},
   ): Promise<ISduiScreen> {
     if (!this.client.resolveScreen) {
-      throw new Error('[sdui] The configured ISduiClient does not implement resolveScreen().');
+      throw new Error("[sdui] The configured ISduiClient does not implement resolveScreen().");
     }
     const key = `${input.resource}:${input.view}`;
     if (!options.force) {

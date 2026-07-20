@@ -5,7 +5,7 @@
  *   React body of the `@stackra/devtools` scope panel.
  */
 
-import type { ScopeService } from '@/core/services/scope.service';
+import type { ScopeService } from "@/core/services/scope.service";
 
 /**
  * Props accepted by {@link ScopeDevtoolsPanelView}.

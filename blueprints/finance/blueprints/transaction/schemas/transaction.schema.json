@@ -156,7 +156,12 @@
         "foreign": { "table": "users", "column": "id", "onDelete": "restrict" },
         "description": "The actor who invoked the recording flow. Null for system-recorded transactions (e.g. RecordInvoicePaidTransactionJob has no human actor)."
       },
-      "updated_by": { "type": "string", "length": 64, "nullable": true, "note": "Populated only by the observer during the creating→posted transition; refuses to update after posted." },
+      "updated_by": {
+        "type": "string",
+        "length": 64,
+        "nullable": true,
+        "note": "Populated only by the observer during the creating→posted transition; refuses to update after posted."
+      },
       "created_at": { "type": "timestamptz", "nullable": false },
       "updated_at": { "type": "timestamptz", "nullable": false }
     },
@@ -169,7 +174,10 @@
         "description": "Composite unique index on (tenant_id, transaction_number, YEAR(effective_date)). Enforced by DB — TransactionNumberGenerator uses a Postgres advisory lock keyed on (tenant_id, year) for monotonic generation."
       },
       { "columns": ["tenant_id", "effective_date"], "name": "transactions_tenant_effective_idx" },
-      { "columns": ["tenant_id", "kind", "effective_date"], "name": "transactions_tenant_kind_effective_idx" },
+      {
+        "columns": ["tenant_id", "kind", "effective_date"],
+        "name": "transactions_tenant_kind_effective_idx"
+      },
       { "columns": ["reference_type", "reference_id"], "name": "transactions_reference_idx" },
       { "columns": ["source_transaction_id"], "name": "transactions_source_idx" },
       { "columns": ["tenant_id", "status", "posted_at"], "name": "transactions_status_idx" },
@@ -212,7 +220,16 @@
     },
     "reference_type": {
       "type": ["string", "null"],
-      "enum": [null, "Invoice", "Payment", "Refund", "Chargeback", "CouponRedemption", "TaxRemittance", "TenantProvisioning"]
+      "enum": [
+        null,
+        "Invoice",
+        "Payment",
+        "Refund",
+        "Chargeback",
+        "CouponRedemption",
+        "TaxRemittance",
+        "TenantProvisioning"
+      ]
     },
     "reference_id": { "type": ["string", "null"], "maxLength": 64 },
     "amount_cents": { "type": "integer", "minimum": 1 },
@@ -223,7 +240,10 @@
     "status": { "type": "string", "enum": ["draft", "posted"] },
     "effective_date": { "type": "string", "format": "date" },
     "posted_at": { "type": ["string", "null"], "format": "date-time" },
-    "source_transaction_id": { "type": ["string", "null"], "pattern": "^trx_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "source_transaction_id": {
+      "type": ["string", "null"],
+      "pattern": "^trx_[0-9A-HJKMNP-TV-Z]{26}$"
+    },
     "reversal_reason": {
       "type": ["string", "null"],
       "enum": [null, "refund", "chargeback", "error_correction", "accounting_adjustment"]

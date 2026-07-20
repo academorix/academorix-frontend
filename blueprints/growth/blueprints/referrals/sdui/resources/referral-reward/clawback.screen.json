@@ -25,7 +25,11 @@
       "children": [
         {
           "kind": "Text",
-          "props": { "as": "h1", "className": "text-2xl font-semibold", "children": "Clawback reward" }
+          "props": {
+            "as": "h1",
+            "className": "text-2xl font-semibold",
+            "children": "Clawback reward"
+          }
         },
         {
           "kind": "Alert",
@@ -38,7 +42,10 @@
           "kind": "Card",
           "props": { "className": "p-4" },
           "children": [
-            { "kind": "Text", "props": { "as": "h3", "className": "font-semibold mb-3", "children": "Reward" } },
+            {
+              "kind": "Text",
+              "props": { "as": "h3", "className": "font-semibold mb-3", "children": "Reward" }
+            },
             {
               "kind": "Widget",
               "widget": "referrals.reward-badge",
@@ -56,7 +63,9 @@
                 {
                   "kind": "Text",
                   "bindings": {
-                    "children": { "$expr": "'Recipient: ' + (reward.recipient?.display_name || reward.recipient_id)" }
+                    "children": {
+                      "$expr": "'Recipient: ' + (reward.recipient?.display_name || reward.recipient_id)"
+                    }
                   }
                 },
                 {
@@ -68,13 +77,17 @@
                 {
                   "kind": "Text",
                   "bindings": {
-                    "children": { "$expr": "reward.materialized_at ? 'Materialized at ' + formatDate(reward.materialized_at) : 'Not yet materialized'" }
+                    "children": {
+                      "$expr": "reward.materialized_at ? 'Materialized at ' + formatDate(reward.materialized_at) : 'Not yet materialized'"
+                    }
                   }
                 },
                 {
                   "kind": "Text",
                   "bindings": {
-                    "children": { "$expr": "reward.paid_at ? 'Paid at ' + formatDate(reward.paid_at) : 'Not yet paid'" }
+                    "children": {
+                      "$expr": "reward.paid_at ? 'Paid at ' + formatDate(reward.paid_at) : 'Not yet paid'"
+                    }
                   }
                 }
               ]
@@ -114,7 +127,10 @@
                   "kind": "http.post",
                   "urlExpr": "'/api/v1/referral-rewards/' + reward.id + '/clawback'",
                   "bodyExpr": "form",
-                  "onSuccess": { "kind": "navigate", "toExpr": "'/tenant/referrals/' + reward.referral_id" }
+                  "onSuccess": {
+                    "kind": "navigate",
+                    "toExpr": "'/tenant/referrals/' + reward.referral_id"
+                  }
                 }
               }
             }

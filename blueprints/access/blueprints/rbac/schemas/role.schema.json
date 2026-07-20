@@ -140,15 +140,7 @@
       }
     ]
   },
-  "required": [
-    "id",
-    "name",
-    "guard_name",
-    "is_system",
-    "sort_order",
-    "created_at",
-    "updated_at"
-  ],
+  "required": ["id", "name", "guard_name", "is_system", "sort_order", "created_at", "updated_at"],
   "properties": {
     "id": { "type": "string", "pattern": "^rol_[0-9A-HJKMNP-TV-Z]{26}$" },
     "application_id": { "type": ["string", "null"], "pattern": "^app_[0-9A-HJKMNP-TV-Z]{26}$" },
@@ -191,6 +183,9 @@
   },
   "x-route-binding": {
     "strategy": "resolveRouteBinding",
-    "accepts": ["ULID (`rol_<26>`)", "name + guard_name (query-scoped to caller's tenant + application)"]
+    "accepts": [
+      "ULID (`rol_<26>`)",
+      "name + guard_name (query-scoped to caller's tenant + application)"
+    ]
   }
 }

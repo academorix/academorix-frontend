@@ -23,23 +23,44 @@
       "kind": "View",
       "props": { "className": "max-w-3xl mx-auto p-6 flex flex-col gap-6" },
       "children": [
-        { "kind": "Text", "props": { "as": "h1", "className": "text-2xl font-semibold", "children": "Verify exemption" } },
+        {
+          "kind": "Text",
+          "props": {
+            "as": "h1",
+            "className": "text-2xl font-semibold",
+            "children": "Verify exemption"
+          }
+        },
         {
           "kind": "Card",
           "props": { "className": "p-6" },
           "children": [
-            { "kind": "Text", "props": { "as": "h2", "className": "text-lg font-semibold mb-3", "children": "Certificate details" } },
+            {
+              "kind": "Text",
+              "props": {
+                "as": "h2",
+                "className": "text-lg font-semibold mb-3",
+                "children": "Certificate details"
+              }
+            },
             {
               "kind": "DescriptionList",
               "props": {
                 "items": [
                   { "label": "Exemption type", "field": "exemption.exemption_type" },
                   { "label": "Certificate number", "field": "exemption.certificate_number" },
-                  { "label": "Customer", "expr": "exemption.customer_type + ' (' + exemption.customer_id + ')'" },
+                  {
+                    "label": "Customer",
+                    "expr": "exemption.customer_type + ' (' + exemption.customer_id + ')'"
+                  },
                   { "label": "Issuing jurisdiction", "field": "exemption.issuing_jurisdiction_id" },
                   { "label": "Valid from", "field": "exemption.valid_from", "formatter": "date" },
                   { "label": "Valid until", "field": "exemption.valid_until", "formatter": "date" },
-                  { "label": "Submitted at", "field": "exemption.created_at", "formatter": "datetime-relative" }
+                  {
+                    "label": "Submitted at",
+                    "field": "exemption.created_at",
+                    "formatter": "datetime-relative"
+                  }
                 ]
               }
             }
@@ -49,10 +70,21 @@
           "kind": "Card",
           "props": { "className": "p-6" },
           "children": [
-            { "kind": "Text", "props": { "as": "h2", "className": "text-lg font-semibold mb-3", "children": "Certificate document" } },
+            {
+              "kind": "Text",
+              "props": {
+                "as": "h2",
+                "className": "text-lg font-semibold mb-3",
+                "children": "Certificate document"
+              }
+            },
             {
               "kind": "Button",
-              "props": { "variant": "secondary", "leadingIcon": "document-text", "children": "View certificate (opens in new tab)" },
+              "props": {
+                "variant": "secondary",
+                "leadingIcon": "document-text",
+                "children": "View certificate (opens in new tab)"
+              },
               "actions": {
                 "onPress": {
                   "kind": "http.get",
@@ -65,7 +97,13 @@
                 }
               }
             },
-            { "kind": "Text", "props": { "className": "text-xs text-muted mt-3", "children": "Signed URL valid for 4 hours. Every access writes an audit event." } }
+            {
+              "kind": "Text",
+              "props": {
+                "className": "text-xs text-muted mt-3",
+                "children": "Signed URL valid for 4 hours. Every access writes an audit event."
+              }
+            }
           ]
         },
         {
@@ -73,14 +111,24 @@
           "props": { "className": "p-6" },
           "bindings": { "hidden": { "$expr": "!exemption.metadata.verifier_response" } },
           "children": [
-            { "kind": "Text", "props": { "as": "h2", "className": "text-lg font-semibold mb-3", "children": "Automatic registry check" } },
+            {
+              "kind": "Text",
+              "props": {
+                "as": "h2",
+                "className": "text-lg font-semibold mb-3",
+                "children": "Automatic registry check"
+              }
+            },
             {
               "kind": "DescriptionList",
               "props": {
                 "items": [
                   { "label": "Verifier", "field": "exemption.metadata.verifier_response.verifier" },
                   { "label": "Outcome", "field": "exemption.metadata.verifier_response.outcome" },
-                  { "label": "Registry match", "field": "exemption.metadata.verifier_response.matched" },
+                  {
+                    "label": "Registry match",
+                    "field": "exemption.metadata.verifier_response.matched"
+                  },
                   { "label": "Notes", "field": "exemption.metadata.verifier_response.notes" }
                 ]
               }
@@ -108,7 +156,11 @@
               "children": [
                 {
                   "kind": "Button",
-                  "props": { "variant": "primary", "leadingIcon": "check", "children": "Verify + approve" },
+                  "props": {
+                    "variant": "primary",
+                    "leadingIcon": "check",
+                    "children": "Verify + approve"
+                  },
                   "actions": {
                     "onPress": {
                       "kind": "http.post",

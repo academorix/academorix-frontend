@@ -59,7 +59,9 @@
             {
               "kind": "Button",
               "props": { "variant": "primary", "leadingIcon": "plus", "children": "Hire staff" },
-              "actions": { "onPress": { "kind": "navigate", "to": "/platform/platform-users/hire" } },
+              "actions": {
+                "onPress": { "kind": "navigate", "to": "/platform/platform-users/hire" }
+              },
               "requiresPermission": "platform.platform_users.hire"
             }
           ]
@@ -73,7 +75,11 @@
             },
             {
               "kind": "Select",
-              "props": { "name": "department", "placeholder": "All departments", "clearable": true },
+              "props": {
+                "name": "department",
+                "placeholder": "All departments",
+                "clearable": true
+              },
               "options": [
                 { "key": "ops", "label": "Operations" },
                 { "key": "product", "label": "Product" },
@@ -98,7 +104,11 @@
             },
             {
               "kind": "Select",
-              "props": { "name": "employment_type", "placeholder": "All employment types", "clearable": true },
+              "props": {
+                "name": "employment_type",
+                "placeholder": "All employment types",
+                "clearable": true
+              },
               "options": [
                 { "key": "full_time", "label": "Full-time" },
                 { "key": "part_time", "label": "Part-time" },
@@ -106,7 +116,10 @@
                 { "key": "temporary", "label": "Temporary" }
               ]
             },
-            { "kind": "Toggle", "props": { "name": "include_offboarded", "label": "Include offboarded" } }
+            {
+              "kind": "Toggle",
+              "props": { "name": "include_offboarded", "label": "Include offboarded" }
+            }
           ]
         },
         {
@@ -175,7 +188,9 @@
               "cell": {
                 "kind": "Text",
                 "props": { "className": "text-xs" },
-                "bindings": { "children": { "$expr": "row.hire_date + ' (' + row.tenure_days + 'd)'" } }
+                "bindings": {
+                  "children": { "$expr": "row.hire_date + ' (' + row.tenure_days + 'd)'" }
+                }
               }
             },
             {

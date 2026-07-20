@@ -37,7 +37,16 @@
       "last_login_at": "datetime",
       "metadata": "array"
     },
-    "appends": ["email", "email_verified_at", "mfa_enabled", "full_name", "display_name", "avatar_url", "locale", "timezone"],
+    "appends": [
+      "email",
+      "email_verified_at",
+      "mfa_enabled",
+      "full_name",
+      "display_name",
+      "avatar_url",
+      "locale",
+      "timezone"
+    ],
     "observers": ["UserObserver"],
     "hidden": [],
     "guarded": [],
@@ -174,16 +183,46 @@
     "status": { "type": "string", "enum": ["pending", "active", "suspended", "disabled"] },
     "last_login_at": { "type": ["string", "null"], "format": "date-time" },
     "default_role_id": { "type": ["string", "null"], "pattern": "^rol_[0-9A-HJKMNP-TV-Z]{26}$" },
-    "preferred_locale": { "type": ["string", "null"], "pattern": "^[a-z]{2,3}(-[A-Z][a-z]{3})?(-[A-Z]{2})?$", "maxLength": 12 },
+    "preferred_locale": {
+      "type": ["string", "null"],
+      "pattern": "^[a-z]{2,3}(-[A-Z][a-z]{3})?(-[A-Z]{2})?$",
+      "maxLength": 12
+    },
     "metadata": { "type": ["object", "null"] },
-    "email": { "type": "string", "format": "email", "description": "Computed. From identity->email." },
-    "email_verified_at": { "type": ["string", "null"], "format": "date-time", "description": "Computed. From identity->email_verified_at." },
-    "mfa_enabled": { "type": "boolean", "description": "Computed. identity->mfa_secret_encrypted !== null." },
-    "full_name": { "type": "string", "description": "Computed. `profile.first_name + ' ' + profile.last_name`. Redactor-gated for non-subject callers." },
-    "display_name": { "type": "string", "description": "Computed. `profile.display_name ?? profile.first_name`." },
-    "avatar_url": { "type": ["string", "null"], "description": "Computed. From profile->avatar_url." },
-    "locale": { "type": "string", "description": "Computed. Resolution chain: profile.locale \u2192 user.preferred_locale \u2192 tenant.default_locale." },
-    "timezone": { "type": "string", "description": "Computed. profile.timezone \u2192 tenant.default_timezone." },
+    "email": {
+      "type": "string",
+      "format": "email",
+      "description": "Computed. From identity->email."
+    },
+    "email_verified_at": {
+      "type": ["string", "null"],
+      "format": "date-time",
+      "description": "Computed. From identity->email_verified_at."
+    },
+    "mfa_enabled": {
+      "type": "boolean",
+      "description": "Computed. identity->mfa_secret_encrypted !== null."
+    },
+    "full_name": {
+      "type": "string",
+      "description": "Computed. `profile.first_name + ' ' + profile.last_name`. Redactor-gated for non-subject callers."
+    },
+    "display_name": {
+      "type": "string",
+      "description": "Computed. `profile.display_name ?? profile.first_name`."
+    },
+    "avatar_url": {
+      "type": ["string", "null"],
+      "description": "Computed. From profile->avatar_url."
+    },
+    "locale": {
+      "type": "string",
+      "description": "Computed. Resolution chain: profile.locale \u2192 user.preferred_locale \u2192 tenant.default_locale."
+    },
+    "timezone": {
+      "type": "string",
+      "description": "Computed. profile.timezone \u2192 tenant.default_timezone."
+    },
     "created_by": { "type": ["string", "null"], "format": "uuid" },
     "updated_by": { "type": ["string", "null"], "format": "uuid" },
     "deleted_by": { "type": ["string", "null"], "format": "uuid" },
@@ -196,7 +235,16 @@
     "envelope": "spatie-data",
     "wrap": "data",
     "mapper": "SnakeCaseMapper",
-    "computed": ["email", "email_verified_at", "mfa_enabled", "full_name", "display_name", "avatar_url", "locale", "timezone"],
+    "computed": [
+      "email",
+      "email_verified_at",
+      "mfa_enabled",
+      "full_name",
+      "display_name",
+      "avatar_url",
+      "locale",
+      "timezone"
+    ],
     "redacted_when_missing_permission": {
       "permission": "profile.view.pii",
       "fields": ["full_name"]

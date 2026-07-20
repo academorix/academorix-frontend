@@ -15,10 +15,10 @@
  *   makes every PWA lifecycle event flow through the analytics stack.
  */
 
-import { Inject, Injectable, Optional } from '@stackra/container';
-import { ANALYTICS_MANAGER, type IAnalyticsManager } from '@stackra/contracts';
+import { Inject, Injectable, Optional } from "@stackra/container";
+import { ANALYTICS_MANAGER, type IAnalyticsManager } from "@stackra/contracts";
 
-import type { PwaEventName } from '../constants';
+import type { PwaEventName } from "../constants";
 
 /**
  * Fan-out bridge that dispatches PWA lifecycle events through the
@@ -49,7 +49,7 @@ export class AnalyticsBridgeService {
   public constructor(
     @Optional()
     @Inject(ANALYTICS_MANAGER)
-    private readonly manager?: IAnalyticsManager | null
+    private readonly manager?: IAnalyticsManager | null,
   ) {}
 
   /**
@@ -79,7 +79,7 @@ export class AnalyticsBridgeService {
       // rejected promise doesn't surface as an unhandled-rejection
       // warning.
       const result = this.manager.track(event, payload) as unknown as void | Promise<unknown>;
-      if (result && typeof (result as Promise<unknown>).catch === 'function') {
+      if (result && typeof (result as Promise<unknown>).catch === "function") {
         (result as Promise<unknown>).catch(() => {
           // fail-soft — the bridge is best-effort.
         });

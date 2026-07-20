@@ -11,13 +11,13 @@
  *   HTTP round-trip on top.
  */
 
-import type { ReactElement } from 'react';
+import type { ReactElement } from "react";
 
-import { MANDATORY_ON_MATRIX, NOTIFICATION_CATEGORIES } from '@/core/constants';
-import type { NotificationCategory } from '@/core/interfaces';
-import { useNotificationPreferences } from '../../../hooks/use-notification-preferences';
-import { ChannelToggle } from '../channel-toggle';
-import type { CategoryPreferencesPanelProps } from './category-preferences-panel.interface';
+import { MANDATORY_ON_MATRIX, NOTIFICATION_CATEGORIES } from "@/core/constants";
+import type { NotificationCategory } from "@/core/interfaces";
+import { useNotificationPreferences } from "../../../hooks/use-notification-preferences";
+import { ChannelToggle } from "../channel-toggle";
+import type { CategoryPreferencesPanelProps } from "./category-preferences-panel.interface";
 
 /**
  * The category × channel matrix.
@@ -42,7 +42,7 @@ export function CategoryPreferencesPanel({
 
   return (
     <div
-      className={`grid grid-cols-1 gap-6 md:grid-cols-2${className ? ` ${className}` : ''}`}
+      className={`grid grid-cols-1 gap-6 md:grid-cols-2${className ? ` ${className}` : ""}`}
       data-notifications-category-preferences=""
     >
       {categories.map((category) => (
@@ -52,10 +52,10 @@ export function CategoryPreferencesPanel({
           data-notifications-category={category.key}
         >
           <div className="flex flex-col gap-0.5">
-            <span className="text-sm font-semibold text-foreground capitalize">
+            <span className="text-foreground text-sm font-semibold capitalize">
               {category.label}
             </span>
-            <span className="text-xs text-muted">{category.description}</span>
+            <span className="text-muted text-xs">{category.description}</span>
           </div>
           <div className="flex flex-col gap-2">
             {channels.map((channel) => {
@@ -72,7 +72,7 @@ export function CategoryPreferencesPanel({
                   isEnabled={isEnabled}
                   isMandatoryOn={isMandatoryOn}
                   note={
-                    isMandatoryOn ? 'Always on — safety alerts bypass every filter.' : channel.note
+                    isMandatoryOn ? "Always on — safety alerts bypass every filter." : channel.note
                   }
                   onChange={(next) =>
                     setChannelEnabled(category.key as NotificationCategory, channel.id, next)

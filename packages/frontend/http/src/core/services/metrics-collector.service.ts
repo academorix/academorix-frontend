@@ -9,14 +9,14 @@
  * @module @stackra/http/services/metrics-collector
  */
 
-import { Injectable } from '@stackra/container';
+import { Injectable } from "@stackra/container";
 
 import type {
   IHttpEndpointMetrics,
   IHttpPercentiles,
   IHttpRealTimeStats,
   IHttpRequestRecord,
-} from '@stackra/contracts';
+} from "@stackra/contracts";
 
 /** Maximum number of durations stored per endpoint. */
 const MAX_DURATIONS = 1_000;

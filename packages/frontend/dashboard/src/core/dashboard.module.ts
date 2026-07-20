@@ -184,9 +184,7 @@ export class DashboardModule {
    * @param options - Async options — `useFactory` + optional `inject`.
    * @returns Dynamic module definition.
    */
-  public static forRootAsync(
-    options: IAsyncModuleOptions<IDashboardModuleOptions>,
-  ): DynamicModule {
+  public static forRootAsync(options: IAsyncModuleOptions<IDashboardModuleOptions>): DynamicModule {
     return {
       module: DashboardModule,
       global: true,

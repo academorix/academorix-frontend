@@ -36,27 +36,86 @@
       "metadata": "array"
     },
     "observers": ["CoachAssignmentObserver"],
-    "appends": [
-      "coach_display_name",
-      "is_active",
-      "duration_days",
-      "assignable_summary"
-    ]
+    "appends": ["coach_display_name", "is_active", "duration_days", "assignable_summary"]
   },
   "x-database": {
     "engine": "postgres",
     "columns": {
-      "id": { "type": "string", "length": 30, "primary": true, "description": "Prefixed ULID: `cas_<26>`." },
-      "tenant_id": { "type": "string", "length": 30, "nullable": false, "foreign": { "table": "tenants", "column": "id", "onUpdate": "cascade", "onDelete": "cascade" } },
-      "coaching_profile_id": { "type": "string", "length": 30, "nullable": false, "foreign": { "table": "coaching_profiles", "column": "id", "onUpdate": "cascade", "onDelete": "restrict" }, "description": "The coach being assigned. RESTRICT." },
-      "assignable_type": { "type": "string", "length": 32, "nullable": false, "description": "Enum: Session / Team / Event. Corresponds to the target model class in the polymorphic morph." },
-      "assignable_id": { "type": "string", "length": 30, "nullable": false, "description": "The target row's ULID. Same-tenant defense-in-depth enforced by observer." },
-      "role": { "type": "string", "length": 32, "nullable": false, "description": "Enum: head_coach / assistant_coach / observer / substitute." },
+      "id": {
+        "type": "string",
+        "length": 30,
+        "primary": true,
+        "description": "Prefixed ULID: `cas_<26>`."
+      },
+      "tenant_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": {
+          "table": "tenants",
+          "column": "id",
+          "onUpdate": "cascade",
+          "onDelete": "cascade"
+        }
+      },
+      "coaching_profile_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": {
+          "table": "coaching_profiles",
+          "column": "id",
+          "onUpdate": "cascade",
+          "onDelete": "restrict"
+        },
+        "description": "The coach being assigned. RESTRICT."
+      },
+      "assignable_type": {
+        "type": "string",
+        "length": 32,
+        "nullable": false,
+        "description": "Enum: Session / Team / Event. Corresponds to the target model class in the polymorphic morph."
+      },
+      "assignable_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "description": "The target row's ULID. Same-tenant defense-in-depth enforced by observer."
+      },
+      "role": {
+        "type": "string",
+        "length": 32,
+        "nullable": false,
+        "description": "Enum: head_coach / assistant_coach / observer / substitute."
+      },
       "start_date": { "type": "timestamptz", "nullable": false },
-      "end_date": { "type": "timestamptz", "nullable": true, "description": "Nullable = open-ended (no scheduled end)." },
-      "notes": { "type": "text", "nullable": true, "description": "Admin-visible assignment notes. Confidential-tier." },
-      "assigned_by_user_id": { "type": "string", "length": 30, "nullable": false, "foreign": { "table": "users", "column": "id", "onUpdate": "cascade", "onDelete": "restrict" }, "description": "The User who created the assignment. RESTRICT for audit-trail integrity." },
-      "metadata": { "type": "jsonb", "nullable": true, "description": "Reserved keys: has_conflict (bool), conflicts (array), ending_notice_sent_at (ISO), affected_by_session_cancellation (bool), activated_at (ISO — set on substitute activation)." },
+      "end_date": {
+        "type": "timestamptz",
+        "nullable": true,
+        "description": "Nullable = open-ended (no scheduled end)."
+      },
+      "notes": {
+        "type": "text",
+        "nullable": true,
+        "description": "Admin-visible assignment notes. Confidential-tier."
+      },
+      "assigned_by_user_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": {
+          "table": "users",
+          "column": "id",
+          "onUpdate": "cascade",
+          "onDelete": "restrict"
+        },
+        "description": "The User who created the assignment. RESTRICT for audit-trail integrity."
+      },
+      "metadata": {
+        "type": "jsonb",
+        "nullable": true,
+        "description": "Reserved keys: has_conflict (bool), conflicts (array), ending_notice_sent_at (ISO), affected_by_session_cancellation (bool), activated_at (ISO — set on substitute activation)."
+      },
       "created_by": { "type": "string", "length": 30, "nullable": true },
       "updated_by": { "type": "string", "length": 30, "nullable": true },
       "deleted_by": { "type": "string", "length": 30, "nullable": true },
@@ -79,9 +138,20 @@
         "predicate": "role = 'head_coach' AND deleted_at IS NULL AND (end_date IS NULL OR end_date > NOW())",
         "description": "One head_coach per assignable when active."
       },
-      { "columns": ["tenant_id", "coaching_profile_id", "end_date"], "name": "coach_assignments_profile_end_date_idx" },
-      { "columns": ["tenant_id", "assignable_type", "assignable_id", "role"], "name": "coach_assignments_assignable_role_idx", "description": "Feeds coaches-for-assignable cache." },
-      { "columns": ["tenant_id", "end_date"], "name": "coach_assignments_ending_idx", "description": "Feeds NotifyAssignmentEndingSoonJob." }
+      {
+        "columns": ["tenant_id", "coaching_profile_id", "end_date"],
+        "name": "coach_assignments_profile_end_date_idx"
+      },
+      {
+        "columns": ["tenant_id", "assignable_type", "assignable_id", "role"],
+        "name": "coach_assignments_assignable_role_idx",
+        "description": "Feeds coaches-for-assignable cache."
+      },
+      {
+        "columns": ["tenant_id", "end_date"],
+        "name": "coach_assignments_ending_idx",
+        "description": "Feeds NotifyAssignmentEndingSoonJob."
+      }
     ]
   },
   "required": [
@@ -102,7 +172,10 @@
     "coaching_profile_id": { "type": "string", "pattern": "^cop_[0-9A-HJKMNP-TV-Z]{26}$" },
     "assignable_type": { "type": "string", "enum": ["Session", "Team", "Event"] },
     "assignable_id": { "type": "string", "pattern": "^(ses|tea|evt)_[0-9A-HJKMNP-TV-Z]{26}$" },
-    "role": { "type": "string", "enum": ["head_coach", "assistant_coach", "observer", "substitute"] },
+    "role": {
+      "type": "string",
+      "enum": ["head_coach", "assistant_coach", "observer", "substitute"]
+    },
     "start_date": { "type": "string", "format": "date-time" },
     "end_date": { "type": ["string", "null"], "format": "date-time" },
     "notes": { "type": ["string", "null"], "maxLength": 2048 },

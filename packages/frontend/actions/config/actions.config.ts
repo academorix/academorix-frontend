@@ -5,7 +5,7 @@
  *   Consumed by `ActionsModule.forRoot()` at bootstrap.
  */
 
-import { defineConfig } from '@stackra/actions';
+import { defineConfig } from "@stackra/actions";
 
 export const actionsConfig = defineConfig({
   /*

@@ -10,12 +10,12 @@
  *   prefers ComboBox over Select for single-choice pickers.
  */
 
-import { useMemo, type ChangeEvent, type ReactElement } from 'react';
-import { ComboBox, Input, Label, ListBox, TextField } from '@stackra/ui/react';
+import { useMemo, type ChangeEvent, type ReactElement } from "react";
+import { ComboBox, Input, Label, ListBox, TextField } from "@stackra/ui/react";
 
-import { DEFAULT_TIMEZONES } from '@/core/constants';
-import type { IQuietHoursWindow } from '@/core/interfaces';
-import type { QuietHoursPickerProps } from './quiet-hours-picker.interface';
+import { DEFAULT_TIMEZONES } from "@/core/constants";
+import type { IQuietHoursWindow } from "@/core/interfaces";
+import type { QuietHoursPickerProps } from "./quiet-hours-picker.interface";
 
 /** A single timezone row for the `ComboBox`. */
 interface ITimezoneOption {
@@ -25,9 +25,9 @@ interface ITimezoneOption {
 
 /** The fallback window rendered when `value === null`. */
 const FALLBACK_WINDOW: IQuietHoursWindow = {
-  start: '22:00',
-  end: '07:00',
-  timezone: 'UTC',
+  start: "22:00",
+  end: "07:00",
+  timezone: "UTC",
 };
 
 /**
@@ -49,7 +49,7 @@ export function QuietHoursPicker({
 
   const timezoneOptions = useMemo<readonly ITimezoneOption[]>(
     () => timezones.map((zone) => ({ id: zone, label: zone })),
-    [timezones]
+    [timezones],
   );
 
   const handleStart = (event: ChangeEvent<HTMLInputElement>): void => {
@@ -67,7 +67,7 @@ export function QuietHoursPicker({
 
   return (
     <div
-      className={`grid grid-cols-1 gap-3 rounded-xl border border-border bg-surface p-3 sm:grid-cols-3${className ? ` ${className}` : ''}`}
+      className={`border-border bg-surface grid grid-cols-1 gap-3 rounded-xl border p-3 sm:grid-cols-3${className ? ` ${className}` : ""}`}
       data-notifications-quiet-hours=""
     >
       <TextField name="quiet_hours_start" className="w-full">

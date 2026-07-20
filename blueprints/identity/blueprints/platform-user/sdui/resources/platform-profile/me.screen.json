@@ -30,7 +30,11 @@
           "children": [
             {
               "kind": "Text",
-              "props": { "as": "h1", "className": "text-2xl font-semibold", "children": "My profile" }
+              "props": {
+                "as": "h1",
+                "className": "text-2xl font-semibold",
+                "children": "My profile"
+              }
             },
             {
               "kind": "Text",
@@ -58,19 +62,33 @@
               "children": [
                 {
                   "kind": "TextField",
-                  "props": { "name": "first_name", "label": "First name", "readOnly": true, "helpText": "HR-controlled" },
+                  "props": {
+                    "name": "first_name",
+                    "label": "First name",
+                    "readOnly": true,
+                    "helpText": "HR-controlled"
+                  },
                   "bindings": { "value": { "$ref": "me.first_name" } }
                 },
                 {
                   "kind": "TextField",
-                  "props": { "name": "last_name", "label": "Last name", "readOnly": true, "helpText": "HR-controlled" },
+                  "props": {
+                    "name": "last_name",
+                    "label": "Last name",
+                    "readOnly": true,
+                    "helpText": "HR-controlled"
+                  },
                   "bindings": { "value": { "$ref": "me.last_name" } }
                 }
               ]
             },
             {
               "kind": "TextField",
-              "props": { "name": "display_name", "label": "Display name", "placeholder": "Optional" },
+              "props": {
+                "name": "display_name",
+                "label": "Display name",
+                "placeholder": "Optional"
+              },
               "bindings": { "value": { "$ref": "me.display_name" } }
             },
             {
@@ -106,7 +124,11 @@
             },
             {
               "kind": "Select",
-              "props": { "name": "timezone", "label": "Timezone", "placeholder": "Select a timezone" },
+              "props": {
+                "name": "timezone",
+                "label": "Timezone",
+                "placeholder": "Select a timezone"
+              },
               "bindings": { "value": { "$ref": "me.timezone" } },
               "optionsSource": "timezones"
             },

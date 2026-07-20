@@ -11,13 +11,13 @@
  *   nests this without conflict.
  */
 
-import type { ReactElement } from 'react';
-import { ScrollView, View } from 'react-native';
-import { Separator } from '@stackra/ui/native';
+import type { ReactElement } from "react";
+import { ScrollView, View } from "react-native";
+import { Separator } from "@stackra/ui/native";
 
-import { NotificationEmptyState } from '../notification-empty-state';
-import { NotificationRow } from '../notification-row';
-import type { NotificationListProps } from './notification-list.interface';
+import { NotificationEmptyState } from "../notification-empty-state";
+import { NotificationRow } from "../notification-row";
+import type { NotificationListProps } from "./notification-list.interface";
 
 /**
  * The native list body.
@@ -35,14 +35,14 @@ import type { NotificationListProps } from './notification-list.interface';
 export function NotificationList({
   entries,
   onRowAction,
-  emptyVariant = 'drawer',
+  emptyVariant = "drawer",
   writer,
   now,
   className,
 }: NotificationListProps): ReactElement {
   if (entries.length === 0) {
     return (
-      <View className={`flex-1 items-center justify-center p-6${className ? ` ${className}` : ''}`}>
+      <View className={`flex-1 items-center justify-center p-6${className ? ` ${className}` : ""}`}>
         <NotificationEmptyState variant={emptyVariant} />
       </View>
     );

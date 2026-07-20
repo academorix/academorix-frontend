@@ -54,7 +54,11 @@
       "description": "Soft-deleted User rows keyed by ULID + their `hard_delete_scheduled_for` timestamp. Read by the scheduler to know which rows to hand to PurgeErasedUsersJob.",
       "ttlSeconds": 7776000,
       "tags": ["user"],
-      "invalidatedBy": ["UserObserver.deleted", "UserObserver.restored", "UserObserver.forceDeleted"]
+      "invalidatedBy": [
+        "UserObserver.deleted",
+        "UserObserver.restored",
+        "UserObserver.forceDeleted"
+      ]
     }
   ]
 }

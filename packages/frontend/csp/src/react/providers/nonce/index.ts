@@ -1,1 +1,1 @@
-export { NonceProvider } from './nonce.provider';
+export { NonceProvider } from "./nonce.provider";

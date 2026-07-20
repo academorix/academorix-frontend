@@ -20,6 +20,6 @@
  * ```
  */
 
-export { MockScheduler } from './mock-scheduler';
-export { MockTaskRunner } from './mock-task-runner';
-export { createMockScheduler, createMockTaskRunner } from './create-mock-scheduler';
+export { MockScheduler } from "./mock-scheduler";
+export { MockTaskRunner } from "./mock-task-runner";
+export { createMockScheduler, createMockTaskRunner } from "./create-mock-scheduler";

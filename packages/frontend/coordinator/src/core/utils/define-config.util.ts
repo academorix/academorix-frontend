@@ -33,7 +33,7 @@
  * See `.kiro/steering/config-architecture.md` for the full guide.
  */
 
-import type { ICoordinatorModuleOptions } from '@/core/interfaces';
+import type { ICoordinatorModuleOptions } from "@/core/interfaces";
 
 /**
  * Type-safe configuration builder for the coordinator module.

@@ -13,12 +13,12 @@
  * The zones we ship as first-class options.
  */
 export const DEFAULT_TIMEZONES: readonly string[] = [
-  'UTC',
-  'Europe/London',
-  'Europe/Paris',
-  'Africa/Cairo',
-  'Africa/Nairobi',
-  'Asia/Dubai',
-  'Asia/Riyadh',
-  'America/New_York',
+  "UTC",
+  "Europe/London",
+  "Europe/Paris",
+  "Africa/Cairo",
+  "Africa/Nairobi",
+  "Asia/Dubai",
+  "Asia/Riyadh",
+  "America/New_York",
 ];

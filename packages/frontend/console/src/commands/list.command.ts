@@ -13,9 +13,10 @@ import pc from "picocolors";
 
 import { BaseCommand } from "../base";
 import { Command } from "../decorators";
-import type { IConsoleModuleOptions } from "../interfaces";
 import { CommandRegistry } from "../registries";
 import { renderCompactBanner } from "../utils/ascii-banner.util";
+
+import type { IConsoleModuleOptions } from "../interfaces";
 
 /**
  * List all registered console commands.
@@ -50,8 +51,12 @@ export class ListCommand extends BaseCommand {
   /**
    * Execute the list command.
    *
+   * `handle` is the async CLI contract; even the pure-sync `list` command
+   * must return a Promise so `ConsoleKernel.boot` can `await` it uniformly.
+   *
    * @returns void (exit code 0)
    */
+  // eslint-disable-next-line @typescript-eslint/require-await
   public async handle(): Promise<void> {
     const namespace = this.argumentOptional<string>("namespace");
 

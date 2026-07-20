@@ -4,4 +4,4 @@
  * @description Barrel export for storage decorators.
  */
 
-export { StorageDriver, STORAGE_DRIVER_METADATA_KEY } from './storage-driver.decorator';
+export { StorageDriver, STORAGE_DRIVER_METADATA_KEY } from "./storage-driver.decorator";

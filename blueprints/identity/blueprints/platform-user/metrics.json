@@ -7,7 +7,13 @@
   "labelConventions": {
     "always": [],
     "commonlyAvailable": ["department", "employment_type", "status", "outcome", "trigger"],
-    "forbiddenAsLabels": ["platform_user_id", "identity_id", "email", "email_fingerprint", "phone_e164"]
+    "forbiddenAsLabels": [
+      "platform_user_id",
+      "identity_id",
+      "email",
+      "email_fingerprint",
+      "phone_e164"
+    ]
   },
   "metrics": [
     {

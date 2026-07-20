@@ -14,7 +14,9 @@
     "incrementing": false,
     "model": "Academorix\\Observability\\Audit\\Models\\AuditRetentionPolicy",
     "interface": "Academorix\\Observability\\Audit\\Contracts\\Data\\AuditRetentionPolicyInterface",
-    "implements": ["Academorix\\Observability\\Audit\\Contracts\\Data\\AuditRetentionPolicyInterface"],
+    "implements": [
+      "Academorix\\Observability\\Audit\\Contracts\\Data\\AuditRetentionPolicyInterface"
+    ],
     "traits": [
       "HasFactory",
       "HasUlids",

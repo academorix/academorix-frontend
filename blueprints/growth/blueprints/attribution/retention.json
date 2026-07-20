@@ -23,7 +23,10 @@
     },
     {
       "entity": "Attribution — churned (lifecycle_state = 'churned')",
-      "hot": { "days": 730, "description": "Retained 2 years post-churn for potential re-engagement" },
+      "hot": {
+        "days": 730,
+        "description": "Retained 2 years post-churn for potential re-engagement"
+      },
       "cold": { "days": "n/a" },
       "purge": {
         "trigger": "> 730 days past last_touch_at + churned status",
@@ -43,7 +46,10 @@
     },
     {
       "entity": "AttributionTouchpoint — base tier (730 days)",
-      "hot": { "days": 730, "description": "Base retention window. Applies to Small + Medium tiers. Non-Enterprise tenants only." },
+      "hot": {
+        "days": 730,
+        "description": "Base retention window. Applies to Small + Medium tiers. Non-Enterprise tenants only."
+      },
       "purge": {
         "trigger": "> 730 days past captured_at + tenant lacks attribution_touchpoint_retention_extended entitlement",
         "action": "hard delete via PurgeArchivedAttributionsJob",
@@ -52,7 +58,10 @@
     },
     {
       "entity": "AttributionTouchpoint — extended tier (2555 days)",
-      "hot": { "days": 2555, "description": "Enterprise-only. Extended retention for financial-audit alignment (7 years matches finance module invoice/subscription retention)." },
+      "hot": {
+        "days": 2555,
+        "description": "Enterprise-only. Extended retention for financial-audit alignment (7 years matches finance module invoice/subscription retention)."
+      },
       "purge": {
         "trigger": "> 2555 days past captured_at + tenant holds attribution_touchpoint_retention_extended entitlement",
         "action": "hard delete via PurgeArchivedAttributionsJob"

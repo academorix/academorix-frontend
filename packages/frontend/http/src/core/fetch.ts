@@ -23,4 +23,4 @@
  * @module @stackra/http/fetch
  */
 
-export { FetchConnector } from './connectors/fetch.connector';
+export { FetchConnector } from "./connectors/fetch.connector";

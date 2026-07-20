@@ -6,16 +6,16 @@
  *   conflicts through the {@link ConflictResolver}.
  */
 
-import { Inject, Injectable } from '@stackra/container';
+import { Inject, Injectable } from "@stackra/container";
 import type {
   IHttpManager,
   ILocalStorageAdapter,
   IPullOptions,
   IPullResult,
-} from '@stackra/contracts';
-import { CONFLICT_RESOLVER, HTTP_MANAGER, LOCAL_STORAGE_ADAPTER } from '@stackra/contracts';
-import { Logger } from '@stackra/logger';
-import type { ConflictResolver } from '../resolvers/conflict.resolver';
+} from "@stackra/contracts";
+import { CONFLICT_RESOLVER, HTTP_MANAGER, LOCAL_STORAGE_ADAPTER } from "@stackra/contracts";
+import { Logger } from "@stackra/logger";
+import type { ConflictResolver } from "../resolvers/conflict.resolver";
 
 /**
  * Server response shape for the cursor-based pull endpoint.
@@ -37,7 +37,7 @@ export class PullService {
   public constructor(
     @Inject(HTTP_MANAGER) private readonly http: IHttpManager,
     @Inject(LOCAL_STORAGE_ADAPTER) private readonly storage: ILocalStorageAdapter,
-    @Inject(CONFLICT_RESOLVER) private readonly conflictResolver: ConflictResolver
+    @Inject(CONFLICT_RESOLVER) private readonly conflictResolver: ConflictResolver,
   ) {}
 
   /**
@@ -59,7 +59,7 @@ export class PullService {
 
         const response = await client.request<IPullResponsePage>({
           url: `${options.baseUrl}/${collection}/sync/pull`,
-          method: 'GET',
+          method: "GET",
           params,
         });
 
@@ -69,7 +69,7 @@ export class PullService {
         for (const remoteDoc of records) {
           const conflicted = await this.applyRecord(
             collection,
-            remoteDoc as Record<string, unknown>
+            remoteDoc as Record<string, unknown>,
           );
           if (conflicted) totalConflicts++;
         }
@@ -97,7 +97,7 @@ export class PullService {
    */
   private async applyRecord(
     collection: string,
-    remoteDoc: Record<string, unknown>
+    remoteDoc: Record<string, unknown>,
   ): Promise<boolean> {
     const id = (remoteDoc.id ?? remoteDoc._id) as string | undefined;
     if (!id) {
@@ -120,7 +120,7 @@ export class PullService {
       localDoc,
       remoteDoc,
       localTs,
-      remoteTs
+      remoteTs,
     );
 
     if (conflict) {

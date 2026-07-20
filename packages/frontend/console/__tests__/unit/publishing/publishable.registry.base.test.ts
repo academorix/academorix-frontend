@@ -14,11 +14,11 @@
 
 import { describe, expect, it, beforeEach, vi } from "vitest";
 
+import type { IPublishableRegistryEntry } from "@stackra/contracts";
+
 import { ConsoleError } from "@/errors";
 import { DuplicatePublishableTagError } from "@/publishing/errors/duplicate-tag.error";
 import { PublishableRegistry } from "@/publishing/registries/publishable.registry";
-
-import type { IPublishableRegistryEntry } from "@stackra/contracts";
 
 class OwnerModule {}
 

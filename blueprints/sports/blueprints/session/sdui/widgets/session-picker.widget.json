@@ -46,7 +46,16 @@
       },
       "children": [
         { "kind": "Label", "bindings": { "children": { "$ref": "props.label" } } },
-        { "kind": "ComboBox.InputGroup", "children": [{ "kind": "Input", "bindings": { "props": { "placeholder": { "$ref": "props.placeholder" } } } }, { "kind": "ComboBox.Trigger" }] },
+        {
+          "kind": "ComboBox.InputGroup",
+          "children": [
+            {
+              "kind": "Input",
+              "bindings": { "props": { "placeholder": { "$ref": "props.placeholder" } } }
+            },
+            { "kind": "ComboBox.Trigger" }
+          ]
+        },
         {
           "kind": "ComboBox.Popover",
           "children": [
@@ -70,18 +79,35 @@
                             "kind": "View",
                             "props": { "className": "flex items-center gap-1" },
                             "children": [
-                              { "kind": "Text", "props": { "className": "font-medium truncate" }, "bindings": { "children": { "$ref": "item.name" } } },
-                              { "kind": "Widget", "props": { "id": "session.session-status-chip" }, "bindings": { "props": { "status": { "$ref": "item.status" }, "size": "xs" } } }
+                              {
+                                "kind": "Text",
+                                "props": { "className": "font-medium truncate" },
+                                "bindings": { "children": { "$ref": "item.name" } }
+                              },
+                              {
+                                "kind": "Widget",
+                                "props": { "id": "session.session-status-chip" },
+                                "bindings": {
+                                  "props": { "status": { "$ref": "item.status" }, "size": "xs" }
+                                }
+                              }
                             ]
                           },
                           {
                             "kind": "Text",
                             "props": { "className": "text-xs text-muted font-mono" },
-                            "bindings": { "children": { "$expr": "formatDateTime(item.resource_booking.starts_at) + ' · ' + item.session_type" } }
+                            "bindings": {
+                              "children": {
+                                "$expr": "formatDateTime(item.resource_booking.starts_at) + ' · ' + item.session_type"
+                              }
+                            }
                           }
                         ]
                       },
-                      { "kind": "ListBox.ItemIndicator", "props": { "className": "size-4 text-accent" } }
+                      {
+                        "kind": "ListBox.ItemIndicator",
+                        "props": { "className": "size-4 text-accent" }
+                      }
                     ]
                   }
                 ]

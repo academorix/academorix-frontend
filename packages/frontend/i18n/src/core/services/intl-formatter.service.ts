@@ -17,23 +17,23 @@
  * before being passed to `Intl.RelativeTimeFormat`.
  */
 export type RelativeTimeUnit =
-  | 'second'
-  | 'seconds'
-  | 'minute'
-  | 'minutes'
-  | 'hour'
-  | 'hours'
-  | 'day'
-  | 'days'
-  | 'week'
-  | 'weeks'
-  | 'month'
-  | 'months'
-  | 'year'
-  | 'years';
+  | "second"
+  | "seconds"
+  | "minute"
+  | "minutes"
+  | "hour"
+  | "hours"
+  | "day"
+  | "days"
+  | "week"
+  | "weeks"
+  | "month"
+  | "months"
+  | "year"
+  | "years";
 
 /** Accepted `dateStyle` presets for quick date formatting. */
-export type DateStyle = 'full' | 'long' | 'medium' | 'short';
+export type DateStyle = "full" | "long" | "medium" | "short";
 
 /** Options for the date formatter. */
 export interface IFormatDateOptions {
@@ -57,13 +57,13 @@ export interface IFormatCurrencyOptions {
   minimumFractionDigits?: number;
   maximumFractionDigits?: number;
   /** How the currency symbol is rendered. */
-  display?: 'symbol' | 'narrowSymbol' | 'code' | 'name';
+  display?: "symbol" | "narrowSymbol" | "code" | "name";
 }
 
 /** Options for the list formatter. */
 export interface IFormatListOptions {
-  style?: 'long' | 'short' | 'narrow';
-  type?: 'conjunction' | 'disjunction' | 'unit';
+  style?: "long" | "short" | "narrow";
+  type?: "conjunction" | "disjunction" | "unit";
 }
 
 /**
@@ -113,7 +113,7 @@ export function createFormatter(locale: string): IIntlFormatter {
     formatDate(date, options): string {
       const dateObj = toDate(date);
       const intlOptions: Intl.DateTimeFormatOptions = options?.options ?? {
-        dateStyle: options?.style ?? 'medium',
+        dateStyle: options?.style ?? "medium",
       };
       return new Intl.DateTimeFormat(locale, intlOptions).format(dateObj);
     },
@@ -130,9 +130,9 @@ export function createFormatter(locale: string): IIntlFormatter {
 
     formatCurrency(amount, currency, options): string {
       return new Intl.NumberFormat(locale, {
-        style: 'currency',
+        style: "currency",
         currency,
-        currencyDisplay: options?.display ?? 'symbol',
+        currencyDisplay: options?.display ?? "symbol",
         minimumFractionDigits: options?.minimumFractionDigits,
         maximumFractionDigits: options?.maximumFractionDigits,
       }).format(amount);
@@ -140,19 +140,19 @@ export function createFormatter(locale: string): IIntlFormatter {
 
     formatRelative(value, unit): string {
       const normalizedUnit = normalizeUnit(unit);
-      return new Intl.RelativeTimeFormat(locale, { numeric: 'auto' }).format(value, normalizedUnit);
+      return new Intl.RelativeTimeFormat(locale, { numeric: "auto" }).format(value, normalizedUnit);
     },
 
     formatList(items, options): string {
       return new Intl.ListFormat(locale, {
-        style: options?.style ?? 'long',
-        type: options?.type ?? 'conjunction',
+        style: options?.style ?? "long",
+        type: options?.type ?? "conjunction",
       }).format(items);
     },
 
     formatPercent(value, minimumFractionDigits): string {
       return new Intl.NumberFormat(locale, {
-        style: 'percent',
+        style: "percent",
         minimumFractionDigits: minimumFractionDigits ?? 0,
       }).format(value);
     },
@@ -166,27 +166,27 @@ export function createFormatter(locale: string): IIntlFormatter {
 /** Coerce a date input to a Date object. */
 function toDate(input: Date | number | string): Date {
   if (input instanceof Date) return input;
-  if (typeof input === 'number') return new Date(input);
+  if (typeof input === "number") return new Date(input);
   return new Date(input);
 }
 
 /** Normalize plural unit strings to singular (Intl.RelativeTimeFormat requires singular). */
 function normalizeUnit(unit: RelativeTimeUnit): Intl.RelativeTimeFormatUnit {
   const mapping: Record<string, Intl.RelativeTimeFormatUnit> = {
-    second: 'second',
-    seconds: 'second',
-    minute: 'minute',
-    minutes: 'minute',
-    hour: 'hour',
-    hours: 'hour',
-    day: 'day',
-    days: 'day',
-    week: 'week',
-    weeks: 'week',
-    month: 'month',
-    months: 'month',
-    year: 'year',
-    years: 'year',
+    second: "second",
+    seconds: "second",
+    minute: "minute",
+    minutes: "minute",
+    hour: "hour",
+    hours: "hour",
+    day: "day",
+    days: "day",
+    week: "week",
+    weeks: "week",
+    month: "month",
+    months: "month",
+    year: "year",
+    years: "year",
   };
-  return mapping[unit] ?? 'day';
+  return mapping[unit] ?? "day";
 }

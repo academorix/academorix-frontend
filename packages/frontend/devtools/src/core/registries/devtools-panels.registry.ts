@@ -15,7 +15,7 @@
  *   fail an app because event fan-out is unavailable).
  */
 
-import { Inject, Injectable, Optional, type OnModuleDestroy } from '@stackra/container';
+import { Inject, Injectable, Optional, type OnModuleDestroy } from "@stackra/container";
 import {
   DEVTOOLS_EVENTS,
   EVENT_EMITTER,
@@ -23,13 +23,13 @@ import {
   type IDevtoolsPanel,
   type IDevtoolsPanelsRegistry,
   type IEventEmitter,
-} from '@stackra/contracts';
+} from "@stackra/contracts";
 
 /** Numeric weight for `panel.order` when omitted — mirrors the workspace default. */
 const DEFAULT_PANEL_ORDER = 100;
 
 /** Fallback category when `panel.category` is omitted. */
-const DEFAULT_PANEL_CATEGORY: DevtoolsCategory = 'modules';
+const DEFAULT_PANEL_CATEGORY: DevtoolsCategory = "modules";
 
 /**
  * The container-scoped devtools panels registry.
@@ -183,7 +183,7 @@ export class DevtoolsPanelsRegistry implements IDevtoolsPanelsRegistry, OnModule
       const p = this.emitter.emit(name, payload);
       // Attach a rejection handler so an async listener throwing
       // doesn't become an unhandled-promise-rejection log-spam.
-      if (p && typeof (p as Promise<void>).catch === 'function') {
+      if (p && typeof (p as Promise<void>).catch === "function") {
         (p as Promise<void>).catch(() => {
           // fail-soft — see docblock.
         });

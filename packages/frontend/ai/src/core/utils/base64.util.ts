@@ -14,10 +14,10 @@
  */
 export function base64Encode(bytes: Uint8Array | ArrayBuffer): string {
   const view = bytes instanceof Uint8Array ? bytes : new Uint8Array(bytes);
-  if (typeof globalThis.Buffer !== 'undefined') {
-    return globalThis.Buffer.from(view).toString('base64');
+  if (typeof globalThis.Buffer !== "undefined") {
+    return globalThis.Buffer.from(view).toString("base64");
   }
-  let binary = '';
+  let binary = "";
   for (let i = 0; i < view.length; i++) binary += String.fromCharCode(view[i]!);
   // eslint-disable-next-line no-restricted-globals
   return globalThis.btoa(binary);
@@ -30,8 +30,8 @@ export function base64Encode(bytes: Uint8Array | ArrayBuffer): string {
  * @returns The decoded bytes as an ArrayBuffer.
  */
 export function base64Decode(b64: string): ArrayBuffer {
-  if (typeof globalThis.Buffer !== 'undefined') {
-    const buf = globalThis.Buffer.from(b64, 'base64');
+  if (typeof globalThis.Buffer !== "undefined") {
+    const buf = globalThis.Buffer.from(b64, "base64");
     return buf.buffer.slice(buf.byteOffset, buf.byteOffset + buf.byteLength) as ArrayBuffer;
   }
   // eslint-disable-next-line no-restricted-globals

@@ -7,11 +7,11 @@
  *   correctly and expose the `useMutation`-style state machine.
  */
 
-import { act, cleanup, renderHook, waitFor } from '@testing-library/react';
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { act, cleanup, renderHook, waitFor } from "@testing-library/react";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-import { useUpdateSettings } from '@/react/hooks/use-update-settings';
-import { MockSettingsRegistry, MockSettingsService } from '@/testing';
+import { useUpdateSettings } from "@/react/hooks/use-update-settings";
+import { MockSettingsRegistry, MockSettingsService } from "@/testing";
 
 // ══════════════════════════════════════════════════════════════════
 // Injector shims — hoist refs so the mocked useInject/useOptional
@@ -23,7 +23,7 @@ const { registryRef, serviceRef, undoableQueueRef, eventsRef } = vi.hoisted(() =
   serviceRef: { current: null as MockSettingsService | null },
   undoableQueueRef: {
     current: null as null | {
-      add: (...a: unknown[]) => Promise<'commit' | 'cancel'>;
+      add: (...a: unknown[]) => Promise<"commit" | "cancel">;
       cancel: (id: string) => void;
     },
   },
@@ -35,17 +35,17 @@ const { registryRef, serviceRef, undoableQueueRef, eventsRef } = vi.hoisted(() =
   },
 }));
 
-vi.mock('@stackra/container/react', () => ({
+vi.mock("@stackra/container/react", () => ({
   useInject: (token: symbol) => {
     const desc = token.toString();
-    if (desc.includes('SETTINGS_SERVICE')) return serviceRef.current;
-    if (desc.includes('SETTINGS_REGISTRY')) return registryRef.current;
+    if (desc.includes("SETTINGS_SERVICE")) return serviceRef.current;
+    if (desc.includes("SETTINGS_REGISTRY")) return registryRef.current;
     return null;
   },
   useOptionalInject: (token: symbol) => {
     const desc = token.toString();
-    if (desc.includes('UNDOABLE_QUEUE')) return undoableQueueRef.current;
-    if (desc.includes('EVENT_EMITTER')) return eventsRef.current;
+    if (desc.includes("UNDOABLE_QUEUE")) return undoableQueueRef.current;
+    if (desc.includes("EVENT_EMITTER")) return eventsRef.current;
     return null;
   },
 }));
@@ -57,12 +57,12 @@ vi.mock('@stackra/container/react', () => ({
 function setupService() {
   const registry = new MockSettingsRegistry();
   registry.registerFromSchema({
-    key: 'display',
-    label: 'Display',
+    key: "display",
+    label: "Display",
     dto: null,
     fields: [
-      { key: 'compact', control: 'toggle', label: 'Compact', defaultValue: false },
-      { key: 'theme', control: 'select', label: 'Theme', defaultValue: 'system' },
+      { key: "compact", control: "toggle", label: "Compact", defaultValue: false },
+      { key: "theme", control: "select", label: "Theme", defaultValue: "system" },
     ],
     groups: [],
   });
@@ -78,50 +78,50 @@ afterEach(() => {
   eventsRef.current = null;
 });
 
-describe('useUpdateSettings — modes', () => {
+describe("useUpdateSettings — modes", () => {
   beforeEach(() => {
     setupService();
   });
 
-  it('optimistic (default) — writes to the service, resolves immediately', async () => {
-    const { result } = renderHook(() => useUpdateSettings<{ compact: boolean }>('display'));
+  it("optimistic (default) — writes to the service, resolves immediately", async () => {
+    const { result } = renderHook(() => useUpdateSettings<{ compact: boolean }>("display"));
 
     await act(async () => {
       await result.current.mutate({ compact: true });
     });
 
-    expect(serviceRef.current!.getByKey('display')?.compact).toBe(true);
+    expect(serviceRef.current!.getByKey("display")?.compact).toBe(true);
     expect(result.current.isSuccess).toBe(true);
     expect(result.current.error).toBeNull();
   });
 
-  it('pessimistic — awaits persist before resolving', async () => {
+  it("pessimistic — awaits persist before resolving", async () => {
     // Spy on awaitPersist to prove the mutation awaits it.
-    const spy = vi.spyOn(serviceRef.current!, 'awaitPersist');
+    const spy = vi.spyOn(serviceRef.current!, "awaitPersist");
 
     const { result } = renderHook(() =>
-      useUpdateSettings<{ compact: boolean }>('display', {
-        mutationMode: 'pessimistic',
-      })
+      useUpdateSettings<{ compact: boolean }>("display", {
+        mutationMode: "pessimistic",
+      }),
     );
 
     await act(async () => {
       await result.current.mutate({ compact: true });
     });
 
-    expect(spy).toHaveBeenCalledWith('display');
-    expect(serviceRef.current!.getByKey('display')?.compact).toBe(true);
+    expect(spy).toHaveBeenCalledWith("display");
+    expect(serviceRef.current!.getByKey("display")?.compact).toBe(true);
   });
 
-  it('pessimistic — rolls back on persist failure', async () => {
+  it("pessimistic — rolls back on persist failure", async () => {
     // Reject awaitPersist to simulate a network error.
-    vi.spyOn(serviceRef.current!, 'awaitPersist').mockRejectedValue(new Error('server rejected'));
-    serviceRef.current!.setByKey('display', 'theme', 'dark'); // baseline
+    vi.spyOn(serviceRef.current!, "awaitPersist").mockRejectedValue(new Error("server rejected"));
+    serviceRef.current!.setByKey("display", "theme", "dark"); // baseline
 
     const { result } = renderHook(() =>
-      useUpdateSettings<{ compact: boolean; theme: string }>('display', {
-        mutationMode: 'pessimistic',
-      })
+      useUpdateSettings<{ compact: boolean; theme: string }>("display", {
+        mutationMode: "pessimistic",
+      }),
     );
 
     // Catch the mutation error inside `act` — the state updates are
@@ -136,51 +136,51 @@ describe('useUpdateSettings — modes', () => {
     });
 
     expect(caught).toBeInstanceOf(Error);
-    expect(caught!.message).toBe('server rejected');
+    expect(caught!.message).toBe("server rejected");
 
     // The optimistic write happened but was rolled back — the
     // pre-mutation snapshot had { theme: 'dark' } (default: false
     // for `compact`).
-    const state = serviceRef.current!.getByKey('display');
+    const state = serviceRef.current!.getByKey("display");
     expect(state?.compact).toBe(false);
-    expect(state?.theme).toBe('dark');
-    expect(result.current.error?.message).toBe('server rejected');
+    expect(state?.theme).toBe("dark");
+    expect(result.current.error?.message).toBe("server rejected");
     expect(result.current.isSuccess).toBe(false);
   });
 
-  it('undoable — commit path fires the persist through the queue', async () => {
+  it("undoable — commit path fires the persist through the queue", async () => {
     // Queue that always commits after a tick.
     undoableQueueRef.current = {
-      add: async () => 'commit' as const,
+      add: async () => "commit" as const,
       cancel: () => undefined,
     };
 
     const { result } = renderHook(() =>
-      useUpdateSettings<{ compact: boolean }>('display', {
-        mutationMode: 'undoable',
+      useUpdateSettings<{ compact: boolean }>("display", {
+        mutationMode: "undoable",
         undoableTimeout: 100,
-        undoableLabel: 'Compact toggled',
-      })
+        undoableLabel: "Compact toggled",
+      }),
     );
 
     await act(async () => {
       await result.current.mutate({ compact: true });
     });
 
-    expect(serviceRef.current!.getByKey('display')?.compact).toBe(true);
+    expect(serviceRef.current!.getByKey("display")?.compact).toBe(true);
     expect(result.current.isSuccess).toBe(true);
   });
 
-  it('undoable — cancel path rolls back and rejects', async () => {
+  it("undoable — cancel path rolls back and rejects", async () => {
     undoableQueueRef.current = {
-      add: async () => 'cancel' as const,
+      add: async () => "cancel" as const,
       cancel: () => undefined,
     };
 
     const { result } = renderHook(() =>
-      useUpdateSettings<{ compact: boolean }>('display', {
-        mutationMode: 'undoable',
-      })
+      useUpdateSettings<{ compact: boolean }>("display", {
+        mutationMode: "undoable",
+      }),
     );
 
     let caught: Error | null = null;
@@ -192,19 +192,19 @@ describe('useUpdateSettings — modes', () => {
       }
     });
 
-    expect(caught?.message).toBe('mutationCancelled');
+    expect(caught?.message).toBe("mutationCancelled");
     // Cache rolled back to the pre-mutation snapshot — `compact`
     // is back to its default (false).
-    expect(serviceRef.current!.getByKey('display')?.compact).toBe(false);
-    expect(result.current.error?.message).toBe('mutationCancelled');
+    expect(serviceRef.current!.getByKey("display")?.compact).toBe(false);
+    expect(result.current.error?.message).toBe("mutationCancelled");
   });
 
-  it('undoable — degrades to fire-and-forget when no queue is bound', async () => {
+  it("undoable — degrades to fire-and-forget when no queue is bound", async () => {
     // No undoableQueueRef.current — the queue peer is absent.
     const { result } = renderHook(() =>
-      useUpdateSettings<{ compact: boolean }>('display', {
-        mutationMode: 'undoable',
-      })
+      useUpdateSettings<{ compact: boolean }>("display", {
+        mutationMode: "undoable",
+      }),
     );
 
     await act(async () => {
@@ -212,18 +212,18 @@ describe('useUpdateSettings — modes', () => {
     });
 
     // The write went through, no cancel path, no rollback.
-    expect(serviceRef.current!.getByKey('display')?.compact).toBe(true);
+    expect(serviceRef.current!.getByKey("display")?.compact).toBe(true);
     expect(result.current.isSuccess).toBe(true);
   });
 });
 
-describe('useUpdateSettings — lifecycle', () => {
+describe("useUpdateSettings — lifecycle", () => {
   beforeEach(() => {
     setupService();
   });
 
-  it('resetState clears success + error + pending', async () => {
-    const { result } = renderHook(() => useUpdateSettings<{ compact: boolean }>('display'));
+  it("resetState clears success + error + pending", async () => {
+    const { result } = renderHook(() => useUpdateSettings<{ compact: boolean }>("display"));
 
     await act(async () => {
       await result.current.mutate({ compact: true });
@@ -237,13 +237,13 @@ describe('useUpdateSettings — lifecycle', () => {
     expect(result.current.error).toBeNull();
   });
 
-  it('reset (defaults) clears the group values', async () => {
+  it("reset (defaults) clears the group values", async () => {
     const { result } = renderHook(() =>
-      useUpdateSettings<{ compact: boolean; theme: string }>('display')
+      useUpdateSettings<{ compact: boolean; theme: string }>("display"),
     );
 
     await act(async () => {
-      await result.current.mutate({ compact: true, theme: 'dark' });
+      await result.current.mutate({ compact: true, theme: "dark" });
     });
 
     act(() => {
@@ -252,21 +252,21 @@ describe('useUpdateSettings — lifecycle', () => {
 
     // Reset clears the cache — reading returns defaults only.
     await waitFor(() => {
-      const state = serviceRef.current!.getByKey('display');
+      const state = serviceRef.current!.getByKey("display");
       expect(state?.compact).toBe(false);
-      expect(state?.theme).toBe('system');
+      expect(state?.theme).toBe("system");
     });
   });
 
-  it('onSuccess + onSettled fire after a successful mutation', async () => {
+  it("onSuccess + onSettled fire after a successful mutation", async () => {
     const onSuccess = vi.fn();
     const onSettled = vi.fn();
 
     const { result } = renderHook(() =>
-      useUpdateSettings<{ compact: boolean }>('display', {
+      useUpdateSettings<{ compact: boolean }>("display", {
         onSuccess,
         onSettled,
-      })
+      }),
     );
 
     await act(async () => {
@@ -277,17 +277,17 @@ describe('useUpdateSettings — lifecycle', () => {
     expect(onSettled).toHaveBeenCalledWith(null, { compact: true });
   });
 
-  it('onError + onSettled fire when a mutation fails', async () => {
-    vi.spyOn(serviceRef.current!, 'awaitPersist').mockRejectedValue(new Error('broken'));
+  it("onError + onSettled fire when a mutation fails", async () => {
+    vi.spyOn(serviceRef.current!, "awaitPersist").mockRejectedValue(new Error("broken"));
     const onError = vi.fn();
     const onSettled = vi.fn();
 
     const { result } = renderHook(() =>
-      useUpdateSettings<{ compact: boolean }>('display', {
-        mutationMode: 'pessimistic',
+      useUpdateSettings<{ compact: boolean }>("display", {
+        mutationMode: "pessimistic",
         onError,
         onSettled,
-      })
+      }),
     );
 
     await act(async () => {

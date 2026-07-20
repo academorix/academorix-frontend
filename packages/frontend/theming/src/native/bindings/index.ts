@@ -4,4 +4,4 @@
  * @description Barrel export for native theming bindings.
  */
 
-export { NativeThemeBindings } from './native-theme.bindings';
+export { NativeThemeBindings } from "./native-theme.bindings";

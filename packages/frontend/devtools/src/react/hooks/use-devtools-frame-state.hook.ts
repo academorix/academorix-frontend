@@ -9,10 +9,10 @@
  *   update in one call.
  */
 
-import { useCallback, useSyncExternalStore } from 'react';
+import { useCallback, useSyncExternalStore } from "react";
 
-import type { IDevtoolsFrameState } from '@/core/interfaces';
-import { useDevtoolsContext } from './use-devtools-context.hook';
+import type { IDevtoolsFrameState } from "@/core/interfaces";
+import { useDevtoolsContext } from "./use-devtools-context.hook";
 
 /** Result returned by {@link useDevtoolsFrameState}. */
 export interface IUseDevtoolsFrameStateResult {
@@ -30,7 +30,7 @@ export function useDevtoolsFrameState(): IUseDevtoolsFrameStateResult {
 
   const subscribe = useCallback(
     (listener: () => void) => frameState.subscribe(listener),
-    [frameState]
+    [frameState],
   );
   const getSnapshot = useCallback(() => frameState.getSnapshot(), [frameState]);
   const state = useSyncExternalStore(subscribe, getSnapshot, getSnapshot);
@@ -39,7 +39,7 @@ export function useDevtoolsFrameState(): IUseDevtoolsFrameStateResult {
     (partial: Partial<IDevtoolsFrameState>) => {
       frameState.update(partial);
     },
-    [frameState]
+    [frameState],
   );
 
   return { state, update };

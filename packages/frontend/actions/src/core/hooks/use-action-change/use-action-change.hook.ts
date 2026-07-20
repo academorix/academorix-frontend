@@ -5,12 +5,12 @@
  *   descriptor to an `onChange` handler for controlled inputs.
  */
 
-import { useCallback } from 'react';
-import type { IActionDescriptor, IActionResponse } from '@stackra/contracts';
+import { useCallback } from "react";
+import type { IActionDescriptor, IActionResponse } from "@stackra/contracts";
 
-import { useAction } from '../use-action';
-import type { IUseActionPressOptions } from '../use-action-press/use-action-press.interface';
-import type { ActionChangeMapper } from './use-action-change.type';
+import { useAction } from "../use-action";
+import type { IUseActionPressOptions } from "../use-action-press/use-action-press.interface";
+import type { ActionChangeMapper } from "./use-action-change.type";
 
 /**
  * Result of {@link useActionChange} — an `onChange(value)` handler + state.
@@ -65,7 +65,7 @@ export function useActionChange<
 >(
   base: D,
   mapper: ActionChangeMapper<V, D>,
-  options: IUseActionPressOptions<D, R> = {}
+  options: IUseActionPressOptions<D, R> = {},
 ): IUseActionChangeResult<V, R> {
   const { run, reset, isPending, error } = useAction<D, R>(base.kind);
   const { context, onDone } = options;
@@ -80,7 +80,7 @@ export function useActionChange<
       onDone?.(result, descriptor);
       return result;
     },
-    [run, mapper, base, context, onDone]
+    [run, mapper, base, context, onDone],
   );
 
   return { onChange, isPending, error, reset };

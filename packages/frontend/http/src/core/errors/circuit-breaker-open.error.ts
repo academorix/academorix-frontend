@@ -7,7 +7,7 @@
  * @module @stackra/http/errors/circuit-breaker-open
  */
 
-import { HttpError } from './http.error';
+import { HttpError } from "./http.error";
 
 /**
  * Thrown when a request is rejected because the circuit breaker is
@@ -15,8 +15,8 @@ import { HttpError } from './http.error';
  * of the pipeline can normalise it consistently.
  */
 export class CircuitBreakerOpenError extends HttpError {
-  public override readonly name: string = 'CircuitBreakerOpenError';
-  public override readonly code: string = 'HTTP_CIRCUIT_BREAKER_OPEN';
+  public override readonly name: string = "CircuitBreakerOpenError";
+  public override readonly code: string = "HTTP_CIRCUIT_BREAKER_OPEN";
 
   /** HTTP-equivalent status. */
   public readonly statusCode: number = 503;

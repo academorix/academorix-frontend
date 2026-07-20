@@ -4,7 +4,7 @@
  * @description Return shape for the {@link useInAppNotifications} hook.
  */
 
-import type { IInAppNotification } from '@/core/interfaces';
+import type { IInAppNotification } from "@/core/interfaces";
 
 /**
  * Value returned by {@link useInAppNotifications}.

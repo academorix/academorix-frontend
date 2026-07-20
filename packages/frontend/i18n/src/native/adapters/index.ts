@@ -6,4 +6,4 @@
  *   one class for both platforms.
  */
 
-export { NativeDirectionAdapter } from './native-direction.adapter';
+export { NativeDirectionAdapter } from "./native-direction.adapter";

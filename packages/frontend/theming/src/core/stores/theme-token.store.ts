@@ -6,8 +6,8 @@
  *   Supports subscriptions for useSyncExternalStore integration.
  */
 
-import { Injectable } from '@stackra/container';
-import type { IDesignTokenMap, ColorMode, ResolvedMode } from '@stackra/contracts';
+import { Injectable } from "@stackra/container";
+import type { IDesignTokenMap, ColorMode, ResolvedMode } from "@stackra/contracts";
 
 // ============================================================================
 // State Interface
@@ -53,9 +53,9 @@ export class ThemeTokenStore {
 
   public constructor() {
     this.state = {
-      themeId: 'default',
-      mode: 'system',
-      resolvedMode: 'light',
+      themeId: "default",
+      mode: "system",
+      resolvedMode: "light",
       tokens: {},
       registryRevision: 0,
     };

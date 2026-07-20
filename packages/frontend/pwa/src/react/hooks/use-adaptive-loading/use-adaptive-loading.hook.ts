@@ -7,9 +7,9 @@
  *   re-render when the effective type flips (e.g. WiFi → cellular).
  */
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState } from "react";
 
-import type { IUseAdaptiveLoadingResult } from './use-adaptive-loading.interface';
+import type { IUseAdaptiveLoadingResult } from "./use-adaptive-loading.interface";
 
 /** Structural shape of `navigator.connection`. */
 interface INetworkInformationLike {
@@ -39,13 +39,13 @@ export function useAdaptiveLoading(): IUseAdaptiveLoadingResult {
   const [state, setState] = useState<IUseAdaptiveLoadingResult>(() => readState());
 
   useEffect(() => {
-    if (typeof navigator === 'undefined') return;
+    if (typeof navigator === "undefined") return;
     const connection = (navigator as unknown as { connection?: INetworkInformationLike })
       .connection;
     if (!connection?.addEventListener) return;
     const onChange = (): void => setState(readState());
-    connection.addEventListener('change', onChange);
-    return () => connection.removeEventListener?.('change', onChange);
+    connection.addEventListener("change", onChange);
+    return () => connection.removeEventListener?.("change", onChange);
   }, []);
 
   return state;
@@ -53,18 +53,18 @@ export function useAdaptiveLoading(): IUseAdaptiveLoadingResult {
 
 /** Snapshot the current connection info. Fail-soft on SSR. */
 function readState(): IUseAdaptiveLoadingResult {
-  if (typeof navigator === 'undefined') {
-    return { effectiveType: 'unknown', saveData: false, downlink: null, rtt: null };
+  if (typeof navigator === "undefined") {
+    return { effectiveType: "unknown", saveData: false, downlink: null, rtt: null };
   }
   const connection = (navigator as unknown as { connection?: INetworkInformationLike }).connection;
   if (!connection) {
-    return { effectiveType: 'unknown', saveData: false, downlink: null, rtt: null };
+    return { effectiveType: "unknown", saveData: false, downlink: null, rtt: null };
   }
   const raw = connection.effectiveType;
   // Guard against unexpected values so consumers can rely on the
   // discriminated type.
   const effectiveType =
-    raw === 'slow-2g' || raw === '2g' || raw === '3g' || raw === '4g' ? raw : 'unknown';
+    raw === "slow-2g" || raw === "2g" || raw === "3g" || raw === "4g" ? raw : "unknown";
   return {
     effectiveType,
     saveData: connection.saveData ?? false,

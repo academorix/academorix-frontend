@@ -6,17 +6,17 @@
  *   catalog (Req 14.4, 14.5).
  */
 
-import { useEffect, useState } from 'react';
-import { useInject } from '@stackra/container/react';
+import { useEffect, useState } from "react";
+import { useInject } from "@stackra/container/react";
 import {
   AI_AGENT_REGISTRY,
   AI_CLIENT,
   type IAiClient,
   type IAiClientToolDefinition,
   type IPersona,
-} from '@stackra/contracts';
+} from "@stackra/contracts";
 
-import { AgentRegistry } from '@/core/registries/agent.registry';
+import { AgentRegistry } from "@/core/registries/agent.registry";
 
 /** The value returned by {@link useAiCatalog}. */
 export interface IUseAiCatalogResult {

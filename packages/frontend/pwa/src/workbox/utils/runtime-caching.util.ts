@@ -13,7 +13,7 @@
  *   caches don't collide with other Workbox users in the same origin.
  */
 
-import type { IRuntimeCachingOptions, IRuntimeCachingRule } from '../interfaces';
+import type { IRuntimeCachingOptions, IRuntimeCachingRule } from "../interfaces";
 
 const DAY_SECONDS = 60 * 60 * 24;
 const YEAR_SECONDS = DAY_SECONDS * 365;
@@ -31,7 +31,7 @@ const REGEX_META_CHARS = /[.*+?^${}()|[\]\\]/g;
  */
 // support-utilities-exempt: regex replacement is a language feature; Str.replace only handles literal search.
 function escapeRegex(literal: string): string {
-  return literal.replace(REGEX_META_CHARS, '\\$&');
+  return literal.replace(REGEX_META_CHARS, "\\$&");
 }
 
 /**
@@ -55,11 +55,11 @@ function escapeRegex(literal: string): string {
  * ```
  */
 export function getRuntimeCaching(
-  options: IRuntimeCachingOptions = {}
+  options: IRuntimeCachingOptions = {},
 ): readonly IRuntimeCachingRule[] {
   const {
     includeApi = true,
-    apiPathPrefix = '/api',
+    apiPathPrefix = "/api",
     apiMaxAgeSeconds = DAY_SECONDS,
     apiMaxEntries = 200,
     imageMaxAgeSeconds = DAY_SECONDS * 30,
@@ -68,7 +68,7 @@ export function getRuntimeCaching(
     fontMaxEntries = 30,
     includeHtmlNavigation = true,
     navigationTimeoutSeconds = 3,
-    cacheNamePrefix = 'stackra-pwa',
+    cacheNamePrefix = "stackra-pwa",
   } = options;
 
   const rules: IRuntimeCachingRule[] = [];
@@ -81,7 +81,7 @@ export function getRuntimeCaching(
     rules.push({
       urlPattern: ({ url, sameOrigin }) =>
         sameOrigin && new RegExp(`^${escaped}(/|$)`).test(url.pathname),
-      handler: 'NetworkFirst',
+      handler: "NetworkFirst",
       options: {
         cacheName: `${cacheNamePrefix}-api`,
         networkTimeoutSeconds: 5,
@@ -95,7 +95,7 @@ export function getRuntimeCaching(
   // consumers can index by ordinal in tests.
   rules.push({
     urlPattern: /\.(?:png|jpg|jpeg|svg|gif|webp|avif|ico)$/i,
-    handler: 'CacheFirst',
+    handler: "CacheFirst",
     options: {
       cacheName: `${cacheNamePrefix}-images`,
       expiration: { maxEntries: imageMaxEntries, maxAgeSeconds: imageMaxAgeSeconds },
@@ -104,7 +104,7 @@ export function getRuntimeCaching(
   });
   rules.push({
     urlPattern: /\.(?:woff|woff2|ttf|otf|eot)$/i,
-    handler: 'CacheFirst',
+    handler: "CacheFirst",
     options: {
       cacheName: `${cacheNamePrefix}-fonts`,
       expiration: { maxEntries: fontMaxEntries, maxAgeSeconds: fontMaxAgeSeconds },
@@ -119,7 +119,7 @@ export function getRuntimeCaching(
     rules.push({
       urlPattern: ({ url, sameOrigin }) =>
         sameOrigin && !!url.pathname && !/\.[a-z0-9]{2,5}(\?.*)?$/i.test(url.pathname),
-      handler: 'NetworkFirst',
+      handler: "NetworkFirst",
       options: {
         cacheName: `${cacheNamePrefix}-html`,
         networkTimeoutSeconds: navigationTimeoutSeconds,

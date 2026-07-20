@@ -10,13 +10,13 @@
  *   yet an assistant reply, and the composer footer.
  */
 
-import type { JSX, ReactNode } from 'react';
-import { ScrollView, View } from 'react-native';
+import type { JSX, ReactNode } from "react";
+import { ScrollView, View } from "react-native";
 
-import { useAiChat } from '@/core/hooks/use-ai-chat';
-import { AiLoader } from '../ai-loader';
-import { AiMessage } from '../ai-message';
-import { AiPrompt } from '../ai-prompt';
+import { useAiChat } from "@/core/hooks/use-ai-chat";
+import { AiLoader } from "../ai-loader";
+import { AiMessage } from "../ai-message";
+import { AiPrompt } from "../ai-prompt";
 
 /** Props accepted by {@link AiChat}. */
 export interface IAiChatProps {
@@ -39,12 +39,12 @@ export function AiChat(props: IAiChatProps): JSX.Element {
   const { persona, threadId, placeholder, header, footer, className } = props;
   const chat = useAiChat({ persona, ...(threadId !== undefined ? { threadId } : {}) });
 
-  const isStreaming = chat.status === 'streaming';
+  const isStreaming = chat.status === "streaming";
   const lastMessage = chat.messages[chat.messages.length - 1];
-  const showLoader = isStreaming && lastMessage?.role !== 'assistant';
+  const showLoader = isStreaming && lastMessage?.role !== "assistant";
 
   return (
-    <View className={`flex-1 flex-col${className ? ` ${className}` : ''}`}>
+    <View className={`flex-1 flex-col${className ? ` ${className}` : ""}`}>
       <ScrollView
         className="flex-1"
         contentContainerClassName="px-4 pt-4 pb-3 gap-3"
@@ -57,7 +57,7 @@ export function AiChat(props: IAiChatProps): JSX.Element {
             <AiMessage
               key={message.id}
               message={message}
-              isStreaming={isStreaming && isLast && message.role === 'assistant'}
+              isStreaming={isStreaming && isLast && message.role === "assistant"}
               onApproveTool={chat.approveTool}
               onRejectTool={chat.rejectTool}
             />
@@ -66,7 +66,7 @@ export function AiChat(props: IAiChatProps): JSX.Element {
         {showLoader ? <AiLoader variant="spinner" label="Thinking…" /> : null}
       </ScrollView>
 
-      <View className="px-3 pb-3 pt-2">
+      <View className="px-3 pt-2 pb-3">
         <AiPrompt
           chat={chat}
           {...(placeholder !== undefined ? { placeholder } : {})}

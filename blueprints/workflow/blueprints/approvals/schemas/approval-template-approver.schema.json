@@ -40,7 +40,12 @@
   "x-database": {
     "engine": "postgres",
     "columns": {
-      "id": { "type": "string", "length": 64, "primary": true, "description": "Prefixed ULID: `apg_<26>`." },
+      "id": {
+        "type": "string",
+        "length": 64,
+        "primary": true,
+        "description": "Prefixed ULID: `apg_<26>`."
+      },
       "approval_template_id": {
         "type": "string",
         "length": 64,
@@ -113,7 +118,18 @@
       }
     ]
   },
-  "required": ["id", "approval_template_id", "tenant_id", "group_name", "sort_order", "selector_expression", "quorum_type", "allows_self_approve", "created_at", "updated_at"],
+  "required": [
+    "id",
+    "approval_template_id",
+    "tenant_id",
+    "group_name",
+    "sort_order",
+    "selector_expression",
+    "quorum_type",
+    "allows_self_approve",
+    "created_at",
+    "updated_at"
+  ],
   "properties": {
     "id": { "type": "string", "pattern": "^apg_[0-9A-HJKMNP-TV-Z]{26}$" },
     "approval_template_id": { "type": "string", "pattern": "^apt_[0-9A-HJKMNP-TV-Z]{26}$" },

@@ -4,7 +4,7 @@
  * @description IUseSseResult interface.
  */
 
-import type { ISseEvent } from '@stackra/contracts';
+import type { ISseEvent } from "@stackra/contracts";
 
 /**
  * Result of {@link useSse}.

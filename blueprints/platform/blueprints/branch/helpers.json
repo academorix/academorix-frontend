@@ -17,10 +17,7 @@
     {
       "signature": "active_branch_id(): ?string",
       "purpose": "Returns the active-branch ULID without hydrating the model. Faster than `active_branch()->id` because it avoids the eager-load of Organization + Region.",
-      "behaviours": [
-        "Reads directly from `RequestContext.branch_id`.",
-        "Never queries the DB."
-      ]
+      "behaviours": ["Reads directly from `RequestContext.branch_id`.", "Never queries the DB."]
     },
     {
       "signature": "branch_is_open_now(Branch|string $branchOrId, ?CarbonInterface $moment = null): bool",

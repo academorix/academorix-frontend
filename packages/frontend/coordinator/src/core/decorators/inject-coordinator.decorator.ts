@@ -4,8 +4,8 @@
  * @description Parameter decorator for injecting the TabCoordinator.
  */
 
-import { Inject } from '@stackra/container';
-import { TAB_COORDINATOR } from '@stackra/contracts';
+import { Inject } from "@stackra/container";
+import { TAB_COORDINATOR } from "@stackra/contracts";
 
 /**
  * Inject the TabCoordinator service.

@@ -5,8 +5,8 @@
  *   {@link NotificationPreferencesPage} component.
  */
 
-import type { ChannelDescriptor } from '../../components/preferences/category-preferences-panel';
-import type { NotificationWriter } from '../../hooks';
+import type { ChannelDescriptor } from "../../components/preferences/category-preferences-panel";
+import type { NotificationWriter } from "../../hooks";
 
 /**
  * Props accepted by the native {@link NotificationPreferencesPage}.

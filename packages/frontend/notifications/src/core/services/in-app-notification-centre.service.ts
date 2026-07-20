@@ -16,20 +16,20 @@
  *   surfaces what the app has already been told to display.
  */
 
-import { Inject, Injectable, Optional } from '@stackra/container';
-import type { OnModuleInit } from '@stackra/contracts';
-import { STORAGE_MANAGER, type IStorage, type IStorageManager } from '@stackra/contracts';
-import { Str } from '@stackra/support';
+import { Inject, Injectable, Optional } from "@stackra/container";
+import type { OnModuleInit } from "@stackra/contracts";
+import { STORAGE_MANAGER, type IStorage, type IStorageManager } from "@stackra/contracts";
+import { Str } from "@stackra/support";
 
-import { NOTIFICATION_CONFIG, NOTIFICATION_EVENTS } from '../constants';
-import { normalizeNotificationPayload } from '../utils';
+import { NOTIFICATION_CONFIG, NOTIFICATION_EVENTS } from "../constants";
+import { normalizeNotificationPayload } from "../utils";
 import type {
   IInAppNotification,
   IInAppNotificationCentreSnapshot,
   INotificationModuleOptions,
   INotificationPayload,
-} from '../interfaces';
-import { AnalyticsBridgeService } from './analytics-bridge.service';
+} from "../interfaces";
+import { AnalyticsBridgeService } from "./analytics-bridge.service";
 
 /** Listener signature — receives no argument. */
 export type InAppNotificationCentreListener = () => void;
@@ -79,11 +79,11 @@ export class InAppNotificationCentre implements OnModuleInit {
     // AnalyticsBridgeService is a peer within the same package — the
     // container resolves it optionally so tests that instantiate the
     // centre directly can skip wiring it.
-    @Optional() private readonly analytics?: AnalyticsBridgeService
+    @Optional() private readonly analytics?: AnalyticsBridgeService,
   ) {
     const centre = config.centre ?? {};
     this.instanceName = centre.storage;
-    this.storageKey = centre.storageKey ?? 'stackra:notifications:centre';
+    this.storageKey = centre.storageKey ?? "stackra:notifications:centre";
     this.maxItems = centre.maxItems ?? 100;
     this.snapshot = this.buildSnapshot();
   }

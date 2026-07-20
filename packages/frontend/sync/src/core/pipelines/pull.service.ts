@@ -6,11 +6,11 @@
  *   retries, or authorization without editing the service.
  */
 
-import { Pipeline } from '@stackra/pipeline';
-import type { IPullOptions, IPullPipelineContext, IPullResult } from '@stackra/contracts';
+import { Pipeline } from "@stackra/pipeline";
+import type { IPullOptions, IPullPipelineContext, IPullResult } from "@stackra/contracts";
 
-import type { CheckpointService } from '../services/checkpoint.service';
-import type { PullService } from '../services/pull.service';
+import type { CheckpointService } from "../services/checkpoint.service";
+import type { PullService } from "../services/pull.service";
 
 /**
  * Execute a single-collection pull through the pipeline.
@@ -24,7 +24,7 @@ export async function executePullPipeline(
   pullService: PullService,
   checkpointService: CheckpointService,
   collection: string,
-  options: IPullOptions
+  options: IPullOptions,
 ): Promise<IPullResult> {
   const context: IPullPipelineContext = {
     collection,
@@ -37,22 +37,22 @@ export async function executePullPipeline(
     .through([
       async (
         ctx: IPullPipelineContext,
-        next: (c: IPullPipelineContext) => Promise<IPullPipelineContext>
+        next: (c: IPullPipelineContext) => Promise<IPullPipelineContext>,
       ) => {
-        if (!ctx.collection) throw new Error('Collection is required for pull');
-        if (!ctx.options.baseUrl) throw new Error('baseUrl is required for pull');
+        if (!ctx.collection) throw new Error("Collection is required for pull");
+        if (!ctx.options.baseUrl) throw new Error("baseUrl is required for pull");
         return next(ctx);
       },
       async (
         ctx: IPullPipelineContext,
-        next: (c: IPullPipelineContext) => Promise<IPullPipelineContext>
+        next: (c: IPullPipelineContext) => Promise<IPullPipelineContext>,
       ) => {
         ctx.result = await pullService.pull(ctx.collection, ctx.options);
         return next(ctx);
       },
       async (
         ctx: IPullPipelineContext,
-        next: (c: IPullPipelineContext) => Promise<IPullPipelineContext>
+        next: (c: IPullPipelineContext) => Promise<IPullPipelineContext>,
       ) => {
         ctx.checkpoint = {
           collection: ctx.collection,
@@ -68,7 +68,7 @@ export async function executePullPipeline(
       },
       async (
         ctx: IPullPipelineContext,
-        next: (c: IPullPipelineContext) => Promise<IPullPipelineContext>
+        next: (c: IPullPipelineContext) => Promise<IPullPipelineContext>,
       ) => {
         if (ctx.checkpoint) {
           await checkpointService.save(ctx.collection, ctx.checkpoint);

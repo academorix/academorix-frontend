@@ -9,12 +9,13 @@
 
 # PHPUnit
 
-PHPUnit is a programmer-oriented testing framework for PHP.
-It is an instance of the xUnit architecture for unit testing frameworks.
+PHPUnit is a programmer-oriented testing framework for PHP. It is an instance of
+the xUnit architecture for unit testing frameworks.
 
 ## Installation
 
-We distribute a [PHP Archive (PHAR)](https://php.net/phar) that has all required dependencies of PHPUnit bundled in a single file:
+We distribute a [PHP Archive (PHAR)](https://php.net/phar) that has all required
+dependencies of PHPUnit bundled in a single file:
 
 ```bash
 $ wget https://phar.phpunit.de/phpunit-X.Y.phar
@@ -24,62 +25,72 @@ $ php phpunit-X.Y.phar --version
 
 Please replace `X.Y` with the version of PHPUnit you are interested in.
 
-Alternatively, you may use [Composer](https://getcomposer.org/) to download and install PHPUnit as well as its dependencies.
-Please refer to the [documentation](https://phpunit.de/documentation.html?ref=github) for details on how to install PHPUnit.
+Alternatively, you may use [Composer](https://getcomposer.org/) to download and
+install PHPUnit as well as its dependencies. Please refer to the
+[documentation](https://phpunit.de/documentation.html?ref=github) for details on
+how to install PHPUnit.
 
 ## Contribute
 
-Please refer to [CONTRIBUTING.md](https://github.com/sebastianbergmann/phpunit/blob/main/.github/CONTRIBUTING.md) for information on how to contribute to PHPUnit and its related projects.
+Please refer to
+[CONTRIBUTING.md](https://github.com/sebastianbergmann/phpunit/blob/main/.github/CONTRIBUTING.md)
+for information on how to contribute to PHPUnit and its related projects.
 
-A big "Thank you!" to everyone who has contributed to PHPUnit!
-You can find a detailed list of contributors on every PHPUnit related package on GitHub.
+A big "Thank you!" to everyone who has contributed to PHPUnit! You can find a
+detailed list of contributors on every PHPUnit related package on GitHub.
 
-Here is a list of all components that are primarily developed and maintained by [Sebastian Bergmann](https://sebastian-bergmann.de/open-source.html?ref=github):
+Here is a list of all components that are primarily developed and maintained by
+[Sebastian Bergmann](https://sebastian-bergmann.de/open-source.html?ref=github):
 
-* [phpunit/phpunit](https://github.com/sebastianbergmann/phpunit)
-* [phpunit/php-code-coverage](https://github.com/sebastianbergmann/php-code-coverage)
-* [phpunit/php-file-iterator](https://github.com/sebastianbergmann/php-file-iterator)
-* [phpunit/php-invoker](https://github.com/sebastianbergmann/php-invoker)
-* [phpunit/php-text-template](https://github.com/sebastianbergmann/php-text-template)
-* [phpunit/php-timer](https://github.com/sebastianbergmann/php-timer)
-* [sebastian/cli-parser](https://github.com/sebastianbergmann/cli-parser)
-* [sebastian/comparator](https://github.com/sebastianbergmann/comparator)
-* [sebastian/complexity](https://github.com/sebastianbergmann/complexity)
-* [sebastian/diff](https://github.com/sebastianbergmann/diff)
-* [sebastian/environment](https://github.com/sebastianbergmann/environment)
-* [sebastian/exporter](https://github.com/sebastianbergmann/exporter)
-* [sebastian/global-state](https://github.com/sebastianbergmann/global-state)
-* [sebastian/lines-of-code](https://github.com/sebastianbergmann/lines-of-code)
-* [sebastian/object-enumerator](https://github.com/sebastianbergmann/object-enumerator)
-* [sebastian/object-reflector](https://github.com/sebastianbergmann/object-reflector)
-* [sebastian/recursion-context](https://github.com/sebastianbergmann/recursion-context)
-* [sebastian/type](https://github.com/sebastianbergmann/type)
-* [sebastian/version](https://github.com/sebastianbergmann/version)
+- [phpunit/phpunit](https://github.com/sebastianbergmann/phpunit)
+- [phpunit/php-code-coverage](https://github.com/sebastianbergmann/php-code-coverage)
+- [phpunit/php-file-iterator](https://github.com/sebastianbergmann/php-file-iterator)
+- [phpunit/php-invoker](https://github.com/sebastianbergmann/php-invoker)
+- [phpunit/php-text-template](https://github.com/sebastianbergmann/php-text-template)
+- [phpunit/php-timer](https://github.com/sebastianbergmann/php-timer)
+- [sebastian/cli-parser](https://github.com/sebastianbergmann/cli-parser)
+- [sebastian/comparator](https://github.com/sebastianbergmann/comparator)
+- [sebastian/complexity](https://github.com/sebastianbergmann/complexity)
+- [sebastian/diff](https://github.com/sebastianbergmann/diff)
+- [sebastian/environment](https://github.com/sebastianbergmann/environment)
+- [sebastian/exporter](https://github.com/sebastianbergmann/exporter)
+- [sebastian/global-state](https://github.com/sebastianbergmann/global-state)
+- [sebastian/lines-of-code](https://github.com/sebastianbergmann/lines-of-code)
+- [sebastian/object-enumerator](https://github.com/sebastianbergmann/object-enumerator)
+- [sebastian/object-reflector](https://github.com/sebastianbergmann/object-reflector)
+- [sebastian/recursion-context](https://github.com/sebastianbergmann/recursion-context)
+- [sebastian/type](https://github.com/sebastianbergmann/type)
+- [sebastian/version](https://github.com/sebastianbergmann/version)
 
-A very special thanks to everyone who has contributed to the [PHPUnit Manual](https://github.com/sebastianbergmann/phpunit-documentation-english).
+A very special thanks to everyone who has contributed to the
+[PHPUnit Manual](https://github.com/sebastianbergmann/phpunit-documentation-english).
 
-In addition to the components listed above, PHPUnit depends on the components listed below:
+In addition to the components listed above, PHPUnit depends on the components
+listed below:
 
-* [myclabs/deep-copy](https://github.com/myclabs/DeepCopy)
-* [nikic/php-parser](https://github.com/nikic/php-parser)
-* [phar-io/manifest](https://github.com/phar-io/manifest)
-* [phar-io/version](https://github.com/phar-io/version)
-* [staabm/side-effects-detector](https://github.com/staabm/side-effects-detector)
-* [theseer/tokenizer](https://github.com/theseer/tokenizer)
+- [myclabs/deep-copy](https://github.com/myclabs/DeepCopy)
+- [nikic/php-parser](https://github.com/nikic/php-parser)
+- [phar-io/manifest](https://github.com/phar-io/manifest)
+- [phar-io/version](https://github.com/phar-io/version)
+- [staabm/side-effects-detector](https://github.com/staabm/side-effects-detector)
+- [theseer/tokenizer](https://github.com/theseer/tokenizer)
 
 These tools are used to develop PHPUnit:
 
-* [Composer](https://getcomposer.org/)
-* [Phive](https://phar.io/)
-* [PHP Autoload Builder](https://github.com/theseer/Autoload/)
-* [PHP-CS-Fixer](https://cs.symfony.com/)
-* [PHP-Scoper](https://github.com/humbug/php-scoper)
-* [PHPStan](https://phpstan.org/)
+- [Composer](https://getcomposer.org/)
+- [Phive](https://phar.io/)
+- [PHP Autoload Builder](https://github.com/theseer/Autoload/)
+- [PHP-CS-Fixer](https://cs.symfony.com/)
+- [PHP-Scoper](https://github.com/humbug/php-scoper)
+- [PHPStan](https://phpstan.org/)
 
 ## Sponsors
 
-It has taken [Sebastian Bergmann](https://sebastian-bergmann.de/open-source.html?ref=github) thousands of hours to develop, test, and support PHPUnit.
-[**You can sponsor his Open Source work through GitHub Sponsors**](https://github.com/sponsors/sebastianbergmann), for example.
+It has taken
+[Sebastian Bergmann](https://sebastian-bergmann.de/open-source.html?ref=github)
+thousands of hours to develop, test, and support PHPUnit.
+[**You can sponsor his Open Source work through GitHub Sponsors**](https://github.com/sponsors/sebastianbergmann),
+for example.
 
 These businesses support Sebastian Bergmann's work on PHPUnit:
 
@@ -101,8 +112,12 @@ These businesses support Sebastian Bergmann's work on PHPUnit:
     </tbody>
 </table>
 
-Would you like to see your logo here as well as on the [PHPUnit website](https://phpunit.de/sponsors.html?ref=github)?
-Contact Sebastian Bergmann at [sponsoring@phpunit.de](mailto:sponsoring@phpunit.de) to learn more about how you can support his work on PHPUnit.
+Would you like to see your logo here as well as on the
+[PHPUnit website](https://phpunit.de/sponsors.html?ref=github)? Contact
+Sebastian Bergmann at [sponsoring@phpunit.de](mailto:sponsoring@phpunit.de) to
+learn more about how you can support his work on PHPUnit.
 
-Whether you are a CEO, CFO, CTO, or a developer: your company surely depends on Open Source software.
-[It is time to pay your share](https://opensourcepledge.com/) and support maintainers like [Sebastian Bergmann](https://phpunit.de/sponsoring.html).
+Whether you are a CEO, CFO, CTO, or a developer: your company surely depends on
+Open Source software.
+[It is time to pay your share](https://opensourcepledge.com/) and support
+maintainers like [Sebastian Bergmann](https://phpunit.de/sponsoring.html).

@@ -9,7 +9,7 @@ import type {
   IRealtimeChannel,
   IRealtimeConnection,
   IRealtimePresenceChannel,
-} from '@stackra/contracts';
+} from "@stackra/contracts";
 
 /** A subscribed channel that records `.on`/`.whisper`/`.leave` calls. */
 class StubChannel implements IRealtimeChannel {
@@ -79,7 +79,7 @@ export class StubConnection implements IRealtimeConnection {
   public presenceChannel(name: string): IRealtimePresenceChannel {
     return this.getOrCreate(
       `presence:${name}`,
-      (key) => new StubPresenceChannel(key)
+      (key) => new StubPresenceChannel(key),
     ) as IRealtimePresenceChannel;
   }
 

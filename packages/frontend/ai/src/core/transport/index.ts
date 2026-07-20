@@ -9,4 +9,4 @@
  *   That keeps the SSE→WebSocket swap a one-line `useClass` change.
  */
 
-export { SseTransport } from './sse.transport';
+export { SseTransport } from "./sse.transport";

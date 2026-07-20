@@ -4,4 +4,4 @@
  * @description Query-layer interfaces barrel export.
  */
 
-export type { QueryModuleOptions } from './query-module-options.interface';
+export type { QueryModuleOptions } from "./query-module-options.interface";

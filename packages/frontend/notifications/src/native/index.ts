@@ -13,12 +13,12 @@
  *   path.
  */
 
-import 'reflect-metadata';
+import "reflect-metadata";
 
 // ════════════════════════════════════════════════════════════════════
 // Native module
 // ════════════════════════════════════════════════════════════════════
-export { NativeNotificationModule } from './native-notification.module';
+export { NativeNotificationModule } from "./native-notification.module";
 
 // ════════════════════════════════════════════════════════════════════
 // Components (native UI surface)
@@ -47,7 +47,7 @@ export {
   type QuietHoursPickerProps,
   type CategoryPreferencesPanelProps,
   type ChannelDescriptor,
-} from './components';
+} from "./components";
 
 // ════════════════════════════════════════════════════════════════════
 // Pages (full-screen native routes)
@@ -57,7 +57,7 @@ export {
   NotificationPreferencesPage,
   type InboxPageProps,
   type NotificationPreferencesPageProps,
-} from './pages';
+} from "./pages";
 
 // ════════════════════════════════════════════════════════════════════
 // Hooks (native mirrors of the react/hooks surface)
@@ -76,14 +76,14 @@ export {
   type IUseRenderableNotificationsResult,
   type IUseSnoozeStoreResult,
   type NotificationWriter,
-} from './hooks';
+} from "./hooks";
 
 // ════════════════════════════════════════════════════════════════════
 // Adapters + services + channels
 // ════════════════════════════════════════════════════════════════════
-export { ExpoPushTokenAdapter, ExpoNotificationListenerAdapter } from './adapters';
-export { NativeNotificationManager } from './services';
-export { ExpoNotificationChannelDriver } from './channels';
+export { ExpoPushTokenAdapter, ExpoNotificationListenerAdapter } from "./adapters";
+export { NativeNotificationManager } from "./services";
+export { ExpoNotificationChannelDriver } from "./channels";
 
 // ════════════════════════════════════════════════════════════════════
 // Tokens + interfaces owned by the native subpath
@@ -93,13 +93,13 @@ export {
   EXPO_PUSH_CONFIG,
   EXPO_PUSH_TOKEN_ADAPTER,
   EXPO_NOTIFICATION_LISTENER_ADAPTER,
-} from './constants';
+} from "./constants";
 export type {
   IExpoPushConfig,
   INativePushToken,
   INativeNotificationModuleOptions,
   INativeNotificationPushOptions,
-} from './interfaces';
+} from "./interfaces";
 
 // ════════════════════════════════════════════════════════════════════
 // Cross-platform re-exports (safe on RN — pure interfaces + tokens)
@@ -116,7 +116,7 @@ export {
   DEFAULT_NOTIFICATIONS_CONFIG,
   type NotificationEventName,
   type DefaultNotificationChannel,
-} from '@/core/constants';
+} from "@/core/constants";
 export type {
   INotificationModuleOptions,
   IInAppNotificationCentreConfig,
@@ -134,10 +134,10 @@ export type {
   IPushSubscriptionAdapter,
   IPushSubscriptionResult,
   NotificationManagerListener,
-} from '@/core/interfaces';
+} from "@/core/interfaces";
 export {
   NotificationError,
   NotificationPermissionDeniedError,
   InvalidVapidKeyError,
   PushNotSupportedError,
-} from '@/core/errors';
+} from "@/core/errors";

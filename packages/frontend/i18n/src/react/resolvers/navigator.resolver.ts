@@ -12,7 +12,7 @@
  *   Returns `undefined` when `navigator` is not available (SSR, Node.js).
  */
 
-import type { II18nResolver } from '@/core/interfaces';
+import type { II18nResolver } from "@/core/interfaces";
 
 /**
  * Resolves locale from the browser's navigator language settings.
@@ -38,7 +38,7 @@ export class NavigatorResolver implements II18nResolver {
    */
   public resolve(): string[] | undefined {
     try {
-      if (typeof navigator === 'undefined') return undefined;
+      if (typeof navigator === "undefined") return undefined;
 
       // navigator.languages is an ordered array of preferred languages
       if (navigator.languages && navigator.languages.length > 0) {

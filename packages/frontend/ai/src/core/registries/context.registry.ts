@@ -16,14 +16,14 @@
  *   job. It stores frames and emits change notifications when they mutate.
  */
 
-import { Inject, Injectable, Optional } from '@stackra/container';
-import { Logger } from '@stackra/logger';
+import { Inject, Injectable, Optional } from "@stackra/container";
+import { Logger } from "@stackra/logger";
 import {
   AI_EVENTS,
   EVENT_EMITTER,
   type IAiContextFrame,
   type IEventEmitter,
-} from '@stackra/contracts';
+} from "@stackra/contracts";
 
 /** Payload accepted by {@link ContextRegistry.register}. */
 export interface IContextRegistration {
@@ -172,7 +172,7 @@ export class ContextRegistry {
       try {
         listener();
       } catch (err) {
-        this.logger.warn('[ContextRegistry] change listener threw', {
+        this.logger.warn("[ContextRegistry] change listener threw", {
           error: err instanceof Error ? err.message : String(err),
         });
       }

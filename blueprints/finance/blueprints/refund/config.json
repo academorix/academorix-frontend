@@ -137,13 +137,24 @@
         {
           "path": "refund.reason.customer_allowed",
           "type": "array<string>",
-          "default": ["customer_requested", "product_not_received", "product_unacceptable", "subscription_cancelled"],
+          "default": [
+            "customer_requested",
+            "product_not_received",
+            "product_unacceptable",
+            "subscription_cancelled"
+          ],
           "description": "Reasons a customer can specify via POST /refunds/mine. Admin-only reasons (fraud_confirmed, admin_correction, regulator_required, accounting_correction, chargeback_prevention) refused from customer path."
         },
         {
           "path": "refund.reason.always_require_approval",
           "type": "array<string>",
-          "default": ["fraud_confirmed", "admin_correction", "chargeback_prevention", "regulator_required", "accounting_correction"],
+          "default": [
+            "fraud_confirmed",
+            "admin_correction",
+            "chargeback_prevention",
+            "regulator_required",
+            "accounting_correction"
+          ],
           "description": "Reasons that ALWAYS require approval regardless of amount / staleness. Distinct from the customer-allowed set (customer-allowed reasons may or may not require approval based on threshold; always-require reasons force approval)."
         },
         {

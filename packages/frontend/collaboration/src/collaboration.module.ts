@@ -4,14 +4,14 @@
  * @category Module
  */
 
-import { Module, type DynamicModule } from '@stackra/container';
-import { Logger } from '@stackra/logger';
-import { COLLABORATION_ROOM_MANAGER } from '@stackra/contracts';
+import { Module, type DynamicModule } from "@stackra/container";
+import { Logger } from "@stackra/logger";
+import { COLLABORATION_ROOM_MANAGER } from "@stackra/contracts";
 
-import { RoomManager } from './services/room-manager.service';
+import { RoomManager } from "./services/room-manager.service";
 
 /** Transport strategy options. */
-type TransportOption = 'reverb' | 'broadcast' | 'auto';
+type TransportOption = "reverb" | "broadcast" | "auto";
 
 /**
  * DI module for the `@stackra/collaboration` package.
@@ -52,7 +52,7 @@ export class CollaborationModule {
    * ```
    */
   public static forRoot(options?: { transport?: TransportOption }): DynamicModule {
-    const transport = options?.transport ?? 'auto';
+    const transport = options?.transport ?? "auto";
 
     CollaborationModule.logger.info(`Registering with transport strategy: ${transport}`);
 

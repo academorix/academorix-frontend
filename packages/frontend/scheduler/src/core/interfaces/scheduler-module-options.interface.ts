@@ -4,7 +4,7 @@
  * @description ISchedulerModuleOptions interface.
  */
 
-import type { ITaskRunner } from './task-runner.interface';
+import type { ITaskRunner } from "./task-runner.interface";
 
 /**
  * Configuration for `SchedulerModule.forRoot()`.

@@ -15,10 +15,10 @@
  *   `ConsentModule` directly from `@stackra/consent`.
  */
 
-import { Module, type DynamicModule } from '@stackra/container';
+import { Module, type DynamicModule } from "@stackra/container";
 
-import { ConsentModule } from '../core/consent.module';
-import type { IConsentModuleOptions } from '../core/types';
+import { ConsentModule } from "../core/consent.module";
+import type { IConsentModuleOptions } from "../core/types";
 
 /**
  * Backward-compatible alias — same as `ConsentModule.forRoot(...)`.

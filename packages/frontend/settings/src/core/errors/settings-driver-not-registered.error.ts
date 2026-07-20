@@ -7,7 +7,7 @@
  *   `manager.extend(name, creator)` factory.
  */
 
-import { SettingsError } from './settings.error';
+import { SettingsError } from "./settings.error";
 
 /**
  * Thrown when a store manager cannot resolve a named driver.
@@ -29,9 +29,9 @@ export class SettingsDriverNotRegisteredError extends SettingsError {
     super(
       `Settings driver "${driver}" is not registered. ` +
         `Use SettingsStoreManager.extend('${driver}', factory) ` +
-        `to register a custom driver, or check the driver name spelling.`
+        `to register a custom driver, or check the driver name spelling.`,
     );
-    this.name = 'SettingsDriverNotRegisteredError';
+    this.name = "SettingsDriverNotRegisteredError";
     this.driver = driver;
   }
 }

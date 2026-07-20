@@ -212,7 +212,9 @@
                     { "label": "Action", "value": { "$ref": "instance.action_key" } },
                     {
                       "label": "Template",
-                      "value": { "$expr": "instance.template_summary.name + ' v' + instance.template_summary.version" }
+                      "value": {
+                        "$expr": "instance.template_summary.name + ' v' + instance.template_summary.version"
+                      }
                     },
                     { "label": "Requested at", "value": { "$ref": "instance.requested_at" } },
                     { "label": "Expires at", "value": { "$ref": "instance.expires_at" } },

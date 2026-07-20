@@ -22,10 +22,38 @@
           "icon": "device-tablet",
           "sortOrder": 1,
           "fields": [
-            { "name": "enable_self_kiosk", "controlType": "toggle", "label": "Enable self-service kiosk check-in", "defaultValue": true, "requiresEntitlement": "attendance_self_kiosk", "sortOrder": 1 },
-            { "name": "enable_qr_scan", "controlType": "toggle", "label": "Enable QR-code check-in", "defaultValue": true, "requiresEntitlement": "attendance_qr_scan", "sortOrder": 2 },
-            { "name": "enable_geofence", "controlType": "toggle", "label": "Enable GPS/geofence-verified check-in", "defaultValue": false, "requiresEntitlement": "attendance_geofence", "helpText": "Requires the products/geofencing module and Medium+ tier.", "sortOrder": 3 },
-            { "name": "require_signature_on_paper_roster", "controlType": "toggle", "label": "Require coach signature on paper roster (S3-hosted image)", "defaultValue": false, "sortOrder": 4 }
+            {
+              "name": "enable_self_kiosk",
+              "controlType": "toggle",
+              "label": "Enable self-service kiosk check-in",
+              "defaultValue": true,
+              "requiresEntitlement": "attendance_self_kiosk",
+              "sortOrder": 1
+            },
+            {
+              "name": "enable_qr_scan",
+              "controlType": "toggle",
+              "label": "Enable QR-code check-in",
+              "defaultValue": true,
+              "requiresEntitlement": "attendance_qr_scan",
+              "sortOrder": 2
+            },
+            {
+              "name": "enable_geofence",
+              "controlType": "toggle",
+              "label": "Enable GPS/geofence-verified check-in",
+              "defaultValue": false,
+              "requiresEntitlement": "attendance_geofence",
+              "helpText": "Requires the products/geofencing module and Medium+ tier.",
+              "sortOrder": 3
+            },
+            {
+              "name": "require_signature_on_paper_roster",
+              "controlType": "toggle",
+              "label": "Require coach signature on paper roster (S3-hosted image)",
+              "defaultValue": false,
+              "sortOrder": 4
+            }
           ]
         },
         {
@@ -33,11 +61,57 @@
           "icon": "adjustments-horizontal",
           "sortOrder": 2,
           "fields": [
-            { "name": "default_grace_period_minutes", "controlType": "number", "label": "Grace period (minutes)", "defaultValue": 15, "min": 0, "max": 120, "helpText": "Athletes arriving within this window count as present; past this = late.", "sortOrder": 1 },
-            { "name": "default_late_after_minutes", "controlType": "number", "label": "Late-after (minutes)", "defaultValue": 30, "min": 1, "max": 120, "helpText": "Late arrivals past this threshold trigger the late-penalty rule. Must exceed grace_period_minutes.", "sortOrder": 2 },
-            { "name": "default_late_penalty_type", "controlType": "select", "label": "Late-arrival penalty", "defaultValue": "notify_only", "options": { "none": "None — log only", "consume_pass_anyway": "Consume pass fully", "fractional_pass_consume": "Half-pass consume", "notify_only": "Notify guardian + coach" }, "sortOrder": 3 },
-            { "name": "default_max_unexcused_absences", "controlType": "number", "label": "Max unexcused absences (rolling)", "defaultValue": 3, "min": 1, "max": 100, "sortOrder": 4 },
-            { "name": "default_absence_freeze_period_days", "controlType": "number", "label": "Rolling window (days)", "defaultValue": 30, "min": 7, "max": 365, "sortOrder": 5 }
+            {
+              "name": "default_grace_period_minutes",
+              "controlType": "number",
+              "label": "Grace period (minutes)",
+              "defaultValue": 15,
+              "min": 0,
+              "max": 120,
+              "helpText": "Athletes arriving within this window count as present; past this = late.",
+              "sortOrder": 1
+            },
+            {
+              "name": "default_late_after_minutes",
+              "controlType": "number",
+              "label": "Late-after (minutes)",
+              "defaultValue": 30,
+              "min": 1,
+              "max": 120,
+              "helpText": "Late arrivals past this threshold trigger the late-penalty rule. Must exceed grace_period_minutes.",
+              "sortOrder": 2
+            },
+            {
+              "name": "default_late_penalty_type",
+              "controlType": "select",
+              "label": "Late-arrival penalty",
+              "defaultValue": "notify_only",
+              "options": {
+                "none": "None — log only",
+                "consume_pass_anyway": "Consume pass fully",
+                "fractional_pass_consume": "Half-pass consume",
+                "notify_only": "Notify guardian + coach"
+              },
+              "sortOrder": 3
+            },
+            {
+              "name": "default_max_unexcused_absences",
+              "controlType": "number",
+              "label": "Max unexcused absences (rolling)",
+              "defaultValue": 3,
+              "min": 1,
+              "max": 100,
+              "sortOrder": 4
+            },
+            {
+              "name": "default_absence_freeze_period_days",
+              "controlType": "number",
+              "label": "Rolling window (days)",
+              "defaultValue": 30,
+              "min": 7,
+              "max": 365,
+              "sortOrder": 5
+            }
           ]
         },
         {
@@ -46,9 +120,30 @@
           "sortOrder": 3,
           "requiresEntitlement": "attendance_no_show_fees",
           "fields": [
-            { "name": "no_show_fee_enabled", "controlType": "toggle", "label": "Auto-invoice for no-show fees", "defaultValue": false, "sortOrder": 1 },
-            { "name": "default_no_show_fee_cents", "controlType": "number", "label": "Default no-show fee (cents)", "defaultValue": 0, "min": 0, "max": 100000, "sortOrder": 2 },
-            { "name": "default_no_show_fee_currency", "controlType": "select", "label": "Currency", "defaultValue": "USD", "options": { "USD": "USD", "EUR": "EUR", "GBP": "GBP", "AUD": "AUD", "CAD": "CAD" }, "sortOrder": 3 }
+            {
+              "name": "no_show_fee_enabled",
+              "controlType": "toggle",
+              "label": "Auto-invoice for no-show fees",
+              "defaultValue": false,
+              "sortOrder": 1
+            },
+            {
+              "name": "default_no_show_fee_cents",
+              "controlType": "number",
+              "label": "Default no-show fee (cents)",
+              "defaultValue": 0,
+              "min": 0,
+              "max": 100000,
+              "sortOrder": 2
+            },
+            {
+              "name": "default_no_show_fee_currency",
+              "controlType": "select",
+              "label": "Currency",
+              "defaultValue": "USD",
+              "options": { "USD": "USD", "EUR": "EUR", "GBP": "GBP", "AUD": "AUD", "CAD": "CAD" },
+              "sortOrder": 3
+            }
           ]
         },
         {
@@ -56,11 +151,42 @@
           "icon": "bell",
           "sortOrder": 4,
           "fields": [
-            { "name": "notify_athlete_on_first_absence", "controlType": "toggle", "label": "Notify athlete + guardian on first absence", "defaultValue": true, "sortOrder": 1 },
-            { "name": "notify_guardian_on_second_absence", "controlType": "toggle", "label": "Notify guardian on second absence", "defaultValue": true, "sortOrder": 2 },
-            { "name": "notify_admin_on_third_absence", "controlType": "toggle", "label": "Notify admin on third absence (warning)", "defaultValue": true, "sortOrder": 3 },
-            { "name": "notify_coach_post_session_summary", "controlType": "toggle", "label": "Send coach a post-session attendance summary", "defaultValue": true, "sortOrder": 4 },
-            { "name": "weekly_admin_digest_enabled", "controlType": "toggle", "label": "Weekly admin digest email", "defaultValue": false, "requiresEntitlement": "attendance_analytics", "sortOrder": 5 }
+            {
+              "name": "notify_athlete_on_first_absence",
+              "controlType": "toggle",
+              "label": "Notify athlete + guardian on first absence",
+              "defaultValue": true,
+              "sortOrder": 1
+            },
+            {
+              "name": "notify_guardian_on_second_absence",
+              "controlType": "toggle",
+              "label": "Notify guardian on second absence",
+              "defaultValue": true,
+              "sortOrder": 2
+            },
+            {
+              "name": "notify_admin_on_third_absence",
+              "controlType": "toggle",
+              "label": "Notify admin on third absence (warning)",
+              "defaultValue": true,
+              "sortOrder": 3
+            },
+            {
+              "name": "notify_coach_post_session_summary",
+              "controlType": "toggle",
+              "label": "Send coach a post-session attendance summary",
+              "defaultValue": true,
+              "sortOrder": 4
+            },
+            {
+              "name": "weekly_admin_digest_enabled",
+              "controlType": "toggle",
+              "label": "Weekly admin digest email",
+              "defaultValue": false,
+              "requiresEntitlement": "attendance_analytics",
+              "sortOrder": 5
+            }
           ]
         },
         {
@@ -69,7 +195,14 @@
           "sortOrder": 5,
           "requiresEntitlement": "attendance_freeze_enforcement",
           "fields": [
-            { "name": "auto_freeze_membership_on_threshold", "controlType": "toggle", "label": "Auto-pause membership when unexcused absence threshold reached", "defaultValue": true, "helpText": "When ON, AbsenceFreezeThresholdReached triggers membership.status='paused'. Admin manually resumes.", "sortOrder": 1 }
+            {
+              "name": "auto_freeze_membership_on_threshold",
+              "controlType": "toggle",
+              "label": "Auto-pause membership when unexcused absence threshold reached",
+              "defaultValue": true,
+              "helpText": "When ON, AbsenceFreezeThresholdReached triggers membership.status='paused'. Admin manually resumes.",
+              "sortOrder": 1
+            }
           ]
         }
       ]

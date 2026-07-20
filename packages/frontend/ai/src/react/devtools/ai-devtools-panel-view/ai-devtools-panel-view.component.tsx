@@ -19,14 +19,14 @@
  *   string changes.
  */
 
-import { type ReactElement, useCallback, useSyncExternalStore } from 'react';
-import { Card, Chip } from '@stackra/ui/react';
+import { type ReactElement, useCallback, useSyncExternalStore } from "react";
+import { Card, Chip } from "@stackra/ui/react";
 
-import type { OrchestratorStatus } from '@/core/services/chat-orchestrator.service';
-import type { AiDevtoolsPanelViewProps } from './ai-devtools-panel-view.interface';
+import type { OrchestratorStatus } from "@/core/services/chat-orchestrator.service";
+import type { AiDevtoolsPanelViewProps } from "./ai-devtools-panel-view.interface";
 
 /** Fallback status when no orchestrator is present. */
-const IDLE_STATUS: OrchestratorStatus = 'idle';
+const IDLE_STATUS: OrchestratorStatus = "idle";
 
 /**
  * Map an orchestrator status to a HeroUI `Chip` variant. Kept as a
@@ -37,18 +37,18 @@ const IDLE_STATUS: OrchestratorStatus = 'idle';
  * "danger" variant — the error label carries the semantic weight
  * in the text.
  */
-function statusVariant(status: OrchestratorStatus): 'primary' | 'secondary' | 'soft' | 'tertiary' {
+function statusVariant(status: OrchestratorStatus): "primary" | "secondary" | "soft" | "tertiary" {
   switch (status) {
-    case 'streaming':
-      return 'primary';
-    case 'complete':
-      return 'soft';
-    case 'error':
-    case 'cancelled':
-      return 'tertiary';
-    case 'idle':
+    case "streaming":
+      return "primary";
+    case "complete":
+      return "soft";
+    case "error":
+    case "cancelled":
+      return "tertiary";
+    case "idle":
     default:
-      return 'secondary';
+      return "secondary";
   }
 }
 
@@ -66,11 +66,11 @@ export function AiDevtoolsPanelView({
   // `useSyncExternalStore` doesn't tear on re-renders.
   const subscribe = useCallback(
     (cb: () => void) => (orchestrator ? orchestrator.onStatusChange(cb) : () => {}),
-    [orchestrator]
+    [orchestrator],
   );
   const getSnapshot = useCallback(
     () => (orchestrator ? orchestrator.status : IDLE_STATUS),
-    [orchestrator]
+    [orchestrator],
   );
   const status = useSyncExternalStore(subscribe, getSnapshot, getSnapshot);
 
@@ -91,13 +91,13 @@ export function AiDevtoolsPanelView({
   }
 
   const clientName =
-    (client as { constructor?: { name?: string } })?.constructor?.name ?? 'unknown';
+    (client as { constructor?: { name?: string } })?.constructor?.name ?? "unknown";
 
   return (
     <div className="flex flex-col gap-3">
       <header>
-        <h3 className="text-base font-semibold text-foreground">AI</h3>
-        <p className="text-xs text-muted">Live orchestrator status and the active AI client.</p>
+        <h3 className="text-foreground text-base font-semibold">AI</h3>
+        <p className="text-muted text-xs">Live orchestrator status and the active AI client.</p>
       </header>
 
       <Card>
@@ -109,7 +109,7 @@ export function AiDevtoolsPanelView({
             </Chip>
           </div>
           <Card.Description>
-            Streaming, tool-call, and error state — sourced from the orchestrator's{' '}
+            Streaming, tool-call, and error state — sourced from the orchestrator's{" "}
             <code>onStatusChange</code> event.
           </Card.Description>
         </Card.Header>

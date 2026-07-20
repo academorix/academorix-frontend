@@ -6,11 +6,11 @@
  *   renders the bottom-sheet compound without crashing.
  */
 
-import { cleanup, render } from '@testing-library/react';
-import { afterEach, describe, expect, it, vi } from 'vitest';
-import type { ReactNode } from 'react';
+import { cleanup, render } from "@testing-library/react";
+import { afterEach, describe, expect, it, vi } from "vitest";
+import type { ReactNode } from "react";
 
-vi.mock('react-native', () => ({
+vi.mock("react-native", () => ({
   View: ({ children }: { readonly children?: ReactNode }) => <div>{children}</div>,
   Text: ({ children }: { readonly children?: ReactNode }) => <span>{children}</span>,
   Pressable: ({
@@ -27,7 +27,7 @@ vi.mock('react-native', () => ({
   ScrollView: ({ children }: { readonly children?: ReactNode }) => <div>{children}</div>,
 }));
 
-vi.mock('@stackra/ui/native', () => {
+vi.mock("@stackra/ui/native", () => {
   function BottomSheet({
     children,
     isOpen,
@@ -75,14 +75,14 @@ const state = {
   panels: [] as { readonly id: string; readonly title: string; readonly view: unknown }[],
 };
 
-vi.mock('@/native/hooks/use-native-devtools-frame-state.hook', () => ({
+vi.mock("@/native/hooks/use-native-devtools-frame-state.hook", () => ({
   useNativeDevtoolsFrameState: () => ({
     state: { isOpen: state.isOpen, activePanelId: state.activePanelId },
     update: state.update,
   }),
 }));
 
-vi.mock('@/native/hooks/use-native-devtools-panels.hook', () => ({
+vi.mock("@/native/hooks/use-native-devtools-panels.hook", () => ({
   useNativeDevtoolsPanels: () => ({
     panels: state.panels,
     byCategory: new Map(),
@@ -91,13 +91,13 @@ vi.mock('@/native/hooks/use-native-devtools-panels.hook', () => ({
 }));
 
 // Stub out the panel view — it drags in more UI primitives.
-vi.mock('@/native/components/devtools-panel-view', () => ({
+vi.mock("@/native/components/devtools-panel-view", () => ({
   DevtoolsPanelView: ({ panel }: { readonly panel: { readonly id: string } }) => (
     <div data-testid="panel-view" data-panel-id={panel.id} />
   ),
 }));
 
-import { DevtoolsShell } from '@/native/components/devtools-shell';
+import { DevtoolsShell } from "@/native/components/devtools-shell";
 
 afterEach(() => {
   cleanup();
@@ -107,20 +107,20 @@ afterEach(() => {
   state.update = vi.fn();
 });
 
-describe('native <DevtoolsShell />', () => {
-  it('renders the bottom sheet without crashing', () => {
-    state.panels = [{ id: 'a', title: 'A', view: { type: 'component', render: () => null } }];
+describe("native <DevtoolsShell />", () => {
+  it("renders the bottom sheet without crashing", () => {
+    state.panels = [{ id: "a", title: "A", view: { type: "component", render: () => null } }];
     const { getByTestId } = render(<DevtoolsShell />);
-    expect(getByTestId('bottom-sheet')).toBeDefined();
-    expect(getByTestId('sheet-title').textContent).toBe('Devtools');
+    expect(getByTestId("bottom-sheet")).toBeDefined();
+    expect(getByTestId("sheet-title").textContent).toBe("Devtools");
   });
 
-  it('shows a chip per registered panel', () => {
+  it("shows a chip per registered panel", () => {
     state.panels = [
-      { id: 'a', title: 'Alpha', view: { type: 'component', render: () => null } },
-      { id: 'b', title: 'Beta', view: { type: 'component', render: () => null } },
+      { id: "a", title: "Alpha", view: { type: "component", render: () => null } },
+      { id: "b", title: "Beta", view: { type: "component", render: () => null } },
     ];
     const { getAllByTestId } = render(<DevtoolsShell />);
-    expect(getAllByTestId('chip')).toHaveLength(2);
+    expect(getAllByTestId("chip")).toHaveLength(2);
   });
 });

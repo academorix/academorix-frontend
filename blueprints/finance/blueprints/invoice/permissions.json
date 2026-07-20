@@ -6,36 +6,184 @@
   "isSystem": true,
   "description": "Two audiences. Tenant plane (sanctum) — customer sees own invoices via invoice.enforce_customer_scope; admin + finance role manage tenant-wide invoices; ops role sees read-only view for support. Platform plane (platform_admin) — cross-tenant support tooling for ops + support. All tenant-plane permissions carry the `invoice.` prefix (or `platform.invoice.` on the platform audience) per hierarchy.md §4 audience-boundary rules. Financial actions (create, finalize, void, mark-uncollectible, issue credit note) require BOTH admin role AND finance sub-role for defense-in-depth.",
   "permissions": [
-    { "name": "invoice.invoices.viewMine", "guard": "sanctum", "description": "Customer sees own invoices via invoice.enforce_customer_scope middleware.", "seededOn": ["parent", "athlete", "member"] },
-    { "name": "invoice.invoices.viewAny", "guard": "sanctum", "seededOn": ["finance", "admin", "owner", "support"] },
-    { "name": "invoice.invoices.view", "guard": "sanctum", "seededOn": ["finance", "admin", "owner", "support"] },
-    { "name": "invoice.invoices.create", "guard": "sanctum", "description": "Create a new draft invoice. Finance + admin only.", "seededOn": ["finance", "admin", "owner"] },
-    { "name": "invoice.invoices.update", "guard": "sanctum", "description": "Update a DRAFT invoice (lines, addresses). Post-finalize is immutable regardless.", "seededOn": ["finance", "admin", "owner"] },
-    { "name": "invoice.invoices.finalize", "guard": "sanctum", "description": "Transition status draft → open. Freezes totals + generates PDF + sends email.", "seededOn": ["finance", "admin", "owner"] },
-    { "name": "invoice.invoices.send", "guard": "sanctum", "description": "Initial email delivery of a finalized invoice.", "seededOn": ["finance", "admin", "owner"] },
-    { "name": "invoice.invoices.resend", "guard": "sanctum", "description": "Re-send the invoice email (customer lost it, wrong address, etc.).", "seededOn": ["finance", "admin", "owner", "support"] },
-    { "name": "invoice.invoices.void", "guard": "sanctum", "description": "Void a draft or open invoice. Refused after payment — use credit note instead.", "seededOn": ["finance", "admin", "owner"] },
-    { "name": "invoice.invoices.mark-uncollectible", "guard": "sanctum", "description": "Mark a past-due invoice uncollectible after dunning ladder exhausted. Bad-debt write-off.", "seededOn": ["finance", "admin", "owner"] },
-    { "name": "invoice.invoices.mark-paid", "guard": "sanctum", "description": "Manual reconciliation. Records that the payment arrived via check / wire / cash. Admin + finance only.", "seededOn": ["finance", "admin", "owner"] },
-    { "name": "invoice.invoices.regenerate-pdf", "guard": "sanctum", "description": "Regenerate the invoice PDF (e.g. after tenant branding update).", "seededOn": ["finance", "admin", "owner", "support"] },
-    { "name": "invoice.invoices.mark-viewed", "guard": "sanctum", "description": "Customer marks their own invoice viewed. Also fired by the email-tracking pixel.", "seededOn": ["parent", "athlete", "member"] },
-    { "name": "invoice.lines.viewAny", "guard": "sanctum", "seededOn": ["finance", "admin", "owner", "support"] },
-    { "name": "invoice.lines.create", "guard": "sanctum", "description": "Add a line item to a DRAFT invoice.", "seededOn": ["finance", "admin", "owner"] },
-    { "name": "invoice.lines.update", "guard": "sanctum", "description": "Edit a line item on a DRAFT invoice.", "seededOn": ["finance", "admin", "owner"] },
-    { "name": "invoice.lines.delete", "guard": "sanctum", "description": "Remove a line item from a DRAFT invoice.", "seededOn": ["finance", "admin", "owner"] },
-    { "name": "invoice.credit-notes.viewMine", "guard": "sanctum", "description": "Customer sees own credit notes.", "seededOn": ["parent", "athlete", "member"] },
-    { "name": "invoice.credit-notes.viewAny", "guard": "sanctum", "seededOn": ["finance", "admin", "owner", "support"] },
-    { "name": "invoice.credit-notes.view", "guard": "sanctum", "seededOn": ["finance", "admin", "owner", "support"] },
-    { "name": "invoice.credit-notes.create", "guard": "sanctum", "description": "Issue a credit note against a paid/partially-paid invoice. Finance + admin only.", "seededOn": ["finance", "admin", "owner"] },
-    { "name": "invoice.credit-notes.apply", "guard": "sanctum", "description": "Apply a credit note (to refund / next invoice / customer balance).", "seededOn": ["finance", "admin", "owner"] },
-    { "name": "invoice.credit-notes.void", "guard": "sanctum", "description": "Void a DRAFT credit note only. Issued/applied credit notes are immutable.", "seededOn": ["finance", "admin", "owner"] },
-    { "name": "invoice.reports.aging.view", "guard": "sanctum", "description": "View the invoice aging report (0-30 / 31-60 / 61-90 / 91+ buckets).", "seededOn": ["finance", "admin", "owner"] },
-    { "name": "invoice.reports.revenue.view", "guard": "sanctum", "description": "View the revenue report (aggregated by period + item type).", "seededOn": ["finance", "admin", "owner"] },
-    { "name": "invoice.reports.tax-collected.view", "guard": "sanctum", "description": "View the tax-collected report (grouped by tax jurisdiction — VAT/GST returns).", "seededOn": ["finance", "admin", "owner", "compliance"] },
-    { "name": "platform.invoice.invoices.viewAny", "guard": "platform_admin", "description": "Cross-tenant invoice list (redacted PII by default).", "seededOn": ["super_admin", "ops", "support"] },
-    { "name": "platform.invoice.invoices.view", "guard": "platform_admin", "seededOn": ["super_admin", "ops", "support"] },
-    { "name": "platform.invoice.pii.view", "guard": "platform_admin", "description": "Unmasked customer PII on cross-tenant invoice view. Escalation-only.", "seededOn": ["super_admin", "ops"] },
-    { "name": "platform.invoice.credit-notes.viewAny", "guard": "platform_admin", "seededOn": ["super_admin", "ops", "support"] },
-    { "name": "platform.invoice.reports.revenue-cross-tenant.view", "guard": "platform_admin", "description": "Aggregated revenue across all tenants. Powers platform-level financial dashboards.", "seededOn": ["super_admin", "ops"] }
+    {
+      "name": "invoice.invoices.viewMine",
+      "guard": "sanctum",
+      "description": "Customer sees own invoices via invoice.enforce_customer_scope middleware.",
+      "seededOn": ["parent", "athlete", "member"]
+    },
+    {
+      "name": "invoice.invoices.viewAny",
+      "guard": "sanctum",
+      "seededOn": ["finance", "admin", "owner", "support"]
+    },
+    {
+      "name": "invoice.invoices.view",
+      "guard": "sanctum",
+      "seededOn": ["finance", "admin", "owner", "support"]
+    },
+    {
+      "name": "invoice.invoices.create",
+      "guard": "sanctum",
+      "description": "Create a new draft invoice. Finance + admin only.",
+      "seededOn": ["finance", "admin", "owner"]
+    },
+    {
+      "name": "invoice.invoices.update",
+      "guard": "sanctum",
+      "description": "Update a DRAFT invoice (lines, addresses). Post-finalize is immutable regardless.",
+      "seededOn": ["finance", "admin", "owner"]
+    },
+    {
+      "name": "invoice.invoices.finalize",
+      "guard": "sanctum",
+      "description": "Transition status draft → open. Freezes totals + generates PDF + sends email.",
+      "seededOn": ["finance", "admin", "owner"]
+    },
+    {
+      "name": "invoice.invoices.send",
+      "guard": "sanctum",
+      "description": "Initial email delivery of a finalized invoice.",
+      "seededOn": ["finance", "admin", "owner"]
+    },
+    {
+      "name": "invoice.invoices.resend",
+      "guard": "sanctum",
+      "description": "Re-send the invoice email (customer lost it, wrong address, etc.).",
+      "seededOn": ["finance", "admin", "owner", "support"]
+    },
+    {
+      "name": "invoice.invoices.void",
+      "guard": "sanctum",
+      "description": "Void a draft or open invoice. Refused after payment — use credit note instead.",
+      "seededOn": ["finance", "admin", "owner"]
+    },
+    {
+      "name": "invoice.invoices.mark-uncollectible",
+      "guard": "sanctum",
+      "description": "Mark a past-due invoice uncollectible after dunning ladder exhausted. Bad-debt write-off.",
+      "seededOn": ["finance", "admin", "owner"]
+    },
+    {
+      "name": "invoice.invoices.mark-paid",
+      "guard": "sanctum",
+      "description": "Manual reconciliation. Records that the payment arrived via check / wire / cash. Admin + finance only.",
+      "seededOn": ["finance", "admin", "owner"]
+    },
+    {
+      "name": "invoice.invoices.regenerate-pdf",
+      "guard": "sanctum",
+      "description": "Regenerate the invoice PDF (e.g. after tenant branding update).",
+      "seededOn": ["finance", "admin", "owner", "support"]
+    },
+    {
+      "name": "invoice.invoices.mark-viewed",
+      "guard": "sanctum",
+      "description": "Customer marks their own invoice viewed. Also fired by the email-tracking pixel.",
+      "seededOn": ["parent", "athlete", "member"]
+    },
+    {
+      "name": "invoice.lines.viewAny",
+      "guard": "sanctum",
+      "seededOn": ["finance", "admin", "owner", "support"]
+    },
+    {
+      "name": "invoice.lines.create",
+      "guard": "sanctum",
+      "description": "Add a line item to a DRAFT invoice.",
+      "seededOn": ["finance", "admin", "owner"]
+    },
+    {
+      "name": "invoice.lines.update",
+      "guard": "sanctum",
+      "description": "Edit a line item on a DRAFT invoice.",
+      "seededOn": ["finance", "admin", "owner"]
+    },
+    {
+      "name": "invoice.lines.delete",
+      "guard": "sanctum",
+      "description": "Remove a line item from a DRAFT invoice.",
+      "seededOn": ["finance", "admin", "owner"]
+    },
+    {
+      "name": "invoice.credit-notes.viewMine",
+      "guard": "sanctum",
+      "description": "Customer sees own credit notes.",
+      "seededOn": ["parent", "athlete", "member"]
+    },
+    {
+      "name": "invoice.credit-notes.viewAny",
+      "guard": "sanctum",
+      "seededOn": ["finance", "admin", "owner", "support"]
+    },
+    {
+      "name": "invoice.credit-notes.view",
+      "guard": "sanctum",
+      "seededOn": ["finance", "admin", "owner", "support"]
+    },
+    {
+      "name": "invoice.credit-notes.create",
+      "guard": "sanctum",
+      "description": "Issue a credit note against a paid/partially-paid invoice. Finance + admin only.",
+      "seededOn": ["finance", "admin", "owner"]
+    },
+    {
+      "name": "invoice.credit-notes.apply",
+      "guard": "sanctum",
+      "description": "Apply a credit note (to refund / next invoice / customer balance).",
+      "seededOn": ["finance", "admin", "owner"]
+    },
+    {
+      "name": "invoice.credit-notes.void",
+      "guard": "sanctum",
+      "description": "Void a DRAFT credit note only. Issued/applied credit notes are immutable.",
+      "seededOn": ["finance", "admin", "owner"]
+    },
+    {
+      "name": "invoice.reports.aging.view",
+      "guard": "sanctum",
+      "description": "View the invoice aging report (0-30 / 31-60 / 61-90 / 91+ buckets).",
+      "seededOn": ["finance", "admin", "owner"]
+    },
+    {
+      "name": "invoice.reports.revenue.view",
+      "guard": "sanctum",
+      "description": "View the revenue report (aggregated by period + item type).",
+      "seededOn": ["finance", "admin", "owner"]
+    },
+    {
+      "name": "invoice.reports.tax-collected.view",
+      "guard": "sanctum",
+      "description": "View the tax-collected report (grouped by tax jurisdiction — VAT/GST returns).",
+      "seededOn": ["finance", "admin", "owner", "compliance"]
+    },
+    {
+      "name": "platform.invoice.invoices.viewAny",
+      "guard": "platform_admin",
+      "description": "Cross-tenant invoice list (redacted PII by default).",
+      "seededOn": ["super_admin", "ops", "support"]
+    },
+    {
+      "name": "platform.invoice.invoices.view",
+      "guard": "platform_admin",
+      "seededOn": ["super_admin", "ops", "support"]
+    },
+    {
+      "name": "platform.invoice.pii.view",
+      "guard": "platform_admin",
+      "description": "Unmasked customer PII on cross-tenant invoice view. Escalation-only.",
+      "seededOn": ["super_admin", "ops"]
+    },
+    {
+      "name": "platform.invoice.credit-notes.viewAny",
+      "guard": "platform_admin",
+      "seededOn": ["super_admin", "ops", "support"]
+    },
+    {
+      "name": "platform.invoice.reports.revenue-cross-tenant.view",
+      "guard": "platform_admin",
+      "description": "Aggregated revenue across all tenants. Powers platform-level financial dashboards.",
+      "seededOn": ["super_admin", "ops"]
+    }
   ]
 }

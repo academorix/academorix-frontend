@@ -1,4 +1,4 @@
-laravel: '@testbench'
+laravel: "@testbench"
 
 providers:
   # - {{ WorkbenchServiceProvider }}
@@ -7,7 +7,7 @@ migrations:
   - workbench/database/migrations
 
 seeders:
-  - {{ WorkbenchDatabaseSeeder }}
+  - { { WorkbenchDatabaseSeeder } }
 
 workbench:
   install: true

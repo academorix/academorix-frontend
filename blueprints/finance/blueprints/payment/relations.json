@@ -175,10 +175,7 @@
       "onModels": ["PaymentMethod"],
       "morphType": "customer_type",
       "morphId": "customer_id",
-      "supportedTypes": [
-        "user::User",
-        "sports::Athlete"
-      ],
+      "supportedTypes": ["user::User", "sports::Athlete"],
       "description": "Polymorphic customer of the saved payment method. User = the account owner. Athlete = the parent-managed minor (parent's UI attaches a method on the athlete's profile via delegation). Each supported type is tenant-scoped in its own module. The observer validates cross-model tenant integrity on write."
     }
   ],

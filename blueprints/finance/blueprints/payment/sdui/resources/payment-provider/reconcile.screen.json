@@ -26,7 +26,11 @@
         {
           "kind": "Text",
           "props": { "as": "h1", "className": "text-2xl font-semibold" },
-          "bindings": { "children": { "$expr": "'Reconcile ' + provider.provider.charAt(0).toUpperCase() + provider.provider.slice(1)" } }
+          "bindings": {
+            "children": {
+              "$expr": "'Reconcile ' + provider.provider.charAt(0).toUpperCase() + provider.provider.slice(1)"
+            }
+          }
         },
         {
           "kind": "Alert",
@@ -39,7 +43,19 @@
         {
           "kind": "Card",
           "children": [
-            { "kind": "CardHeader", "children": [{ "kind": "Text", "props": { "as": "h2", "className": "text-lg font-medium", "children": "Last run" } }] },
+            {
+              "kind": "CardHeader",
+              "children": [
+                {
+                  "kind": "Text",
+                  "props": {
+                    "as": "h2",
+                    "className": "text-lg font-medium",
+                    "children": "Last run"
+                  }
+                }
+              ]
+            },
             {
               "kind": "CardContent",
               "children": [
@@ -82,7 +98,14 @@
             {
               "kind": "CardHeader",
               "children": [
-                { "kind": "Text", "props": { "as": "h2", "className": "text-lg font-medium", "children": "Reconciliation complete" } }
+                {
+                  "kind": "Text",
+                  "props": {
+                    "as": "h2",
+                    "className": "text-lg font-medium",
+                    "children": "Reconciliation complete"
+                  }
+                }
               ]
             },
             {

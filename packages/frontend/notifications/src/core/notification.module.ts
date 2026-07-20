@@ -22,25 +22,25 @@
  *   auto-registers on the manager during `onApplicationBootstrap`.
  */
 
-import { Module, type DynamicModule, type Type } from '@stackra/container';
-import { createSeedLoader, seedLoaderToken } from '@stackra/support';
+import { Module, type DynamicModule, type Type } from "@stackra/container";
+import { createSeedLoader, seedLoaderToken } from "@stackra/support";
 
-import { InAppChannelDriver } from './channels';
+import { InAppChannelDriver } from "./channels";
 import {
   IN_APP_NOTIFICATION_CENTRE,
   NOTIFICATION_CONFIG,
   NOTIFICATION_MANAGER,
   NOTIFICATION_PREFERENCES_SERVICE,
   PUSH_SUBSCRIPTION_MANAGER,
-} from './constants';
-import { mergeConfig } from './utils/merge-config.util';
-import { AnalyticsBridgeService } from './services/analytics-bridge.service';
-import { InAppNotificationCentre } from './services/in-app-notification-centre.service';
-import { NotificationManager } from './services/notification-manager.service';
-import { NotificationPreferencesService } from './services/notification-preferences.service';
-import { PushSubscriptionManager } from './services/push-subscription-manager.service';
-import type { INotificationChannelDriver, INotificationModuleOptions } from './interfaces';
-import { PushModule } from '../push/push.module';
+} from "./constants";
+import { mergeConfig } from "./utils/merge-config.util";
+import { AnalyticsBridgeService } from "./services/analytics-bridge.service";
+import { InAppNotificationCentre } from "./services/in-app-notification-centre.service";
+import { NotificationManager } from "./services/notification-manager.service";
+import { NotificationPreferencesService } from "./services/notification-preferences.service";
+import { PushSubscriptionManager } from "./services/push-subscription-manager.service";
+import type { INotificationChannelDriver, INotificationModuleOptions } from "./interfaces";
+import { PushModule } from "../push/push.module";
 
 /**
  * Notifications root module.
@@ -102,7 +102,7 @@ export class NotificationModule {
         // — see `module-lifecycle.md` for the last-wins rule.
         InAppChannelDriver,
         {
-          provide: seedLoaderToken('notifications:channel:in-app'),
+          provide: seedLoaderToken("notifications:channel:in-app"),
           useFactory: (manager: NotificationManager, driver: InAppChannelDriver) =>
             createSeedLoader(() => manager.register(driver)),
           inject: [NOTIFICATION_MANAGER, InAppChannelDriver],
@@ -153,7 +153,7 @@ export class NotificationModule {
    * ```
    */
   public static forFeature(
-    driver: Type<INotificationChannelDriver> | Type<INotificationChannelDriver>[]
+    driver: Type<INotificationChannelDriver> | Type<INotificationChannelDriver>[],
   ): DynamicModule {
     const classes = Array.isArray(driver) ? driver : [driver];
     return {

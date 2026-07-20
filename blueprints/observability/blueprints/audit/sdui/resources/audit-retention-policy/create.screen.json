@@ -23,7 +23,9 @@
             {
               "kind": "Button",
               "props": { "variant": "ghost", "leadingIcon": "arrow-left", "children": "Back" },
-              "actions": { "onPress": { "kind": "navigate", "to": "/tenant/audit/retention-policies" } }
+              "actions": {
+                "onPress": { "kind": "navigate", "to": "/tenant/audit/retention-policies" }
+              }
             },
             {
               "kind": "Text",
@@ -84,9 +86,15 @@
                 { "key": "sox_404", "label": "SOX §404 — financial mutation records" },
                 { "key": "hipaa_164_316", "label": "HIPAA §164.316(b)(2)(i) — PHI audit trail" },
                 { "key": "irs_6001", "label": "IRS §6001 — taxable transaction records" },
-                { "key": "pci_dss_10_7", "label": "PCI-DSS Req 10.7 — cardholder-data audit trails" },
+                {
+                  "key": "pci_dss_10_7",
+                  "label": "PCI-DSS Req 10.7 — cardholder-data audit trails"
+                },
                 { "key": "gdpr_art_30", "label": "GDPR Art. 30 — records of processing" },
-                { "key": "regulator_hold", "label": "Regulator preservation order (ongoing investigation)" },
+                {
+                  "key": "regulator_hold",
+                  "label": "Regulator preservation order (ongoing investigation)"
+                },
                 { "key": "litigation_hold", "label": "Litigation hold (discovery pending)" }
               ]
             },

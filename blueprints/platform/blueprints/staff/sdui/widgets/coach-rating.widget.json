@@ -6,12 +6,22 @@
   "description": "Star-rating renderer for Coach.rating + rating_count. Renders nothing when coach_rating_display entitlement is off OR rating is null (never rated).",
   "props": {
     "rating": { "type": "number", "description": "Rating between 0 and 5. Null = no rating." },
-    "count": { "type": "integer", "default": 0, "description": "Number of ratings that produced the average." },
+    "count": {
+      "type": "integer",
+      "default": 0,
+      "description": "Number of ratings that produced the average."
+    },
     "size": { "type": "string", "default": "sm", "enum": ["xs", "sm", "md", "lg"] },
     "showCount": { "type": "boolean", "default": true }
   },
   "dataSources": [
-    { "name": "features", "kind": "http.get", "url": "/api/v1/features", "unwrap": "data", "cache": { "ttlSeconds": 60 } }
+    {
+      "name": "features",
+      "kind": "http.get",
+      "url": "/api/v1/features",
+      "unwrap": "data",
+      "cache": { "ttlSeconds": 60 }
+    }
   ],
   "nodes": [
     {

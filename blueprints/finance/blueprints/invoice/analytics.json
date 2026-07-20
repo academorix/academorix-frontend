@@ -10,28 +10,57 @@
       "name": "Invoice Created",
       "kind": "track",
       "consent_required": "functional",
-      "properties": ["tenant_id", "series", "currency", "payment_terms", "line_count_bucket", "created_by_role", "is_membership_linked"],
+      "properties": [
+        "tenant_id",
+        "series",
+        "currency",
+        "payment_terms",
+        "line_count_bucket",
+        "created_by_role",
+        "is_membership_linked"
+      ],
       "description": "Admin manually created an invoice. Powers admin-workflow funnel + membership-linkage rate insight."
     },
     {
       "name": "Invoice Finalized",
       "kind": "track",
       "consent_required": "functional",
-      "properties": ["tenant_id", "days_from_creation_bucket", "line_count_bucket", "total_bucket", "currency", "finalized_by_role"],
+      "properties": [
+        "tenant_id",
+        "days_from_creation_bucket",
+        "line_count_bucket",
+        "total_bucket",
+        "currency",
+        "finalized_by_role"
+      ],
       "description": "Draft → open transition. days_from_creation_bucket signals workflow speed."
     },
     {
       "name": "Invoice Paid",
       "kind": "track",
       "consent_required": "essential",
-      "properties": ["tenant_id", "days_from_finalize_to_paid_bucket", "was_past_due", "was_partially_paid_first", "payment_method_bucket", "total_bucket", "currency", "is_membership_linked"],
+      "properties": [
+        "tenant_id",
+        "days_from_finalize_to_paid_bucket",
+        "was_past_due",
+        "was_partially_paid_first",
+        "payment_method_bucket",
+        "total_bucket",
+        "currency",
+        "is_membership_linked"
+      ],
       "description": "Load-bearing revenue event. Consent tier: essential (financial signal). Feeds ROAS + revenue-recognition funnels."
     },
     {
       "name": "Invoice Voided",
       "kind": "track",
       "consent_required": "functional",
-      "properties": ["tenant_id", "previous_status", "days_from_creation_bucket", "void_reason_category"],
+      "properties": [
+        "tenant_id",
+        "previous_status",
+        "days_from_creation_bucket",
+        "void_reason_category"
+      ],
       "description": "void_reason_category is bucketed: 'error', 'customer_cancelled', 'duplicate', 'other' (to bound cardinality — free-form void_reason not exported)."
     },
     {
@@ -57,7 +86,12 @@
       "name": "Invoice Written Off",
       "kind": "track",
       "consent_required": "essential",
-      "properties": ["tenant_id", "days_from_past_due_to_write_off_bucket", "total_bucket", "currency"]
+      "properties": [
+        "tenant_id",
+        "days_from_past_due_to_write_off_bucket",
+        "total_bucket",
+        "currency"
+      ]
     },
     {
       "name": "Credit Note Issued",
@@ -101,7 +135,13 @@
       "name": "Invoice Mark Paid (Manual Reconciliation)",
       "kind": "track",
       "consent_required": "functional",
-      "properties": ["tenant_id", "payment_method", "total_bucket", "currency", "days_from_finalize_bucket"],
+      "properties": [
+        "tenant_id",
+        "payment_method",
+        "total_bucket",
+        "currency",
+        "days_from_finalize_bucket"
+      ],
       "description": "Signal for off-platform payments (check/wire/cash). Every fire is admin intervention."
     }
   ],

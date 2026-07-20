@@ -32,8 +32,21 @@
             {
               "kind": "View",
               "children": [
-                { "kind": "Text", "props": { "as": "h1", "className": "text-2xl font-semibold", "children": "Annual tax report" } },
-                { "kind": "Text", "props": { "className": "text-sm text-muted", "children": "Aggregated tax_calculations per jurisdiction for regulator filing." } }
+                {
+                  "kind": "Text",
+                  "props": {
+                    "as": "h1",
+                    "className": "text-2xl font-semibold",
+                    "children": "Annual tax report"
+                  }
+                },
+                {
+                  "kind": "Text",
+                  "props": {
+                    "className": "text-sm text-muted",
+                    "children": "Aggregated tax_calculations per jurisdiction for regulator filing."
+                  }
+                }
               ]
             },
             {
@@ -42,7 +55,11 @@
               "children": [
                 {
                   "kind": "Button",
-                  "props": { "variant": "secondary", "leadingIcon": "arrow-down-tray", "children": "Export CSV" },
+                  "props": {
+                    "variant": "secondary",
+                    "leadingIcon": "arrow-down-tray",
+                    "children": "Export CSV"
+                  },
                   "actions": {
                     "onPress": {
                       "kind": "http.download",
@@ -53,7 +70,11 @@
                 },
                 {
                   "kind": "Button",
-                  "props": { "variant": "primary", "leadingIcon": "document-arrow-down", "children": "Export PDF" },
+                  "props": {
+                    "variant": "primary",
+                    "leadingIcon": "document-arrow-down",
+                    "children": "Export PDF"
+                  },
                   "actions": {
                     "onPress": {
                       "kind": "http.download",
@@ -88,7 +109,11 @@
                 { "id": "custom_webhook", "label": "Custom Webhook" }
               ],
               "actions": {
-                "onSelectionChange": { "kind": "filter.set", "field": "provider", "valueExpr": "$selectedKey" }
+                "onSelectionChange": {
+                  "kind": "filter.set",
+                  "field": "provider",
+                  "valueExpr": "$selectedKey"
+                }
               }
             }
           ]
@@ -101,24 +126,52 @@
               "kind": "Card",
               "props": { "className": "p-6" },
               "children": [
-                { "kind": "Text", "props": { "className": "text-sm text-muted", "children": "Total taxable revenue" } },
-                { "kind": "Text", "props": { "className": "text-3xl font-bold mt-1" }, "bindings": { "children": { "$ref": "report.totals.source_amount", "formatter": "currency" } } }
+                {
+                  "kind": "Text",
+                  "props": {
+                    "className": "text-sm text-muted",
+                    "children": "Total taxable revenue"
+                  }
+                },
+                {
+                  "kind": "Text",
+                  "props": { "className": "text-3xl font-bold mt-1" },
+                  "bindings": {
+                    "children": { "$ref": "report.totals.source_amount", "formatter": "currency" }
+                  }
+                }
               ]
             },
             {
               "kind": "Card",
               "props": { "className": "p-6" },
               "children": [
-                { "kind": "Text", "props": { "className": "text-sm text-muted", "children": "Total tax collected" } },
-                { "kind": "Text", "props": { "className": "text-3xl font-bold mt-1" }, "bindings": { "children": { "$ref": "report.totals.tax_amount", "formatter": "currency" } } }
+                {
+                  "kind": "Text",
+                  "props": { "className": "text-sm text-muted", "children": "Total tax collected" }
+                },
+                {
+                  "kind": "Text",
+                  "props": { "className": "text-3xl font-bold mt-1" },
+                  "bindings": {
+                    "children": { "$ref": "report.totals.tax_amount", "formatter": "currency" }
+                  }
+                }
               ]
             },
             {
               "kind": "Card",
               "props": { "className": "p-6" },
               "children": [
-                { "kind": "Text", "props": { "className": "text-sm text-muted", "children": "Calculations" } },
-                { "kind": "Text", "props": { "className": "text-3xl font-bold mt-1" }, "bindings": { "children": { "$ref": "report.totals.calculation_count" } } }
+                {
+                  "kind": "Text",
+                  "props": { "className": "text-sm text-muted", "children": "Calculations" }
+                },
+                {
+                  "kind": "Text",
+                  "props": { "className": "text-3xl font-bold mt-1" },
+                  "bindings": { "children": { "$ref": "report.totals.calculation_count" } }
+                }
               ]
             }
           ]
@@ -127,18 +180,53 @@
           "kind": "Card",
           "props": { "className": "p-6" },
           "children": [
-            { "kind": "Text", "props": { "as": "h2", "className": "text-lg font-semibold mb-4", "children": "Per-jurisdiction breakdown" } },
+            {
+              "kind": "Text",
+              "props": {
+                "as": "h2",
+                "className": "text-lg font-semibold mb-4",
+                "children": "Per-jurisdiction breakdown"
+              }
+            },
             {
               "kind": "DataGrid",
               "bindings": { "items": { "$ref": "report.by_jurisdiction" } },
               "props": {
                 "columns": [
-                  { "field": "jurisdiction.name", "label": "Jurisdiction", "sortable": true, "width": 260 },
+                  {
+                    "field": "jurisdiction.name",
+                    "label": "Jurisdiction",
+                    "sortable": true,
+                    "width": 260
+                  },
                   { "field": "jurisdiction.tax_type", "label": "Tax type", "width": 140 },
-                  { "field": "calculation_count", "label": "Calculations", "sortable": true, "width": 130 },
-                  { "field": "source_amount", "label": "Revenue", "sortable": true, "width": 160, "formatter": "currency" },
-                  { "field": "tax_amount", "label": "Tax", "sortable": true, "defaultSort": "desc", "width": 160, "formatter": "currency" },
-                  { "field": "effective_rate", "label": "Effective rate", "width": 130, "formatter": "percent" }
+                  {
+                    "field": "calculation_count",
+                    "label": "Calculations",
+                    "sortable": true,
+                    "width": 130
+                  },
+                  {
+                    "field": "source_amount",
+                    "label": "Revenue",
+                    "sortable": true,
+                    "width": 160,
+                    "formatter": "currency"
+                  },
+                  {
+                    "field": "tax_amount",
+                    "label": "Tax",
+                    "sortable": true,
+                    "defaultSort": "desc",
+                    "width": 160,
+                    "formatter": "currency"
+                  },
+                  {
+                    "field": "effective_rate",
+                    "label": "Effective rate",
+                    "width": 130,
+                    "formatter": "percent"
+                  }
                 ]
               }
             }

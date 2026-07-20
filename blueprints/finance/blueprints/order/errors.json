@@ -4,17 +4,109 @@
   "title": "order — error codes",
   "namespace": "order",
   "errors": [
-    { "code": "ORDER_NOT_FOUND", "http": 404, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "order.errors.not_found" },
-    { "code": "ORDER_STATE_INVALID", "http": 409, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "order.errors.state_invalid", "description": "Requested transition not allowed from current status." },
-    { "code": "ORDER_EMPTY", "http": 422, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "order.errors.empty", "description": "Cannot checkout with zero lines." },
-    { "code": "ORDER_TOTAL_NEGATIVE", "http": 422, "retryable": false, "user_facing": true, "audit_severity": "warn", "i18n_key": "order.errors.total_negative", "description": "Adjustments exceed subtotal + tax. Adjust to non-negative." },
-    { "code": "ORDER_LINE_NOT_FOUND", "http": 404, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "order.errors.line_not_found" },
-    { "code": "ORDER_ADJUSTMENT_NOT_FOUND", "http": 404, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "order.errors.adjustment_not_found" },
-    { "code": "ORDER_ADJUSTMENT_TAX_LOCKED", "http": 422, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "order.errors.adjustment_tax_locked", "description": "Tax adjustments are auto-computed and cannot be deleted manually." },
-    { "code": "ORDER_PURCHASABLE_UNAVAILABLE", "http": 422, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "order.errors.purchasable_unavailable", "description": "Purchasable is out of stock / sold out / disabled." },
-    { "code": "ORDER_CURRENCY_MISMATCH", "http": 422, "retryable": false, "user_facing": false, "audit_severity": "warn", "i18n_key": "order.errors.currency_mismatch", "description": "All lines must share the order's currency. Enforced at line-add." },
-    { "code": "ORDER_ALREADY_PAID", "http": 409, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "order.errors.already_paid" },
-    { "code": "ORDER_REFUND_NOT_ALLOWED", "http": 422, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "order.errors.refund_not_allowed", "description": "Order not in a refundable state, OR refund amount > amount_paid." },
-    { "code": "ORDER_ABANDONED", "http": 410, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "order.errors.abandoned", "description": "Order TTL expired — buyer must start a new checkout." }
+    {
+      "code": "ORDER_NOT_FOUND",
+      "http": 404,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "order.errors.not_found"
+    },
+    {
+      "code": "ORDER_STATE_INVALID",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "order.errors.state_invalid",
+      "description": "Requested transition not allowed from current status."
+    },
+    {
+      "code": "ORDER_EMPTY",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "order.errors.empty",
+      "description": "Cannot checkout with zero lines."
+    },
+    {
+      "code": "ORDER_TOTAL_NEGATIVE",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "warn",
+      "i18n_key": "order.errors.total_negative",
+      "description": "Adjustments exceed subtotal + tax. Adjust to non-negative."
+    },
+    {
+      "code": "ORDER_LINE_NOT_FOUND",
+      "http": 404,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "order.errors.line_not_found"
+    },
+    {
+      "code": "ORDER_ADJUSTMENT_NOT_FOUND",
+      "http": 404,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "order.errors.adjustment_not_found"
+    },
+    {
+      "code": "ORDER_ADJUSTMENT_TAX_LOCKED",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "order.errors.adjustment_tax_locked",
+      "description": "Tax adjustments are auto-computed and cannot be deleted manually."
+    },
+    {
+      "code": "ORDER_PURCHASABLE_UNAVAILABLE",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "order.errors.purchasable_unavailable",
+      "description": "Purchasable is out of stock / sold out / disabled."
+    },
+    {
+      "code": "ORDER_CURRENCY_MISMATCH",
+      "http": 422,
+      "retryable": false,
+      "user_facing": false,
+      "audit_severity": "warn",
+      "i18n_key": "order.errors.currency_mismatch",
+      "description": "All lines must share the order's currency. Enforced at line-add."
+    },
+    {
+      "code": "ORDER_ALREADY_PAID",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "order.errors.already_paid"
+    },
+    {
+      "code": "ORDER_REFUND_NOT_ALLOWED",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "order.errors.refund_not_allowed",
+      "description": "Order not in a refundable state, OR refund amount > amount_paid."
+    },
+    {
+      "code": "ORDER_ABANDONED",
+      "http": 410,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "order.errors.abandoned",
+      "description": "Order TTL expired — buyer must start a new checkout."
+    }
   ]
 }

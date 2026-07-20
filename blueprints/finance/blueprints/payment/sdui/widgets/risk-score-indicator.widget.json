@@ -78,7 +78,9 @@
               "kind": "Text",
               "props": { "className": "text-xs font-mono text-muted" },
               "bindings": {
-                "children": { "$expr": "props.score !== null && props.score !== undefined ? props.score.toString() : '—'" }
+                "children": {
+                  "$expr": "props.score !== null && props.score !== undefined ? props.score.toString() : '—'"
+                }
               }
             }
           ]

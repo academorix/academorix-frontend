@@ -14,7 +14,7 @@ export {
   useConflictResolver,
   type IUseSyncStatusResult,
   type IUseConflictResolverResult,
-} from './hooks';
+} from "./hooks";
 
 // ════════════════════════════════════════════════════════════════════════════════
 // Devtools contribution
@@ -23,4 +23,4 @@ export {
   SyncDevtoolsPanel,
   SyncDevtoolsPanelView,
   type SyncDevtoolsPanelViewProps,
-} from './devtools';
+} from "./devtools";

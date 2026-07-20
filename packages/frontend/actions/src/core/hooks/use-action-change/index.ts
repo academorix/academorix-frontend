@@ -4,5 +4,5 @@
  * @description Public API barrel for the `useActionChange` entity.
  */
 
-export { useActionChange, type IUseActionChangeResult } from './use-action-change.hook';
-export type { ActionChangeMapper } from './use-action-change.type';
+export { useActionChange, type IUseActionChangeResult } from "./use-action-change.hook";
+export type { ActionChangeMapper } from "./use-action-change.type";

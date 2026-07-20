@@ -4,5 +4,5 @@
  * @description Barrel for the `DevtoolsNavRail` entity.
  */
 
-export { DevtoolsNavRail } from './devtools-nav-rail.component';
-export type { DevtoolsNavRailProps } from './devtools-nav-rail.interface';
+export { DevtoolsNavRail } from "./devtools-nav-rail.component";
+export type { DevtoolsNavRailProps } from "./devtools-nav-rail.interface";

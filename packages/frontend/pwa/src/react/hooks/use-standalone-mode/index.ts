@@ -1,1 +1,1 @@
-export { useStandaloneMode } from './use-standalone-mode.hook';
+export { useStandaloneMode } from "./use-standalone-mode.hook";

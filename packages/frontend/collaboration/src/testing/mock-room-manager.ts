@@ -8,11 +8,11 @@
  *   and drive it with the `simulate*` hooks.
  */
 
-import type { CollaborationTransport } from '@/interfaces/transport.interface';
-import { MockCollaborationTransport } from './mock-collaboration-transport';
+import type { CollaborationTransport } from "@/interfaces/transport.interface";
+import { MockCollaborationTransport } from "./mock-collaboration-transport";
 
 /** Transport strategy accepted by `configure()` — mirrors the real service. */
-type TransportStrategy = 'reverb' | 'broadcast' | 'auto';
+type TransportStrategy = "reverb" | "broadcast" | "auto";
 
 /**
  * Mock room manager for tests.
@@ -25,13 +25,13 @@ export class MockRoomManager {
   public readonly transport: MockCollaborationTransport = new MockCollaborationTransport();
 
   /** Last strategy passed to `configure()` — inspectable by tests. */
-  public strategy: TransportStrategy = 'auto';
+  public strategy: TransportStrategy = "auto";
 
   /** Last `realtimeManager` passed to `configure()` — inspectable by tests. */
   public realtimeManager: unknown = null;
 
   public configure(options: { transport?: TransportStrategy; realtimeManager?: unknown }): void {
-    this.strategy = options.transport ?? 'auto';
+    this.strategy = options.transport ?? "auto";
     this.realtimeManager = options.realtimeManager ?? null;
   }
 
@@ -42,7 +42,7 @@ export class MockRoomManager {
   /** Drop the transport ledger — useful between tests. */
   public reset(): void {
     this.transport.reset();
-    this.strategy = 'auto';
+    this.strategy = "auto";
     this.realtimeManager = null;
   }
 }

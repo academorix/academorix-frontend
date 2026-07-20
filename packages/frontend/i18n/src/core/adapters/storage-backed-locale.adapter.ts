@@ -12,19 +12,19 @@
  *   `StorageManager`, not a compile-time choice on the adapter.
  */
 
-import { Inject, Injectable, Optional } from '@stackra/container';
+import { Inject, Injectable, Optional } from "@stackra/container";
 import {
   STORAGE_MANAGER,
   type ILocaleStorage,
   type IStorage,
   type IStorageManager,
-} from '@stackra/contracts';
+} from "@stackra/contracts";
 
-import { I18N_CONFIG } from '@/core/constants';
-import type { II18nConfig } from '@/core/interfaces';
+import { I18N_CONFIG } from "@/core/constants";
+import type { II18nConfig } from "@/core/interfaces";
 
 /** Default storage key when the config doesn't override it. */
-const DEFAULT_STORAGE_KEY = 'stackra_locale';
+const DEFAULT_STORAGE_KEY = "stackra_locale";
 
 /**
  * `ILocaleStorage` implementation backed by `IStorage`.
@@ -70,9 +70,9 @@ export class StorageBackedLocaleAdapter implements ILocaleStorage {
    */
   public constructor(
     @Inject(STORAGE_MANAGER) private readonly manager: IStorageManager,
-    @Optional() @Inject(I18N_CONFIG) config?: II18nConfig
+    @Optional() @Inject(I18N_CONFIG) config?: II18nConfig,
   ) {
-    this.instanceName = config?.storage ?? '';
+    this.instanceName = config?.storage ?? "";
     this.storageKey = config?.storageKey ?? DEFAULT_STORAGE_KEY;
   }
 

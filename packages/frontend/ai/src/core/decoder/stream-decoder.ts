@@ -21,11 +21,11 @@
  *   data event.
  */
 
-import { Injectable } from '@stackra/container';
-import { AiStreamEventType, type IAiStreamDecoder, type IAiStreamEvent } from '@stackra/contracts';
+import { Injectable } from "@stackra/container";
+import { AiStreamEventType, type IAiStreamDecoder, type IAiStreamEvent } from "@stackra/contracts";
 
 /** The sentinel signalling the stream has completed. */
-const DONE_SENTINEL = '[DONE]';
+const DONE_SENTINEL = "[DONE]";
 
 /**
  * Pure function-style decoder — no state, no side effects.
@@ -64,14 +64,14 @@ export class StreamDecoder implements IAiStreamDecoder {
 
     // 3. Only object frames are protocol events; primitives / arrays surface
     //    as recoverable errors.
-    if (parsed === null || typeof parsed !== 'object' || Array.isArray(parsed)) {
-      return this.makeErrorEvent('Protocol frame must be a JSON object');
+    if (parsed === null || typeof parsed !== "object" || Array.isArray(parsed)) {
+      return this.makeErrorEvent("Protocol frame must be a JSON object");
     }
 
     const record = parsed as Record<string, unknown>;
     const rawType = record.type;
-    if (typeof rawType !== 'string') {
-      return this.makeErrorEvent('Protocol frame missing string `type` field');
+    if (typeof rawType !== "string") {
+      return this.makeErrorEvent("Protocol frame missing string `type` field");
     }
 
     // 4. Map by discriminator. Unknown types surface as recoverable errors
@@ -177,7 +177,7 @@ export class StreamDecoder implements IAiStreamDecoder {
 
   /** Coerce an arbitrary value to a string field (missing fields become empty). */
   private str(value: unknown): string {
-    return typeof value === 'string' ? value : '';
+    return typeof value === "string" ? value : "";
   }
 
   private makeErrorEvent(message: string): IAiStreamEvent {

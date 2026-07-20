@@ -9,7 +9,7 @@
  *   event bus, no DI wiring required.
  */
 
-import type { IConsentManager } from '@stackra/contracts';
+import type { IConsentManager } from "@stackra/contracts";
 
 /**
  * In-memory consent manager for testing.

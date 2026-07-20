@@ -31,9 +31,7 @@
     "wave-2"
   ],
   "priority": 51,
-  "providers": [
-    "Academorix\\Staff\\Providers\\StaffServiceProvider"
-  ],
+  "providers": ["Academorix\\Staff\\Providers\\StaffServiceProvider"],
   "files": [],
   "dependencies": [
     "foundation",
@@ -55,24 +53,10 @@
     "scheduling (Wave 4 — shift-planning module reads Staff.weekly_hours + Coach.session_capacity_per_week for capacity)"
   ],
   "contributes": {
-    "traits": [
-      "BelongsToStaff",
-      "BelongsToCoach",
-      "WrapsUser",
-      "HasCoachProfile"
-    ],
-    "attributes": [
-      "AsStaffListener",
-      "AsCoachListener"
-    ],
-    "blueprints": [
-      "staff",
-      "coaches"
-    ],
-    "middleware": [
-      "staff.enforce_active",
-      "staff.enforce_compensation_permission"
-    ],
+    "traits": ["BelongsToStaff", "BelongsToCoach", "WrapsUser", "HasCoachProfile"],
+    "attributes": ["AsStaffListener", "AsCoachListener"],
+    "blueprints": ["staff", "coaches"],
+    "middleware": ["staff.enforce_active", "staff.enforce_compensation_permission"],
     "events": [
       "StaffHired",
       "StaffUpdated",
@@ -98,10 +82,7 @@
       "CoachStatusChanged",
       "CoachAvailabilityChanged"
     ],
-    "policies": [
-      "StaffPolicy",
-      "CoachPolicy"
-    ],
+    "policies": ["StaffPolicy", "CoachPolicy"],
     "hooks": [
       "PreventStaffOrphansOnBranchArchived",
       "PreventUserArchiveWithActiveStaff",
@@ -151,15 +132,8 @@
       "CoachOnLeaveNotification",
       "StaffSuspendedNotification"
     ],
-    "broadcasts": [
-      "tenant.{tenantId}.staff",
-      "branch.{branchId}.staff",
-      "user.{userId}.staff"
-    ],
-    "observers": [
-      "StaffObserver",
-      "CoachObserver"
-    ],
+    "broadcasts": ["tenant.{tenantId}.staff", "branch.{branchId}.staff", "user.{userId}.staff"],
+    "observers": ["StaffObserver", "CoachObserver"],
     "rules": [
       "valid_hex_color",
       "valid_e164_phone",
@@ -188,16 +162,9 @@
       "AvailabilityPattern"
     ],
     "views": [],
-    "lang": [
-      "staff"
-    ],
-    "config": [
-      "staff"
-    ],
-    "macros": [
-      "Request::activeStaff",
-      "Request::activeStaffId"
-    ],
+    "lang": ["staff"],
+    "config": ["staff"],
+    "macros": ["Request::activeStaff", "Request::activeStaffId"],
     "bindings": [
       "StaffRepository",
       "CoachRepository",
@@ -209,10 +176,7 @@
       "OrgChartResolver",
       "BranchManagerResolver"
     ],
-    "resources": [
-      "staff",
-      "coach"
-    ]
+    "resources": ["staff", "coach"]
   },
   "hosts": {
     "tenant": {

@@ -8,18 +8,18 @@
  *      equal the input `.shape` keys.
  */
 
-import { describe, it } from 'vitest';
-import { z, type ZodTypeAny } from 'zod';
+import { describe, it } from "vitest";
+import { z, type ZodTypeAny } from "zod";
 
-import { ToolRegistry } from '@/core/registries/tool.registry';
-import { ToolConverter } from '@/core/services/tool-converter.service';
-import { forAll, type IPrng } from './property-test.helper';
+import { ToolRegistry } from "@/core/registries/tool.registry";
+import { ToolConverter } from "@/core/services/tool-converter.service";
+import { forAll, type IPrng } from "./property-test.helper";
 
-const CHARS = 'abcdefghijklmnopqrstuvwxyz';
+const CHARS = "abcdefghijklmnopqrstuvwxyz";
 
 const genName = (r: IPrng): string => {
   const len = r.int(3, 10);
-  let out = '';
+  let out = "";
   for (let i = 0; i < len; i++) out += CHARS[r.int(0, CHARS.length)];
   return out;
 };
@@ -55,14 +55,14 @@ function genShape(r: IPrng): { name: string; keys: string[]; schema: ZodTypeAny 
   return { name, keys, schema: z.object(shape) };
 }
 
-describe('Property 4: tool-conversion invariant (Req 7.6)', () => {
-  it('convert(def) preserves name and the parameter key set', () => {
+describe("Property 4: tool-conversion invariant (Req 7.6)", () => {
+  it("convert(def) preserves name and the parameter key set", () => {
     forAll(
       (r) => genShape(r),
       ({ name, keys, schema }) => {
         const registry = new ToolRegistry();
         registry.register({
-          definition: { name, description: '', parameters: schema },
+          definition: { name, description: "", parameters: schema },
           handler: async () => undefined,
         });
         const converter = new ToolConverter(registry);
@@ -77,7 +77,7 @@ describe('Property 4: tool-conversion invariant (Req 7.6)', () => {
         for (const k of keys) if (!outKeys.has(k)) return false;
         return true;
       },
-      { runs: 200 }
+      { runs: 200 },
     );
   });
 });

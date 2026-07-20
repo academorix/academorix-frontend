@@ -15,8 +15,14 @@
   "retention": [
     {
       "entity": "TaxRate",
-      "hot": { "days": 3650, "description": "Active rates + first 10 years of historical rates hot for calculation-freeze lookups. Old rates are hit rarely but must be resolvable for audit." },
-      "cold": { "days": "indefinite", "description": "Historical rates NEVER hard-deleted. They anchor calculation-freeze snapshots — dropping them would corrupt the audit trail." },
+      "hot": {
+        "days": 3650,
+        "description": "Active rates + first 10 years of historical rates hot for calculation-freeze lookups. Old rates are hit rarely but must be resolvable for audit."
+      },
+      "cold": {
+        "days": "indefinite",
+        "description": "Historical rates NEVER hard-deleted. They anchor calculation-freeze snapshots — dropping them would corrupt the audit trail."
+      },
       "purge": {
         "trigger": "TenantErased cascade only",
         "action": "hard delete (FK CASCADE from tenant_id)",
@@ -45,8 +51,14 @@
     },
     {
       "entity": "TaxExemption",
-      "hot": { "days": 730, "description": "Active exemptions + first 2 years post-expiry hot for calculation-freeze lookups" },
-      "cold": { "days": "2555 (7 years post valid_until)", "description": "Regulator audit retention: 7 years past the exemption's expiry date." },
+      "hot": {
+        "days": 730,
+        "description": "Active exemptions + first 2 years post-expiry hot for calculation-freeze lookups"
+      },
+      "cold": {
+        "days": "2555 (7 years post valid_until)",
+        "description": "Regulator audit retention: 7 years past the exemption's expiry date."
+      },
       "purge": {
         "trigger": "> 7 years past valid_until",
         "action": "hard delete via PurgeExpiredExemptionsJob (weekly)",
@@ -55,8 +67,14 @@
     },
     {
       "entity": "TaxCalculation",
-      "hot": { "days": 365, "description": "Active + first year for reporting, support queries, dispute resolution" },
-      "cold": { "days": "2555 (7 years)", "description": "Financial-record retention. Enterprise tenants with tax_extended_retention entitlement: 3650 (10 years)." },
+      "hot": {
+        "days": 365,
+        "description": "Active + first year for reporting, support queries, dispute resolution"
+      },
+      "cold": {
+        "days": "2555 (7 years)",
+        "description": "Financial-record retention. Enterprise tenants with tax_extended_retention entitlement: 3650 (10 years)."
+      },
       "purge": {
         "trigger": "> 7 years past calculated_at (10 years for Enterprise)",
         "action": "MIGRATE to tax_calculations_archive (linked to invoice_lines_archive) — NEVER hard-delete inside the module",

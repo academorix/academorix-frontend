@@ -22,7 +22,10 @@
       "kind": "http.post",
       "urlExpr": "'/api/v1/coach-assignments/' + $route.assignment_id + '/end'",
       "body": "$form",
-      "onSuccess": { "kind": "navigate", "toExpr": "'/tenant/coach-assignments/' + $route.assignment_id" },
+      "onSuccess": {
+        "kind": "navigate",
+        "toExpr": "'/tenant/coach-assignments/' + $route.assignment_id"
+      },
       "onError": { "kind": "toast.error", "message": "Could not end assignment." }
     }
   },
@@ -32,24 +35,54 @@
       "kind": "View",
       "props": { "className": "flex flex-col gap-4 p-6 max-w-xl mx-auto" },
       "children": [
-        { "kind": "Text", "props": { "as": "h1", "className": "text-2xl font-semibold", "children": "End coach assignment" } },
+        {
+          "kind": "Text",
+          "props": {
+            "as": "h1",
+            "className": "text-2xl font-semibold",
+            "children": "End coach assignment"
+          }
+        },
         {
           "kind": "Card",
           "children": [
             {
               "kind": "Card.Content",
               "children": [
-                { "kind": "Description", "props": { "label": "Coach" }, "bindings": { "children": { "$ref": "assignment.coach_display_name" } } },
-                { "kind": "Description", "props": { "label": "Assigned to" }, "bindings": { "children": { "$ref": "assignment.assignable_summary" } } },
-                { "kind": "Description", "props": { "label": "Role" }, "bindings": { "children": { "$ref": "assignment.role" } } },
-                { "kind": "Description", "props": { "label": "Started" }, "bindings": { "children": { "$expr": "$formatDate($ref('assignment.start_date'), 'MMM d, yyyy')" } } }
+                {
+                  "kind": "Description",
+                  "props": { "label": "Coach" },
+                  "bindings": { "children": { "$ref": "assignment.coach_display_name" } }
+                },
+                {
+                  "kind": "Description",
+                  "props": { "label": "Assigned to" },
+                  "bindings": { "children": { "$ref": "assignment.assignable_summary" } }
+                },
+                {
+                  "kind": "Description",
+                  "props": { "label": "Role" },
+                  "bindings": { "children": { "$ref": "assignment.role" } }
+                },
+                {
+                  "kind": "Description",
+                  "props": { "label": "Started" },
+                  "bindings": {
+                    "children": {
+                      "$expr": "$formatDate($ref('assignment.start_date'), 'MMM d, yyyy')"
+                    }
+                  }
+                }
               ]
             }
           ]
         },
         {
           "kind": "Alert",
-          "props": { "variant": "warning", "children": "Ending an assignment is terminal — historical roster preserved for audit." }
+          "props": {
+            "variant": "warning",
+            "children": "Ending an assignment is terminal — historical roster preserved for audit."
+          }
         },
         {
           "kind": "Card",
@@ -57,8 +90,14 @@
             {
               "kind": "Card.Content",
               "children": [
-                { "kind": "DateField", "props": { "name": "end_date", "label": "End date (default: today)" } },
-                { "kind": "TextArea", "props": { "name": "reason", "label": "Reason (optional)", "rows": 3 } }
+                {
+                  "kind": "DateField",
+                  "props": { "name": "end_date", "label": "End date (default: today)" }
+                },
+                {
+                  "kind": "TextArea",
+                  "props": { "name": "reason", "label": "Reason (optional)", "rows": 3 }
+                }
               ]
             }
           ]
@@ -67,8 +106,25 @@
           "kind": "View",
           "props": { "className": "flex justify-end gap-2" },
           "children": [
-            { "kind": "Button", "props": { "variant": "flat", "children": "Cancel" }, "actions": { "onPress": { "kind": "navigate", "toExpr": "'/tenant/coach-assignments/' + $route.assignment_id" } } },
-            { "kind": "Button", "props": { "variant": "danger", "type": "submit", "leadingIcon": "stop-circle", "children": "End assignment" } }
+            {
+              "kind": "Button",
+              "props": { "variant": "flat", "children": "Cancel" },
+              "actions": {
+                "onPress": {
+                  "kind": "navigate",
+                  "toExpr": "'/tenant/coach-assignments/' + $route.assignment_id"
+                }
+              }
+            },
+            {
+              "kind": "Button",
+              "props": {
+                "variant": "danger",
+                "type": "submit",
+                "leadingIcon": "stop-circle",
+                "children": "End assignment"
+              }
+            }
           ]
         }
       ]

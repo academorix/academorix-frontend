@@ -54,7 +54,9 @@
           "children": [
             {
               "kind": "View",
-              "props": { "className": "size-3 rounded-full border-2 border-dashed border-neutral-400 bg-transparent" }
+              "props": {
+                "className": "size-3 rounded-full border-2 border-dashed border-neutral-400 bg-transparent"
+              }
             }
           ]
         }

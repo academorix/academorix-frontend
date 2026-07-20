@@ -36,8 +36,21 @@
             {
               "kind": "View",
               "children": [
-                { "kind": "Text", "props": { "as": "h1", "className": "text-2xl font-semibold", "children": "Health checks" } },
-                { "kind": "Text", "props": { "className": "text-sm text-muted", "children": "Server-side probes of tenant infrastructure." } }
+                {
+                  "kind": "Text",
+                  "props": {
+                    "as": "h1",
+                    "className": "text-2xl font-semibold",
+                    "children": "Health checks"
+                  }
+                },
+                {
+                  "kind": "Text",
+                  "props": {
+                    "className": "text-sm text-muted",
+                    "children": "Server-side probes of tenant infrastructure."
+                  }
+                }
               ]
             },
             {
@@ -55,7 +68,11 @@
                 },
                 {
                   "kind": "Button",
-                  "props": { "variant": "primary", "leadingIcon": "plus", "children": "Add health check" },
+                  "props": {
+                    "variant": "primary",
+                    "leadingIcon": "plus",
+                    "children": "Add health check"
+                  },
                   "requiresPermission": "monitoring.health_checks.create",
                   "bindings": { "disabled": { "$ref": "slot.is_exceeded" } },
                   "actions": {
@@ -85,13 +102,23 @@
                   "bindings": { "status": { "$ref": "row.last_run_status" } }
                 }
               },
-              { "field": "interval_seconds", "header": "Interval", "cellRenderer": { "kind": "Text", "props": { "children": "{{row.interval_seconds}}s" } } },
+              {
+                "field": "interval_seconds",
+                "header": "Interval",
+                "cellRenderer": {
+                  "kind": "Text",
+                  "props": { "children": "{{row.interval_seconds}}s" }
+                }
+              },
               { "field": "last_run_at", "header": "Last run", "sortable": true },
               { "field": "consecutive_failure_count", "header": "Failures" }
             ]
           },
           "actions": {
-            "onRowPress": { "kind": "navigate", "toExpr": "'/tenant/monitoring/health-checks/' + row.id" }
+            "onRowPress": {
+              "kind": "navigate",
+              "toExpr": "'/tenant/monitoring/health-checks/' + row.id"
+            }
           }
         }
       ]

@@ -95,9 +95,7 @@ describe("WidgetLoader", () => {
     expect(widgets.get("kpi-athletes")?.metadata.title).toBe("Athletes");
     expect(renderers.has("kpi-athletes")).toBe(true);
     // The bound renderer produces the class's real output.
-    expect(renderers.get("kpi-athletes")?.({ config: {}, onConfigChange: () => {} })).toBe(
-      "hello",
-    );
+    expect(renderers.get("kpi-athletes")?.({ config: {}, onConfigChange: () => {} })).toBe("hello");
   });
 
   it("skips providers with no metatype (factory-provided)", () => {

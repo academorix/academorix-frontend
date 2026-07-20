@@ -33,22 +33,50 @@
         {
           "kind": "View",
           "children": [
-            { "kind": "Text", "props": { "as": "h1", "className": "text-2xl font-semibold", "children": "Replay dead letter" } },
-            { "kind": "Text", "props": { "className": "text-sm text-muted", "children": "Enqueue a fresh dispatch attempt against the provider." } }
+            {
+              "kind": "Text",
+              "props": {
+                "as": "h1",
+                "className": "text-2xl font-semibold",
+                "children": "Replay dead letter"
+              }
+            },
+            {
+              "kind": "Text",
+              "props": {
+                "className": "text-sm text-muted",
+                "children": "Enqueue a fresh dispatch attempt against the provider."
+              }
+            }
           ]
         },
         {
           "kind": "Card",
           "props": { "className": "p-6" },
           "children": [
-            { "kind": "Text", "props": { "as": "h2", "className": "text-lg font-semibold mb-3", "children": "Event" } },
+            {
+              "kind": "Text",
+              "props": {
+                "as": "h2",
+                "className": "text-lg font-semibold mb-3",
+                "children": "Event"
+              }
+            },
             {
               "kind": "DescriptionList",
               "props": {
                 "items": [
                   { "label": "Event type", "field": "event.event_type" },
-                  { "label": "Subject", "expr": "event.subject_type + ' (' + event.subject_id + ')'" },
-                  { "label": "Value", "field": "event.value_amount_cents", "formatter": "currency", "currencyField": "event.value_currency" },
+                  {
+                    "label": "Subject",
+                    "expr": "event.subject_type + ' (' + event.subject_id + ')'"
+                  },
+                  {
+                    "label": "Value",
+                    "field": "event.value_amount_cents",
+                    "formatter": "currency",
+                    "currencyField": "event.value_currency"
+                  },
                   { "label": "Captured at", "field": "event.created_at", "formatter": "datetime" }
                 ]
               }
@@ -59,7 +87,14 @@
           "kind": "Card",
           "props": { "className": "p-6" },
           "children": [
-            { "kind": "Text", "props": { "as": "h2", "className": "text-lg font-semibold mb-3", "children": "Dead-letter details" } },
+            {
+              "kind": "Text",
+              "props": {
+                "as": "h2",
+                "className": "text-lg font-semibold mb-3",
+                "children": "Dead-letter details"
+              }
+            },
             {
               "kind": "DescriptionList",
               "props": {
@@ -67,9 +102,19 @@
                   { "label": "Provider", "field": "dead_letter.provider" },
                   { "label": "Reason", "field": "dead_letter.reason" },
                   { "label": "Replay attempts", "field": "dead_letter.replay_attempts" },
-                  { "label": "Last replay at", "field": "dead_letter.last_replay_at", "formatter": "datetime-relative" },
-                  { "label": "Final error code", "field": "dead_letter.final_error_details.error_code" },
-                  { "label": "Final error message", "field": "dead_letter.final_error_details.error_message" }
+                  {
+                    "label": "Last replay at",
+                    "field": "dead_letter.last_replay_at",
+                    "formatter": "datetime-relative"
+                  },
+                  {
+                    "label": "Final error code",
+                    "field": "dead_letter.final_error_details.error_code"
+                  },
+                  {
+                    "label": "Final error message",
+                    "field": "dead_letter.final_error_details.error_message"
+                  }
                 ]
               }
             }
@@ -101,7 +146,12 @@
             },
             {
               "kind": "Button",
-              "props": { "variant": "primary", "size": "lg", "leadingIcon": "arrow-path", "children": "Replay" },
+              "props": {
+                "variant": "primary",
+                "size": "lg",
+                "leadingIcon": "arrow-path",
+                "children": "Replay"
+              },
               "bindings": { "disabled": { "$expr": "!form.note || form.note.length < 10" } },
               "actions": {
                 "onPress": {

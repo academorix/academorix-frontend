@@ -4,5 +4,5 @@
  * @description Barrel for the SettingsContext.
  */
 
-export { SettingsContext } from './settings.context';
-export type { ISettingsContextValue } from './settings.interface';
+export { SettingsContext } from "./settings.context";
+export type { ISettingsContextValue } from "./settings.interface";

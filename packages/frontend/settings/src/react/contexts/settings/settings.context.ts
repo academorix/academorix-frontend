@@ -10,9 +10,9 @@
  *   `SettingsProvider ready="waitSchema"`).
  */
 
-import { createContext } from 'react';
+import { createContext } from "react";
 
-import type { ISettingsContextValue } from './settings.interface';
+import type { ISettingsContextValue } from "./settings.interface";
 
 /**
  * Context value seeded by `SettingsProvider`.

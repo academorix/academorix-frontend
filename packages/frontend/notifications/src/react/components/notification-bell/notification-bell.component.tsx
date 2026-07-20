@@ -10,14 +10,14 @@
  *   focus.
  */
 
-import { useState, type ReactElement } from 'react';
-import { Button } from '@stackra/ui/react';
-import { BellIcon } from '@stackra/ui/icons/heroicon/outline';
+import { useState, type ReactElement } from "react";
+import { Button } from "@stackra/ui/react";
+import { BellIcon } from "@stackra/ui/icons/heroicon/outline";
 
-import { useRenderableNotifications } from '../../hooks/use-renderable-notifications';
-import { NotificationBadge } from '../notification-badge';
-import { NotificationDrawer } from '../notification-drawer';
-import type { NotificationBellProps } from './notification-bell.interface';
+import { useRenderableNotifications } from "../../hooks/use-renderable-notifications";
+import { NotificationBadge } from "../notification-badge";
+import { NotificationDrawer } from "../notification-drawer";
+import type { NotificationBellProps } from "./notification-bell.interface";
 
 /**
  * Notification bell.
@@ -41,7 +41,7 @@ export function NotificationBell({
 
   const label =
     ariaLabel ??
-    (unreadCount > 0 ? `Notifications, ${unreadCount} unread` : 'Notifications, no unread');
+    (unreadCount > 0 ? `Notifications, ${unreadCount} unread` : "Notifications, no unread");
 
   return (
     <>

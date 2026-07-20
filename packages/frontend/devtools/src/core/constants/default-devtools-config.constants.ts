@@ -11,10 +11,10 @@
  *   order used by both the web and native shells.
  */
 
-import { Env } from '@stackra/support';
-import type { DevtoolsCategory } from '@stackra/contracts';
+import { Env } from "@stackra/support";
+import type { DevtoolsCategory } from "@stackra/contracts";
 
-import type { IDevtoolsModuleOptions } from '../interfaces/devtools-module-options.interface';
+import type { IDevtoolsModuleOptions } from "../interfaces/devtools-module-options.interface";
 
 /**
  * Canonical order in which `DevtoolsCategory` sections appear in the
@@ -22,14 +22,14 @@ import type { IDevtoolsModuleOptions } from '../interfaces/devtools-module-optio
  * of their position in this list.
  */
 export const DEFAULT_DEVTOOLS_CATEGORY_ORDER: readonly DevtoolsCategory[] = [
-  'pinned',
-  'app',
-  'framework',
-  'data',
-  'ui',
-  'network',
-  'observability',
-  'modules',
+  "pinned",
+  "app",
+  "framework",
+  "data",
+  "ui",
+  "network",
+  "observability",
+  "modules",
 ];
 
 /**
@@ -57,10 +57,10 @@ export const DEFAULT_DEVTOOLS_CONFIG: IDevtoolsModuleOptions = {
   // `enabled` is resolved eagerly so bundlers can constant-fold
   // the value and tree-shake the shell in production builds.
   enabled: !Env.isProduction(),
-  position: 'right',
+  position: "right",
   initialSize: 480,
-  shortcut: { meta: true, shift: true, key: 'd' },
-  storage: 'localStorage',
+  shortcut: { meta: true, shift: true, key: "d" },
+  storage: "localStorage",
   categoryOrder: DEFAULT_DEVTOOLS_CATEGORY_ORDER,
   minimizeInactive: 0,
   analytics: true,

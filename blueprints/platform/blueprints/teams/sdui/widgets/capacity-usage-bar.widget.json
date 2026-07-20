@@ -6,8 +6,16 @@
   "description": "Progress bar showing team's active roster count against its capacity + waitlist. Warns visually when approaching capacity, refuses (via aria-live message) at cap. Never relies on colour alone — always shows numbers + a status text.",
   "props": {
     "active_count": { "type": "integer", "required": true },
-    "capacity": { "type": "integer", "required": false, "description": "Null = no cap; renders 'unlimited' label." },
-    "waitlist_size": { "type": "integer", "required": false, "description": "Optional waitlist beyond capacity." },
+    "capacity": {
+      "type": "integer",
+      "required": false,
+      "description": "Null = no cap; renders 'unlimited' label."
+    },
+    "waitlist_size": {
+      "type": "integer",
+      "required": false,
+      "description": "Optional waitlist beyond capacity."
+    },
     "size": { "type": "string", "default": "md", "enum": ["sm", "md", "lg"] }
   },
   "nodes": [
@@ -59,7 +67,9 @@
           "kind": "Text",
           "props": { "className": "text-xs text-muted", "aria-live": "polite" },
           "bindings": {
-            "hidden": { "$expr": "!(props.active_count >= (props.capacity || 0) && props.waitlist_size)" },
+            "hidden": {
+              "$expr": "!(props.active_count >= (props.capacity || 0) && props.waitlist_size)"
+            },
             "children": { "$expr": "'Waitlist: up to ' + props.waitlist_size + ' more spots'" }
           }
         }

@@ -4,4 +4,4 @@
  * @description Global test setup for the theming package.
  */
 
-import '@stackra/testing/setup';
+import "@stackra/testing/setup";

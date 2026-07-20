@@ -8,11 +8,11 @@
  *   web behaviour for safety × push.
  */
 
-import type { ReactElement } from 'react';
-import { View, Text } from 'react-native';
-import { Switch } from '@stackra/ui/native';
+import type { ReactElement } from "react";
+import { View, Text } from "react-native";
+import { Switch } from "@stackra/ui/native";
 
-import type { ChannelToggleProps } from './channel-toggle.interface';
+import type { ChannelToggleProps } from "./channel-toggle.interface";
 
 /**
  * Native channel toggle row.
@@ -38,11 +38,11 @@ export function ChannelToggle({
   return (
     <View
       accessibilityLabel={id}
-      className="flex-row items-start justify-between gap-4 rounded-xl border border-border bg-surface p-3"
+      className="border-border bg-surface flex-row items-start justify-between gap-4 rounded-xl border p-3"
     >
       <View className="flex-1 flex-col">
-        <Text className="text-sm font-medium text-foreground">{label}</Text>
-        {note ? <Text className="mt-0.5 text-xs text-muted">{note}</Text> : null}
+        <Text className="text-foreground text-sm font-medium">{label}</Text>
+        {note ? <Text className="text-muted mt-0.5 text-xs">{note}</Text> : null}
       </View>
       <Switch
         accessibilityLabel={label}

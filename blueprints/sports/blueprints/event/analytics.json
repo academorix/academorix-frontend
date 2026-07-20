@@ -9,7 +9,20 @@
       "name": "Event Created",
       "kind": "track",
       "consent_required": "essential",
-      "properties": ["tenant_id", "event_id", "event_type", "format", "visibility", "days_until_start", "has_entry_fee", "has_prize_pool", "has_livestream", "has_sponsors", "is_multi_facility", "has_minor_registrants_expected"],
+      "properties": [
+        "tenant_id",
+        "event_id",
+        "event_type",
+        "format",
+        "visibility",
+        "days_until_start",
+        "has_entry_fee",
+        "has_prize_pool",
+        "has_livestream",
+        "has_sponsors",
+        "is_multi_facility",
+        "has_minor_registrants_expected"
+      ],
       "description": "New Event created. days_until_start = starts_at - created_at. Feature-toggle usage feeds tier-adoption analytics."
     },
     {
@@ -28,7 +41,13 @@
       "name": "Event Registration Closed",
       "kind": "track",
       "consent_required": "essential",
-      "properties": ["tenant_id", "event_id", "trigger", "registered_count_snapshot", "is_full_at_close"]
+      "properties": [
+        "tenant_id",
+        "event_id",
+        "trigger",
+        "registered_count_snapshot",
+        "is_full_at_close"
+      ]
     },
     {
       "name": "Event Started",
@@ -46,34 +65,65 @@
       "name": "Event Cancelled",
       "kind": "track",
       "consent_required": "essential",
-      "properties": ["tenant_id", "event_id", "registered_count_at_cancel", "days_before_start_at_cancel", "cancellation_category"],
+      "properties": [
+        "tenant_id",
+        "event_id",
+        "registered_count_at_cancel",
+        "days_before_start_at_cancel",
+        "cancellation_category"
+      ],
       "description": "cancellation_category is derived from cancellation_reason via a simple keyword classifier (weather / low_signups / staff_shortage / venue_conflict / regulatory / other). The raw reason is NEVER sent to Segment (may contain PII)."
     },
     {
       "name": "Event Rescheduled",
       "kind": "track",
       "consent_required": "essential",
-      "properties": ["tenant_id", "event_id", "days_delta_start", "days_delta_end", "affected_registration_count"],
+      "properties": [
+        "tenant_id",
+        "event_id",
+        "days_delta_start",
+        "days_delta_end",
+        "affected_registration_count"
+      ],
       "description": "days_delta_* is the signed delta from the previous date."
     },
     {
       "name": "Event Venue Changed",
       "kind": "track",
       "consent_required": "essential",
-      "properties": ["tenant_id", "event_id", "affected_registration_count", "changed_branch", "changed_primary_facility"]
+      "properties": [
+        "tenant_id",
+        "event_id",
+        "affected_registration_count",
+        "changed_branch",
+        "changed_primary_facility"
+      ]
     },
     {
       "name": "Event Pricing Changed",
       "kind": "track",
       "consent_required": "essential",
-      "properties": ["tenant_id", "event_id", "status_at_change", "delta_entry_fee_pct", "delta_late_fee_pct", "audit_severity"],
+      "properties": [
+        "tenant_id",
+        "event_id",
+        "status_at_change",
+        "delta_entry_fee_pct",
+        "delta_late_fee_pct",
+        "audit_severity"
+      ],
       "description": "delta_*_pct is the percentage change from previous value. Audit-critical when audit_severity='critical' (post-registration_open)."
     },
     {
       "name": "Event Minor Eligibility Corrected",
       "kind": "track",
       "consent_required": "essential",
-      "properties": ["tenant_id", "event_id", "excluded_registration_count", "excluded_minor_count", "status_at_change"],
+      "properties": [
+        "tenant_id",
+        "event_id",
+        "excluded_registration_count",
+        "excluded_minor_count",
+        "status_at_change"
+      ],
       "description": "Audit-critical. Feeds a dashboard for regulator-facing incidents."
     },
     {

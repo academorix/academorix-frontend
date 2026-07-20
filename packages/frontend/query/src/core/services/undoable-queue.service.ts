@@ -17,8 +17,8 @@
  *   never leaks intervals.
  */
 
-import { Injectable, Optional, Inject } from '@stackra/container';
-import { Logger } from '@stackra/logger';
+import { Injectable, Optional, Inject } from "@stackra/container";
+import { Logger } from "@stackra/logger";
 import {
   EVENT_EMITTER,
   type IEventEmitter,
@@ -27,18 +27,18 @@ import {
   type UndoableQueueListener,
   type UndoableQueueUnsubscribe,
   type UndoableResolution,
-} from '@stackra/contracts';
+} from "@stackra/contracts";
 
 // ══════════════════════════════════════════════════════════════════
 // Event names
 // ══════════════════════════════════════════════════════════════════
 
 /** Emitted when a new undoable mutation is enqueued. */
-const EVENT_ENQUEUED = 'query.undoable.enqueued';
+const EVENT_ENQUEUED = "query.undoable.enqueued";
 /** Emitted when a queued mutation is committed (countdown elapsed / commit()). */
-const EVENT_COMMITTED = 'query.undoable.committed';
+const EVENT_COMMITTED = "query.undoable.committed";
 /** Emitted when a queued mutation is cancelled by the user. */
-const EVENT_CANCELLED = 'query.undoable.cancelled';
+const EVENT_CANCELLED = "query.undoable.cancelled";
 
 // ══════════════════════════════════════════════════════════════════
 // Internal entry state
@@ -91,7 +91,7 @@ export class UndoableQueueService implements IUndoableQueue {
    *   lifecycle events; the queue is fully functional without it.
    */
   public constructor(
-    @Optional() @Inject(EVENT_EMITTER) private readonly eventEmitter?: IEventEmitter
+    @Optional() @Inject(EVENT_EMITTER) private readonly eventEmitter?: IEventEmitter,
   ) {}
 
   // ── IUndoableQueue ────────────────────────────────────────────────
@@ -119,7 +119,7 @@ export class UndoableQueueService implements IUndoableQueue {
       // `commit()` and `cancel()` clear the timer before calling
       // resolve so we never double-resolve.
       state.timer = setTimeout(() => {
-        this.finalize(entry.id, 'commit');
+        this.finalize(entry.id, "commit");
       }, entry.timeoutMs);
 
       this.emit(EVENT_ENQUEUED, {
@@ -136,14 +136,14 @@ export class UndoableQueueService implements IUndoableQueue {
   public cancel(id: string): void {
     const entry = this.entries.get(id);
     if (!entry) return;
-    this.finalize(id, 'cancel');
+    this.finalize(id, "cancel");
   }
 
   /** @inheritdoc */
   public commit(id: string): void {
     const entry = this.entries.get(id);
     if (!entry) return;
-    this.finalize(id, 'commit');
+    this.finalize(id, "commit");
   }
 
   /** @inheritdoc */
@@ -159,7 +159,7 @@ export class UndoableQueueService implements IUndoableQueue {
     try {
       listener(this.getPending());
     } catch (error: unknown) {
-      this.logger.warn('initial listener notify failed', { error });
+      this.logger.warn("initial listener notify failed", { error });
     }
     return () => {
       this.listeners.delete(listener);
@@ -188,14 +188,14 @@ export class UndoableQueueService implements IUndoableQueue {
     } catch (error: unknown) {
       // Fail-soft: a broken resolver must not stop the queue from
       // emitting its lifecycle events or notifying subscribers.
-      this.logger.warn('resolver threw during finalize', {
+      this.logger.warn("resolver threw during finalize", {
         id,
         resolution,
         error,
       });
     }
 
-    this.emit(resolution === 'commit' ? EVENT_COMMITTED : EVENT_CANCELLED, {
+    this.emit(resolution === "commit" ? EVENT_COMMITTED : EVENT_CANCELLED, {
       id,
       resource: state.mutation.resource,
     });
@@ -212,7 +212,7 @@ export class UndoableQueueService implements IUndoableQueue {
         listener(snapshot);
       } catch (error: unknown) {
         // fail-soft — one bad listener must not break the others.
-        this.logger.warn('listener threw during notify', { error });
+        this.logger.warn("listener threw during notify", { error });
       }
     }
   }
@@ -224,7 +224,7 @@ export class UndoableQueueService implements IUndoableQueue {
       void this.eventEmitter.emit(name, payload);
     } catch (error: unknown) {
       // fail-soft — event bus failures must not affect the queue.
-      this.logger.warn('event emit failed', { name, error });
+      this.logger.warn("event emit failed", { name, error });
     }
   }
 }

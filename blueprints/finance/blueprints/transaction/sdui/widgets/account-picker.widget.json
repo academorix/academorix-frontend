@@ -56,7 +56,9 @@
             {
               "kind": "ListBox.Section",
               "bindings": {
-                "title": { "$expr": "$ref('$group.name').charAt(0).toUpperCase() + $ref('$group.name').slice(1)" }
+                "title": {
+                  "$expr": "$ref('$group.name').charAt(0).toUpperCase() + $ref('$group.name').slice(1)"
+                }
               },
               "children": [
                 {
@@ -75,8 +77,15 @@
                           "kind": "View",
                           "props": { "className": "flex items-center justify-between w-full" },
                           "children": [
-                            { "kind": "Text", "bindings": { "children": { "$ref": "$item.display_name" } } },
-                            { "kind": "Text", "props": { "className": "text-xs text-muted font-mono" }, "bindings": { "children": { "$ref": "$item.account" } } }
+                            {
+                              "kind": "Text",
+                              "bindings": { "children": { "$ref": "$item.display_name" } }
+                            },
+                            {
+                              "kind": "Text",
+                              "props": { "className": "text-xs text-muted font-mono" },
+                              "bindings": { "children": { "$ref": "$item.account" } }
+                            }
                           ]
                         },
                         { "kind": "ListBox.ItemIndicator" }

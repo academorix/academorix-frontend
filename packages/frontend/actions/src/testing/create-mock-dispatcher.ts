@@ -10,7 +10,7 @@ import type {
   IActionDispatcher,
   IActionHandler,
   IActionResponse,
-} from '@stackra/contracts';
+} from "@stackra/contracts";
 
 /**
  * A single dispatched-action record captured by the mock.
@@ -44,10 +44,10 @@ export function createMockDispatcher(): IMockDispatcher {
 
   const dispatch = async <D extends IActionDescriptor, R = unknown>(
     descriptor: D,
-    context: IActionContext = {}
+    context: IActionContext = {},
   ): Promise<IActionResponse<R>> => {
     if (context.signal?.aborted) {
-      const response: IActionResponse<R> = { success: false, message: 'Aborted' };
+      const response: IActionResponse<R> = { success: false, message: "Aborted" };
       calls.push({ descriptor, context, response });
       return response;
     }
@@ -61,7 +61,7 @@ export function createMockDispatcher(): IMockDispatcher {
     } else {
       try {
         response = (await Promise.resolve(
-          handler.execute(descriptor as never, context)
+          handler.execute(descriptor as never, context),
         )) as IActionResponse<R>;
       } catch (err) {
         response = { success: false, message: err instanceof Error ? err.message : String(err) };

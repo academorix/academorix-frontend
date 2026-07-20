@@ -65,7 +65,11 @@
       "name": "Cross App SSO Complete",
       "kind": "track",
       "consent_required": "functional",
-      "properties": ["identity_fingerprint", "target_application_id", "elapsed_grant_to_exchange_seconds"],
+      "properties": [
+        "identity_fingerprint",
+        "target_application_id",
+        "elapsed_grant_to_exchange_seconds"
+      ],
       "description": "Grant exchanged. Funnel with Cross App SSO Start."
     },
     {
@@ -99,7 +103,12 @@
       "name": "Impersonation Ended",
       "kind": "track",
       "consent_required": "essential",
-      "properties": ["impersonator_fingerprint", "target_fingerprint", "duration_seconds", "trigger"]
+      "properties": [
+        "impersonator_fingerprint",
+        "target_fingerprint",
+        "duration_seconds",
+        "trigger"
+      ]
     }
   ],
   "notes": [

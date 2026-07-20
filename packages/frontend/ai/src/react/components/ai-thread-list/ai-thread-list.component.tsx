@@ -5,10 +5,10 @@
  *   HeroUI Pro's `ChatListView`. Driven by `useAiThreads` (Req 17.3, 17.4).
  */
 
-import type { JSX } from 'react';
-import { ChatListView } from '@stackra/ui/react';
+import type { JSX } from "react";
+import { ChatListView } from "@stackra/ui/react";
 
-import { useAiThreads } from '@/core/hooks/use-ai-threads';
+import { useAiThreads } from "@/core/hooks/use-ai-threads";
 
 /** Props accepted by {@link AiThreadList}. */
 export interface IAiThreadListProps {
@@ -22,7 +22,7 @@ export interface IAiThreadListProps {
 
 /** A sidebar-friendly thread list. */
 export function AiThreadList(props: IAiThreadListProps): JSX.Element {
-  const { compact = false, className, ariaLabel = 'Recent conversations' } = props;
+  const { compact = false, className, ariaLabel = "Recent conversations" } = props;
   const { threads, activeId, select } = useAiThreads();
 
   return (
@@ -30,7 +30,7 @@ export function AiThreadList(props: IAiThreadListProps): JSX.Element {
       aria-label={ariaLabel}
       className={className}
       items={threads}
-      density={compact ? 'compact' : undefined}
+      density={compact ? "compact" : undefined}
     >
       {(thread) => (
         <ChatListView.Item
@@ -53,10 +53,10 @@ export function AiThreadList(props: IAiThreadListProps): JSX.Element {
 }
 
 function formatMeta(timestamp: number): string {
-  if (!timestamp) return '';
+  if (!timestamp) return "";
   const date = new Date(timestamp);
   const now = new Date();
   const isToday = date.toDateString() === now.toDateString();
-  if (isToday) return date.toLocaleTimeString(undefined, { hour: 'numeric', minute: '2-digit' });
-  return date.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+  if (isToday) return date.toLocaleTimeString(undefined, { hour: "numeric", minute: "2-digit" });
+  return date.toLocaleDateString(undefined, { month: "short", day: "numeric" });
 }

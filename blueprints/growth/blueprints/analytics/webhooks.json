@@ -48,7 +48,10 @@
             "eligible_provider_count": 4,
             "failed_providers": [
               { "provider": "amplitude", "error_code": "NOTIFICATIONS_ANALYTICS_PROVIDER_ERROR" },
-              { "provider": "mixpanel", "error_code": "NOTIFICATIONS_ANALYTICS_PROVIDER_RATE_LIMITED" }
+              {
+                "provider": "mixpanel",
+                "error_code": "NOTIFICATIONS_ANALYTICS_PROVIDER_RATE_LIMITED"
+              }
             ]
           }
         }

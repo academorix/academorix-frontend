@@ -12,26 +12,54 @@
         { "action": "view", "permission": "dunning-plans.view" },
         { "action": "create", "permission": "dunning-plans.create" },
         { "action": "update", "permission": "dunning-plans.update" },
-        { "action": "delete", "permission": "dunning-plans.delete", "scope": "refuses when plan is referenced by active dunning_runs (WHERE status='active')." }
+        {
+          "action": "delete",
+          "permission": "dunning-plans.delete",
+          "scope": "refuses when plan is referenced by active dunning_runs (WHERE status='active')."
+        }
       ]
     },
     {
       "model": "DunningRun",
       "class": "Academorix\\Finance\\Dunning\\Policies\\DunningRunPolicy",
       "abilities": [
-        { "action": "viewAny", "permission": "dunning-runs.viewAny", "scope": "guardian narrowed to own (subject resolves to a membership/subscription owned by current guardian)." },
+        {
+          "action": "viewAny",
+          "permission": "dunning-runs.viewAny",
+          "scope": "guardian narrowed to own (subject resolves to a membership/subscription owned by current guardian)."
+        },
         { "action": "view", "permission": "dunning-runs.view", "scope": "same narrowing." },
-        { "action": "pause", "permission": "dunning-runs.pause", "scope": "refuses when status != 'active'." },
-        { "action": "resume", "permission": "dunning-runs.resume", "scope": "refuses when status != 'paused'." },
-        { "action": "cancel", "permission": "dunning-runs.cancel", "scope": "refuses when status IN ('resolved', 'exhausted', 'cancelled')." },
-        { "action": "retryNow", "permission": "dunning-runs.retry-now", "scope": "refuses when status != 'active'." }
+        {
+          "action": "pause",
+          "permission": "dunning-runs.pause",
+          "scope": "refuses when status != 'active'."
+        },
+        {
+          "action": "resume",
+          "permission": "dunning-runs.resume",
+          "scope": "refuses when status != 'paused'."
+        },
+        {
+          "action": "cancel",
+          "permission": "dunning-runs.cancel",
+          "scope": "refuses when status IN ('resolved', 'exhausted', 'cancelled')."
+        },
+        {
+          "action": "retryNow",
+          "permission": "dunning-runs.retry-now",
+          "scope": "refuses when status != 'active'."
+        }
       ]
     },
     {
       "model": "DunningEvent",
       "class": "Academorix\\Finance\\Dunning\\Policies\\DunningEventPolicy",
       "abilities": [
-        { "action": "viewAny", "permission": "dunning-events.viewAny", "scope": "narrowed by parent run's ownership." },
+        {
+          "action": "viewAny",
+          "permission": "dunning-events.viewAny",
+          "scope": "narrowed by parent run's ownership."
+        },
         { "action": "view", "permission": "dunning-events.view" }
       ]
     }

@@ -6,7 +6,7 @@
  *   fallback when no machine-translation provider is configured.
  */
 
-import type { ITranslationProvider } from '@stackra/contracts';
+import type { ITranslationProvider } from "@stackra/contracts";
 
 /**
  * Null translation provider — returns the source text unchanged.
@@ -16,7 +16,7 @@ import type { ITranslationProvider } from '@stackra/contracts';
  */
 export class NullTranslationProvider implements ITranslationProvider {
   public getName(): string {
-    return 'null';
+    return "null";
   }
 
   public async translate(_key: string, text: string): Promise<string> {
@@ -24,7 +24,7 @@ export class NullTranslationProvider implements ITranslationProvider {
   }
 
   public async translateBatch(
-    entries: ReadonlyArray<{ key: string; text: string }>
+    entries: ReadonlyArray<{ key: string; text: string }>,
   ): Promise<string[]> {
     return entries.map((entry) => entry.text);
   }

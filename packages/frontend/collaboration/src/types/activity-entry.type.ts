@@ -28,7 +28,7 @@ export type ActivityEntry = {
   id: string;
 
   /** Type of activity event. */
-  type: 'join' | 'leave' | 'state_change' | 'message' | 'thread_create' | 'thread_resolve';
+  type: "join" | "leave" | "state_change" | "message" | "thread_create" | "thread_resolve";
 
   /** User ID of the actor. */
   userId: string;

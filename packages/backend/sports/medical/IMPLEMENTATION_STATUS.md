@@ -4,15 +4,14 @@
 
 ## Scope
 
-Medical assessment + injury tracking + treatment workflow. Distinct
-from `sports/athlete`'s `medical_*` fields (which are static
-condition/allergy declarations). This module owns the ACTIVE medical
-lifecycle — injuries, treatments, physio notes, return-to-play
-gates.
+Medical assessment + injury tracking + treatment workflow. Distinct from
+`sports/athlete`'s `medical_*` fields (which are static condition/allergy
+declarations). This module owns the ACTIVE medical lifecycle — injuries,
+treatments, physio notes, return-to-play gates.
 
-Regulated data — every write requires
-`athletes.manage.medical` OR `medical.professional` role. Reads
-gate through `sports/athlete`'s `MedicalDisclosureGate`.
+Regulated data — every write requires `athletes.manage.medical` OR
+`medical.professional` role. Reads gate through `sports/athlete`'s
+`MedicalDisclosureGate`.
 
 ## What landed
 
@@ -23,25 +22,23 @@ gate through `sports/athlete`'s `MedicalDisclosureGate`.
 
 ### Actions
 
-- **`RecordInjuryAction`** — POST /medical/injuries. Payload:
-  athlete, injury type, severity, date, expected return date.
-  Cascades: sets the athlete's status to Paused when severity is
-  Severe.
-- **`RecordTreatmentAction`** — POST
-  /medical/injuries/{injury}/treatments. Physio session, medication
-  administered, imaging results (linked via platform/storage).
-- **`ClearForReturnAction`** — POST /medical/injuries/{injury}/clear.
-  Requires medical-professional role. Transitions the athlete back
-  to Active. Fires `AthleteClearedForReturn`.
+- **`RecordInjuryAction`** — POST /medical/injuries. Payload: athlete, injury
+  type, severity, date, expected return date. Cascades: sets the athlete's
+  status to Paused when severity is Severe.
+- **`RecordTreatmentAction`** — POST /medical/injuries/{injury}/treatments.
+  Physio session, medication administered, imaging results (linked via
+  platform/storage).
+- **`ClearForReturnAction`** — POST /medical/injuries/{injury}/clear. Requires
+  medical-professional role. Transitions the athlete back to Active. Fires
+  `AthleteClearedForReturn`.
 - **`ListMyInjuriesAction`** — GET /athletes/my/injuries. Self-view.
 - **`ListActiveInjuriesAction`** — GET /medical/active. Staff-view.
 
 ### Services
 
-- **`InjuryProvisioner`** — write-side orchestrator + athlete-status
-  cascade.
-- **`ReturnToPlayGate`** — enforces the clearance rule (severity
-  threshold + medical-professional approval).
+- **`InjuryProvisioner`** — write-side orchestrator + athlete-status cascade.
+- **`ReturnToPlayGate`** — enforces the clearance rule (severity threshold +
+  medical-professional approval).
 
 ### Cross-module dependencies
 

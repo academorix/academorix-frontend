@@ -8,22 +8,22 @@
  */
 
 // Contexts
-export { NonceContext } from './contexts';
+export { NonceContext } from "./contexts";
 
 // Providers
-export { NonceProvider } from './providers';
+export { NonceProvider } from "./providers";
 
 // Components
-export { Script, CspMeta } from './components';
+export { Script, CspMeta } from "./components";
 
 // Hooks
-export { useNonce } from './hooks';
+export { useNonce } from "./hooks";
 
 // Utils
-export { readDocumentNonce } from './utils';
+export { readDocumentNonce } from "./utils";
 
 // Interfaces
-export type { NonceProviderProps, ScriptProps } from './interfaces';
+export type { NonceProviderProps, ScriptProps } from "./interfaces";
 
 // Core re-export
-export * from '../core';
+export * from "../core";

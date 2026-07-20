@@ -13,10 +13,10 @@
 /**
  * Metadata key for `@HttpMiddleware()` storage on middleware classes.
  */
-export const HTTP_MIDDLEWARE_METADATA = 'HTTP_MIDDLEWARE_METADATA';
+export const HTTP_MIDDLEWARE_METADATA = "HTTP_MIDDLEWARE_METADATA";
 
 /**
  * Metadata key for `@HttpInterceptor()` storage on interceptor
  * classes.
  */
-export const HTTP_INTERCEPTOR_METADATA = 'HTTP_INTERCEPTOR_METADATA';
+export const HTTP_INTERCEPTOR_METADATA = "HTTP_INTERCEPTOR_METADATA";

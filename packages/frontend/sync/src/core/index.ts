@@ -11,7 +11,7 @@
 // ============================================================================
 // Module
 // ============================================================================
-export { SyncModule } from './sync.module';
+export { SyncModule } from "./sync.module";
 
 // ============================================================================
 // Services (concrete classes — tokens live in @stackra/contracts)
@@ -24,26 +24,26 @@ export {
   PullService,
   PushService,
   SyncEngine,
-} from './services';
+} from "./services";
 
 // ============================================================================
 // Resolvers + strategies
 // ============================================================================
-export { ConflictResolver } from './resolvers';
-export { lastWriteWins, localWins, remoteWins } from './strategies';
+export { ConflictResolver } from "./resolvers";
+export { lastWriteWins, localWins, remoteWins } from "./strategies";
 
 // ============================================================================
 // Pipelines
 // ============================================================================
-export { executePullPipeline, executePushPipeline, executeFullSyncPipeline } from './pipelines';
+export { executePullPipeline, executePushPipeline, executeFullSyncPipeline } from "./pipelines";
 
 // ============================================================================
 // Errors
 // ============================================================================
-export { SyncError, ConflictError, NetworkError } from './errors';
+export { SyncError, ConflictError, NetworkError } from "./errors";
 
 // ============================================================================
 // Utilities + defaults
 // ============================================================================
-export { defineConfig, mergeConfig } from './utils';
-export { DEFAULT_SYNC_CONFIG } from './constants';
+export { defineConfig, mergeConfig } from "./utils";
+export { DEFAULT_SYNC_CONFIG } from "./constants";

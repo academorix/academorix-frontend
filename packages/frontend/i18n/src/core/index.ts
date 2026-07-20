@@ -15,20 +15,20 @@
 // Module
 // ============================================================================
 
-export { I18nModule } from './i18n.module';
+export { I18nModule } from "./i18n.module";
 
 // ============================================================================
 // Adapters (cross-platform)
 // ============================================================================
 
-export { StorageBackedLocaleAdapter } from './adapters';
+export { StorageBackedLocaleAdapter } from "./adapters";
 
 // ============================================================================
 // Services
 // ============================================================================
 
-export { I18nManager, I18nLocaleService, DirectionService } from './services';
-export { createFormatter } from './services';
+export { I18nManager, I18nLocaleService, DirectionService } from "./services";
+export { createFormatter } from "./services";
 export type {
   IIntlFormatter,
   IFormatDateOptions,
@@ -37,19 +37,19 @@ export type {
   IFormatListOptions,
   RelativeTimeUnit,
   DateStyle,
-} from './services';
+} from "./services";
 
 // ============================================================================
 // Loaders
 // ============================================================================
 
-export { StaticLoader, DynamicImportLoader, HttpLoader } from './loaders';
+export { StaticLoader, DynamicImportLoader, HttpLoader } from "./loaders";
 
 // ============================================================================
 // Providers
 // ============================================================================
 
-export { NullTranslationProvider } from './providers';
+export { NullTranslationProvider } from "./providers";
 
 // ============================================================================
 // Interfaces (package-owned)
@@ -72,13 +72,13 @@ export type {
   HttpLoaderOptions,
   DynamicImportLoaderOptions,
   TypeGeneratorOptions,
-} from './interfaces';
+} from "./interfaces";
 
 // ============================================================================
 // Types (package-owned)
 // ============================================================================
 
-export type { ExportFormat } from './types';
+export type { ExportFormat } from "./types";
 
 // ============================================================================
 // Constants
@@ -98,7 +98,7 @@ export {
   PLURAL_KEYS,
   RTL_LOCALES,
   DEFAULT_I18N_CONFIG,
-} from './constants';
+} from "./constants";
 
 // ============================================================================
 // Utilities
@@ -123,4 +123,4 @@ export {
   mergeDeep,
   isRtlLocale,
   getDirection,
-} from './utils';
+} from "./utils";

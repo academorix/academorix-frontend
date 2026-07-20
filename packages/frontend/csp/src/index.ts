@@ -5,4 +5,4 @@
  *   `@stackra/csp` (core) and `@stackra/csp/react` (web bindings).
  */
 
-export * from './core';
+export * from "./core";

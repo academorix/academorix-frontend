@@ -23,7 +23,11 @@
       "kind": "View",
       "props": { "className": "max-w-2xl mx-auto p-6 flex flex-col gap-6" },
       "children": [
-        { "kind": "Text", "props": { "as": "h1", "className": "text-2xl font-semibold" }, "bindings": { "children": { "$expr": "'Test ' + provider.provider" } } },
+        {
+          "kind": "Text",
+          "props": { "as": "h1", "className": "text-2xl font-semibold" },
+          "bindings": { "children": { "$expr": "'Test ' + provider.provider" } }
+        },
         {
           "kind": "Alert",
           "props": {
@@ -41,27 +45,53 @@
               "widget": "tax.jurisdiction-picker",
               "props": { "label": "Jurisdiction", "required": true },
               "actions": {
-                "onSelectionChange": { "kind": "form.set", "field": "jurisdiction_id", "valueExpr": "$selectedKey" }
+                "onSelectionChange": {
+                  "kind": "form.set",
+                  "field": "jurisdiction_id",
+                  "valueExpr": "$selectedKey"
+                }
               }
             },
             {
               "kind": "NumberField",
-              "props": { "label": "Amount (cents)", "placeholder": "10000", "min": 1, "required": true },
+              "props": {
+                "label": "Amount (cents)",
+                "placeholder": "10000",
+                "min": 1,
+                "required": true
+              },
               "actions": {
                 "onChange": { "kind": "form.set", "field": "amount_cents", "valueExpr": "$value" }
               }
             },
             {
               "kind": "Input",
-              "props": { "label": "Currency (ISO 4217)", "placeholder": "USD", "maxLength": 3, "required": true },
+              "props": {
+                "label": "Currency (ISO 4217)",
+                "placeholder": "USD",
+                "maxLength": 3,
+                "required": true
+              },
               "actions": {
-                "onChange": { "kind": "form.set", "field": "currency", "valueExpr": "$value.toUpperCase()" }
+                "onChange": {
+                  "kind": "form.set",
+                  "field": "currency",
+                  "valueExpr": "$value.toUpperCase()"
+                }
               }
             },
             {
               "kind": "Button",
-              "props": { "variant": "primary", "leadingIcon": "paper-airplane", "children": "Send test calculation" },
-              "bindings": { "disabled": { "$expr": "!form.jurisdiction_id || !form.amount_cents || !form.currency" } },
+              "props": {
+                "variant": "primary",
+                "leadingIcon": "paper-airplane",
+                "children": "Send test calculation"
+              },
+              "bindings": {
+                "disabled": {
+                  "$expr": "!form.jurisdiction_id || !form.amount_cents || !form.currency"
+                }
+              },
               "actions": {
                 "onPress": {
                   "kind": "http.post",
@@ -85,16 +115,40 @@
           "props": { "className": "p-6" },
           "bindings": { "hidden": { "$expr": "!state.test_result" } },
           "children": [
-            { "kind": "Text", "props": { "as": "h2", "className": "text-lg font-semibold mb-3", "children": "Test result" } },
+            {
+              "kind": "Text",
+              "props": {
+                "as": "h2",
+                "className": "text-lg font-semibold mb-3",
+                "children": "Test result"
+              }
+            },
             {
               "kind": "DescriptionList",
               "props": {
                 "items": [
                   { "label": "Outcome", "field": "state.test_result.outcome" },
-                  { "label": "Computed tax", "field": "state.test_result.tax_amount_cents", "formatter": "currency", "currencyField": "state.test_result.currency" },
-                  { "label": "Effective rate", "field": "state.test_result.effective_rate_percentage", "formatter": "percent" },
-                  { "label": "Latency", "field": "state.test_result.latency_ms", "formatter": "duration-ms" },
-                  { "label": "Provider transaction ID", "field": "state.test_result.provider_transaction_id", "className": "font-mono" },
+                  {
+                    "label": "Computed tax",
+                    "field": "state.test_result.tax_amount_cents",
+                    "formatter": "currency",
+                    "currencyField": "state.test_result.currency"
+                  },
+                  {
+                    "label": "Effective rate",
+                    "field": "state.test_result.effective_rate_percentage",
+                    "formatter": "percent"
+                  },
+                  {
+                    "label": "Latency",
+                    "field": "state.test_result.latency_ms",
+                    "formatter": "duration-ms"
+                  },
+                  {
+                    "label": "Provider transaction ID",
+                    "field": "state.test_result.provider_transaction_id",
+                    "className": "font-mono"
+                  },
                   { "label": "Error", "field": "state.test_result.error_message" }
                 ]
               }

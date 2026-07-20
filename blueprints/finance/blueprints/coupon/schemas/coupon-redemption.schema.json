@@ -45,7 +45,12 @@
   "x-database": {
     "engine": "postgres",
     "columns": {
-      "id": { "type": "string", "length": 64, "primary": true, "description": "Prefixed ULID: `crd_<26>`. Distinct from `rcd_` (referrals::ReferralCode) — see readme.md §14." },
+      "id": {
+        "type": "string",
+        "length": 64,
+        "primary": true,
+        "description": "Prefixed ULID: `crd_<26>`. Distinct from `rcd_` (referrals::ReferralCode) — see readme.md §14."
+      },
       "tenant_id": {
         "type": "string",
         "length": 64,
@@ -142,16 +147,33 @@
     },
     "indexes": [
       {
-        "columns": ["tenant_id", "coupon_id", "customer_type", "customer_id", "applied_to_type", "applied_to_id"],
+        "columns": [
+          "tenant_id",
+          "coupon_id",
+          "customer_type",
+          "customer_id",
+          "applied_to_type",
+          "applied_to_id"
+        ],
         "unique": true,
         "name": "coupon_redemptions_target_unique",
         "predicate": "reversed_at IS NULL"
       },
       { "columns": ["tenant_id", "coupon_id"], "name": "coupon_redemptions_coupon_idx" },
-      { "columns": ["tenant_id", "customer_type", "customer_id"], "name": "coupon_redemptions_customer_idx" },
-      { "columns": ["tenant_id", "applied_to_type", "applied_to_id"], "name": "coupon_redemptions_target_lookup_idx" },
+      {
+        "columns": ["tenant_id", "customer_type", "customer_id"],
+        "name": "coupon_redemptions_customer_idx"
+      },
+      {
+        "columns": ["tenant_id", "applied_to_type", "applied_to_id"],
+        "name": "coupon_redemptions_target_lookup_idx"
+      },
       { "columns": ["tenant_id", "redeemed_at"], "name": "coupon_redemptions_redeemed_at_idx" },
-      { "columns": ["tenant_id", "reversed_at"], "name": "coupon_redemptions_reversed_at_idx", "predicate": "reversed_at IS NOT NULL" }
+      {
+        "columns": ["tenant_id", "reversed_at"],
+        "name": "coupon_redemptions_reversed_at_idx",
+        "predicate": "reversed_at IS NOT NULL"
+      }
     ]
   },
   "required": [
@@ -191,7 +213,14 @@
       "properties": {
         "discount_type": {
           "type": "string",
-          "enum": ["percent", "fixed_amount", "free_period", "first_month_free", "bogo", "free_shipping"]
+          "enum": [
+            "percent",
+            "fixed_amount",
+            "free_period",
+            "first_month_free",
+            "bogo",
+            "free_shipping"
+          ]
         },
         "discount_amount": { "type": ["number", "null"] },
         "discount_currency": { "type": ["string", "null"], "pattern": "^[A-Z]{3}$" },
@@ -215,7 +244,10 @@
       "type": ["string", "null"],
       "enum": [null, "refund", "chargeback", "fraud", "manual_admin"]
     },
-    "reversed_by_user_id": { "type": ["string", "null"], "pattern": "^usr_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "reversed_by_user_id": {
+      "type": ["string", "null"],
+      "pattern": "^usr_[0-9A-HJKMNP-TV-Z]{26}$"
+    },
     "metadata": { "type": ["object", "null"] },
     "created_at": { "type": "string", "format": "date-time" },
     "updated_at": { "type": "string", "format": "date-time" }

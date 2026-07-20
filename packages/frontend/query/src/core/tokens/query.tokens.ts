@@ -9,4 +9,4 @@
  */
 
 /** Token for the query-layer default configuration provided by `QueryModule`. */
-export const QUERY_CONFIG = Symbol.for('STACKRA_QUERY_CONFIG');
+export const QUERY_CONFIG = Symbol.for("STACKRA_QUERY_CONFIG");

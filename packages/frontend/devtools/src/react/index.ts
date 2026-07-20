@@ -14,18 +14,18 @@
 // ════════════════════════════════════════════════════════════════════
 // One-liner mount
 // ════════════════════════════════════════════════════════════════════
-export { Devtools, type DevtoolsProps } from './devtools';
+export { Devtools, type DevtoolsProps } from "./devtools";
 
 // ════════════════════════════════════════════════════════════════════
 // Provider + contexts + hooks
 // ════════════════════════════════════════════════════════════════════
-export { DevtoolsProvider, type DevtoolsProviderProps } from './providers/devtools';
+export { DevtoolsProvider, type DevtoolsProviderProps } from "./providers/devtools";
 export {
   DevtoolsContext,
   DevtoolsInspectorContext,
   type IDevtoolsContextValue,
   type IDevtoolsInspectorContextValue,
-} from './contexts';
+} from "./contexts";
 export {
   useDevtoolsContext,
   useDevtoolsEnabled,
@@ -42,7 +42,7 @@ export {
   type IUseDevtoolsInspectorResult,
   type IUseDevtoolsPanelsResult,
   type IUseDevtoolsSearchResult,
-} from './hooks';
+} from "./hooks";
 
 // ════════════════════════════════════════════════════════════════════
 // Components
@@ -76,14 +76,14 @@ export {
   type DevtoolsSearchProps,
   type DevtoolsShellProps,
   type OverviewPanelProps,
-} from './components';
+} from "./components";
 
 // ════════════════════════════════════════════════════════════════════
 // Built-in panels (contribution classes)
 // ════════════════════════════════════════════════════════════════════
-export { ActionsDevtoolsPanel, OverviewDevtoolsPanel } from './panels';
+export { ActionsDevtoolsPanel, OverviewDevtoolsPanel } from "./panels";
 
 // ════════════════════════════════════════════════════════════════════
 // Utilities
 // ════════════════════════════════════════════════════════════════════
-export { formatPanelBadge } from './utils';
+export { formatPanelBadge } from "./utils";

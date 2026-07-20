@@ -8,48 +8,152 @@
       "model": "Invoice",
       "class": "Academorix\\Finance\\Invoice\\Policies\\InvoicePolicy",
       "abilities": [
-        { "action": "viewAny", "permission": "invoice.invoices.viewAny", "scope": "any tenant member with finance+admin role; support role read-only. Members without finance role see own only via viewMine." },
-        { "action": "viewMine", "permission": "invoice.invoices.viewMine", "scope": "customer-facing. Auto-scopes to invoices where customer_id = auth.user.id (or one of the athletes they're guardian for)." },
-        { "action": "view", "permission": "invoice.invoices.view", "scope": "admin + finance + support see any tenant invoice; customer sees own only" },
-        { "action": "create", "permission": "invoice.invoices.create", "scope": "admin + finance only. NOT support role." },
-        { "action": "update", "permission": "invoice.invoices.update", "scope": "admin + finance only, AND invoice.status must be 'draft' (post-finalize is refused at both policy + observer layers)" },
-        { "action": "finalize", "permission": "invoice.invoices.finalize", "scope": "admin + finance only. Requires all lines have tax_calculation_id set." },
-        { "action": "send", "permission": "invoice.invoices.send", "scope": "admin + finance only. Requires status='open'." },
-        { "action": "resend", "permission": "invoice.invoices.resend", "scope": "admin + finance + support. Idempotent — sends the same email again." },
-        { "action": "void", "permission": "invoice.invoices.void", "scope": "admin + finance only. Refused when status IN ('paid', 'partially_paid') — must issue credit note instead." },
-        { "action": "markUncollectible", "permission": "invoice.invoices.mark-uncollectible", "scope": "admin + finance only. Requires days_past_due >= config('invoice.dunning.uncollectible_after_days')." },
-        { "action": "markPaid", "permission": "invoice.invoices.mark-paid", "scope": "admin + finance only. Manual reconciliation for off-platform payments (check / wire / cash). Requires payment method + reference note." },
-        { "action": "regeneratePdf", "permission": "invoice.invoices.regenerate-pdf", "scope": "admin + finance + support. Idempotent." },
-        { "action": "markViewed", "permission": "invoice.invoices.mark-viewed", "scope": "customer-facing. Also fires from email-tracking pixel with a signed token." },
-        { "action": "delete", "permission": "NEVER", "scope": "financial retention 7-10y; hard-purged by PurgeExpiredInvoiceDataJob only. Soft-delete only allowed for draft/void via observer." },
+        {
+          "action": "viewAny",
+          "permission": "invoice.invoices.viewAny",
+          "scope": "any tenant member with finance+admin role; support role read-only. Members without finance role see own only via viewMine."
+        },
+        {
+          "action": "viewMine",
+          "permission": "invoice.invoices.viewMine",
+          "scope": "customer-facing. Auto-scopes to invoices where customer_id = auth.user.id (or one of the athletes they're guardian for)."
+        },
+        {
+          "action": "view",
+          "permission": "invoice.invoices.view",
+          "scope": "admin + finance + support see any tenant invoice; customer sees own only"
+        },
+        {
+          "action": "create",
+          "permission": "invoice.invoices.create",
+          "scope": "admin + finance only. NOT support role."
+        },
+        {
+          "action": "update",
+          "permission": "invoice.invoices.update",
+          "scope": "admin + finance only, AND invoice.status must be 'draft' (post-finalize is refused at both policy + observer layers)"
+        },
+        {
+          "action": "finalize",
+          "permission": "invoice.invoices.finalize",
+          "scope": "admin + finance only. Requires all lines have tax_calculation_id set."
+        },
+        {
+          "action": "send",
+          "permission": "invoice.invoices.send",
+          "scope": "admin + finance only. Requires status='open'."
+        },
+        {
+          "action": "resend",
+          "permission": "invoice.invoices.resend",
+          "scope": "admin + finance + support. Idempotent — sends the same email again."
+        },
+        {
+          "action": "void",
+          "permission": "invoice.invoices.void",
+          "scope": "admin + finance only. Refused when status IN ('paid', 'partially_paid') — must issue credit note instead."
+        },
+        {
+          "action": "markUncollectible",
+          "permission": "invoice.invoices.mark-uncollectible",
+          "scope": "admin + finance only. Requires days_past_due >= config('invoice.dunning.uncollectible_after_days')."
+        },
+        {
+          "action": "markPaid",
+          "permission": "invoice.invoices.mark-paid",
+          "scope": "admin + finance only. Manual reconciliation for off-platform payments (check / wire / cash). Requires payment method + reference note."
+        },
+        {
+          "action": "regeneratePdf",
+          "permission": "invoice.invoices.regenerate-pdf",
+          "scope": "admin + finance + support. Idempotent."
+        },
+        {
+          "action": "markViewed",
+          "permission": "invoice.invoices.mark-viewed",
+          "scope": "customer-facing. Also fires from email-tracking pixel with a signed token."
+        },
+        {
+          "action": "delete",
+          "permission": "NEVER",
+          "scope": "financial retention 7-10y; hard-purged by PurgeExpiredInvoiceDataJob only. Soft-delete only allowed for draft/void via observer."
+        },
         { "action": "platformViewAny", "permission": "platform.invoice.invoices.viewAny" },
         { "action": "platformView", "permission": "platform.invoice.invoices.view" },
-        { "action": "platformViewPii", "permission": "platform.invoice.pii.view", "scope": "unmasks customer PII on cross-tenant view. Escalation-only." }
+        {
+          "action": "platformViewPii",
+          "permission": "platform.invoice.pii.view",
+          "scope": "unmasks customer PII on cross-tenant view. Escalation-only."
+        }
       ]
     },
     {
       "model": "InvoiceLine",
       "class": "Academorix\\Finance\\Invoice\\Policies\\InvoiceLinePolicy",
       "abilities": [
-        { "action": "viewAny", "permission": "invoice.lines.viewAny", "scope": "inherits parent invoice's view scope — support+admin+finance see all; customer sees only lines on their own invoices" },
+        {
+          "action": "viewAny",
+          "permission": "invoice.lines.viewAny",
+          "scope": "inherits parent invoice's view scope — support+admin+finance see all; customer sees only lines on their own invoices"
+        },
         { "action": "view", "permission": "invoice.lines.viewAny" },
-        { "action": "create", "permission": "invoice.lines.create", "scope": "admin + finance only, AND parent invoice.status='draft'" },
-        { "action": "update", "permission": "invoice.lines.update", "scope": "admin + finance only, AND parent invoice.status='draft'" },
-        { "action": "delete", "permission": "invoice.lines.delete", "scope": "admin + finance only, AND parent invoice.status='draft'" }
+        {
+          "action": "create",
+          "permission": "invoice.lines.create",
+          "scope": "admin + finance only, AND parent invoice.status='draft'"
+        },
+        {
+          "action": "update",
+          "permission": "invoice.lines.update",
+          "scope": "admin + finance only, AND parent invoice.status='draft'"
+        },
+        {
+          "action": "delete",
+          "permission": "invoice.lines.delete",
+          "scope": "admin + finance only, AND parent invoice.status='draft'"
+        }
       ]
     },
     {
       "model": "CreditNote",
       "class": "Academorix\\Finance\\Invoice\\Policies\\CreditNotePolicy",
       "abilities": [
-        { "action": "viewAny", "permission": "invoice.credit-notes.viewAny", "scope": "admin + finance + support see any tenant; customer sees own via viewMine" },
-        { "action": "viewMine", "permission": "invoice.credit-notes.viewMine", "scope": "customer-facing. Auto-scopes to credit notes on invoices where customer_id = auth.user.id (or guardian of)." },
+        {
+          "action": "viewAny",
+          "permission": "invoice.credit-notes.viewAny",
+          "scope": "admin + finance + support see any tenant; customer sees own via viewMine"
+        },
+        {
+          "action": "viewMine",
+          "permission": "invoice.credit-notes.viewMine",
+          "scope": "customer-facing. Auto-scopes to credit notes on invoices where customer_id = auth.user.id (or guardian of)."
+        },
         { "action": "view", "permission": "invoice.credit-notes.view" },
-        { "action": "create", "permission": "invoice.credit-notes.create", "scope": "admin + finance only. Requires parent invoice.status IN ('paid', 'partially_paid', 'refunded', 'disputed', 'written_off') + credit_note_issuance entitlement." },
-        { "action": "apply", "permission": "invoice.credit-notes.apply", "scope": "admin + finance only. Sets applied_to_type + applied_to_id + transitions status issued → applied." },
-        { "action": "void", "permission": "invoice.credit-notes.void", "scope": "admin + finance only. REFUSED when status IN ('issued', 'applied') — issued/applied credit notes are IMMUTABLE." },
-        { "action": "update", "permission": "NEVER", "scope": "credit notes are immutable except for the status transitions (draft → issued → applied OR draft → voided). No field mutation ever." },
-        { "action": "delete", "permission": "NEVER", "scope": "financial retention 7-10y; hard-purged only via TenantErased FK CASCADE." },
+        {
+          "action": "create",
+          "permission": "invoice.credit-notes.create",
+          "scope": "admin + finance only. Requires parent invoice.status IN ('paid', 'partially_paid', 'refunded', 'disputed', 'written_off') + credit_note_issuance entitlement."
+        },
+        {
+          "action": "apply",
+          "permission": "invoice.credit-notes.apply",
+          "scope": "admin + finance only. Sets applied_to_type + applied_to_id + transitions status issued → applied."
+        },
+        {
+          "action": "void",
+          "permission": "invoice.credit-notes.void",
+          "scope": "admin + finance only. REFUSED when status IN ('issued', 'applied') — issued/applied credit notes are IMMUTABLE."
+        },
+        {
+          "action": "update",
+          "permission": "NEVER",
+          "scope": "credit notes are immutable except for the status transitions (draft → issued → applied OR draft → voided). No field mutation ever."
+        },
+        {
+          "action": "delete",
+          "permission": "NEVER",
+          "scope": "financial retention 7-10y; hard-purged only via TenantErased FK CASCADE."
+        },
         { "action": "platformViewAny", "permission": "platform.invoice.credit-notes.viewAny" }
       ]
     }

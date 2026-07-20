@@ -6,4 +6,4 @@
  *   one class for both platforms.
  */
 
-export { WebDirectionAdapter } from './web-direction.adapter';
+export { WebDirectionAdapter } from "./web-direction.adapter";

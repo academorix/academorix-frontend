@@ -8,7 +8,7 @@
  *   mock through a jsdom `window`.
  */
 
-import type { IBeforeInstallPromptEvent } from '@/core/services';
+import type { IBeforeInstallPromptEvent } from "@/core/services";
 
 /**
  * Test double implementing the {@link IBeforeInstallPromptEvent}
@@ -26,7 +26,7 @@ import type { IBeforeInstallPromptEvent } from '@/core/services';
  */
 export class MockBeforeInstallPromptEvent extends Event implements IBeforeInstallPromptEvent {
   /** Resolves when `simulateUserChoice` is called. */
-  public readonly userChoice: Promise<{ readonly outcome: 'accepted' | 'dismissed' }>;
+  public readonly userChoice: Promise<{ readonly outcome: "accepted" | "dismissed" }>;
 
   /** Number of times `prompt()` has been called. */
   public promptCalls = 0;
@@ -34,10 +34,10 @@ export class MockBeforeInstallPromptEvent extends Event implements IBeforeInstal
   /** Number of times `preventDefault()` has been called. */
   public preventDefaultCalls = 0;
 
-  private resolveChoice!: (result: { readonly outcome: 'accepted' | 'dismissed' }) => void;
+  private resolveChoice!: (result: { readonly outcome: "accepted" | "dismissed" }) => void;
 
   public constructor() {
-    super('beforeinstallprompt');
+    super("beforeinstallprompt");
     // The real event's `userChoice` is a promise the caller awaits
     // after `prompt()`. Match that shape by holding the resolver.
     this.userChoice = new Promise((resolve) => {
@@ -46,7 +46,7 @@ export class MockBeforeInstallPromptEvent extends Event implements IBeforeInstal
   }
 
   /** Standard event override — counts invocations for tests. */
-  public preventDefault(): void {
+  public override preventDefault(): void {
     super.preventDefault();
     this.preventDefaultCalls += 1;
   }
@@ -62,7 +62,7 @@ export class MockBeforeInstallPromptEvent extends Event implements IBeforeInstal
    * call this after `prompt()` to simulate the user picking a
    * choice.
    */
-  public simulateUserChoice(outcome: 'accepted' | 'dismissed'): void {
+  public simulateUserChoice(outcome: "accepted" | "dismissed"): void {
     this.resolveChoice({ outcome });
   }
 }

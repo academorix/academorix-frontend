@@ -16,7 +16,7 @@
  *   it to the launch URL.
  */
 export type LaunchHandlerClientMode =
-  'auto' | 'focus-existing' | 'navigate-new' | 'navigate-existing';
+  "auto" | "focus-existing" | "navigate-new" | "navigate-existing";
 
 /**
  * Launch Handler API — declares how the browser should handle the

@@ -13,8 +13,8 @@
  *   `vapidPublicKey`).
  */
 
-import { DEFAULT_NOTIFICATIONS_CONFIG } from '../constants/defaults.constant';
-import type { INotificationModuleOptions } from '../interfaces';
+import { DEFAULT_NOTIFICATIONS_CONFIG } from "../constants/defaults.constant";
+import type { INotificationModuleOptions } from "../interfaces";
 
 /**
  * Merge user options over {@link DEFAULT_NOTIFICATIONS_CONFIG}.

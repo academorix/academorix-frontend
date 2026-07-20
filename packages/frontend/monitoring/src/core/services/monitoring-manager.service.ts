@@ -12,9 +12,9 @@
  *   throwing provider is isolated.
  */
 
-import { Inject, Injectable, Optional, OnApplicationBootstrap } from '@stackra/container';
-import { MultipleInstanceManager } from '@stackra/support';
-import { MONITORING_CONFIG, LOGGER_MANAGER } from '@stackra/contracts';
+import { Inject, Injectable, Optional, OnApplicationBootstrap } from "@stackra/container";
+import { MultipleInstanceManager } from "@stackra/support";
+import { MONITORING_CONFIG, LOGGER_MANAGER } from "@stackra/contracts";
 import type {
   ICaptureContext,
   ILoggerManager,
@@ -22,11 +22,11 @@ import type {
   IMonitoringManager,
   IMonitoringProvider,
   IMonitoringUser,
-} from '@stackra/contracts';
+} from "@stackra/contracts";
 
-import type { IMonitoringModuleOptions, ISentryProviderOptions } from '../interfaces';
-import { ConsoleMonitoringProvider } from '../providers/console-monitoring.provider';
-import { SentryMonitoringProvider } from '../providers/sentry-monitoring.provider';
+import type { IMonitoringModuleOptions, ISentryProviderOptions } from "../interfaces";
+import { ConsoleMonitoringProvider } from "../providers/console-monitoring.provider";
+import { SentryMonitoringProvider } from "../providers/sentry-monitoring.provider";
 
 /**
  * The monitoring manager — a `MultipleInstanceManager` of providers with a
@@ -48,7 +48,7 @@ export class MonitoringManager
    */
   public constructor(
     @Inject(MONITORING_CONFIG) private readonly config: IMonitoringModuleOptions,
-    @Optional() @Inject(LOGGER_MANAGER) private readonly loggerManager?: ILoggerManager
+    @Optional() @Inject(LOGGER_MANAGER) private readonly loggerManager?: ILoggerManager,
   ) {
     super();
   }
@@ -58,7 +58,7 @@ export class MonitoringManager
   // ══════════════════════════════════════════════════════════════════════════
 
   public getDefaultInstance(): string {
-    return this.config.default ?? Object.keys(this.config.providers ?? {})[0] ?? 'console';
+    return this.config.default ?? Object.keys(this.config.providers ?? {})[0] ?? "console";
   }
 
   public setDefaultInstance(name: string): void {
@@ -91,8 +91,8 @@ export class MonitoringManager
       this.configuredProviders().map((provider) =>
         Promise.resolve()
           .then(() => provider.init?.())
-          .catch((error) => this.warn(`provider "${provider.name}" init failed`, error))
-      )
+          .catch((error) => this.warn(`provider "${provider.name}" init failed`, error)),
+      ),
     );
   }
 
@@ -166,8 +166,8 @@ export class MonitoringManager
       this.activeProviders().map((provider) =>
         Promise.resolve()
           .then(() => provider.flush?.())
-          .catch((error) => this.warn(`provider "${provider.name}" flush failed`, error))
-      )
+          .catch((error) => this.warn(`provider "${provider.name}" flush failed`, error)),
+      ),
     );
   }
 
@@ -231,7 +231,7 @@ export class MonitoringManager
   private warn(message: string, error: unknown): void {
     if (!this.loggerManager) return;
     try {
-      this.loggerManager.create('monitoring').warn(`${message}: ${String(error)}`);
+      this.loggerManager.create("monitoring").warn(`${message}: ${String(error)}`);
     } catch {
       /* never let internal logging throw */
     }

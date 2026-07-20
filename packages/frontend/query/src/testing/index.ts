@@ -25,5 +25,5 @@
  * ```
  */
 
-export { MockQueryClient, type RecordedQueryCall } from './mock-query-client';
-export { createMockQueryClient } from './create-mock-query';
+export { MockQueryClient, type RecordedQueryCall } from "./mock-query-client";
+export { createMockQueryClient } from "./create-mock-query";

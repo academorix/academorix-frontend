@@ -7,8 +7,8 @@
  *   `useMutation` from `@stackra/query` for optimistic/server-backed writes).
  */
 
-import { useInject } from '@stackra/container/react';
-import type { Store } from '@tanstack/store';
+import { useInject } from "@stackra/container/react";
+import type { Store } from "@tanstack/store";
 
 /**
  * Get the setState function from a DI-managed store.

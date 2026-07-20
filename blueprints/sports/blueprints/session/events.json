@@ -11,10 +11,7 @@
       "class": "Academorix\\Sports\\Session\\Events\\SessionScheduled",
       "trigger": "SessionProvisioner completed a successful create. Fires exactly once per `sessions.id`.",
       "queue": "notifications",
-      "consumers": [
-        "audit::WriteToAuditLog",
-        "activity::WriteToActivityLog"
-      ],
+      "consumers": ["audit::WriteToAuditLog", "activity::WriteToActivityLog"],
       "payload": {
         "session_id": "ULID (ses_*)",
         "tenant_id": "ULID (ten_*)",
@@ -35,7 +32,11 @@
       "class": "Academorix\\Sports\\Session\\Events\\SessionConfirmed",
       "trigger": "Session.status transitioned scheduled -> confirmed. Confirmation locks the session for attendees (roster is committed).",
       "queue": "notifications",
-      "consumers": ["audit::WriteToAuditLog", "activity::WriteToActivityLog", "notifications::DispatchSessionScheduledNotification (only if not already fired at scheduled)"],
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog",
+        "notifications::DispatchSessionScheduledNotification (only if not already fired at scheduled)"
+      ],
       "payload": {
         "session_id": "ULID",
         "tenant_id": "ULID",
@@ -125,7 +126,11 @@
       "class": "Academorix\\Sports\\Session\\Events\\SessionCoachAssigned",
       "trigger": "head_coach_id set on session for the first time OR assistant_coach added to array.",
       "queue": "notifications",
-      "consumers": ["audit::WriteToAuditLog", "activity::WriteToActivityLog", "notifications::DispatchSessionCoachAssignedNotification (to the coach — 'you're on this session')"],
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog",
+        "notifications::DispatchSessionCoachAssignedNotification (to the coach — 'you're on this session')"
+      ],
       "payload": {
         "session_id": "ULID",
         "tenant_id": "ULID",
@@ -191,10 +196,7 @@
       "class": "Academorix\\Sports\\Session\\Events\\SessionAthleteCheckedIn",
       "trigger": "SessionAttendance.status transitioned registered -> checked_in.",
       "queue": "notifications",
-      "consumers": [
-        "audit::WriteToAuditLog",
-        "activity::WriteToActivityLog"
-      ],
+      "consumers": ["audit::WriteToAuditLog", "activity::WriteToActivityLog"],
       "payload": {
         "session_id": "ULID",
         "attendance_id": "ULID (sat_*)",
@@ -254,10 +256,7 @@
       "class": "Academorix\\Sports\\Session\\Events\\SessionAttendanceBelowMinimum",
       "trigger": "checked_in_athletes_count < attendance_min after session start. Fires from CancelUnderMinimumSessionsJob. Session transitions to cancelled with trigger='automated_under_minimum'.",
       "queue": "notifications",
-      "consumers": [
-        "audit::WriteToAuditLog",
-        "activity::WriteToActivityLog"
-      ],
+      "consumers": ["audit::WriteToAuditLog", "activity::WriteToActivityLog"],
       "payload": {
         "session_id": "ULID",
         "tenant_id": "ULID",
@@ -284,7 +283,10 @@
       "class": "Academorix\\Sports\\Session\\Events\\SessionRatingAggregated",
       "trigger": "AggregateSessionRatingsJob wrote a new session_rating value. Fires at session close (nightly job).",
       "queue": "low",
-      "consumers": ["audit::WriteToAuditLog", "coaching::UpdateCoachAggregateRating (Wave 2b — the coach.rating aggregator that pulls per-session ratings)"],
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "coaching::UpdateCoachAggregateRating (Wave 2b — the coach.rating aggregator that pulls per-session ratings)"
+      ],
       "payload": {
         "session_id": "ULID",
         "tenant_id": "ULID",

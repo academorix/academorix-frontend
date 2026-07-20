@@ -22,9 +22,7 @@
     "compliance-evidence"
   ],
   "priority": 33,
-  "providers": [
-    "Academorix\\Delegation\\Providers\\DelegationServiceProvider"
-  ],
+  "providers": ["Academorix\\Delegation\\Providers\\DelegationServiceProvider"],
   "files": [],
   "dependencies": [
     "foundation",
@@ -36,19 +34,11 @@
     "entitlements",
     "rbac"
   ],
-  "extendedBy": [
-    "approvals"
-  ],
+  "extendedBy": ["approvals"],
   "consumed_by_note": "workflow/approvals reads role_delegations rows via DelegationResolver during approver-selector evaluation (see access-approvals/design.md §7). Domain modules never call the resolver directly — they call Gate::allows() and the RBAC PermissionResolver traverses delegation transparently.",
   "contributes": {
-    "traits": [
-      "HasDelegations",
-      "HasImpersonationHistory"
-    ],
-    "attributes": [
-      "AsDelegationListener",
-      "AsImpersonationListener"
-    ],
+    "traits": ["HasDelegations", "HasImpersonationHistory"],
+    "attributes": ["AsDelegationListener", "AsImpersonationListener"],
     "blueprints": [],
     "middleware": [
       "delegation.enforce_delegate_context",
@@ -67,13 +57,8 @@
       "ImpersonationSessionForcedTerminate",
       "ImpersonationAttemptRefused"
     ],
-    "policies": [
-      "RoleDelegationPolicy",
-      "ImpersonationSessionPolicy"
-    ],
-    "hooks": [
-      "WarmDelegationResolverCacheOnTenantInit"
-    ],
+    "policies": ["RoleDelegationPolicy", "ImpersonationSessionPolicy"],
+    "hooks": ["WarmDelegationResolverCacheOnTenantInit"],
     "commands": [
       "delegations:list",
       "delegations:describe",
@@ -105,14 +90,8 @@
       "ImpersonationExtendedNotification",
       "ImpersonationForcedTerminationNotification"
     ],
-    "broadcasts": [
-      "tenant.{id}.delegations",
-      "platform.impersonation.{platform_user_id}"
-    ],
-    "observers": [
-      "RoleDelegationObserver",
-      "ImpersonationSessionObserver"
-    ],
+    "broadcasts": ["tenant.{id}.delegations", "platform.impersonation.{platform_user_id}"],
+    "observers": ["RoleDelegationObserver", "ImpersonationSessionObserver"],
     "rules": [
       "valid_delegation_window",
       "delegator_holds_role",
@@ -120,17 +99,10 @@
       "impersonation_ttl_within_bounds",
       "impersonation_reason_min_length"
     ],
-    "casts": [
-      "DelegationType",
-      "ImpersonationEndTrigger"
-    ],
+    "casts": ["DelegationType", "ImpersonationEndTrigger"],
     "views": [],
-    "lang": [
-      "delegation"
-    ],
-    "config": [
-      "delegation"
-    ],
+    "lang": ["delegation"],
+    "config": ["delegation"],
     "macros": [],
     "bindings": [
       "RoleDelegationRepository",
@@ -141,10 +113,7 @@
       "DelegationValidator",
       "ImpersonationEntitlementChecker"
     ],
-    "resources": [
-      "role-delegation",
-      "impersonation-session"
-    ]
+    "resources": ["role-delegation", "impersonation-session"]
   },
   "hosts": {
     "tenant": {

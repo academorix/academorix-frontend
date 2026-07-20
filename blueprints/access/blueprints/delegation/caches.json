@@ -68,14 +68,20 @@
       "description": "Guard for the one-at-a-time invariant — whether a specific PlatformUser already has an active session. Consulted by the observer's creating hook.",
       "ttlSeconds": 60,
       "tags": ["impersonation"],
-      "invalidatedBy": ["ImpersonationSessionObserver.created", "ImpersonationSessionObserver.updated"]
+      "invalidatedBy": [
+        "ImpersonationSessionObserver.created",
+        "ImpersonationSessionObserver.updated"
+      ]
     },
     {
       "pattern": "dlg:tenant:locked-down:{tenant_id}",
       "description": "Compliance module's active-security-incident registry, cached for fast reads from the impersonation observer. When the flag is set, ALL new impersonation attempts against that tenant are refused with target_tenant_locked_down.",
       "ttlSeconds": 30,
       "tags": ["impersonation", "compliance"],
-      "invalidatedBy": ["compliance::TenantSecurityIncidentDeclared", "compliance::TenantSecurityIncidentClosed"]
+      "invalidatedBy": [
+        "compliance::TenantSecurityIncidentDeclared",
+        "compliance::TenantSecurityIncidentClosed"
+      ]
     }
   ],
   "notes": [

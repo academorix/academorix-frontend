@@ -4,10 +4,10 @@
  * @description CLI command to find missing translation keys across locales.
  */
 
-import { readFileSync, readdirSync, statSync, existsSync } from 'fs';
-import { join, basename } from 'path';
+import { readFileSync, readdirSync, statSync, existsSync } from "fs";
+import { join, basename } from "path";
 
-import type { MissingKeysReport } from '../interfaces';
+import type { MissingKeysReport } from "../interfaces";
 
 /**
  * Find translation keys that are present in the source locale but missing in others.
@@ -18,14 +18,14 @@ import type { MissingKeysReport } from '../interfaces';
  */
 export function findMissingKeys(
   translationsPath: string,
-  sourceLocale?: string
+  sourceLocale?: string,
 ): MissingKeysReport[] {
   if (!existsSync(translationsPath)) {
     throw new Error(`Translations path not found: ${translationsPath}`);
   }
 
   const localeDirs = readdirSync(translationsPath).filter((entry) =>
-    statSync(join(translationsPath, entry)).isDirectory()
+    statSync(join(translationsPath, entry)).isDirectory(),
   );
 
   if (localeDirs.length < 2) return [];
@@ -59,11 +59,11 @@ function collectAllKeys(dir: string): string[] {
 
   if (!existsSync(dir)) return keys;
 
-  const files = readdirSync(dir).filter((f) => f.endsWith('.json'));
+  const files = readdirSync(dir).filter((f) => f.endsWith(".json"));
 
   for (const file of files) {
-    const namespace = basename(file, '.json');
-    const content = JSON.parse(readFileSync(join(dir, file), 'utf-8'));
+    const namespace = basename(file, ".json");
+    const content = JSON.parse(readFileSync(join(dir, file), "utf-8"));
     flattenKeys(content, `${namespace}.`, keys);
   }
 
@@ -76,7 +76,7 @@ function collectAllKeys(dir: string): string[] {
 function flattenKeys(obj: Record<string, unknown>, prefix: string, result: string[]): void {
   for (const [key, value] of Object.entries(obj)) {
     const fullKey = `${prefix}${key}`;
-    if (typeof value === 'object' && value !== null && !Array.isArray(value)) {
+    if (typeof value === "object" && value !== null && !Array.isArray(value)) {
       flattenKeys(value as Record<string, unknown>, `${fullKey}.`, result);
     } else {
       result.push(fullKey);
@@ -92,7 +92,7 @@ export function runMissingCommand(translationsPath: string, sourceLocale?: strin
     const reports = findMissingKeys(translationsPath, sourceLocale);
 
     if (reports.length === 0) {
-      console.log('[i18n:missing] All locales are in sync.');
+      console.log("[i18n:missing] All locales are in sync.");
       return;
     }
 
@@ -111,7 +111,7 @@ export function runMissingCommand(translationsPath: string, sourceLocale?: strin
     }
 
     console.log(
-      `\nTotal missing: ${totalMissing} key(s) across ${reports.filter((r) => r.count > 0).length} locale(s).`
+      `\nTotal missing: ${totalMissing} key(s) across ${reports.filter((r) => r.count > 0).length} locale(s).`,
     );
   } catch (error: any) {
     console.error(`[i18n:missing] Error: ${error.message}`);

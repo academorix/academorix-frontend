@@ -20,9 +20,9 @@
  *   installed.
  */
 
-import { useCallback } from 'react';
-import { useOptionalInject } from '@stackra/container/react';
-import { REALTIME_MANAGER, type ILiveEvent, type IRealtimeManager } from '@stackra/contracts';
+import { useCallback } from "react";
+import { useOptionalInject } from "@stackra/container/react";
+import { REALTIME_MANAGER, type ILiveEvent, type IRealtimeManager } from "@stackra/contracts";
 
 /**
  * Publish function signature returned by `usePublish`.
@@ -31,7 +31,7 @@ import { REALTIME_MANAGER, type ILiveEvent, type IRealtimeManager } from '@stack
  * the hook fills it with `new Date()` when the caller omits it.
  */
 export type PublishLiveEvent = (
-  event: Omit<ILiveEvent, 'date'> & { readonly date?: Date }
+  event: Omit<ILiveEvent, "date"> & { readonly date?: Date },
 ) => Promise<void>;
 
 /**
@@ -81,6 +81,6 @@ export function usePublish(options: UsePublishOptions = {}): PublishLiveEvent {
         __stackraQueryEventDate: (event.date ?? new Date()).toISOString(),
       });
     },
-    [manager, connectionName, isPrivate]
+    [manager, connectionName, isPrivate],
   );
 }

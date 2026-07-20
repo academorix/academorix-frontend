@@ -7,5 +7,5 @@
  *   `workbox.runtimeCaching` or to Serwist's `runtimeCaching`.
  */
 
-export { getRuntimeCaching } from './utils';
-export type { IRuntimeCachingRule, IRuntimeCachingOptions } from './interfaces';
+export { getRuntimeCaching } from "./utils";
+export type { IRuntimeCachingRule, IRuntimeCachingOptions } from "./interfaces";

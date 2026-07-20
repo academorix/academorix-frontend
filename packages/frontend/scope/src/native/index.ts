@@ -20,20 +20,20 @@
 // ════════════════════════════════════════════════════════════════════════════════
 // Module
 // ════════════════════════════════════════════════════════════════════════════════
-export { NativeScopeModule, type NativeScopeRootOptions } from './native-scope.module';
+export { NativeScopeModule, type NativeScopeRootOptions } from "./native-scope.module";
 
 // ════════════════════════════════════════════════════════════════════════════════
 // Components (built on @stackra/ui/native)
 // ════════════════════════════════════════════════════════════════════════════════
-export { NativeScopeSwitcher } from './components';
+export { NativeScopeSwitcher } from "./components";
 
 // ════════════════════════════════════════════════════════════════════════════════
 // Interfaces
 // ════════════════════════════════════════════════════════════════════════════════
-export type { NativeScopeSwitcherProps } from './interfaces';
+export type { NativeScopeSwitcherProps } from "./interfaces";
 
 // ════════════════════════════════════════════════════════════════════════════════
 // Cross-platform hook re-exports (single source in ./react/hooks)
 // ════════════════════════════════════════════════════════════════════════════════
-export { useScope, useScopeTree, useScopeValue } from '@/react/hooks';
-export type { UseScopeResult } from '@/react/hooks';
+export { useScope, useScopeTree, useScopeValue } from "@/react/hooks";
+export type { UseScopeResult } from "@/react/hooks";

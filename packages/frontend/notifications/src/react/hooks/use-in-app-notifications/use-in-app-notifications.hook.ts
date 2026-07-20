@@ -7,12 +7,12 @@
  *   concurrent React — matches the scope package's pattern.
  */
 
-import { useCallback, useSyncExternalStore } from 'react';
-import { useInject } from '@stackra/container/react';
+import { useCallback, useSyncExternalStore } from "react";
+import { useInject } from "@stackra/container/react";
 
-import { IN_APP_NOTIFICATION_CENTRE } from '@/core/constants';
-import type { InAppNotificationCentre } from '@/core/services';
-import type { IUseInAppNotificationsResult } from './use-in-app-notifications.interface';
+import { IN_APP_NOTIFICATION_CENTRE } from "@/core/constants";
+import type { InAppNotificationCentre } from "@/core/services";
+import type { IUseInAppNotificationsResult } from "./use-in-app-notifications.interface";
 
 /**
  * Subscribe to the in-app centre's snapshot.

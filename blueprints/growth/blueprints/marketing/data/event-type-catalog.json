@@ -10,7 +10,17 @@
       "subject_types": ["User"],
       "carries_value": false,
       "typical_deduplication_pattern": "signup:{subject_id}",
-      "supported_by_providers": ["meta_capi", "google_ads", "google_analytics_4", "gtm_server", "tiktok_events", "linkedin_insight", "snapchat_capi", "pinterest_capi", "custom_webhook"]
+      "supported_by_providers": [
+        "meta_capi",
+        "google_ads",
+        "google_analytics_4",
+        "gtm_server",
+        "tiktok_events",
+        "linkedin_insight",
+        "snapchat_capi",
+        "pinterest_capi",
+        "custom_webhook"
+      ]
     },
     {
       "event_type": "trial_started",
@@ -19,7 +29,15 @@
       "subject_types": ["Subscription"],
       "carries_value": false,
       "typical_deduplication_pattern": "trial:{subject_id}:started",
-      "supported_by_providers": ["meta_capi", "google_ads", "google_analytics_4", "gtm_server", "tiktok_events", "linkedin_insight", "custom_webhook"]
+      "supported_by_providers": [
+        "meta_capi",
+        "google_ads",
+        "google_analytics_4",
+        "gtm_server",
+        "tiktok_events",
+        "linkedin_insight",
+        "custom_webhook"
+      ]
     },
     {
       "event_type": "trial_ended",
@@ -28,7 +46,13 @@
       "subject_types": ["Subscription"],
       "carries_value": false,
       "typical_deduplication_pattern": "trial:{subject_id}:ended",
-      "supported_by_providers": ["meta_capi", "google_ads", "google_analytics_4", "gtm_server", "custom_webhook"]
+      "supported_by_providers": [
+        "meta_capi",
+        "google_ads",
+        "google_analytics_4",
+        "gtm_server",
+        "custom_webhook"
+      ]
     },
     {
       "event_type": "trial_converted",
@@ -37,7 +61,17 @@
       "subject_types": ["Subscription"],
       "carries_value": true,
       "typical_deduplication_pattern": "trial:{subject_id}:converted",
-      "supported_by_providers": ["meta_capi", "google_ads", "google_analytics_4", "gtm_server", "tiktok_events", "linkedin_insight", "snapchat_capi", "pinterest_capi", "custom_webhook"]
+      "supported_by_providers": [
+        "meta_capi",
+        "google_ads",
+        "google_analytics_4",
+        "gtm_server",
+        "tiktok_events",
+        "linkedin_insight",
+        "snapchat_capi",
+        "pinterest_capi",
+        "custom_webhook"
+      ]
     },
     {
       "event_type": "subscription_started",
@@ -46,7 +80,17 @@
       "subject_types": ["Subscription"],
       "carries_value": true,
       "typical_deduplication_pattern": "sub:{subject_id}:started",
-      "supported_by_providers": ["meta_capi", "google_ads", "google_analytics_4", "gtm_server", "tiktok_events", "linkedin_insight", "snapchat_capi", "pinterest_capi", "custom_webhook"]
+      "supported_by_providers": [
+        "meta_capi",
+        "google_ads",
+        "google_analytics_4",
+        "gtm_server",
+        "tiktok_events",
+        "linkedin_insight",
+        "snapchat_capi",
+        "pinterest_capi",
+        "custom_webhook"
+      ]
     },
     {
       "event_type": "subscription_upgraded",
@@ -55,7 +99,14 @@
       "subject_types": ["Subscription"],
       "carries_value": true,
       "typical_deduplication_pattern": "sub:{subject_id}:upgraded:{new_plan_id}",
-      "supported_by_providers": ["meta_capi", "google_ads", "google_analytics_4", "gtm_server", "linkedin_insight", "custom_webhook"]
+      "supported_by_providers": [
+        "meta_capi",
+        "google_ads",
+        "google_analytics_4",
+        "gtm_server",
+        "linkedin_insight",
+        "custom_webhook"
+      ]
     },
     {
       "event_type": "subscription_downgraded",
@@ -73,7 +124,14 @@
       "subject_types": ["Subscription"],
       "carries_value": false,
       "typical_deduplication_pattern": "sub:{subject_id}:cancelled",
-      "supported_by_providers": ["meta_capi", "google_ads", "google_analytics_4", "gtm_server", "linkedin_insight", "custom_webhook"]
+      "supported_by_providers": [
+        "meta_capi",
+        "google_ads",
+        "google_analytics_4",
+        "gtm_server",
+        "linkedin_insight",
+        "custom_webhook"
+      ]
     },
     {
       "event_type": "membership_purchased",
@@ -82,7 +140,17 @@
       "subject_types": ["Membership"],
       "carries_value": true,
       "typical_deduplication_pattern": "membership:{subject_id}:purchased",
-      "supported_by_providers": ["meta_capi", "google_ads", "google_analytics_4", "gtm_server", "tiktok_events", "linkedin_insight", "snapchat_capi", "pinterest_capi", "custom_webhook"]
+      "supported_by_providers": [
+        "meta_capi",
+        "google_ads",
+        "google_analytics_4",
+        "gtm_server",
+        "tiktok_events",
+        "linkedin_insight",
+        "snapchat_capi",
+        "pinterest_capi",
+        "custom_webhook"
+      ]
     },
     {
       "event_type": "lead_captured",
@@ -91,7 +159,17 @@
       "subject_types": ["Lead"],
       "carries_value": false,
       "typical_deduplication_pattern": "lead:{subject_id}",
-      "supported_by_providers": ["meta_capi", "google_ads", "google_analytics_4", "gtm_server", "tiktok_events", "linkedin_insight", "snapchat_capi", "pinterest_capi", "custom_webhook"]
+      "supported_by_providers": [
+        "meta_capi",
+        "google_ads",
+        "google_analytics_4",
+        "gtm_server",
+        "tiktok_events",
+        "linkedin_insight",
+        "snapchat_capi",
+        "pinterest_capi",
+        "custom_webhook"
+      ]
     },
     {
       "event_type": "session_booked",
@@ -100,7 +178,13 @@
       "subject_types": ["User", "Athlete"],
       "carries_value": true,
       "typical_deduplication_pattern": "booking:{booking_id}",
-      "supported_by_providers": ["meta_capi", "google_ads", "google_analytics_4", "gtm_server", "custom_webhook"]
+      "supported_by_providers": [
+        "meta_capi",
+        "google_ads",
+        "google_analytics_4",
+        "gtm_server",
+        "custom_webhook"
+      ]
     },
     {
       "event_type": "event_registered",
@@ -109,7 +193,14 @@
       "subject_types": ["User", "Athlete"],
       "carries_value": true,
       "typical_deduplication_pattern": "event_reg:{event_registration_id}",
-      "supported_by_providers": ["meta_capi", "google_ads", "google_analytics_4", "gtm_server", "tiktok_events", "custom_webhook"]
+      "supported_by_providers": [
+        "meta_capi",
+        "google_ads",
+        "google_analytics_4",
+        "gtm_server",
+        "tiktok_events",
+        "custom_webhook"
+      ]
     },
     {
       "event_type": "athlete_enrolled",
@@ -118,7 +209,13 @@
       "subject_types": ["Athlete"],
       "carries_value": false,
       "typical_deduplication_pattern": "athlete:{subject_id}:enrolled:{enrollment_id}",
-      "supported_by_providers": ["meta_capi", "google_ads", "google_analytics_4", "gtm_server", "custom_webhook"]
+      "supported_by_providers": [
+        "meta_capi",
+        "google_ads",
+        "google_analytics_4",
+        "gtm_server",
+        "custom_webhook"
+      ]
     },
     {
       "event_type": "athlete_withdrawn",
@@ -136,7 +233,16 @@
       "subject_types": ["User"],
       "carries_value": true,
       "typical_deduplication_pattern": "cart:{cart_id}:abandoned",
-      "supported_by_providers": ["meta_capi", "google_ads", "google_analytics_4", "gtm_server", "tiktok_events", "snapchat_capi", "pinterest_capi", "custom_webhook"]
+      "supported_by_providers": [
+        "meta_capi",
+        "google_ads",
+        "google_analytics_4",
+        "gtm_server",
+        "tiktok_events",
+        "snapchat_capi",
+        "pinterest_capi",
+        "custom_webhook"
+      ]
     },
     {
       "event_type": "churn_predicted",
@@ -154,7 +260,14 @@
       "subject_types": ["User"],
       "carries_value": true,
       "typical_deduplication_pattern": "referral:{referral_id}:completed",
-      "supported_by_providers": ["meta_capi", "google_ads", "google_analytics_4", "gtm_server", "tiktok_events", "custom_webhook"]
+      "supported_by_providers": [
+        "meta_capi",
+        "google_ads",
+        "google_analytics_4",
+        "gtm_server",
+        "tiktok_events",
+        "custom_webhook"
+      ]
     },
     {
       "event_type": "refund_issued",
@@ -164,7 +277,13 @@
       "carries_value": true,
       "value_may_be_negative": true,
       "typical_deduplication_pattern": "refund:{refund_id}",
-      "supported_by_providers": ["meta_capi", "google_ads", "google_analytics_4", "gtm_server", "custom_webhook"]
+      "supported_by_providers": [
+        "meta_capi",
+        "google_ads",
+        "google_analytics_4",
+        "gtm_server",
+        "custom_webhook"
+      ]
     },
     {
       "event_type": "chargeback_filed",
@@ -192,7 +311,14 @@
       "subject_types": ["Lead"],
       "carries_value": false,
       "typical_deduplication_pattern": "demo:{lead_id}:scheduled",
-      "supported_by_providers": ["meta_capi", "google_ads", "google_analytics_4", "gtm_server", "linkedin_insight", "custom_webhook"]
+      "supported_by_providers": [
+        "meta_capi",
+        "google_ads",
+        "google_analytics_4",
+        "gtm_server",
+        "linkedin_insight",
+        "custom_webhook"
+      ]
     },
     {
       "event_type": "demo_attended",
@@ -201,7 +327,14 @@
       "subject_types": ["Lead"],
       "carries_value": false,
       "typical_deduplication_pattern": "demo:{lead_id}:attended",
-      "supported_by_providers": ["meta_capi", "google_ads", "google_analytics_4", "gtm_server", "linkedin_insight", "custom_webhook"]
+      "supported_by_providers": [
+        "meta_capi",
+        "google_ads",
+        "google_analytics_4",
+        "gtm_server",
+        "linkedin_insight",
+        "custom_webhook"
+      ]
     },
     {
       "event_type": "newsletter_subscribed",
@@ -210,7 +343,13 @@
       "subject_types": ["User", "Lead"],
       "carries_value": false,
       "typical_deduplication_pattern": "newsletter:{subject_id}:subscribed",
-      "supported_by_providers": ["meta_capi", "google_ads", "google_analytics_4", "gtm_server", "custom_webhook"]
+      "supported_by_providers": [
+        "meta_capi",
+        "google_ads",
+        "google_analytics_4",
+        "gtm_server",
+        "custom_webhook"
+      ]
     },
     {
       "event_type": "newsletter_unsubscribed",
@@ -228,7 +367,13 @@
       "subject_types": ["Lead"],
       "carries_value": false,
       "typical_deduplication_pattern": "contact:{lead_id}",
-      "supported_by_providers": ["meta_capi", "google_ads", "google_analytics_4", "gtm_server", "custom_webhook"]
+      "supported_by_providers": [
+        "meta_capi",
+        "google_ads",
+        "google_analytics_4",
+        "gtm_server",
+        "custom_webhook"
+      ]
     },
     {
       "event_type": "app_install",
@@ -237,7 +382,15 @@
       "subject_types": ["User"],
       "carries_value": false,
       "typical_deduplication_pattern": "install:{user_id}:{device_id}",
-      "supported_by_providers": ["meta_capi", "google_ads", "google_analytics_4", "gtm_server", "tiktok_events", "snapchat_capi", "custom_webhook"]
+      "supported_by_providers": [
+        "meta_capi",
+        "google_ads",
+        "google_analytics_4",
+        "gtm_server",
+        "tiktok_events",
+        "snapchat_capi",
+        "custom_webhook"
+      ]
     }
   ],
   "notes": [

@@ -37,7 +37,7 @@
 export function parseMaterializedPath(path: string): string[] {
   if (!path) return [];
 
-  const segments = path.split('/').filter(Boolean);
+  const segments = path.split("/").filter(Boolean);
 
   // Reverse: materialized path is root→self, but resolution needs self→root
   return segments.reverse();

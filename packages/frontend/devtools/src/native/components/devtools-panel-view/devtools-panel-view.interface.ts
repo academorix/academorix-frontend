@@ -4,7 +4,7 @@
  * @description Props for the native panel-view.
  */
 
-import type { IDevtoolsPanel } from '@stackra/contracts';
+import type { IDevtoolsPanel } from "@stackra/contracts";
 
 /** Props for the native panel-view. */
 export interface DevtoolsPanelViewProps {

@@ -7,7 +7,7 @@
  *   no lifecycle wiring.
  */
 
-import type { ISyncCheckpoint } from '@stackra/contracts';
+import type { ISyncCheckpoint } from "@stackra/contracts";
 
 /**
  * In-memory mock of `CheckpointService`.

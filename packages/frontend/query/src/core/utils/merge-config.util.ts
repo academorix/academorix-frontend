@@ -4,8 +4,8 @@
  * @description Merge user options with query defaults.
  */
 
-import type { QueryModuleOptions } from '../interfaces/query-module-options.interface';
-import { DEFAULT_QUERY_CONFIG } from '../constants';
+import type { QueryModuleOptions } from "../interfaces/query-module-options.interface";
+import { DEFAULT_QUERY_CONFIG } from "../constants";
 
 /**
  * Merge partial options over {@link DEFAULT_QUERY_CONFIG}.

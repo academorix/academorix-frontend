@@ -173,7 +173,11 @@
               "children": [
                 {
                   "kind": "Button",
-                  "props": { "variant": "danger", "leadingIcon": "arrow-uturn-left", "children": "Revert to default" },
+                  "props": {
+                    "variant": "danger",
+                    "leadingIcon": "arrow-uturn-left",
+                    "children": "Revert to default"
+                  },
                   "actions": {
                     "onPress": {
                       "kind": "http.delete",

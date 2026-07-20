@@ -6,12 +6,14 @@
  *   the CommandLoader during the OnModuleInit lifecycle hook.
  */
 
+import { Injectable } from "@stackra/container";
 import { defineMetadata } from "@vivtel/metadata";
+
 import { COMMAND_METADATA_KEY } from "../constants";
 import { COMMAND_NAME_PATTERN } from "../constants";
 import { InvalidCommandNameError } from "../errors";
+
 import type { ICommandMetadata } from "../interfaces";
-import { Injectable } from "@stackra/container";
 
 /**
  * Register a class as a console command.
@@ -43,6 +45,12 @@ export function Command(metadata: ICommandMetadata): ClassDecorator {
     throw new InvalidCommandNameError(metadata.name);
   }
 
+  // TypeScript's built-in `ClassDecorator` type signature is
+  // `<T extends Function>(target: T) => T | void` — `Function` is
+  // mandated by the language decorator contract; our body only calls
+  // `Injectable()` (which also takes `Function`) and `defineMetadata`
+  // (which stores an arbitrary object).
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
   return (target: Function) => {
     Injectable()(target);
     defineMetadata(COMMAND_METADATA_KEY, metadata, target);

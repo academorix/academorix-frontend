@@ -19,7 +19,11 @@
     }
   ],
   "broadcasts": [
-    { "channel": "tenant.{tenantId}.refunds.pending-approvals", "onEvent": ["*"], "action": "refresh" }
+    {
+      "channel": "tenant.{tenantId}.refunds.pending-approvals",
+      "onEvent": ["*"],
+      "action": "refresh"
+    }
   ],
   "nodes": [
     {
@@ -34,8 +38,21 @@
             {
               "kind": "View",
               "children": [
-                { "kind": "Text", "props": { "as": "h1", "className": "text-2xl font-semibold", "children": "Pending refund approvals" } },
-                { "kind": "Text", "props": { "className": "text-sm text-muted", "children": "Refunds awaiting your review. Sorted oldest-first to surface SLA-approaching approvals." } }
+                {
+                  "kind": "Text",
+                  "props": {
+                    "as": "h1",
+                    "className": "text-2xl font-semibold",
+                    "children": "Pending refund approvals"
+                  }
+                },
+                {
+                  "kind": "Text",
+                  "props": {
+                    "className": "text-sm text-muted",
+                    "children": "Refunds awaiting your review. Sorted oldest-first to surface SLA-approaching approvals."
+                  }
+                }
               ]
             },
             {
@@ -48,7 +65,11 @@
                 { "id": "not_mine", "label": "Not initiated by me" }
               ],
               "actions": {
-                "onSelectionChange": { "kind": "filter.set", "field": "older_than", "valueExpr": "$selectedKey" }
+                "onSelectionChange": {
+                  "kind": "filter.set",
+                  "field": "older_than",
+                  "valueExpr": "$selectedKey"
+                }
               }
             }
           ]
@@ -62,9 +83,21 @@
             "kind": "View",
             "props": { "className": "text-center py-12" },
             "children": [
-              { "kind": "Icon", "props": { "name": "check-circle", "className": "size-12 mx-auto text-success" } },
-              { "kind": "Text", "props": { "className": "mt-4 text-lg font-medium", "children": "All caught up" } },
-              { "kind": "Text", "props": { "className": "text-sm text-muted", "children": "No refunds are pending approval." } }
+              {
+                "kind": "Icon",
+                "props": { "name": "check-circle", "className": "size-12 mx-auto text-success" }
+              },
+              {
+                "kind": "Text",
+                "props": { "className": "mt-4 text-lg font-medium", "children": "All caught up" }
+              },
+              {
+                "kind": "Text",
+                "props": {
+                  "className": "text-sm text-muted",
+                  "children": "No refunds are pending approval."
+                }
+              }
             ]
           },
           "columns": [
@@ -109,7 +142,11 @@
                 }
               }
             },
-            { "key": "initiated_by_user_id", "label": "Initiated by", "renderer": "user-avatar-name" },
+            {
+              "key": "initiated_by_user_id",
+              "label": "Initiated by",
+              "renderer": "user-avatar-name"
+            },
             {
               "key": "days_since_payment",
               "label": "Days since payment",
@@ -136,9 +173,17 @@
                   },
                   {
                     "kind": "Button",
-                    "props": { "variant": "primary", "size": "sm", "leadingIcon": "check", "children": "Approve" },
+                    "props": {
+                      "variant": "primary",
+                      "size": "sm",
+                      "leadingIcon": "check",
+                      "children": "Approve"
+                    },
                     "actions": {
-                      "onPress": { "kind": "navigate", "toExpr": "'/tenant/refunds/' + row.id + '/approve'" }
+                      "onPress": {
+                        "kind": "navigate",
+                        "toExpr": "'/tenant/refunds/' + row.id + '/approve'"
+                      }
                     },
                     "bindings": {
                       "hidden": { "$expr": "row.initiated_by_user_id === auth.user.id" }
@@ -146,9 +191,17 @@
                   },
                   {
                     "kind": "Button",
-                    "props": { "variant": "danger", "size": "sm", "leadingIcon": "x-mark", "children": "Reject" },
+                    "props": {
+                      "variant": "danger",
+                      "size": "sm",
+                      "leadingIcon": "x-mark",
+                      "children": "Reject"
+                    },
                     "actions": {
-                      "onPress": { "kind": "navigate", "toExpr": "'/tenant/refunds/' + row.id + '/reject'" }
+                      "onPress": {
+                        "kind": "navigate",
+                        "toExpr": "'/tenant/refunds/' + row.id + '/reject'"
+                      }
                     },
                     "bindings": {
                       "hidden": { "$expr": "row.initiated_by_user_id === auth.user.id" }

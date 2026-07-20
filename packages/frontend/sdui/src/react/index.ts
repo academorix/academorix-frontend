@@ -8,7 +8,7 @@
  */
 
 // Module (web)
-export { WebSduiModule } from './web-sdui.module';
+export { WebSduiModule } from "./web-sdui.module";
 
 // Providers — `ISduiRuntime` + `ISduiNotification` are contract types
 // (import from `@stackra/contracts` directly, per `contract-reexports.md`).
@@ -18,7 +18,7 @@ export {
   SduiThemeScope,
   type ISduiRuntimeProviderProps,
   type ISduiThemeScopeProps,
-} from './providers';
+} from "./providers";
 
 // Renderer
 export {
@@ -28,10 +28,10 @@ export {
   type INodeErrorBoundaryProps,
   type ISduiNodeViewProps,
   type ISduiTreeProps,
-} from './renderer';
+} from "./renderer";
 
 // Action adapter
-export { useSduiActionAdapter } from './action-adapter';
+export { useSduiActionAdapter } from "./action-adapter";
 
 // Hooks
 export {
@@ -41,14 +41,14 @@ export {
   useDataSources,
   type IUseSchemaResult,
   type IUseDataSourcesResult,
-} from './hooks';
+} from "./hooks";
 
 // Top-level view
-export { SduiScreenView, type ISduiScreenViewProps } from './components';
+export { SduiScreenView, type ISduiScreenViewProps } from "./components";
 
 // Registry seeds (consumers can call these directly against a bespoke registry)
 export {
   registerCorePrimitives,
   registerHeroUiComponents,
   registerBuiltInLayouts,
-} from './registry';
+} from "./registry";

@@ -36,30 +36,94 @@
       "metadata": "array"
     },
     "observers": ["CoachCertificationObserver"],
-    "appends": [
-      "coach_display_name",
-      "is_verified",
-      "is_expired",
-      "days_until_expiry"
-    ]
+    "appends": ["coach_display_name", "is_verified", "is_expired", "days_until_expiry"]
   },
   "x-database": {
     "engine": "postgres",
     "columns": {
-      "id": { "type": "string", "length": 30, "primary": true, "description": "Prefixed ULID: `ccf_<26>`." },
-      "tenant_id": { "type": "string", "length": 30, "nullable": false, "foreign": { "table": "tenants", "column": "id", "onUpdate": "cascade", "onDelete": "cascade" } },
-      "coaching_profile_id": { "type": "string", "length": 30, "nullable": false, "foreign": { "table": "coaching_profiles", "column": "id", "onUpdate": "cascade", "onDelete": "cascade" }, "description": "The coach's profile. CASCADE — certs go with the profile on hard-delete." },
-      "issuing_body": { "type": "string", "length": 256, "nullable": false, "description": "Certification body slug or free-text. Autocompletes against the certification-body-catalog." },
-      "certification_name": { "type": "string", "length": 256, "nullable": false, "description": "Certification name (e.g. 'USSF C License', 'CPR + AED Certification', 'CSCS')." },
-      "level": { "type": "string", "length": 32, "nullable": true, "description": "Enum: entry / intermediate / advanced / expert / master." },
+      "id": {
+        "type": "string",
+        "length": 30,
+        "primary": true,
+        "description": "Prefixed ULID: `ccf_<26>`."
+      },
+      "tenant_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": {
+          "table": "tenants",
+          "column": "id",
+          "onUpdate": "cascade",
+          "onDelete": "cascade"
+        }
+      },
+      "coaching_profile_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": {
+          "table": "coaching_profiles",
+          "column": "id",
+          "onUpdate": "cascade",
+          "onDelete": "cascade"
+        },
+        "description": "The coach's profile. CASCADE — certs go with the profile on hard-delete."
+      },
+      "issuing_body": {
+        "type": "string",
+        "length": 256,
+        "nullable": false,
+        "description": "Certification body slug or free-text. Autocompletes against the certification-body-catalog."
+      },
+      "certification_name": {
+        "type": "string",
+        "length": 256,
+        "nullable": false,
+        "description": "Certification name (e.g. 'USSF C License', 'CPR + AED Certification', 'CSCS')."
+      },
+      "level": {
+        "type": "string",
+        "length": 32,
+        "nullable": true,
+        "description": "Enum: entry / intermediate / advanced / expert / master."
+      },
       "issued_at": { "type": "date", "nullable": false },
       "expires_at": { "type": "date", "nullable": true, "description": "NULL = does not expire." },
-      "verification_url": { "type": "string", "length": 512, "nullable": true, "description": "External verification URL (issuing body's public verify portal)." },
-      "document_url": { "type": "string", "length": 512, "nullable": true, "description": "Signed HTTPS S3 URL to scanned cert. Requires coaching_advanced_certifications entitlement." },
-      "verified_by_admin_user_id": { "type": "string", "length": 30, "nullable": true, "foreign": { "table": "users", "column": "id", "onUpdate": "cascade", "onDelete": "set null" } },
+      "verification_url": {
+        "type": "string",
+        "length": 512,
+        "nullable": true,
+        "description": "External verification URL (issuing body's public verify portal)."
+      },
+      "document_url": {
+        "type": "string",
+        "length": 512,
+        "nullable": true,
+        "description": "Signed HTTPS S3 URL to scanned cert. Requires coaching_advanced_certifications entitlement."
+      },
+      "verified_by_admin_user_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": true,
+        "foreign": {
+          "table": "users",
+          "column": "id",
+          "onUpdate": "cascade",
+          "onDelete": "set null"
+        }
+      },
       "verified_at": { "type": "timestamptz", "nullable": true },
-      "verification_notes": { "type": "text", "nullable": true, "description": "Admin-visible notes on the verification. HR-visible only." },
-      "metadata": { "type": "jsonb", "nullable": true, "description": "Reserved keys: expiration_notices (map cadence_days -> ISO), expired_at (ISO)." },
+      "verification_notes": {
+        "type": "text",
+        "nullable": true,
+        "description": "Admin-visible notes on the verification. HR-visible only."
+      },
+      "metadata": {
+        "type": "jsonb",
+        "nullable": true,
+        "description": "Reserved keys: expiration_notices (map cadence_days -> ISO), expired_at (ISO)."
+      },
       "created_by": { "type": "string", "length": 30, "nullable": true },
       "updated_by": { "type": "string", "length": 30, "nullable": true },
       "deleted_by": { "type": "string", "length": 30, "nullable": true },
@@ -69,15 +133,31 @@
     },
     "indexes": [
       {
-        "columns": ["tenant_id", "coaching_profile_id", "issuing_body", "certification_name", "issued_at"],
+        "columns": [
+          "tenant_id",
+          "coaching_profile_id",
+          "issuing_body",
+          "certification_name",
+          "issued_at"
+        ],
         "unique": true,
         "name": "coach_certifications_body_name_unique",
         "predicate": "deleted_at IS NULL",
         "description": "One live row per (coach, issuing_body, certification_name, issued_at). Prevents duplicate captures."
       },
-      { "columns": ["tenant_id", "expires_at"], "name": "coach_certifications_expires_idx", "description": "Feeds NotifyCertificationExpiringJob's per-tenant sweep." },
-      { "columns": ["tenant_id", "coaching_profile_id", "verified_at"], "name": "coach_certifications_profile_verified_idx" },
-      { "columns": ["tenant_id", "coaching_profile_id", "issuing_body"], "name": "coach_certifications_body_idx" }
+      {
+        "columns": ["tenant_id", "expires_at"],
+        "name": "coach_certifications_expires_idx",
+        "description": "Feeds NotifyCertificationExpiringJob's per-tenant sweep."
+      },
+      {
+        "columns": ["tenant_id", "coaching_profile_id", "verified_at"],
+        "name": "coach_certifications_profile_verified_idx"
+      },
+      {
+        "columns": ["tenant_id", "coaching_profile_id", "issuing_body"],
+        "name": "coach_certifications_body_idx"
+      }
     ]
   },
   "required": [
@@ -96,12 +176,18 @@
     "coaching_profile_id": { "type": "string", "pattern": "^cop_[0-9A-HJKMNP-TV-Z]{26}$" },
     "issuing_body": { "type": "string", "maxLength": 256 },
     "certification_name": { "type": "string", "maxLength": 256 },
-    "level": { "type": ["string", "null"], "enum": ["entry", "intermediate", "advanced", "expert", "master", null] },
+    "level": {
+      "type": ["string", "null"],
+      "enum": ["entry", "intermediate", "advanced", "expert", "master", null]
+    },
     "issued_at": { "type": "string", "format": "date" },
     "expires_at": { "type": ["string", "null"], "format": "date" },
     "verification_url": { "type": ["string", "null"], "maxLength": 512, "format": "uri" },
     "document_url": { "type": ["string", "null"], "maxLength": 512, "format": "uri" },
-    "verified_by_admin_user_id": { "type": ["string", "null"], "pattern": "^usr_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "verified_by_admin_user_id": {
+      "type": ["string", "null"],
+      "pattern": "^usr_[0-9A-HJKMNP-TV-Z]{26}$"
+    },
     "verified_at": { "type": ["string", "null"], "format": "date-time" },
     "verification_notes": { "type": ["string", "null"], "maxLength": 2048 },
     "metadata": { "type": ["object", "null"] },

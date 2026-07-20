@@ -8,11 +8,14 @@
 [![Quality Score](https://img.shields.io/scrutinizer/g/thephpleague/config.svg?style=flat-square)](https://scrutinizer-ci.com/g/thephpleague/config)
 [![Sponsor development of this project](https://img.shields.io/badge/sponsor%20this%20package-%E2%9D%A4-ff69b4.svg?style=flat-square)](https://www.colinodell.com/sponsor)
 
-**league/config** helps you define nested configuration arrays with strict schemas and access configuration values with dot notation.  It was created by [Colin O'Dell][@colinodell].
+**league/config** helps you define nested configuration arrays with strict
+schemas and access configuration values with dot notation. It was created by
+[Colin O'Dell][@colinodell].
 
 ## 📦 Installation
 
-This project requires PHP 7.4 or higher.  To install it via [Composer] simply run:
+This project requires PHP 7.4 or higher. To install it via [Composer] simply
+run:
 
 ```bash
 composer require league/config
@@ -20,7 +23,8 @@ composer require league/config
 
 ## 🧰️ Basic Usage
 
-The `Configuration` class provides everything you need to define the configuration structure and fetch values:
+The `Configuration` class provides everything you need to define the
+configuration structure and fetch values:
 
 ```php
 use League\Config\Configuration;
@@ -83,21 +87,28 @@ Full documentation can be found at [config.thephpleague.com][docs].
 
 ## 💭 Philosophy
 
-This library aims to provide a **simple yet opinionated** approach to configuration with the following goals:
+This library aims to provide a **simple yet opinionated** approach to
+configuration with the following goals:
 
-- The configuration should operate on **arrays with nested values** which are easily accessible
-- The configuration structure should be **defined with strict schemas** defining the overall structure, allowed types, and allowed values
+- The configuration should operate on **arrays with nested values** which are
+  easily accessible
+- The configuration structure should be **defined with strict schemas** defining
+  the overall structure, allowed types, and allowed values
 - Schemas should be defined using a **simple, fluent interface**
-- You should be able to **add and combine schemas but never modify existing ones**
-- Both the configuration values and the schema should be **defined and managed with PHP code**
+- You should be able to **add and combine schemas but never modify existing
+  ones**
+- Both the configuration values and the schema should be **defined and managed
+  with PHP code**
 - Schemas should be **immutable**; they should never change once they are set
 - Configuration values should never define or influence the schemas
 
 As a result, this library will likely **never** support features like:
 
-- Loading and/or exporting configuration values or schemas using YAML, XML, or other files
+- Loading and/or exporting configuration values or schemas using YAML, XML, or
+  other files
 - Parsing configuration values from a command line or other user interface
-- Dynamically changing the schema, allowed values, or default values based on other configuration values
+- Dynamically changing the schema, allowed values, or default values based on
+  other configuration values
 
 If you need that functionality you should check out other libraries like:
 
@@ -109,21 +120,31 @@ If you need that functionality you should check out other libraries like:
 
 ## 🏷️ Versioning
 
-[SemVer](http://semver.org/) is followed closely. Minor and patch releases should not introduce breaking changes to the codebase.
+[SemVer](http://semver.org/) is followed closely. Minor and patch releases
+should not introduce breaking changes to the codebase.
 
-Any classes or methods marked `@internal` are not intended for use outside this library and are subject to breaking changes at any time, so please avoid using them.
+Any classes or methods marked `@internal` are not intended for use outside this
+library and are subject to breaking changes at any time, so please avoid using
+them.
 
 ## 🛠️ Maintenance & Support
 
-When a new **minor** version (e.g. `1.0` -> `1.1`) is released, the previous one (`1.0`) will continue to receive security and critical bug fixes for *at least* 3 months.
+When a new **minor** version (e.g. `1.0` -> `1.1`) is released, the previous one
+(`1.0`) will continue to receive security and critical bug fixes for _at least_
+3 months.
 
-When a new **major** version is released (e.g. `1.1` -> `2.0`), the previous one (`1.1`) will receive critical bug fixes for *at least* 3 months and security updates for 6 months after that new release comes out.
+When a new **major** version is released (e.g. `1.1` -> `2.0`), the previous one
+(`1.1`) will receive critical bug fixes for _at least_ 3 months and security
+updates for 6 months after that new release comes out.
 
-(This policy may change in the future and exceptions may be made on a case-by-case basis.)
+(This policy may change in the future and exceptions may be made on a
+case-by-case basis.)
 
 ## 👷‍️ Contributing
 
-Contributions to this library are **welcome**! We only ask that you adhere to our [contributor guidelines] and avoid making changes that conflict with our Philosophy above.
+Contributions to this library are **welcome**! We only ask that you adhere to
+our [contributor guidelines] and avoid making changes that conflict with our
+Philosophy above.
 
 ## 🧪 Testing
 
@@ -133,9 +154,10 @@ composer test
 
 ## 📄 License
 
-**league/config** is licensed under the BSD-3 license.  See the [`LICENSE.md`][license] file for more details.
+**league/config** is licensed under the BSD-3 license. See the
+[`LICENSE.md`][license] file for more details.
 
-## 🗺️  Who Uses It?
+## 🗺️ Who Uses It?
 
 This project is used by [league/commonmark][league-commonmark].
 
@@ -144,10 +166,12 @@ This project is used by [league/commonmark][league-commonmark].
 [Composer]: https://getcomposer.org/
 [PHP League]: https://thephpleague.com
 [symfony/config]: https://symfony.com/doc/current/components/config.html
-[symfony/options-resolver]: https://symfony.com/doc/current/components/options_resolver.html
+[symfony/options-resolver]:
+  https://symfony.com/doc/current/components/options_resolver.html
 [hassankhan/config]: https://github.com/hassankhan/config
 [consolidation/config]: https://github.com/consolidation/config
 [laminas/laminas-config]: https://docs.laminas.dev/laminas-config/
-[contributor guidelines]: https://github.com/thephpleague/config/blob/main/.github/CONTRIBUTING.md
+[contributor guidelines]:
+  https://github.com/thephpleague/config/blob/main/.github/CONTRIBUTING.md
 [license]: https://github.com/thephpleague/config/blob/main/LICENSE.md
 [league-commonmark]: https://commonmark.thephpleague.com

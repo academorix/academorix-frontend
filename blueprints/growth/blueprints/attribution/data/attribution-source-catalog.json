@@ -40,7 +40,18 @@
     {
       "canonical": "google",
       "aliases": ["google", "google-ads", "google-search", "adwords", "google_paid"],
-      "referrer_patterns": ["google.com", "google.co.uk", "google.ca", "google.de", "google.fr", "google.es", "google.it", "google.com.br", "google.co.jp", "google.co.in"],
+      "referrer_patterns": [
+        "google.com",
+        "google.co.uk",
+        "google.ca",
+        "google.de",
+        "google.fr",
+        "google.es",
+        "google.it",
+        "google.com.br",
+        "google.co.jp",
+        "google.co.in"
+      ],
       "bucket_organic": "organic",
       "bucket_paid": "paid",
       "notes": "The bucket depends on click_id.gclid presence: gclid present → paid; absent → organic."
@@ -160,7 +171,17 @@
     },
     {
       "canonical": "email",
-      "aliases": ["email", "newsletter", "mailchimp", "sendgrid", "postmark", "mailgun", "sendinblue", "campaign-monitor", "convertkit"],
+      "aliases": [
+        "email",
+        "newsletter",
+        "mailchimp",
+        "sendgrid",
+        "postmark",
+        "mailgun",
+        "sendinblue",
+        "campaign-monitor",
+        "convertkit"
+      ],
       "referrer_patterns": [],
       "bucket_organic": "email",
       "bucket_paid": "email",
@@ -168,7 +189,15 @@
     },
     {
       "canonical": "affiliate",
-      "aliases": ["affiliate", "referred_by", "cj-affiliate", "impact", "rakuten", "awin", "sharesale"],
+      "aliases": [
+        "affiliate",
+        "referred_by",
+        "cj-affiliate",
+        "impact",
+        "rakuten",
+        "awin",
+        "sharesale"
+      ],
       "referrer_patterns": [],
       "bucket_organic": "affiliate",
       "notes": "Any source with utm_medium=affiliate."

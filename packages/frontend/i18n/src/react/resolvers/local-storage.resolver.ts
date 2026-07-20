@@ -17,8 +17,8 @@
  *   Returns `undefined` when `localStorage` is not available (SSR, Node.js).
  */
 
-import type { II18nResolver } from '@/core/interfaces';
-import type { LocalStorageResolverOptions } from '../interfaces';
+import type { II18nResolver } from "@/core/interfaces";
+import type { LocalStorageResolverOptions } from "../interfaces";
 
 /**
  * Resolves locale from browser localStorage.
@@ -46,7 +46,7 @@ export class LocalStorageResolver implements II18nResolver {
    * @param options - Optional configuration with storage key
    */
   public constructor(options?: LocalStorageResolverOptions) {
-    this.key = options?.key ?? 'stackra_locale';
+    this.key = options?.key ?? "stackra_locale";
   }
 
   /**
@@ -56,7 +56,7 @@ export class LocalStorageResolver implements II18nResolver {
    */
   public resolve(): string | undefined {
     try {
-      if (typeof localStorage === 'undefined') return undefined;
+      if (typeof localStorage === "undefined") return undefined;
       const value = localStorage.getItem(this.key);
       return value ?? undefined;
     } catch {

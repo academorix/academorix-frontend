@@ -34,13 +34,19 @@
       "name": "auth.login",
       "description": "User authenticated. Registered by auth::UserLoggedInAuditableTransition. Auditable_type = User::class.",
       "vendor_recognized": false,
-      "typical_auditable_types": ["Academorix\\User\\Models\\User", "Academorix\\User\\Models\\PlatformUser"]
+      "typical_auditable_types": [
+        "Academorix\\User\\Models\\User",
+        "Academorix\\User\\Models\\PlatformUser"
+      ]
     },
     {
       "name": "auth.logout",
       "description": "User logged out (explicit; session-expiry doesn't emit this).",
       "vendor_recognized": false,
-      "typical_auditable_types": ["Academorix\\User\\Models\\User", "Academorix\\User\\Models\\PlatformUser"]
+      "typical_auditable_types": [
+        "Academorix\\User\\Models\\User",
+        "Academorix\\User\\Models\\PlatformUser"
+      ]
     },
     {
       "name": "auth.mfa_challenge_passed",
@@ -94,7 +100,10 @@
       "name": "transaction.refunded",
       "description": "Refund issued against a transaction.",
       "vendor_recognized": false,
-      "typical_auditable_types": ["Academorix\\Finance\\Models\\Transaction", "Academorix\\Finance\\Models\\Refund"]
+      "typical_auditable_types": [
+        "Academorix\\Finance\\Models\\Transaction",
+        "Academorix\\Finance\\Models\\Refund"
+      ]
     },
     {
       "name": "read.phi_record",
@@ -106,7 +115,9 @@
       "name": "read.cardholder_data",
       "description": "Cardholder-data record accessed. PCI-DSS Requirement 10.1.",
       "vendor_recognized": false,
-      "typical_auditable_types": ["Academorix\\Finance\\Models\\Transaction (when card fields are read)"]
+      "typical_auditable_types": [
+        "Academorix\\Finance\\Models\\Transaction (when card fields are read)"
+      ]
     },
     {
       "name": "audit.purged",

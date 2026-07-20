@@ -19,7 +19,13 @@
       "url": "/api/v1/approvals/templates",
       "unwrap": "data",
       "paginated": true,
-      "queryParamsFromState": ["filter[action_key]", "filter[is_active]", "sort", "page", "per_page"],
+      "queryParamsFromState": [
+        "filter[action_key]",
+        "filter[is_active]",
+        "sort",
+        "page",
+        "per_page"
+      ],
       "cache": { "ttlSeconds": 60, "staleWhileRevalidate": true }
     },
     {
@@ -131,8 +137,19 @@
                 "propsExpr": "{ to: '/tenant/approvals/templates/' + row.id, children: row.name, className: 'font-medium' }"
               }
             },
-            { "key": "action_key", "header": "Action", "cell": { "kind": "Text", "propsExpr": "{ className: 'font-mono text-xs', children: row.action_key }" } },
-            { "key": "version", "header": "Version", "cell": { "kind": "Text", "propsExpr": "{ children: 'v' + row.version }" } },
+            {
+              "key": "action_key",
+              "header": "Action",
+              "cell": {
+                "kind": "Text",
+                "propsExpr": "{ className: 'font-mono text-xs', children: row.action_key }"
+              }
+            },
+            {
+              "key": "version",
+              "header": "Version",
+              "cell": { "kind": "Text", "propsExpr": "{ children: 'v' + row.version }" }
+            },
             { "key": "priority", "header": "Priority" },
             { "key": "on_timeout", "header": "On timeout" },
             {

@@ -4,4 +4,4 @@
  * @description Barrel export for storage services.
  */
 
-export { StorageManager } from './storage-manager.service';
+export { StorageManager } from "./storage-manager.service";

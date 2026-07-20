@@ -24,13 +24,13 @@
  * ```
  */
 
-export { MockConsentManager } from './mock-consent-manager';
+export { MockConsentManager } from "./mock-consent-manager";
 export {
   MockConsentStorageAdapter,
   type RecordedStorageCall,
-} from './mock-consent-storage-adapter';
+} from "./mock-consent-storage-adapter";
 export {
   createMockConsentManager,
   createMockConsentStorageAdapter,
   type CreateMockConsentManagerOptions,
-} from './create-mock-consent';
+} from "./create-mock-consent";

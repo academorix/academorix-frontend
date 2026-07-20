@@ -15,7 +15,7 @@
  * @module @stackra/http/services/upload-service
  */
 
-import { Inject, Injectable, Optional } from '@stackra/container';
+import { Inject, Injectable, Optional } from "@stackra/container";
 
 import {
   HTTP_CLIENT,
@@ -24,9 +24,9 @@ import {
   type IHttpPresignedUrlResult,
   type IHttpResponse,
   type IHttpUploadOptions,
-} from '@stackra/contracts';
+} from "@stackra/contracts";
 
-import { HttpDriverError } from '../errors';
+import { HttpDriverError } from "../errors";
 
 /**
  * Upload helper service.
@@ -47,7 +47,7 @@ export class UploadService {
   private requireClient(): IHttpClient {
     if (!this.http) {
       throw new HttpDriverError(
-        '[UploadService] no HTTP_CLIENT is registered — configure HttpModule.forRoot() with a default connection.'
+        "[UploadService] no HTTP_CLIENT is registered — configure HttpModule.forRoot() with a default connection.",
       );
     }
     return this.http;
@@ -69,10 +69,10 @@ export class UploadService {
   public async upload<T = unknown>(
     url: string,
     file: File | Blob,
-    options: IHttpUploadOptions = {}
+    options: IHttpUploadOptions = {},
   ): Promise<IHttpResponse<T>> {
     const formData = new FormData();
-    const fieldName = options.fieldName ?? 'file';
+    const fieldName = options.fieldName ?? "file";
     formData.append(fieldName, file);
 
     if (options.fields) {
@@ -101,10 +101,10 @@ export class UploadService {
   public async uploadMany<T = unknown>(
     url: string,
     files: Array<File | Blob>,
-    options: IHttpUploadOptions = {}
+    options: IHttpUploadOptions = {},
   ): Promise<IHttpResponse<T>> {
     const formData = new FormData();
-    const fieldName = options.fieldName ?? 'files';
+    const fieldName = options.fieldName ?? "files";
 
     for (const file of files) {
       formData.append(`${fieldName}[]`, file);
@@ -138,7 +138,7 @@ export class UploadService {
    */
   public async getPresignedUrl<P extends Record<string, unknown>>(
     url: string,
-    params: P
+    params: P,
   ): Promise<IHttpPresignedUrlResult> {
     const response = await this.requireClient().post<IHttpPresignedUrlResult>(url, params);
     return response.data;
@@ -155,13 +155,13 @@ export class UploadService {
   public async uploadToPresignedUrl(
     presignedUrl: string,
     file: File | Blob,
-    options: Pick<IHttpUploadOptions, 'onProgress' | 'headers' | 'signal'> = {}
+    options: Pick<IHttpUploadOptions, "onProgress" | "headers" | "signal"> = {},
   ): Promise<IHttpResponse> {
     return this.requireClient().put(presignedUrl, file, {
       // Clear baseURL — the presigned URL is absolute.
-      baseURL: '',
+      baseURL: "",
       headers: {
-        'Content-Type': file.type || 'application/octet-stream',
+        "Content-Type": file.type || "application/octet-stream",
         ...options.headers,
       },
       onUploadProgress: this.adaptProgress(options.onProgress),
@@ -187,7 +187,7 @@ export class UploadService {
   public async uploadChunked<T = unknown>(
     url: string,
     file: File | Blob,
-    options: IHttpChunkedUploadOptions = {}
+    options: IHttpChunkedUploadOptions = {},
   ): Promise<IHttpResponse<T>> {
     const chunkSize = options.chunkSize ?? 5 * 1024 * 1024;
     const totalChunks = Math.ceil(file.size / chunkSize);
@@ -200,13 +200,13 @@ export class UploadService {
       }>(
         options.initEndpoint,
         {
-          filename: (file as File).name ?? 'upload',
+          filename: (file as File).name ?? "upload",
           size: file.size,
           totalChunks,
           contentType: file.type,
           ...options.fields,
         },
-        { signal: options.signal, meta: options.meta }
+        { signal: options.signal, meta: options.meta },
       );
       uploadId = initResponse.data.uploadId ?? initResponse.data.id;
     }
@@ -217,10 +217,10 @@ export class UploadService {
       const chunk = file.slice(start, end);
 
       const formData = new FormData();
-      formData.append('chunk', chunk);
-      formData.append('chunkIndex', String(i));
-      formData.append('totalChunks', String(totalChunks));
-      if (uploadId !== undefined) formData.append('uploadId', uploadId);
+      formData.append("chunk", chunk);
+      formData.append("chunkIndex", String(i));
+      formData.append("totalChunks", String(totalChunks));
+      if (uploadId !== undefined) formData.append("uploadId", uploadId);
 
       await this.requireClient().post(url, formData, {
         signal: options.signal,
@@ -240,17 +240,17 @@ export class UploadService {
         {
           uploadId,
           totalChunks,
-          filename: (file as File).name ?? 'upload',
+          filename: (file as File).name ?? "upload",
           ...options.fields,
         },
-        { signal: options.signal, meta: options.meta }
+        { signal: options.signal, meta: options.meta },
       );
     }
 
     return {
       data: { uploadId, totalChunks, size: file.size } as unknown as T,
       status: 200,
-      statusText: 'OK',
+      statusText: "OK",
       headers: {},
     } as IHttpResponse<T>;
   }
@@ -276,7 +276,7 @@ export class UploadService {
    * the low-level `(event)` callback consumed by axios / fetch.
    */
   private adaptProgress(
-    callback: IHttpUploadOptions['onProgress']
+    callback: IHttpUploadOptions["onProgress"],
   ): ((event: unknown) => void) | undefined {
     if (!callback) return undefined;
     return (event: unknown) => {

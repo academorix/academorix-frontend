@@ -1,11 +1,11 @@
 # academorix/access-sdk
 
-Typed Saloon SDK for the Access service — roles, permissions, policies, scopes, groups, invitations.
+Typed Saloon SDK for the Access service — roles, permissions, policies, scopes,
+groups, invitations.
 
-Per-service umbrella SDK built on the shared kernel (`academorix/api-sdk`).
-It owns the Access service connector (config `sdk.access.*`), a typed
-`AccessSdk` client, and a discovery pass scoped to
-`#[AsSdkResource(service: 'access')]`.
+Per-service umbrella SDK built on the shared kernel (`academorix/api-sdk`). It
+owns the Access service connector (config `sdk.access.*`), a typed `AccessSdk`
+client, and a discovery pass scoped to `#[AsSdkResource(service: 'access')]`.
 
 ## Usage
 

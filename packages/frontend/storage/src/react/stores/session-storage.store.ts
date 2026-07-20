@@ -5,7 +5,7 @@
  *   scoped to a single browser tab, cleared when the tab closes.
  */
 
-import { WebStorageBase } from './web-storage-base.store';
+import { WebStorageBase } from "./web-storage-base.store";
 
 /**
  * `IStorage` implementation persisting to `window.sessionStorage`.
@@ -30,7 +30,7 @@ import { WebStorageBase } from './web-storage-base.store';
 export class SessionStorageStore extends WebStorageBase {
   /** @inheritdoc */
   protected override getBackingStore(): Storage | null {
-    if (typeof window === 'undefined') return null;
+    if (typeof window === "undefined") return null;
     try {
       return window.sessionStorage;
     } catch {

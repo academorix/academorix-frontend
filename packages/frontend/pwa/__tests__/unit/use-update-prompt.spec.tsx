@@ -5,17 +5,17 @@
  * @description Behavioural tests for {@link useUpdatePrompt}.
  */
 
-import { act, cleanup, renderHook } from '@testing-library/react';
-import { afterEach, describe, expect, it, vi } from 'vitest';
+import { act, cleanup, renderHook } from "@testing-library/react";
+import { afterEach, describe, expect, it, vi } from "vitest";
 
-import { useUpdatePrompt } from '@/react/hooks/use-update-prompt/use-update-prompt.hook';
-import { MockPwaService } from '@/testing/mock-pwa-service';
+import { useUpdatePrompt } from "@/react/hooks/use-update-prompt/use-update-prompt.hook";
+import { MockPwaService } from "@/testing/mock-pwa-service";
 
 const { serviceRef } = vi.hoisted(() => ({
   serviceRef: { current: null as MockPwaService | null },
 }));
 
-vi.mock('@stackra/container/react', () => ({
+vi.mock("@stackra/container/react", () => ({
   useInject: <T,>() => serviceRef.current as unknown as T,
 }));
 
@@ -24,8 +24,8 @@ afterEach(() => {
   serviceRef.current = null;
 });
 
-describe('useUpdatePrompt', () => {
-  it('reads the initial state', () => {
+describe("useUpdatePrompt", () => {
+  it("reads the initial state", () => {
     serviceRef.current = new MockPwaService({
       update: { isAvailable: true, isVisible: true },
     });
@@ -34,7 +34,7 @@ describe('useUpdatePrompt', () => {
     expect(result.current.isVisible).toBe(true);
   });
 
-  it('routes accept / dismiss to the service', () => {
+  it("routes accept / dismiss to the service", () => {
     const service = new MockPwaService({ update: { isAvailable: true, isVisible: true } });
     serviceRef.current = service;
     const { result } = renderHook(() => useUpdatePrompt());

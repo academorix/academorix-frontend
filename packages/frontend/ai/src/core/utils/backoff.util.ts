@@ -40,7 +40,7 @@ export interface IBackoffOptions {
 export function computeBackoff(
   attempt: number,
   policy: IBackoffPolicy,
-  options: IBackoffOptions = {}
+  options: IBackoffOptions = {},
 ): number {
   const { baseMs, capMs } = policy;
   const safeAttempt = Number.isFinite(attempt) && attempt > 0 ? Math.floor(attempt) : 0;

@@ -12,4 +12,4 @@
  */
 
 /** DI token for the resolved Web Push configuration. */
-export const WEB_PUSH_CONFIG = Symbol.for('NOTIFICATIONS_WEB_PUSH_CONFIG');
+export const WEB_PUSH_CONFIG = Symbol.for("NOTIFICATIONS_WEB_PUSH_CONFIG");

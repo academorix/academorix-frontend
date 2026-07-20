@@ -12,15 +12,15 @@
  *   `StorageManager` level, not a compile-time choice.
  */
 
-import { Inject, Injectable, Optional } from '@stackra/container';
-import { STORAGE_MANAGER, type IStorage, type IStorageManager } from '@stackra/contracts';
+import { Inject, Injectable, Optional } from "@stackra/container";
+import { STORAGE_MANAGER, type IStorage, type IStorageManager } from "@stackra/contracts";
 
-import { SCOPE_CONFIG } from '@/core/constants';
-import type { IScopeModuleOptions } from '@/core/interfaces';
-import type { IScopePersistAdapter } from '@/core/interfaces/scope-persist-adapter.interface';
+import { SCOPE_CONFIG } from "@/core/constants";
+import type { IScopeModuleOptions } from "@/core/interfaces";
+import type { IScopePersistAdapter } from "@/core/interfaces/scope-persist-adapter.interface";
 
 /** Default storage key — namespaced under `@stackra:scope`. */
-const DEFAULT_STORAGE_KEY = '@stackra:scope:active_node_id';
+const DEFAULT_STORAGE_KEY = "@stackra:scope:active_node_id";
 
 /**
  * `IScopePersistAdapter` backed by `IStorage`.
@@ -71,9 +71,9 @@ export class StorageBackedScopePersistAdapter implements IScopePersistAdapter {
    */
   public constructor(
     @Inject(STORAGE_MANAGER) private readonly manager: IStorageManager,
-    @Optional() @Inject(SCOPE_CONFIG) config?: IScopeModuleOptions
+    @Optional() @Inject(SCOPE_CONFIG) config?: IScopeModuleOptions,
   ) {
-    this.instanceName = config?.storage ?? '';
+    this.instanceName = config?.storage ?? "";
     this.storageKey = config?.storageKey ?? DEFAULT_STORAGE_KEY;
   }
 

@@ -8,15 +8,15 @@
  * @category Services
  */
 
-import { Injectable } from '@stackra/container';
-import { Logger } from '@stackra/logger';
+import { Injectable } from "@stackra/container";
+import { Logger } from "@stackra/logger";
 
-import type { CollaborationTransport } from '@/interfaces/transport.interface';
-import { BroadcastChannelTransport } from '@/transports/broadcast-channel.transport';
-import { ReverbTransport } from '@/transports/reverb.transport';
+import type { CollaborationTransport } from "@/interfaces/transport.interface";
+import { BroadcastChannelTransport } from "@/transports/broadcast-channel.transport";
+import { ReverbTransport } from "@/transports/reverb.transport";
 
 /** Transport strategy configuration. */
-type TransportStrategy = 'reverb' | 'broadcast' | 'auto';
+type TransportStrategy = "reverb" | "broadcast" | "auto";
 
 /**
  * Manages collaboration room lifecycle and transport selection.
@@ -41,7 +41,7 @@ export class RoomManager {
   private transport: CollaborationTransport | null = null;
 
   /** The configured transport strategy. */
-  private strategy: TransportStrategy = 'auto';
+  private strategy: TransportStrategy = "auto";
 
   /** Reference to the RealtimeManager (if available via DI). */
   private realtimeManager: unknown = null;
@@ -59,7 +59,7 @@ export class RoomManager {
    * ```
    */
   public configure(options: { transport?: TransportStrategy; realtimeManager?: unknown }): void {
-    this.strategy = options.transport ?? 'auto';
+    this.strategy = options.transport ?? "auto";
     this.realtimeManager = options.realtimeManager ?? null;
     this.transport = null; // Reset so next getTransport() creates fresh
     this.logger.info(`Configured with strategy: ${this.strategy}`);
@@ -85,25 +85,25 @@ export class RoomManager {
     }
 
     switch (this.strategy) {
-      case 'broadcast': {
-        this.logger.info('Using BroadcastChannel transport');
+      case "broadcast": {
+        this.logger.info("Using BroadcastChannel transport");
         this.transport = new BroadcastChannelTransport();
         break;
       }
 
-      case 'reverb': {
-        this.logger.info('Using Reverb transport');
+      case "reverb": {
+        this.logger.info("Using Reverb transport");
         this.transport = new ReverbTransport(this.realtimeManager);
         break;
       }
 
-      case 'auto':
+      case "auto":
       default: {
         if (this.realtimeManager) {
-          this.logger.info('Auto-selected Reverb transport (RealtimeManager available)');
+          this.logger.info("Auto-selected Reverb transport (RealtimeManager available)");
           this.transport = new ReverbTransport(this.realtimeManager);
         } else {
-          this.logger.info('Auto-selected BroadcastChannel transport (no RealtimeManager)');
+          this.logger.info("Auto-selected BroadcastChannel transport (no RealtimeManager)");
           this.transport = new BroadcastChannelTransport();
         }
         break;

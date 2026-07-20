@@ -18,18 +18,18 @@
  *   doesn't depend on `@stackra/events` even in devDeps.
  */
 
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-import { HTTP_EVENTS, HttpMethod } from '@stackra/contracts';
+import { HTTP_EVENTS, HttpMethod } from "@stackra/contracts";
 import type {
   IEventEmitter,
   IHttpContext,
   IHttpNextFunction,
   IHttpResponse,
-} from '@stackra/contracts';
+} from "@stackra/contracts";
 
-import { DEFAULT_MAX_RETRIES, DEFAULT_RETRY_BACKOFF } from '@/core/constants';
-import { RetryInterceptor } from '@/core/interceptors/retry.interceptor';
+import { DEFAULT_MAX_RETRIES, DEFAULT_RETRY_BACKOFF } from "@/core/constants";
+import { RetryInterceptor } from "@/core/interceptors/retry.interceptor";
 
 // ────────────────────────────────────────────────────────────────────────
 // Test scaffolding
@@ -60,7 +60,7 @@ class RecordingEventEmitter implements IEventEmitter {
 
   public emit(event: string, payload?: unknown): Promise<void> {
     if (this.shouldThrow) {
-      throw new Error('emit boom');
+      throw new Error("emit boom");
     }
     this.emitted.push({ event, payload });
     return Promise.resolve();
@@ -84,12 +84,12 @@ class RecordingEventEmitter implements IEventEmitter {
 }
 
 /** Build a fresh `IHttpContext` for each test. */
-function makeContext(overrides: Partial<IHttpContext['request']> = {}): IHttpContext {
+function makeContext(overrides: Partial<IHttpContext["request"]> = {}): IHttpContext {
   return {
     request: {
       method: HttpMethod.GET,
-      url: '/users',
-      baseURL: 'https://api.example.com',
+      url: "/users",
+      baseURL: "https://api.example.com",
       meta: {},
       ...overrides,
     },
@@ -125,19 +125,19 @@ function totalDefaultWaits(): number {
 // Specs
 // ────────────────────────────────────────────────────────────────────────
 
-describe('RetryInterceptor', () => {
+describe("RetryInterceptor", () => {
   let emitter: RecordingEventEmitter;
   let interceptor: RetryInterceptor;
   let response: IHttpResponse;
 
   beforeEach(() => {
-    vi.useFakeTimers({ toFake: ['setTimeout'] });
+    vi.useFakeTimers({ toFake: ["setTimeout"] });
     emitter = new RecordingEventEmitter();
     interceptor = new RetryInterceptor(emitter);
     response = {
       data: { ok: true },
       status: 200,
-      statusText: 'OK',
+      statusText: "OK",
       headers: {},
     };
   });
@@ -147,8 +147,8 @@ describe('RetryInterceptor', () => {
     vi.restoreAllMocks();
   });
 
-  describe('happy path', () => {
-    it('returns the response on first success and emits no retry event', async () => {
+  describe("happy path", () => {
+    it("returns the response on first success and emits no retry event", async () => {
       const next: IHttpNextFunction = vi.fn().mockResolvedValue(response);
 
       const result = await interceptor.intercept(makeContext(), next);
@@ -160,12 +160,12 @@ describe('RetryInterceptor', () => {
     });
   });
 
-  describe('retryable failures', () => {
-    it('retries on 5xx and eventually resolves once `next` succeeds', async () => {
+  describe("retryable failures", () => {
+    it("retries on 5xx and eventually resolves once `next` succeeds", async () => {
       const next: IHttpNextFunction = vi
         .fn()
         // First attempt — 503.
-        .mockRejectedValueOnce(httpError(503, 'unavailable'))
+        .mockRejectedValueOnce(httpError(503, "unavailable"))
         // Second attempt — success.
         .mockResolvedValueOnce(response);
 
@@ -178,10 +178,10 @@ describe('RetryInterceptor', () => {
       expect(next).toHaveBeenCalledTimes(2);
     });
 
-    it('retries on network errors (statusCode === 0)', async () => {
+    it("retries on network errors (statusCode === 0)", async () => {
       const next: IHttpNextFunction = vi
         .fn()
-        .mockRejectedValueOnce(httpError(0, 'network unreachable'))
+        .mockRejectedValueOnce(httpError(0, "network unreachable"))
         .mockResolvedValueOnce(response);
 
       const promise = interceptor.intercept(makeContext(), next);
@@ -191,13 +191,13 @@ describe('RetryInterceptor', () => {
       expect(next).toHaveBeenCalledTimes(2);
     });
 
-    it('exhausts the retry budget and re-throws the last error', async () => {
-      const finalError = httpError(500, 'boom-3');
+    it("exhausts the retry budget and re-throws the last error", async () => {
+      const finalError = httpError(500, "boom-3");
       const next: IHttpNextFunction = vi
         .fn()
-        .mockRejectedValueOnce(httpError(500, 'boom-0'))
-        .mockRejectedValueOnce(httpError(500, 'boom-1'))
-        .mockRejectedValueOnce(httpError(500, 'boom-2'))
+        .mockRejectedValueOnce(httpError(500, "boom-0"))
+        .mockRejectedValueOnce(httpError(500, "boom-1"))
+        .mockRejectedValueOnce(httpError(500, "boom-2"))
         .mockRejectedValueOnce(finalError);
 
       const promise = interceptor.intercept(makeContext(), next);
@@ -213,9 +213,9 @@ describe('RetryInterceptor', () => {
     });
   });
 
-  describe('non-retryable failures', () => {
-    it('re-throws immediately on 4xx without emitting a retry', async () => {
-      const err = httpError(404, 'not found');
+  describe("non-retryable failures", () => {
+    it("re-throws immediately on 4xx without emitting a retry", async () => {
+      const err = httpError(404, "not found");
       const next: IHttpNextFunction = vi.fn().mockRejectedValue(err);
 
       await expect(interceptor.intercept(makeContext(), next)).rejects.toBe(err);
@@ -223,16 +223,16 @@ describe('RetryInterceptor', () => {
       expect(emitter.emitted).toHaveLength(0);
     });
 
-    it('re-throws immediately on non-object errors (unknown shape)', async () => {
-      const next: IHttpNextFunction = vi.fn().mockRejectedValue('bare-string');
+    it("re-throws immediately on non-object errors (unknown shape)", async () => {
+      const next: IHttpNextFunction = vi.fn().mockRejectedValue("bare-string");
 
-      await expect(interceptor.intercept(makeContext(), next)).rejects.toThrow('bare-string');
+      await expect(interceptor.intercept(makeContext(), next)).rejects.toThrow("bare-string");
       expect(next).toHaveBeenCalledTimes(1);
       expect(emitter.emitted).toHaveLength(0);
     });
 
-    it('re-throws immediately when statusCode is undefined', async () => {
-      const err = new Error('no status');
+    it("re-throws immediately when statusCode is undefined", async () => {
+      const err = new Error("no status");
       const next: IHttpNextFunction = vi.fn().mockRejectedValue(err);
 
       await expect(interceptor.intercept(makeContext(), next)).rejects.toBe(err);
@@ -240,17 +240,17 @@ describe('RetryInterceptor', () => {
     });
   });
 
-  describe('REQUEST_RETRY event emission', () => {
-    it('emits with the right payload before each retry (attempt starts at 1)', async () => {
+  describe("REQUEST_RETRY event emission", () => {
+    it("emits with the right payload before each retry (attempt starts at 1)", async () => {
       const next: IHttpNextFunction = vi
         .fn()
-        .mockRejectedValueOnce(httpError(503, 'boom-0'))
-        .mockRejectedValueOnce(httpError(503, 'boom-1'))
+        .mockRejectedValueOnce(httpError(503, "boom-0"))
+        .mockRejectedValueOnce(httpError(503, "boom-1"))
         .mockResolvedValueOnce(response);
 
       const promise = interceptor.intercept(
-        makeContext({ url: '/orders', method: HttpMethod.POST }),
-        next
+        makeContext({ url: "/orders", method: HttpMethod.POST }),
+        next,
       );
 
       // Two retries → two events → two backoff waits.
@@ -266,10 +266,10 @@ describe('RetryInterceptor', () => {
         event: HTTP_EVENTS.REQUEST_RETRY,
         payload: {
           method: HttpMethod.POST,
-          url: '/orders',
+          url: "/orders",
           attempt: 1,
           delayMs: DEFAULT_RETRY_BACKOFF[0],
-          error: 'boom-0',
+          error: "boom-0",
         },
       });
       // Second retry — attempt 2, delay = backoff[1].
@@ -277,19 +277,19 @@ describe('RetryInterceptor', () => {
         event: HTTP_EVENTS.REQUEST_RETRY,
         payload: {
           method: HttpMethod.POST,
-          url: '/orders',
+          url: "/orders",
           attempt: 2,
           delayMs: DEFAULT_RETRY_BACKOFF[1],
-          error: 'boom-1',
+          error: "boom-1",
         },
       });
     });
 
-    it('is fail-soft — a throwing emitter never breaks the retry loop', async () => {
+    it("is fail-soft — a throwing emitter never breaks the retry loop", async () => {
       emitter.shouldThrow = true;
       const next: IHttpNextFunction = vi
         .fn()
-        .mockRejectedValueOnce(httpError(500, 'boom'))
+        .mockRejectedValueOnce(httpError(500, "boom"))
         .mockResolvedValueOnce(response);
 
       const promise = interceptor.intercept(makeContext(), next);
@@ -300,12 +300,12 @@ describe('RetryInterceptor', () => {
       expect(next).toHaveBeenCalledTimes(2);
     });
 
-    it('does not emit when no emitter was injected', async () => {
+    it("does not emit when no emitter was injected", async () => {
       // Simulates the `@Optional()` DI hole — no emitter provided.
       const noEmitter = new RetryInterceptor(undefined);
       const next: IHttpNextFunction = vi
         .fn()
-        .mockRejectedValueOnce(httpError(500, 'boom'))
+        .mockRejectedValueOnce(httpError(500, "boom"))
         .mockResolvedValueOnce(response);
 
       const promise = noEmitter.intercept(makeContext(), next);
@@ -315,9 +315,9 @@ describe('RetryInterceptor', () => {
     });
   });
 
-  describe('per-request overrides via `meta`', () => {
-    it('honours `meta.maxRetries` — 0 disables retries entirely', async () => {
-      const err = httpError(500, 'boom');
+  describe("per-request overrides via `meta`", () => {
+    it("honours `meta.maxRetries` — 0 disables retries entirely", async () => {
+      const err = httpError(500, "boom");
       const next: IHttpNextFunction = vi.fn().mockRejectedValue(err);
 
       const promise = interceptor.intercept(makeContext({ meta: { maxRetries: 0 } }), next);
@@ -328,13 +328,13 @@ describe('RetryInterceptor', () => {
       expect(emitter.emitted).toHaveLength(0);
     });
 
-    it('honours `meta.maxRetries` — smaller than default retries less', async () => {
-      const err = httpError(500, 'boom');
+    it("honours `meta.maxRetries` — smaller than default retries less", async () => {
+      const err = httpError(500, "boom");
       const next: IHttpNextFunction = vi.fn().mockRejectedValue(err);
 
       const promise = interceptor.intercept(
         makeContext({ meta: { maxRetries: 1 } }), // 1 retry → 2 total attempts.
-        next
+        next,
       );
       const settled = expect(promise).rejects.toBe(err);
 
@@ -346,14 +346,14 @@ describe('RetryInterceptor', () => {
       expect(emitter.emitted).toHaveLength(1);
     });
 
-    it('honours `meta.retryBackoff` — custom per-attempt delays', async () => {
-      const err = httpError(500, 'boom');
+    it("honours `meta.retryBackoff` — custom per-attempt delays", async () => {
+      const err = httpError(500, "boom");
       const next: IHttpNextFunction = vi.fn().mockRejectedValue(err);
 
       const custom = [42, 84];
       const promise = interceptor.intercept(
         makeContext({ meta: { maxRetries: 2, retryBackoff: custom } }),
-        next
+        next,
       );
       const settled = expect(promise).rejects.toBe(err);
 
@@ -362,14 +362,14 @@ describe('RetryInterceptor', () => {
 
       await settled;
       expect(emitter.emitted.map((e) => (e.payload as { delayMs: number }).delayMs)).toEqual(
-        custom
+        custom,
       );
     });
   });
 
-  describe('total attempts arithmetic', () => {
-    it('runs `maxRetries + 1` total attempts under the defaults', async () => {
-      const err = httpError(500, 'boom');
+  describe("total attempts arithmetic", () => {
+    it("runs `maxRetries + 1` total attempts under the defaults", async () => {
+      const err = httpError(500, "boom");
       const next: IHttpNextFunction = vi.fn().mockRejectedValue(err);
 
       const promise = interceptor.intercept(makeContext(), next);

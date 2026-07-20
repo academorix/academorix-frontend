@@ -19,7 +19,10 @@
     {
       "purpose": "Cross-branch access requests (compliance-review required)",
       "expression": "context.resource_owner_branch_id != requester.branch_id",
-      "context_example": { "resource_owner_branch_id": "brn_...", "requester_branch_id": "brn_..." },
+      "context_example": {
+        "resource_owner_branch_id": "brn_...",
+        "requester_branch_id": "brn_..."
+      },
       "expected": true
     },
     {

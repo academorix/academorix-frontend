@@ -7,4 +7,4 @@
  *   from here.
  */
 
-export type { IConsentModuleOptions } from './consent-module-options.interface';
+export type { IConsentModuleOptions } from "./consent-module-options.interface";

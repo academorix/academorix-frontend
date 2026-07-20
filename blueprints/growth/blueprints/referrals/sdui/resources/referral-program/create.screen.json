@@ -41,7 +41,11 @@
       "children": [
         {
           "kind": "Text",
-          "props": { "as": "h1", "className": "text-2xl font-semibold", "children": "New referral program" }
+          "props": {
+            "as": "h1",
+            "className": "text-2xl font-semibold",
+            "children": "New referral program"
+          }
         },
         {
           "kind": "Tabs",
@@ -53,12 +57,20 @@
               "children": [
                 {
                   "kind": "TextField",
-                  "props": { "label": "Program name", "isRequired": true, "placeholder": "e.g. Refer a Friend — Summer 2026" },
+                  "props": {
+                    "label": "Program name",
+                    "isRequired": true,
+                    "placeholder": "e.g. Refer a Friend — Summer 2026"
+                  },
                   "form": { "field": "name" }
                 },
                 {
                   "kind": "TextField",
-                  "props": { "label": "Slug", "isRequired": true, "description": "Unique per tenant; url-safe." },
+                  "props": {
+                    "label": "Slug",
+                    "isRequired": true,
+                    "description": "Unique per tenant; url-safe."
+                  },
                   "form": { "field": "slug" }
                 },
                 {
@@ -81,7 +93,9 @@
                   "kind": "ComboBox",
                   "props": { "label": "Side", "menuTrigger": "focus", "isRequired": true },
                   "bindings": {
-                    "disabledKeys": { "$expr": "doubleSidedEntitlement.enabled ? [] : ['double_sided']" }
+                    "disabledKeys": {
+                      "$expr": "doubleSidedEntitlement.enabled ? [] : ['double_sided']"
+                    }
                   },
                   "props_items": [
                     { "id": "single_sided", "label": "Single-sided (referrer only)" },
@@ -99,7 +113,11 @@
                 },
                 {
                   "kind": "ComboBox",
-                  "props": { "label": "Reward type (referrer)", "menuTrigger": "focus", "isRequired": true },
+                  "props": {
+                    "label": "Reward type (referrer)",
+                    "menuTrigger": "focus",
+                    "isRequired": true
+                  },
                   "bindings": {
                     "items": {
                       "$expr": "rewardTypeCatalog.types.filter(t => (advancedRewardEntitlement.enabled || ['percent_discount','fixed_amount'].includes(t.reward_type))).map(t => ({ id: t.reward_type, label: t.display_name, description: t.description }))"
@@ -114,7 +132,11 @@
                 },
                 {
                   "kind": "TextField",
-                  "props": { "label": "Currency (referrer)", "placeholder": "USD", "description": "ISO 4217 — required for fixed_amount + credits." },
+                  "props": {
+                    "label": "Currency (referrer)",
+                    "placeholder": "USD",
+                    "description": "ISO 4217 — required for fixed_amount + credits."
+                  },
                   "form": { "field": "reward_currency_referrer" }
                 },
                 {
@@ -174,13 +196,17 @@
                 {
                   "kind": "NumberField",
                   "props": { "label": "Vesting hold days", "minValue": 1, "maxValue": 365 },
-                  "bindings": { "hidden": { "$expr": "form.vesting_rule !== 'trigger_plus_hold_days'" } },
+                  "bindings": {
+                    "hidden": { "$expr": "form.vesting_rule !== 'trigger_plus_hold_days'" }
+                  },
                   "form": { "field": "vesting_hold_days", "defaultValue": 30 }
                 },
                 {
                   "kind": "NumberField",
                   "props": { "label": "N events required", "minValue": 1, "maxValue": 100 },
-                  "bindings": { "hidden": { "$expr": "form.vesting_rule !== 'n_events_completed'" } },
+                  "bindings": {
+                    "hidden": { "$expr": "form.vesting_rule !== 'n_events_completed'" }
+                  },
                   "form": { "field": "vesting_n_events" }
                 }
               ]
@@ -191,7 +217,11 @@
               "children": [
                 {
                   "kind": "NumberField",
-                  "props": { "label": "Max rewards per referrer (lifetime)", "minValue": 1, "description": "Leave empty for unlimited." },
+                  "props": {
+                    "label": "Max rewards per referrer (lifetime)",
+                    "minValue": 1,
+                    "description": "Leave empty for unlimited."
+                  },
                   "form": { "field": "max_rewards_per_referrer" }
                 },
                 {
@@ -201,12 +231,21 @@
                 },
                 {
                   "kind": "NumberField",
-                  "props": { "label": "Program budget cap (cents)", "minValue": 1, "description": "Total budget the program can distribute. Requires `Program budget cap` entitlement (Medium+)." },
+                  "props": {
+                    "label": "Program budget cap (cents)",
+                    "minValue": 1,
+                    "description": "Total budget the program can distribute. Requires `Program budget cap` entitlement (Medium+)."
+                  },
                   "form": { "field": "max_rewards_per_program" }
                 },
                 {
                   "kind": "NumberField",
-                  "props": { "label": "Fraud hard-block threshold", "minValue": 0, "maxValue": 100, "description": "Referrals scoring above this at claim time are refused." },
+                  "props": {
+                    "label": "Fraud hard-block threshold",
+                    "minValue": 0,
+                    "maxValue": 100,
+                    "description": "Referrals scoring above this at claim time are refused."
+                  },
                   "form": { "field": "fraud_config.hard_block_threshold", "defaultValue": 90 }
                 }
               ]
@@ -222,7 +261,10 @@
                 },
                 {
                   "kind": "DatePicker",
-                  "props": { "label": "Program ends at", "description": "Leave empty for an open-ended program." },
+                  "props": {
+                    "label": "Program ends at",
+                    "description": "Leave empty for an open-ended program."
+                  },
                   "form": { "field": "program_ends_at" }
                 }
               ]
@@ -246,7 +288,10 @@
                   "kind": "http.post",
                   "url": "/api/v1/referral-programs",
                   "bodyExpr": "form",
-                  "onSuccess": { "kind": "navigate", "toExpr": "'/tenant/referral-programs/' + $response.data.id" }
+                  "onSuccess": {
+                    "kind": "navigate",
+                    "toExpr": "'/tenant/referral-programs/' + $response.data.id"
+                  }
                 }
               }
             }

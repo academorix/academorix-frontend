@@ -34,7 +34,7 @@ export function useRouteAnalytics(): void {
 
   useEffect(() => {
     if (matches.length === 0) return;
-    const leaf = matches[matches.length - 1];
+    const leaf = matches[matches.length - 1]!;
     // Analytics lives on the well-known `handle.analytics` field. The
     // adapter also mirrors it into the private bag; we read the well-
     // known field here so authors can override on `defineRoute(...)`.

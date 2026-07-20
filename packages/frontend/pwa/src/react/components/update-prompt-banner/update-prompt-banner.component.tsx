@@ -8,11 +8,11 @@
  *   dismissed for the session).
  */
 
-import type { ReactElement } from 'react';
-import { Alert, Button } from '@stackra/ui/react';
+import type { ReactElement } from "react";
+import { Alert, Button } from "@stackra/ui/react";
 
-import { useUpdatePrompt } from '@/react/hooks/use-update-prompt/use-update-prompt.hook';
-import type { UpdatePromptBannerProps } from './update-prompt-banner.interface';
+import { useUpdatePrompt } from "@/react/hooks/use-update-prompt/use-update-prompt.hook";
+import type { UpdatePromptBannerProps } from "./update-prompt-banner.interface";
 
 /**
  * Update prompt banner.
@@ -34,10 +34,10 @@ import type { UpdatePromptBannerProps } from './update-prompt-banner.interface';
  * ```
  */
 export function UpdatePromptBanner({
-  title = 'Update available',
-  message = 'A new version is ready — refresh to apply it.',
-  updateLabel = 'Refresh',
-  dismissLabel = 'Later',
+  title = "Update available",
+  message = "A new version is ready — refresh to apply it.",
+  updateLabel = "Refresh",
+  dismissLabel = "Later",
   className,
 }: UpdatePromptBannerProps = {}): ReactElement | null {
   const { isVisible, accept, dismiss } = useUpdatePrompt();

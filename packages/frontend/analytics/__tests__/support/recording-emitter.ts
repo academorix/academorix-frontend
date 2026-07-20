@@ -9,7 +9,7 @@
  *   optional.
  */
 
-import type { IEventEmitter } from '@stackra/contracts';
+import type { IEventEmitter } from "@stackra/contracts";
 
 /** One emitted call recorded by the {@link RecordingEmitter}. */
 export interface IRecordedEmit {

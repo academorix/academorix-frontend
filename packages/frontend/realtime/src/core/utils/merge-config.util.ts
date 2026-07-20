@@ -7,8 +7,8 @@
  *   defaults stay consistent.
  */
 
-import type { IRealtimeModuleOptions } from '@/core/interfaces';
-import { DEFAULT_REALTIME_CONFIG } from '@/core/constants/default-realtime-config.constant';
+import type { IRealtimeModuleOptions } from "@/core/interfaces";
+import { DEFAULT_REALTIME_CONFIG } from "@/core/constants/default-realtime-config.constant";
 
 /**
  * Merge user options into the default realtime config.

@@ -18,7 +18,13 @@
           "step": "cache lookup",
           "cache_key": "rbac:permissions:User:usr_01H1234567890ABCDEFGHIJKLM:app_01H1234567890ABCDEFGHIJKLM:tnt_01H1234567890ABCDEFGHIJKLM",
           "outcome": "hit",
-          "resolved_permissions_snapshot": ["invoices.viewAny.tenant", "invoices.view.tenant", "invoices.create.branch", "roles.viewAny.tenant", "..."]
+          "resolved_permissions_snapshot": [
+            "invoices.viewAny.tenant",
+            "invoices.view.tenant",
+            "invoices.create.branch",
+            "roles.viewAny.tenant",
+            "..."
+          ]
         },
         {
           "step": "check inclusion",

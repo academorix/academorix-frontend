@@ -7,7 +7,16 @@
   "labelConventions": {
     "always": [],
     "commonlyAvailable": ["event_type", "provider", "status", "reason", "consent_category"],
-    "forbiddenAsLabels": ["tenant_id", "marketing_event_id", "marketing_delivery_id", "marketing_dead_letter_id", "provider_config_id", "subject_id", "value_amount_cents", "utm_campaign_raw"]
+    "forbiddenAsLabels": [
+      "tenant_id",
+      "marketing_event_id",
+      "marketing_delivery_id",
+      "marketing_dead_letter_id",
+      "provider_config_id",
+      "subject_id",
+      "value_amount_cents",
+      "utm_campaign_raw"
+    ]
   },
   "metrics": [
     {

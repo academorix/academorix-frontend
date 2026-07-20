@@ -6,47 +6,213 @@
   "isSystem": true,
   "description": "Two audiences. Tenant plane (sanctum) — attendance CRUD by admin / hr / branch_manager / coach / reception, self-service via .own scope for guardians + adult athletes on the kiosk / self surfaces. Platform plane (platform_admin) — cross-tenant read.",
   "permissions": [
-    { "name": "attendance.viewAny", "guard": "sanctum", "seededOn": ["hr", "reception", "branch_manager", "admin", "owner"] },
-    { "name": "attendance.viewAny.coach", "guard": "sanctum", "description": "Coach-scoped listing — sees attendance rows for sessions where the coach is head_coach or assistant_coach.", "seededOn": ["coach", "head_coach"] },
-    { "name": "attendance.viewAny.own", "guard": "sanctum", "description": "Guardian + adult-athlete scoped listing.", "seededOn": ["guardian", "athlete"] },
-    { "name": "attendance.view", "guard": "sanctum", "seededOn": ["hr", "coach", "reception", "branch_manager", "admin", "owner"] },
-    { "name": "attendance.view.own", "guard": "sanctum", "seededOn": ["athlete", "guardian", "coach", "reception", "hr", "branch_manager", "admin", "owner"] },
-    { "name": "attendance.create", "guard": "sanctum", "description": "Admin-recorded check-in.", "seededOn": ["reception", "hr", "branch_manager", "admin", "owner"] },
-    { "name": "attendance.create.coach", "guard": "sanctum", "description": "Coach-verified check-in — scoped to sessions the coach is assigned to.", "seededOn": ["coach", "head_coach", "branch_manager", "admin", "owner"] },
-    { "name": "attendance.check-in.own", "guard": "sanctum", "description": "Self / kiosk check-in for the caller's athlete or their guardian's athletes.", "seededOn": ["athlete", "guardian"] },
-    { "name": "attendance.check-out", "guard": "sanctum", "seededOn": ["athlete", "guardian", "coach", "reception", "hr", "branch_manager", "admin", "owner"] },
-    { "name": "attendance.update", "guard": "sanctum", "description": "Post-check-in mutations within the 48h correction window.", "seededOn": ["hr", "coach", "branch_manager", "admin", "owner"] },
-    { "name": "attendance.cancel", "guard": "sanctum", "description": "Cancel an accidental check-in. Refunds consumed pass.", "seededOn": ["hr", "branch_manager", "admin", "owner"] },
-    { "name": "attendance.add-session-note", "guard": "sanctum", "description": "Coach-only session notes on an attendance record.", "seededOn": ["coach", "head_coach", "hr", "admin"] },
-    { "name": "attendance.reconcile", "guard": "sanctum", "description": "Trigger a manual attendance reconciliation sweep.", "seededOn": ["hr", "branch_manager", "admin", "owner"] },
-    { "name": "attendance.post-window-override", "guard": "sanctum", "description": "Bypass the 48h post-session correction window with a documented reason.", "seededOn": ["hr", "admin", "owner"] },
+    {
+      "name": "attendance.viewAny",
+      "guard": "sanctum",
+      "seededOn": ["hr", "reception", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "attendance.viewAny.coach",
+      "guard": "sanctum",
+      "description": "Coach-scoped listing — sees attendance rows for sessions where the coach is head_coach or assistant_coach.",
+      "seededOn": ["coach", "head_coach"]
+    },
+    {
+      "name": "attendance.viewAny.own",
+      "guard": "sanctum",
+      "description": "Guardian + adult-athlete scoped listing.",
+      "seededOn": ["guardian", "athlete"]
+    },
+    {
+      "name": "attendance.view",
+      "guard": "sanctum",
+      "seededOn": ["hr", "coach", "reception", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "attendance.view.own",
+      "guard": "sanctum",
+      "seededOn": [
+        "athlete",
+        "guardian",
+        "coach",
+        "reception",
+        "hr",
+        "branch_manager",
+        "admin",
+        "owner"
+      ]
+    },
+    {
+      "name": "attendance.create",
+      "guard": "sanctum",
+      "description": "Admin-recorded check-in.",
+      "seededOn": ["reception", "hr", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "attendance.create.coach",
+      "guard": "sanctum",
+      "description": "Coach-verified check-in — scoped to sessions the coach is assigned to.",
+      "seededOn": ["coach", "head_coach", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "attendance.check-in.own",
+      "guard": "sanctum",
+      "description": "Self / kiosk check-in for the caller's athlete or their guardian's athletes.",
+      "seededOn": ["athlete", "guardian"]
+    },
+    {
+      "name": "attendance.check-out",
+      "guard": "sanctum",
+      "seededOn": [
+        "athlete",
+        "guardian",
+        "coach",
+        "reception",
+        "hr",
+        "branch_manager",
+        "admin",
+        "owner"
+      ]
+    },
+    {
+      "name": "attendance.update",
+      "guard": "sanctum",
+      "description": "Post-check-in mutations within the 48h correction window.",
+      "seededOn": ["hr", "coach", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "attendance.cancel",
+      "guard": "sanctum",
+      "description": "Cancel an accidental check-in. Refunds consumed pass.",
+      "seededOn": ["hr", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "attendance.add-session-note",
+      "guard": "sanctum",
+      "description": "Coach-only session notes on an attendance record.",
+      "seededOn": ["coach", "head_coach", "hr", "admin"]
+    },
+    {
+      "name": "attendance.reconcile",
+      "guard": "sanctum",
+      "description": "Trigger a manual attendance reconciliation sweep.",
+      "seededOn": ["hr", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "attendance.post-window-override",
+      "guard": "sanctum",
+      "description": "Bypass the 48h post-session correction window with a documented reason.",
+      "seededOn": ["hr", "admin", "owner"]
+    },
 
-    { "name": "attendance-policies.viewAny", "guard": "sanctum", "seededOn": ["hr", "branch_manager", "admin", "owner"] },
-    { "name": "attendance-policies.view", "guard": "sanctum", "seededOn": ["hr", "branch_manager", "admin", "owner"] },
-    { "name": "attendance-policies.create", "guard": "sanctum", "description": "Create attendance policy. Plan-scoped policies require attendance_advanced_policies entitlement.", "seededOn": ["hr", "admin", "owner"] },
-    { "name": "attendance-policies.update", "guard": "sanctum", "seededOn": ["hr", "admin", "owner"] },
-    { "name": "attendance-policies.activate", "guard": "sanctum", "seededOn": ["hr", "admin", "owner"] },
-    { "name": "attendance-policies.deactivate", "guard": "sanctum", "seededOn": ["hr", "admin", "owner"] },
+    {
+      "name": "attendance-policies.viewAny",
+      "guard": "sanctum",
+      "seededOn": ["hr", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "attendance-policies.view",
+      "guard": "sanctum",
+      "seededOn": ["hr", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "attendance-policies.create",
+      "guard": "sanctum",
+      "description": "Create attendance policy. Plan-scoped policies require attendance_advanced_policies entitlement.",
+      "seededOn": ["hr", "admin", "owner"]
+    },
+    {
+      "name": "attendance-policies.update",
+      "guard": "sanctum",
+      "seededOn": ["hr", "admin", "owner"]
+    },
+    {
+      "name": "attendance-policies.activate",
+      "guard": "sanctum",
+      "seededOn": ["hr", "admin", "owner"]
+    },
+    {
+      "name": "attendance-policies.deactivate",
+      "guard": "sanctum",
+      "seededOn": ["hr", "admin", "owner"]
+    },
     { "name": "attendance-policies.delete", "guard": "sanctum", "seededOn": ["admin", "owner"] },
 
-    { "name": "absences.viewAny", "guard": "sanctum", "seededOn": ["hr", "safeguarding_officer", "branch_manager", "admin", "owner"] },
+    {
+      "name": "absences.viewAny",
+      "guard": "sanctum",
+      "seededOn": ["hr", "safeguarding_officer", "branch_manager", "admin", "owner"]
+    },
     { "name": "absences.viewAny.own", "guard": "sanctum", "seededOn": ["guardian", "athlete"] },
-    { "name": "absences.view", "guard": "sanctum", "seededOn": ["hr", "coach", "safeguarding_officer", "branch_manager", "admin", "owner"] },
+    {
+      "name": "absences.view",
+      "guard": "sanctum",
+      "seededOn": ["hr", "coach", "safeguarding_officer", "branch_manager", "admin", "owner"]
+    },
     { "name": "absences.view.own", "guard": "sanctum", "seededOn": ["athlete", "guardian"] },
-    { "name": "absences.report.own", "guard": "sanctum", "description": "Guardian / adult athlete self-report absence.", "seededOn": ["athlete", "guardian"] },
-    { "name": "absences.excuse", "guard": "sanctum", "description": "Admin flips unexcused → excused.", "seededOn": ["hr", "safeguarding_officer", "branch_manager", "admin", "owner"] },
-    { "name": "absences.reverse-excuse", "guard": "sanctum", "description": "Admin flips excused → unexcused (audit-sensitive).", "seededOn": ["safeguarding_officer", "admin", "owner"] },
+    {
+      "name": "absences.report.own",
+      "guard": "sanctum",
+      "description": "Guardian / adult athlete self-report absence.",
+      "seededOn": ["athlete", "guardian"]
+    },
+    {
+      "name": "absences.excuse",
+      "guard": "sanctum",
+      "description": "Admin flips unexcused → excused.",
+      "seededOn": ["hr", "safeguarding_officer", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "absences.reverse-excuse",
+      "guard": "sanctum",
+      "description": "Admin flips excused → unexcused (audit-sensitive).",
+      "seededOn": ["safeguarding_officer", "admin", "owner"]
+    },
     { "name": "absences.update", "guard": "sanctum", "seededOn": ["hr", "admin", "owner"] },
-    { "name": "absences.delete", "guard": "sanctum", "description": "Only with admin override + documented reason.", "seededOn": ["admin", "owner"] },
+    {
+      "name": "absences.delete",
+      "guard": "sanctum",
+      "description": "Only with admin override + documented reason.",
+      "seededOn": ["admin", "owner"]
+    },
 
-    { "name": "late-arrivals.viewAny", "guard": "sanctum", "seededOn": ["hr", "coach", "branch_manager", "admin", "owner"] },
-    { "name": "late-arrivals.view", "guard": "sanctum", "seededOn": ["hr", "coach", "branch_manager", "admin", "owner"] },
+    {
+      "name": "late-arrivals.viewAny",
+      "guard": "sanctum",
+      "seededOn": ["hr", "coach", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "late-arrivals.view",
+      "guard": "sanctum",
+      "seededOn": ["hr", "coach", "branch_manager", "admin", "owner"]
+    },
 
-    { "name": "reports.attendance.view", "guard": "sanctum", "description": "Aggregate attendance report. Requires attendance_analytics entitlement.", "seededOn": ["hr", "branch_manager", "admin", "owner"] },
+    {
+      "name": "reports.attendance.view",
+      "guard": "sanctum",
+      "description": "Aggregate attendance report. Requires attendance_analytics entitlement.",
+      "seededOn": ["hr", "branch_manager", "admin", "owner"]
+    },
 
-    { "name": "platform.attendance.viewAny", "guard": "platform_admin", "seededOn": ["super_admin", "ops", "support"] },
-    { "name": "platform.attendance.view", "guard": "platform_admin", "seededOn": ["super_admin", "ops", "support"] },
-    { "name": "platform.absences.viewAny", "guard": "platform_admin", "seededOn": ["super_admin", "ops", "support"] },
-    { "name": "platform.late-arrivals.viewAny", "guard": "platform_admin", "seededOn": ["super_admin", "ops", "support"] }
+    {
+      "name": "platform.attendance.viewAny",
+      "guard": "platform_admin",
+      "seededOn": ["super_admin", "ops", "support"]
+    },
+    {
+      "name": "platform.attendance.view",
+      "guard": "platform_admin",
+      "seededOn": ["super_admin", "ops", "support"]
+    },
+    {
+      "name": "platform.absences.viewAny",
+      "guard": "platform_admin",
+      "seededOn": ["super_admin", "ops", "support"]
+    },
+    {
+      "name": "platform.late-arrivals.viewAny",
+      "guard": "platform_admin",
+      "seededOn": ["super_admin", "ops", "support"]
+    }
   ]
 }

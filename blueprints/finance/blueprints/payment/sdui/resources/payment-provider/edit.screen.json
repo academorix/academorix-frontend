@@ -37,8 +37,22 @@
             {
               "kind": "View",
               "children": [
-                { "kind": "Text", "props": { "as": "h1", "className": "text-2xl font-semibold" }, "bindings": { "children": { "$expr": "'Edit ' + provider.provider.charAt(0).toUpperCase() + provider.provider.slice(1)" } } },
-                { "kind": "Widget", "widget": "payment.payment-status-chip", "bindings": { "props.status": { "$expr": "provider.is_active ? 'active' : 'inactive'" } } }
+                {
+                  "kind": "Text",
+                  "props": { "as": "h1", "className": "text-2xl font-semibold" },
+                  "bindings": {
+                    "children": {
+                      "$expr": "'Edit ' + provider.provider.charAt(0).toUpperCase() + provider.provider.slice(1)"
+                    }
+                  }
+                },
+                {
+                  "kind": "Widget",
+                  "widget": "payment.payment-status-chip",
+                  "bindings": {
+                    "props.status": { "$expr": "provider.is_active ? 'active' : 'inactive'" }
+                  }
+                }
               ]
             }
           ]
@@ -48,7 +62,16 @@
           "children": [
             {
               "kind": "CardHeader",
-              "children": [{ "kind": "Text", "props": { "as": "h2", "className": "text-lg font-medium", "children": "Credentials" } }]
+              "children": [
+                {
+                  "kind": "Text",
+                  "props": {
+                    "as": "h2",
+                    "className": "text-lg font-medium",
+                    "children": "Credentials"
+                  }
+                }
+              ]
             },
             {
               "kind": "CardContent",
@@ -69,7 +92,12 @@
           "children": [
             {
               "kind": "CardHeader",
-              "children": [{ "kind": "Text", "props": { "as": "h2", "className": "text-lg font-medium", "children": "Status" } }]
+              "children": [
+                {
+                  "kind": "Text",
+                  "props": { "as": "h2", "className": "text-lg font-medium", "children": "Status" }
+                }
+              ]
             },
             {
               "kind": "CardContent",
@@ -94,7 +122,9 @@
             {
               "kind": "Button",
               "props": { "variant": "ghost", "children": "Cancel" },
-              "actions": { "onPress": { "kind": "navigate", "toExpr": "'/tenant/payment-providers'" } }
+              "actions": {
+                "onPress": { "kind": "navigate", "toExpr": "'/tenant/payment-providers'" }
+              }
             },
             {
               "kind": "Button",

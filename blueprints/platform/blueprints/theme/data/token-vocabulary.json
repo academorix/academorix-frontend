@@ -6,7 +6,13 @@
     "color": {
       "token_type": "color",
       "value_pattern": "^(#[0-9a-fA-F]{6,8}|rgb\\(.+\\)|rgba\\(.+\\)|hsl\\(.+\\)|hsla\\(.+\\)|oklch\\(.+\\))$",
-      "value_examples": ["#0066CC", "#0066CCFF", "rgb(0 102 204)", "rgba(0, 102, 204, 0.85)", "oklch(60% 0.14 258)"],
+      "value_examples": [
+        "#0066CC",
+        "#0066CCFF",
+        "rgb(0 102 204)",
+        "rgba(0, 102, 204, 0.85)",
+        "oklch(60% 0.14 258)"
+      ],
       "keys": [
         "color.primary.50",
         "color.primary.100",

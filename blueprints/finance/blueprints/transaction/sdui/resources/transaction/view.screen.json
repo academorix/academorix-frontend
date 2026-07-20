@@ -36,16 +36,37 @@
             {
               "kind": "View",
               "children": [
-                { "kind": "Text", "props": { "as": "h1", "className": "text-2xl font-semibold font-mono" }, "bindings": { "children": { "$ref": "transaction.transaction_number" } } },
+                {
+                  "kind": "Text",
+                  "props": { "as": "h1", "className": "text-2xl font-semibold font-mono" },
+                  "bindings": { "children": { "$ref": "transaction.transaction_number" } }
+                },
                 {
                   "kind": "View",
                   "props": { "className": "flex items-center gap-2 mt-1" },
                   "children": [
-                    { "kind": "Widget", "widget": "transaction.kind-chip", "bindings": { "kind": { "$ref": "transaction.kind" } } },
-                    { "kind": "Chip", "bindings": { "variant": { "$expr": "$ref('transaction.status') === 'posted' ? 'success' : 'warning'" }, "children": { "$ref": "transaction.status" } } },
+                    {
+                      "kind": "Widget",
+                      "widget": "transaction.kind-chip",
+                      "bindings": { "kind": { "$ref": "transaction.kind" } }
+                    },
                     {
                       "kind": "Chip",
-                      "bindings": { "hidden": { "$expr": "!$ref('transaction.reversal_reason')" }, "children": { "$expr": "'Reversal: ' + $ref('transaction.reversal_reason')" } },
+                      "bindings": {
+                        "variant": {
+                          "$expr": "$ref('transaction.status') === 'posted' ? 'success' : 'warning'"
+                        },
+                        "children": { "$ref": "transaction.status" }
+                      }
+                    },
+                    {
+                      "kind": "Chip",
+                      "bindings": {
+                        "hidden": { "$expr": "!$ref('transaction.reversal_reason')" },
+                        "children": {
+                          "$expr": "'Reversal: ' + $ref('transaction.reversal_reason')"
+                        }
+                      },
                       "props": { "variant": "warning" }
                     }
                   ]
@@ -78,21 +99,49 @@
           "kind": "Card",
           "props": { "className": "p-6" },
           "children": [
-            { "kind": "Text", "props": { "as": "h2", "className": "text-lg font-medium mb-4", "children": "Movement" } },
+            {
+              "kind": "Text",
+              "props": {
+                "as": "h2",
+                "className": "text-lg font-medium mb-4",
+                "children": "Movement"
+              }
+            },
             {
               "kind": "View",
               "props": { "className": "grid grid-cols-3 gap-4" },
               "children": [
-                { "kind": "LabeledValue", "props": { "label": "Amount", "formatter": "currency" }, "bindings": { "value": { "$ref": "transaction.amount_cents" }, "currency": { "$ref": "transaction.currency" } } },
-                { "kind": "LabeledValue", "props": { "label": "Currency" }, "bindings": { "value": { "$ref": "transaction.currency" } } },
-                { "kind": "LabeledValue", "props": { "label": "Effective date", "formatter": "date" }, "bindings": { "value": { "$ref": "transaction.effective_date" } } },
-                { "kind": "LabeledValue", "props": { "label": "Posted at", "formatter": "datetime" }, "bindings": { "value": { "$ref": "transaction.posted_at" } } },
+                {
+                  "kind": "LabeledValue",
+                  "props": { "label": "Amount", "formatter": "currency" },
+                  "bindings": {
+                    "value": { "$ref": "transaction.amount_cents" },
+                    "currency": { "$ref": "transaction.currency" }
+                  }
+                },
+                {
+                  "kind": "LabeledValue",
+                  "props": { "label": "Currency" },
+                  "bindings": { "value": { "$ref": "transaction.currency" } }
+                },
+                {
+                  "kind": "LabeledValue",
+                  "props": { "label": "Effective date", "formatter": "date" },
+                  "bindings": { "value": { "$ref": "transaction.effective_date" } }
+                },
+                {
+                  "kind": "LabeledValue",
+                  "props": { "label": "Posted at", "formatter": "datetime" },
+                  "bindings": { "value": { "$ref": "transaction.posted_at" } }
+                },
                 {
                   "kind": "LabeledValue",
                   "props": { "label": "Reference" },
                   "bindings": {
                     "hidden": { "$expr": "!$ref('transaction.reference_type')" },
-                    "value": { "$expr": "$ref('transaction.reference_type') + ' — ' + $ref('transaction.reference_id')" }
+                    "value": {
+                      "$expr": "$ref('transaction.reference_type') + ' — ' + $ref('transaction.reference_id')"
+                    }
                   }
                 },
                 {
@@ -112,7 +161,14 @@
           "kind": "Card",
           "props": { "className": "p-6" },
           "children": [
-            { "kind": "Text", "props": { "as": "h2", "className": "text-lg font-medium mb-4", "children": "Ledger entries" } },
+            {
+              "kind": "Text",
+              "props": {
+                "as": "h2",
+                "className": "text-lg font-medium mb-4",
+                "children": "Ledger entries"
+              }
+            },
             {
               "kind": "DataGrid",
               "bindings": { "items": { "$ref": "ledger_entries" } },
@@ -121,18 +177,54 @@
                 "columns": [
                   { "field": "account", "label": "Account", "width": 200 },
                   { "field": "regulator_category", "label": "Category", "width": 140 },
-                  { "field": "debit_cents", "label": "Debit", "width": 140, "renderer": { "kind": "Text", "formatter": "currency", "className": "text-right font-mono", "conditionalHidden": { "$expr": "row.debit_cents === 0" } } },
-                  { "field": "credit_cents", "label": "Credit", "width": 140, "renderer": { "kind": "Text", "formatter": "currency", "className": "text-right font-mono", "conditionalHidden": { "$expr": "row.credit_cents === 0" } } },
+                  {
+                    "field": "debit_cents",
+                    "label": "Debit",
+                    "width": 140,
+                    "renderer": {
+                      "kind": "Text",
+                      "formatter": "currency",
+                      "className": "text-right font-mono",
+                      "conditionalHidden": { "$expr": "row.debit_cents === 0" }
+                    }
+                  },
+                  {
+                    "field": "credit_cents",
+                    "label": "Credit",
+                    "width": 140,
+                    "renderer": {
+                      "kind": "Text",
+                      "formatter": "currency",
+                      "className": "text-right font-mono",
+                      "conditionalHidden": { "$expr": "row.credit_cents === 0" }
+                    }
+                  },
                   { "field": "description", "label": "Description" }
                 ]
               }
             },
             {
               "kind": "View",
-              "props": { "className": "mt-4 flex items-center justify-end gap-4 text-sm text-muted font-mono" },
+              "props": {
+                "className": "mt-4 flex items-center justify-end gap-4 text-sm text-muted font-mono"
+              },
               "children": [
-                { "kind": "Text", "bindings": { "children": { "$expr": "'Total debits: ' + $sumFormat($ref('ledger_entries'), 'debit_cents', $ref('transaction.currency'))" } } },
-                { "kind": "Text", "bindings": { "children": { "$expr": "'Total credits: ' + $sumFormat($ref('ledger_entries'), 'credit_cents', $ref('transaction.currency'))" } } },
+                {
+                  "kind": "Text",
+                  "bindings": {
+                    "children": {
+                      "$expr": "'Total debits: ' + $sumFormat($ref('ledger_entries'), 'debit_cents', $ref('transaction.currency'))"
+                    }
+                  }
+                },
+                {
+                  "kind": "Text",
+                  "bindings": {
+                    "children": {
+                      "$expr": "'Total credits: ' + $sumFormat($ref('ledger_entries'), 'credit_cents', $ref('transaction.currency'))"
+                    }
+                  }
+                },
                 { "kind": "Chip", "props": { "variant": "success", "children": "Balanced" } }
               ]
             }
@@ -141,21 +233,38 @@
         {
           "kind": "Card",
           "bindings": {
-            "hidden": { "$expr": "!$ref('transaction.source_transaction_id') && !$refExists('transaction.reversals')" }
+            "hidden": {
+              "$expr": "!$ref('transaction.source_transaction_id') && !$refExists('transaction.reversals')"
+            }
           },
           "props": { "className": "p-6" },
           "children": [
-            { "kind": "Text", "props": { "as": "h2", "className": "text-lg font-medium mb-4", "children": "Reversal chain" } },
+            {
+              "kind": "Text",
+              "props": {
+                "as": "h2",
+                "className": "text-lg font-medium mb-4",
+                "children": "Reversal chain"
+              }
+            },
             {
               "kind": "View",
               "bindings": { "hidden": { "$expr": "!$ref('transaction.source_transaction_id')" } },
               "children": [
-                { "kind": "Text", "props": { "className": "text-sm text-muted mb-2", "children": "This transaction reverses:" } },
+                {
+                  "kind": "Text",
+                  "props": {
+                    "className": "text-sm text-muted mb-2",
+                    "children": "This transaction reverses:"
+                  }
+                },
                 {
                   "kind": "Link",
                   "bindings": {
                     "toExpr": "'/tenant/finance/transactions/' + $ref('transaction.source_transaction_id')",
-                    "children": { "$expr": "'Source transaction ' + $ref('transaction.source_transaction_id')" }
+                    "children": {
+                      "$expr": "'Source transaction ' + $ref('transaction.source_transaction_id')"
+                    }
                   }
                 }
               ]

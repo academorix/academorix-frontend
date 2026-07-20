@@ -16,11 +16,11 @@
  *   ```
  */
 
-import { useInject } from '@stackra/container/react';
-import { I18N_LOCALE_SERVICE } from '@stackra/contracts';
+import { useInject } from "@stackra/container/react";
+import { I18N_LOCALE_SERVICE } from "@stackra/contracts";
 
-import type { I18nLocaleService } from '../services/i18n-locale.service';
-import type { UseDirectionReturn } from '../interfaces';
+import type { I18nLocaleService } from "../services/i18n-locale.service";
+import type { UseDirectionReturn } from "../interfaces";
 
 /**
  * Access the current text direction from a React component.

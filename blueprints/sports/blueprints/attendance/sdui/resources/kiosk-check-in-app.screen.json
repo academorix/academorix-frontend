@@ -11,16 +11,30 @@
   "requiresPermission": "attendance.check-in.own",
   "requiresFeature": "attendance.self_kiosk",
   "dataSources": [
-    { "name": "todays_sessions", "kind": "http.get", "url": "/api/v1/sessions/today?filter[venue_id]={kiosk.venue_id}", "unwrap": "data", "cache": { "ttlSeconds": 60 } }
+    {
+      "name": "todays_sessions",
+      "kind": "http.get",
+      "url": "/api/v1/sessions/today?filter[venue_id]={kiosk.venue_id}",
+      "unwrap": "data",
+      "cache": { "ttlSeconds": 60 }
+    }
   ],
   "nodes": [
     {
       "id": "root",
       "kind": "View",
-      "props": { "className": "flex flex-col items-center justify-center min-h-screen bg-primary text-primary-foreground gap-8 p-8" },
+      "props": {
+        "className": "flex flex-col items-center justify-center min-h-screen bg-primary text-primary-foreground gap-8 p-8"
+      },
       "children": [
-        { "kind": "Text", "props": { "as": "h1", "className": "text-5xl font-bold", "children": "Welcome" } },
-        { "kind": "Text", "props": { "className": "text-xl", "children": "Tap to check in for today's session" } },
+        {
+          "kind": "Text",
+          "props": { "as": "h1", "className": "text-5xl font-bold", "children": "Welcome" }
+        },
+        {
+          "kind": "Text",
+          "props": { "className": "text-xl", "children": "Tap to check in for today's session" }
+        },
         {
           "kind": "View",
           "props": { "className": "grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-2xl w-full" },
@@ -41,8 +55,16 @@
                 "props": { "className": "flex flex-col items-center gap-2 p-8 text-center" },
                 "children": [
                   { "kind": "Icon", "props": { "name": "sparkles", "className": "size-12" } },
-                  { "kind": "Text", "props": { "className": "text-xl font-semibold" }, "bindings": { "children": { "$ref": "item.name" } } },
-                  { "kind": "Text", "props": { "className": "text-sm text-muted" }, "bindings": { "children": { "$ref": "item.starts_at_short" } } }
+                  {
+                    "kind": "Text",
+                    "props": { "className": "text-xl font-semibold" },
+                    "bindings": { "children": { "$ref": "item.name" } }
+                  },
+                  {
+                    "kind": "Text",
+                    "props": { "className": "text-sm text-muted" },
+                    "bindings": { "children": { "$ref": "item.starts_at_short" } }
+                  }
                 ]
               }
             ]
@@ -72,7 +94,13 @@
               "kind": "Widget",
               "widget": "athlete.athlete-picker",
               "props": { "label": "Search by name or PIN", "autoFocus": true },
-              "actions": { "onSelect": { "kind": "modal.open", "modal": "attendance.kiosk-pin-confirm", "params": { "session_id": "modal.session_id", "athlete_id": "$selectedId" } } }
+              "actions": {
+                "onSelect": {
+                  "kind": "modal.open",
+                  "modal": "attendance.kiosk-pin-confirm",
+                  "params": { "session_id": "modal.session_id", "athlete_id": "$selectedId" }
+                }
+              }
             }
           ]
         }
@@ -102,7 +130,11 @@
                     "pin_verification": "$value"
                   },
                   "onSuccess": { "kind": "modal.open", "modal": "attendance.kiosk-success" },
-                  "onError": { "kind": "toast", "variant": "danger", "messageExpr": "$error.code === 'ATTENDANCE_NO_ACTIVE_PASS' ? 'No active pass — see reception' : $error.message" }
+                  "onError": {
+                    "kind": "toast",
+                    "variant": "danger",
+                    "messageExpr": "$error.code === 'ATTENDANCE_NO_ACTIVE_PASS' ? 'No active pass — see reception' : $error.message"
+                  }
                 }
               }
             }
@@ -119,9 +151,22 @@
           "kind": "View",
           "props": { "className": "flex flex-col items-center gap-4 p-8" },
           "children": [
-            { "kind": "Icon", "props": { "name": "check-circle", "className": "size-24 text-success" } },
-            { "kind": "Text", "props": { "as": "h2", "className": "text-3xl font-bold", "children": "You're checked in!" } },
-            { "kind": "Text", "props": { "className": "text-sm text-muted", "children": "Have a great session." } }
+            {
+              "kind": "Icon",
+              "props": { "name": "check-circle", "className": "size-24 text-success" }
+            },
+            {
+              "kind": "Text",
+              "props": {
+                "as": "h2",
+                "className": "text-3xl font-bold",
+                "children": "You're checked in!"
+              }
+            },
+            {
+              "kind": "Text",
+              "props": { "className": "text-sm text-muted", "children": "Have a great session." }
+            }
           ]
         }
       ]

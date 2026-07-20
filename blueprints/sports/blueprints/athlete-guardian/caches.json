@@ -3,14 +3,25 @@
   "$version": 1,
   "title": "athlete-guardian — cache keys + tags",
   "driver": "redis",
-  "ownedTags": ["athlete_guardian", "athlete_guardian.primary", "athlete_guardian.by_user", "athlete_guardian.pickup_list"],
+  "ownedTags": [
+    "athlete_guardian",
+    "athlete_guardian.primary",
+    "athlete_guardian.by_user",
+    "athlete_guardian.pickup_list"
+  ],
   "keys": [
     {
       "pattern": "agu:by_athlete:{athlete_id}",
       "description": "All active guardians for an athlete. Read hot on every athlete-detail page.",
       "ttlSeconds": 300,
       "tags": ["athlete_guardian"],
-      "invalidatedBy": ["GuardianAdded", "GuardianRemoved", "PrimaryGuardianChanged", "GuardianVerified", "GuardianVerificationRevoked"]
+      "invalidatedBy": [
+        "GuardianAdded",
+        "GuardianRemoved",
+        "PrimaryGuardianChanged",
+        "GuardianVerified",
+        "GuardianVerificationRevoked"
+      ]
     },
     {
       "pattern": "agu:primary:{athlete_id}",
@@ -38,7 +49,12 @@
       "description": "Guardians authorised for emergency medical decisions (can_authorise_medical_care=true AND has_legal_custody=true AND is_active). Wave 4+ Medical Clearance module reads this.",
       "ttlSeconds": 600,
       "tags": ["athlete_guardian"],
-      "invalidatedBy": ["GuardianCanAuthoriseMedicalCareToggled", "GuardianCustodyChanged", "GuardianAdded", "GuardianRemoved"]
+      "invalidatedBy": [
+        "GuardianCanAuthoriseMedicalCareToggled",
+        "GuardianCustodyChanged",
+        "GuardianAdded",
+        "GuardianRemoved"
+      ]
     }
   ]
 }

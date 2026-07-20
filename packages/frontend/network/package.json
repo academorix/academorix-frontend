@@ -1,7 +1,7 @@
 {
   "name": "@stackra/network",
   "version": "0.1.0",
-  "description": "Network detection for the Stackra framework — online/offline + connection-type/speed, browser/native/node detectors, event emission, and React bindings.",
+  "description": "Network detection for the Stackra framework \u2014 online/offline + connection-type/speed, browser/native/node detectors, event emission, and React bindings.",
   "license": "MIT",
   "author": {
     "name": "Stackra L.L.C",
@@ -82,6 +82,7 @@
     "@stackra/logger": "workspace:^",
     "@stackra/support": "workspace:^",
     "@stackra/testing": "workspace:^",
+    "@stackra/ui": "workspace:^",
     "react": "catalog:",
     "react-native": "*",
     "reflect-metadata": "catalog:"
@@ -96,6 +97,9 @@
     "@stackra/testing": {
       "optional": true
     },
+    "@stackra/ui": {
+      "optional": true
+    },
     "react": {
       "optional": true
     },
@@ -104,12 +108,15 @@
     }
   },
   "devDependencies": {
+    "@academorix/config-tsconfig": "workspace:*",
+    "@academorix/config-tsup": "workspace:*",
     "@stackra/config": "workspace:*",
     "@stackra/container": "workspace:*",
     "@stackra/contracts": "workspace:*",
     "@stackra/logger": "workspace:*",
     "@stackra/support": "workspace:*",
     "@stackra/testing": "workspace:*",
+    "@stackra/ui": "workspace:*",
     "@types/node": "catalog:",
     "@types/react": "catalog:",
     "react": "catalog:",

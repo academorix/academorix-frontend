@@ -52,9 +52,7 @@
       "class": "Academorix\\Finance\\Payment\\Events\\PaymentIntentProcessing",
       "trigger": "Status transitioned to 'processing'. Provider accepted the confirmation and is processing async. Terminal within a short window (seconds to minutes).",
       "queue": "payment",
-      "consumers": [
-        "monitoring::MetricsCollector"
-      ],
+      "consumers": ["monitoring::MetricsCollector"],
       "payload": {
         "payment_intent_id": "ULID",
         "tenant_id": "ULID",
@@ -104,10 +102,7 @@
       "class": "Academorix\\Finance\\Payment\\Events\\PaymentIntentCancelled",
       "trigger": "Status transitioned to 'cancelled'. Customer or system cancelled. cancellation_reason populated.",
       "queue": "payment",
-      "consumers": [
-        "audit::WriteToAuditLog",
-        "monitoring::MetricsCollector"
-      ],
+      "consumers": ["audit::WriteToAuditLog", "monitoring::MetricsCollector"],
       "payload": {
         "payment_intent_id": "ULID",
         "tenant_id": "ULID",
@@ -120,10 +115,7 @@
       "class": "Academorix\\Finance\\Payment\\Events\\PaymentIntentExpired",
       "trigger": "ExpireStalePaymentIntentsJob nightly sweep marked an intent 'cancelled' with cancellation_reason='expired' (>24h in non-terminal status). Signals abandoned checkouts.",
       "queue": "payment",
-      "consumers": [
-        "audit::WriteToAuditLog",
-        "monitoring::MetricsCollector"
-      ],
+      "consumers": ["audit::WriteToAuditLog", "monitoring::MetricsCollector"],
       "payload": {
         "payment_intent_id": "ULID",
         "tenant_id": "ULID",
@@ -225,10 +217,7 @@
       "class": "Academorix\\Finance\\Payment\\Events\\PaymentMethodDetached",
       "trigger": "PaymentMethodObserver.deleted (soft-delete) OR is_active transitioned false. Provider-side detach dispatched (Stripe DetachPaymentMethod, Adyen storedPaymentMethod delete).",
       "queue": "payment",
-      "consumers": [
-        "audit::WriteToAuditLog",
-        "monitoring::MetricsCollector"
-      ],
+      "consumers": ["audit::WriteToAuditLog", "monitoring::MetricsCollector"],
       "payload": {
         "payment_method_id": "ULID",
         "tenant_id": "ULID",
@@ -262,10 +251,7 @@
       "class": "Academorix\\Finance\\Payment\\Events\\PaymentMethodVerified",
       "trigger": "Bank_debit method (typically ACH) completed micro-deposit verification. verified_at populated. The method can now dispatch payments.",
       "queue": "payment",
-      "consumers": [
-        "audit::WriteToAuditLog",
-        "monitoring::MetricsCollector"
-      ],
+      "consumers": ["audit::WriteToAuditLog", "monitoring::MetricsCollector"],
       "payload": {
         "payment_method_id": "ULID",
         "tenant_id": "ULID",
@@ -277,10 +263,7 @@
       "class": "Academorix\\Finance\\Payment\\Events\\PaymentMethodDuplicateDetected",
       "trigger": "PaymentMethodObserver detected a duplicate via fingerprint_hash. Existing method re-activated (if soft-deleted or is_active=false); new insert refused.",
       "queue": "payment",
-      "consumers": [
-        "audit::WriteToAuditLog",
-        "monitoring::MetricsCollector"
-      ],
+      "consumers": ["audit::WriteToAuditLog", "monitoring::MetricsCollector"],
       "payload": {
         "tenant_id": "ULID",
         "customer_type": "string",
@@ -319,10 +302,7 @@
       "class": "Academorix\\Finance\\Payment\\Events\\PaymentDisputeEvidenceSubmitted",
       "trigger": "SubmitDisputeEvidenceJob completed. evidence_submitted_at populated.",
       "queue": "payment",
-      "consumers": [
-        "audit::WriteToAuditLog",
-        "monitoring::MetricsCollector"
-      ],
+      "consumers": ["audit::WriteToAuditLog", "monitoring::MetricsCollector"],
       "payload": {
         "payment_dispute_id": "ULID",
         "tenant_id": "ULID",
@@ -334,10 +314,7 @@
       "class": "Academorix\\Finance\\Payment\\Events\\PaymentDisputeClosed",
       "trigger": "PaymentDisputeObserver detected status transitioned to a terminal state (won / lost / charge_refunded / warning_closed). closed_at populated.",
       "queue": "payment",
-      "consumers": [
-        "audit::WriteToAuditLog (retention: 7 years)",
-        "monitoring::MetricsCollector"
-      ],
+      "consumers": ["audit::WriteToAuditLog (retention: 7 years)", "monitoring::MetricsCollector"],
       "payload": {
         "payment_dispute_id": "ULID",
         "tenant_id": "ULID",
@@ -388,10 +365,7 @@
       "class": "Academorix\\Finance\\Payment\\Events\\PaymentDisputeEscalatedToChargeback",
       "trigger": "EscalateDisputeToChargebackJob created a Chargeback row via chargeback module. dispute.chargeback_id populated.",
       "queue": "payment",
-      "consumers": [
-        "audit::WriteToAuditLog",
-        "monitoring::MetricsCollector"
-      ],
+      "consumers": ["audit::WriteToAuditLog", "monitoring::MetricsCollector"],
       "payload": {
         "payment_dispute_id": "ULID",
         "chargeback_id": "ULID (cbk_*)",
@@ -421,10 +395,7 @@
       "class": "Academorix\\Finance\\Payment\\Events\\PaymentProviderDeactivated",
       "trigger": "Provider config soft-deleted or is_active flipped false.",
       "queue": "payment",
-      "consumers": [
-        "audit::WriteToAuditLog",
-        "monitoring::MetricsCollector"
-      ],
+      "consumers": ["audit::WriteToAuditLog", "monitoring::MetricsCollector"],
       "payload": {
         "provider_config_id": "ULID",
         "tenant_id": "ULID",

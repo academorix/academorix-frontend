@@ -1,7 +1,7 @@
 {
   "name": "@stackra/monitoring",
   "version": "0.1.0",
-  "description": "Error-monitoring for the Stackra framework — a consent-agnostic, fan-out manager over pluggable providers (Sentry, console, custom), with auto-registration and React bindings.",
+  "description": "Error-monitoring for the Stackra framework \u2014 a consent-agnostic, fan-out manager over pluggable providers (Sentry, console, custom), with auto-registration and React bindings.",
   "license": "MIT",
   "author": {
     "name": "Stackra L.L.C",
@@ -95,6 +95,8 @@
     }
   },
   "devDependencies": {
+    "@academorix/config-tsconfig": "workspace:*",
+    "@academorix/config-tsup": "workspace:*",
     "@stackra/container": "workspace:*",
     "@stackra/contracts": "workspace:*",
     "@stackra/logger": "workspace:*",

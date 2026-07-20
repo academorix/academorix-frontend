@@ -10,11 +10,11 @@
  *   the footer surfaces the reason.
  */
 
-import type { JSX, ReactNode } from 'react';
-import { PromptInput } from '@stackra/ui/react';
+import type { JSX, ReactNode } from "react";
+import { PromptInput } from "@stackra/ui/react";
 
-import type { IUseAiChatResult } from '@/core/hooks/use-ai-chat';
-import type { OrchestratorStatus } from '@/core/services/chat-orchestrator.service';
+import type { IUseAiChatResult } from "@/core/hooks/use-ai-chat";
+import type { OrchestratorStatus } from "@/core/services/chat-orchestrator.service";
 
 /** Props accepted by {@link AiPrompt}. */
 export interface IAiPromptProps {
@@ -29,23 +29,23 @@ export interface IAiPromptProps {
 }
 
 /** Map orchestrator status to `PromptInput`'s status union. */
-function mapStatus(status: OrchestratorStatus): 'ready' | 'submitted' | 'streaming' | 'error' {
+function mapStatus(status: OrchestratorStatus): "ready" | "submitted" | "streaming" | "error" {
   switch (status) {
-    case 'streaming':
-      return 'streaming';
-    case 'error':
-      return 'error';
-    case 'complete':
-    case 'idle':
-    case 'cancelled':
+    case "streaming":
+      return "streaming";
+    case "error":
+      return "error";
+    case "complete":
+    case "idle":
+    case "cancelled":
     default:
-      return 'ready';
+      return "ready";
   }
 }
 
 /** The chat composer, bound to `useAiChat`. */
 export function AiPrompt(props: IAiPromptProps): JSX.Element {
-  const { chat, placeholder = 'Message the assistant...', footer, className } = props;
+  const { chat, placeholder = "Message the assistant...", footer, className } = props;
 
   const status = mapStatus(chat.status);
   const disabledReason = !chat.connection.isConnected ? chat.connection.reason?.message : undefined;

@@ -18,14 +18,25 @@
       "description": "All memberships (active + terminal) for an athlete. Read hot on athlete detail pages.",
       "ttlSeconds": 300,
       "tags": ["membership", "membership.by_athlete"],
-      "invalidatedBy": ["MembershipCreated", "MembershipActivated", "MembershipCancelled", "MembershipLapsed", "MembershipRenewed"]
+      "invalidatedBy": [
+        "MembershipCreated",
+        "MembershipActivated",
+        "MembershipCancelled",
+        "MembershipLapsed",
+        "MembershipRenewed"
+      ]
     },
     {
       "pattern": "mbr:by_user:{user_id}",
       "description": "All memberships associated with a User via athlete.user_id OR guardian relationship. Feeds /me/memberships.",
       "ttlSeconds": 300,
       "tags": ["membership", "membership.by_user"],
-      "invalidatedBy": ["MembershipCreated", "MembershipActivated", "MembershipCancelled", "MembershipLapsed"]
+      "invalidatedBy": [
+        "MembershipCreated",
+        "MembershipActivated",
+        "MembershipCancelled",
+        "MembershipLapsed"
+      ]
     },
     {
       "pattern": "mbr:by_plan:{plan_id}",
@@ -60,14 +71,25 @@
       "description": "Memberships with next_renewal_at in the coming 7 days. Feeds admin dashboards showing 'renewals this week'.",
       "ttlSeconds": 300,
       "tags": ["membership"],
-      "invalidatedBy": ["MembershipCreated", "MembershipRenewed", "MembershipCancelled", "MembershipPaused", "MembershipResumed"]
+      "invalidatedBy": [
+        "MembershipCreated",
+        "MembershipRenewed",
+        "MembershipCancelled",
+        "MembershipPaused",
+        "MembershipResumed"
+      ]
     },
     {
       "pattern": "mbr:dunning_open:{tenant_id}",
       "description": "Memberships with consecutive_failed_renewal_count > 0 — the tenant's active dunning list.",
       "ttlSeconds": 120,
       "tags": ["membership"],
-      "invalidatedBy": ["MembershipRenewalFailed", "MembershipRenewed", "MembershipRenewalRecovered", "MembershipLapsed"]
+      "invalidatedBy": [
+        "MembershipRenewalFailed",
+        "MembershipRenewed",
+        "MembershipRenewalRecovered",
+        "MembershipLapsed"
+      ]
     }
   ]
 }

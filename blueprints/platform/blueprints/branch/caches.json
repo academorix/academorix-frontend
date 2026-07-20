@@ -22,7 +22,10 @@
       "description": "The Branch's opening_hours JSONB blob + a pre-computed lookup table of open-periods per day-of-week in `branch.region.timezone`. Consumed by `OpeningHoursEvaluator::isOpenNow()` + the `/hours` + `/is-open` endpoints.",
       "ttlSeconds": 600,
       "tags": ["branch", "opening-hours"],
-      "invalidatedBy": ["BranchOpeningHoursUpdated", "BranchStatusChanged (paused / closed affect is-open)"]
+      "invalidatedBy": [
+        "BranchOpeningHoursUpdated",
+        "BranchStatusChanged (paused / closed affect is-open)"
+      ]
     },
     {
       "pattern": "br:is_open:{branch_id}:{yyyy_mm_dd_hh_mm}",

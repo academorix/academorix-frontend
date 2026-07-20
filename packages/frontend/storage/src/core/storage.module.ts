@@ -8,8 +8,8 @@
  *   actually inject.
  */
 
-import { Global, Module, type DynamicModule } from '@stackra/container';
-import { DevtoolsModule } from '@stackra/devtools';
+import { Global, Module, type DynamicModule } from "@stackra/container";
+import { DevtoolsModule } from "@stackra/devtools";
 import {
   STORAGE,
   STORAGE_CONFIG,
@@ -17,11 +17,11 @@ import {
   type IAsyncModuleOptions,
   type IStorage,
   type IStorageModuleOptions,
-} from '@stackra/contracts';
+} from "@stackra/contracts";
 
-import { StorageManager } from './services/storage-manager.service';
-import { mergeConfig } from './utils/merge-config.util';
-import { StorageDevtoolsPanel } from '../react/devtools/storage.devtools-panel';
+import { StorageManager } from "./services/storage-manager.service";
+import { mergeConfig } from "./utils/merge-config.util";
+import { StorageDevtoolsPanel } from "../react/devtools/storage.devtools-panel";
 
 /**
  * Global DI module for `@stackra/storage`.

@@ -9,7 +9,7 @@
  */
 export enum TabRoleEnum {
   /** This tab is the elected leader — performs expensive single-instance operations. */
-  LEADER = 'leader',
+  LEADER = "leader",
   /** This tab is a follower — receives relayed data from the leader. */
-  FOLLOWER = 'follower',
+  FOLLOWER = "follower",
 }

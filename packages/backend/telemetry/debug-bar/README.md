@@ -26,8 +26,8 @@ Providers.
 
 ## 📦 Installation
 
-This package is included with the main `academorix/laravel-telemetry` package. If
-you need to install it separately:
+This package is included with the main `academorix/laravel-telemetry` package.
+If you need to install it separately:
 
 ```bash
 composer require academorix/laravel-telemetry-debugbar

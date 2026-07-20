@@ -4,7 +4,7 @@
  * @description Props for the {@link QuietHoursPicker} component.
  */
 
-import type { IQuietHoursWindow } from '@/core/interfaces';
+import type { IQuietHoursWindow } from "@/core/interfaces";
 
 /**
  * Props accepted by {@link QuietHoursPicker}.

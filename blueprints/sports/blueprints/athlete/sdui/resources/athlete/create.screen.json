@@ -50,14 +50,58 @@
               "kind": "CardBody",
               "props": { "className": "grid grid-cols-2 gap-4" },
               "children": [
-                { "kind": "TextField", "props": { "name": "first_name", "label": "First name", "isRequired": true, "className": "col-span-1" } },
-                { "kind": "TextField", "props": { "name": "last_name", "label": "Last name", "isRequired": true, "className": "col-span-1" } },
-                { "kind": "TextField", "props": { "name": "middle_name", "label": "Middle name (optional)", "className": "col-span-1" } },
-                { "kind": "TextField", "props": { "name": "preferred_name", "label": "Preferred name (call-me name)", "className": "col-span-1" } },
-                { "kind": "DateField", "props": { "name": "date_of_birth", "label": "Date of birth", "isRequired": true, "className": "col-span-1", "helpText": "Immutable after create — double-check before saving." } },
+                {
+                  "kind": "TextField",
+                  "props": {
+                    "name": "first_name",
+                    "label": "First name",
+                    "isRequired": true,
+                    "className": "col-span-1"
+                  }
+                },
+                {
+                  "kind": "TextField",
+                  "props": {
+                    "name": "last_name",
+                    "label": "Last name",
+                    "isRequired": true,
+                    "className": "col-span-1"
+                  }
+                },
+                {
+                  "kind": "TextField",
+                  "props": {
+                    "name": "middle_name",
+                    "label": "Middle name (optional)",
+                    "className": "col-span-1"
+                  }
+                },
+                {
+                  "kind": "TextField",
+                  "props": {
+                    "name": "preferred_name",
+                    "label": "Preferred name (call-me name)",
+                    "className": "col-span-1"
+                  }
+                },
+                {
+                  "kind": "DateField",
+                  "props": {
+                    "name": "date_of_birth",
+                    "label": "Date of birth",
+                    "isRequired": true,
+                    "className": "col-span-1",
+                    "helpText": "Immutable after create — double-check before saving."
+                  }
+                },
                 {
                   "kind": "ComboBox",
-                  "props": { "name": "gender", "label": "Gender", "menuTrigger": "focus", "className": "col-span-1" },
+                  "props": {
+                    "name": "gender",
+                    "label": "Gender",
+                    "menuTrigger": "focus",
+                    "className": "col-span-1"
+                  },
                   "props_items": [
                     { "id": "male", "label": "Male" },
                     { "id": "female", "label": "Female" },
@@ -66,7 +110,15 @@
                     { "id": "other", "label": "Other" }
                   ]
                 },
-                { "kind": "TextField", "props": { "name": "pronouns", "label": "Pronouns", "className": "col-span-1", "placeholder": "e.g. she/her, they/them" } }
+                {
+                  "kind": "TextField",
+                  "props": {
+                    "name": "pronouns",
+                    "label": "Pronouns",
+                    "className": "col-span-1",
+                    "placeholder": "e.g. she/her, they/them"
+                  }
+                }
               ]
             }
           ]
@@ -81,12 +133,40 @@
               "children": [
                 {
                   "kind": "ComboBox",
-                  "props": { "name": "branch_id", "label": "Branch", "isRequired": true, "menuTrigger": "focus", "className": "col-span-2" },
+                  "props": {
+                    "name": "branch_id",
+                    "label": "Branch",
+                    "isRequired": true,
+                    "menuTrigger": "focus",
+                    "className": "col-span-2"
+                  },
                   "bindings": { "items": { "$ref": "branches" } }
                 },
-                { "kind": "TextField", "props": { "name": "external_id", "label": "External CRM ID (optional)", "className": "col-span-1" } },
-                { "kind": "TextField", "props": { "name": "primary_language", "label": "Primary language (BCP-47)", "className": "col-span-1", "placeholder": "e.g. en-US, ar-EG" } },
-                { "kind": "TextField", "props": { "name": "profile_photo_url", "label": "Profile photo URL (optional)", "className": "col-span-2" } }
+                {
+                  "kind": "TextField",
+                  "props": {
+                    "name": "external_id",
+                    "label": "External CRM ID (optional)",
+                    "className": "col-span-1"
+                  }
+                },
+                {
+                  "kind": "TextField",
+                  "props": {
+                    "name": "primary_language",
+                    "label": "Primary language (BCP-47)",
+                    "className": "col-span-1",
+                    "placeholder": "e.g. en-US, ar-EG"
+                  }
+                },
+                {
+                  "kind": "TextField",
+                  "props": {
+                    "name": "profile_photo_url",
+                    "label": "Profile photo URL (optional)",
+                    "className": "col-span-2"
+                  }
+                }
               ]
             }
           ]
@@ -102,11 +182,39 @@
               "children": [
                 {
                   "kind": "Alert",
-                  "props": { "variant": "warning", "className": "col-span-2", "title": "Confidential", "children": "Emergency contact data is CONFIDENTIAL-tier. Redacted 90 days post-archive per retention policy." }
+                  "props": {
+                    "variant": "warning",
+                    "className": "col-span-2",
+                    "title": "Confidential",
+                    "children": "Emergency contact data is CONFIDENTIAL-tier. Redacted 90 days post-archive per retention policy."
+                  }
                 },
-                { "kind": "TextField", "props": { "name": "emergency_contact_name", "label": "Contact name", "className": "col-span-1" } },
-                { "kind": "TextField", "props": { "name": "emergency_contact_phone", "label": "Contact phone (E.164)", "className": "col-span-1", "placeholder": "+15551234567" } },
-                { "kind": "TextField", "props": { "name": "emergency_contact_relationship", "label": "Relationship", "className": "col-span-1", "placeholder": "e.g. mother, father, guardian" } }
+                {
+                  "kind": "TextField",
+                  "props": {
+                    "name": "emergency_contact_name",
+                    "label": "Contact name",
+                    "className": "col-span-1"
+                  }
+                },
+                {
+                  "kind": "TextField",
+                  "props": {
+                    "name": "emergency_contact_phone",
+                    "label": "Contact phone (E.164)",
+                    "className": "col-span-1",
+                    "placeholder": "+15551234567"
+                  }
+                },
+                {
+                  "kind": "TextField",
+                  "props": {
+                    "name": "emergency_contact_relationship",
+                    "label": "Relationship",
+                    "className": "col-span-1",
+                    "placeholder": "e.g. mother, father, guardian"
+                  }
+                }
               ]
             }
           ]
@@ -122,14 +230,40 @@
               "children": [
                 {
                   "kind": "Alert",
-                  "props": { "variant": "info", "title": "Parental consent", "children": "For athletes under 16, consents must be recorded by an authorised legal guardian." }
+                  "props": {
+                    "variant": "info",
+                    "title": "Parental consent",
+                    "children": "For athletes under 16, consents must be recorded by an authorised legal guardian."
+                  }
                 },
-                { "kind": "Switch", "props": { "name": "consent_photo_release", "label": "Photo release — use in tenant marketing / social" } },
-                { "kind": "Switch", "props": { "name": "consent_medical_disclosure", "label": "Medical disclosure — allow coaches to see medical info" } },
-                { "kind": "Switch", "props": { "name": "consent_third_party", "label": "Third-party sharing — insurance / subprocessors" } },
+                {
+                  "kind": "Switch",
+                  "props": {
+                    "name": "consent_photo_release",
+                    "label": "Photo release — use in tenant marketing / social"
+                  }
+                },
+                {
+                  "kind": "Switch",
+                  "props": {
+                    "name": "consent_medical_disclosure",
+                    "label": "Medical disclosure — allow coaches to see medical info"
+                  }
+                },
+                {
+                  "kind": "Switch",
+                  "props": {
+                    "name": "consent_third_party",
+                    "label": "Third-party sharing — insurance / subprocessors"
+                  }
+                },
                 {
                   "kind": "TextField",
-                  "props": { "name": "consent_recorded_by_user_id", "label": "Recorded by (User ULID)", "helpText": "For minors, must be an active guardian with legal custody." }
+                  "props": {
+                    "name": "consent_recorded_by_user_id",
+                    "label": "Recorded by (User ULID)",
+                    "helpText": "For minors, must be an active guardian with legal custody."
+                  }
                 }
               ]
             }
@@ -139,8 +273,15 @@
           "kind": "View",
           "props": { "className": "flex items-center justify-end gap-3 pt-4" },
           "children": [
-            { "kind": "Button", "props": { "variant": "neutral", "children": "Cancel" }, "actions": { "onPress": { "kind": "navigate", "to": "/tenant/athletes" } } },
-            { "kind": "Button", "props": { "type": "submit", "variant": "primary", "children": "Create athlete" } }
+            {
+              "kind": "Button",
+              "props": { "variant": "neutral", "children": "Cancel" },
+              "actions": { "onPress": { "kind": "navigate", "to": "/tenant/athletes" } }
+            },
+            {
+              "kind": "Button",
+              "props": { "type": "submit", "variant": "primary", "children": "Create athlete" }
+            }
           ]
         }
       ]

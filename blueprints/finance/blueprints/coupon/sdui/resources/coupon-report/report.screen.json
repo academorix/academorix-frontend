@@ -31,8 +31,23 @@
             {
               "kind": "View",
               "children": [
-                { "kind": "Text", "props": { "as": "h1", "className": "text-2xl font-semibold", "children": "Coupon usage report" } },
-                { "kind": "Text", "props": { "className": "text-sm text-muted" }, "bindings": { "children": { "$expr": "'Reporting period: ' + formatDate(report.period_start, 'short') + ' - ' + formatDate(report.period_end, 'short')" } } }
+                {
+                  "kind": "Text",
+                  "props": {
+                    "as": "h1",
+                    "className": "text-2xl font-semibold",
+                    "children": "Coupon usage report"
+                  }
+                },
+                {
+                  "kind": "Text",
+                  "props": { "className": "text-sm text-muted" },
+                  "bindings": {
+                    "children": {
+                      "$expr": "'Reporting period: ' + formatDate(report.period_start, 'short') + ' - ' + formatDate(report.period_end, 'short')"
+                    }
+                  }
+                }
               ]
             },
             {
@@ -48,12 +63,20 @@
                     { "id": "90d", "label": "Last 90 days" }
                   ],
                   "actions": {
-                    "onSelectionChange": { "kind": "filter.set", "field": "range", "valueExpr": "$selectedKey" }
+                    "onSelectionChange": {
+                      "kind": "filter.set",
+                      "field": "range",
+                      "valueExpr": "$selectedKey"
+                    }
                   }
                 },
                 {
                   "kind": "Button",
-                  "props": { "variant": "outline", "leadingIcon": "arrow-down-tray", "children": "Export CSV" },
+                  "props": {
+                    "variant": "outline",
+                    "leadingIcon": "arrow-down-tray",
+                    "children": "Export CSV"
+                  },
                   "actions": {
                     "onPress": {
                       "kind": "http.get.download",
@@ -83,7 +106,9 @@
               "kind": "StatCard",
               "props": { "label": "Total discount" },
               "requiresPermission": "coupons.view-financials",
-              "bindings": { "value": { "$expr": "formatMoney(report.total_discount_cents, report.currency)" } }
+              "bindings": {
+                "value": { "$expr": "formatMoney(report.total_discount_cents, report.currency)" }
+              }
             },
             {
               "kind": "StatCard",
@@ -100,7 +125,14 @@
           "kind": "Card",
           "props": { "className": "p-4" },
           "children": [
-            { "kind": "Text", "props": { "as": "h3", "className": "font-medium mb-3", "children": "Redemptions over time" } },
+            {
+              "kind": "Text",
+              "props": {
+                "as": "h3",
+                "className": "font-medium mb-3",
+                "children": "Redemptions over time"
+              }
+            },
             {
               "kind": "SparklineChart",
               "props": { "className": "h-32" },
@@ -118,19 +150,48 @@
               "kind": "Card",
               "props": { "className": "p-4" },
               "children": [
-                { "kind": "Text", "props": { "as": "h3", "className": "font-medium mb-3", "children": "Top coupon codes" } },
+                {
+                  "kind": "Text",
+                  "props": {
+                    "as": "h3",
+                    "className": "font-medium mb-3",
+                    "children": "Top coupon codes"
+                  }
+                },
                 {
                   "kind": "Table",
                   "props": { "size": "sm" },
                   "bindings": { "items": { "$ref": "report.top_codes" } },
                   "columns": [
-                    { "id": "code", "label": "Code", "cell": { "kind": "Text", "props": { "className": "font-mono text-sm" }, "bindings": { "children": { "$ref": "row.code" } } } },
-                    { "id": "count", "label": "Uses", "cell": { "kind": "Text", "bindings": { "children": { "$ref": "row.redemption_count" } } } },
+                    {
+                      "id": "code",
+                      "label": "Code",
+                      "cell": {
+                        "kind": "Text",
+                        "props": { "className": "font-mono text-sm" },
+                        "bindings": { "children": { "$ref": "row.code" } }
+                      }
+                    },
+                    {
+                      "id": "count",
+                      "label": "Uses",
+                      "cell": {
+                        "kind": "Text",
+                        "bindings": { "children": { "$ref": "row.redemption_count" } }
+                      }
+                    },
                     {
                       "id": "discount",
                       "label": "Discount",
                       "requiresPermission": "coupons.view-financials",
-                      "cell": { "kind": "Text", "bindings": { "children": { "$expr": "formatMoney(row.total_discount_cents, row.currency)" } } }
+                      "cell": {
+                        "kind": "Text",
+                        "bindings": {
+                          "children": {
+                            "$expr": "formatMoney(row.total_discount_cents, row.currency)"
+                          }
+                        }
+                      }
                     }
                   ]
                 }
@@ -140,7 +201,14 @@
               "kind": "Card",
               "props": { "className": "p-4" },
               "children": [
-                { "kind": "Text", "props": { "as": "h3", "className": "font-medium mb-3", "children": "By issuance source" } },
+                {
+                  "kind": "Text",
+                  "props": {
+                    "as": "h3",
+                    "className": "font-medium mb-3",
+                    "children": "By issuance source"
+                  }
+                },
                 {
                   "kind": "Table",
                   "props": { "size": "sm" },
@@ -155,13 +223,34 @@
                         "bindings": { "children": { "$ref": "row.issuance_source" } }
                       }
                     },
-                    { "id": "coupon_count", "label": "Coupons", "cell": { "kind": "Text", "bindings": { "children": { "$ref": "row.coupon_count" } } } },
-                    { "id": "redemption_count", "label": "Uses", "cell": { "kind": "Text", "bindings": { "children": { "$ref": "row.redemption_count" } } } },
+                    {
+                      "id": "coupon_count",
+                      "label": "Coupons",
+                      "cell": {
+                        "kind": "Text",
+                        "bindings": { "children": { "$ref": "row.coupon_count" } }
+                      }
+                    },
+                    {
+                      "id": "redemption_count",
+                      "label": "Uses",
+                      "cell": {
+                        "kind": "Text",
+                        "bindings": { "children": { "$ref": "row.redemption_count" } }
+                      }
+                    },
                     {
                       "id": "discount",
                       "label": "Discount",
                       "requiresPermission": "coupons.view-financials",
-                      "cell": { "kind": "Text", "bindings": { "children": { "$expr": "formatMoney(row.total_discount_cents, row.currency)" } } }
+                      "cell": {
+                        "kind": "Text",
+                        "bindings": {
+                          "children": {
+                            "$expr": "formatMoney(row.total_discount_cents, row.currency)"
+                          }
+                        }
+                      }
                     }
                   ]
                 }

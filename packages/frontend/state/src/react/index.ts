@@ -12,10 +12,10 @@
  *   `@stackra/state`.
  */
 
-export { useStore, useStoreValue, useStoreDispatch } from './hooks';
+export { useStore, useStoreValue, useStoreDispatch } from "./hooks";
 
 // Convenience re-export of the raw TanStack Store hook for advanced use.
-export { useStore as useTanStackStore } from '@tanstack/react-store';
+export { useStore as useTanStackStore } from "@tanstack/react-store";
 
 // ════════════════════════════════════════════════════════════════════════════════
 // Devtools contribution
@@ -24,4 +24,4 @@ export {
   StateDevtoolsPanel,
   StateDevtoolsPanelView,
   type StateDevtoolsPanelViewProps,
-} from './devtools';
+} from "./devtools";

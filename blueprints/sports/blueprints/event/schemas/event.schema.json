@@ -55,13 +55,25 @@
       "sponsors": "array",
       "metadata": "array"
     },
-    "appends": ["is_registration_open", "current_phase", "days_until_start", "registered_count", "is_full", "is_livestreamed"],
+    "appends": [
+      "is_registration_open",
+      "current_phase",
+      "days_until_start",
+      "registered_count",
+      "is_full",
+      "is_livestreamed"
+    ],
     "observers": ["EventObserver"]
   },
   "x-database": {
     "engine": "postgres",
     "columns": {
-      "id": { "type": "string", "length": 64, "primary": true, "description": "Prefixed ULID: `eve_<26>`." },
+      "id": {
+        "type": "string",
+        "length": 64,
+        "primary": true,
+        "description": "Prefixed ULID: `eve_<26>`."
+      },
       "tenant_id": {
         "type": "string",
         "length": 64,
@@ -114,8 +126,16 @@
         "nullable": true,
         "description": "Enum: single_elimination / double_elimination / round_robin / group_stage / seeded_bracket / friendly / clinic / lecture / social_only. Nullable — only meaningful for competitive event_types."
       },
-      "description": { "type": "text", "nullable": true, "description": "Public-facing rich description (Markdown). Rendered on public event pages when visibility='public'." },
-      "private_notes": { "type": "text", "nullable": true, "description": "Admin-only internal notes. Never rendered to end-users." },
+      "description": {
+        "type": "text",
+        "nullable": true,
+        "description": "Public-facing rich description (Markdown). Rendered on public event pages when visibility='public'."
+      },
+      "private_notes": {
+        "type": "text",
+        "nullable": true,
+        "description": "Admin-only internal notes. Never rendered to end-users."
+      },
       "visibility": {
         "type": "string",
         "length": 24,
@@ -131,8 +151,17 @@
         "description": "Enum: draft / announced / registration_open / registration_closed / in_progress / completed / cancelled / archived. Transitions via RollEventStatusJob or explicit actions."
       },
       "starts_at": { "type": "timestamptz", "nullable": false },
-      "ends_at": { "type": "timestamptz", "nullable": false, "description": "Must be >= starts_at (single-instant events allowed)." },
-      "timezone": { "type": "string", "length": 64, "nullable": true, "description": "IANA timezone. Falls back to branch -> region timezone at render time." },
+      "ends_at": {
+        "type": "timestamptz",
+        "nullable": false,
+        "description": "Must be >= starts_at (single-instant events allowed)."
+      },
+      "timezone": {
+        "type": "string",
+        "length": 64,
+        "nullable": true,
+        "description": "IANA timezone. Falls back to branch -> region timezone at render time."
+      },
       "registration_opens_at": { "type": "timestamptz", "nullable": true },
       "registration_closes_at": { "type": "timestamptz", "nullable": true },
       "max_participants": {
@@ -141,8 +170,16 @@
         "description": "Total registration cap (individual entrants). Enforced by the registration surface (Wave 3+); this module ships the column."
       },
       "max_teams": { "type": "integer", "nullable": true, "description": "Team registration cap." },
-      "min_age": { "type": "integer", "nullable": true, "description": "Age eligibility floor. Range 3-100." },
-      "max_age": { "type": "integer", "nullable": true, "description": "Age eligibility ceiling. Range 3-100." },
+      "min_age": {
+        "type": "integer",
+        "nullable": true,
+        "description": "Age eligibility floor. Range 3-100."
+      },
+      "max_age": {
+        "type": "integer",
+        "nullable": true,
+        "description": "Age eligibility ceiling. Range 3-100."
+      },
       "age_group_ids": {
         "type": "jsonb",
         "nullable": true,
@@ -171,14 +208,38 @@
         "nullable": true,
         "description": "Total prize pool (for tournaments / competitive events). Informational only."
       },
-      "prize_pool_currency": { "type": "string", "length": 3, "nullable": true, "description": "ISO 4217. Required when prize_pool_cents > 0." },
-      "livestream_url": { "type": "string", "length": 512, "nullable": true, "description": "Public livestream link (HTTPS). Rendered when visibility='public' + event.status IN (registration_open, registration_closed, in_progress)." },
-      "livestream_password": { "type": "string", "length": 128, "nullable": true, "description": "Private-tier — never rendered on public surfaces; delivered via notification to registered participants only." },
+      "prize_pool_currency": {
+        "type": "string",
+        "length": 3,
+        "nullable": true,
+        "description": "ISO 4217. Required when prize_pool_cents > 0."
+      },
+      "livestream_url": {
+        "type": "string",
+        "length": 512,
+        "nullable": true,
+        "description": "Public livestream link (HTTPS). Rendered when visibility='public' + event.status IN (registration_open, registration_closed, in_progress)."
+      },
+      "livestream_password": {
+        "type": "string",
+        "length": 128,
+        "nullable": true,
+        "description": "Private-tier — never rendered on public surfaces; delivered via notification to registered participants only."
+      },
       "hero_image_url": { "type": "string", "length": 512, "nullable": true },
-      "registration_form_id": { "type": "string", "length": 64, "nullable": true, "description": "Future forms module reference (Wave 4+). Optional custom registration form." },
+      "registration_form_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": true,
+        "description": "Future forms module reference (Wave 4+). Optional custom registration form."
+      },
       "allow_late_registration": { "type": "boolean", "nullable": false, "default": false },
       "late_registration_fee_cents": { "type": "integer", "nullable": false, "default": 0 },
-      "cancellation_reason": { "type": "text", "nullable": true, "description": "Required when status transitions to cancelled." },
+      "cancellation_reason": {
+        "type": "text",
+        "nullable": true,
+        "description": "Required when status transitions to cancelled."
+      },
       "cancelled_at": { "type": "timestamptz", "nullable": true },
       "cancelled_by_user_id": {
         "type": "string",
@@ -191,7 +252,12 @@
         "nullable": true,
         "description": "Array of sponsor objects: { name, logo_url, tier: 'gold' | 'silver' | 'bronze' | 'partner' }. Enterprise-only via entitlement."
       },
-      "rules_document_url": { "type": "string", "length": 512, "nullable": true, "description": "Attach event rules PDF." },
+      "rules_document_url": {
+        "type": "string",
+        "length": 512,
+        "nullable": true,
+        "description": "Attach event rules PDF."
+      },
       "metadata": { "type": "jsonb", "nullable": true },
       "created_by": { "type": "string", "length": 64, "nullable": true },
       "updated_by": { "type": "string", "length": 64, "nullable": true },
@@ -210,11 +276,29 @@
       },
       { "columns": ["tenant_id", "status"], "name": "events_status_idx" },
       { "columns": ["tenant_id", "starts_at"], "name": "events_starts_at_idx" },
-      { "columns": ["tenant_id", "organization_id", "starts_at"], "name": "events_org_starts_at_idx" },
-      { "columns": ["tenant_id", "branch_id", "starts_at"], "name": "events_branch_starts_at_idx", "predicate": "branch_id IS NOT NULL" },
-      { "columns": ["tenant_id", "season_id"], "name": "events_season_idx", "predicate": "season_id IS NOT NULL" },
-      { "columns": ["tenant_id", "visibility", "starts_at"], "name": "events_visibility_starts_at_idx" },
-      { "columns": ["tenant_id", "primary_sport_key"], "name": "events_sport_idx", "predicate": "primary_sport_key IS NOT NULL" },
+      {
+        "columns": ["tenant_id", "organization_id", "starts_at"],
+        "name": "events_org_starts_at_idx"
+      },
+      {
+        "columns": ["tenant_id", "branch_id", "starts_at"],
+        "name": "events_branch_starts_at_idx",
+        "predicate": "branch_id IS NOT NULL"
+      },
+      {
+        "columns": ["tenant_id", "season_id"],
+        "name": "events_season_idx",
+        "predicate": "season_id IS NOT NULL"
+      },
+      {
+        "columns": ["tenant_id", "visibility", "starts_at"],
+        "name": "events_visibility_starts_at_idx"
+      },
+      {
+        "columns": ["tenant_id", "primary_sport_key"],
+        "name": "events_sport_idx",
+        "predicate": "primary_sport_key IS NOT NULL"
+      },
       { "columns": ["tenant_id", "event_type", "starts_at"], "name": "events_type_starts_at_idx" }
     ]
   },
@@ -241,16 +325,48 @@
     "organization_id": { "type": "string", "pattern": "^org_[0-9A-HJKMNP-TV-Z]{26}$" },
     "branch_id": { "type": ["string", "null"], "pattern": "^brn_[0-9A-HJKMNP-TV-Z]{26}$" },
     "season_id": { "type": ["string", "null"], "pattern": "^sea_[0-9A-HJKMNP-TV-Z]{26}$" },
-    "primary_sport_key": { "type": ["string", "null"], "maxLength": 32, "pattern": "^[a-z][a-z0-9_]*$" },
+    "primary_sport_key": {
+      "type": ["string", "null"],
+      "maxLength": 32,
+      "pattern": "^[a-z][a-z0-9_]*$"
+    },
     "name": { "type": "string", "minLength": 2, "maxLength": 128 },
-    "slug": { "type": "string", "minLength": 2, "maxLength": 64, "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$" },
+    "slug": {
+      "type": "string",
+      "minLength": 2,
+      "maxLength": 64,
+      "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+    },
     "event_type": {
       "type": "string",
-      "enum": ["tournament", "match", "showcase", "workshop", "camp", "conference", "social", "graduation", "awards_ceremony", "open_house", "other"]
+      "enum": [
+        "tournament",
+        "match",
+        "showcase",
+        "workshop",
+        "camp",
+        "conference",
+        "social",
+        "graduation",
+        "awards_ceremony",
+        "open_house",
+        "other"
+      ]
     },
     "format": {
       "type": ["string", "null"],
-      "enum": [null, "single_elimination", "double_elimination", "round_robin", "group_stage", "seeded_bracket", "friendly", "clinic", "lecture", "social_only"]
+      "enum": [
+        null,
+        "single_elimination",
+        "double_elimination",
+        "round_robin",
+        "group_stage",
+        "seeded_bracket",
+        "friendly",
+        "clinic",
+        "lecture",
+        "social_only"
+      ]
     },
     "description": { "type": ["string", "null"] },
     "private_notes": { "type": ["string", "null"] },
@@ -260,7 +376,16 @@
     },
     "status": {
       "type": "string",
-      "enum": ["draft", "announced", "registration_open", "registration_closed", "in_progress", "completed", "cancelled", "archived"]
+      "enum": [
+        "draft",
+        "announced",
+        "registration_open",
+        "registration_closed",
+        "in_progress",
+        "completed",
+        "cancelled",
+        "archived"
+      ]
     },
     "starts_at": { "type": "string", "format": "date-time" },
     "ends_at": { "type": "string", "format": "date-time" },
@@ -291,7 +416,10 @@
     "late_registration_fee_cents": { "type": "integer", "minimum": 0 },
     "cancellation_reason": { "type": ["string", "null"] },
     "cancelled_at": { "type": ["string", "null"], "format": "date-time" },
-    "cancelled_by_user_id": { "type": ["string", "null"], "pattern": "^usr_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "cancelled_by_user_id": {
+      "type": ["string", "null"],
+      "pattern": "^usr_[0-9A-HJKMNP-TV-Z]{26}$"
+    },
     "sponsors": {
       "type": ["array", "null"],
       "items": {
@@ -314,11 +442,21 @@
     "envelope": "spatie-data",
     "wrap": "data",
     "mapper": "SnakeCaseMapper",
-    "computed": ["is_registration_open", "current_phase", "days_until_start", "registered_count", "is_full", "is_livestreamed"]
+    "computed": [
+      "is_registration_open",
+      "current_phase",
+      "days_until_start",
+      "registered_count",
+      "is_full",
+      "is_livestreamed"
+    ]
   },
   "x-route-binding": {
     "strategy": "resolveRouteBinding",
-    "accepts": ["ULID (`eve_<26>`)", "slug (case-insensitive, resolved within active tenant + organization)"]
+    "accepts": [
+      "ULID (`eve_<26>`)",
+      "slug (case-insensitive, resolved within active tenant + organization)"
+    ]
   },
   "x-invariants": [
     "ends_at >= starts_at",

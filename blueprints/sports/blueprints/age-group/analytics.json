@@ -9,28 +9,57 @@
       "name": "Age Group Created",
       "kind": "track",
       "consent_required": "essential",
-      "properties": ["tenant_id", "age_group_id", "sport_key", "min_age_inclusive", "max_age_inclusive", "cutoff_date_kind", "is_youth", "is_default", "is_seeded", "source"],
+      "properties": [
+        "tenant_id",
+        "age_group_id",
+        "sport_key",
+        "min_age_inclusive",
+        "max_age_inclusive",
+        "cutoff_date_kind",
+        "is_youth",
+        "is_default",
+        "is_seeded",
+        "source"
+      ],
       "description": "New AgeGroup row created. `source` explains the entry point (tenant_provisioning / admin_created / legacy_backfill_command)."
     },
     {
       "name": "Age Group Bounds Changed",
       "kind": "track",
       "consent_required": "essential",
-      "properties": ["tenant_id", "age_group_id", "min_age_delta", "max_age_delta", "is_youth_flip", "affected_athlete_count"],
+      "properties": [
+        "tenant_id",
+        "age_group_id",
+        "min_age_delta",
+        "max_age_delta",
+        "is_youth_flip",
+        "affected_athlete_count"
+      ],
       "description": "Bounds mutation. Feeds the safeguarding-drift dashboard — bounds changes may invalidate athlete eligibility. `min_age_delta` + `max_age_delta` are numeric (post - pre); `is_youth_flip` signals whether the change crossed the 18-boundary. affected_athlete_count populated from Wave 3+ (Athlete module hooks)."
     },
     {
       "name": "Age Group Cutoff Changed",
       "kind": "track",
       "consent_required": "essential",
-      "properties": ["tenant_id", "age_group_id", "cutoff_date_kind_before", "cutoff_date_kind_after"],
+      "properties": [
+        "tenant_id",
+        "age_group_id",
+        "cutoff_date_kind_before",
+        "cutoff_date_kind_after"
+      ],
       "description": "Cutoff mutation. Feeds the same safeguarding-drift dashboard."
     },
     {
       "name": "Age Group Default Changed",
       "kind": "track",
       "consent_required": "essential",
-      "properties": ["tenant_id", "from_age_group_id", "to_age_group_id", "sport_key", "has_organization_scope"],
+      "properties": [
+        "tenant_id",
+        "from_age_group_id",
+        "to_age_group_id",
+        "sport_key",
+        "has_organization_scope"
+      ],
       "description": "Default flag flipped within a (tenant, org, sport_key) tuple. Feeds the tier-pricing-impact dashboard."
     },
     {

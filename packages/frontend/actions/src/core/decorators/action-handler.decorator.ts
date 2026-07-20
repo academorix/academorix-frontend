@@ -6,8 +6,8 @@
  *   bootstrap.
  */
 
-import { Injectable } from '@stackra/container';
-import { ACTION_HANDLER_METADATA } from '@stackra/contracts';
+import { Injectable } from "@stackra/container";
+import { ACTION_HANDLER_METADATA } from "@stackra/contracts";
 
 /**
  * Class decorator that stamps a handler class as discoverable.

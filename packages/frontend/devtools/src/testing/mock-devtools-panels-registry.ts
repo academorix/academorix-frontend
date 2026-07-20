@@ -8,10 +8,10 @@
  *   without spinning up the full DI container.
  */
 
-import type { DevtoolsCategory, IDevtoolsPanel, IDevtoolsPanelsRegistry } from '@stackra/contracts';
+import type { DevtoolsCategory, IDevtoolsPanel, IDevtoolsPanelsRegistry } from "@stackra/contracts";
 
 /** Fallback category when `panel.category` is omitted. */
-const DEFAULT_PANEL_CATEGORY: DevtoolsCategory = 'modules';
+const DEFAULT_PANEL_CATEGORY: DevtoolsCategory = "modules";
 
 /** Numeric weight for `panel.order` when omitted. */
 const DEFAULT_PANEL_ORDER = 100;

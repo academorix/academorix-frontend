@@ -5,7 +5,11 @@
   "kind": "SduiWidget",
   "description": "The /me/invitations composer. Multi-recipient email input (chip-based) + channel toggle (email/SMS) + template selector + preview + send. Rate-limit indicator shows X/100 daily. Refuses submit when disposable emails detected.",
   "props": {
-    "userReferralCode": { "type": "object", "required": true, "description": "The user's active user_scoped code + share_url + program_summary." },
+    "userReferralCode": {
+      "type": "object",
+      "required": true,
+      "description": "The user's active user_scoped code + share_url + program_summary."
+    },
     "dailyLimit": { "type": "integer", "default": 100 },
     "dailyUsed": { "type": "integer", "default": 0 },
     "maxPerRequest": { "type": "integer", "default": 10 }
@@ -33,7 +37,11 @@
           "children": [
             {
               "kind": "Text",
-              "props": { "as": "h3", "className": "font-semibold text-lg", "children": "Invite friends" }
+              "props": {
+                "as": "h3",
+                "className": "font-semibold text-lg",
+                "children": "Invite friends"
+              }
             },
             {
               "kind": "Text",
@@ -48,7 +56,9 @@
         },
         {
           "kind": "View",
-          "props": { "className": "flex items-center justify-between p-3 bg-neutral-subtle rounded-md" },
+          "props": {
+            "className": "flex items-center justify-between p-3 bg-neutral-subtle rounded-md"
+          },
           "children": [
             {
               "kind": "View",

@@ -1,7 +1,7 @@
 {
   "name": "@stackra/scheduler",
   "version": "0.1.0",
-  "description": "Client-side task scheduler for the Stackra framework — interval + cron, decorator-based auto-discovery, lifecycle hooks.",
+  "description": "Client-side task scheduler for the Stackra framework \u2014 interval + cron, decorator-based auto-discovery, lifecycle hooks.",
   "license": "MIT",
   "author": {
     "name": "Stackra L.L.C",
@@ -88,6 +88,8 @@
     }
   },
   "devDependencies": {
+    "@academorix/config-tsconfig": "workspace:*",
+    "@academorix/config-tsup": "workspace:*",
     "@stackra/container": "workspace:*",
     "@stackra/contracts": "workspace:*",
     "@stackra/logger": "workspace:*",

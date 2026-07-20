@@ -16,7 +16,7 @@ export interface IUseAdaptiveLoadingResult {
    * Coarse effective network type. `'unknown'` when the API is
    * unavailable (Safari, Firefox pre-recent, SSR).
    */
-  readonly effectiveType: 'slow-2g' | '2g' | '3g' | '4g' | 'unknown';
+  readonly effectiveType: "slow-2g" | "2g" | "3g" | "4g" | "unknown";
   /** Whether the user has opted into data-saver mode. */
   readonly saveData: boolean;
   /**

@@ -15,9 +15,9 @@
  *   canonical picker.
  */
 
-import { useMemo } from 'react';
-import { View } from 'react-native';
-import { Select, Chip, Button, Text } from '@stackra/ui/native';
+import { useMemo } from "react";
+import { View } from "react-native";
+import { Select, Chip, Button, Text } from "@stackra/ui/native";
 
 /**
  * Shape HeroUI Native's `Select` uses for its controlled `value` and
@@ -29,9 +29,9 @@ interface ISelectOption {
   readonly label: string;
 }
 
-import { useScope } from '@/react/hooks/use-scope.hook';
-import type { IScopeNodeTreeNode } from '@/core/interfaces';
-import type { NativeScopeSwitcherProps } from '@/native/interfaces';
+import { useScope } from "@/react/hooks/use-scope.hook";
+import type { IScopeNodeTreeNode } from "@/core/interfaces";
+import type { NativeScopeSwitcherProps } from "@/native/interfaces";
 
 /** A single flattened row rendered inside the Select. */
 interface IFlattenedRow {
@@ -56,7 +56,7 @@ interface IFlattenedRow {
 function flatten(
   nodes: readonly IScopeNodeTreeNode[],
   depth = 0,
-  acc: IFlattenedRow[] = []
+  acc: IFlattenedRow[] = [],
 ): IFlattenedRow[] {
   for (const node of nodes) {
     acc.push({
@@ -86,11 +86,11 @@ function flatten(
  * ```
  */
 export function NativeScopeSwitcher({
-  label = 'Scope',
-  placeholder = 'Select a scope...',
+  label = "Scope",
+  placeholder = "Select a scope...",
   className,
   emulateOnSelect = false,
-  presentation = 'bottom-sheet',
+  presentation = "bottom-sheet",
 }: NativeScopeSwitcherProps = {}) {
   const { scope, tree, isLoading, isEmulating, setScope, emulate, restore } = useScope();
 
@@ -144,8 +144,8 @@ export function NativeScopeSwitcher({
                     switcher's affordance verbatim).
                   */}
                   {opt.depth > 0 ? (
-                    <Text className="mr-2 text-muted-foreground">
-                      {'\u2014 '.repeat(opt.depth)}
+                    <Text className="text-muted-foreground mr-2">
+                      {"\u2014 ".repeat(opt.depth)}
                     </Text>
                   ) : null}
                   <View className="flex-1">

@@ -13,22 +13,22 @@
  *     the {@link NotificationManager} for OS-tray dispatch.
  */
 
-import { Module, type DynamicModule } from '@stackra/container';
-import { createSeedLoader, seedLoaderToken } from '@stackra/support';
+import { Module, type DynamicModule } from "@stackra/container";
+import { createSeedLoader, seedLoaderToken } from "@stackra/support";
 
-import { NOTIFICATION_MANAGER, PUSH_SUBSCRIPTION_ADAPTER } from '@/core/constants';
-import type { NotificationManager } from '@/core/services';
-import { NotificationModule } from '@/core/notification.module';
-import { ExpoNotificationListenerAdapter, ExpoPushTokenAdapter } from './adapters';
-import { ExpoNotificationChannelDriver } from './channels';
+import { NOTIFICATION_MANAGER, PUSH_SUBSCRIPTION_ADAPTER } from "@/core/constants";
+import type { NotificationManager } from "@/core/services";
+import { NotificationModule } from "@/core/notification.module";
+import { ExpoNotificationListenerAdapter, ExpoPushTokenAdapter } from "./adapters";
+import { ExpoNotificationChannelDriver } from "./channels";
 import {
   EXPO_NOTIFICATION_LISTENER_ADAPTER,
   EXPO_PUSH_CONFIG,
   EXPO_PUSH_TOKEN_ADAPTER,
   NATIVE_NOTIFICATION_MANAGER,
-} from './constants';
-import type { IExpoPushConfig, INativeNotificationModuleOptions } from './interfaces';
-import { NativeNotificationManager } from './services';
+} from "./constants";
+import type { IExpoPushConfig, INativeNotificationModuleOptions } from "./interfaces";
+import { NativeNotificationManager } from "./services";
 
 /**
  * Extract the Expo config subset out of the native module options,
@@ -109,7 +109,7 @@ export class NativeNotificationModule {
         // OS-notification channel driver + its seed loader.
         ExpoNotificationChannelDriver,
         {
-          provide: seedLoaderToken('notifications:channel:os-notification:native'),
+          provide: seedLoaderToken("notifications:channel:os-notification:native"),
           useFactory: (manager: NotificationManager, driver: ExpoNotificationChannelDriver) =>
             createSeedLoader(() => manager.register(driver)),
           inject: [NOTIFICATION_MANAGER, ExpoNotificationChannelDriver],

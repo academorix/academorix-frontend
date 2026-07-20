@@ -4,8 +4,8 @@
  * @description Props for the {@link NotificationList} component.
  */
 
-import type { IRenderableNotification } from '@/core/interfaces';
-import type { NotificationWriter } from '../../hooks/use-notification-writes';
+import type { IRenderableNotification } from "@/core/interfaces";
+import type { NotificationWriter } from "../../hooks/use-notification-writes";
 
 /**
  * Props accepted by {@link NotificationList}.
@@ -20,7 +20,7 @@ export interface NotificationListProps {
    */
   readonly onRowAction?: () => void;
   /** Renders the empty state at page or drawer size. */
-  readonly emptyVariant?: 'drawer' | 'page';
+  readonly emptyVariant?: "drawer" | "page";
   /**
    * Optional writer bundle passed down to every row for network
    * persistence. When omitted, rows still update local state

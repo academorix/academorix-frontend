@@ -6,11 +6,11 @@
  *   selected.
  */
 
-import { type ReactElement } from 'react';
-import { EmptyState } from '@stackra/ui/react';
-import { CubeTransparentIcon } from '@stackra/ui/icons/heroicon/outline';
+import { type ReactElement } from "react";
+import { EmptyState } from "@stackra/ui/react";
+import { CubeTransparentIcon } from "@stackra/ui/icons/heroicon/outline";
 
-import type { DevtoolsPanelEmptyProps } from './devtools-panel-empty.interface';
+import type { DevtoolsPanelEmptyProps } from "./devtools-panel-empty.interface";
 
 /**
  * Panel-viewport empty state.
@@ -24,12 +24,12 @@ export function DevtoolsPanelEmpty({ title, description }: DevtoolsPanelEmptyPro
       <EmptyState>
         <EmptyState.Header>
           <EmptyState.Media>
-            <CubeTransparentIcon aria-hidden="true" className="size-8 text-muted" />
+            <CubeTransparentIcon aria-hidden="true" className="text-muted size-8" />
           </EmptyState.Media>
-          <EmptyState.Title>{title ?? 'No panel selected'}</EmptyState.Title>
+          <EmptyState.Title>{title ?? "No panel selected"}</EmptyState.Title>
           <EmptyState.Description>
             {description ??
-              'Select a panel from the rail on the left, or contribute one from a package with @DevtoolsPanel(...).'}
+              "Select a panel from the rail on the left, or contribute one from a package with @DevtoolsPanel(...)."}
           </EmptyState.Description>
         </EmptyState.Header>
       </EmptyState>

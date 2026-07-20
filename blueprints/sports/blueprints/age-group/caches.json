@@ -57,10 +57,7 @@
       "description": "One AgeGroup row. Read by every consumer that needs the full field set (bounds + cutoff config).",
       "ttlSeconds": 600,
       "tags": ["age-group"],
-      "invalidatedBy": [
-        "AgeGroupObserver.updated",
-        "AgeGroupObserver.deleted"
-      ]
+      "invalidatedBy": ["AgeGroupObserver.updated", "AgeGroupObserver.deleted"]
     },
     {
       "pattern": "age:default_catalog:v{version}",

@@ -25,8 +25,8 @@ import {
   Optional,
   type OnModuleInit,
   type OnModuleDestroy,
-} from '@stackra/container';
-import { Logger } from '@stackra/logger';
+} from "@stackra/container";
+import { Logger } from "@stackra/logger";
 import {
   AI_CLIENT,
   AI_CONFIG,
@@ -39,12 +39,12 @@ import {
   type IAiContextFrame,
   type IEventEmitter,
   type IUiContextSnapshot,
-} from '@stackra/contracts';
+} from "@stackra/contracts";
 
-import { deepEqual } from '../utils/deep-equal.util';
-import { serializedSizeOf } from '../utils/byte-size.util';
-import { ContextRegistry } from '../registries/context.registry';
-import { PiiRedactor } from './pii-redactor.service';
+import { deepEqual } from "../utils/deep-equal.util";
+import { serializedSizeOf } from "../utils/byte-size.util";
+import { ContextRegistry } from "../registries/context.registry";
+import { PiiRedactor } from "./pii-redactor.service";
 
 /** Debounce window for context syncs, in milliseconds (Req 12.2). */
 const DEFAULT_DEBOUNCE_MS = 500;
@@ -62,7 +62,7 @@ export interface IContextDiagnostic {
   /** Cap that was exceeded. */
   cap: number;
   /** How the collector handled it. */
-  action: 'truncated' | 'omitted';
+  action: "truncated" | "omitted";
 }
 
 /**
@@ -95,7 +95,7 @@ export class ContextCollector implements OnModuleInit, OnModuleDestroy {
     @Inject(AI_PII_REDACTOR) private readonly redactor: PiiRedactor,
     @Inject(AI_CLIENT) private readonly client: IAiClient,
     @Inject(AI_CONFIG) config: IAiConfig,
-    @Optional() @Inject(EVENT_EMITTER) private readonly events?: IEventEmitter
+    @Optional() @Inject(EVENT_EMITTER) private readonly events?: IEventEmitter,
   ) {
     this.maxFrameBytes = config.context?.maxFrameBytes ?? DEFAULT_MAX_FRAME_BYTES;
     this.maxSnapshotBytes = config.context?.maxSnapshotBytes ?? DEFAULT_MAX_SNAPSHOT_BYTES;
@@ -180,7 +180,7 @@ export class ContextCollector implements OnModuleInit, OnModuleDestroy {
     try {
       await this.client.syncContext(snapshot);
     } catch (err) {
-      this.logger.warn('[ContextCollector] failed to sync context', {
+      this.logger.warn("[ContextCollector] failed to sync context", {
         error: err instanceof Error ? err.message : String(err),
       });
       // Reset lastSynced so the next successful flush retries the same
@@ -223,7 +223,7 @@ export class ContextCollector implements OnModuleInit, OnModuleDestroy {
           key: frame.key,
           bytes: frameBytes,
           cap: this.maxFrameBytes,
-          action: 'truncated',
+          action: "truncated",
         });
         survivor = { ...frame, snapshot: { _truncated: true, originalBytes: frameBytes } };
       }
@@ -235,7 +235,7 @@ export class ContextCollector implements OnModuleInit, OnModuleDestroy {
           key: frame.key,
           bytes: survivorBytes,
           cap: this.maxSnapshotBytes,
-          action: 'omitted',
+          action: "omitted",
         });
         continue;
       }
@@ -255,7 +255,7 @@ export class ContextCollector implements OnModuleInit, OnModuleDestroy {
         bytes: diagnostic.bytes,
         cap: diagnostic.cap,
         action: diagnostic.action,
-      }
+      },
     );
   }
 }

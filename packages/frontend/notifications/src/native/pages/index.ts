@@ -5,8 +5,8 @@
  *   notifications routes.
  */
 
-export { InboxPage, type InboxPageProps } from './inbox-page';
+export { InboxPage, type InboxPageProps } from "./inbox-page";
 export {
   NotificationPreferencesPage,
   type NotificationPreferencesPageProps,
-} from './notification-preferences-page';
+} from "./notification-preferences-page";

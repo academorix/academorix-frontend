@@ -52,18 +52,18 @@ export function LauncherPaletteLayout({
                   textValue={cmd.label}
                   isDisabled={cmd.disabled}
                 >
-                  <span className="grid size-10 shrink-0 place-items-center rounded-lg bg-accent/10 text-accent">
+                  <span className="bg-accent/10 text-accent grid size-10 shrink-0 place-items-center rounded-lg">
                     {cmd.icon ?? <AppIcon />}
                   </span>
-                  <div className="flex flex-1 flex-col min-w-0">
-                    <span className="truncate text-sm font-medium text-foreground">
+                  <div className="flex min-w-0 flex-1 flex-col">
+                    <span className="text-foreground truncate text-sm font-medium">
                       {cmd.label}
                     </span>
                     {cmd.description && (
-                      <span className="truncate text-xs text-default-500">{cmd.description}</span>
+                      <span className="text-default-500 truncate text-xs">{cmd.description}</span>
                     )}
                   </div>
-                  <span className="shrink-0 text-xs text-default-400">
+                  <span className="text-default-400 shrink-0 text-xs">
                     {cmd.type === "application"
                       ? t("kbd.components.command_palette.application")
                       : t("kbd.components.command_palette.command")}
@@ -72,7 +72,7 @@ export function LauncherPaletteLayout({
               ))}
             </Command.List>
             <Command.Footer className="justify-between">
-              <div className="flex items-center gap-3 text-xs text-default-500">
+              <div className="text-default-500 flex items-center gap-3 text-xs">
                 <span>{t("kbd.components.command_palette.open_application")} ↵</span>
                 <span>{t("kbd.components.command_palette.actions")} ⌘K</span>
               </div>

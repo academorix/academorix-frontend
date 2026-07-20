@@ -5,18 +5,18 @@
  * @description Behavioural tests for {@link useInstallPrompt}.
  */
 
-import { act, cleanup, renderHook } from '@testing-library/react';
-import { afterEach, describe, expect, it, vi } from 'vitest';
+import { act, cleanup, renderHook } from "@testing-library/react";
+import { afterEach, describe, expect, it, vi } from "vitest";
 
-import { useInstallPrompt } from '@/react/hooks/use-install-prompt/use-install-prompt.hook';
-import { MockPwaService } from '@/testing/mock-pwa-service';
+import { useInstallPrompt } from "@/react/hooks/use-install-prompt/use-install-prompt.hook";
+import { MockPwaService } from "@/testing/mock-pwa-service";
 
 /** Hoisted reference the mocked useInject reads. */
 const { serviceRef } = vi.hoisted(() => ({
   serviceRef: { current: null as MockPwaService | null },
 }));
 
-vi.mock('@stackra/container/react', () => ({
+vi.mock("@stackra/container/react", () => ({
   useInject: <T,>() => serviceRef.current as unknown as T,
 }));
 
@@ -25,8 +25,8 @@ afterEach(() => {
   serviceRef.current = null;
 });
 
-describe('useInstallPrompt', () => {
-  it('reads the initial snapshot', () => {
+describe("useInstallPrompt", () => {
+  it("reads the initial snapshot", () => {
     serviceRef.current = new MockPwaService({
       install: { isSupported: true, isVisible: true, dismissCount: 0 },
     });
@@ -36,7 +36,7 @@ describe('useInstallPrompt', () => {
     expect(result.current.dismissCount).toBe(0);
   });
 
-  it('re-renders when the install substate changes', () => {
+  it("re-renders when the install substate changes", () => {
     const service = new MockPwaService({ install: { isSupported: false, isVisible: false } });
     serviceRef.current = service;
     const { result } = renderHook(() => useInstallPrompt());
@@ -49,7 +49,7 @@ describe('useInstallPrompt', () => {
     expect(result.current.isVisible).toBe(true);
   });
 
-  it('routes promptInstall / dismiss / reset to the service', async () => {
+  it("routes promptInstall / dismiss / reset to the service", async () => {
     const service = new MockPwaService({});
     serviceRef.current = service;
     const { result } = renderHook(() => useInstallPrompt());

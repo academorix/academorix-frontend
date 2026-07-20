@@ -5,7 +5,7 @@
  *   Consumed by `HttpModule.forRoot()` at bootstrap.
  */
 
-import { defineConfig } from '@stackra/http';
+import { defineConfig } from "@stackra/http";
 
 export const httpConfig = defineConfig({
   /*
@@ -17,7 +17,7 @@ export const httpConfig = defineConfig({
   | @InjectHttp() without specifying a connection name.
   |
   */
-  default: 'api',
+  default: "api",
 
   /*
   |--------------------------------------------------------------------------
@@ -32,11 +32,11 @@ export const httpConfig = defineConfig({
   */
   connections: {
     api: {
-      baseURL: '/',
+      baseURL: "/",
       timeout: 30_000,
       headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
+        Accept: "application/json",
+        "Content-Type": "application/json",
       },
     },
   },

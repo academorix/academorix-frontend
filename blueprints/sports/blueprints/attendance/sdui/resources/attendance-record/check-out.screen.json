@@ -9,7 +9,12 @@
   "resource": { "module": "attendance", "entity": "attendance-record", "action": "check-out" },
   "requiresPermission": "attendance.check-out",
   "dataSources": [
-    { "name": "record", "kind": "http.get", "urlTemplate": "/api/v1/attendance-records/{record}", "unwrap": "data" }
+    {
+      "name": "record",
+      "kind": "http.get",
+      "urlTemplate": "/api/v1/attendance-records/{record}",
+      "unwrap": "data"
+    }
   ],
   "nodes": [
     {
@@ -17,14 +22,20 @@
       "kind": "View",
       "props": { "className": "flex flex-col gap-4 p-6 max-w-3xl mx-auto" },
       "children": [
-        { "kind": "Text", "props": { "as": "h1", "className": "text-2xl font-semibold", "children": "Check out" } },
+        {
+          "kind": "Text",
+          "props": { "as": "h1", "className": "text-2xl font-semibold", "children": "Check out" }
+        },
         {
           "kind": "Card",
           "children": [
             {
               "kind": "Card.Header",
               "children": [
-                { "kind": "Text", "propsExpr": "{ children: 'Checking out ' + record.athlete_display_name + ' from ' + record.session_display_name }" }
+                {
+                  "kind": "Text",
+                  "propsExpr": "{ children: 'Checking out ' + record.athlete_display_name + ' from ' + record.session_display_name }"
+                }
               ]
             },
             {
@@ -33,13 +44,33 @@
               "children": [
                 {
                   "kind": "DatePicker",
-                  "props": { "label": "Checked out at (defaults to now)", "granularity": "minute", "isRequired": true },
-                  "actions": { "onChange": { "kind": "field.set", "field": "checked_out_at", "valueExpr": "$value" } }
+                  "props": {
+                    "label": "Checked out at (defaults to now)",
+                    "granularity": "minute",
+                    "isRequired": true
+                  },
+                  "actions": {
+                    "onChange": {
+                      "kind": "field.set",
+                      "field": "checked_out_at",
+                      "valueExpr": "$value"
+                    }
+                  }
                 },
                 {
                   "kind": "TextArea",
-                  "props": { "label": "Left early? Reason (optional)", "maxLength": 256, "rows": 3 },
-                  "actions": { "onChange": { "kind": "field.set", "field": "left_early_reason", "valueExpr": "$value" } }
+                  "props": {
+                    "label": "Left early? Reason (optional)",
+                    "maxLength": 256,
+                    "rows": 3
+                  },
+                  "actions": {
+                    "onChange": {
+                      "kind": "field.set",
+                      "field": "left_early_reason",
+                      "valueExpr": "$value"
+                    }
+                  }
                 }
               ]
             }

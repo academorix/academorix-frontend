@@ -20,10 +20,10 @@
  *   ```
  */
 
-import { readdirSync, readFileSync, statSync, existsSync } from 'fs';
-import { join, resolve, basename } from 'path';
+import { readdirSync, readFileSync, statSync, existsSync } from "fs";
+import { join, resolve, basename } from "path";
 
-import type { I18nPluginOptions } from './interfaces';
+import type { I18nPluginOptions } from "./interfaces";
 
 // ============================================================================
 // Types
@@ -33,8 +33,8 @@ import type { I18nPluginOptions } from './interfaces';
 // Plugin
 // ============================================================================
 
-const VIRTUAL_MODULE_ID = 'virtual:i18n/translations';
-const RESOLVED_VIRTUAL_ID = '\0' + VIRTUAL_MODULE_ID;
+const VIRTUAL_MODULE_ID = "virtual:i18n/translations";
+const RESOLVED_VIRTUAL_ID = "\0" + VIRTUAL_MODULE_ID;
 
 /**
  * Vite plugin that auto-discovers translation files and exposes them
@@ -44,12 +44,12 @@ const RESOLVED_VIRTUAL_ID = '\0' + VIRTUAL_MODULE_ID;
  * @returns Vite plugin object
  */
 export function i18nPlugin(options: I18nPluginOptions): any {
-  const ext = options.fileExtension ?? '.json';
-  let root = '';
+  const ext = options.fileExtension ?? ".json";
+  let root = "";
 
   return {
-    name: 'stackra-i18n',
-    enforce: 'pre' as const,
+    name: "stackra-i18n",
+    enforce: "pre" as const,
 
     configResolved(config: any) {
       root = config.root;
@@ -70,7 +70,7 @@ export function i18nPlugin(options: I18nPluginOptions): any {
       }
 
       const locales = readdirSync(translationsDir).filter((entry) =>
-        statSync(join(translationsDir, entry)).isDirectory()
+        statSync(join(translationsDir, entry)).isDirectory(),
       );
 
       const translationsObj: Record<string, Record<string, unknown>> = {};
@@ -82,7 +82,7 @@ export function i18nPlugin(options: I18nPluginOptions): any {
         translationsObj[locale] = {};
         for (const file of files) {
           const namespace = basename(file, ext);
-          const content = readFileSync(join(localeDir, file), 'utf-8');
+          const content = readFileSync(join(localeDir, file), "utf-8");
           translationsObj[locale]![namespace] = JSON.parse(content);
         }
       }
@@ -90,7 +90,7 @@ export function i18nPlugin(options: I18nPluginOptions): any {
       return [
         `export const translations = ${JSON.stringify(translationsObj)};`,
         `export const supportedLocales = ${JSON.stringify(locales)};`,
-      ].join('\n');
+      ].join("\n");
     },
 
     handleHotUpdate(ctx: any) {

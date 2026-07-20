@@ -11,13 +11,13 @@
  *   transport here — that's covered by `broadcast-channel-transport.spec.ts`.
  */
 
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect, beforeEach } from "vitest";
 
-import { RoomManager } from '@/services/room-manager.service';
-import { BroadcastChannelTransport } from '@/transports/broadcast-channel.transport';
-import { ReverbTransport } from '@/transports/reverb.transport';
+import { RoomManager } from "@/services/room-manager.service";
+import { BroadcastChannelTransport } from "@/transports/broadcast-channel.transport";
+import { ReverbTransport } from "@/transports/reverb.transport";
 
-describe('RoomManager', () => {
+describe("RoomManager", () => {
   let manager: RoomManager;
 
   beforeEach(() => {
@@ -26,15 +26,15 @@ describe('RoomManager', () => {
 
   // ── default (auto) ──────────────────────────────────────────────────────
 
-  describe('default strategy (auto)', () => {
-    it('returns a BroadcastChannelTransport when no realtimeManager is available', () => {
+  describe("default strategy (auto)", () => {
+    it("returns a BroadcastChannelTransport when no realtimeManager is available", () => {
       // No `configure()` — strategy defaults to `'auto'`, no
       // `realtimeManager`, so auto picks the local transport.
       const t = manager.getTransport();
       expect(t).toBeInstanceOf(BroadcastChannelTransport);
     });
 
-    it('returns the same instance across subsequent calls (caches)', () => {
+    it("returns the same instance across subsequent calls (caches)", () => {
       const t1 = manager.getTransport();
       const t2 = manager.getTransport();
       expect(t2).toBe(t1);
@@ -43,38 +43,38 @@ describe('RoomManager', () => {
 
   // ── explicit strategies ─────────────────────────────────────────────────
 
-  describe('configure({ transport })', () => {
-    it('selects BroadcastChannelTransport for strategy=broadcast', () => {
-      manager.configure({ transport: 'broadcast' });
+  describe("configure({ transport })", () => {
+    it("selects BroadcastChannelTransport for strategy=broadcast", () => {
+      manager.configure({ transport: "broadcast" });
       expect(manager.getTransport()).toBeInstanceOf(BroadcastChannelTransport);
     });
 
-    it('selects ReverbTransport for strategy=reverb (with realtimeManager)', () => {
+    it("selects ReverbTransport for strategy=reverb (with realtimeManager)", () => {
       // Any non-null value is accepted — RoomManager stores it as
       // `unknown` and hands it to ReverbTransport.
-      manager.configure({ transport: 'reverb', realtimeManager: {} });
+      manager.configure({ transport: "reverb", realtimeManager: {} });
       expect(manager.getTransport()).toBeInstanceOf(ReverbTransport);
     });
 
-    it('selects ReverbTransport for strategy=reverb even without a realtimeManager', () => {
+    it("selects ReverbTransport for strategy=reverb even without a realtimeManager", () => {
       // The service does not gate reverb selection on realtimeManager
       // presence — ReverbTransport itself handles the fallback. We
       // just assert the class chosen here.
-      manager.configure({ transport: 'reverb' });
+      manager.configure({ transport: "reverb" });
       expect(manager.getTransport()).toBeInstanceOf(ReverbTransport);
     });
 
-    it('auto picks Reverb when a realtimeManager is provided', () => {
-      manager.configure({ transport: 'auto', realtimeManager: {} });
+    it("auto picks Reverb when a realtimeManager is provided", () => {
+      manager.configure({ transport: "auto", realtimeManager: {} });
       expect(manager.getTransport()).toBeInstanceOf(ReverbTransport);
     });
 
-    it('auto picks BroadcastChannel when no realtimeManager is provided', () => {
-      manager.configure({ transport: 'auto' });
+    it("auto picks BroadcastChannel when no realtimeManager is provided", () => {
+      manager.configure({ transport: "auto" });
       expect(manager.getTransport()).toBeInstanceOf(BroadcastChannelTransport);
     });
 
-    it('defaults to auto when transport is not specified', () => {
+    it("defaults to auto when transport is not specified", () => {
       manager.configure({});
       expect(manager.getTransport()).toBeInstanceOf(BroadcastChannelTransport);
     });
@@ -82,42 +82,42 @@ describe('RoomManager', () => {
 
   // ── caching + reset semantics ───────────────────────────────────────────
 
-  describe('caching + reset semantics', () => {
-    it('resets the cached transport — reconfiguring returns a fresh instance', () => {
+  describe("caching + reset semantics", () => {
+    it("resets the cached transport — reconfiguring returns a fresh instance", () => {
       const first = manager.getTransport();
       // Reconfigure to a different strategy; the cache is cleared so
       // the next getTransport() builds a new instance.
-      manager.configure({ transport: 'broadcast' });
+      manager.configure({ transport: "broadcast" });
       const second = manager.getTransport();
       expect(second).not.toBe(first);
     });
 
-    it('caches the new transport after reconfigure', () => {
-      manager.configure({ transport: 'broadcast' });
+    it("caches the new transport after reconfigure", () => {
+      manager.configure({ transport: "broadcast" });
       const a = manager.getTransport();
       const b = manager.getTransport();
       expect(b).toBe(a);
     });
 
-    it('reconfiguring with the same strategy still returns a fresh instance', () => {
+    it("reconfiguring with the same strategy still returns a fresh instance", () => {
       // `configure` unconditionally resets the cached transport — it
       // does not compare against the prior strategy. Consumers get a
       // guaranteed fresh instance on every reconfigure.
-      manager.configure({ transport: 'broadcast' });
+      manager.configure({ transport: "broadcast" });
       const first = manager.getTransport();
-      manager.configure({ transport: 'broadcast' });
+      manager.configure({ transport: "broadcast" });
       const second = manager.getTransport();
       expect(second).not.toBe(first);
       expect(second).toBeInstanceOf(BroadcastChannelTransport);
     });
 
-    it('reconfiguring updates the realtimeManager passed to the next transport', () => {
+    it("reconfiguring updates the realtimeManager passed to the next transport", () => {
       // Auto without a realtimeManager -> BroadcastChannel.
-      manager.configure({ transport: 'auto' });
+      manager.configure({ transport: "auto" });
       expect(manager.getTransport()).toBeInstanceOf(BroadcastChannelTransport);
 
       // Auto WITH a realtimeManager -> Reverb.
-      manager.configure({ transport: 'auto', realtimeManager: {} });
+      manager.configure({ transport: "auto", realtimeManager: {} });
       expect(manager.getTransport()).toBeInstanceOf(ReverbTransport);
     });
   });

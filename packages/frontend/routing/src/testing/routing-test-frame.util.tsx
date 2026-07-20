@@ -39,10 +39,7 @@ import { DEFAULT_ROUTING_CONFIG } from "@/core/constants";
 import { StackraRoutingContext } from "@stackra/routing/react";
 
 import { createMockContainer } from "./create-mock-container.util";
-import {
-  createTestRouter,
-  type ICreateTestRouterOptions,
-} from "./create-test-router.util";
+import { createTestRouter, type ICreateTestRouterOptions } from "./create-test-router.util";
 
 /**
  * Props accepted by {@link RoutingTestFrame}.

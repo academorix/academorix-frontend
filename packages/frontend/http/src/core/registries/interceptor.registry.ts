@@ -6,14 +6,14 @@
  * @module @stackra/http/registries/interceptor-registry
  */
 
-import { Injectable } from '@stackra/container';
-import { BaseRegistry } from '@stackra/support';
+import { Injectable } from "@stackra/container";
+import { BaseRegistry } from "@stackra/support";
 
 import type {
   IHttpInterceptor,
   IHttpInterceptorEntry,
   IHttpInterceptorRegistry,
-} from '@stackra/contracts';
+} from "@stackra/contracts";
 
 /**
  * Priority-sorted interceptor registry.

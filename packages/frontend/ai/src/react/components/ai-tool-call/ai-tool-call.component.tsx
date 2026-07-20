@@ -7,9 +7,9 @@
  *   to the orchestrator through the caller (Req 20.1, 20.2, 9).
  */
 
-import type { JSX } from 'react';
-import { ChatTool } from '@stackra/ui/react';
-import { AiToolState, type IAiToolCall } from '@stackra/contracts';
+import type { JSX } from "react";
+import { ChatTool } from "@stackra/ui/react";
+import { AiToolState, type IAiToolCall } from "@stackra/contracts";
 
 /** Props accepted by {@link AiToolCall}. */
 export interface IAiToolCallProps {
@@ -30,10 +30,10 @@ export interface IAiToolCallProps {
  * enum values are aligned so the mapping is direct identity.
  */
 function mapState(
-  state: AiToolState
-): 'input-streaming' | 'input-available' | 'output-available' | 'output-error' | 'requires-action' {
+  state: AiToolState,
+): "input-streaming" | "input-available" | "output-available" | "output-error" | "requires-action" {
   return state as
-    'input-streaming' | 'input-available' | 'output-available' | 'output-error' | 'requires-action';
+    "input-streaming" | "input-available" | "output-available" | "output-error" | "requires-action";
 }
 
 /** Render a single tool call. */
@@ -46,11 +46,11 @@ export function AiToolCall(props: IAiToolCallProps): JSX.Element {
     state: mapState(toolCall.state),
     defaultExpanded,
     triggerPrefix:
-      toolCall.origin === 'server'
-        ? 'Server tool: '
+      toolCall.origin === "server"
+        ? "Server tool: "
         : toolCall.state === AiToolState.RequiresAction
-          ? 'Approval needed: '
-          : 'Used tool: ',
+          ? "Approval needed: "
+          : "Used tool: ",
     ...(toolCall.args !== undefined ? { input: toolCall.args } : {}),
     ...(toolCall.argsText !== undefined ? { argsText: toolCall.argsText } : {}),
     ...(toolCall.result !== undefined ? { output: toolCall.result } : {}),

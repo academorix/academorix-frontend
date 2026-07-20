@@ -10,12 +10,12 @@
  *   so the RN entry point doesn't need to reach into `../react/`.
  */
 
-import { useCallback, useSyncExternalStore } from 'react';
-import { useInject } from '@stackra/container/react';
+import { useCallback, useSyncExternalStore } from "react";
+import { useInject } from "@stackra/container/react";
 
-import { IN_APP_NOTIFICATION_CENTRE } from '@/core/constants';
-import type { InAppNotificationCentre } from '@/core/services';
-import type { IInAppNotificationCentreSnapshot } from '@/core/interfaces';
+import { IN_APP_NOTIFICATION_CENTRE } from "@/core/constants";
+import type { InAppNotificationCentre } from "@/core/services";
+import type { IInAppNotificationCentreSnapshot } from "@/core/interfaces";
 
 /**
  * Value returned by the native `useInAppNotifications`.

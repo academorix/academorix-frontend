@@ -9,7 +9,12 @@
   "resource": { "module": "attendance", "entity": "attendance-record", "action": "cancel" },
   "requiresPermission": "attendance.cancel",
   "dataSources": [
-    { "name": "record", "kind": "http.get", "urlTemplate": "/api/v1/attendance-records/{record}", "unwrap": "data" }
+    {
+      "name": "record",
+      "kind": "http.get",
+      "urlTemplate": "/api/v1/attendance-records/{record}",
+      "unwrap": "data"
+    }
   ],
   "nodes": [
     {
@@ -17,14 +22,27 @@
       "kind": "View",
       "props": { "className": "flex flex-col gap-4 p-6 max-w-3xl mx-auto" },
       "children": [
-        { "kind": "Text", "props": { "as": "h1", "className": "text-2xl font-semibold", "children": "Cancel attendance record" } },
+        {
+          "kind": "Text",
+          "props": {
+            "as": "h1",
+            "className": "text-2xl font-semibold",
+            "children": "Cancel attendance record"
+          }
+        },
         {
           "kind": "Alert",
           "props": { "variant": "warning" },
           "bindings": { "hidden": { "$expr": "!record.consumed_pass_id" } },
           "children": [
-            { "kind": "Text", "props": { "className": "font-semibold", "children": "Pass will be refunded" } },
-            { "kind": "Text", "propsExpr": "{ children: 'Cancelling this attendance record will refund the consumed pass ' + record.consumed_pass_id + ' back to the athlete\\'s membership.' }" }
+            {
+              "kind": "Text",
+              "props": { "className": "font-semibold", "children": "Pass will be refunded" }
+            },
+            {
+              "kind": "Text",
+              "propsExpr": "{ children: 'Cancelling this attendance record will refund the consumed pass ' + record.consumed_pass_id + ' back to the athlete\\'s membership.' }"
+            }
           ]
         },
         {
@@ -33,7 +51,10 @@
             {
               "kind": "Card.Header",
               "children": [
-                { "kind": "Text", "propsExpr": "{ children: 'Cancelling ' + record.athlete_display_name + ' at ' + record.session_display_name }" }
+                {
+                  "kind": "Text",
+                  "propsExpr": "{ children: 'Cancelling ' + record.athlete_display_name + ' at ' + record.session_display_name }"
+                }
               ]
             },
             {
@@ -42,8 +63,20 @@
               "children": [
                 {
                   "kind": "TextArea",
-                  "props": { "label": "Cancellation reason", "isRequired": true, "maxLength": 256, "rows": 3, "placeholder": "Wrong athlete, accidental check-in, session cancelled, etc." },
-                  "actions": { "onChange": { "kind": "field.set", "field": "cancellation_reason", "valueExpr": "$value" } }
+                  "props": {
+                    "label": "Cancellation reason",
+                    "isRequired": true,
+                    "maxLength": 256,
+                    "rows": 3,
+                    "placeholder": "Wrong athlete, accidental check-in, session cancelled, etc."
+                  },
+                  "actions": {
+                    "onChange": {
+                      "kind": "field.set",
+                      "field": "cancellation_reason",
+                      "valueExpr": "$value"
+                    }
+                  }
                 }
               ]
             }

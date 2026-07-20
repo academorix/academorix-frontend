@@ -150,9 +150,7 @@ describe("readStoredLayout", () => {
 
   it("returns the parsed items when the stored blob matches the schema", () => {
     const { catalogueByKey } = makeCatalogue();
-    const items: IDashboardLayoutItem[] = [
-      makeItem({ widgetKey: "kpi-coaches", x: 3, w: 3 }),
-    ];
+    const items: IDashboardLayoutItem[] = [makeItem({ widgetKey: "kpi-coaches", x: 3, w: 3 })];
 
     window.localStorage.setItem(
       STORAGE_KEY,
@@ -181,10 +179,7 @@ describe("readStoredLayout", () => {
   it("returns null for an unknown schema version", () => {
     const { catalogueByKey } = makeCatalogue();
 
-    window.localStorage.setItem(
-      STORAGE_KEY,
-      JSON.stringify({ version: 99, items: [makeItem()] }),
-    );
+    window.localStorage.setItem(STORAGE_KEY, JSON.stringify({ version: 99, items: [makeItem()] }));
 
     expect(readStoredLayout(USER_ID, catalogueByKey)).toBeNull();
   });
@@ -219,10 +214,7 @@ describe("readStoredLayout", () => {
       STORAGE_KEY,
       JSON.stringify({
         version: LAYOUT_SCHEMA_VERSION,
-        items: [
-          makeItem({ widgetKey: "kpi-athletes" }),
-          makeItem({ widgetKey: "removed-widget" }),
-        ],
+        items: [makeItem({ widgetKey: "kpi-athletes" }), makeItem({ widgetKey: "removed-widget" })],
       }),
     );
 

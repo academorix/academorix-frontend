@@ -87,13 +87,10 @@ export function CommandPalette({
   const placeholder =
     placeholderOverride ??
     t("kbd.components.command_palette.search_for_products_customers_or_actions");
-  const emptyMessage =
-    emptyMessageOverride ?? t("kbd.components.command_palette.no_results");
+  const emptyMessage = emptyMessageOverride ?? t("kbd.components.command_palette.no_results");
   const emptyHint =
     emptyHintOverride ??
-    t(
-      "kbd.components.command_palette.try_a_different_keyword_or_use_one_of_the_shortcuts_above",
-    );
+    t("kbd.components.command_palette.try_a_different_keyword_or_use_one_of_the_shortcuts_above");
 
   const { isOpen, query, commands, isLoading, service } = useCommandPalette();
   const types = useInject<CommandTypeRegistry>(COMMAND_TYPE_REGISTRY);

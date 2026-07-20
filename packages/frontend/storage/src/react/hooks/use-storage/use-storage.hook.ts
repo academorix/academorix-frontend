@@ -6,9 +6,9 @@
  *   don't have to reach for the container directly.
  */
 
-import { useMemo } from 'react';
-import { useInject } from '@stackra/container/react';
-import { STORAGE_MANAGER, type IStorage, type IStorageManager } from '@stackra/contracts';
+import { useMemo } from "react";
+import { useInject } from "@stackra/container/react";
+import { STORAGE_MANAGER, type IStorage, type IStorageManager } from "@stackra/contracts";
 
 /**
  * Resolve a named `IStorage` instance.

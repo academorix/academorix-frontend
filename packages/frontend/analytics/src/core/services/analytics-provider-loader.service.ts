@@ -6,13 +6,13 @@
  *   discovered provider with the `AnalyticsManager`.
  */
 
-import { Inject, Injectable, Optional, OnApplicationBootstrap } from '@stackra/container';
+import { Inject, Injectable, Optional, OnApplicationBootstrap } from "@stackra/container";
 import {
   ANALYTICS_MANAGER,
   ANALYTICS_PROVIDER_METADATA_KEY,
   DISCOVERY_SERVICE,
-} from '@stackra/contracts';
-import type { IAnalyticsManager, IAnalyticsProvider, IDiscoveryService } from '@stackra/contracts';
+} from "@stackra/contracts";
+import type { IAnalyticsManager, IAnalyticsProvider, IDiscoveryService } from "@stackra/contracts";
 
 /**
  * Discovers `@AnalyticsProvider()`-decorated providers and registers them.
@@ -25,7 +25,7 @@ export class AnalyticsProviderLoader implements OnApplicationBootstrap {
    */
   public constructor(
     @Inject(ANALYTICS_MANAGER) private readonly manager: IAnalyticsManager,
-    @Optional() @Inject(DISCOVERY_SERVICE) private readonly discovery?: IDiscoveryService
+    @Optional() @Inject(DISCOVERY_SERVICE) private readonly discovery?: IDiscoveryService,
   ) {}
 
   /** Scan and register after every module has initialised. */
@@ -34,7 +34,7 @@ export class AnalyticsProviderLoader implements OnApplicationBootstrap {
 
     for (const wrapper of this.discovery.getProvidersByMetadata(ANALYTICS_PROVIDER_METADATA_KEY)) {
       const instance = wrapper.instance as IAnalyticsProvider | undefined;
-      if (!instance || typeof instance.track !== 'function') continue;
+      if (!instance || typeof instance.track !== "function") continue;
       this.manager.register(instance);
     }
   }

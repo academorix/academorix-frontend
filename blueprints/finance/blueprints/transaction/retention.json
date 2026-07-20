@@ -16,8 +16,14 @@
   "retention": [
     {
       "entity": "Transaction",
-      "hot": { "days": 365, "description": "Active + first year for reporting, support queries, dispute investigation" },
-      "cold": { "days": "2555 (7 years)", "description": "Financial-audit retention. Enterprise tenants with transaction_extended_retention entitlement: 3650 (10 years)." },
+      "hot": {
+        "days": 365,
+        "description": "Active + first year for reporting, support queries, dispute investigation"
+      },
+      "cold": {
+        "days": "2555 (7 years)",
+        "description": "Financial-audit retention. Enterprise tenants with transaction_extended_retention entitlement: 3650 (10 years)."
+      },
       "purge": {
         "trigger": "> 7 years past effective_date (10 years for Enterprise)",
         "action": "archive to compliance-storage THEN hard delete via PurgeExpiredTransactionDataJob",
@@ -27,7 +33,10 @@
     {
       "entity": "TransactionLedgerEntry",
       "hot": { "days": 365 },
-      "cold": { "days": "2555 (7 years)", "description": "Same retention as parent transaction. Cascade via FK. Enterprise: 10 years." },
+      "cold": {
+        "days": "2555 (7 years)",
+        "description": "Same retention as parent transaction. Cascade via FK. Enterprise: 10 years."
+      },
       "purge": {
         "trigger": "parent transaction hard-deleted (via FK CASCADE)",
         "action": "hard delete (part of the parent transaction's archive-then-delete flow)",

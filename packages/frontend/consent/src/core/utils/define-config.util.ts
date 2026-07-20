@@ -4,7 +4,7 @@
  * @description Typed identity helper for authoring `consent.config.ts`.
  */
 
-import type { IConsentModuleOptions } from '../types';
+import type { IConsentModuleOptions } from "../types";
 
 /**
  * Type-safe consent configuration helper — identity pass-through for

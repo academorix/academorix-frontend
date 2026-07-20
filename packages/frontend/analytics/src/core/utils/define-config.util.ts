@@ -4,7 +4,7 @@
  * @description Typed identity for authoring analytics config in a file.
  */
 
-import type { IAnalyticsModuleOptions } from '../interfaces';
+import type { IAnalyticsModuleOptions } from "../interfaces";
 
 /**
  * Type-safe identity for an analytics configuration object.

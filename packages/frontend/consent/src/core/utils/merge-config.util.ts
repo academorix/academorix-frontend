@@ -4,8 +4,8 @@
  * @description Merge user consent options with defaults.
  */
 
-import type { IConsentModuleOptions } from '../types';
-import { DEFAULT_CONSENT_CONFIG } from '../constants/defaults.constant';
+import type { IConsentModuleOptions } from "../types";
+import { DEFAULT_CONSENT_CONFIG } from "../constants/defaults.constant";
 
 /**
  * Merge partial consent options over {@link DEFAULT_CONSENT_CONFIG}.

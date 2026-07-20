@@ -4,8 +4,8 @@
  * @description Access the scope tree (switchable nodes) for the current user.
  */
 
-import { useScope } from './use-scope.hook';
-import type { IScopeNodeTreeNode } from '@/core/interfaces';
+import { useScope } from "./use-scope.hook";
+import type { IScopeNodeTreeNode } from "@/core/interfaces";
 
 /**
  * Access the hierarchical scope tree — the concrete nodes the current

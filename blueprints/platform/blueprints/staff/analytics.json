@@ -9,14 +9,27 @@
       "name": "Staff Hired",
       "kind": "track",
       "consent_required": "functional",
-      "properties": ["tenant_id", "branch_id", "employment_type", "position_bucket", "has_probation", "is_branch_manager", "has_coach_profile_at_hire"],
+      "properties": [
+        "tenant_id",
+        "branch_id",
+        "employment_type",
+        "position_bucket",
+        "has_probation",
+        "is_branch_manager",
+        "has_coach_profile_at_hire"
+      ],
       "description": "Admin hired a staff member. position_bucket is pre-computed (coaching / reception / management / support / other) to avoid high-cardinality free-text labels."
     },
     {
       "name": "Staff Promoted To Manager",
       "kind": "track",
       "consent_required": "functional",
-      "properties": ["tenant_id", "branch_id", "was_prior_manager_demoted", "days_since_hire_bucket"]
+      "properties": [
+        "tenant_id",
+        "branch_id",
+        "was_prior_manager_demoted",
+        "days_since_hire_bucket"
+      ]
     },
     {
       "name": "Staff Put On Leave",
@@ -35,7 +48,15 @@
       "name": "Staff Offboarded",
       "kind": "track",
       "consent_required": "functional",
-      "properties": ["tenant_id", "branch_id", "termination_reason", "days_of_service_bucket", "was_branch_manager", "was_coach", "cascade_used"]
+      "properties": [
+        "tenant_id",
+        "branch_id",
+        "termination_reason",
+        "days_of_service_bucket",
+        "was_branch_manager",
+        "was_coach",
+        "cascade_used"
+      ]
     },
     {
       "name": "Staff Reactivated",
@@ -47,14 +68,27 @@
       "name": "Compensation Changed",
       "kind": "track",
       "consent_required": "essential",
-      "properties": ["tenant_id", "branch_id", "changed_fields_count", "was_within_max_delta_percent", "compensation_type"],
+      "properties": [
+        "tenant_id",
+        "branch_id",
+        "changed_fields_count",
+        "was_within_max_delta_percent",
+        "compensation_type"
+      ],
       "description": "PRIVATE-TIER analytics — payload NEVER carries the amount. Only the FACT that a change happened + which fields + the compensation_type category (hourly / salary / stipend / volunteer / commission). Powers HR-compliance dashboards for pay-transparency audits. Consent tier: essential (compensation-change frequency is a discrimination-pattern signal that cannot be opted out)."
     },
     {
       "name": "Coach Created",
       "kind": "track",
       "consent_required": "functional",
-      "properties": ["tenant_id", "branch_id", "sport_key", "coaching_level", "additional_sports_count", "certifications_at_create_count"]
+      "properties": [
+        "tenant_id",
+        "branch_id",
+        "sport_key",
+        "coaching_level",
+        "additional_sports_count",
+        "certifications_at_create_count"
+      ]
     },
     {
       "name": "Coach Sport Changed",
@@ -66,7 +100,13 @@
       "name": "Coach Certification Added",
       "kind": "track",
       "consent_required": "functional",
-      "properties": ["tenant_id", "coach_id_bucket", "requires_verification", "has_expiry", "years_until_expiry_bucket"]
+      "properties": [
+        "tenant_id",
+        "coach_id_bucket",
+        "requires_verification",
+        "has_expiry",
+        "years_until_expiry_bucket"
+      ]
     },
     {
       "name": "Coach Certification Expired",

@@ -8,8 +8,8 @@
  * @module @stackra/http/react/hooks/use-http-manager
  */
 
-import { useInject } from '@stackra/container/react';
-import { HTTP_MANAGER, type IHttpManager } from '@stackra/contracts';
+import { useInject } from "@stackra/container/react";
+import { HTTP_MANAGER, type IHttpManager } from "@stackra/contracts";
 
 /**
  * Read the active `IHttpManager`.

@@ -42,7 +42,7 @@ export function separateTokensByMode(tokens: Record<string, unknown>): {
 
     const stringValue = String(value);
 
-    if (key.startsWith('dark_')) {
+    if (key.startsWith("dark_")) {
       const strippedKey = key.slice(5);
       dark[strippedKey] = stringValue;
     } else {

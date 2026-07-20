@@ -1,7 +1,7 @@
 {
   "name": "@stackra/realtime",
   "version": "0.1.0",
-  "description": "Multi-driver realtime WebSocket manager — transport-agnostic, driver-registered. Client-side.",
+  "description": "Multi-driver realtime WebSocket manager \u2014 transport-agnostic, driver-registered. Client-side.",
   "license": "MIT",
   "author": {
     "name": "Stackra L.L.C",
@@ -96,6 +96,8 @@
     }
   },
   "devDependencies": {
+    "@academorix/config-tsconfig": "workspace:*",
+    "@academorix/config-tsup": "workspace:*",
     "@stackra/actions": "workspace:*",
     "@stackra/container": "workspace:*",
     "@stackra/contracts": "workspace:*",

@@ -4,4 +4,4 @@
  * @description Barrel export for web theming bindings.
  */
 
-export { WebThemeBindings } from './web-theme.bindings';
+export { WebThemeBindings } from "./web-theme.bindings";

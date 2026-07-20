@@ -16,7 +16,16 @@
         "erasure archive manifests (tenant_id, erasure_event_id, row_count, sha256)"
       ],
       "dpa_url": "https://aws.amazon.com/service-terms/",
-      "certifications": ["SOC 2 Type II", "ISO 27001", "ISO 27017", "ISO 27018", "PCI-DSS", "HIPAA (BAA available on Enterprise)", "GDPR compliant", "FedRAMP High"],
+      "certifications": [
+        "SOC 2 Type II",
+        "ISO 27001",
+        "ISO 27017",
+        "ISO 27018",
+        "PCI-DSS",
+        "HIPAA (BAA available on Enterprise)",
+        "GDPR compliant",
+        "FedRAMP High"
+      ],
       "region_selection_note": "EU-based tenants get their archive bucket in eu-west-1 with SCC-covered inter-region transfers explicitly disabled. Regulator-shaped exports for EU tenants stay in eu-west-1. US tenants default to us-east-1. Regional pinning honored per config.audit.export.archive_bucket_env resolution which is tenant-scoped."
     }
   ],

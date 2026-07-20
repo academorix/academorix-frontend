@@ -13,36 +13,36 @@
  *   consumers can drop this row into their own list wrappers.
  */
 
-import { useMemo, type ReactElement } from 'react';
-import { Button, Dropdown } from '@stackra/ui/react';
-import { CheckIcon, ClockIcon, TrashIcon } from '@stackra/ui/icons/heroicon/outline';
+import { useMemo, type ReactElement } from "react";
+import { Button, Dropdown } from "@stackra/ui/react";
+import { CheckIcon, ClockIcon, TrashIcon } from "@stackra/ui/icons/heroicon/outline";
 
-import type { IRenderableNotification, SnoozePreset } from '@/core/interfaces';
-import { useNotificationWrites } from '../../hooks/use-notification-writes';
-import { useSnoozeStore } from '../../hooks/use-snooze-store';
-import type { NotificationRowProps } from './notification-row.interface';
+import type { IRenderableNotification, SnoozePreset } from "@/core/interfaces";
+import { useNotificationWrites } from "../../hooks/use-notification-writes";
+import { useSnoozeStore } from "../../hooks/use-snooze-store";
+import type { NotificationRowProps } from "./notification-row.interface";
 
 /**
  * Priority → Tailwind border-accent class. The class strings are
  * kept explicit — dynamic composition defeats Tailwind's JIT
  * purge.
  */
-const PRIORITY_ACCENT: Readonly<Record<IRenderableNotification['priority'], string>> = {
-  urgent: 'border-l-danger',
-  high: 'border-l-warning',
-  normal: 'border-l-accent/40',
-  low: 'border-l-transparent',
+const PRIORITY_ACCENT: Readonly<Record<IRenderableNotification["priority"], string>> = {
+  urgent: "border-l-danger",
+  high: "border-l-warning",
+  normal: "border-l-accent/40",
+  low: "border-l-transparent",
 };
 
 /**
  * Priority → screen-reader label. Feeds `aria-describedby` so a
  * JAWS/NVDA user hears "urgent notification" alongside the title.
  */
-const PRIORITY_ARIA_LABEL: Readonly<Record<IRenderableNotification['priority'], string>> = {
-  urgent: 'Urgent notification',
-  high: 'High-priority notification',
-  normal: 'Notification',
-  low: 'Low-priority notification',
+const PRIORITY_ARIA_LABEL: Readonly<Record<IRenderableNotification["priority"], string>> = {
+  urgent: "Urgent notification",
+  high: "High-priority notification",
+  normal: "Notification",
+  low: "Low-priority notification",
 };
 
 /**
@@ -55,26 +55,26 @@ const PRIORITY_ARIA_LABEL: Readonly<Record<IRenderableNotification['priority'], 
  */
 function formatRelative(millis: number, now: Date = new Date()): string {
   const diff = now.getTime() - millis;
-  if (!Number.isFinite(diff) || diff < 0) return '';
-  const formatter = new Intl.RelativeTimeFormat('en', { numeric: 'auto' });
+  if (!Number.isFinite(diff) || diff < 0) return "";
+  const formatter = new Intl.RelativeTimeFormat("en", { numeric: "auto" });
   const seconds = Math.round(diff / 1000);
-  if (seconds < 60) return formatter.format(-seconds, 'second');
+  if (seconds < 60) return formatter.format(-seconds, "second");
   const minutes = Math.round(seconds / 60);
-  if (minutes < 60) return formatter.format(-minutes, 'minute');
+  if (minutes < 60) return formatter.format(-minutes, "minute");
   const hours = Math.round(minutes / 60);
-  if (hours < 24) return formatter.format(-hours, 'hour');
+  if (hours < 24) return formatter.format(-hours, "hour");
   const days = Math.round(hours / 24);
-  if (days < 7) return formatter.format(-days, 'day');
+  if (days < 7) return formatter.format(-days, "day");
   const weeks = Math.round(days / 7);
-  return formatter.format(-weeks, 'week');
+  return formatter.format(-weeks, "week");
 }
 
 /** Every snooze preset's user-facing label. */
 const SNOOZE_LABELS: Readonly<Record<SnoozePreset, string>> = {
-  hour: '1 hour',
-  threeHours: '3 hours',
-  tomorrow: 'Tomorrow',
-  nextWeek: 'Next week',
+  hour: "1 hour",
+  threeHours: "3 hours",
+  tomorrow: "Tomorrow",
+  nextWeek: "Next week",
 };
 
 /**
@@ -97,7 +97,7 @@ export function NotificationRow({
   const { notification, isRead, priority } = entry;
   const relative = useMemo(
     () => formatRelative(notification.createdAt, now),
-    [notification.createdAt, now]
+    [notification.createdAt, now],
   );
   const priorityLabelId = `notif-priority-${notification.id}`;
 
@@ -125,10 +125,10 @@ export function NotificationRow({
       // the only place we hand-roll classes, per the ui-components
       // rule which permits layout utilities but forbids bespoke
       // component styling.
-      className={`flex items-start gap-2 border-l-4 py-3 pr-2 pl-3 transition-colors hover:bg-surface-secondary ${PRIORITY_ACCENT[priority]}`}
+      className={`hover:bg-surface-secondary flex items-start gap-2 border-l-4 py-3 pr-2 pl-3 transition-colors ${PRIORITY_ACCENT[priority]}`}
       data-notifications-row=""
       data-notifications-row-priority={priority}
-      data-notifications-row-read={isRead ? 'true' : 'false'}
+      data-notifications-row-read={isRead ? "true" : "false"}
     >
       <div className="flex min-w-0 flex-1 items-start gap-3">
         <div className="flex min-w-0 flex-1 flex-col">
@@ -136,20 +136,20 @@ export function NotificationRow({
             <span
               className={
                 isRead
-                  ? 'truncate text-sm font-medium text-foreground'
-                  : 'truncate text-sm font-semibold text-foreground'
+                  ? "text-foreground truncate text-sm font-medium"
+                  : "text-foreground truncate text-sm font-semibold"
               }
             >
               {notification.payload.title}
             </span>
             {!isRead ? (
-              <span aria-label="Unread" className="size-1.5 shrink-0 rounded-full bg-accent" />
+              <span aria-label="Unread" className="bg-accent size-1.5 shrink-0 rounded-full" />
             ) : null}
           </div>
           {notification.payload.body ? (
-            <p className="mt-0.5 line-clamp-2 text-xs text-muted">{notification.payload.body}</p>
+            <p className="text-muted mt-0.5 line-clamp-2 text-xs">{notification.payload.body}</p>
           ) : null}
-          <div className="mt-1 flex items-center gap-2 text-xs text-muted">
+          <div className="text-muted mt-1 flex items-center gap-2 text-xs">
             <span>{relative}</span>
             {notification.payload.category ? (
               <>

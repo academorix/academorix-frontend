@@ -63,10 +63,10 @@ export function MinimalPaletteLayout({
                       textValue={cmd.label}
                       isDisabled={cmd.disabled}
                     >
-                      <span className="w-[3px] self-stretch rounded-full bg-accent opacity-0 group-data-focused:opacity-100" />
-                      <span className="flex-1 truncate text-sm text-foreground">{cmd.label}</span>
+                      <span className="bg-accent w-[3px] self-stretch rounded-full opacity-0 group-data-focused:opacity-100" />
+                      <span className="text-foreground flex-1 truncate text-sm">{cmd.label}</span>
                       {cmd.shortcut && (
-                        <span className="shrink-0 text-xs text-default-400">
+                        <span className="text-default-400 shrink-0 text-xs">
                           {formatCombo(cmd.shortcut)}
                         </span>
                       )}

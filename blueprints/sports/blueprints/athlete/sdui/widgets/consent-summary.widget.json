@@ -9,8 +9,17 @@
     "consent_photo_release": { "type": "boolean", "required": true },
     "consent_medical_disclosure": { "type": "boolean", "required": true },
     "consent_third_party": { "type": "boolean", "required": true },
-    "consent_recorded_at": { "type": "string", "required": false, "description": "ISO 8601 timestamp when consents were last recorded." },
-    "workflow_enabled": { "type": "boolean", "required": false, "default": false, "description": "Whether athlete_consent_workflow entitlement is on for the tenant — enables expiry warnings." }
+    "consent_recorded_at": {
+      "type": "string",
+      "required": false,
+      "description": "ISO 8601 timestamp when consents were last recorded."
+    },
+    "workflow_enabled": {
+      "type": "boolean",
+      "required": false,
+      "default": false,
+      "description": "Whether athlete_consent_workflow entitlement is on for the tenant — enables expiry warnings."
+    }
   },
   "nodes": [
     {

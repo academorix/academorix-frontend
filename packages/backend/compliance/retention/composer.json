@@ -1,31 +1,31 @@
 {
-    "name": "academorix/retention",
-    "type": "library",
-    "description": "Retention scanner — scans classes carrying #[AsRetentionPolicy] and applies delete / archive / anonymize actions on a scheduled cadence.",
-    "license": "proprietary",
-    "require": {
-        "php": "^8.3",
-        "academorix/console": "@dev",
-        "academorix/foundation": "@dev",
-        "academorix/scheduling": "@dev",
-        "academorix/service-provider": "@dev",
-        "illuminate/console": "^13.0",
-        "illuminate/contracts": "^13.0",
-        "illuminate/database": "^13.0",
-        "illuminate/support": "^13.0"
-    },
-    "autoload": {
-        "psr-4": {
-            "Academorix\\Retention\\": "src/"
-        }
-    },
-    "extra": {
-        "laravel": {
-            "providers": [
-                "Academorix\\Retention\\Providers\\RetentionServiceProvider"
-            ]
-        }
-    },
-    "minimum-stability": "dev",
-    "prefer-stable": true
+  "name": "academorix/retention",
+  "type": "library",
+  "description": "Retention scanner — scans classes carrying #[AsRetentionPolicy] and applies delete / archive / anonymize actions on a scheduled cadence.",
+  "license": "proprietary",
+  "require": {
+    "php": "^8.3",
+    "academorix/console": "@dev",
+    "academorix/foundation": "@dev",
+    "academorix/scheduling": "@dev",
+    "academorix/service-provider": "@dev",
+    "illuminate/console": "^13.0",
+    "illuminate/contracts": "^13.0",
+    "illuminate/database": "^13.0",
+    "illuminate/support": "^13.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "Academorix\\Retention\\": "src/"
+    }
+  },
+  "extra": {
+    "laravel": {
+      "providers": [
+        "Academorix\\Retention\\Providers\\RetentionServiceProvider"
+      ]
+    }
+  },
+  "minimum-stability": "dev",
+  "prefer-stable": true
 }

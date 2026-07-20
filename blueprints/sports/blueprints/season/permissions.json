@@ -6,27 +6,104 @@
   "isSystem": true,
   "scope_suffix_convention": "Every read permission may be seeded WITH a scope suffix (`.any`, `.tenant`). The base permission (no suffix) is the highest-tier variant, effectively `.tenant`. The ScopeSuffixResolver (shipped by the user module, consumed by every base repository) applies the corresponding WHERE clause at query build time. Season has no `.branch` / `.org` variants because a season is tenant-scoped by construction — org / branch scoping is on the row itself, not on the reader's authority.",
   "permissions": [
-    { "name": "seasons.viewAny", "guard": "sanctum", "seededOn": ["admin", "owner", "member", "coach", "reception", "athlete", "guardian"], "description": "Every tenant role reads the season list — seasons are UI reference data (every enrollment surface + team dropdown reads them)." },
-    { "name": "seasons.viewAny.tenant", "guard": "sanctum", "seededOn": ["admin", "owner", "member", "coach", "reception", "athlete", "guardian"] },
-    { "name": "seasons.view", "guard": "sanctum", "seededOn": ["admin", "owner", "member", "coach", "reception", "athlete", "guardian"], "description": "Single-row read." },
-    { "name": "seasons.create", "guard": "sanctum", "seededOn": ["admin", "owner"], "description": "Consumes 1 unit of the season_slot entitlement per overlapping calendar year." },
-    { "name": "seasons.update", "guard": "sanctum", "seededOn": ["admin", "owner"], "description": "Mutable fields: name, slug, description, season_type, registration timestamps, competition_starts_at, has_playoffs, playoff timestamps, sort_order, primary_color, capacity_target, max_enrollments_per_athlete, allows_late_registration, late_registration_fee_cents. sport_key mutable only pre-in_progress. start_date/end_date mutable in-progress only with `seasons.dates.shift`." },
-    { "name": "seasons.dates.shift", "guard": "sanctum", "seededOn": ["owner"], "description": "Owner-only. Permits start_date / end_date / playoff timestamps changes on Seasons with status IN (in_progress, playoffs). Fires SeasonDatesShifted (audit-warn) + a cannot-opt-out notification to enrolled athletes + coaches." },
-    { "name": "seasons.delete", "guard": "sanctum", "seededOn": ["owner"], "description": "Owner-only. Soft-delete (archive path). Hard-delete via retention purge only." },
-    { "name": "seasons.set_current", "guard": "sanctum", "seededOn": ["owner"], "description": "Owner-only. Changing the current season affects year-over-year reporting queries + the default scope for downstream enrollment surfaces — narrow blast radius." },
+    {
+      "name": "seasons.viewAny",
+      "guard": "sanctum",
+      "seededOn": ["admin", "owner", "member", "coach", "reception", "athlete", "guardian"],
+      "description": "Every tenant role reads the season list — seasons are UI reference data (every enrollment surface + team dropdown reads them)."
+    },
+    {
+      "name": "seasons.viewAny.tenant",
+      "guard": "sanctum",
+      "seededOn": ["admin", "owner", "member", "coach", "reception", "athlete", "guardian"]
+    },
+    {
+      "name": "seasons.view",
+      "guard": "sanctum",
+      "seededOn": ["admin", "owner", "member", "coach", "reception", "athlete", "guardian"],
+      "description": "Single-row read."
+    },
+    {
+      "name": "seasons.create",
+      "guard": "sanctum",
+      "seededOn": ["admin", "owner"],
+      "description": "Consumes 1 unit of the season_slot entitlement per overlapping calendar year."
+    },
+    {
+      "name": "seasons.update",
+      "guard": "sanctum",
+      "seededOn": ["admin", "owner"],
+      "description": "Mutable fields: name, slug, description, season_type, registration timestamps, competition_starts_at, has_playoffs, playoff timestamps, sort_order, primary_color, capacity_target, max_enrollments_per_athlete, allows_late_registration, late_registration_fee_cents. sport_key mutable only pre-in_progress. start_date/end_date mutable in-progress only with `seasons.dates.shift`."
+    },
+    {
+      "name": "seasons.dates.shift",
+      "guard": "sanctum",
+      "seededOn": ["owner"],
+      "description": "Owner-only. Permits start_date / end_date / playoff timestamps changes on Seasons with status IN (in_progress, playoffs). Fires SeasonDatesShifted (audit-warn) + a cannot-opt-out notification to enrolled athletes + coaches."
+    },
+    {
+      "name": "seasons.delete",
+      "guard": "sanctum",
+      "seededOn": ["owner"],
+      "description": "Owner-only. Soft-delete (archive path). Hard-delete via retention purge only."
+    },
+    {
+      "name": "seasons.set_current",
+      "guard": "sanctum",
+      "seededOn": ["owner"],
+      "description": "Owner-only. Changing the current season affects year-over-year reporting queries + the default scope for downstream enrollment surfaces — narrow blast radius."
+    },
     { "name": "seasons.open_registration", "guard": "sanctum", "seededOn": ["admin", "owner"] },
-    { "name": "seasons.registration.open-early", "guard": "sanctum", "seededOn": ["owner"], "description": "Owner-only. Permits opening registration before `registration_opens_at`. Bypasses the scheduled-open guardrail." },
+    {
+      "name": "seasons.registration.open-early",
+      "guard": "sanctum",
+      "seededOn": ["owner"],
+      "description": "Owner-only. Permits opening registration before `registration_opens_at`. Bypasses the scheduled-open guardrail."
+    },
     { "name": "seasons.close_registration", "guard": "sanctum", "seededOn": ["admin", "owner"] },
     { "name": "seasons.start", "guard": "sanctum", "seededOn": ["admin", "owner"] },
-    { "name": "seasons.start.early", "guard": "sanctum", "seededOn": ["owner"], "description": "Owner-only. Permits starting a season before `start_date`. Bypasses the scheduled-start guardrail." },
+    {
+      "name": "seasons.start.early",
+      "guard": "sanctum",
+      "seededOn": ["owner"],
+      "description": "Owner-only. Permits starting a season before `start_date`. Bypasses the scheduled-start guardrail."
+    },
     { "name": "seasons.begin_playoffs", "guard": "sanctum", "seededOn": ["admin", "owner"] },
-    { "name": "seasons.playoffs.begin-early", "guard": "sanctum", "seededOn": ["owner"], "description": "Owner-only. Permits beginning playoffs before `playoff_starts_at`." },
+    {
+      "name": "seasons.playoffs.begin-early",
+      "guard": "sanctum",
+      "seededOn": ["owner"],
+      "description": "Owner-only. Permits beginning playoffs before `playoff_starts_at`."
+    },
     { "name": "seasons.complete", "guard": "sanctum", "seededOn": ["admin", "owner"] },
     { "name": "seasons.archive", "guard": "sanctum", "seededOn": ["admin", "owner"] },
-    { "name": "seasons.restore", "guard": "sanctum", "seededOn": ["admin", "owner"], "description": "Restore an archived Season within the retention window." },
-    { "name": "seasons.manage", "guard": "sanctum", "seededOn": ["admin", "owner"], "description": "Umbrella permission for the settings blueprint gate. Admin + owner." },
-    { "name": "seasons.enroll.late", "guard": "sanctum", "seededOn": ["admin", "owner"], "description": "Permission for the downstream enrollment surface (Wave 3) to accept enrollments in the late-registration window. NOT seeded on the enrollment_creator role by default — admins explicitly grant it to their reception staff who handle late-signups + surcharge collection." },
-    { "name": "platform.seasons.viewAny", "guard": "platform_admin", "seededOn": ["super_admin", "ops", "support"] },
-    { "name": "platform.seasons.view", "guard": "platform_admin", "seededOn": ["super_admin", "ops", "support"] }
+    {
+      "name": "seasons.restore",
+      "guard": "sanctum",
+      "seededOn": ["admin", "owner"],
+      "description": "Restore an archived Season within the retention window."
+    },
+    {
+      "name": "seasons.manage",
+      "guard": "sanctum",
+      "seededOn": ["admin", "owner"],
+      "description": "Umbrella permission for the settings blueprint gate. Admin + owner."
+    },
+    {
+      "name": "seasons.enroll.late",
+      "guard": "sanctum",
+      "seededOn": ["admin", "owner"],
+      "description": "Permission for the downstream enrollment surface (Wave 3) to accept enrollments in the late-registration window. NOT seeded on the enrollment_creator role by default — admins explicitly grant it to their reception staff who handle late-signups + surcharge collection."
+    },
+    {
+      "name": "platform.seasons.viewAny",
+      "guard": "platform_admin",
+      "seededOn": ["super_admin", "ops", "support"]
+    },
+    {
+      "name": "platform.seasons.view",
+      "guard": "platform_admin",
+      "seededOn": ["super_admin", "ops", "support"]
+    }
   ]
 }

@@ -21,7 +21,12 @@
       "signature": "valid_url[:scheme]",
       "description": "Extends Laravel's built-in `url` rule with a per-scheme allowlist. Default = { 'https' }; loosen to { 'http', 'https' } when the caller passes 'http' explicitly. Refuses `data:` / `javascript:` / `file:` schemes. Length-capped at 500 chars to match the DB column.",
       "params": [
-        { "name": "schemes", "type": "string", "default": "https", "description": "Comma-joined allowed schemes." }
+        {
+          "name": "schemes",
+          "type": "string",
+          "default": "https",
+          "description": "Comma-joined allowed schemes."
+        }
       ],
       "example_field_rule": "website_url: ['nullable', 'valid_url']",
       "error_message_key": "branch::validation.valid_url",

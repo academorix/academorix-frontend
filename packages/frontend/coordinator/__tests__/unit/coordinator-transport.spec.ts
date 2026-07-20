@@ -11,15 +11,15 @@
  *   plus a hand-rolled peer manager to simulate a second tab.
  */
 
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { describe, it, expect, beforeEach, vi } from "vitest";
 
-import type { IEventEmitterSync } from '@stackra/contracts';
+import type { IEventEmitterSync } from "@stackra/contracts";
 
-import { CoordinatorTransport } from '@/core/services/coordinator-transport.service';
-import { MockTabTransportManager } from '@/testing/mock-tab-transport-manager';
-import type { IRelayMessage } from '@/core/interfaces/relay-message.interface';
+import { CoordinatorTransport } from "@/core/services/coordinator-transport.service";
+import { MockTabTransportManager } from "@/testing/mock-tab-transport-manager";
+import type { IRelayMessage } from "@/core/interfaces/relay-message.interface";
 
-const RELAY_CHANNEL = 'stackra-event-relay';
+const RELAY_CHANNEL = "stackra-event-relay";
 
 /** Tiny sync event emitter shim — captures `emit` calls for assertion. */
 function makeEmitter(): IEventEmitterSync & { calls: Array<[string | symbol, unknown[]]> } {
@@ -33,15 +33,15 @@ function makeEmitter(): IEventEmitterSync & { calls: Array<[string | symbol, unk
   };
 }
 
-describe('CoordinatorTransport', () => {
+describe("CoordinatorTransport", () => {
   let manager: MockTabTransportManager;
 
   beforeEach(() => {
     manager = new MockTabTransportManager();
   });
 
-  describe('connect + disconnect', () => {
-    it('subscribes to the shared relay channel on connect()', () => {
+  describe("connect + disconnect", () => {
+    it("subscribes to the shared relay channel on connect()", () => {
       const transport = new CoordinatorTransport(manager, { broadcastEvents: true });
       const emitter = makeEmitter();
       transport.connect(emitter);
@@ -50,7 +50,7 @@ describe('CoordinatorTransport', () => {
       expect(manager.hasChannel(RELAY_CHANNEL)).toBe(true);
     });
 
-    it('is inert when broadcastEvents is false', () => {
+    it("is inert when broadcastEvents is false", () => {
       const transport = new CoordinatorTransport(manager, { broadcastEvents: false });
       const emitter = makeEmitter();
       transport.connect(emitter);
@@ -58,20 +58,20 @@ describe('CoordinatorTransport', () => {
       expect(manager.hasChannel(RELAY_CHANNEL)).toBe(false);
     });
 
-    it('is inert when the manager reports unsupported', () => {
+    it("is inert when the manager reports unsupported", () => {
       manager.simulateUnsupported();
       const transport = new CoordinatorTransport(manager, { broadcastEvents: true });
       transport.connect(makeEmitter());
       expect(manager.hasChannel(RELAY_CHANNEL)).toBe(false);
     });
 
-    it('is inert when no manager was injected', () => {
+    it("is inert when no manager was injected", () => {
       const transport = new CoordinatorTransport(undefined, { broadcastEvents: true });
       // connect() must not throw; there's nothing to wire.
       expect(() => transport.connect(makeEmitter())).not.toThrow();
     });
 
-    it('disconnect() unsubscribes but leaves the shared channel open', () => {
+    it("disconnect() unsubscribes but leaves the shared channel open", () => {
       const transport = new CoordinatorTransport(manager, { broadcastEvents: true });
       const emitter = makeEmitter();
       transport.connect(emitter);
@@ -80,19 +80,19 @@ describe('CoordinatorTransport', () => {
       const peer = manager.createPeer();
       const peerChan = peer.channel(RELAY_CHANNEL);
       const msg: IRelayMessage = {
-        kind: 'event-relay',
-        event: 'auth:login',
-        args: [{ userId: 'u1' }],
-        sourceTabId: 'peer-tab',
+        kind: "event-relay",
+        event: "auth:login",
+        args: [{ userId: "u1" }],
+        sourceTabId: "peer-tab",
       };
       peerChan.broadcast(msg);
-      expect(emitter.calls).toContainEqual(['auth:login', [{ userId: 'u1' }]]);
+      expect(emitter.calls).toContainEqual(["auth:login", [{ userId: "u1" }]]);
 
       const beforeCalls = emitter.calls.length;
       transport.disconnect();
 
       // Post-disconnect, inbound messages must not reach the emitter.
-      peerChan.broadcast({ ...msg, args: [{ userId: 'u2' }] });
+      peerChan.broadcast({ ...msg, args: [{ userId: "u2" }] });
       expect(emitter.calls.length).toBe(beforeCalls);
 
       // But the shared channel itself is still cached in the manager —
@@ -101,8 +101,8 @@ describe('CoordinatorTransport', () => {
     });
   });
 
-  describe('echo suppression', () => {
-    it('does not re-emit a message whose sourceTabId equals its own', () => {
+  describe("echo suppression", () => {
+    it("does not re-emit a message whose sourceTabId equals its own", () => {
       const transport = new CoordinatorTransport(manager, { broadcastEvents: true });
       const emitter = makeEmitter();
       transport.connect(emitter);
@@ -112,7 +112,7 @@ describe('CoordinatorTransport', () => {
       const chan = manager.channel(RELAY_CHANNEL);
       // Broadcast then observe on a peer — the sender's own tabId is
       // captured on the outbound message.
-      transport.relay('sync:pull', { id: 1 });
+      transport.relay("sync:pull", { id: 1 });
       const peer = manager.createPeer();
       const peerChan = peer.channel(RELAY_CHANNEL);
 
@@ -121,12 +121,12 @@ describe('CoordinatorTransport', () => {
 
       // Now re-broadcast on the OWN channel using the same tabId —
       // the transport's own subscriber must swallow it.
-      const relayed = seen[0] ?? { sourceTabId: 'unknown' };
+      const relayed = seen[0] ?? { sourceTabId: "unknown" };
       const own = (relayed as IRelayMessage).sourceTabId;
       const before = emitter.calls.length;
       chan.broadcast({
-        kind: 'event-relay',
-        event: 'auth:login',
+        kind: "event-relay",
+        event: "auth:login",
         args: [],
         sourceTabId: own,
       });
@@ -136,26 +136,26 @@ describe('CoordinatorTransport', () => {
       expect(emitter.calls.length).toBe(before);
     });
 
-    it('ignores payloads that are not event-relay messages', () => {
+    it("ignores payloads that are not event-relay messages", () => {
       const transport = new CoordinatorTransport(manager, { broadcastEvents: true });
       const emitter = makeEmitter();
       transport.connect(emitter);
 
       const peer = manager.createPeer();
       const peerChan = peer.channel(RELAY_CHANNEL);
-      peerChan.broadcast({ kind: 'not-relay', hello: 'world' });
+      peerChan.broadcast({ kind: "not-relay", hello: "world" });
       peerChan.broadcast(null);
-      peerChan.broadcast('a string');
+      peerChan.broadcast("a string");
 
       expect(emitter.calls).toEqual([]);
     });
   });
 
-  describe('relay() pattern matching', () => {
-    it('* matches exactly one segment', () => {
+  describe("relay() pattern matching", () => {
+    it("* matches exactly one segment", () => {
       const transport = new CoordinatorTransport(manager, {
         broadcastEvents: true,
-        broadcastPatterns: ['auth.*'],
+        broadcastPatterns: ["auth.*"],
       });
       const emitter = makeEmitter();
       transport.connect(emitter);
@@ -165,17 +165,17 @@ describe('CoordinatorTransport', () => {
       const seen: IRelayMessage[] = [];
       peerChan.subscribe((data) => seen.push(data as IRelayMessage));
 
-      transport.relay('auth.login', { u: 1 });
-      transport.relay('auth.logout.done', { u: 1 }); // two segments — must NOT match
-      transport.relay('other.login', { u: 1 }); // wrong prefix
+      transport.relay("auth.login", { u: 1 });
+      transport.relay("auth.logout.done", { u: 1 }); // two segments — must NOT match
+      transport.relay("other.login", { u: 1 }); // wrong prefix
 
-      expect(seen.map((m) => m.event)).toEqual(['auth.login']);
+      expect(seen.map((m) => m.event)).toEqual(["auth.login"]);
     });
 
-    it('** matches one-or-more segments', () => {
+    it("** matches one-or-more segments", () => {
       const transport = new CoordinatorTransport(manager, {
         broadcastEvents: true,
-        broadcastPatterns: ['sync.**'],
+        broadcastPatterns: ["sync.**"],
       });
       transport.connect(makeEmitter());
 
@@ -184,18 +184,18 @@ describe('CoordinatorTransport', () => {
       const seen: IRelayMessage[] = [];
       peerChan.subscribe((data) => seen.push(data as IRelayMessage));
 
-      transport.relay('sync.pull', {}); // 1 segment after prefix — matches
-      transport.relay('sync.pull.batch', {}); // 2 segments after prefix — matches
-      transport.relay('sync', {}); // no trailing segment — does NOT match (** needs ≥ 1)
-      transport.relay('other.stuff', {}); // wrong prefix
+      transport.relay("sync.pull", {}); // 1 segment after prefix — matches
+      transport.relay("sync.pull.batch", {}); // 2 segments after prefix — matches
+      transport.relay("sync", {}); // no trailing segment — does NOT match (** needs ≥ 1)
+      transport.relay("other.stuff", {}); // wrong prefix
 
-      expect(seen.map((m) => m.event)).toEqual(['sync.pull', 'sync.pull.batch']);
+      expect(seen.map((m) => m.event)).toEqual(["sync.pull", "sync.pull.batch"]);
     });
 
-    it('leaves broadcasts alone when none of the patterns match', () => {
+    it("leaves broadcasts alone when none of the patterns match", () => {
       const transport = new CoordinatorTransport(manager, {
         broadcastEvents: true,
-        broadcastPatterns: ['auth.**'],
+        broadcastPatterns: ["auth.**"],
       });
       transport.connect(makeEmitter());
 
@@ -204,27 +204,27 @@ describe('CoordinatorTransport', () => {
       const seen: IRelayMessage[] = [];
       peerChan.subscribe((data) => seen.push(data as IRelayMessage));
 
-      transport.relay('other.event', {});
+      transport.relay("other.event", {});
 
       expect(seen).toEqual([]);
     });
 
-    it('is a no-op before connect() (no transport yet)', () => {
+    it("is a no-op before connect() (no transport yet)", () => {
       const transport = new CoordinatorTransport(manager, {
         broadcastEvents: true,
-        broadcastPatterns: ['**'],
+        broadcastPatterns: ["**"],
       });
 
       // No emitter connected yet — relay() must silently no-op.
-      expect(() => transport.relay('auth.login', {})).not.toThrow();
+      expect(() => transport.relay("auth.login", {})).not.toThrow();
     });
   });
 
-  describe('inbound flow', () => {
-    it('re-emits matching inbound relay messages on the local emitter', () => {
+  describe("inbound flow", () => {
+    it("re-emits matching inbound relay messages on the local emitter", () => {
       const transport = new CoordinatorTransport(manager, {
         broadcastEvents: true,
-        broadcastPatterns: ['sync.**'],
+        broadcastPatterns: ["sync.**"],
       });
       const emitter = makeEmitter();
       transport.connect(emitter);
@@ -232,13 +232,13 @@ describe('CoordinatorTransport', () => {
       const peer = manager.createPeer();
       const peerChan = peer.channel(RELAY_CHANNEL);
       peerChan.broadcast({
-        kind: 'event-relay',
-        event: 'auth.login',
-        args: [{ userId: 'u1' }, { at: 1 }],
-        sourceTabId: 'other-tab',
+        kind: "event-relay",
+        event: "auth.login",
+        args: [{ userId: "u1" }, { at: 1 }],
+        sourceTabId: "other-tab",
       } satisfies IRelayMessage);
 
-      expect(emitter.calls).toContainEqual(['auth.login', [{ userId: 'u1' }, { at: 1 }]]);
+      expect(emitter.calls).toContainEqual(["auth.login", [{ userId: "u1" }, { at: 1 }]]);
     });
   });
 });

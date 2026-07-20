@@ -10,7 +10,11 @@
       "abilities": [
         { "action": "viewAny", "permission": "payouts.viewAny" },
         { "action": "view", "permission": "payouts.view" },
-        { "action": "sync", "permission": "payouts.sync", "scope": "refuses when status IN ('paid', 'failed', 'cancelled') AND reconciled_at IS NOT NULL." },
+        {
+          "action": "sync",
+          "permission": "payouts.sync",
+          "scope": "refuses when status IN ('paid', 'failed', 'cancelled') AND reconciled_at IS NOT NULL."
+        },
         { "action": "platformViewAny", "permission": "platform.payouts.viewAny" }
       ]
     },
@@ -28,7 +32,11 @@
       "abilities": [
         { "action": "viewAny", "permission": "payout-reconciliations.viewAny" },
         { "action": "view", "permission": "payout-reconciliations.view" },
-        { "action": "resolve", "permission": "payout-reconciliations.resolve", "scope": "refuses when status != 'drift'." }
+        {
+          "action": "resolve",
+          "permission": "payout-reconciliations.resolve",
+          "scope": "refuses when status != 'drift'."
+        }
       ]
     }
   ]

@@ -6,9 +6,9 @@
 
 ### Trust-boundary (P0) — DONE
 
-- `Actions/PublicExchange/CreateTokenAction.php` — bcrypt → HS256 JWT
-  exchange. Constant-time secret compare, uniform failure payload for every
-  branch (unknown SA / wrong secret / disabled / expired), rate-limit via
+- `Actions/PublicExchange/CreateTokenAction.php` — bcrypt → HS256 JWT exchange.
+  Constant-time secret compare, uniform failure payload for every branch
+  (unknown SA / wrong secret / disabled / expired), rate-limit via
   `throttle:token-exchange` middleware, event dispatch on success.
 - `Services/ServiceAccountJwtIssuer.php` — bridges the SA row (signer_kid,
   application_id, tenant_id) to `auth::JwtSigner`. `purpose = service_account`,
@@ -24,8 +24,8 @@
   `#[SensitiveParameter]` on `$secret`, regex-validated ULID, audience array,
   bounded TTL override.
 - `Data/TokenIssuedData.php` — wire response mirroring blueprint §3.2.
-- `Exceptions/ServiceAccountTenantMutationException.php` — new exception for
-  the observer's guard.
+- `Exceptions/ServiceAccountTenantMutationException.php` — new exception for the
+  observer's guard.
 - `config/service-accounts.php` — jwt / rotation / rate_limits / dormant /
   failure_disable knobs, all env-loaded via Doppler.
 
@@ -33,16 +33,16 @@
 
 ### Platform CRUD (still `return null` scaffolds)
 
-| Action                        | Contract                                                   | Notes                                                                                                                              |
-| ----------------------------- | ---------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
-| `CreateServiceAccountAction`  | `POST /api/v1/platform/service-accounts`                   | Provision a SA. Emit the plain rotation secret ONCE in the response body; persist only `secret_hash` (bcrypt cost 12). Fire `ServiceAccountCreated`. |
-| `UpdateServiceAccountAction`  | `PATCH /api/v1/platform/service-accounts/{sa}`             | Update name / description / metadata / expires_at. Observer refuses `tenant_id` + `application_id` mutation.                       |
-| `RotateSecretAction`          | `POST /api/v1/platform/service-accounts/{sa}/rotate`       | Rotate the secret. New plain secret returned in response body ONCE. Old secret is immediately unusable — `Hash::check` will fail. |
-| `DeleteServiceAccountAction`  | `DELETE /api/v1/platform/service-accounts/{sa}`            | Soft-delete. Observer sets deleted_at + tenant_id stays intact for the retention window.                                            |
-| `ShowServiceAccountAction`    | `GET /api/v1/platform/service-accounts/{sa}`               | Read.                                                                                                                              |
-| `ListServiceAccountAction`    | `GET /api/v1/platform/service-accounts`                    | Read with spatie query filters.                                                                                                    |
-| `IssueJwtAction`              | `POST /api/v1/platform/service-accounts/{sa}/issue-jwt`    | Dry-run token generation (60s TTL default). Fires `ServiceAccountJwtIssued` with `trigger='test'`.                                 |
-| `AuditUsageAction`            | `GET /api/v1/platform/service-accounts/{sa}/audit-usage`   | Usage report — last N successful issuances + rate-limit hits + dormant window.                                                     |
+| Action                       | Contract                                                 | Notes                                                                                                                                                |
+| ---------------------------- | -------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `CreateServiceAccountAction` | `POST /api/v1/platform/service-accounts`                 | Provision a SA. Emit the plain rotation secret ONCE in the response body; persist only `secret_hash` (bcrypt cost 12). Fire `ServiceAccountCreated`. |
+| `UpdateServiceAccountAction` | `PATCH /api/v1/platform/service-accounts/{sa}`           | Update name / description / metadata / expires_at. Observer refuses `tenant_id` + `application_id` mutation.                                         |
+| `RotateSecretAction`         | `POST /api/v1/platform/service-accounts/{sa}/rotate`     | Rotate the secret. New plain secret returned in response body ONCE. Old secret is immediately unusable — `Hash::check` will fail.                    |
+| `DeleteServiceAccountAction` | `DELETE /api/v1/platform/service-accounts/{sa}`          | Soft-delete. Observer sets deleted_at + tenant_id stays intact for the retention window.                                                             |
+| `ShowServiceAccountAction`   | `GET /api/v1/platform/service-accounts/{sa}`             | Read.                                                                                                                                                |
+| `ListServiceAccountAction`   | `GET /api/v1/platform/service-accounts`                  | Read with spatie query filters.                                                                                                                      |
+| `IssueJwtAction`             | `POST /api/v1/platform/service-accounts/{sa}/issue-jwt`  | Dry-run token generation (60s TTL default). Fires `ServiceAccountJwtIssued` with `trigger='test'`.                                                   |
+| `AuditUsageAction`           | `GET /api/v1/platform/service-accounts/{sa}/audit-usage` | Usage report — last N successful issuances + rate-limit hits + dormant window.                                                                       |
 
 ### Services that still need bodies
 
@@ -52,8 +52,8 @@
   `ServiceAccountSecretRotated`.
 - `RotationSchedulerService` — cron: T-14d before `expires_at` dispatch
   `NotifyRotationDueJob`.
-- `DormantAccountDetector` — weekly scan: `last_used_at + dormant_days < now`
-  → emit dormancy signal.
+- `DormantAccountDetector` — weekly scan: `last_used_at + dormant_days < now` →
+  emit dormancy signal.
 - `ServiceAccountFingerprinter` — IP + user-agent digest for anomaly detection.
 
 ### Background jobs
@@ -110,9 +110,9 @@ RateLimiter::for('token-exchange', function (Request $request) {
 
 ## Follow-up handoffs
 
-- `test-mutation-engineer` — trust boundary is a MUST for max mutation
-  coverage. Priority: constant-time secret compare, IP-allowlist check
-  (once wired), disable-on-N-failures counter, JWT emission event shape.
-- `security-compliance-reviewer` — verify the "no enumeration signal"
-  invariant across the full failure path (message + status code + response
-  time). Time each branch and confirm they're within 5ms of each other.
+- `test-mutation-engineer` — trust boundary is a MUST for max mutation coverage.
+  Priority: constant-time secret compare, IP-allowlist check (once wired),
+  disable-on-N-failures counter, JWT emission event shape.
+- `security-compliance-reviewer` — verify the "no enumeration signal" invariant
+  across the full failure path (message + status code + response time). Time
+  each branch and confirm they're within 5ms of each other.

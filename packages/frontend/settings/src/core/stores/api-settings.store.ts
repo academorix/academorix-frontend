@@ -13,16 +13,16 @@
  *   reads never surface as failures on offline networks.
  */
 
-import { retry, Uri } from '@stackra/support';
+import { retry, Uri } from "@stackra/support";
 import type {
   IApiStoreDriverConfig,
   IHttpClient,
   IHttpManager,
   ISettingsApiEndpoints,
   ISettingsStore,
-} from '@stackra/contracts';
+} from "@stackra/contracts";
 
-import { DEFAULT_API_ENDPOINTS } from '@/core/constants/api-endpoints.constant';
+import { DEFAULT_API_ENDPOINTS } from "@/core/constants/api-endpoints.constant";
 
 /**
  * Options accepted by `ApiSettingsStore`.
@@ -52,7 +52,7 @@ export interface IApiSettingsStoreOptions {
    */
   readonly query?: Record<string, string> | (() => Record<string, string>);
   /** Retry policy. */
-  readonly retry?: IApiStoreDriverConfig['retry'];
+  readonly retry?: IApiStoreDriverConfig["retry"];
   /**
    * Fallback store to consult on API failure. Provided by the
    * manager, resolved lazily (avoids constructor-time cyclic
@@ -60,30 +60,30 @@ export interface IApiSettingsStoreOptions {
    */
   readonly fallback?: ISettingsStore;
   /** Called when a request fails after retries. */
-  readonly onError?: IApiStoreDriverConfig['onError'];
+  readonly onError?: IApiStoreDriverConfig["onError"];
 }
 
 /** `ISettingsStore` composed over `@stackra/http`. */
 export class ApiSettingsStore implements ISettingsStore {
   /** Driver identifier. */
-  public readonly driver = 'api';
+  public readonly driver = "api";
 
   private readonly httpManager: IHttpManager;
   private readonly connection: string;
   private readonly endpoints: Required<ISettingsApiEndpoints>;
   private readonly baseUrl?: string;
-  private readonly headers?: IApiSettingsStoreOptions['headers'];
-  private readonly query?: IApiSettingsStoreOptions['query'];
-  private readonly retryOptions: IApiStoreDriverConfig['retry'];
+  private readonly headers?: IApiSettingsStoreOptions["headers"];
+  private readonly query?: IApiSettingsStoreOptions["query"];
+  private readonly retryOptions: IApiStoreDriverConfig["retry"];
   private readonly fallback?: ISettingsStore;
-  private readonly onError?: IApiStoreDriverConfig['onError'];
+  private readonly onError?: IApiStoreDriverConfig["onError"];
 
   /** Cached HTTP client resolved on first request. */
   private clientPromise: Promise<IHttpClient> | null = null;
 
   public constructor(options: IApiSettingsStoreOptions) {
     this.httpManager = options.httpManager;
-    this.connection = options.connection ?? 'default';
+    this.connection = options.connection ?? "default";
     this.endpoints = {
       ...DEFAULT_API_ENDPOINTS,
       ...options.endpoints,
@@ -109,9 +109,9 @@ export class ApiSettingsStore implements ISettingsStore {
   public async load(groupKey: string): Promise<Record<string, unknown>> {
     try {
       const values = await this.request<Record<string, unknown>>(
-        'GET',
+        "GET",
         this.endpoints.getGroup,
-        groupKey
+        groupKey,
       );
 
       // Mirror to fallback for offline warm-start.
@@ -125,7 +125,7 @@ export class ApiSettingsStore implements ISettingsStore {
 
       return values;
     } catch (error) {
-      this.emitError(error, groupKey, 'load');
+      this.emitError(error, groupKey, "load");
       if (this.fallback) {
         return this.fallback.load(groupKey);
       }
@@ -150,13 +150,13 @@ export class ApiSettingsStore implements ISettingsStore {
 
     try {
       await this.request<Record<string, unknown>>(
-        'PUT',
+        "PUT",
         this.endpoints.updateGroup,
         groupKey,
-        values
+        values,
       );
     } catch (error) {
-      this.emitError(error, groupKey, 'save');
+      this.emitError(error, groupKey, "save");
       // Local mirror already persisted — the caller sees success on
       // the fallback path and can retry the API push later.
     }
@@ -177,11 +177,11 @@ export class ApiSettingsStore implements ISettingsStore {
   public async loadAll(): Promise<Record<string, Record<string, unknown>>> {
     try {
       const payload = await this.request<unknown>(
-        'GET',
+        "GET",
         this.endpoints.listGroups,
         // The listGroups endpoint has no `{group}` placeholder — the
         // empty string is fine, `buildUrl` just no-ops the replace.
-        ''
+        "",
       );
 
       const groups = normaliseListGroupsPayload(payload);
@@ -200,7 +200,7 @@ export class ApiSettingsStore implements ISettingsStore {
 
       return groups;
     } catch (error) {
-      this.emitError(error, '*', 'load');
+      this.emitError(error, "*", "load");
       // Delegate to the fallback's loadAll (if it has one) so
       // consumers get a warm cache from the last successful call.
       if (this.fallback?.loadAll) {
@@ -221,9 +221,9 @@ export class ApiSettingsStore implements ISettingsStore {
     }
 
     try {
-      await this.request<void>('DELETE', this.endpoints.updateGroup, groupKey);
+      await this.request<void>("DELETE", this.endpoints.updateGroup, groupKey);
     } catch (error) {
-      this.emitError(error, groupKey, 'clear');
+      this.emitError(error, groupKey, "clear");
     }
   }
 
@@ -245,10 +245,10 @@ export class ApiSettingsStore implements ISettingsStore {
    * shape.
    */
   private async request<T>(
-    method: 'GET' | 'PUT' | 'DELETE',
+    method: "GET" | "PUT" | "DELETE",
     endpointTemplate: string,
     groupKey: string,
-    body?: unknown
+    body?: unknown,
   ): Promise<T> {
     return retry(
       async () => {
@@ -257,11 +257,11 @@ export class ApiSettingsStore implements ISettingsStore {
         const headers = this.resolveHeaders();
 
         // Every branch returns the response body as `T`.
-        if (method === 'GET') {
+        if (method === "GET") {
           const res = await client.get<T>(url, { headers });
           return res.data as T;
         }
-        if (method === 'PUT') {
+        if (method === "PUT") {
           const res = await client.put<T>(url, body, { headers });
           return res.data as T;
         }
@@ -272,8 +272,8 @@ export class ApiSettingsStore implements ISettingsStore {
       {
         times: this.retryOptions?.attempts ?? 3,
         delay: this.retryOptions?.backoffMs ?? 200,
-        backoff: 'exponential',
-      }
+        backoff: "exponential",
+      },
     );
   }
 
@@ -283,7 +283,7 @@ export class ApiSettingsStore implements ISettingsStore {
    * normalisation.
    */
   private buildUrl(template: string, groupKey: string): string {
-    const path = template.replace('{group}', encodeURIComponent(groupKey));
+    const path = template.replace("{group}", encodeURIComponent(groupKey));
 
     // When no explicit baseUrl is set, return the path — the HTTP
     // client's own baseUrl folds it in. When one IS set, build the
@@ -292,7 +292,7 @@ export class ApiSettingsStore implements ISettingsStore {
       const query = this.resolveQuery();
       if (Object.keys(query).length === 0) return path;
       // Uri needs a base to work with; use a placeholder then strip.
-      const placeholder = 'https://__stackra_settings_placeholder__';
+      const placeholder = "https://__stackra_settings_placeholder__";
       const abs = Uri.of(placeholder).path(path).query(query).toString();
       return abs.slice(placeholder.length);
     }
@@ -304,17 +304,17 @@ export class ApiSettingsStore implements ISettingsStore {
   /** Merge static + dynamic headers into one record. */
   private resolveHeaders(): Record<string, string> | undefined {
     if (!this.headers) return undefined;
-    return typeof this.headers === 'function' ? this.headers() : this.headers;
+    return typeof this.headers === "function" ? this.headers() : this.headers;
   }
 
   /** Merge static + dynamic query params into one record. */
   private resolveQuery(): Record<string, string> {
     if (!this.query) return {};
-    return typeof this.query === 'function' ? this.query() : this.query;
+    return typeof this.query === "function" ? this.query() : this.query;
   }
 
   /** Emit the onError callback while shielding from callback throws. */
-  private emitError(error: unknown, groupKey: string, op: 'load' | 'save' | 'clear'): void {
+  private emitError(error: unknown, groupKey: string, op: "load" | "save" | "clear"): void {
     if (!this.onError) return;
     try {
       this.onError(error instanceof Error ? error : new Error(String(error)), groupKey, op);
@@ -340,11 +340,11 @@ export class ApiSettingsStore implements ISettingsStore {
  * than throwing — a malformed group cannot sink the whole cold-start.
  */
 function normaliseListGroupsPayload(payload: unknown): Record<string, Record<string, unknown>> {
-  if (!payload || typeof payload !== 'object') return {};
+  if (!payload || typeof payload !== "object") return {};
 
   // Laravel API-resource wrapper: unwrap `.data`.
   const source =
-    'data' in payload && typeof (payload as { data?: unknown }).data === 'object'
+    "data" in payload && typeof (payload as { data?: unknown }).data === "object"
       ? (payload as { data: unknown }).data
       : payload;
 
@@ -354,7 +354,7 @@ function normaliseListGroupsPayload(payload: unknown): Record<string, Record<str
   if (Array.isArray(source)) {
     for (const entry of source) {
       if (!isRecord(entry)) continue;
-      const groupKey = typeof entry.group === 'string' ? entry.group : undefined;
+      const groupKey = typeof entry.group === "string" ? entry.group : undefined;
       if (!groupKey) continue;
       const values = isRecord(entry.values) ? entry.values : {};
       out[groupKey] = values;
@@ -374,5 +374,5 @@ function normaliseListGroupsPayload(payload: unknown): Record<string, Record<str
 
 /** Runtime record guard. */
 function isRecord(value: unknown): value is Record<string, unknown> {
-  return typeof value === 'object' && value !== null && !Array.isArray(value);
+  return typeof value === "object" && value !== null && !Array.isArray(value);
 }

@@ -8,27 +8,27 @@
  *   chosen route path.
  */
 
-import { useMemo, useState, type ReactElement } from 'react';
-import { Button, Chip } from '@stackra/ui/react';
-import { CheckIcon, Cog6ToothIcon } from '@stackra/ui/icons/heroicon/outline';
+import { useMemo, useState, type ReactElement } from "react";
+import { Button, Chip } from "@stackra/ui/react";
+import { CheckIcon, Cog6ToothIcon } from "@stackra/ui/icons/heroicon/outline";
 
-import { NOTIFICATION_CATEGORIES } from '@/core/constants';
-import type { IRenderableNotification } from '@/core/interfaces';
-import { useNotificationWrites } from '../../hooks/use-notification-writes';
-import { useRenderableNotifications } from '../../hooks/use-renderable-notifications';
-import { NotificationList } from '../../components/notification-list';
+import { NOTIFICATION_CATEGORIES } from "@/core/constants";
+import type { IRenderableNotification } from "@/core/interfaces";
+import { useNotificationWrites } from "../../hooks/use-notification-writes";
+import { useRenderableNotifications } from "../../hooks/use-renderable-notifications";
+import { NotificationList } from "../../components/notification-list";
 import type {
   NotificationDrawerCategoryFilter,
   NotificationDrawerSection,
-} from '../../components/notification-drawer';
-import type { InboxPageProps } from './inbox-page.interface';
+} from "../../components/notification-drawer";
+import type { InboxPageProps } from "./inbox-page.interface";
 
 /** Category filter chips — identical shape to the drawer's. */
 const CATEGORY_FILTERS: readonly {
   readonly key: NotificationDrawerCategoryFilter;
   readonly label: string;
 }[] = [
-  { key: 'all', label: 'All' },
+  { key: "all", label: "All" },
   ...(Object.values(NOTIFICATION_CATEGORIES).map((c) => ({
     key: c.key,
     label: c.label,
@@ -43,9 +43,9 @@ const CATEGORY_FILTERS: readonly {
  */
 function matchesCategory(
   entry: IRenderableNotification,
-  category: NotificationDrawerCategoryFilter
+  category: NotificationDrawerCategoryFilter,
 ): boolean {
-  if (category === 'all') return true;
+  if (category === "all") return true;
   return entry.notification.payload.category === category;
 }
 
@@ -69,13 +69,13 @@ export function InboxPage({
 }: InboxPageProps = {}): ReactElement {
   const { entries, unreadCount } = useRenderableNotifications();
   const { markAllSeen } = useNotificationWrites(writer);
-  const [section, setSection] = useState<NotificationDrawerSection>('unread');
-  const [category, setCategory] = useState<NotificationDrawerCategoryFilter>('all');
+  const [section, setSection] = useState<NotificationDrawerSection>("unread");
+  const [category, setCategory] = useState<NotificationDrawerCategoryFilter>("all");
 
   const filtered = useMemo<readonly IRenderableNotification[]>(() => {
     return entries.filter((entry) => {
       if (entry.isSnoozed) return false;
-      if (section === 'unread' && entry.isRead) return false;
+      if (section === "unread" && entry.isRead) return false;
       if (!matchesCategory(entry, category)) return false;
       return true;
     });
@@ -83,16 +83,16 @@ export function InboxPage({
 
   return (
     <div
-      className={`flex flex-col gap-4 p-6${className ? ` ${className}` : ''}`}
+      className={`flex flex-col gap-4 p-6${className ? ` ${className}` : ""}`}
       data-notifications-inbox-page=""
     >
       <header className="flex items-start justify-between gap-3">
         <div className="flex flex-col gap-1">
-          <h1 className="text-xl font-semibold text-foreground">Inbox</h1>
-          <p className="text-sm text-muted">
+          <h1 className="text-foreground text-xl font-semibold">Inbox</h1>
+          <p className="text-muted text-sm">
             {unreadCount === 0
               ? "You're up to date."
-              : `${unreadCount} unread notification${unreadCount === 1 ? '' : 's'}.`}
+              : `${unreadCount} unread notification${unreadCount === 1 ? "" : "s"}.`}
           </p>
         </div>
         <div className="flex items-center gap-2">
@@ -122,18 +122,18 @@ export function InboxPage({
         </div>
       </header>
 
-      <div className="flex flex-col gap-3 border-b border-border pb-3">
+      <div className="border-border flex flex-col gap-3 border-b pb-3">
         <div
           aria-label="Sections"
-          className="inline-flex rounded-lg bg-surface-secondary p-0.5"
+          className="bg-surface-secondary inline-flex rounded-lg p-0.5"
           role="tablist"
         >
           {[
             {
-              key: 'unread' as const,
-              label: `Unread${unreadCount > 0 ? ` (${unreadCount})` : ''}`,
+              key: "unread" as const,
+              label: `Unread${unreadCount > 0 ? ` (${unreadCount})` : ""}`,
             },
-            { key: 'all' as const, label: 'All' },
+            { key: "all" as const, label: "All" },
           ].map((tab) => (
             <button
               key={tab.key}
@@ -142,8 +142,8 @@ export function InboxPage({
               aria-selected={section === tab.key}
               className={
                 section === tab.key
-                  ? 'rounded-md bg-surface px-3 py-1 text-sm font-medium text-foreground shadow-surface'
-                  : 'rounded-md px-3 py-1 text-sm text-muted hover:text-foreground'
+                  ? "bg-surface text-foreground shadow-surface rounded-md px-3 py-1 text-sm font-medium"
+                  : "text-muted hover:text-foreground rounded-md px-3 py-1 text-sm"
               }
               onClick={() => setSection(tab.key)}
             >
@@ -159,13 +159,13 @@ export function InboxPage({
                 key={filter.key}
                 type="button"
                 aria-pressed={isActive}
-                className="focus:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+                className="focus-visible:ring-accent focus:outline-none focus-visible:ring-2"
                 onClick={() => setCategory(filter.key)}
               >
                 <Chip
-                  color={isActive ? 'accent' : 'default'}
+                  color={isActive ? "accent" : "default"}
                   size="sm"
-                  variant={isActive ? 'primary' : 'secondary'}
+                  variant={isActive ? "primary" : "secondary"}
                 >
                   <Chip.Label>{filter.label}</Chip.Label>
                 </Chip>
@@ -175,7 +175,7 @@ export function InboxPage({
         </div>
       </div>
 
-      <div className="min-h-[400px] rounded-xl border border-border bg-surface">
+      <div className="border-border bg-surface min-h-[400px] rounded-xl border">
         <NotificationList emptyVariant="page" entries={filtered} writer={writer} />
       </div>
     </div>

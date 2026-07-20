@@ -19,19 +19,19 @@
  *      dispatches without subscribing to every schema node.
  */
 
-import { useCallback } from 'react';
-import { useOptionalInject } from '@stackra/container/react';
-import { useActionDispatcher } from '@stackra/actions/react';
+import { useCallback } from "react";
+import { useOptionalInject } from "@stackra/container/react";
+import { useActionDispatcher } from "@stackra/actions/react";
 import type {
   IActionContext,
   IActionResponse,
   IEventEmitter,
   ISduiAction,
   ISduiSubmitFormAction,
-} from '@stackra/contracts';
-import { ActionKind, EVENT_EMITTER, SDUI_EVENTS, SDUI_RUNTIME_STORE } from '@stackra/contracts';
-import type { ISduiRuntime } from '@stackra/contracts';
-import { useSduiRuntime } from '../providers/sdui-runtime.provider';
+} from "@stackra/contracts";
+import { ActionKind, EVENT_EMITTER, SDUI_EVENTS, SDUI_RUNTIME_STORE } from "@stackra/contracts";
+import type { ISduiRuntime } from "@stackra/contracts";
+import { useSduiRuntime } from "../providers/sdui-runtime.provider";
 
 /**
  * Result of `adaptAction` — the framework descriptor plus whether the
@@ -52,7 +52,7 @@ interface AdaptResult {
  */
 function adaptAction(action: ISduiAction): AdaptResult {
   switch (action.kind) {
-    case 'navigate':
+    case "navigate":
       return {
         descriptor: {
           kind: ActionKind.Navigate,
@@ -61,7 +61,7 @@ function adaptAction(action: ISduiAction): AdaptResult {
           replace: action.replace,
         } as never,
       };
-    case 'toast':
+    case "toast":
       return {
         descriptor: {
           kind: ActionKind.Toast,
@@ -70,7 +70,7 @@ function adaptAction(action: ISduiAction): AdaptResult {
           message: action.description ?? action.title,
         } as never,
       };
-    case 'openOverlay':
+    case "openOverlay":
       return {
         descriptor: {
           kind: ActionKind.OpenOverlay,
@@ -78,14 +78,14 @@ function adaptAction(action: ISduiAction): AdaptResult {
           payload: action.payload as unknown,
         } as never,
       };
-    case 'closeOverlay':
+    case "closeOverlay":
       return {
         descriptor: {
           kind: ActionKind.CloseOverlay,
           overlayId: action.overlayId,
         } as never,
       };
-    case 'setState':
+    case "setState":
       // Substitute the SDUI runtime store as default `storeToken` so
       // the framework `SetStateHandler` routes schema-authored writes
       // to the registered SDUI store (registered by
@@ -98,7 +98,7 @@ function adaptAction(action: ISduiAction): AdaptResult {
           storeToken: SDUI_RUNTIME_STORE,
         } as never,
       };
-    case 'toggleState':
+    case "toggleState":
       return {
         descriptor: {
           kind: ActionKind.ToggleState,
@@ -106,7 +106,7 @@ function adaptAction(action: ISduiAction): AdaptResult {
           storeToken: SDUI_RUNTIME_STORE,
         } as never,
       };
-    case 'callApi':
+    case "callApi":
       return {
         descriptor: {
           kind: ActionKind.Mutate,
@@ -116,7 +116,7 @@ function adaptAction(action: ISduiAction): AdaptResult {
           assignTo: action.assignTo,
         } as never,
       };
-    case 'submitForm':
+    case "submitForm":
       // Handled specially: adapter grabs form values, then wraps the
       // Mutate + onSuccess chain in a single `ICompositeAction` so the
       // whole submission traces as one dispatch (see caller below).
@@ -124,7 +124,7 @@ function adaptAction(action: ISduiAction): AdaptResult {
         descriptor: {
           kind: ActionKind.Mutate,
           endpoint: action.endpoint,
-          method: action.method ?? 'POST',
+          method: action.method ?? "POST",
         } as never,
         isSubmitForm: true,
       };
@@ -137,7 +137,7 @@ function adaptAction(action: ISduiAction): AdaptResult {
  */
 export type SduiActionDispatchCallback = (
   action: ISduiAction,
-  context?: IActionContext
+  context?: IActionContext,
 ) => Promise<IActionResponse>;
 
 /**
@@ -212,12 +212,12 @@ export function useSduiActionAdapter(): SduiActionDispatchCallback {
       // Practically: the local call is the fallback path; the
       // subscription in the provider is the primary path when the
       // framework is wired.
-      if (action.kind === 'openOverlay') runtime.openOverlay(action.overlayId);
-      if (action.kind === 'closeOverlay') runtime.closeOverlay(action.overlayId);
+      if (action.kind === "openOverlay") runtime.openOverlay(action.overlayId);
+      if (action.kind === "closeOverlay") runtime.closeOverlay(action.overlayId);
 
       let response: IActionResponse;
 
-      if (action.kind === 'submitForm') {
+      if (action.kind === "submitForm") {
         // Compose Mutate + onSuccess into a single Composite so the
         // pipeline traces as ONE dispatch (matches the framework's
         // "one audit surface per intent" invariant) and stopOnFailure
@@ -243,7 +243,7 @@ export function useSduiActionAdapter(): SduiActionDispatchCallback {
 
       return response;
     },
-    [dispatch, runtime, events]
+    [dispatch, runtime, events],
   );
 }
 
@@ -261,7 +261,7 @@ async function dispatchSubmitForm(
   action: ISduiSubmitFormAction,
   context: IActionContext,
   dispatch: ReturnType<typeof useActionDispatcher>,
-  runtime: ISduiRuntime
+  runtime: ISduiRuntime,
 ): Promise<IActionResponse> {
   // Collect the form values imperatively — the form-value registry
   // lives on a ref inside the runtime so keystrokes don't cause
@@ -270,7 +270,7 @@ async function dispatchSubmitForm(
   const mutateDescriptor = {
     kind: ActionKind.Mutate,
     endpoint: action.endpoint,
-    method: action.method ?? 'POST',
+    method: action.method ?? "POST",
     body: values,
   } as const;
 

@@ -6,7 +6,7 @@
  *   `authProvider.refresh()` once and retries — a second failure re-throws.
  */
 
-import { AiError } from './ai.error';
+import { AiError } from "./ai.error";
 
 /**
  * Thrown when the backend rejects a request with `401 Unauthorized` or
@@ -25,7 +25,7 @@ export class AiAuthError extends AiError {
   public constructor(
     message: string,
     public readonly status: number,
-    cause?: unknown
+    cause?: unknown,
   ) {
     super(message, cause);
   }

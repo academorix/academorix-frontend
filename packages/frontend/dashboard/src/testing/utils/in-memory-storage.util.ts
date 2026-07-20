@@ -254,10 +254,7 @@ export class InMemoryDashboardStorage implements IDashboardStorageAdapter {
     };
   }
 
-  public async updateAnnotation(
-    annotationId: string,
-    body: string,
-  ): Promise<IWidgetAnnotation> {
+  public async updateAnnotation(annotationId: string, body: string): Promise<IWidgetAnnotation> {
     return {
       id: annotationId,
       widgetInstanceId: "test-widget",

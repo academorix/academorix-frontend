@@ -9,7 +9,7 @@ import type {
   IPwaInstallState,
   IPwaUpdateState,
   PwaDisplayMode,
-} from '@/core/interfaces';
+} from "@/core/interfaces";
 
 /**
  * Shape returned by {@link usePwa}.

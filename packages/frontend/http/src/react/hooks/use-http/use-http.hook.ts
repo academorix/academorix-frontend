@@ -8,11 +8,11 @@
  * @module @stackra/http/react/hooks/use-http
  */
 
-import { useEffect, useState } from 'react';
-import { useInject } from '@stackra/container/react';
-import { HTTP_MANAGER, type IHttpManager } from '@stackra/contracts';
+import { useEffect, useState } from "react";
+import { useInject } from "@stackra/container/react";
+import { HTTP_MANAGER, type IHttpManager } from "@stackra/contracts";
 
-import type { IUseHttpResult } from '@/react/interfaces';
+import type { IUseHttpResult } from "@/react/interfaces";
 
 /**
  * Read an `IHttpClient` for the given connection.

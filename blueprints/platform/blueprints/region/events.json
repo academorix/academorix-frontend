@@ -34,10 +34,7 @@
       "class": "Academorix\\Region\\Events\\RegionUpdated",
       "trigger": "Any Region field mutated except status (RegionStatusChanged), is_default (RegionDefaultChanged), and tax_config (RegionTaxConfigUpdated). Fires for renames, timezone changes, locale changes, sort_order, weekend_days, subdivision_code.",
       "queue": "notifications",
-      "consumers": [
-        "audit::WriteToAuditLog",
-        "activity::WriteToActivityLog"
-      ],
+      "consumers": ["audit::WriteToAuditLog", "activity::WriteToActivityLog"],
       "payload": {
         "region_id": "ULID",
         "tenant_id": "ULID",
@@ -50,10 +47,7 @@
       "class": "Academorix\\Region\\Events\\RegionStatusChanged",
       "trigger": "Region.status transitioned. Umbrella event fired alongside the specific transition event (RegionPaused / RegionResumed / RegionArchived / RegionRestored). Downstream consumers subscribe to whichever level of specificity they need.",
       "queue": "notifications",
-      "consumers": [
-        "audit::WriteToAuditLog",
-        "activity::WriteToActivityLog"
-      ],
+      "consumers": ["audit::WriteToAuditLog", "activity::WriteToActivityLog"],
       "payload": {
         "region_id": "ULID",
         "tenant_id": "ULID",
@@ -126,10 +120,7 @@
       "class": "Academorix\\Region\\Events\\RegionRestored",
       "trigger": "Archived Region transitioned back to active. Restoration allowed within the 730-day retention window (financial retention).",
       "queue": "notifications",
-      "consumers": [
-        "audit::WriteToAuditLog",
-        "activity::WriteToActivityLog"
-      ],
+      "consumers": ["audit::WriteToAuditLog", "activity::WriteToActivityLog"],
       "payload": {
         "region_id": "ULID",
         "tenant_id": "ULID",
@@ -180,10 +171,7 @@
       "class": "Academorix\\Region\\Events\\RegionDeleted",
       "trigger": "Region soft-deleted OR hard-deleted. Distinct events not needed — the payload carries the mode.",
       "queue": "notifications",
-      "consumers": [
-        "audit::WriteToAuditLog",
-        "activity::WriteToActivityLog"
-      ],
+      "consumers": ["audit::WriteToAuditLog", "activity::WriteToActivityLog"],
       "payload": {
         "region_id": "ULID",
         "tenant_id": "ULID",

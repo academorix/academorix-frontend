@@ -9,7 +9,7 @@
  * @module @stackra/http/middleware/rate-limit
  */
 
-import { Inject } from '@stackra/container';
+import { Inject } from "@stackra/container";
 
 import {
   HTTP_CONFIG,
@@ -20,16 +20,16 @@ import {
   type IHttpRateLimitEndpointConfig,
   type IHttpRequestConfig,
   type IHttpResponse,
-} from '@stackra/contracts';
+} from "@stackra/contracts";
 
-import { DEFAULT_RATE_LIMIT } from '../constants';
-import { HttpMiddleware } from '../decorators/http-middleware.decorator';
-import { TokenBucketService } from '../services/token-bucket.service';
+import { DEFAULT_RATE_LIMIT } from "../constants";
+import { HttpMiddleware } from "../decorators/http-middleware.decorator";
+import { TokenBucketService } from "../services/token-bucket.service";
 
 /**
  * Rate-limit middleware.
  */
-@HttpMiddleware({ priority: 30, name: 'rate-limit' })
+@HttpMiddleware({ priority: 30, name: "rate-limit" })
 export class RateLimitMiddleware implements IHttpMiddleware {
   /**
    * @param config       - Module options. The default-connection's
@@ -39,7 +39,7 @@ export class RateLimitMiddleware implements IHttpMiddleware {
    */
   public constructor(
     @Inject(HTTP_CONFIG) private readonly config: IHttpModuleOptions,
-    private readonly tokenBuckets: TokenBucketService
+    private readonly tokenBuckets: TokenBucketService,
   ) {}
 
   /** @inheritdoc */
@@ -51,7 +51,7 @@ export class RateLimitMiddleware implements IHttpMiddleware {
       return next(context);
     }
 
-    if (context.request.meta?.['skipRateLimit'] === true) {
+    if (context.request.meta?.["skipRateLimit"] === true) {
       return next(context);
     }
 
@@ -65,6 +65,6 @@ export class RateLimitMiddleware implements IHttpMiddleware {
 
   /** Build the `"{METHOD}:{URL}"` lookup key. */
   private static endpointKey(request: IHttpRequestConfig): string {
-    return `${request.method ?? 'GET'}:${request.url ?? ''}`;
+    return `${request.method ?? "GET"}:${request.url ?? ""}`;
   }
 }

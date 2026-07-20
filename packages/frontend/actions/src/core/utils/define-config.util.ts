@@ -5,7 +5,7 @@
  *   `config/actions.config.ts` file.
  */
 
-import type { IActionsModuleOptions } from '@stackra/contracts';
+import type { IActionsModuleOptions } from "@stackra/contracts";
 
 /**
  * Authoring helper for the actions module config.

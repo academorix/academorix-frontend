@@ -11,7 +11,12 @@
   "requiresEntitlement": "teams",
   "realtime": {
     "channel": "team.{teamId}.members",
-    "events": ["TeamMemberJoined", "TeamMemberLeft", "TeamMemberRoleChanged", "TeamMemberStatusChanged"],
+    "events": [
+      "TeamMemberJoined",
+      "TeamMemberLeft",
+      "TeamMemberRoleChanged",
+      "TeamMemberStatusChanged"
+    ],
     "onEvent": { "kind": "refetch", "sources": ["members"] }
   },
   "dataSources": [
@@ -62,7 +67,12 @@
             {
               "kind": "Button",
               "props": { "variant": "primary", "leadingIcon": "plus", "children": "Add member" },
-              "actions": { "onPress": { "kind": "navigate", "toExpr": "'/tenant/teams/' + team.id + '/members/new'" } },
+              "actions": {
+                "onPress": {
+                  "kind": "navigate",
+                  "toExpr": "'/tenant/teams/' + team.id + '/members/new'"
+                }
+              },
               "requiresPermission": "team_members.create"
             }
           ]
@@ -77,21 +87,81 @@
           "columns": [
             { "field": "member.name", "label": "Member", "sortable": true },
             { "field": "member_type", "label": "Type" },
-            { "field": "role_on_team", "label": "Role", "renderer": { "kind": "Widget", "widget": "teams.member-role-chip", "bindings": { "role": { "$ref": "row.role_on_team" } } } },
+            {
+              "field": "role_on_team",
+              "label": "Role",
+              "renderer": {
+                "kind": "Widget",
+                "widget": "teams.member-role-chip",
+                "bindings": { "role": { "$ref": "row.role_on_team" } }
+              }
+            },
             { "field": "jersey_number", "label": "#", "align": "right" },
             { "field": "position", "label": "Position" },
             { "field": "joined_at", "label": "Joined", "format": "date" },
-            { "field": "status", "label": "Status", "renderer": { "kind": "Chip", "bindings": { "variant": { "$expr": "row.status === 'active' ? 'success' : (row.status === 'injured' ? 'warning' : (row.status === 'suspended' ? 'danger' : 'neutral'))" }, "children": { "$ref": "row.status" } } } },
+            {
+              "field": "status",
+              "label": "Status",
+              "renderer": {
+                "kind": "Chip",
+                "bindings": {
+                  "variant": {
+                    "$expr": "row.status === 'active' ? 'success' : (row.status === 'injured' ? 'warning' : (row.status === 'suspended' ? 'danger' : 'neutral'))"
+                  },
+                  "children": { "$ref": "row.status" }
+                }
+              }
+            },
             {
               "field": "actions",
               "label": "",
               "renderer": {
                 "kind": "Dropdown",
                 "children": [
-                  { "kind": "Dropdown.Item", "props": { "children": "View" }, "actions": { "onPress": { "kind": "navigate", "toExpr": "'/tenant/teams/' + team.id + '/members/' + row.id" } } },
-                  { "kind": "Dropdown.Item", "props": { "children": "Change role" }, "actions": { "onPress": { "kind": "modal.open", "modal": "change-role", "context": { "member_id": "row.id" } } }, "requiresPermission": "team_members.change-role" },
-                  { "kind": "Dropdown.Item", "props": { "children": "Mark injured" }, "actions": { "onPress": { "kind": "http.post", "url": "/api/v1/teams/{teamId}/members/{row.id}/mark-injured" } }, "requiresPermission": "team_members.mark-injured" },
-                  { "kind": "Dropdown.Item", "props": { "children": "Mark graduated" }, "actions": { "onPress": { "kind": "http.post", "url": "/api/v1/teams/{teamId}/members/{row.id}/mark-graduated" } }, "requiresPermission": "team_members.mark-graduated" }
+                  {
+                    "kind": "Dropdown.Item",
+                    "props": { "children": "View" },
+                    "actions": {
+                      "onPress": {
+                        "kind": "navigate",
+                        "toExpr": "'/tenant/teams/' + team.id + '/members/' + row.id"
+                      }
+                    }
+                  },
+                  {
+                    "kind": "Dropdown.Item",
+                    "props": { "children": "Change role" },
+                    "actions": {
+                      "onPress": {
+                        "kind": "modal.open",
+                        "modal": "change-role",
+                        "context": { "member_id": "row.id" }
+                      }
+                    },
+                    "requiresPermission": "team_members.change-role"
+                  },
+                  {
+                    "kind": "Dropdown.Item",
+                    "props": { "children": "Mark injured" },
+                    "actions": {
+                      "onPress": {
+                        "kind": "http.post",
+                        "url": "/api/v1/teams/{teamId}/members/{row.id}/mark-injured"
+                      }
+                    },
+                    "requiresPermission": "team_members.mark-injured"
+                  },
+                  {
+                    "kind": "Dropdown.Item",
+                    "props": { "children": "Mark graduated" },
+                    "actions": {
+                      "onPress": {
+                        "kind": "http.post",
+                        "url": "/api/v1/teams/{teamId}/members/{row.id}/mark-graduated"
+                      }
+                    },
+                    "requiresPermission": "team_members.mark-graduated"
+                  }
                 ]
               }
             }

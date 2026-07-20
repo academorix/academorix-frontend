@@ -64,7 +64,11 @@
               "children": [
                 {
                   "kind": "Button",
-                  "props": { "variant": "ghost", "leadingIcon": "arrow-down-tray", "children": "Export CSV" },
+                  "props": {
+                    "variant": "ghost",
+                    "leadingIcon": "arrow-down-tray",
+                    "children": "Export CSV"
+                  },
                   "actions": {
                     "onPress": {
                       "kind": "http.download",
@@ -74,7 +78,11 @@
                 },
                 {
                   "kind": "Button",
-                  "props": { "variant": "ghost", "leadingIcon": "arrow-down-tray", "children": "Export JSON" },
+                  "props": {
+                    "variant": "ghost",
+                    "leadingIcon": "arrow-down-tray",
+                    "children": "Export JSON"
+                  },
                   "actions": {
                     "onPress": {
                       "kind": "http.download",
@@ -130,7 +138,11 @@
             },
             {
               "kind": "Select",
-              "props": { "name": "filter[department]", "placeholder": "All departments", "clearable": true },
+              "props": {
+                "name": "filter[department]",
+                "placeholder": "All departments",
+                "clearable": true
+              },
               "options": [
                 { "key": "support", "label": "Support" },
                 { "key": "engineering", "label": "Engineering" },
@@ -141,7 +153,11 @@
             },
             {
               "kind": "Select",
-              "props": { "name": "filter[end_trigger]", "placeholder": "Any end trigger", "clearable": true },
+              "props": {
+                "name": "filter[end_trigger]",
+                "placeholder": "Any end trigger",
+                "clearable": true
+              },
               "options": [
                 { "key": "self_service", "label": "Ended by operator" },
                 { "key": "ttl_expired", "label": "TTL expired" },
@@ -159,7 +175,10 @@
               "kind": "Card",
               "props": { "className": "p-4" },
               "children": [
-                { "kind": "Text", "props": { "className": "text-sm text-muted", "children": "Total sessions" } },
+                {
+                  "kind": "Text",
+                  "props": { "className": "text-sm text-muted", "children": "Total sessions" }
+                },
                 {
                   "kind": "Text",
                   "props": { "className": "text-2xl font-semibold" },
@@ -171,7 +190,10 @@
               "kind": "Card",
               "props": { "className": "p-4" },
               "children": [
-                { "kind": "Text", "props": { "className": "text-sm text-muted", "children": "Force-terminated" } },
+                {
+                  "kind": "Text",
+                  "props": { "className": "text-sm text-muted", "children": "Force-terminated" }
+                },
                 {
                   "kind": "Text",
                   "props": { "className": "text-2xl font-semibold text-danger" },
@@ -183,7 +205,10 @@
               "kind": "Card",
               "props": { "className": "p-4" },
               "children": [
-                { "kind": "Text", "props": { "className": "text-sm text-muted", "children": "Refused attempts" } },
+                {
+                  "kind": "Text",
+                  "props": { "className": "text-sm text-muted", "children": "Refused attempts" }
+                },
                 {
                   "kind": "Text",
                   "props": { "className": "text-2xl font-semibold text-warning" },
@@ -195,7 +220,10 @@
               "kind": "Card",
               "props": { "className": "p-4" },
               "children": [
-                { "kind": "Text", "props": { "className": "text-sm text-muted", "children": "Average duration" } },
+                {
+                  "kind": "Text",
+                  "props": { "className": "text-sm text-muted", "children": "Average duration" }
+                },
                 {
                   "kind": "Text",
                   "props": { "className": "text-2xl font-semibold" },

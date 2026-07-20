@@ -395,15 +395,26 @@
                           "kind": "View",
                           "props": { "className": "flex justify-between" },
                           "children": [
-                            { "kind": "Text", "props": { "className": "text-muted", "children": "Granted" } },
-                            { "kind": "Text", "bindings": { "children": { "$expr": "formatDate(grant.granted_at)" } } }
+                            {
+                              "kind": "Text",
+                              "props": { "className": "text-muted", "children": "Granted" }
+                            },
+                            {
+                              "kind": "Text",
+                              "bindings": {
+                                "children": { "$expr": "formatDate(grant.granted_at)" }
+                              }
+                            }
                           ]
                         },
                         {
                           "kind": "View",
                           "props": { "className": "flex justify-between" },
                           "children": [
-                            { "kind": "Text", "props": { "className": "text-muted", "children": "Expires" } },
+                            {
+                              "kind": "Text",
+                              "props": { "className": "text-muted", "children": "Expires" }
+                            },
                             {
                               "kind": "Text",
                               "bindings": {
@@ -419,7 +430,10 @@
                           "props": { "className": "flex justify-between" },
                           "bindings": { "hidden": { "$expr": "!grant.revoked_at" } },
                           "children": [
-                            { "kind": "Text", "props": { "className": "text-muted", "children": "Revoked" } },
+                            {
+                              "kind": "Text",
+                              "props": { "className": "text-muted", "children": "Revoked" }
+                            },
                             {
                               "kind": "Text",
                               "bindings": {

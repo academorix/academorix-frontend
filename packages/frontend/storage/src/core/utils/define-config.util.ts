@@ -7,7 +7,7 @@
  *   `StorageModule.forRoot`.
  */
 
-import type { IStorageModuleOptions } from '@stackra/contracts';
+import type { IStorageModuleOptions } from "@stackra/contracts";
 
 /**
  * Type-safe storage config builder.

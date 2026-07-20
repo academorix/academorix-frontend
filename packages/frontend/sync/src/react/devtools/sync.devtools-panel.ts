@@ -12,22 +12,22 @@
  *   `DevtoolsModule.forFeature([...])`.
  */
 
-import { createElement, type ReactNode } from 'react';
-import { ArrowsRightLeftIcon } from '@stackra/ui/icons/heroicon/outline';
-import { Inject, Injectable, Optional } from '@stackra/container';
+import { createElement, type ReactNode } from "react";
+import { ArrowsRightLeftIcon } from "@stackra/ui/icons/heroicon/outline";
+import { Inject, Injectable, Optional } from "@stackra/container";
 import {
   OPERATION_QUEUE,
   SYNC_ENGINE,
   type DevtoolsCategory,
   type IDevtoolsPanel,
   type IDevtoolsView,
-} from '@stackra/contracts';
+} from "@stackra/contracts";
 
-import { DevtoolsPanel } from '@stackra/devtools';
+import { DevtoolsPanel } from "@stackra/devtools";
 
-import type { OperationQueue } from '@/core/services/operation-queue.service';
-import type { SyncEngine } from '@/core/services/sync-engine.service';
-import { SyncDevtoolsPanelView } from './sync-devtools-panel-view';
+import type { OperationQueue } from "@/core/services/operation-queue.service";
+import type { SyncEngine } from "@/core/services/sync-engine.service";
+import { SyncDevtoolsPanelView } from "./sync-devtools-panel-view";
 
 /**
  * The devtools sync panel.
@@ -46,23 +46,23 @@ import { SyncDevtoolsPanelView } from './sync-devtools-panel-view';
  */
 @Injectable()
 @DevtoolsPanel({
-  id: 'sync',
-  title: 'Sync',
-  category: 'data',
+  id: "sync",
+  title: "Sync",
+  category: "data",
   order: 50,
 })
 export class SyncDevtoolsPanel implements IDevtoolsPanel {
   /** @inheritdoc */
-  public readonly id = 'sync';
+  public readonly id = "sync";
   /** @inheritdoc */
-  public readonly title = 'Sync';
+  public readonly title = "Sync";
   /** @inheritdoc */
-  public readonly category: DevtoolsCategory = 'data';
+  public readonly category: DevtoolsCategory = "data";
   /** @inheritdoc */
   public readonly order = 50;
   /** @inheritdoc */
   public readonly icon: ReactNode = createElement(ArrowsRightLeftIcon, {
-    className: 'size-4',
+    className: "size-4",
   });
   /** @inheritdoc */
   public readonly view: IDevtoolsView;
@@ -77,10 +77,10 @@ export class SyncDevtoolsPanel implements IDevtoolsPanel {
    */
   public constructor(
     @Optional() @Inject(SYNC_ENGINE) private readonly engine?: SyncEngine,
-    @Optional() @Inject(OPERATION_QUEUE) private readonly queue?: OperationQueue
+    @Optional() @Inject(OPERATION_QUEUE) private readonly queue?: OperationQueue,
   ) {
     this.view = {
-      type: 'component',
+      type: "component",
       render: (): ReactNode =>
         createElement(SyncDevtoolsPanelView, {
           engine: this.engine,

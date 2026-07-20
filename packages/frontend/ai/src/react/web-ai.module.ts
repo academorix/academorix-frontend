@@ -9,11 +9,11 @@
  *   code stays untouched (Requirement 3.3, 3.5, 23.7).
  */
 
-import { Global, Module, type DynamicModule } from '@stackra/container';
-import { AI_TRANSPORT, type IAiModuleOptions } from '@stackra/contracts';
+import { Global, Module, type DynamicModule } from "@stackra/container";
+import { AI_TRANSPORT, type IAiModuleOptions } from "@stackra/contracts";
 
-import { AiModule } from '@/core/ai.module';
-import { SseTransport } from '@/core/transport/sse.transport';
+import { AiModule } from "@/core/ai.module";
+import { SseTransport } from "@/core/transport/sse.transport";
 
 /**
  * The web-platform AI module.

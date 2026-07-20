@@ -6,21 +6,21 @@
  *   matchMedia for system detection. Includes cross-tab sync via storage events.
  */
 
-import { Injectable } from '@stackra/container';
+import { Injectable } from "@stackra/container";
 import type {
   IThemeBindings,
   ColorMode,
   ResolvedMode,
   IDesignTokenMap,
   ISSRScriptOptions,
-} from '@stackra/contracts';
+} from "@stackra/contracts";
 import {
   DEFAULT_MODE_STORAGE_KEY,
   DEFAULT_THEME_STORAGE_KEY,
   DEFAULT_THEME_ID,
   THEME_DATA_ATTRIBUTE,
-} from '../../core/constants';
-import { tokenToCssVar } from '../../core/utils';
+} from "../../core/constants";
+import { tokenToCssVar } from "../../core/utils";
 
 // ============================================================================
 // Web Bindings
@@ -43,9 +43,9 @@ export class WebThemeBindings implements IThemeBindings {
    * @returns The stored ColorMode or null if not set.
    */
   public getPersistedMode(): ColorMode | null {
-    if (typeof window === 'undefined') return null;
+    if (typeof window === "undefined") return null;
     const value = localStorage.getItem(DEFAULT_MODE_STORAGE_KEY);
-    if (value === 'light' || value === 'dark' || value === 'system') {
+    if (value === "light" || value === "dark" || value === "system") {
       return value;
     }
     return null;
@@ -57,7 +57,7 @@ export class WebThemeBindings implements IThemeBindings {
    * @param mode - The color mode to persist.
    */
   public setPersistedMode(mode: ColorMode): void {
-    if (typeof window === 'undefined') return;
+    if (typeof window === "undefined") return;
     localStorage.setItem(DEFAULT_MODE_STORAGE_KEY, mode);
   }
 
@@ -67,7 +67,7 @@ export class WebThemeBindings implements IThemeBindings {
    * @returns The stored theme ID or null if not set.
    */
   public getPersistedTheme(): string | null {
-    if (typeof window === 'undefined') return null;
+    if (typeof window === "undefined") return null;
     return localStorage.getItem(DEFAULT_THEME_STORAGE_KEY);
   }
 
@@ -77,7 +77,7 @@ export class WebThemeBindings implements IThemeBindings {
    * @param id - The theme ID to persist.
    */
   public setPersistedTheme(id: string): void {
-    if (typeof window === 'undefined') return;
+    if (typeof window === "undefined") return;
     localStorage.setItem(DEFAULT_THEME_STORAGE_KEY, id);
   }
 
@@ -89,8 +89,8 @@ export class WebThemeBindings implements IThemeBindings {
    * @returns 'dark' or 'light' based on the OS preference.
    */
   public getSystemColorScheme(): ResolvedMode {
-    if (typeof window === 'undefined') return 'light';
-    return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    if (typeof window === "undefined") return "light";
+    return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
   }
 
   /**
@@ -100,13 +100,13 @@ export class WebThemeBindings implements IThemeBindings {
    * @returns Unsubscribe function.
    */
   public subscribeToSystemChanges(listener: (mode: ResolvedMode) => void): () => void {
-    if (typeof window === 'undefined') return () => {};
-    const mql = window.matchMedia('(prefers-color-scheme: dark)');
+    if (typeof window === "undefined") return () => {};
+    const mql = window.matchMedia("(prefers-color-scheme: dark)");
     const handler = (e: MediaQueryListEvent) => {
-      listener(e.matches ? 'dark' : 'light');
+      listener(e.matches ? "dark" : "light");
     };
-    mql.addEventListener('change', handler);
-    return () => mql.removeEventListener('change', handler);
+    mql.addEventListener("change", handler);
+    return () => mql.removeEventListener("change", handler);
   }
 
   // ── Application ─────────────────────────────────────────────────────────
@@ -118,11 +118,11 @@ export class WebThemeBindings implements IThemeBindings {
    * @param resolvedMode - The computed mode to apply.
    */
   public applyColorMode(resolvedMode: ResolvedMode): void {
-    if (typeof document === 'undefined') return;
+    if (typeof document === "undefined") return;
     const root = document.documentElement;
-    root.classList.remove('light', 'dark');
+    root.classList.remove("light", "dark");
     root.classList.add(resolvedMode);
-    root.setAttribute('data-theme', resolvedMode);
+    root.setAttribute("data-theme", resolvedMode);
     root.style.colorScheme = resolvedMode;
   }
 
@@ -133,7 +133,7 @@ export class WebThemeBindings implements IThemeBindings {
    * @param tokens - Token map to apply.
    */
   public applyTokens(tokens: IDesignTokenMap): void {
-    if (typeof document === 'undefined') return;
+    if (typeof document === "undefined") return;
     const root = document.documentElement;
     for (const [key, value] of Object.entries(tokens)) {
       if (value != null) {
@@ -152,7 +152,7 @@ export class WebThemeBindings implements IThemeBindings {
   public getSSRScript(options: ISSRScriptOptions = {}): string {
     const modeKey = options.storageKey ?? DEFAULT_MODE_STORAGE_KEY;
     const themeKey = options.themeKey ?? DEFAULT_THEME_STORAGE_KEY;
-    const defaultMode = options.defaultMode ?? 'system';
+    const defaultMode = options.defaultMode ?? "system";
 
     return `(function(){try{var d=document.documentElement;var m=localStorage.getItem('${modeKey}')||'${defaultMode}';var t=localStorage.getItem('${themeKey}');var r=m;if(m==='system'){r=window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light';}d.classList.add(r);d.setAttribute('data-theme',r);d.style.colorScheme=r;if(t&&t!=='${DEFAULT_THEME_ID}'){d.setAttribute('${THEME_DATA_ATTRIBUTE}',t);}}catch(e){}})();`;
   }

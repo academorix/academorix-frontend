@@ -4,8 +4,8 @@
  * @description Aggregate install-source attribution hook.
  */
 
-import { usePwa } from '@/react/hooks/use-pwa/use-pwa.hook';
-import type { IPwaAttribution } from '@/core/interfaces';
+import { usePwa } from "@/react/hooks/use-pwa/use-pwa.hook";
+import type { IPwaAttribution } from "@/core/interfaces";
 
 /**
  * Full install-source attribution snapshot — UTM + display mode +

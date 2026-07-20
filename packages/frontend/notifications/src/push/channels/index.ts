@@ -4,4 +4,4 @@
  * @description Barrel export for Web Push channel drivers.
  */
 
-export { WebNotificationChannelDriver } from './web-notification-channel.driver';
+export { WebNotificationChannelDriver } from "./web-notification-channel.driver";

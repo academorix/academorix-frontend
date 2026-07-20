@@ -8,11 +8,11 @@
  *   live under `../../react/components/`, not here.
  */
 
-export { Action, enhanceActionChildProps } from './action';
+export { Action, enhanceActionChildProps } from "./action";
 export type {
   EnhancedElement,
   IActionChildProps,
   IActionSlotProps,
   IEnhanceOptions,
   IEnhancedChildProps,
-} from './action';
+} from "./action";

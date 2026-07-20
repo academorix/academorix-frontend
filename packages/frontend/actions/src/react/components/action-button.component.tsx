@@ -13,11 +13,11 @@
  *   major.
  */
 
-import type { ComponentProps } from 'react';
-import type { IActionContext, IActionDescriptor, IActionResponse } from '@stackra/contracts';
-import { Button } from '@stackra/ui/react';
+import type { ComponentProps } from "react";
+import type { IActionContext, IActionDescriptor, IActionResponse } from "@stackra/contracts";
+import { Button } from "@stackra/ui/react";
 
-import { useAction } from '@/core/hooks/use-action';
+import { useAction } from "@/core/hooks/use-action";
 
 /** HeroUI `Button`'s prop shape — cached so the interface stays terse. */
 type ButtonProps = ComponentProps<typeof Button>;
@@ -34,7 +34,7 @@ type ButtonProps = ComponentProps<typeof Button>;
 export interface IActionButtonProps<
   D extends IActionDescriptor = IActionDescriptor,
   R = unknown,
-> extends Omit<ButtonProps, 'onPress'> {
+> extends Omit<ButtonProps, "onPress"> {
   /** The action descriptor to dispatch on press. */
   readonly action: D;
 

@@ -30,7 +30,10 @@
               "kind": "Button",
               "props": { "variant": "flat", "size": "sm", "children": "Manage" },
               "bindings": {
-                "onPress": { "$action": "route.push", "urlExpr": "'/events/' + props.eventId + '/facilities'" }
+                "onPress": {
+                  "$action": "route.push",
+                  "urlExpr": "'/events/' + props.eventId + '/facilities'"
+                }
               }
             }
           ]
@@ -42,7 +45,10 @@
               "kind": "View",
               "bindings": { "hidden": { "$expr": "facilities.length > 0" } },
               "children": [
-                { "kind": "Text", "props": { "className": "text-muted italic", "children": "No facility attached." } }
+                {
+                  "kind": "Text",
+                  "props": { "className": "text-muted italic", "children": "No facility attached." }
+                }
               ]
             },
             {

@@ -26,21 +26,31 @@
       "children": [
         {
           "kind": "Step",
-          "props": { "title": "Choose provider", "description": "Which payment gateway do you want to add?" },
+          "props": {
+            "title": "Choose provider",
+            "description": "Which payment gateway do you want to add?"
+          },
           "children": [
             {
               "kind": "ComboBox",
               "props": { "label": "Provider", "menuTrigger": "focus" },
               "bindings": { "items": { "$ref": "capabilities" } },
               "actions": {
-                "onSelectionChange": { "kind": "form.set", "field": "provider", "valueExpr": "$selectedKey" }
+                "onSelectionChange": {
+                  "kind": "form.set",
+                  "field": "provider",
+                  "valueExpr": "$selectedKey"
+                }
               }
             }
           ]
         },
         {
           "kind": "Step",
-          "props": { "title": "Credentials", "description": "Enter your provider credentials. Encrypted at rest." },
+          "props": {
+            "title": "Credentials",
+            "description": "Enter your provider credentials. Encrypted at rest."
+          },
           "children": [
             {
               "kind": "DynamicForm",
@@ -52,13 +62,20 @@
         },
         {
           "kind": "Step",
-          "props": { "title": "Regional routing", "description": "Optional. Route customers from specific countries to this provider." },
+          "props": {
+            "title": "Regional routing",
+            "description": "Optional. Route customers from specific countries to this provider."
+          },
           "children": [
             {
               "kind": "TextArea",
               "props": { "label": "Country codes (comma-separated)", "placeholder": "US,CA,MX" },
               "actions": {
-                "onChange": { "kind": "form.set", "field": "regions", "valueExpr": "$value.split(',').map(s => s.trim())" }
+                "onChange": {
+                  "kind": "form.set",
+                  "field": "regions",
+                  "valueExpr": "$value.split(',').map(s => s.trim())"
+                }
               }
             }
           ]

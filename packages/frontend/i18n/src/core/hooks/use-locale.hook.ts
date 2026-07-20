@@ -6,12 +6,12 @@
  *   Uses `useInject()` from `@stackra/container/react` for proper DI access.
  */
 
-import { useCallback } from 'react';
-import { useInject } from '@stackra/container/react';
-import { I18N_LOCALE_SERVICE } from '@stackra/contracts';
+import { useCallback } from "react";
+import { useInject } from "@stackra/container/react";
+import { I18N_LOCALE_SERVICE } from "@stackra/contracts";
 
-import type { I18nLocaleService } from '../services/i18n-locale.service';
-import type { UseLocaleReturn } from '../interfaces';
+import type { I18nLocaleService } from "../services/i18n-locale.service";
+import type { UseLocaleReturn } from "../interfaces";
 
 /**
  * Access locale state from a React component (lighter than useI18n).
@@ -31,13 +31,13 @@ export function useLocale(): UseLocaleReturn {
     async (newLocale: string) => {
       await localeService.setLocale(newLocale);
     },
-    [localeService]
+    [localeService],
   );
 
   return {
     locale,
     dir,
-    isRTL: dir === 'rtl',
+    isRTL: dir === "rtl",
     setLocale,
     languages: localeService.getSupportedLocales(),
   };

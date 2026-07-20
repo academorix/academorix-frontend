@@ -46,9 +46,18 @@
     ],
     "tenancy": [{ "trait": "Academorix\\Tenancy\\Concerns\\BelongsToTenant" }],
     "branch": [{ "trait": "Academorix\\Branch\\Concerns\\BelongsToBranch" }],
-    "season": [{ "trait": "Academorix\\Sports\\Season\\Concerns\\BelongsToSeason", "reason": "Optional FK." }],
-    "event": [{ "trait": "Academorix\\Sports\\Event\\Concerns\\BelongsToEvent", "reason": "Optional FK." }],
-    "audit": [{ "trait": "Academorix\\Audit\\Concerns\\Auditable", "reason": "Session mutations are audit-critical; safeguarding-flagged sessions retain regulator-tier." }],
+    "season": [
+      { "trait": "Academorix\\Sports\\Season\\Concerns\\BelongsToSeason", "reason": "Optional FK." }
+    ],
+    "event": [
+      { "trait": "Academorix\\Sports\\Event\\Concerns\\BelongsToEvent", "reason": "Optional FK." }
+    ],
+    "audit": [
+      {
+        "trait": "Academorix\\Audit\\Concerns\\Auditable",
+        "reason": "Session mutations are audit-critical; safeguarding-flagged sessions retain regulator-tier."
+      }
+    ],
     "activity": [{ "trait": "Academorix\\Activity\\Concerns\\HasActivityLog" }]
   },
   "composition": {

@@ -33,7 +33,7 @@
  * See `.kiro/steering/config-architecture.md` for the full guide.
  */
 
-import type { IRealtimeModuleOptions } from '@/core/interfaces';
+import type { IRealtimeModuleOptions } from "@/core/interfaces";
 
 /**
  * Type-safe configuration builder for the realtime module.

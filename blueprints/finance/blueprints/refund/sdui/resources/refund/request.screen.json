@@ -24,8 +24,21 @@
       "kind": "View",
       "props": { "className": "flex flex-col gap-4 p-6 max-w-3xl mx-auto" },
       "children": [
-        { "kind": "Text", "props": { "as": "h1", "className": "text-2xl font-semibold", "children": "Request a refund" } },
-        { "kind": "Text", "props": { "className": "text-sm text-muted", "children": "Refunds are typically processed within 5-10 business days for card payments." } },
+        {
+          "kind": "Text",
+          "props": {
+            "as": "h1",
+            "className": "text-2xl font-semibold",
+            "children": "Request a refund"
+          }
+        },
+        {
+          "kind": "Text",
+          "props": {
+            "className": "text-sm text-muted",
+            "children": "Refunds are typically processed within 5-10 business days for card payments."
+          }
+        },
         {
           "kind": "Wizard",
           "props": { "id": "refund-request-wizard" },
@@ -36,7 +49,11 @@
               "children": [
                 {
                   "kind": "ComboBox",
-                  "props": { "label": "Payment", "menuTrigger": "focus", "placeholder": "Search payments..." },
+                  "props": {
+                    "label": "Payment",
+                    "menuTrigger": "focus",
+                    "placeholder": "Search payments..."
+                  },
                   "bindings": { "items": { "$ref": "eligible_payments" } },
                   "itemRenderer": {
                     "kind": "Text",
@@ -47,7 +64,11 @@
                     }
                   },
                   "actions": {
-                    "onSelectionChange": { "kind": "form.set", "field": "payment_id", "valueExpr": "$selectedKey" }
+                    "onSelectionChange": {
+                      "kind": "form.set",
+                      "field": "payment_id",
+                      "valueExpr": "$selectedKey"
+                    }
                   }
                 }
               ]
@@ -64,7 +85,11 @@
                     "value": { "$ref": "form.amount_display" }
                   },
                   "actions": {
-                    "onChange": { "kind": "form.set", "field": "amount_cents", "valueExpr": "Math.round($value * 100)" }
+                    "onChange": {
+                      "kind": "form.set",
+                      "field": "amount_cents",
+                      "valueExpr": "Math.round($value * 100)"
+                    }
                   }
                 },
                 {
@@ -73,21 +98,37 @@
                   "children": [
                     {
                       "kind": "Radio",
-                      "props": { "value": "full", "label": "Full refund", "description": "Refund the entire remaining amount." }
+                      "props": {
+                        "value": "full",
+                        "label": "Full refund",
+                        "description": "Refund the entire remaining amount."
+                      }
                     },
                     {
                       "kind": "Radio",
-                      "props": { "value": "partial", "label": "Partial refund", "description": "Refund a specific amount." },
+                      "props": {
+                        "value": "partial",
+                        "label": "Partial refund",
+                        "description": "Refund a specific amount."
+                      },
                       "bindings": { "hidden": { "$expr": "!hasEntitlement('refund_partial')" } }
                     },
                     {
                       "kind": "Radio",
-                      "props": { "value": "prorated", "label": "Prorated refund", "description": "For cancelled memberships — refund the unused period." },
+                      "props": {
+                        "value": "prorated",
+                        "label": "Prorated refund",
+                        "description": "For cancelled memberships — refund the unused period."
+                      },
                       "bindings": { "hidden": { "$expr": "!hasEntitlement('refund_prorated')" } }
                     }
                   ],
                   "actions": {
-                    "onChange": { "kind": "form.set", "field": "refund_type", "valueExpr": "$value" }
+                    "onChange": {
+                      "kind": "form.set",
+                      "field": "refund_type",
+                      "valueExpr": "$value"
+                    }
                   }
                 },
                 {
@@ -113,14 +154,27 @@
                     "value": { "$ref": "form.reason" }
                   },
                   "actions": {
-                    "onSelectionChange": { "kind": "form.set", "field": "reason", "valueExpr": "$selectedKey" }
+                    "onSelectionChange": {
+                      "kind": "form.set",
+                      "field": "reason",
+                      "valueExpr": "$selectedKey"
+                    }
                   }
                 },
                 {
                   "kind": "TextArea",
-                  "props": { "label": "Reason detail", "placeholder": "Tell us more about why you're requesting this refund..." },
+                  "props": {
+                    "label": "Reason detail",
+                    "placeholder": "Tell us more about why you're requesting this refund..."
+                  },
                   "bindings": { "value": { "$ref": "form.reason_note" } },
-                  "actions": { "onChange": { "kind": "form.set", "field": "reason_note", "valueExpr": "$value" } }
+                  "actions": {
+                    "onChange": {
+                      "kind": "form.set",
+                      "field": "reason_note",
+                      "valueExpr": "$value"
+                    }
+                  }
                 }
               ]
             },
@@ -132,11 +186,27 @@
                   "kind": "RadioGroup",
                   "props": { "label": "Refund to" },
                   "children": [
-                    { "kind": "Radio", "props": { "value": "original_payment_method", "label": "Original payment method (recommended)" } },
-                    { "kind": "Radio", "props": { "value": "customer_balance", "label": "Store credit (customer balance)" } }
+                    {
+                      "kind": "Radio",
+                      "props": {
+                        "value": "original_payment_method",
+                        "label": "Original payment method (recommended)"
+                      }
+                    },
+                    {
+                      "kind": "Radio",
+                      "props": {
+                        "value": "customer_balance",
+                        "label": "Store credit (customer balance)"
+                      }
+                    }
                   ],
                   "actions": {
-                    "onChange": { "kind": "form.set", "field": "refunded_to", "valueExpr": "$value" }
+                    "onChange": {
+                      "kind": "form.set",
+                      "field": "refunded_to",
+                      "valueExpr": "$value"
+                    }
                   }
                 }
               ]
@@ -149,11 +219,21 @@
                   "kind": "Alert",
                   "props": { "variant": "info" },
                   "bindings": {
-                    "hidden": { "$expr": "!(form.amount_cents > getConfig('refund.approval.threshold_amount_cents') || hasStaleThreshold(form.payment_id))" }
+                    "hidden": {
+                      "$expr": "!(form.amount_cents > getConfig('refund.approval.threshold_amount_cents') || hasStaleThreshold(form.payment_id))"
+                    }
                   },
                   "children": [
-                    { "kind": "Text", "props": { "className": "font-medium", "children": "Approval required" } },
-                    { "kind": "Text", "props": { "children": "This refund requires approval based on the amount or age. You'll be notified once an admin reviews it." } }
+                    {
+                      "kind": "Text",
+                      "props": { "className": "font-medium", "children": "Approval required" }
+                    },
+                    {
+                      "kind": "Text",
+                      "props": {
+                        "children": "This refund requires approval based on the amount or age. You'll be notified once an admin reviews it."
+                      }
+                    }
                   ]
                 },
                 {

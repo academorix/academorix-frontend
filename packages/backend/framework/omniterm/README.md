@@ -8,7 +8,8 @@
 
 **Terminal UI toolkit for Laravel**
 
-Rich CLI output using HTML and Tailwind CSS classes, rendered as ANSI in your terminal.
+Rich CLI output using HTML and Tailwind CSS classes, rendered as ANSI in your
+terminal.
 
 ![Progress Bars](docs/gifs/progress-bars.gif)
 
@@ -18,16 +19,26 @@ Rich CLI output using HTML and Tailwind CSS classes, rendered as ANSI in your te
 
 ## About
 
-OmniTerm is a terminal rendering engine for Laravel. Write your CLI output as HTML with Tailwind CSS classes and OmniTerm compiles it to ANSI escape sequences.
+OmniTerm is a terminal rendering engine for Laravel. Write your CLI output as
+HTML with Tailwind CSS classes and OmniTerm compiles it to ANSI escape
+sequences.
 
-The Tailwind-for-terminal concept was pioneered by [Termwind](https://github.com/nunomaduro/termwind). OmniTerm builds on that idea with its own rendering engine that adds:
+The Tailwind-for-terminal concept was pioneered by
+[Termwind](https://github.com/nunomaduro/termwind). OmniTerm builds on that idea
+with its own rendering engine that adds:
 
-- **16 million color support** - full RGB truecolor, with automatic 256-color fallback for older terminals
-- **Gradients** - `bg-gradient-to-r`, `from-{color}`, `via-{color}`, `to-{color}` for smooth per-character color transitions
-- **Arbitrary RGB classes** - `text-[R,G,B]` and `bg-[R,G,B]` for computed/dynamic colors
-- **Content repeat** - `content-repeat-[char]` to fill widths with box-drawing characters
+- **16 million color support** - full RGB truecolor, with automatic 256-color
+  fallback for older terminals
+- **Gradients** - `bg-gradient-to-r`, `from-{color}`, `via-{color}`,
+  `to-{color}` for smooth per-character color transitions
+- **Arbitrary RGB classes** - `text-[R,G,B]` and `bg-[R,G,B]` for
+  computed/dynamic colors
+- **Content repeat** - `content-repeat-[char]` to fill widths with box-drawing
+  characters
 
-On top of the rendering engine, OmniTerm ships with a set of pre-built components for common CLI patterns: status messages, data tables, progress bars, spinners, live tasks, and an interactive split-pane browser.
+On top of the rendering engine, OmniTerm ships with a set of pre-built
+components for common CLI patterns: status messages, data tables, progress bars,
+spinners, live tasks, and an interactive split-pane browser.
 
 ## Requirements
 
@@ -110,7 +121,8 @@ $this->omni->hrSuccess();
 
 ### Progress Bars
 
-Fluent builder API with three styles: simple, framed, and gradient. Color steps transition from rose through amber to emerald as progress increases.
+Fluent builder API with three styles: simple, framed, and gradient. Color steps
+transition from rose through amber to emerald as progress increases.
 
 ```php
 $bar = $this->omni->progressBar(100)->framed()->steps();
@@ -191,11 +203,14 @@ for ($batch = 0; $batch < 5; $batch++) {
 $task->finish('Processing complete');
 ```
 
-The `Spinner` enum provides 10 animation types: `Dots`, `Dots2`, `Dots3`, `DotsCircle`, `Sand`, `Clock`, `Material`, `Pong`, `Progress`, `ProgressLoader`.
+The `Spinner` enum provides 10 animation types: `Dots`, `Dots2`, `Dots3`,
+`DotsCircle`, `Sand`, `Clock`, `Material`, `Pong`, `Progress`, `ProgressLoader`.
 
 ### Interactive Browser
 
-Split-pane TUI: scrollable list on the left, detail view on the right. Items can be closures (rendered with full omni output), associative arrays (auto-formatted), or plain arrays.
+Split-pane TUI: scrollable list on the left, detail view on the right. Items can
+be closures (rendered with full omni output), associative arrays
+(auto-formatted), or plain arrays.
 
 ```
 +-- Server Dashboard ---------------+-----------------------------------+
@@ -234,7 +249,8 @@ $color = $this->omni->ask('Choose a color:', ['red', 'green', 'blue']);
 
 ## DIY - The Rendering Engine
 
-The built-in components are just Blade templates compiled through OmniTerm's rendering engine. You can use the same engine directly to build anything.
+The built-in components are just Blade templates compiled through OmniTerm's
+rendering engine. You can use the same engine directly to build anything.
 
 ### `render()`
 
@@ -287,7 +303,7 @@ $height = $this->omni->terminal()->getHeight();
 #### Layout
 
 | Class         | Effect                    |
-|---------------|---------------------------|
+| ------------- | ------------------------- |
 | `flex`        | Horizontal layout         |
 | `flex-1`      | Fill remaining space      |
 | `w-{n}`       | Fixed width in characters |
@@ -296,7 +312,7 @@ $height = $this->omni->terminal()->getHeight();
 #### Spacing
 
 | Class                        | Effect                        |
-|------------------------------|-------------------------------|
+| ---------------------------- | ----------------------------- |
 | `px-{n}`, `pl-{n}`, `pr-{n}` | Horizontal padding            |
 | `mx-{n}`, `ml-{n}`, `mr-{n}` | Horizontal margin             |
 | `mt-{n}`, `mb-{n}`           | Vertical margin (blank lines) |
@@ -304,18 +320,20 @@ $height = $this->omni->terminal()->getHeight();
 #### Typography
 
 | Class         | Effect       |
-|---------------|--------------|
+| ------------- | ------------ |
 | `font-bold`   | Bold         |
 | `text-center` | Center-align |
 | `text-right`  | Right-align  |
 
 #### Colors
 
-All [Tailwind colors](https://tailwindcss.com/docs/customizing-colors) with shades 50-950: slate, gray, zinc, neutral, stone, red, orange, amber, yellow, lime, green, emerald, teal, cyan, sky, blue, indigo, violet, purple, fuchsia, pink,
-rose.
+All [Tailwind colors](https://tailwindcss.com/docs/customizing-colors) with
+shades 50-950: slate, gray, zinc, neutral, stone, red, orange, amber, yellow,
+lime, green, emerald, teal, cyan, sky, blue, indigo, violet, purple, fuchsia,
+pink, rose.
 
 | Class                  | Effect                                       |
-|------------------------|----------------------------------------------|
+| ---------------------- | -------------------------------------------- |
 | `text-{color}-{shade}` | Text color, e.g. `text-sky-500`              |
 | `bg-{color}-{shade}`   | Background color, e.g. `bg-red-600`          |
 | `text-[R,G,B]`         | Arbitrary RGB text, e.g. `text-[255,100,50]` |
@@ -326,7 +344,7 @@ rose.
 Per-character color interpolation across an element's width.
 
 | Class                  | Effect                 |
-|------------------------|------------------------|
+| ---------------------- | ---------------------- |
 | `bg-gradient-to-r`     | Left-to-right gradient |
 | `bg-gradient-to-l`     | Right-to-left gradient |
 | `from-{color}-{shade}` | Start color            |
@@ -344,7 +362,7 @@ $this->omni->render('<div class="flex">
 #### Content
 
 | Class                   | Effect                         |
-|-------------------------|--------------------------------|
+| ----------------------- | ------------------------------ |
 | `content-repeat-[char]` | Repeat character to fill width |
 
 ### Color Mode Detection
@@ -352,13 +370,16 @@ $this->omni->render('<div class="flex">
 OmniTerm auto-detects your terminal's color capability:
 
 - **Truecolor (16M)** - full RGB. iTerm2, Kitty, WezTerm, most modern terminals.
-- **256-color** - automatic fallback for older terminals (e.g. Apple Terminal). Colors mapped to nearest match.
+- **256-color** - automatic fallback for older terminals (e.g. Apple Terminal).
+  Colors mapped to nearest match.
 
 No configuration needed.
 
 ### Using Blade Templates
 
-Since OmniTerm is a Laravel package, you can write your CLI output as Blade views and render them through the engine. This is how all the built-in components work:
+Since OmniTerm is a Laravel package, you can write your CLI output as Blade
+views and render them through the engine. This is how all the built-in
+components work:
 
 ```php
 // resources/views/cli/deploy-status.blade.php
@@ -386,7 +407,8 @@ mkdir -p app/Console/Commands/OmniTermSamples
 cp vendor/pdphilip/omniterm/samples/Commands/*.php app/Console/Commands/OmniTermSamples/
 ```
 
-Update the namespace in each file to `App\Console\Commands\OmniTermSamples`, then:
+Update the namespace in each file to `App\Console\Commands\OmniTermSamples`,
+then:
 
 ```bash
 php artisan omniterm:full-demo          # One of every feature

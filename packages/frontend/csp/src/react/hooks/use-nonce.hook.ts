@@ -5,9 +5,9 @@
  *   context.
  */
 
-import { useContext } from 'react';
+import { useContext } from "react";
 
-import { NonceContext } from '../contexts/nonce.context';
+import { NonceContext } from "../contexts/nonce.context";
 
 /**
  * Access the current CSP nonce value.

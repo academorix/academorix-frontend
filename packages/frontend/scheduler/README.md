@@ -1,6 +1,8 @@
 # @stackra/scheduler
 
-Client-side task scheduler for the Stackra framework — interval + cron scheduling, decorator-based auto-discovery, lifecycle hooks, retry policy, and React bindings.
+Client-side task scheduler for the Stackra framework — interval + cron
+scheduling, decorator-based auto-discovery, lifecycle hooks, retry policy, and
+React bindings.
 
 ## Install
 
@@ -11,10 +13,10 @@ pnpm add @stackra/scheduler @stackra/container @stackra/contracts @stackra/logge
 ## Quick start
 
 ```typescript
-import { SchedulerModule } from '@stackra/scheduler';
+import { SchedulerModule } from "@stackra/scheduler";
 
 @Module({
-  imports: [SchedulerModule.forRoot({ logging: 'info' })],
+  imports: [SchedulerModule.forRoot({ logging: "info" })],
   providers: [SyncOrdersTask, HeartbeatTask],
 })
 export class AppModule {}
@@ -23,10 +25,10 @@ export class AppModule {}
 Auto-discovered tasks:
 
 ```typescript
-import { Injectable } from '@stackra/container';
-import { Scheduled } from '@stackra/scheduler';
+import { Injectable } from "@stackra/container";
+import { Scheduled } from "@stackra/scheduler";
 
-@Scheduled({ name: 'sync-orders', every: 60_000, retries: 2 })
+@Scheduled({ name: "sync-orders", every: 60_000, retries: 2 })
 @Injectable()
 export class SyncOrdersTask {
   async run() {
@@ -34,16 +36,17 @@ export class SyncOrdersTask {
   }
 }
 
-@Scheduled({ name: 'heartbeat', cron: '*/30 * * * * *' }) // every 30 seconds
+@Scheduled({ name: "heartbeat", cron: "*/30 * * * * *" }) // every 30 seconds
 @Injectable()
 export class HeartbeatTask {
   async run() {
-    await fetch('/api/heartbeat');
+    await fetch("/api/heartbeat");
   }
 }
 ```
 
-At bootstrap, `ScheduledTaskLoader` scans every provider for `@Scheduled` metadata and registers it with the runner.
+At bootstrap, `ScheduledTaskLoader` scans every provider for `@Scheduled`
+metadata and registers it with the runner.
 
 ## Public API
 
@@ -65,9 +68,9 @@ The decorated class must implement `run(): Promise<void>`.
 Programmatic registration (bypasses `@Scheduled`):
 
 ```typescript
-import { Inject, Injectable } from '@stackra/container';
-import { SCHEDULER_SERVICE } from '@stackra/contracts';
-import { SchedulerService } from '@stackra/scheduler';
+import { Inject, Injectable } from "@stackra/container";
+import { SCHEDULER_SERVICE } from "@stackra/contracts";
+import { SchedulerService } from "@stackra/scheduler";
 
 @Injectable()
 class Setup {
@@ -75,7 +78,7 @@ class Setup {
 
   wire() {
     this.scheduler.register(
-      'cleanup',
+      "cleanup",
       async () => {
         await cache.gc();
       },
@@ -87,7 +90,7 @@ class Setup {
           onSuccess: (name, ms) => metrics.timing(`task.${name}`, ms),
           onFailure: (name, err) => log.error(`task ${name} failed`, err),
         },
-      }
+      },
     );
   }
 }
@@ -124,10 +127,11 @@ Standard 5-field or 6-field cron:
 
 ### Custom task runners
 
-Default runner uses `setInterval` + computed cron delays. Swap for a platform-specific runner:
+Default runner uses `setInterval` + computed cron delays. Swap for a
+platform-specific runner:
 
 ```typescript
-import type { ITaskRunner } from '@stackra/scheduler';
+import type { ITaskRunner } from "@stackra/scheduler";
 
 class MyBackgroundRunner implements ITaskRunner {
   register(name, fn, options) {
@@ -153,12 +157,13 @@ class MyBackgroundRunner implements ITaskRunner {
 SchedulerModule.forRoot({ runner: new MyBackgroundRunner() });
 ```
 
-Reference implementations to write yourself: `ExpoTaskRunner` (React Native background tasks), `SharedWorkerRunner` (offload to a shared worker).
+Reference implementations to write yourself: `ExpoTaskRunner` (React Native
+background tasks), `SharedWorkerRunner` (offload to a shared worker).
 
 ## Events
 
 ```typescript
-import { SCHEDULER_EVENTS } from '@stackra/contracts';
+import { SCHEDULER_EVENTS } from "@stackra/contracts";
 
 events.on(SCHEDULER_EVENTS.TASK_REGISTERED, ({ name, options }) => {});
 events.on(SCHEDULER_EVENTS.TASK_UNREGISTERED, ({ name }) => {});
@@ -172,7 +177,7 @@ events.on(SCHEDULER_EVENTS.TASK_RESUMED, ({ name }) => {});
 ## React bindings — `@stackra/scheduler/react`
 
 ```tsx
-import { useScheduler } from '@stackra/scheduler/react';
+import { useScheduler } from "@stackra/scheduler/react";
 
 function TaskMonitor() {
   const { tasks, pause, resume, runNow, refresh } = useScheduler();
@@ -181,9 +186,9 @@ function TaskMonitor() {
     <ul>
       {tasks.map((t) => (
         <li key={t.name}>
-          {t.name} — {t.isRunning ? 'running' : t.isPaused ? 'paused' : 'idle'}
+          {t.name} — {t.isRunning ? "running" : t.isPaused ? "paused" : "idle"}
           <button onClick={() => (t.isPaused ? resume(t.name) : pause(t.name))}>
-            {t.isPaused ? 'resume' : 'pause'}
+            {t.isPaused ? "resume" : "pause"}
           </button>
           <button onClick={() => runNow(t.name)}>run now</button>
         </li>
@@ -196,27 +201,27 @@ function TaskMonitor() {
 ## Testing — `@stackra/scheduler/testing`
 
 ```typescript
-import { createMockScheduler } from '@stackra/scheduler/testing';
+import { createMockScheduler } from "@stackra/scheduler/testing";
 
 const scheduler = createMockScheduler();
 service.setup(scheduler);
 
 // Assert the task was registered
-scheduler.$.assertCalled('register').once();
+scheduler.$.assertCalled("register").once();
 
 // Inspect the concrete state
 const [task] = scheduler.getRegistered();
-expect(task.name).toBe('cleanup');
+expect(task.name).toBe("cleanup");
 expect(task.interval).toBe(300_000);
 
 // Drive execution from a test — no real timers involved
-await scheduler.runNow('cleanup');
+await scheduler.runNow("cleanup");
 ```
 
 The mock runner never starts real timers; you drive execution via
 `.runNow(name)`. `.pause()` / `.resume()` state flips are reflected in
-`.getRegistered()` so consumer code that observes those flags works
-against the mock unchanged.
+`.getRegistered()` so consumer code that observes those flags works against the
+mock unchanged.
 
 ## Configuration
 

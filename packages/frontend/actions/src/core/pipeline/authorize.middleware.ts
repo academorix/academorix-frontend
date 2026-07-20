@@ -6,16 +6,16 @@
  *   and short-circuits the pipeline on denial.
  */
 
-import { Inject, Injectable, Optional } from '@stackra/container';
-import type { IEventEmitter, ILoggerManager, IPermissionResolver } from '@stackra/contracts';
+import { Inject, Injectable, Optional } from "@stackra/container";
+import type { IEventEmitter, ILoggerManager, IPermissionResolver } from "@stackra/contracts";
 import {
   ACTION_EVENTS,
   EVENT_EMITTER,
   LOGGER_MANAGER,
   PERMISSION_RESOLVER,
-} from '@stackra/contracts';
+} from "@stackra/contracts";
 
-import type { IMiddlewarePassable } from './middleware-passable.interface';
+import type { IMiddlewarePassable } from "./middleware-passable.interface";
 
 /**
  * Authorize middleware.
@@ -31,12 +31,12 @@ export class AuthorizeMiddleware {
   public constructor(
     @Optional() @Inject(PERMISSION_RESOLVER) private readonly resolver?: IPermissionResolver,
     @Optional() @Inject(EVENT_EMITTER) private readonly events?: IEventEmitter,
-    @Optional() @Inject(LOGGER_MANAGER) private readonly logger?: ILoggerManager
+    @Optional() @Inject(LOGGER_MANAGER) private readonly logger?: ILoggerManager,
   ) {}
 
   public async handle(
     passable: IMiddlewarePassable,
-    next: (p: IMiddlewarePassable) => Promise<IMiddlewarePassable>
+    next: (p: IMiddlewarePassable) => Promise<IMiddlewarePassable>,
   ): Promise<IMiddlewarePassable> {
     const { descriptor } = passable;
     if (descriptor.authorize === false || !descriptor.permission) {
@@ -45,9 +45,9 @@ export class AuthorizeMiddleware {
 
     if (!this.resolver) {
       this.logger
-        ?.channel('actions', 'authorize')
+        ?.channel("actions", "authorize")
         .warn(
-          `[actions] No PERMISSION_RESOLVER configured; permitting "${descriptor.permission}".`
+          `[actions] No PERMISSION_RESOLVER configured; permitting "${descriptor.permission}".`,
         );
       return next(passable);
     }

@@ -9,14 +9,29 @@
       "name": "Season Created",
       "kind": "track",
       "consent_required": "essential",
-      "properties": ["tenant_id", "season_id", "season_type", "source", "is_current", "business_type", "has_playoffs", "days_span"],
+      "properties": [
+        "tenant_id",
+        "season_id",
+        "season_type",
+        "source",
+        "is_current",
+        "business_type",
+        "has_playoffs",
+        "days_span"
+      ],
       "description": "New Season row created. days_span = end_date - start_date; feeds tier-usage analytics on typical season lengths."
     },
     {
       "name": "Season Current Changed",
       "kind": "track",
       "consent_required": "essential",
-      "properties": ["tenant_id", "from_season_id", "to_season_id", "days_since_last_change", "was_year_boundary_crossed"],
+      "properties": [
+        "tenant_id",
+        "from_season_id",
+        "to_season_id",
+        "days_since_last_change",
+        "was_year_boundary_crossed"
+      ],
       "description": "The current-flag flipped. Audit-critical + feeds the reporting-integrity dashboard — YoY reports pivot on this event."
     },
     {
@@ -49,7 +64,14 @@
       "name": "Season Completed",
       "kind": "track",
       "consent_required": "essential",
-      "properties": ["tenant_id", "season_id", "season_type", "trigger", "final_enrolled_count", "had_playoffs"],
+      "properties": [
+        "tenant_id",
+        "season_id",
+        "season_type",
+        "trigger",
+        "final_enrolled_count",
+        "had_playoffs"
+      ],
       "description": "final_enrolled_count feeds capacity-target-vs-actual analytics."
     },
     {
@@ -69,7 +91,14 @@
       "name": "Season Dates Shifted",
       "kind": "track",
       "consent_required": "essential",
-      "properties": ["tenant_id", "season_id", "status_at_shift", "days_delta_start", "days_delta_end", "affected_enrollment_count"],
+      "properties": [
+        "tenant_id",
+        "season_id",
+        "status_at_shift",
+        "days_delta_start",
+        "days_delta_end",
+        "affected_enrollment_count"
+      ],
       "description": "days_delta_* is the signed delta from the previous date. Feeds an audit-worthy signal — frequent shifts are a red flag."
     },
     {

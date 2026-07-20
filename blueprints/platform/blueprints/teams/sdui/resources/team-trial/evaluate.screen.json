@@ -39,7 +39,9 @@
                 {
                   "kind": "Text",
                   "props": { "as": "h1", "className": "text-2xl font-semibold" },
-                  "bindings": { "children": { "$expr": "'Evaluate ' + trial.trialist_display_name" } }
+                  "bindings": {
+                    "children": { "$expr": "'Evaluate ' + trial.trialist_display_name" }
+                  }
                 },
                 {
                   "kind": "Text",
@@ -66,29 +68,57 @@
                 {
                   "kind": "View",
                   "children": [
-                    { "kind": "Text", "props": { "className": "text-xs text-muted", "children": "Type" } },
-                    { "kind": "Text", "props": { "className": "font-medium" }, "bindings": { "children": { "$ref": "trial.trial_type" } } }
+                    {
+                      "kind": "Text",
+                      "props": { "className": "text-xs text-muted", "children": "Type" }
+                    },
+                    {
+                      "kind": "Text",
+                      "props": { "className": "font-medium" },
+                      "bindings": { "children": { "$ref": "trial.trial_type" } }
+                    }
                   ]
                 },
                 {
                   "kind": "View",
                   "children": [
-                    { "kind": "Text", "props": { "className": "text-xs text-muted", "children": "Sessions" } },
-                    { "kind": "Text", "props": { "className": "font-medium" }, "bindings": { "children": { "$ref": "trial.session_count" } } }
+                    {
+                      "kind": "Text",
+                      "props": { "className": "text-xs text-muted", "children": "Sessions" }
+                    },
+                    {
+                      "kind": "Text",
+                      "props": { "className": "font-medium" },
+                      "bindings": { "children": { "$ref": "trial.session_count" } }
+                    }
                   ]
                 },
                 {
                   "kind": "View",
                   "children": [
-                    { "kind": "Text", "props": { "className": "text-xs text-muted", "children": "Starts" } },
-                    { "kind": "Text", "props": { "className": "font-medium" }, "bindings": { "children": { "$ref": "trial.starts_at" } } }
+                    {
+                      "kind": "Text",
+                      "props": { "className": "text-xs text-muted", "children": "Starts" }
+                    },
+                    {
+                      "kind": "Text",
+                      "props": { "className": "font-medium" },
+                      "bindings": { "children": { "$ref": "trial.starts_at" } }
+                    }
                   ]
                 },
                 {
                   "kind": "View",
                   "children": [
-                    { "kind": "Text", "props": { "className": "text-xs text-muted", "children": "Ends" } },
-                    { "kind": "Text", "props": { "className": "font-medium" }, "bindings": { "children": { "$ref": "trial.ends_at" } } }
+                    {
+                      "kind": "Text",
+                      "props": { "className": "text-xs text-muted", "children": "Ends" }
+                    },
+                    {
+                      "kind": "Text",
+                      "props": { "className": "font-medium" },
+                      "bindings": { "children": { "$ref": "trial.ends_at" } }
+                    }
                   ]
                 }
               ]
@@ -132,11 +162,20 @@
                 {
                   "kind": "Button",
                   "props": { "variant": "ghost", "children": "Cancel" },
-                  "actions": { "onPress": { "kind": "navigate", "toExpr": "'/tenant/teams/' + team.id + '/trials'" } }
+                  "actions": {
+                    "onPress": {
+                      "kind": "navigate",
+                      "toExpr": "'/tenant/teams/' + team.id + '/trials'"
+                    }
+                  }
                 },
                 {
                   "kind": "Button",
-                  "props": { "type": "submit", "variant": "primary", "children": "Complete + proceed to decision" }
+                  "props": {
+                    "type": "submit",
+                    "variant": "primary",
+                    "children": "Complete + proceed to decision"
+                  }
                 }
               ]
             }

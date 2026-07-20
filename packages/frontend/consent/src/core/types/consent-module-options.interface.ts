@@ -6,7 +6,7 @@
  *   storage, and behaviour.
  */
 
-import type { IConsentCategory } from '@stackra/contracts';
+import type { IConsentCategory } from "@stackra/contracts";
 
 /**
  * Configuration options for the consent module.
@@ -37,7 +37,7 @@ export interface IConsentModuleOptions {
    * `storage` here to that instance name.
    */
   storage?:
-    'localStorage' | 'sessionStorage' | 'cookie' | 'memory' | 'asyncStorage' | (string & {});
+    "localStorage" | "sessionStorage" | "cookie" | "memory" | "asyncStorage" | (string & {});
 
   /** Storage key / cookie name for persistence. Default: `'consent_preferences'`. */
   cookieName?: string;
@@ -49,10 +49,10 @@ export interface IConsentModuleOptions {
    * Default consent mode. `'opt-in'` requires an explicit grant;
    * `'opt-out'` assumes granted until revoked. Default: `'opt-in'`.
    */
-  defaultMode?: 'opt-in' | 'opt-out';
+  defaultMode?: "opt-in" | "opt-out";
 
   /** Logging level for consent operations. */
-  logging?: 'debug' | 'info' | 'warn' | 'error' | 'silent';
+  logging?: "debug" | "info" | "warn" | "error" | "silent";
 
   /** Whether to emit consent lifecycle events on the event bus. Default: `true`. */
   emitEvents?: boolean;

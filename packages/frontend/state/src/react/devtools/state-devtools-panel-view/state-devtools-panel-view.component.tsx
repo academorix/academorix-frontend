@@ -19,12 +19,12 @@
  *   `registry.snapshot()` (imperative) or via the store's own token.
  */
 
-import { type ReactElement, useCallback, useSyncExternalStore } from 'react';
-import { Card, Chip } from '@stackra/ui/react';
-import type { Store } from '@tanstack/store';
+import { type ReactElement, useCallback, useSyncExternalStore } from "react";
+import { Card, Chip } from "@stackra/ui/react";
+import type { Store } from "@tanstack/store";
 
-import type { StoreEntry } from '@/core/registries/state.registry';
-import type { StateDevtoolsPanelViewProps } from './state-devtools-panel-view.interface';
+import type { StoreEntry } from "@/core/registries/state.registry";
+import type { StateDevtoolsPanelViewProps } from "./state-devtools-panel-view.interface";
 
 /** How many levels deep to keep in the JSON preview. */
 const PREVIEW_DEPTH = 3;
@@ -46,8 +46,8 @@ function previewState(value: unknown): string {
     // Track depth by watching the input list — every `[` pushes one.
     // JSON.stringify walks depth-first, so a hand-rolled counter is
     // less error-prone than trying to read the `this` context.
-    if (val && typeof val === 'object') {
-      if (seen.has(val as object)) return '[Circular]';
+    if (val && typeof val === "object") {
+      if (seen.has(val as object)) return "[Circular]";
       seen.add(val as object);
       // Only push a real object; primitives don't count for depth.
       stack.push(val);
@@ -58,7 +58,7 @@ function previewState(value: unknown): string {
         seen.delete(val as object);
         stack.pop();
         depth = stack.length;
-        return '[…]';
+        return "[…]";
       }
     }
     return val === undefined ? null : val;
@@ -68,7 +68,7 @@ function previewState(value: unknown): string {
   } catch {
     // Non-serialisable value (function, DOM node) — fall back to
     // a short marker so the panel still renders.
-    return '[unserialisable]';
+    return "[unserialisable]";
   }
 }
 
@@ -89,13 +89,13 @@ function StoreCard({ entry }: { entry: StoreEntry }): ReactElement {
       const sub = store.subscribe(cb);
       return () => sub.unsubscribe();
     },
-    [store]
+    [store],
   );
   const getSnapshot = useCallback(() => store.state, [store]);
   const state = useSyncExternalStore(subscribe, getSnapshot, getSnapshot);
 
   const tokenLabel =
-    typeof entry.token === 'symbol' ? (entry.token.description ?? 'Symbol()') : String(entry.token);
+    typeof entry.token === "symbol" ? (entry.token.description ?? "Symbol()") : String(entry.token);
 
   return (
     <Card>
@@ -111,7 +111,7 @@ function StoreCard({ entry }: { entry: StoreEntry }): ReactElement {
         </Card.Description>
       </Card.Header>
       <Card.Content>
-        <pre className="overflow-x-auto text-xs text-foreground">
+        <pre className="text-foreground overflow-x-auto text-xs">
           <code>{previewState(state)}</code>
         </pre>
       </Card.Content>
@@ -155,7 +155,7 @@ export function StateDevtoolsPanelView({ registry }: StateDevtoolsPanelViewProps
           <Card.Header>
             <Card.Title>No stores registered</Card.Title>
             <Card.Description>
-              Register a store with{' '}
+              Register a store with{" "}
               <code>StateModule.forFeature(&#123; name, token, initialState &#125;)</code> to see it
               here.
             </Card.Description>
@@ -168,8 +168,8 @@ export function StateDevtoolsPanelView({ registry }: StateDevtoolsPanelViewProps
   return (
     <div className="flex flex-col gap-3">
       <header>
-        <h3 className="text-base font-semibold text-foreground">State stores</h3>
-        <p className="text-xs text-muted">
+        <h3 className="text-foreground text-base font-semibold">State stores</h3>
+        <p className="text-muted text-xs">
           Reactive stores registered via <code>StateModule.forFeature()</code>. Every card is a live
           view — mutations reflect immediately via each store&apos;s <code>subscribe</code> API.
         </p>

@@ -15,20 +15,20 @@
  *   base peer of the notifications native surface.
  */
 
-import { useMemo, type ReactElement } from 'react';
-import { View } from 'react-native';
-import { Input, Label, Select, TextField } from '@stackra/ui/native';
+import { useMemo, type ReactElement } from "react";
+import { View } from "react-native";
+import { Input, Label, Select, TextField } from "@stackra/ui/native";
 
-import { DEFAULT_TIMEZONES } from '@/core/constants';
-import type { IQuietHoursWindow } from '@/core/interfaces';
+import { DEFAULT_TIMEZONES } from "@/core/constants";
+import type { IQuietHoursWindow } from "@/core/interfaces";
 
-import type { QuietHoursPickerProps } from './quiet-hours-picker.interface';
+import type { QuietHoursPickerProps } from "./quiet-hours-picker.interface";
 
 /** Fallback window rendered when the caller passes `value === null`. */
 const FALLBACK_WINDOW: IQuietHoursWindow = {
-  start: '22:00',
-  end: '07:00',
-  timezone: 'UTC',
+  start: "22:00",
+  end: "07:00",
+  timezone: "UTC",
 };
 
 /**
@@ -59,7 +59,7 @@ export function QuietHoursPicker({
 
   const timezoneOptions = useMemo<readonly ITimezoneOption[]>(
     () => timezones.map((zone) => ({ value: zone, label: zone })),
-    [timezones]
+    [timezones],
   );
 
   const handleStart = (next: string): void => {
@@ -81,7 +81,7 @@ export function QuietHoursPicker({
 
   return (
     <View
-      className={`gap-3 rounded-xl border border-border bg-surface p-3${className ? ` ${className}` : ''}`}
+      className={`border-border bg-surface gap-3 rounded-xl border p-3${className ? ` ${className}` : ""}`}
     >
       <TextField>
         <Label>

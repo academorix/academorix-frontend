@@ -12,12 +12,12 @@
  *   native, both mapped to the HeroUI `Spinner` root.
  */
 
-import type { JSX } from 'react';
-import { View } from 'react-native';
-import { Spinner, Typography } from '@stackra/ui/native';
+import type { JSX } from "react";
+import { View } from "react-native";
+import { Spinner, Typography } from "@stackra/ui/native";
 
 /** The loader variant to render. */
-export type AiLoaderVariant = 'dots' | 'spinner';
+export type AiLoaderVariant = "dots" | "spinner";
 
 /** Props accepted by {@link AiLoader}. */
 export interface IAiLoaderProps {
@@ -31,15 +31,15 @@ export interface IAiLoaderProps {
 
 /** Assistant loading affordance. */
 export function AiLoader(props: IAiLoaderProps): JSX.Element {
-  const { variant = 'spinner', label = 'Thinking…', className } = props;
+  const { variant = "spinner", label = "Thinking…", className } = props;
 
   return (
     <View
-      className={`flex-row items-center gap-2 py-2${className ? ` ${className}` : ''}`}
+      className={`flex-row items-center gap-2 py-2${className ? ` ${className}` : ""}`}
       accessibilityRole="progressbar"
       accessibilityLabel={label}
     >
-      <Spinner size={variant === 'dots' ? 'sm' : 'md'} color="default" />
+      <Spinner size={variant === "dots" ? "sm" : "md"} color="default" />
       {label ? (
         <Typography type="body-sm" color="muted">
           {label}

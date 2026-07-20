@@ -12,13 +12,13 @@
  *   would otherwise render the shell useless.
  */
 
-import { useMemo } from 'react';
-import type { IDevtoolsAuthGate } from '@stackra/contracts';
-import { useOptionalInject } from '@stackra/container/react';
-import { AUTH_SERVICE } from '@stackra/contracts';
+import { useMemo } from "react";
+import type { IDevtoolsAuthGate } from "@stackra/contracts";
+import { useOptionalInject } from "@stackra/container/react";
+import { AUTH_SERVICE } from "@stackra/contracts";
 
 /** Reason a gate blocked the panel — powers the locked-state branching. */
-export type DevtoolsAuthDenyReason = 'unauthenticated' | 'forbidden';
+export type DevtoolsAuthDenyReason = "unauthenticated" | "forbidden";
 
 /** Result returned by {@link useDevtoolsAuthGuard}. */
 export interface IUseDevtoolsAuthGuardResult {
@@ -65,15 +65,15 @@ export function useDevtoolsAuthGuard(gate?: IDevtoolsAuthGate): IUseDevtoolsAuth
     // affordance ("Sign in") than a plain forbidden ("Contact
     // admin").
     const isAuthed =
-      typeof authService.isAuthenticated === 'function'
+      typeof authService.isAuthenticated === "function"
         ? authService.isAuthenticated()
         : Boolean(authService.isAuthenticated ?? authService.currentUser);
-    if (!isAuthed) return { allowed: false, reason: 'unauthenticated' };
+    if (!isAuthed) return { allowed: false, reason: "unauthenticated" };
 
     // Ability check — we default to `false` when the auth service
     // doesn't implement `.can(...)`, matching a conservative RBAC
     // stance (unknown implementation → deny).
     const can = authService.can?.(gate.ability, gate.resource) ?? false;
-    return can ? { allowed: true, reason: null } : { allowed: false, reason: 'forbidden' };
+    return can ? { allowed: true, reason: null } : { allowed: false, reason: "forbidden" };
   }, [authService, gate]);
 }

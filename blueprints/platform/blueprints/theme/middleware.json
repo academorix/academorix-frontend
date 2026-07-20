@@ -16,8 +16,14 @@
   "consumed": [
     { "middleware": "foundation::request.id" },
     { "middleware": "foundation::cors.strict" },
-    { "middleware": "foundation::auth:sanctum", "notes": "Required on every /api/v1/themes* route except /me/theme-preference which uses the caller's own token." },
-    { "middleware": "foundation::auth:platform_admin", "notes": "Required on every /api/v1/platform/theme-presets* route." },
+    {
+      "middleware": "foundation::auth:sanctum",
+      "notes": "Required on every /api/v1/themes* route except /me/theme-preference which uses the caller's own token."
+    },
+    {
+      "middleware": "foundation::auth:platform_admin",
+      "notes": "Required on every /api/v1/platform/theme-presets* route."
+    },
     { "middleware": "foundation::throttle" },
     { "middleware": "foundation::response.envelope" },
     { "middleware": "tenancy::tenant.resolve" },

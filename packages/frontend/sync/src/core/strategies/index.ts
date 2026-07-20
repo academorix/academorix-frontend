@@ -4,6 +4,6 @@
  * @description Strategies barrel export.
  */
 
-export { lastWriteWins } from './last-write-wins.strategy';
-export { localWins } from './local-wins.strategy';
-export { remoteWins } from './remote-wins.strategy';
+export { lastWriteWins } from "./last-write-wins.strategy";
+export { localWins } from "./local-wins.strategy";
+export { remoteWins } from "./remote-wins.strategy";

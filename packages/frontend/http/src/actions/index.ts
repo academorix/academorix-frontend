@@ -4,5 +4,5 @@
  * @description Framework action handlers shipped by `@stackra/http`.
  */
 
-export { DownloadHandler } from './download.handler';
-export { UploadHandler } from './upload.handler';
+export { DownloadHandler } from "./download.handler";
+export { UploadHandler } from "./upload.handler";

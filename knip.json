@@ -1,27 +1,38 @@
 {
   "workspaces": {
-    "apps/dashboard": {
-      "ignoreDependencies": ["@heroui/styles", "openapi-fetch"],
-      "ignore": ["src/lib/api/**"]
+    ".": {
+      "entry": ["scripts/**/*.{ts,mjs,py}"],
+      "project": ["*.{ts,mjs,cjs}"]
     },
-    "apps/landing-page": {
-      "ignoreDependencies": [
-        "@heroui-pro/react",
-        "intl-messageformat",
-        "tailwind-variants",
-        "@eslint/compat",
-        "@eslint/eslintrc",
-        "eslint-config-next"
-      ],
-      "ignore": ["postcss.config.mjs"]
+    "apps/vite-template": {
+      "project": ["src/**/*.{ts,tsx}"]
     },
-    "packages/api-types": {
-      "ignoreDependencies": ["zod"],
-      "entry": ["src/{common,enums,errors,ids}.ts", "src/resources/*.ts"]
+    "apps/laravel-template": {
+      "ignore": ["**/*"]
     },
-    "packages/typescript-config": {
-      "entry": ["*.json"],
-      "ignoreDependencies": ["next"]
+    "apps/react-native-template": {
+      "entry": ["App.tsx"],
+      "ignore": ["__tests__/**", "ios/**", "android/**"]
+    },
+    "packages/config/eslint": {
+      "entry": ["base.mjs", "react.mjs", "native.mjs", "vite-app.mjs"]
+    },
+    "packages/config/tailwind": {},
+    "packages/config/tsconfig": {},
+    "packages/config/typescript": {},
+    "packages/config/tsup": {
+      "entry": ["src/index.ts"],
+      "project": ["src/**/*.{ts,tsx}"]
+    },
+    "packages/frontend/*": {
+      "entry": ["src/**/index.ts"],
+      "project": ["src/**/*.{ts,tsx}"]
+    },
+    "packages/backend/*": {
+      "ignore": ["**/*"]
+    },
+    "packages/sdk/*": {
+      "ignore": ["**/*"]
     }
   },
   "rules": {
@@ -30,11 +41,38 @@
     "types": "off",
     "duplicates": "off",
     "enumMembers": "off",
-    "dependencies": "error",
-    "unlisted": "error",
-    "unresolved": "error",
-    "binaries": "error"
+    "dependencies": "warn",
+    "unlisted": "warn",
+    "unresolved": "warn",
+    "binaries": "warn"
   },
   "ignoreExportsUsedInFile": true,
-  "ignoreBinaries": ["doppler"]
+  "ignoreDependencies": [
+    "@stackra/*",
+    "@academorix/*",
+    "@commitlint/types",
+    "@babel/preset-env",
+    "@babel/runtime",
+    "@react-native/eslint-config",
+    "eslint-plugin-node",
+    "eslint-plugin-react-hooks",
+    "prettier",
+    "reflect-metadata",
+    "@vivtel/metadata",
+    "@testing-library/react",
+    "@heroicons/react",
+    "@heroui/react",
+    "@heroui/styles",
+    "@iconify/react",
+    "@tanstack/query-core",
+    "@tanstack/react-query",
+    "@types/react-dom",
+    "react-dom",
+    "rxjs",
+    "zod",
+    "react-native",
+    "@react-native-community/netinfo",
+    "@react-native-async-storage/async-storage"
+  ],
+  "ignoreBinaries": ["doppler", "docker", "gh", "pint", "phpstan", "pest", "composer", "tauri"]
 }

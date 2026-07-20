@@ -20,10 +20,10 @@
  *   propagates the error.
  */
 
-import { Inject, Injectable, Optional } from '@stackra/container';
+import { Inject, Injectable, Optional } from "@stackra/container";
 
-import { NOTIFICATION_CONFIG, NOTIFICATION_EVENTS } from '../constants';
-import { detectNotificationSupport, normalizeNotificationPayload } from '../utils';
+import { NOTIFICATION_CONFIG, NOTIFICATION_EVENTS } from "../constants";
+import { detectNotificationSupport, normalizeNotificationPayload } from "../utils";
 import type {
   IDeliveryReport,
   INotificationChannelDriver,
@@ -33,8 +33,8 @@ import type {
   INotificationPayload,
   INotificationPermissionState,
   NotificationManagerListener,
-} from '../interfaces';
-import { AnalyticsBridgeService } from './analytics-bridge.service';
+} from "../interfaces";
+import { AnalyticsBridgeService } from "./analytics-bridge.service";
 
 /**
  * The notification manager.
@@ -66,7 +66,7 @@ export class NotificationManager implements INotificationManager {
 
   public constructor(
     @Inject(NOTIFICATION_CONFIG) private readonly config: INotificationModuleOptions,
-    @Optional() private readonly analytics?: AnalyticsBridgeService
+    @Optional() private readonly analytics?: AnalyticsBridgeService,
   ) {
     // The `in-app` driver is registered by `NotificationModule.forRoot`
     // via a `createSeedLoader` provider — the manager itself no longer
@@ -102,7 +102,7 @@ export class NotificationManager implements INotificationManager {
    */
   public async dispatch(
     payload: INotificationPayload,
-    options?: { readonly channels?: readonly string[] }
+    options?: { readonly channels?: readonly string[] },
   ): Promise<readonly IDeliveryReport[]> {
     // The manager normalises once — every downstream driver receives
     // the same shape (trimmed title/body, defaulted timestamp).
@@ -123,7 +123,7 @@ export class NotificationManager implements INotificationManager {
       channelIds = this.config.defaultStack;
     } else {
       const keys = [...this.drivers.keys()];
-      channelIds = keys.length > 0 ? keys : ['in-app'];
+      channelIds = keys.length > 0 ? keys : ["in-app"];
     }
 
     // Sequential delivery so one driver's slow response doesn't
@@ -171,13 +171,13 @@ export class NotificationManager implements INotificationManager {
   public async requestPermission(): Promise<NotificationPermission> {
     this.analytics?.emit(NOTIFICATION_EVENTS.NOTIFICATION_PERMISSION_REQUESTED);
     if (!detectNotificationSupport()) {
-      const denied: NotificationPermission = 'denied';
+      const denied: NotificationPermission = "denied";
       this.permission = { supported: false, permission: denied };
       this.emit();
       this.analytics?.emit(NOTIFICATION_EVENTS.NOTIFICATION_PERMISSION_DENIED);
       return denied;
     }
-    let result: NotificationPermission = 'denied';
+    let result: NotificationPermission = "denied";
     try {
       // The narrowed global — TS doesn't know we already probed it.
       const g = globalThis as unknown as {
@@ -187,15 +187,15 @@ export class NotificationManager implements INotificationManager {
     } catch {
       // fail-soft — a browser that throws (private mode) is treated
       // as a denial rather than propagating the error to the caller.
-      result = 'denied';
+      result = "denied";
     }
     this.permission = { supported: true, permission: result };
     this.emit();
     switch (result) {
-      case 'granted':
+      case "granted":
         this.analytics?.emit(NOTIFICATION_EVENTS.NOTIFICATION_PERMISSION_GRANTED);
         break;
-      case 'denied':
+      case "denied":
         this.analytics?.emit(NOTIFICATION_EVENTS.NOTIFICATION_PERMISSION_DENIED);
         break;
       default:
@@ -234,7 +234,7 @@ export class NotificationManager implements INotificationManager {
   /** Probe the current permission state SSR-safely. */
   private readPermission(): INotificationPermissionState {
     const supported = detectNotificationSupport();
-    if (!supported) return { supported: false, permission: 'denied' };
+    if (!supported) return { supported: false, permission: "denied" };
     // Narrowed global — TS doesn't remember the earlier probe.
     const g = globalThis as unknown as {
       readonly Notification: { readonly permission: NotificationPermission };

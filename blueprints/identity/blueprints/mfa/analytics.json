@@ -10,11 +10,7 @@
       "name": "MFA Enrollment Preview Started",
       "kind": "track",
       "consent_required": "functional",
-      "properties": [
-        "identity_fingerprint",
-        "method",
-        "elapsed_since_registration_days"
-      ],
+      "properties": ["identity_fingerprint", "method", "elapsed_since_registration_days"],
       "description": "Round 1 of enrolment. method=totp|webauthn. Drives the enrolment-funnel dashboard (preview → confirm conversion rate)."
     },
     {
@@ -33,44 +29,28 @@
       "name": "MFA Enrollment Abandoned",
       "kind": "track",
       "consent_required": "functional",
-      "properties": [
-        "identity_fingerprint",
-        "method",
-        "reason"
-      ],
+      "properties": ["identity_fingerprint", "method", "reason"],
       "description": "Round 2 failed OR the preview expired. reason=confirmation_code_invalid|preview_expired|preview_missing|attestation_verification_failed|duplicate_credential. Signals friction in the enrolment UX."
     },
     {
       "name": "MFA Challenge Attempted",
       "kind": "track",
       "consent_required": "functional",
-      "properties": [
-        "identity_fingerprint",
-        "method",
-        "outcome",
-        "duration_ms",
-        "context"
-      ],
+      "properties": ["identity_fingerprint", "method", "outcome", "duration_ms", "context"],
       "description": "One challenge verification. outcome=verified|invalid|expired. context=login|step_up (distinguishes initial-login MFA from mid-session step-up)."
     },
     {
       "name": "MFA Recovery Code Consumed",
       "kind": "track",
       "consent_required": "functional",
-      "properties": [
-        "identity_fingerprint",
-        "remaining_count"
-      ],
+      "properties": ["identity_fingerprint", "remaining_count"],
       "description": "User fell back to a recovery code. Signals primary-factor loss OR credential migration event."
     },
     {
       "name": "MFA Recovery Codes Regenerated",
       "kind": "track",
       "consent_required": "functional",
-      "properties": [
-        "identity_fingerprint",
-        "trigger"
-      ],
+      "properties": ["identity_fingerprint", "trigger"],
       "description": "trigger=self_service|admin_action."
     },
     {
@@ -102,20 +82,14 @@
       "name": "MFA Disabled",
       "kind": "track",
       "consent_required": "functional",
-      "properties": [
-        "identity_fingerprint",
-        "trigger"
-      ],
+      "properties": ["identity_fingerprint", "trigger"],
       "description": "trigger=self_service|admin_action|account_recovery|identity_erasure."
     },
     {
       "name": "MFA Step-Up Prompted",
       "kind": "track",
       "consent_required": "functional",
-      "properties": [
-        "identity_fingerprint",
-        "action_id"
-      ],
+      "properties": ["identity_fingerprint", "action_id"],
       "description": "mfa.require_recent_challenge middleware rejected a sensitive action. action_id = the target the caller was trying to invoke. Signals sensitive-action volume for the CX team."
     }
   ],

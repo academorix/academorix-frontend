@@ -10,7 +10,11 @@
       "typical_severity": "block",
       "confidence_inputs": ["ip_hash_matched", "days_between_referrals"],
       "details_shape": {
-        "matched_ip_hash": { "type": "string", "pattern": "^[a-f0-9]{64}$", "description": "SHA-256 hex" },
+        "matched_ip_hash": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$",
+          "description": "SHA-256 hex"
+        },
         "referrer_ip_matched_at": { "type": "string", "format": "date-time" },
         "referred_ip_matched_at": { "type": "string", "format": "date-time" }
       }
@@ -47,7 +51,10 @@
       "details_shape": {
         "referrer_email_hash": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
         "referred_email_hash": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
-        "match_pattern": { "type": "string", "enum": ["plus_addressing", "dot_notation", "subdomain"] }
+        "match_pattern": {
+          "type": "string",
+          "enum": ["plus_addressing", "dot_notation", "subdomain"]
+        }
       }
     },
     {

@@ -15,7 +15,9 @@
     "incrementing": false,
     "model": "Academorix\\Sports\\AthleteEnrollment\\Models\\AthleteEnrollment",
     "interface": "Academorix\\Sports\\AthleteEnrollment\\Contracts\\Data\\AthleteEnrollmentInterface",
-    "implements": ["Academorix\\Sports\\AthleteEnrollment\\Contracts\\Data\\AthleteEnrollmentInterface"],
+    "implements": [
+      "Academorix\\Sports\\AthleteEnrollment\\Contracts\\Data\\AthleteEnrollmentInterface"
+    ],
     "traits": [
       "HasFactory",
       "HasPrefixedUlid",
@@ -51,46 +53,211 @@
       "metadata": "array"
     },
     "observers": ["AthleteEnrollmentObserver"],
-    "appends": [
-      "days_since_submission",
-      "is_active",
-      "requires_payment",
-      "requires_consent"
-    ]
+    "appends": ["days_since_submission", "is_active", "requires_payment", "requires_consent"]
   },
   "x-database": {
     "engine": "postgres",
     "columns": {
-      "id": { "type": "string", "length": 30, "primary": true, "description": "Prefixed ULID: `aen_<26>`." },
-      "tenant_id": { "type": "string", "length": 30, "nullable": false, "foreign": { "table": "tenants", "column": "id", "onUpdate": "cascade", "onDelete": "cascade" } },
-      "branch_id": { "type": "string", "length": 30, "nullable": false, "foreign": { "table": "branches", "column": "id", "onUpdate": "cascade", "onDelete": "restrict" }, "description": "Denormalised from athlete.branch_id for indexed filtering. IMMUTABLE post-create." },
-      "team_id": { "type": "string", "length": 30, "nullable": false, "foreign": { "table": "teams", "column": "id", "onUpdate": "cascade", "onDelete": "restrict" }, "description": "The team the athlete is enrolled in. RESTRICT — teams cannot be archived while active enrollments reference them. IMMUTABLE post-create." },
-      "athlete_id": { "type": "string", "length": 30, "nullable": false, "foreign": { "table": "athletes", "column": "id", "onUpdate": "cascade", "onDelete": "restrict" }, "description": "The enrolled athlete. RESTRICT — athletes cannot be archived while active enrollments reference them. IMMUTABLE post-create." },
-      "season_id": { "type": "string", "length": 30, "nullable": false, "foreign": { "table": "seasons", "column": "id", "onUpdate": "cascade", "onDelete": "restrict" }, "description": "The season this enrollment applies to. RESTRICT — seasons cannot be archived while active enrollments reference them. IMMUTABLE post-create." },
-      "age_group_snapshot_id": { "type": "string", "length": 30, "nullable": true, "foreign": { "table": "age_groups", "column": "id", "onUpdate": "cascade", "onDelete": "set null" }, "description": "SNAPSHOT of athlete.current_age_group_id at EnrollmentSubmitted time. IMMUTABLE for the enrollment lifetime — birthday drift + AgeGroup catalog changes do NOT reshape this. SET NULL when the referenced AgeGroup is deleted (the enrollment remains valid; the snapshot is a historical marker)." },
-      "team_member_id": { "type": "string", "length": 30, "nullable": true, "foreign": { "table": "team_members", "column": "id", "onUpdate": "cascade", "onDelete": "set null" }, "description": "The teams::TeamMember row created atomically when status → active. Null until activation. SET NULL when the TeamMember is soft-deleted (usually because the athlete left the team mid-season)." },
-      "enrollment_source": { "type": "string", "length": 24, "nullable": false, "description": "Enum: self_serve / admin / import / migration / api / trial_conversion. How the enrollment came to be." },
-      "enrollment_type": { "type": "string", "length": 24, "nullable": false, "default": "'regular'", "description": "Enum: regular / trial_converted / late / waitlist / provisional. regular = default; trial_converted = source_trial_id set; late = past registration_closes_at with fee; waitlist = capacity-full at enroll time; provisional = pending guardian consent for minors (Enterprise-only)." },
-      "source_trial_id": { "type": "string", "length": 30, "nullable": true, "foreign": { "table": "team_trials", "column": "id", "onUpdate": "cascade", "onDelete": "set null" }, "description": "Set when enrollment_type='trial_converted'. References the TeamTrial that converted to this enrollment. RESTRICT would be better but SET NULL matches the audit-preservation pattern." },
-      "status": { "type": "string", "length": 24, "nullable": false, "default": "'submitted'", "description": "Enum: submitted / payment_pending / consent_pending / confirmed / active / completed / withdrawn / expelled / expired / waitlisted." },
-      "position_preference": { "type": "string", "length": 64, "nullable": true, "description": "Sport-specific position the athlete wants (free-text in Wave 3a)." },
-      "position_assigned": { "type": "string", "length": 64, "nullable": true, "description": "Coach's assigned position." },
+      "id": {
+        "type": "string",
+        "length": 30,
+        "primary": true,
+        "description": "Prefixed ULID: `aen_<26>`."
+      },
+      "tenant_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": {
+          "table": "tenants",
+          "column": "id",
+          "onUpdate": "cascade",
+          "onDelete": "cascade"
+        }
+      },
+      "branch_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": {
+          "table": "branches",
+          "column": "id",
+          "onUpdate": "cascade",
+          "onDelete": "restrict"
+        },
+        "description": "Denormalised from athlete.branch_id for indexed filtering. IMMUTABLE post-create."
+      },
+      "team_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": {
+          "table": "teams",
+          "column": "id",
+          "onUpdate": "cascade",
+          "onDelete": "restrict"
+        },
+        "description": "The team the athlete is enrolled in. RESTRICT — teams cannot be archived while active enrollments reference them. IMMUTABLE post-create."
+      },
+      "athlete_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": {
+          "table": "athletes",
+          "column": "id",
+          "onUpdate": "cascade",
+          "onDelete": "restrict"
+        },
+        "description": "The enrolled athlete. RESTRICT — athletes cannot be archived while active enrollments reference them. IMMUTABLE post-create."
+      },
+      "season_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": {
+          "table": "seasons",
+          "column": "id",
+          "onUpdate": "cascade",
+          "onDelete": "restrict"
+        },
+        "description": "The season this enrollment applies to. RESTRICT — seasons cannot be archived while active enrollments reference them. IMMUTABLE post-create."
+      },
+      "age_group_snapshot_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": true,
+        "foreign": {
+          "table": "age_groups",
+          "column": "id",
+          "onUpdate": "cascade",
+          "onDelete": "set null"
+        },
+        "description": "SNAPSHOT of athlete.current_age_group_id at EnrollmentSubmitted time. IMMUTABLE for the enrollment lifetime — birthday drift + AgeGroup catalog changes do NOT reshape this. SET NULL when the referenced AgeGroup is deleted (the enrollment remains valid; the snapshot is a historical marker)."
+      },
+      "team_member_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": true,
+        "foreign": {
+          "table": "team_members",
+          "column": "id",
+          "onUpdate": "cascade",
+          "onDelete": "set null"
+        },
+        "description": "The teams::TeamMember row created atomically when status → active. Null until activation. SET NULL when the TeamMember is soft-deleted (usually because the athlete left the team mid-season)."
+      },
+      "enrollment_source": {
+        "type": "string",
+        "length": 24,
+        "nullable": false,
+        "description": "Enum: self_serve / admin / import / migration / api / trial_conversion. How the enrollment came to be."
+      },
+      "enrollment_type": {
+        "type": "string",
+        "length": 24,
+        "nullable": false,
+        "default": "'regular'",
+        "description": "Enum: regular / trial_converted / late / waitlist / provisional. regular = default; trial_converted = source_trial_id set; late = past registration_closes_at with fee; waitlist = capacity-full at enroll time; provisional = pending guardian consent for minors (Enterprise-only)."
+      },
+      "source_trial_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": true,
+        "foreign": {
+          "table": "team_trials",
+          "column": "id",
+          "onUpdate": "cascade",
+          "onDelete": "set null"
+        },
+        "description": "Set when enrollment_type='trial_converted'. References the TeamTrial that converted to this enrollment. RESTRICT would be better but SET NULL matches the audit-preservation pattern."
+      },
+      "status": {
+        "type": "string",
+        "length": 24,
+        "nullable": false,
+        "default": "'submitted'",
+        "description": "Enum: submitted / payment_pending / consent_pending / confirmed / active / completed / withdrawn / expelled / expired / waitlisted."
+      },
+      "position_preference": {
+        "type": "string",
+        "length": 64,
+        "nullable": true,
+        "description": "Sport-specific position the athlete wants (free-text in Wave 3a)."
+      },
+      "position_assigned": {
+        "type": "string",
+        "length": 64,
+        "nullable": true,
+        "description": "Coach's assigned position."
+      },
       "jersey_number_preference": { "type": "integer", "nullable": true, "description": "0-999." },
-      "jersey_number_assigned": { "type": "integer", "nullable": true, "description": "0-999. Unique per active enrollment on the team (partial unique index)." },
-      "enrollment_notes": { "type": "text", "nullable": true, "description": "Coach + admin visible." },
-      "coach_notes": { "type": "text", "nullable": true, "description": "Coach-only. Never surfaced to athlete/guardian." },
-      "withdrawal_reason": { "type": "string", "length": 32, "nullable": true, "description": "Enum: withdrew / dropped / injury / relocation / financial / disciplinary / other. Required when status='withdrawn' OR 'expelled'." },
+      "jersey_number_assigned": {
+        "type": "integer",
+        "nullable": true,
+        "description": "0-999. Unique per active enrollment on the team (partial unique index)."
+      },
+      "enrollment_notes": {
+        "type": "text",
+        "nullable": true,
+        "description": "Coach + admin visible."
+      },
+      "coach_notes": {
+        "type": "text",
+        "nullable": true,
+        "description": "Coach-only. Never surfaced to athlete/guardian."
+      },
+      "withdrawal_reason": {
+        "type": "string",
+        "length": 32,
+        "nullable": true,
+        "description": "Enum: withdrew / dropped / injury / relocation / financial / disciplinary / other. Required when status='withdrawn' OR 'expelled'."
+      },
       "withdrawn_at": { "type": "timestamptz", "nullable": true },
-      "withdrawn_by_user_id": { "type": "string", "length": 30, "nullable": true, "foreign": { "table": "users", "column": "id", "onUpdate": "cascade", "onDelete": "set null" } },
-      "price_amount_cents": { "type": "integer", "nullable": false, "default": 0, "description": "Enrollment fee, frozen at confirm time. Zero for free enrollments." },
-      "price_currency": { "type": "string", "length": 3, "nullable": true, "description": "ISO 4217. Required when price_amount_cents > 0." },
-      "payment_status": { "type": "string", "length": 16, "nullable": false, "default": "'none'", "description": "Enum: none / pending / paid / partial / refunded / failed. Wave 4 finance hook." },
-      "consent_snapshot": { "type": "jsonb", "nullable": true, "description": "Snapshot of the athlete's consents at confirm time — {photo_release, medical_disclosure, third_party, recorded_at, recorded_by_user_id}. Required for provisional/confirmed status transitions." },
+      "withdrawn_by_user_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": true,
+        "foreign": {
+          "table": "users",
+          "column": "id",
+          "onUpdate": "cascade",
+          "onDelete": "set null"
+        }
+      },
+      "price_amount_cents": {
+        "type": "integer",
+        "nullable": false,
+        "default": 0,
+        "description": "Enrollment fee, frozen at confirm time. Zero for free enrollments."
+      },
+      "price_currency": {
+        "type": "string",
+        "length": 3,
+        "nullable": true,
+        "description": "ISO 4217. Required when price_amount_cents > 0."
+      },
+      "payment_status": {
+        "type": "string",
+        "length": 16,
+        "nullable": false,
+        "default": "'none'",
+        "description": "Enum: none / pending / paid / partial / refunded / failed. Wave 4 finance hook."
+      },
+      "consent_snapshot": {
+        "type": "jsonb",
+        "nullable": true,
+        "description": "Snapshot of the athlete's consents at confirm time — {photo_release, medical_disclosure, third_party, recorded_at, recorded_by_user_id}. Required for provisional/confirmed status transitions."
+      },
       "confirmed_at": { "type": "timestamptz", "nullable": true },
       "activated_at": { "type": "timestamptz", "nullable": true },
       "completed_at": { "type": "timestamptz", "nullable": true },
       "waitlisted_at": { "type": "timestamptz", "nullable": true },
-      "waitlist_position": { "type": "integer", "nullable": true, "description": "Position in the team's waitlist queue. Null when not waitlisted. Recomputed by PromoteWaitlistedEnrollmentsJob as slots open." },
+      "waitlist_position": {
+        "type": "integer",
+        "nullable": true,
+        "description": "Position in the team's waitlist queue. Null when not waitlisted. Recomputed by PromoteWaitlistedEnrollmentsJob as slots open."
+      },
       "expired_at": { "type": "timestamptz", "nullable": true },
       "metadata": { "type": "jsonb", "nullable": true },
       "created_by": { "type": "string", "length": 30, "nullable": true },
@@ -115,10 +282,26 @@
         "predicate": "status IN ('active') AND jersey_number_assigned IS NOT NULL AND deleted_at IS NULL",
         "description": "Jersey number uniqueness within an active team roster."
       },
-      { "columns": ["tenant_id", "team_id", "season_id", "status"], "name": "athlete_enrollments_team_season_status_idx" },
-      { "columns": ["tenant_id", "athlete_id", "season_id"], "name": "athlete_enrollments_athlete_season_idx" },
-      { "columns": ["tenant_id", "status", "waitlist_position"], "name": "athlete_enrollments_waitlist_idx", "predicate": "status = 'waitlisted' AND deleted_at IS NULL", "description": "Feeds PromoteWaitlistedEnrollmentsJob's queue." },
-      { "columns": ["tenant_id", "team_member_id"], "name": "athlete_enrollments_team_member_idx", "predicate": "team_member_id IS NOT NULL", "description": "Reverse lookup — given a TeamMember, find its originating enrollment." }
+      {
+        "columns": ["tenant_id", "team_id", "season_id", "status"],
+        "name": "athlete_enrollments_team_season_status_idx"
+      },
+      {
+        "columns": ["tenant_id", "athlete_id", "season_id"],
+        "name": "athlete_enrollments_athlete_season_idx"
+      },
+      {
+        "columns": ["tenant_id", "status", "waitlist_position"],
+        "name": "athlete_enrollments_waitlist_idx",
+        "predicate": "status = 'waitlisted' AND deleted_at IS NULL",
+        "description": "Feeds PromoteWaitlistedEnrollmentsJob's queue."
+      },
+      {
+        "columns": ["tenant_id", "team_member_id"],
+        "name": "athlete_enrollments_team_member_idx",
+        "predicate": "team_member_id IS NOT NULL",
+        "description": "Reverse lookup — given a TeamMember, find its originating enrollment."
+      }
     ]
   },
   "required": [
@@ -143,7 +326,10 @@
     "team_id": { "type": "string", "pattern": "^tea_[0-9A-HJKMNP-TV-Z]{26}$" },
     "athlete_id": { "type": "string", "pattern": "^ath_[0-9A-HJKMNP-TV-Z]{26}$" },
     "season_id": { "type": "string", "pattern": "^sea_[0-9A-HJKMNP-TV-Z]{26}$" },
-    "age_group_snapshot_id": { "type": ["string", "null"], "pattern": "^age_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "age_group_snapshot_id": {
+      "type": ["string", "null"],
+      "pattern": "^age_[0-9A-HJKMNP-TV-Z]{26}$"
+    },
     "team_member_id": { "type": ["string", "null"], "pattern": "^trm_[0-9A-HJKMNP-TV-Z]{26}$" },
     "enrollment_source": {
       "type": "string",
@@ -156,7 +342,18 @@
     "source_trial_id": { "type": ["string", "null"], "pattern": "^ttr_[0-9A-HJKMNP-TV-Z]{26}$" },
     "status": {
       "type": "string",
-      "enum": ["submitted", "payment_pending", "consent_pending", "confirmed", "active", "completed", "withdrawn", "expelled", "expired", "waitlisted"]
+      "enum": [
+        "submitted",
+        "payment_pending",
+        "consent_pending",
+        "confirmed",
+        "active",
+        "completed",
+        "withdrawn",
+        "expelled",
+        "expired",
+        "waitlisted"
+      ]
     },
     "position_preference": { "type": ["string", "null"], "maxLength": 64 },
     "position_assigned": { "type": ["string", "null"], "maxLength": 64 },
@@ -166,10 +363,22 @@
     "coach_notes": { "type": ["string", "null"], "maxLength": 4096 },
     "withdrawal_reason": {
       "type": ["string", "null"],
-      "enum": ["withdrew", "dropped", "injury", "relocation", "financial", "disciplinary", "other", null]
+      "enum": [
+        "withdrew",
+        "dropped",
+        "injury",
+        "relocation",
+        "financial",
+        "disciplinary",
+        "other",
+        null
+      ]
     },
     "withdrawn_at": { "type": ["string", "null"], "format": "date-time" },
-    "withdrawn_by_user_id": { "type": ["string", "null"], "pattern": "^usr_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "withdrawn_by_user_id": {
+      "type": ["string", "null"],
+      "pattern": "^usr_[0-9A-HJKMNP-TV-Z]{26}$"
+    },
     "price_amount_cents": { "type": "integer", "minimum": 0 },
     "price_currency": { "type": ["string", "null"], "pattern": "^[A-Z]{3}$" },
     "payment_status": {

@@ -21,7 +21,10 @@
         "trigger": "deleted_at + user.privacy.erasure_hold_days past",
         "action": "hard delete",
         "job": "PurgeErasedUsersJob",
-        "cascades": ["TenantMember (FK CASCADE)", "Profile (via post-purge Profile hard-delete step)"]
+        "cascades": [
+          "TenantMember (FK CASCADE)",
+          "Profile (via post-purge Profile hard-delete step)"
+        ]
       }
     },
     {

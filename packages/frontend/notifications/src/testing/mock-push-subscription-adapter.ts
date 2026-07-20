@@ -9,14 +9,14 @@
  *   `simulate*` hooks + assertable through call counters.
  */
 
-import type { IPushSubscriptionAdapter, IPushSubscriptionResult } from '@/core/interfaces';
+import type { IPushSubscriptionAdapter, IPushSubscriptionResult } from "@/core/interfaces";
 
 /**
  * Options accepted by {@link MockPushSubscriptionAdapter}.
  */
 export interface IMockPushSubscriptionAdapterOptions {
   /** Which platform the mock advertises. Defaults to `'web'`. */
-  readonly platform?: 'web' | 'native';
+  readonly platform?: "web" | "native";
   /** Seed permission state. */
   readonly permission?: NotificationPermission;
   /** Seed the initial subscription (or `null`). */
@@ -30,7 +30,7 @@ export interface IMockPushSubscriptionAdapterOptions {
  */
 export class MockPushSubscriptionAdapter implements IPushSubscriptionAdapter {
   /** Platform discriminator (`'web'` by default). */
-  public readonly platform: 'web' | 'native';
+  public readonly platform: "web" | "native";
 
   /** Test hook — override `isSupported()`. */
   public supported: boolean;
@@ -51,9 +51,9 @@ export class MockPushSubscriptionAdapter implements IPushSubscriptionAdapter {
   public getPermissionStateCalls = 0;
 
   public constructor(options: IMockPushSubscriptionAdapterOptions = {}) {
-    this.platform = options.platform ?? 'web';
+    this.platform = options.platform ?? "web";
     this.supported = options.supported ?? true;
-    this.permission = options.permission ?? 'default';
+    this.permission = options.permission ?? "default";
     this.subscription = options.subscription ?? null;
   }
 
@@ -81,13 +81,13 @@ export class MockPushSubscriptionAdapter implements IPushSubscriptionAdapter {
       ({
         kind: this.platform,
         value:
-          this.platform === 'web'
+          this.platform === "web"
             ? {
-                endpoint: 'https://push.example.com/subs/mock',
+                endpoint: "https://push.example.com/subs/mock",
                 expirationTime: null,
-                keys: { p256dh: 'p256dh-mock', auth: 'auth-mock' },
+                keys: { p256dh: "p256dh-mock", auth: "auth-mock" },
               }
-            : { platform: 'ios', token: 'ExponentPushToken[mock]' },
+            : { platform: "ios", token: "ExponentPushToken[mock]" },
       } as IPushSubscriptionResult);
     this.subscription = value;
     return value;

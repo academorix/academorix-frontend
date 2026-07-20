@@ -9,12 +9,12 @@
  * @module @stackra/http/connectors/axios-connector
  */
 
-import { Injectable } from '@stackra/container';
-import { Str } from '@stackra/support';
+import { Injectable } from "@stackra/container";
+import { Str } from "@stackra/support";
 
-import type { IHttpConnector, IHttpContext, IHttpResponse } from '@stackra/contracts';
+import type { IHttpConnector, IHttpContext, IHttpResponse } from "@stackra/contracts";
 
-import { HttpDriverError } from '../errors';
+import { HttpDriverError } from "../errors";
 
 /**
  * Lazily-loaded `axios` module reference.
@@ -22,22 +22,22 @@ import { HttpDriverError } from '../errors';
  * Kept as a module-level variable so the dynamic `import()` runs at
  * most once per process even when many connections are created.
  */
-let axiosModule: typeof import('axios') | null = null;
+let axiosModule: typeof import("axios") | null = null;
 
 /**
  * Resolve the axios module on first use. Throws a friendly error
  * when `axios` is not installed so consumers see the missing peer
  * dependency immediately.
  */
-async function loadAxios(): Promise<typeof import('axios')> {
+async function loadAxios(): Promise<typeof import("axios")> {
   if (axiosModule) return axiosModule;
   try {
-    axiosModule = await import('axios');
+    axiosModule = await import("axios");
     return axiosModule;
   } catch (err: Error | any) {
     throw new HttpDriverError(
       "[AxiosConnector] 'axios' is not installed. Install it or switch to FetchConnector via @stackra/http/fetch.",
-      err as Error
+      err as Error,
     );
   }
 }
@@ -54,14 +54,14 @@ export class AxiosConnector implements IHttpConnector {
 
     const response = await axios.default.request({
       url: request.url,
-      method: Str.lower(request.method ?? 'get'),
+      method: Str.lower(request.method ?? "get"),
       baseURL: request.baseURL,
       headers: request.headers,
       params: request.params,
       data: request.data,
       timeout: request.timeout,
       signal: request.signal,
-      responseType: (request.responseType ?? 'json') as never,
+      responseType: (request.responseType ?? "json") as never,
       onUploadProgress: request.onUploadProgress as never,
       onDownloadProgress: request.onDownloadProgress as never,
     });
@@ -90,14 +90,14 @@ export class AxiosConnector implements IHttpConnector {
 
     const response = await axios.default.request({
       url: request.url,
-      method: Str.lower(request.method ?? 'get'),
+      method: Str.lower(request.method ?? "get"),
       baseURL: request.baseURL,
       headers: request.headers,
       params: request.params,
       data: request.data,
       timeout: request.timeout,
       signal: request.signal,
-      responseType: 'stream',
+      responseType: "stream",
     });
 
     const data = response.data as unknown;
@@ -115,7 +115,7 @@ export class AxiosConnector implements IHttpConnector {
    */
   private static async *toAsyncIterable(data: unknown): AsyncIterable<Uint8Array> {
     // Web stream support — runtime agnostic.
-    if (data && typeof (data as ReadableStream<Uint8Array>).getReader === 'function') {
+    if (data && typeof (data as ReadableStream<Uint8Array>).getReader === "function") {
       const reader = (data as ReadableStream<Uint8Array>).getReader();
       try {
         while (true) {
@@ -130,13 +130,13 @@ export class AxiosConnector implements IHttpConnector {
     }
 
     // Node Readable — supports `for-await-of` natively.
-    if (data && typeof (data as AsyncIterable<unknown>)[Symbol.asyncIterator] === 'function') {
+    if (data && typeof (data as AsyncIterable<unknown>)[Symbol.asyncIterator] === "function") {
       for await (const chunk of data as AsyncIterable<unknown>) {
         if (chunk instanceof Uint8Array) {
           yield chunk;
-        } else if (typeof Buffer !== 'undefined' && Buffer.isBuffer(chunk)) {
+        } else if (typeof Buffer !== "undefined" && Buffer.isBuffer(chunk)) {
           yield new Uint8Array(chunk);
-        } else if (typeof chunk === 'string') {
+        } else if (typeof chunk === "string") {
           yield new TextEncoder().encode(chunk);
         }
       }
@@ -144,7 +144,7 @@ export class AxiosConnector implements IHttpConnector {
     }
 
     throw new HttpDriverError(
-      '[AxiosConnector] axios returned an unsupported stream payload — use FetchConnector for streaming in the browser.'
+      "[AxiosConnector] axios returned an unsupported stream payload — use FetchConnector for streaming in the browser.",
     );
   }
 }

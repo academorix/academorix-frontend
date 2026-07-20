@@ -4,7 +4,7 @@
  * @description Boolean hook — is the app running as an installed PWA?
  */
 
-import { usePwa } from '@/react/hooks/use-pwa/use-pwa.hook';
+import { usePwa } from "@/react/hooks/use-pwa/use-pwa.hook";
 
 /**
  * Whether the app is running as an installed PWA (standalone or TWA).

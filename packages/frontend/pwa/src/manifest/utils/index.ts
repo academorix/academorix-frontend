@@ -4,4 +4,4 @@
  * @description Barrel export for manifest builder utilities.
  */
 
-export { buildManifest } from './build-manifest.util';
+export { buildManifest } from "./build-manifest.util";

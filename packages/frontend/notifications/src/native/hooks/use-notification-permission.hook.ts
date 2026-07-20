@@ -12,11 +12,11 @@
  *   those three values Expo reports.
  */
 
-import { useCallback, useEffect, useState } from 'react';
-import { useInject } from '@stackra/container/react';
+import { useCallback, useEffect, useState } from "react";
+import { useInject } from "@stackra/container/react";
 
-import { NOTIFICATION_MANAGER } from '@/core/constants';
-import type { INotificationManager } from '@/core/interfaces';
+import { NOTIFICATION_MANAGER } from "@/core/constants";
+import type { INotificationManager } from "@/core/interfaces";
 
 /**
  * Return shape for the native

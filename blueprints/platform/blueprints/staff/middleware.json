@@ -20,9 +20,7 @@
       "priority": 42,
       "description": "Field-level permission enforcer for the compensation sub-resource. Refuses the whole `/staff/{staff}/compensation` endpoint (GET + PATCH) when the caller lacks `staff.view.compensation` (for GET) or `staff.manage.compensation` (for PATCH). Also refuses when the tenant has not enabled the `staff_compensation_tracking` entitlement. This is separate from the field-level redaction that applies on the parent `/staff/{staff}` GET — the sub-resource is entirely permission-gated so the middleware can 403 the request before any DB fetch.",
       "auto_applied": false,
-      "auto_applied_to": [
-        "/staff/{staff}/compensation (GET, PATCH)"
-      ]
+      "auto_applied_to": ["/staff/{staff}/compensation (GET, PATCH)"]
     }
   ],
   "consumed": [

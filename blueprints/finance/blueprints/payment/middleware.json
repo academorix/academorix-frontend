@@ -9,9 +9,7 @@
       "priority": 30,
       "description": "Guards the public webhook plane (POST /webhooks/payment/{provider}). Extracts the provider's signature header + verifies HMAC-SHA256 over the request body + timestamp per per-provider signing scheme (Stripe: `Stripe-Signature`; Paddle: `Paddle-Signature`; Adyen: `HmacSignature`; Square: `Square-Signature`; PayPal: `Paypal-Transmission-Sig` with cert verification; CustomWebhook: `X-Payment-Signature`). Refuses (400) with `payment_webhook_signature_invalid` on failure. No body echoed on refuse. Runs BEFORE any tenant/application resolution (the webhook body carries the tenant identifier).",
       "auto_applied": false,
-      "auto_applied_to": [
-        "POST /webhooks/payment/{provider}"
-      ]
+      "auto_applied_to": ["POST /webhooks/payment/{provider}"]
     }
   ],
   "consumed": [
@@ -19,8 +17,14 @@
     { "middleware": "foundation::response.envelope" },
     { "middleware": "foundation::versioning.resolve" },
     { "middleware": "foundation::cors.strict" },
-    { "middleware": "application::application.resolve", "note": "Applied on tenant + platform-admin plane routes. NOT applied on the webhook plane (webhook body carries the provider's tenant identifier)." },
-    { "middleware": "tenancy::tenant.resolve", "note": "Applied on tenant plane. Webhook plane resolves tenant from the verified webhook body." },
+    {
+      "middleware": "application::application.resolve",
+      "note": "Applied on tenant + platform-admin plane routes. NOT applied on the webhook plane (webhook body carries the provider's tenant identifier)."
+    },
+    {
+      "middleware": "tenancy::tenant.resolve",
+      "note": "Applied on tenant plane. Webhook plane resolves tenant from the verified webhook body."
+    },
     {
       "middleware": "entitlements::entitlement.enforce",
       "note": "Applied per-route with the specific entitlement key (payment_capture for base surface, payment_manual_capture on POST /payments/{payment}/capture, payment_dispute_management on /payment-disputes/*, etc.)."

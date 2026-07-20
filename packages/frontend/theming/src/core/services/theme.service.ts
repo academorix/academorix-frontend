@@ -6,23 +6,14 @@
  *   system-preference subscriptions, and event emission.
  */
 
-import { Injectable, Inject } from '@stackra/container';
-import type {
-  IThemeBindings,
-  ColorMode,
-  ResolvedMode,
-  OnModuleInit,
-} from '@stackra/contracts';
-import {
-  THEME_BINDINGS,
-  THEMING_CONFIG,
-  THEME_REGISTRY,
-} from '@stackra/contracts';
-import type { IThemingModuleOptions } from '../interfaces';
-import { THEME_TOKEN_STORE } from '../tokens';
-import { ThemeRegistry } from '../registries';
-import { ThemeTokenStore } from '../stores';
-import { ThemeNotFoundError } from '../errors';
+import { Injectable, Inject } from "@stackra/container";
+import type { IThemeBindings, ColorMode, ResolvedMode, OnModuleInit } from "@stackra/contracts";
+import { THEME_BINDINGS, THEMING_CONFIG, THEME_REGISTRY } from "@stackra/contracts";
+import type { IThemingModuleOptions } from "../interfaces";
+import { THEME_TOKEN_STORE } from "../tokens";
+import { ThemeRegistry } from "../registries";
+import { ThemeTokenStore } from "../stores";
+import { ThemeNotFoundError } from "../errors";
 
 // ============================================================================
 // Service
@@ -49,7 +40,7 @@ export class ThemeService implements OnModuleInit {
     @Inject(THEMING_CONFIG) private readonly config: IThemingModuleOptions,
     @Inject(THEME_BINDINGS) private readonly bindings: IThemeBindings,
     @Inject(THEME_REGISTRY) private readonly registry: ThemeRegistry,
-    @Inject(THEME_TOKEN_STORE) private readonly store: ThemeTokenStore
+    @Inject(THEME_TOKEN_STORE) private readonly store: ThemeTokenStore,
   ) {}
 
   // ── Lifecycle ─────────────────────────────────────────────────────────────
@@ -59,8 +50,8 @@ export class ThemeService implements OnModuleInit {
    */
   public onModuleInit(): void {
     this.store.initialize(
-      this.config.defaultTheme ?? 'default',
-      this.config.defaultMode ?? 'system'
+      this.config.defaultTheme ?? "default",
+      this.config.defaultMode ?? "system",
     );
     this.registry.seedBuiltInThemes();
     if (this.config.themes) {
@@ -130,7 +121,7 @@ export class ThemeService implements OnModuleInit {
    * @returns The resolved actual mode.
    */
   private resolveMode(mode: ColorMode): ResolvedMode {
-    if (mode === 'system') {
+    if (mode === "system") {
       return this.bindings.getSystemColorScheme();
     }
     return mode;
@@ -144,8 +135,8 @@ export class ThemeService implements OnModuleInit {
       const persistedMode = this.bindings.getPersistedMode();
       const persistedTheme = this.bindings.getPersistedTheme();
 
-      const mode = persistedMode ?? this.config.defaultMode ?? 'system';
-      const themeId = persistedTheme ?? this.config.defaultTheme ?? 'default';
+      const mode = persistedMode ?? this.config.defaultMode ?? "system";
+      const themeId = persistedTheme ?? this.config.defaultTheme ?? "default";
       const resolvedMode = this.resolveMode(mode);
 
       this.bindings.applyColorMode(resolvedMode);
@@ -163,7 +154,7 @@ export class ThemeService implements OnModuleInit {
     try {
       this.systemCleanup = this.bindings.subscribeToSystemChanges((newScheme) => {
         const { mode } = this.store.getState();
-        if (mode !== 'system') return;
+        if (mode !== "system") return;
         this.bindings.applyColorMode(newScheme);
         this.store.setState({ resolvedMode: newScheme });
       });

@@ -114,11 +114,7 @@
       "onModels": ["TaxExemption"],
       "morphType": "customer_type",
       "morphId": "customer_id",
-      "supportedTypes": [
-        "user::User",
-        "sports::Athlete",
-        "organization::Organization"
-      ],
+      "supportedTypes": ["user::User", "sports::Athlete", "organization::Organization"],
       "description": "Polymorphic customer of the exemption certificate. Each supported type is tenant-scoped. The observer validates cross-model tenant integrity."
     }
   ],

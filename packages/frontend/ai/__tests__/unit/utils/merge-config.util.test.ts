@@ -5,11 +5,11 @@
  *   are deep-merged rather than shallow-clobbered.
  */
 
-import { describe, expect, it } from 'vitest';
-import type { IAiCredentials, IAiModuleOptions } from '@stackra/contracts';
+import { describe, expect, it } from "vitest";
+import type { IAiCredentials, IAiModuleOptions } from "@stackra/contracts";
 
-import { mergeConfig } from '@/core/utils/merge-config.util';
-import { DEFAULT_AI_CONFIG } from '@/core/constants/default-ai-config.constant';
+import { mergeConfig } from "@/core/utils/merge-config.util";
+import { DEFAULT_AI_CONFIG } from "@/core/constants/default-ai-config.constant";
 
 /** Minimal auth-provider stub for typing. */
 const authProvider = {
@@ -18,13 +18,13 @@ const authProvider = {
 };
 
 /** Required-fields fixture consumed by every case below. */
-const required = { baseUrl: 'https://api.example.com', authProvider };
+const required = { baseUrl: "https://api.example.com", authProvider };
 
-describe('mergeConfig', () => {
-  it('applies every default when only required fields are supplied', () => {
+describe("mergeConfig", () => {
+  it("applies every default when only required fields are supplied", () => {
     const resolved = mergeConfig(required);
 
-    expect(resolved.baseUrl).toBe('https://api.example.com');
+    expect(resolved.baseUrl).toBe("https://api.example.com");
     expect(resolved.authProvider).toBe(authProvider);
     expect(resolved.context).toEqual(DEFAULT_AI_CONFIG.context);
     expect(resolved.retryPolicy).toEqual(DEFAULT_AI_CONFIG.retryPolicy);
@@ -32,7 +32,7 @@ describe('mergeConfig', () => {
     expect(resolved.personas).toEqual(DEFAULT_AI_CONFIG.personas);
   });
 
-  it('deep-merges the context object, preserving defaults for omitted keys', () => {
+  it("deep-merges the context object, preserving defaults for omitted keys", () => {
     const resolved = mergeConfig({
       ...required,
       context: { debounceMs: 250 },
@@ -45,7 +45,7 @@ describe('mergeConfig', () => {
     expect(resolved.context?.maxSnapshotBytes).toBe(DEFAULT_AI_CONFIG.context!.maxSnapshotBytes);
   });
 
-  it('deep-merges the retryPolicy object', () => {
+  it("deep-merges the retryPolicy object", () => {
     const resolved = mergeConfig({
       ...required,
       retryPolicy: { maxAttempts: 10 },
@@ -56,7 +56,7 @@ describe('mergeConfig', () => {
     expect(resolved.retryPolicy?.capMs).toBe(DEFAULT_AI_CONFIG.retryPolicy!.capMs);
   });
 
-  it('deep-merges the speech object', () => {
+  it("deep-merges the speech object", () => {
     const resolved = mergeConfig({
       ...required,
       speech: { transcribe: true },
@@ -66,18 +66,18 @@ describe('mergeConfig', () => {
     expect(resolved.speech?.tts).toBe(DEFAULT_AI_CONFIG.speech!.tts);
   });
 
-  it('lets user-supplied required fields win over any defaults', () => {
+  it("lets user-supplied required fields win over any defaults", () => {
     const otherAuth = { ...authProvider };
     const resolved = mergeConfig({
-      baseUrl: 'https://api.other.example',
+      baseUrl: "https://api.other.example",
       authProvider: otherAuth,
     });
 
-    expect(resolved.baseUrl).toBe('https://api.other.example');
+    expect(resolved.baseUrl).toBe("https://api.other.example");
     expect(resolved.authProvider).toBe(otherAuth);
   });
 
-  it('accepts no arguments and returns a config with just defaults (typed as partial)', () => {
+  it("accepts no arguments and returns a config with just defaults (typed as partial)", () => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const resolved = mergeConfig() as any;
 
@@ -87,7 +87,7 @@ describe('mergeConfig', () => {
     expect(resolved.personas).toEqual(DEFAULT_AI_CONFIG.personas);
   });
 
-  it('does not mutate the DEFAULT_AI_CONFIG constant', () => {
+  it("does not mutate the DEFAULT_AI_CONFIG constant", () => {
     const before = JSON.stringify(DEFAULT_AI_CONFIG);
     mergeConfig({
       ...required,
@@ -98,8 +98,8 @@ describe('mergeConfig', () => {
     expect(JSON.stringify(DEFAULT_AI_CONFIG)).toBe(before);
   });
 
-  it('overrides personas array verbatim (no per-item merge)', () => {
-    const personas = [{ slug: 'writer', title: 'Writer' }];
+  it("overrides personas array verbatim (no per-item merge)", () => {
+    const personas = [{ slug: "writer", title: "Writer" }];
     const resolved = mergeConfig({ ...required, personas });
     expect(resolved.personas).toBe(personas);
   });

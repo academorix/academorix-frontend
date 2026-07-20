@@ -5,5 +5,5 @@
  *   Consumers register them via `ActionsModule.forFeature([...])`.
  */
 
-export { SetStateHandler } from './set-state.handler';
-export { ToggleStateHandler } from './toggle-state.handler';
+export { SetStateHandler } from "./set-state.handler";
+export { ToggleStateHandler } from "./toggle-state.handler";

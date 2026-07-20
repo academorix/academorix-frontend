@@ -164,10 +164,7 @@
       "trigger": "SeedDefaultOrganizationForTenantJob committed the tenant's default row. Fires exactly once per tenant. Distinct from OrganizationCreated (which fires for the same row) — this event has extra context tying the seed to the provisioning transaction.",
       "queue": "notifications",
       "afterCommit": true,
-      "consumers": [
-        "branch::MayAutoSeedDefaultBranch (planned)",
-        "activity::WriteToActivityLog"
-      ],
+      "consumers": ["branch::MayAutoSeedDefaultBranch (planned)", "activity::WriteToActivityLog"],
       "payload": {
         "tenant_id": "string",
         "organization_id": "string",

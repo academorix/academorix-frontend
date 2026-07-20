@@ -203,8 +203,6 @@ describe("DashboardStorageService", () => {
   });
 
   it("createBroadcastTemplate rejects empty names", async () => {
-    await expect(
-      storage.createBroadcastTemplate({ name: "  ", config: {} }),
-    ).rejects.toThrow();
+    await expect(storage.createBroadcastTemplate({ name: "  ", config: {} })).rejects.toThrow();
   });
 });

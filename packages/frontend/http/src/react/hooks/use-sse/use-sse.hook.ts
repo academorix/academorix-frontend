@@ -7,12 +7,12 @@
  * @module @stackra/http/react/hooks/use-sse
  */
 
-import { useEffect, useState } from 'react';
-import { useInject } from '@stackra/container/react';
+import { useEffect, useState } from "react";
+import { useInject } from "@stackra/container/react";
 
-import { HTTP_MANAGER, type IHttpManager, type ISseConfig } from '@stackra/contracts';
+import { HTTP_MANAGER, type IHttpManager, type ISseConfig } from "@stackra/contracts";
 
-import type { IUseSseResult } from '@/react/interfaces';
+import type { IUseSseResult } from "@/react/interfaces";
 
 /**
  * Subscribe to an SSE endpoint.
@@ -25,7 +25,7 @@ import type { IUseSseResult } from '@/react/interfaces';
 export function useSse<T = unknown>(
   url: string,
   config?: ISseConfig,
-  connection?: string
+  connection?: string,
 ): IUseSseResult<T> {
   const manager = useInject<IHttpManager>(HTTP_MANAGER);
   const [state, setState] = useState<IUseSseResult<T>>({

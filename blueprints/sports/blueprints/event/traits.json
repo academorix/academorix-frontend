@@ -47,11 +47,33 @@
       { "trait": "Academorix\\Foundation\\Concerns\\Searchable" }
     ],
     "tenancy": [{ "trait": "Academorix\\Tenancy\\Concerns\\BelongsToTenant" }],
-    "organization": [{ "trait": "Academorix\\Organization\\Concerns\\BelongsToOrganization", "reason": "Required FK — every event belongs to an organization." }],
-    "branch": [{ "trait": "Academorix\\Branch\\Concerns\\BelongsToBranch", "reason": "Optional FK." }],
-    "season": [{ "trait": "Academorix\\Sports\\Season\\Concerns\\BelongsToSeason", "reason": "Optional FK — stand-alone events are allowed." }],
-    "audit": [{ "trait": "Academorix\\Audit\\Concerns\\Auditable", "reason": "Event mutations write to the `audits` table — every one of them is compliance-relevant, and financial/eligibility changes are 7-year retention." }],
-    "activity": [{ "trait": "Academorix\\Activity\\Concerns\\HasActivityLog", "reason": "Event lifecycle events feed the tenant admin's product-facing activity feed." }]
+    "organization": [
+      {
+        "trait": "Academorix\\Organization\\Concerns\\BelongsToOrganization",
+        "reason": "Required FK — every event belongs to an organization."
+      }
+    ],
+    "branch": [
+      { "trait": "Academorix\\Branch\\Concerns\\BelongsToBranch", "reason": "Optional FK." }
+    ],
+    "season": [
+      {
+        "trait": "Academorix\\Sports\\Season\\Concerns\\BelongsToSeason",
+        "reason": "Optional FK — stand-alone events are allowed."
+      }
+    ],
+    "audit": [
+      {
+        "trait": "Academorix\\Audit\\Concerns\\Auditable",
+        "reason": "Event mutations write to the `audits` table — every one of them is compliance-relevant, and financial/eligibility changes are 7-year retention."
+      }
+    ],
+    "activity": [
+      {
+        "trait": "Academorix\\Activity\\Concerns\\HasActivityLog",
+        "reason": "Event lifecycle events feed the tenant admin's product-facing activity feed."
+      }
+    ]
   },
   "composition": {
     "event": {

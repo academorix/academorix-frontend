@@ -8,9 +8,9 @@
  *   to bootstrap the Android project.
  */
 
-import { Str } from '@stackra/support';
+import { Str } from "@stackra/support";
 
-import type { IBubblewrapConfigInput, ITwaManifest } from '../interfaces';
+import type { IBubblewrapConfigInput, ITwaManifest } from "../interfaces";
 
 /**
  * Derive an Android application id (reverse-DNS package name) from
@@ -20,10 +20,10 @@ import type { IBubblewrapConfigInput, ITwaManifest } from '../interfaces';
  */
 function deriveApplicationId(host: string): string {
   const cleaned = Str.lower(host);
-  const parts = cleaned.split('.').filter(Boolean);
+  const parts = cleaned.split(".").filter(Boolean);
   // Reverse the host parts (`['example','com']` → `['com','example']`)
   // then suffix with `.twa` to distinguish TWA from a native app.
-  return [...parts].reverse().concat('twa').join('.');
+  return [...parts].reverse().concat("twa").join(".");
 }
 
 /**
@@ -65,14 +65,14 @@ export function getBubblewrapConfig(input: IBubblewrapConfigInput): ITwaManifest
     iconUrl,
     maskableIconUrl,
     monochromeIconUrl,
-    display = 'standalone',
-    orientation = 'any',
+    display = "standalone",
+    orientation = "any",
     shortcuts,
     signing,
     minSdkVersion = 21,
     applicationId,
     versionCode = 1,
-    versionName = '1.0.0',
+    versionName = "1.0.0",
   } = input;
 
   // Application id — either caller-provided (recommended for stability
@@ -90,7 +90,7 @@ export function getBubblewrapConfig(input: IBubblewrapConfigInput): ITwaManifest
     // Bubblewrap ties `navigationColor` to the Android status bar;
     // fall back to `themeColor` so the theming stays coherent.
     navigationColor: navigationColor ?? themeColor,
-    navigationColorDark: navigationColorDark ?? '#000000',
+    navigationColorDark: navigationColorDark ?? "#000000",
     backgroundColor,
     // Enable push notifications by default — users still see the
     // permission prompt inside the TWA.
@@ -118,9 +118,9 @@ export function getBubblewrapConfig(input: IBubblewrapConfigInput): ITwaManifest
         url: s.url,
         ...(s.iconUrl ? { iconUrl: s.iconUrl } : {}),
       })) ?? [],
-    generatorApp: '@stackra/pwa',
+    generatorApp: "@stackra/pwa",
     webManifestUrl: manifestUrl,
-    fallbackType: 'customtabs',
+    fallbackType: "customtabs",
     features: {},
     minSdkVersion,
   };

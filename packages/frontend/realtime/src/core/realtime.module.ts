@@ -5,13 +5,13 @@
  *   Registers RealtimeManager globally. Drivers registered via forFeature().
  */
 
-import { Module, type DynamicModule } from '@stackra/container';
-import { createSeedLoader, seedLoaderToken } from '@stackra/support';
-import type { IAsyncModuleOptions } from '@stackra/contracts';
-import { REALTIME_MANAGER, REALTIME_CONFIG } from '@stackra/contracts';
-import { RealtimeManager } from './services/realtime-manager.service';
-import type { IRealtimeModuleOptions } from './interfaces';
-import { mergeConfig } from './utils/merge-config.util';
+import { Module, type DynamicModule } from "@stackra/container";
+import { createSeedLoader, seedLoaderToken } from "@stackra/support";
+import type { IAsyncModuleOptions } from "@stackra/contracts";
+import { REALTIME_MANAGER, REALTIME_CONFIG } from "@stackra/contracts";
+import { RealtimeManager } from "./services/realtime-manager.service";
+import type { IRealtimeModuleOptions } from "./interfaces";
+import { mergeConfig } from "./utils/merge-config.util";
 
 /**
  * Realtime DI module.
@@ -90,10 +90,10 @@ export class RealtimeModule {
   public static forFeature(connectors: Record<string, Function>): DynamicModule;
   public static forFeature(
     driverOrConnectors: string | Record<string, Function>,
-    connectorType?: Function
+    connectorType?: Function,
   ): DynamicModule {
     const entries: [string, Function][] =
-      typeof driverOrConnectors === 'string'
+      typeof driverOrConnectors === "string"
         ? [[driverOrConnectors, connectorType as Function]]
         : Object.entries(driverOrConnectors);
 

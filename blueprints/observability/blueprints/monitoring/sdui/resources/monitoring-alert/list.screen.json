@@ -10,7 +10,12 @@
   "requiresPermission": "monitoring.alerts.viewAny",
   "requiresEntitlement": "monitoring_capture",
   "dataSources": [
-    { "name": "alerts", "kind": "http.get", "url": "/api/v1/monitoring/alerts?filter[status]=firing", "unwrap": "data" }
+    {
+      "name": "alerts",
+      "kind": "http.get",
+      "url": "/api/v1/monitoring/alerts?filter[status]=firing",
+      "unwrap": "data"
+    }
   ],
   "nodes": [
     {
@@ -21,16 +26,39 @@
         {
           "kind": "View",
           "children": [
-            { "kind": "Text", "props": { "as": "h1", "className": "text-2xl font-semibold", "children": "Monitoring alerts" } },
-            { "kind": "Text", "props": { "className": "text-sm text-muted", "children": "Fired alerts requiring ops attention." } }
+            {
+              "kind": "Text",
+              "props": {
+                "as": "h1",
+                "className": "text-2xl font-semibold",
+                "children": "Monitoring alerts"
+              }
+            },
+            {
+              "kind": "Text",
+              "props": {
+                "className": "text-sm text-muted",
+                "children": "Fired alerts requiring ops attention."
+              }
+            }
           ]
         },
         {
           "kind": "FilterBar",
           "props": {
             "filters": [
-              { "field": "status", "label": "Status", "kind": "select", "options": ["firing", "acknowledged", "resolved", "suppressed", "expired"] },
-              { "field": "severity", "label": "Severity", "kind": "select", "options": ["p1", "p2", "p3", "p4"] },
+              {
+                "field": "status",
+                "label": "Status",
+                "kind": "select",
+                "options": ["firing", "acknowledged", "resolved", "suppressed", "expired"]
+              },
+              {
+                "field": "severity",
+                "label": "Severity",
+                "kind": "select",
+                "options": ["p1", "p2", "p3", "p4"]
+              },
               { "field": "from", "label": "From", "kind": "date" },
               { "field": "to", "label": "To", "kind": "date" }
             ]
@@ -44,7 +72,11 @@
               {
                 "field": "severity",
                 "header": "Severity",
-                "cellRenderer": { "kind": "Widget", "widget": "monitoring.severity-chip", "bindings": { "severity": { "$ref": "row.severity" } } }
+                "cellRenderer": {
+                  "kind": "Widget",
+                  "widget": "monitoring.severity-chip",
+                  "bindings": { "severity": { "$ref": "row.severity" } }
+                }
               },
               { "field": "fired_at", "header": "Fired at", "sortable": true },
               { "field": "signal_type", "header": "Signal" },
@@ -52,7 +84,11 @@
               {
                 "field": "status",
                 "header": "Status",
-                "cellRenderer": { "kind": "Widget", "widget": "monitoring.status-badge", "bindings": { "status": { "$ref": "row.status" } } }
+                "cellRenderer": {
+                  "kind": "Widget",
+                  "widget": "monitoring.status-badge",
+                  "bindings": { "status": { "$ref": "row.status" } }
+                }
               },
               {
                 "field": "actions",
@@ -65,12 +101,21 @@
                       "kind": "Button",
                       "props": { "variant": "secondary", "size": "sm", "children": "Acknowledge" },
                       "bindings": { "hidden": { "$expr": "row.status !== 'firing'" } },
-                      "actions": { "onPress": { "kind": "navigate", "toExpr": "'/tenant/monitoring/alerts/' + row.id + '/acknowledge'" } }
+                      "actions": {
+                        "onPress": {
+                          "kind": "navigate",
+                          "toExpr": "'/tenant/monitoring/alerts/' + row.id + '/acknowledge'"
+                        }
+                      }
                     },
                     {
                       "kind": "Button",
                       "props": { "variant": "primary", "size": "sm", "children": "Resolve" },
-                      "bindings": { "hidden": { "$expr": "row.status === 'resolved' || row.status === 'expired' || row.status === 'suppressed'" } },
+                      "bindings": {
+                        "hidden": {
+                          "$expr": "row.status === 'resolved' || row.status === 'expired' || row.status === 'suppressed'"
+                        }
+                      },
                       "actions": {
                         "onPress": {
                           "kind": "http.post",

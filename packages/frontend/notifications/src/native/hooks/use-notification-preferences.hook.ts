@@ -11,16 +11,16 @@
  *   symmetry.
  */
 
-import { useCallback, useSyncExternalStore } from 'react';
-import { useInject } from '@stackra/container/react';
+import { useCallback, useSyncExternalStore } from "react";
+import { useInject } from "@stackra/container/react";
 
-import { NOTIFICATION_PREFERENCES_SERVICE } from '@/core/constants';
-import type { NotificationPreferencesService } from '@/core';
+import { NOTIFICATION_PREFERENCES_SERVICE } from "@/core/constants";
+import type { NotificationPreferencesService } from "@/core";
 import type {
   INotificationPreferences,
   IQuietHoursWindow,
   NotificationCategory,
-} from '@/core/interfaces';
+} from "@/core/interfaces";
 
 /**
  * Return shape for the native
@@ -38,7 +38,7 @@ export interface IUseNotificationPreferencesResult {
   readonly setChannelEnabled: (
     category: NotificationCategory,
     channel: string,
-    enabled: boolean
+    enabled: boolean,
   ) => void;
   /** Replace the quiet-hours window. */
   readonly setQuietHours: (window: IQuietHoursWindow) => void;
@@ -67,22 +67,22 @@ export function useNotificationPreferences(): IUseNotificationPreferencesResult 
   const set = useCallback((next: INotificationPreferences) => service.set(next), [service]);
   const patch = useCallback(
     (defaults: Record<string, unknown>) => service.patch(defaults),
-    [service]
+    [service],
   );
   const setChannelEnabled = useCallback(
     (category: NotificationCategory, channel: string, enabled: boolean) =>
       service.setChannelEnabled(category, channel, enabled),
-    [service]
+    [service],
   );
   const setQuietHours = useCallback(
     (window: IQuietHoursWindow) => service.setQuietHours(window),
-    [service]
+    [service],
   );
   const clearQuietHours = useCallback(() => service.clearQuietHours(), [service]);
   const isChannelEnabled = useCallback(
     (category: NotificationCategory, channel: string) =>
       service.isChannelEnabled(category, channel),
-    [service]
+    [service],
   );
   const isInQuietHours = useCallback((now?: Date) => service.isInQuietHours(now), [service]);
 

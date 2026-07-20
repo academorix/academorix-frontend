@@ -57,7 +57,9 @@
       "class": "Academorix\\Grant\\Notifications\\DeniedAccessAttemptNotification",
       "channels": ["mail", "database", "slack"],
       "consentTier": "transactional",
-      "targets": ["User (tenant admins + security_team_members matched by `security_incident_response` role)"],
+      "targets": [
+        "User (tenant admins + security_team_members matched by `security_incident_response` role)"
+      ],
       "template": {
         "mail": "grants::email.denied-access-attempt",
         "markdown": true

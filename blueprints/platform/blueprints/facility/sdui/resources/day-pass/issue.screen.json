@@ -36,7 +36,11 @@
           "children": [
             {
               "kind": "Text",
-              "props": { "as": "h1", "className": "text-2xl font-semibold", "children": "Sell day pass" }
+              "props": {
+                "as": "h1",
+                "className": "text-2xl font-semibold",
+                "children": "Sell day pass"
+              }
             },
             {
               "kind": "Text",
@@ -120,7 +124,11 @@
                     },
                     {
                       "kind": "TextField",
-                      "props": { "label": "Phone (E.164)", "placeholder": "+15551234567", "isRequired": true },
+                      "props": {
+                        "label": "Phone (E.164)",
+                        "placeholder": "+15551234567",
+                        "isRequired": true
+                      },
                       "form": { "field": "issued_to_profile_phone" }
                     },
                     {
@@ -160,7 +168,12 @@
             },
             {
               "kind": "ComboBox",
-              "props": { "label": "Payment method", "menuTrigger": "focus", "isRequired": true, "defaultSelectedKey": "cash" },
+              "props": {
+                "label": "Payment method",
+                "menuTrigger": "focus",
+                "isRequired": true,
+                "defaultSelectedKey": "cash"
+              },
               "props_items": [
                 { "id": "cash", "label": "Cash" },
                 { "id": "card", "label": "Card (terminal)" },

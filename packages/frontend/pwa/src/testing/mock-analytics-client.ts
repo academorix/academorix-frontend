@@ -16,7 +16,7 @@ import type {
   IAnalyticsManager,
   IAnalyticsPageView,
   IAnalyticsProvider,
-} from '@stackra/contracts';
+} from "@stackra/contracts";
 
 /**
  * A single recorded analytics event.

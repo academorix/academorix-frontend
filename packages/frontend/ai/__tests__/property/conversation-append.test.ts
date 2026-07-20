@@ -7,40 +7,40 @@
  *   Also asserts that `appendTextDelta` never changes the count.
  */
 
-import { describe, it } from 'vitest';
+import { describe, it } from "vitest";
 
-import { ConversationStore } from '@/core/services/conversation-store.service';
-import { forAll, type IPrng } from './property-test.helper';
+import { ConversationStore } from "@/core/services/conversation-store.service";
+import { forAll, type IPrng } from "./property-test.helper";
 
-type Op = { kind: 'user'; text: string } | { kind: 'assistant' } | { kind: 'delta'; text: string };
+type Op = { kind: "user"; text: string } | { kind: "assistant" } | { kind: "delta"; text: string };
 
 function genOps(r: IPrng): Op[] {
   const n = r.int(1, 30);
   const ops: Op[] = [];
   for (let i = 0; i < n; i++) {
     const k = r.int(0, 3);
-    if (k === 0) ops.push({ kind: 'user', text: `m${i}` });
-    else if (k === 1) ops.push({ kind: 'assistant' });
-    else ops.push({ kind: 'delta', text: `d${i}` });
+    if (k === 0) ops.push({ kind: "user", text: `m${i}` });
+    else if (k === 1) ops.push({ kind: "assistant" });
+    else ops.push({ kind: "delta", text: `d${i}` });
   }
   return ops;
 }
 
-describe('Property 10: conversation append invariant (Req 17.5)', () => {
-  it('every append operation grows the thread by exactly one message', () => {
+describe("Property 10: conversation append invariant (Req 17.5)", () => {
+  it("every append operation grows the thread by exactly one message", () => {
     forAll(
       (r) => genOps(r),
       (ops) => {
         const store = new ConversationStore();
-        const t = store.createThread({ personaSlug: 'writer' });
+        const t = store.createThread({ personaSlug: "writer" });
         let lastAssistantId: string | null = null;
 
         for (const op of ops) {
           const before = store.getThread(t)!.messages.length;
-          if (op.kind === 'user') {
+          if (op.kind === "user") {
             store.appendUser(t, op.text);
             if (store.getThread(t)!.messages.length !== before + 1) return false;
-          } else if (op.kind === 'assistant') {
+          } else if (op.kind === "assistant") {
             lastAssistantId = store.startAssistantMessage(t);
             if (store.getThread(t)!.messages.length !== before + 1) return false;
           } else {
@@ -53,7 +53,7 @@ describe('Property 10: conversation append invariant (Req 17.5)', () => {
         }
         return true;
       },
-      { runs: 200 }
+      { runs: 200 },
     );
   });
 });

@@ -15,22 +15,22 @@
  *   - Preserve `shortcut: false` verbatim (means "disable binding").
  */
 
-import type { DevtoolsCategory } from '@stackra/contracts';
+import type { DevtoolsCategory } from "@stackra/contracts";
 
 import {
   DEFAULT_DEVTOOLS_CATEGORY_ORDER,
   DEFAULT_DEVTOOLS_CONFIG,
   DEVTOOLS_SIZE_BOUNDS,
-} from '../constants/default-devtools-config.constants';
+} from "../constants/default-devtools-config.constants";
 import type {
   IDevtoolsModuleOptions,
   IDevtoolsShortcut,
-} from '../interfaces/devtools-module-options.interface';
-import type { DevtoolsShellPosition } from '../types/devtools-shell-position.type';
-import { shouldEnableDevtools } from './should-enable-devtools.util';
+} from "../interfaces/devtools-module-options.interface";
+import type { DevtoolsShellPosition } from "../types/devtools-shell-position.type";
+import { shouldEnableDevtools } from "./should-enable-devtools.util";
 
 /** Valid positions the shell may occupy. */
-const VALID_POSITIONS: readonly DevtoolsShellPosition[] = ['left', 'right', 'top', 'bottom'];
+const VALID_POSITIONS: readonly DevtoolsShellPosition[] = ["left", "right", "top", "bottom"];
 
 /**
  * Clamp `size` to the workspace bounds.
@@ -50,7 +50,7 @@ function clampSize(raw: number): number {
  * fall back to the default when unknown.
  */
 function coercePosition(raw: DevtoolsShellPosition | undefined): DevtoolsShellPosition {
-  const fallback = DEFAULT_DEVTOOLS_CONFIG.position ?? 'right';
+  const fallback = DEFAULT_DEVTOOLS_CONFIG.position ?? "right";
   if (!raw) return fallback;
   return VALID_POSITIONS.includes(raw) ? raw : fallback;
 }

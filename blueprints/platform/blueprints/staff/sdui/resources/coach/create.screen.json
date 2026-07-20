@@ -33,7 +33,11 @@
       "children": [
         {
           "kind": "Text",
-          "props": { "as": "h1", "className": "text-2xl font-semibold mb-6", "children": "New coach profile" }
+          "props": {
+            "as": "h1",
+            "className": "text-2xl font-semibold mb-6",
+            "children": "New coach profile"
+          }
         },
         {
           "kind": "Alert",
@@ -49,7 +53,12 @@
           "children": [
             {
               "kind": "ComboBox",
-              "props": { "name": "staff_id", "label": "Staff", "required": true, "menuTrigger": "input" },
+              "props": {
+                "name": "staff_id",
+                "label": "Staff",
+                "required": true,
+                "menuTrigger": "input"
+              },
               "bindings": { "items": { "$ref": "eligible_staff" } },
               "itemRenderer": {
                 "kind": "View",
@@ -58,13 +67,23 @@
                   {
                     "kind": "Avatar",
                     "props": { "size": "xs" },
-                    "bindings": { "src": { "$ref": "item.avatar_url" }, "name": { "$ref": "item.display_name" } }
+                    "bindings": {
+                      "src": { "$ref": "item.avatar_url" },
+                      "name": { "$ref": "item.display_name" }
+                    }
                   },
                   {
                     "kind": "View",
                     "children": [
-                      { "kind": "Text", "bindings": { "children": { "$ref": "item.display_name" } } },
-                      { "kind": "Text", "props": { "className": "text-xs text-muted" }, "bindings": { "children": { "$ref": "item.position" } } }
+                      {
+                        "kind": "Text",
+                        "bindings": { "children": { "$ref": "item.display_name" } }
+                      },
+                      {
+                        "kind": "Text",
+                        "props": { "className": "text-xs text-muted" },
+                        "bindings": { "children": { "$ref": "item.position" } }
+                      }
                     ]
                   }
                 ]
@@ -72,11 +91,21 @@
             },
             {
               "kind": "TextField",
-              "props": { "name": "sport_key", "label": "Primary sport", "required": true, "helpText": "e.g. basketball, swimming, general_fitness. Lower-case snake_case." }
+              "props": {
+                "name": "sport_key",
+                "label": "Primary sport",
+                "required": true,
+                "helpText": "e.g. basketball, swimming, general_fitness. Lower-case snake_case."
+              }
             },
             {
               "kind": "ComboBox",
-              "props": { "name": "coaching_level", "label": "Coaching level", "required": true, "menuTrigger": "focus" },
+              "props": {
+                "name": "coaching_level",
+                "label": "Coaching level",
+                "required": true,
+                "menuTrigger": "focus"
+              },
               "props_items": [
                 { "id": "assistant", "label": "Assistant" },
                 { "id": "head", "label": "Head" },
@@ -87,15 +116,28 @@
             },
             {
               "kind": "TextField",
-              "props": { "name": "specialization", "label": "Specialization", "placeholder": "youth development / elite prep / rehab / ..." }
+              "props": {
+                "name": "specialization",
+                "label": "Specialization",
+                "placeholder": "youth development / elite prep / rehab / ..."
+              }
             },
             {
               "kind": "DatePicker",
-              "props": { "name": "coach_started_at", "label": "Coaching start date", "helpText": "Defaults to the staff's started_at." }
+              "props": {
+                "name": "coach_started_at",
+                "label": "Coaching start date",
+                "helpText": "Defaults to the staff's started_at."
+              }
             },
             {
               "kind": "TextField",
-              "props": { "name": "session_capacity_per_week", "type": "number", "label": "Max sessions per week", "min": 0 }
+              "props": {
+                "name": "session_capacity_per_week",
+                "type": "number",
+                "label": "Max sessions per week",
+                "min": 0
+              }
             }
           ]
         },

@@ -7,11 +7,11 @@
  *   only needs one field's value + setter. Same subscription plumbing.
  */
 
-import { useCallback } from 'react';
-import type { Type } from '@stackra/contracts';
+import { useCallback } from "react";
+import type { Type } from "@stackra/contracts";
 
-import { useSettings } from '../use-settings';
-import type { IUseSettingValueResult } from './use-setting-value.interface';
+import { useSettings } from "../use-settings";
+import type { IUseSettingValueResult } from "./use-setting-value.interface";
 
 /**
  * Subscribe to a single field on a settings group.
@@ -29,21 +29,21 @@ import type { IUseSettingValueResult } from './use-setting-value.interface';
  */
 export function useSettingValue<T extends object, K extends keyof T & string>(
   dto: Type<T>,
-  key: K
+  key: K,
 ): IUseSettingValueResult<T[K]>;
 export function useSettingValue<TValue = unknown>(
   groupKey: string,
-  fieldKey: string
+  fieldKey: string,
 ): IUseSettingValueResult<TValue>;
 export function useSettingValue<T extends object>(
   dtoOrKey: Type<T> | string,
-  fieldKey: string
+  fieldKey: string,
 ): IUseSettingValueResult<unknown> {
   // Overload resolution splits over the runtime `typeof` — both paths
   // route through the same `useSettings` under the hood so the
   // subscription plumbing is shared.
   const result =
-    typeof dtoOrKey === 'string'
+    typeof dtoOrKey === "string"
       ? useSettings<Record<string, unknown>>(dtoOrKey)
       : useSettings(dtoOrKey);
 
@@ -51,7 +51,7 @@ export function useSettingValue<T extends object>(
     (next: unknown): void => {
       result.set(fieldKey as keyof T & string, next);
     },
-    [result, fieldKey]
+    [result, fieldKey],
   );
 
   return {

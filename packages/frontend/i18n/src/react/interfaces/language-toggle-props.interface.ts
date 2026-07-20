@@ -4,7 +4,7 @@
  * @description Props for the `<LanguageToggle />` component.
  */
 
-import type { LanguageToggleOption } from './language-toggle-option.interface';
+import type { LanguageToggleOption } from "./language-toggle-option.interface";
 
 /**
  * Props for the `LanguageToggle` component.

@@ -21,10 +21,7 @@
       "description": "L2 evaluation cache. Redis shared across workers. Same shape as L1 but survives worker restarts. Reads: on L1 miss. Writes: on L1 miss + resolve. Invalidation: cascades from L1 invalidation.",
       "ttlSeconds": 3600,
       "tags": ["grants", "grants:eval", "grants:eval:l2"],
-      "invalidatedBy": [
-        "InvalidateGrantCacheJob",
-        "GrantCacheWarmerHook"
-      ],
+      "invalidatedBy": ["InvalidateGrantCacheJob", "GrantCacheWarmerHook"],
       "storageTier": "l2_redis"
     },
     {

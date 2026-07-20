@@ -6,13 +6,13 @@
  *   formatters that automatically react to locale changes.
  */
 
-import { useMemo } from 'react';
-import { useInject } from '@stackra/container/react';
-import { I18N_LOCALE_SERVICE } from '@stackra/contracts';
+import { useMemo } from "react";
+import { useInject } from "@stackra/container/react";
+import { I18N_LOCALE_SERVICE } from "@stackra/contracts";
 
-import type { I18nLocaleService } from '../services/i18n-locale.service';
-import { createFormatter } from '../services/intl-formatter.service';
-import type { IUseFormatReturn } from '../interfaces';
+import type { I18nLocaleService } from "../services/i18n-locale.service";
+import { createFormatter } from "../services/intl-formatter.service";
+import type { IUseFormatReturn } from "../interfaces";
 
 /**
  * React hook for locale-aware Intl formatting.
@@ -58,6 +58,6 @@ export type {
   RelativeTimeUnit,
   IIntlFormatter,
   DateStyle,
-} from '../services/intl-formatter.service';
+} from "../services/intl-formatter.service";
 
-export type { IUseFormatReturn } from '@/react/interfaces';
+export type { IUseFormatReturn } from "@/react/interfaces";

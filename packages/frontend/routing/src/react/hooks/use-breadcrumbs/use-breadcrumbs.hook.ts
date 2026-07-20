@@ -73,9 +73,9 @@ export function useBreadcrumbs(): readonly IBreadcrumbEntry[] {
     });
 
     // Mark the last contribution as current. Consumers rely on this
-    // for HeroUI `<Breadcrumbs>` styling.
+    // for HeroUI `<Breadcrumbs>` styling. Length-guarded above.
     if (contributions.length > 0) {
-      const last = contributions[contributions.length - 1];
+      const last = contributions[contributions.length - 1]!;
       contributions[contributions.length - 1] = { ...last, isCurrent: true };
     }
 

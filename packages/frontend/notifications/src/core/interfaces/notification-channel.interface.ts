@@ -28,7 +28,7 @@ export interface INotificationChannel {
    * choosing a fallback if the user has muted the primary channel.
    * `'urgent'` is reserved for auth-critical + safety notifications.
    */
-  readonly importance?: 'min' | 'low' | 'default' | 'high' | 'urgent';
+  readonly importance?: "min" | "low" | "default" | "high" | "urgent";
   /**
    * Whether the channel is enabled by default. Consumers can mirror
    * this in their own settings store when the user hasn't picked a

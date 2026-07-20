@@ -1,7 +1,7 @@
 {
   "name": "@stackra/console",
   "version": "0.1.0",
-  "description": "Artisan-style CLI framework for the @stackra workspace — @Command()-driven command registration, auto-discovery via DISCOVERY_SERVICE, styled terminal output, stub-based scaffolding.",
+  "description": "Artisan-style CLI framework for the @stackra workspace \u2014 @Command()-driven command registration, auto-discovery via DISCOVERY_SERVICE, styled terminal output, stub-based scaffolding.",
   "license": "MIT",
   "author": {
     "name": "Stackra L.L.C",
@@ -92,6 +92,8 @@
     "@vivtel/metadata": "catalog:"
   },
   "devDependencies": {
+    "@academorix/config-tsconfig": "workspace:*",
+    "@academorix/config-tsup": "workspace:*",
     "@academorix/typescript-config": "workspace:*",
     "@stackra/container": "workspace:*",
     "@stackra/contracts": "workspace:*",

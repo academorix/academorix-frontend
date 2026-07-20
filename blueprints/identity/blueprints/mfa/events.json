@@ -46,9 +46,7 @@
       "class": "Academorix\\Mfa\\Events\\MfaEnrollmentFailed",
       "trigger": "Round-2 confirm rejected — either the TOTP confirmation code was wrong OR the ephemeral secret expired OR the round-1 preview never happened. Ephemeral state discarded on failure.",
       "queue": "notifications",
-      "consumers": [
-        "observability::EmitMfaEnrollmentFailedMetric"
-      ],
+      "consumers": ["observability::EmitMfaEnrollmentFailedMetric"],
       "payload": {
         "identity_id": "ULID",
         "method": "'totp' | 'webauthn'",
@@ -61,9 +59,7 @@
       "class": "Academorix\\Mfa\\Events\\MfaChallengeIssued",
       "trigger": "identity/auth::LoginAction issued a challenge because the resolved Identity has MFA enrolled. A row was written to the shared auth_mfa_challenges table with a 5-minute TTL + 3-attempt cap.",
       "queue": null,
-      "consumers": [
-        "observability::EmitMfaChallengeIssuedMetric"
-      ],
+      "consumers": ["observability::EmitMfaChallengeIssuedMetric"],
       "payload": {
         "identity_id": "ULID",
         "challenge_id": "ULID (`mfc_...`)",
@@ -172,9 +168,7 @@
       "class": "Academorix\\Mfa\\Events\\WebauthnCredentialRenamed",
       "trigger": "PATCH /api/v1/me/mfa/webauthn/credentials/{id} changed device_name.",
       "queue": "notifications",
-      "consumers": [
-        "activity::WriteToActivityLog"
-      ],
+      "consumers": ["activity::WriteToActivityLog"],
       "payload": {
         "identity_id": "ULID",
         "credential_id": "ULID",
@@ -224,9 +218,7 @@
       "class": "Academorix\\Mfa\\Events\\MfaBackupCodeCountLow",
       "trigger": "MfaRecoveryCodeConsumed fired AND remaining_count < 3. Debounced 24h per Identity so a rapid burn-down doesn't spam the user.",
       "queue": "notifications",
-      "consumers": [
-        "notifications::DispatchLowRecoveryCodesRemainingNotification"
-      ],
+      "consumers": ["notifications::DispatchLowRecoveryCodesRemainingNotification"],
       "payload": {
         "identity_id": "ULID",
         "remaining_count": "integer",

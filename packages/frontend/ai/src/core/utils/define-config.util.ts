@@ -6,7 +6,7 @@
  *   performs no merging. Defaults are applied by `mergeConfig()`.
  */
 
-import type { IAiModuleOptions } from '@stackra/contracts';
+import type { IAiModuleOptions } from "@stackra/contracts";
 
 /**
  * Type-safe configuration builder for `@stackra/ai`.

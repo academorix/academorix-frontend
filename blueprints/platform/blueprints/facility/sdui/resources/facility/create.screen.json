@@ -75,17 +75,28 @@
                 },
                 {
                   "kind": "TextField",
-                  "props": { "label": "Name", "placeholder": "Court 1 — Basketball", "isRequired": true },
+                  "props": {
+                    "label": "Name",
+                    "placeholder": "Court 1 — Basketball",
+                    "isRequired": true
+                  },
                   "form": { "field": "name" }
                 },
                 {
                   "kind": "TextField",
-                  "props": { "label": "Slug", "placeholder": "court-1-basketball", "helpText": "Auto-generated from name; edit to customise." },
+                  "props": {
+                    "label": "Slug",
+                    "placeholder": "court-1-basketball",
+                    "helpText": "Auto-generated from name; edit to customise."
+                  },
                   "form": { "field": "slug" }
                 },
                 {
                   "kind": "TextArea",
-                  "props": { "label": "Description", "placeholder": "Wooden floor, adjustable rims, three-point line" },
+                  "props": {
+                    "label": "Description",
+                    "placeholder": "Wooden floor, adjustable rims, three-point line"
+                  },
                   "form": { "field": "description" }
                 },
                 {
@@ -96,7 +107,11 @@
                 },
                 {
                   "kind": "ComboBox",
-                  "props": { "label": "Sport category", "menuTrigger": "focus", "helpText": "Leave empty for sport-agnostic facilities (rooms, studios)." },
+                  "props": {
+                    "label": "Sport category",
+                    "menuTrigger": "focus",
+                    "helpText": "Leave empty for sport-agnostic facilities (rooms, studios)."
+                  },
                   "bindings": {
                     "items": {
                       "$expr": "facilityTypeCatalog.types.find(t => t.facility_type === form.facility_type)?.compatible_sports?.map(s => ({ id: s, label: s })) ?? []"
@@ -117,17 +132,32 @@
               "children": [
                 {
                   "kind": "NumberField",
-                  "props": { "label": "Min booking duration (min)", "defaultValue": 60, "step": 15, "minValue": 15 },
+                  "props": {
+                    "label": "Min booking duration (min)",
+                    "defaultValue": 60,
+                    "step": 15,
+                    "minValue": 15
+                  },
                   "form": { "field": "min_booking_duration_minutes" }
                 },
                 {
                   "kind": "NumberField",
-                  "props": { "label": "Max booking duration (min)", "defaultValue": 240, "step": 15, "minValue": 30 },
+                  "props": {
+                    "label": "Max booking duration (min)",
+                    "defaultValue": 240,
+                    "step": 15,
+                    "minValue": 30
+                  },
                   "form": { "field": "max_booking_duration_minutes" }
                 },
                 {
                   "kind": "ComboBox",
-                  "props": { "label": "Slot step", "menuTrigger": "focus", "isRequired": true, "defaultSelectedKey": 30 },
+                  "props": {
+                    "label": "Slot step",
+                    "menuTrigger": "focus",
+                    "isRequired": true,
+                    "defaultSelectedKey": 30
+                  },
                   "props_items": [
                     { "id": 15, "label": "15 min" },
                     { "id": 30, "label": "30 min" },
@@ -138,12 +168,22 @@
                 },
                 {
                   "kind": "NumberField",
-                  "props": { "label": "Advance booking window (days)", "defaultValue": 30, "minValue": 1, "maxValue": 365 },
+                  "props": {
+                    "label": "Advance booking window (days)",
+                    "defaultValue": 30,
+                    "minValue": 1,
+                    "maxValue": 365
+                  },
                   "form": { "field": "advance_booking_window_days" }
                 },
                 {
                   "kind": "NumberField",
-                  "props": { "label": "Cancellation notice (hours)", "defaultValue": 24, "minValue": 0, "maxValue": 168 },
+                  "props": {
+                    "label": "Cancellation notice (hours)",
+                    "defaultValue": 24,
+                    "minValue": 0,
+                    "maxValue": 168
+                  },
                   "form": { "field": "cancellation_notice_hours" }
                 }
               ]
@@ -154,9 +194,15 @@
               "children": [
                 {
                   "kind": "ComboBox",
-                  "props": { "label": "Preset", "menuTrigger": "focus", "helpText": "Pick a preset then fine-tune below." },
+                  "props": {
+                    "label": "Preset",
+                    "menuTrigger": "focus",
+                    "helpText": "Pick a preset then fine-tune below."
+                  },
                   "bindings": {
-                    "items": { "$expr": "availabilitySamples.samples.map(s => ({ id: s.id, label: s.name }))" }
+                    "items": {
+                      "$expr": "availabilitySamples.samples.map(s => ({ id: s.id, label: s.name }))"
+                    }
                   },
                   "actions": {
                     "onSelectionChange": {
@@ -180,12 +226,20 @@
               "children": [
                 {
                   "kind": "ComboBox",
-                  "props": { "label": "Pricing model", "menuTrigger": "focus", "isRequired": true, "defaultSelectedKey": "per_hour" },
+                  "props": {
+                    "label": "Pricing model",
+                    "menuTrigger": "focus",
+                    "isRequired": true,
+                    "defaultSelectedKey": "per_hour"
+                  },
                   "props_items": [
                     { "id": "per_hour", "label": "Per hour" },
                     { "id": "per_slot", "label": "Per slot (flat rate)" },
                     { "id": "per_person", "label": "Per person" },
-                    { "id": "included_in_membership", "label": "Included in membership (no charge)" }
+                    {
+                      "id": "included_in_membership",
+                      "label": "Included in membership (no charge)"
+                    }
                   ],
                   "form": { "field": "pricing_json.model" }
                 },

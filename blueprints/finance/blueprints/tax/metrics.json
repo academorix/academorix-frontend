@@ -6,8 +6,28 @@
   "namespace": "academorix.tax",
   "labelConventions": {
     "always": [],
-    "commonlyAvailable": ["provider", "rate_type", "exemption_type", "verification_status", "country_code_bucket", "outcome"],
-    "forbiddenAsLabels": ["tenant_id", "tax_rate_id", "tax_jurisdiction_id", "tax_exemption_id", "tax_calculation_id", "provider_config_id", "customer_id", "invoice_line_id", "certificate_number", "source_amount_cents", "tax_amount_cents", "percentage"]
+    "commonlyAvailable": [
+      "provider",
+      "rate_type",
+      "exemption_type",
+      "verification_status",
+      "country_code_bucket",
+      "outcome"
+    ],
+    "forbiddenAsLabels": [
+      "tenant_id",
+      "tax_rate_id",
+      "tax_jurisdiction_id",
+      "tax_exemption_id",
+      "tax_calculation_id",
+      "provider_config_id",
+      "customer_id",
+      "invoice_line_id",
+      "certificate_number",
+      "source_amount_cents",
+      "tax_amount_cents",
+      "percentage"
+    ]
   },
   "metrics": [
     {

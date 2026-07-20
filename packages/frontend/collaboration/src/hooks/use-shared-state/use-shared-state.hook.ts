@@ -4,11 +4,11 @@
  * @category Hooks
  */
 
-import { useState, useEffect, useCallback, useRef } from 'react';
-import { useInject } from '@stackra/container/react';
+import { useState, useEffect, useCallback, useRef } from "react";
+import { useInject } from "@stackra/container/react";
 
-import type { RoomMember } from '@/interfaces/room-member.interface';
-import { RoomManager } from '@/services/room-manager.service';
+import type { RoomMember } from "@/interfaces/room-member.interface";
+import { RoomManager } from "@/services/room-manager.service";
 
 /** Metadata about the shared state. */
 interface SharedStateMeta {
@@ -101,7 +101,7 @@ export function useSharedState<T>(roomId: string, initialState: T): UseSharedSta
       const transport = roomManager.getTransport();
 
       setLocalState((prev) => {
-        const next = typeof updater === 'function' ? (updater as (prev: T) => T)(prev) : updater;
+        const next = typeof updater === "function" ? (updater as (prev: T) => T)(prev) : updater;
 
         // Broadcast to other members
         transport.setState<T>(roomId, () => next);
@@ -115,7 +115,7 @@ export function useSharedState<T>(roomId: string, initialState: T): UseSharedSta
         return next;
       });
     },
-    [roomId, roomManager]
+    [roomId, roomManager],
   );
 
   return [state, setState, meta];

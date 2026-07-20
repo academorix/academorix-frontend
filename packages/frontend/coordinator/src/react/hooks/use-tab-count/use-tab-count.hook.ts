@@ -4,10 +4,10 @@
  * @description React hook that returns the number of active tabs.
  */
 
-import { useState, useEffect } from 'react';
-import { useInject } from '@stackra/container/react';
-import { TAB_COORDINATOR } from '@stackra/contracts';
-import { TabCoordinator } from '@/core/services/tab-coordinator.service';
+import { useState, useEffect } from "react";
+import { useInject } from "@stackra/container/react";
+import { TAB_COORDINATOR } from "@stackra/contracts";
+import { TabCoordinator } from "@/core/services/tab-coordinator.service";
 
 /**
  * Returns the number of currently active tabs.

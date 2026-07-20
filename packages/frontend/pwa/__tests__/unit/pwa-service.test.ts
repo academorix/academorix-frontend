@@ -5,12 +5,12 @@
  * @description Behavioural tests for {@link PwaService}.
  */
 
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-import { PwaService, AnalyticsBridgeService } from '@/core';
-import { PWA_EVENTS } from '@/core/constants';
-import type { IPwaModuleOptions } from '@/core/interfaces';
-import { MockAnalyticsClient, MockBeforeInstallPromptEvent } from '@/testing';
+import { PwaService, AnalyticsBridgeService } from "@/core";
+import { PWA_EVENTS } from "@/core/constants";
+import type { IPwaModuleOptions } from "@/core/interfaces";
+import { MockAnalyticsClient, MockBeforeInstallPromptEvent } from "@/testing";
 
 /** Build a fresh PwaService with mocked deps for each test. */
 function newService(options?: { config?: IPwaModuleOptions; analytics?: MockAnalyticsClient }): {
@@ -21,7 +21,7 @@ function newService(options?: { config?: IPwaModuleOptions; analytics?: MockAnal
   const bridge = new AnalyticsBridgeService(analytics);
   const service = new PwaService(
     options?.config ?? { install: {}, update: {}, offlineQueue: {} },
-    bridge
+    bridge,
   );
   return { service, analytics };
 }
@@ -36,8 +36,8 @@ afterEach(() => {
   window.localStorage.clear();
 });
 
-describe('PwaService construction', () => {
-  it('constructs safely in a jsdom environment', () => {
+describe("PwaService construction", () => {
+  it("constructs safely in a jsdom environment", () => {
     const { service } = newService();
     const snap = service.getSnapshot();
     expect(snap.install.isVisible).toBe(false);
@@ -45,14 +45,14 @@ describe('PwaService construction', () => {
     expect(snap.update.isAvailable).toBe(false);
   });
 
-  it('exposes a referentially stable snapshot until state changes', () => {
+  it("exposes a referentially stable snapshot until state changes", () => {
     const { service } = newService();
     expect(service.getSnapshot()).toBe(service.getSnapshot());
   });
 });
 
-describe('PwaService.dismissInstallPrompt', () => {
-  it('increments the dismiss count and emits a snapshot change', () => {
+describe("PwaService.dismissInstallPrompt", () => {
+  it("increments the dismiss count and emits a snapshot change", () => {
     const { service, analytics } = newService();
     const listener = vi.fn();
     service.subscribe(listener);
@@ -68,22 +68,22 @@ describe('PwaService.dismissInstallPrompt', () => {
     });
   });
 
-  it('persists the dismiss count to localStorage', () => {
+  it("persists the dismiss count to localStorage", () => {
     const { service } = newService();
     service.dismissInstallPrompt();
     service.dismissInstallPrompt();
-    expect(window.localStorage.getItem('stackra:pwa:install-dismissed')).toBe('2');
+    expect(window.localStorage.getItem("stackra:pwa:install-dismissed")).toBe("2");
   });
 
-  it('reads the dismiss count from localStorage on construction', () => {
-    window.localStorage.setItem('stackra:pwa:install-dismissed', '4');
+  it("reads the dismiss count from localStorage on construction", () => {
+    window.localStorage.setItem("stackra:pwa:install-dismissed", "4");
     const { service } = newService();
     expect(service.getSnapshot().install.dismissCount).toBe(4);
   });
 });
 
-describe('PwaService.resetDismissCount', () => {
-  it('zeroes the count', () => {
+describe("PwaService.resetDismissCount", () => {
+  it("zeroes the count", () => {
     const { service } = newService();
     service.dismissInstallPrompt();
     service.dismissInstallPrompt();
@@ -92,8 +92,8 @@ describe('PwaService.resetDismissCount', () => {
   });
 });
 
-describe('PwaService.promptInstall', () => {
-  it('returns false when no deferred prompt is available', async () => {
+describe("PwaService.promptInstall", () => {
+  it("returns false when no deferred prompt is available", async () => {
     const { service, analytics } = newService();
     const outcome = await service.promptInstall();
     expect(outcome).toBe(false);
@@ -102,7 +102,7 @@ describe('PwaService.promptInstall', () => {
     expect(analytics.calls).toEqual([]);
   });
 
-  it('honours a deferred prompt and returns true on accept', async () => {
+  it("honours a deferred prompt and returns true on accept", async () => {
     const { service, analytics } = newService();
     await service.onModuleInit();
 
@@ -115,27 +115,27 @@ describe('PwaService.promptInstall', () => {
     // avoid a race with the setTimeout scheduled by the delayMs
     // guard (default 30s — irrelevant here since we're bypassing
     // it directly).
-    event.simulateUserChoice('accepted');
+    event.simulateUserChoice("accepted");
     const outcome = await service.promptInstall();
     expect(outcome).toBe(true);
     expect(event.promptCalls).toBe(1);
     expect(analytics.calls.some((c) => c.event === PWA_EVENTS.INSTALL_ACCEPTED)).toBe(true);
   });
 
-  it('returns false when the user dismisses', async () => {
+  it("returns false when the user dismisses", async () => {
     const { service, analytics } = newService();
     await service.onModuleInit();
     const event = new MockBeforeInstallPromptEvent();
     window.dispatchEvent(event);
-    event.simulateUserChoice('dismissed');
+    event.simulateUserChoice("dismissed");
     const outcome = await service.promptInstall();
     expect(outcome).toBe(false);
     expect(analytics.calls.some((c) => c.event === PWA_EVENTS.INSTALL_DISMISSED)).toBe(true);
   });
 });
 
-describe('PwaService.acceptUpdate / dismissUpdate', () => {
-  it('dismissUpdate hides the banner and emits a snapshot change', () => {
+describe("PwaService.acceptUpdate / dismissUpdate", () => {
+  it("dismissUpdate hides the banner and emits a snapshot change", () => {
     const { service, analytics } = newService();
     const listener = vi.fn();
     service.subscribe(listener);
@@ -154,11 +154,11 @@ describe('PwaService.acceptUpdate / dismissUpdate', () => {
   });
 });
 
-describe('PwaService fail-soft subscribers', () => {
-  it('does not propagate a subscriber error to the emitter', () => {
+describe("PwaService fail-soft subscribers", () => {
+  it("does not propagate a subscriber error to the emitter", () => {
     const { service } = newService();
     service.subscribe(() => {
-      throw new Error('boom');
+      throw new Error("boom");
     });
     // The `dismissInstallPrompt` path invokes `emit()`; a thrown
     // listener must not bubble.
@@ -166,10 +166,10 @@ describe('PwaService fail-soft subscribers', () => {
   });
 });
 
-describe('PwaService analytics bridge fail-soft', () => {
-  it('swallows analytics client errors', () => {
+describe("PwaService analytics bridge fail-soft", () => {
+  it("swallows analytics client errors", () => {
     const analytics = new MockAnalyticsClient();
-    analytics.throwOnTrack = new Error('bridge down');
+    analytics.throwOnTrack = new Error("bridge down");
     const { service } = newService({ analytics });
     // Every dispatched event will throw inside the client — the
     // service should keep operating.
@@ -179,11 +179,11 @@ describe('PwaService analytics bridge fail-soft', () => {
   });
 });
 
-describe('PwaService install prompt maxDismissals gate', () => {
-  it('does not surface the banner after maxDismissals is hit', async () => {
+describe("PwaService install prompt maxDismissals gate", () => {
+  it("does not surface the banner after maxDismissals is hit", async () => {
     vi.useFakeTimers();
     try {
-      window.localStorage.setItem('stackra:pwa:install-dismissed', '3');
+      window.localStorage.setItem("stackra:pwa:install-dismissed", "3");
       const { service } = newService({
         config: {
           install: { delayMs: 10, maxDismissals: 3 },
@@ -207,8 +207,8 @@ describe('PwaService install prompt maxDismissals gate', () => {
   });
 });
 
-describe('PwaService reportOffline', () => {
-  it('emits pwa.offline.entered via the analytics bridge', () => {
+describe("PwaService reportOffline", () => {
+  it("emits pwa.offline.entered via the analytics bridge", () => {
     const { service, analytics } = newService();
     service.reportOffline();
     expect(analytics.calls.some((c) => c.event === PWA_EVENTS.OFFLINE_ENTERED)).toBe(true);

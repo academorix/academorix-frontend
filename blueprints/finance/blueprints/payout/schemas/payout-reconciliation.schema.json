@@ -16,7 +16,14 @@
     "model": "Academorix\\Finance\\Payout\\Models\\PayoutReconciliation",
     "interface": "Academorix\\Finance\\Payout\\Contracts\\Data\\PayoutReconciliationInterface",
     "implements": ["Academorix\\Finance\\Payout\\Contracts\\Data\\PayoutReconciliationInterface"],
-    "traits": ["HasFactory", "HasUlids", "BelongsToTenant", "HasMetadata", "HasUserstamps", "Auditable"],
+    "traits": [
+      "HasFactory",
+      "HasUlids",
+      "BelongsToTenant",
+      "HasMetadata",
+      "HasUserstamps",
+      "Auditable"
+    ],
     "casts": {
       "status": "PayoutReconciliationStatus",
       "local_total_minor": "bigint",
@@ -32,9 +39,25 @@
     "engine": "postgres",
     "columns": {
       "id": { "type": "string", "length": 64, "primary": true },
-      "tenant_id": { "type": "string", "length": 64, "nullable": false, "foreign": { "table": "tenants", "column": "id", "onDelete": "cascade" } },
-      "payout_id": { "type": "string", "length": 64, "nullable": false, "foreign": { "table": "payouts", "column": "id", "onDelete": "cascade" } },
-      "status": { "type": "string", "length": 16, "nullable": false, "default": "'pending'", "description": "Enum: pending / matched / drift / resolved / failed." },
+      "tenant_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "foreign": { "table": "tenants", "column": "id", "onDelete": "cascade" }
+      },
+      "payout_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "foreign": { "table": "payouts", "column": "id", "onDelete": "cascade" }
+      },
+      "status": {
+        "type": "string",
+        "length": 16,
+        "nullable": false,
+        "default": "'pending'",
+        "description": "Enum: pending / matched / drift / resolved / failed."
+      },
       "local_total_minor": { "type": "bigint", "nullable": false },
       "provider_total_minor": { "type": "bigint", "nullable": false },
       "drift_minor": { "type": "bigint", "nullable": false, "default": 0 },
@@ -49,11 +72,28 @@
       "updated_at": { "type": "timestamptz", "nullable": false }
     },
     "indexes": [
-      { "columns": ["tenant_id", "payout_id"], "unique": true, "name": "payout_reconciliations_payout_unique" },
-      { "columns": ["tenant_id", "status", "reconciled_at"], "name": "payout_reconciliations_status_idx" }
+      {
+        "columns": ["tenant_id", "payout_id"],
+        "unique": true,
+        "name": "payout_reconciliations_payout_unique"
+      },
+      {
+        "columns": ["tenant_id", "status", "reconciled_at"],
+        "name": "payout_reconciliations_status_idx"
+      }
     ]
   },
-  "required": ["id", "tenant_id", "payout_id", "status", "local_total_minor", "provider_total_minor", "drift_minor", "created_at", "updated_at"],
+  "required": [
+    "id",
+    "tenant_id",
+    "payout_id",
+    "status",
+    "local_total_minor",
+    "provider_total_minor",
+    "drift_minor",
+    "created_at",
+    "updated_at"
+  ],
   "properties": {
     "id": { "type": "string", "pattern": "^pyr_[0-9A-HJKMNP-TV-Z]{26}$" },
     "tenant_id": { "type": "string", "pattern": "^ten_[0-9A-HJKMNP-TV-Z]{26}$" },

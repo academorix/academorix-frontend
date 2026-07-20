@@ -100,10 +100,10 @@ function FocusModalHeader({
 }: FocusModalHeaderProps): React.ReactElement {
   return (
     <Modal.Header
-      className={`border-default-200 sticky top-0 z-10 flex shrink-0 items-center justify-between gap-4 border-b bg-background px-6 py-4 ${className ?? ""}`.trim()}
+      className={`border-default-200 bg-background sticky top-0 z-10 flex shrink-0 items-center justify-between gap-4 border-b px-6 py-4 ${className ?? ""}`.trim()}
     >
       <div className="flex flex-col gap-1">
-        <Modal.Heading className="text-lg font-semibold text-foreground">{title}</Modal.Heading>
+        <Modal.Heading className="text-foreground text-lg font-semibold">{title}</Modal.Heading>
         {description ? <p className="text-foreground-500 text-sm">{description}</p> : null}
       </div>
       <div className="flex items-center gap-2">
@@ -149,7 +149,7 @@ FocusModalBody.displayName = "FocusModal.Body";
 function FocusModalFooter({ className, children }: FocusModalFooterProps): React.ReactElement {
   return (
     <Modal.Footer
-      className={`border-default-200 sticky bottom-0 z-10 flex shrink-0 items-center justify-end gap-2 border-t bg-background px-6 py-4 ${className ?? ""}`.trim()}
+      className={`border-default-200 bg-background sticky bottom-0 z-10 flex shrink-0 items-center justify-end gap-2 border-t px-6 py-4 ${className ?? ""}`.trim()}
     >
       {children}
     </Modal.Footer>

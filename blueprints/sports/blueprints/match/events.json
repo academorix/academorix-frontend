@@ -35,10 +35,7 @@
       "class": "Academorix\\Sports\\Match\\Events\\MatchLineupSet",
       "trigger": "Match.status transitions SCHEDULED -> LINEUP_SET. Head coach chose the squad + roles. Lineup is not yet parent-facing — that requires MatchLineupPublished.",
       "queue": "matches",
-      "consumers": [
-        "audit::WriteToAuditLog",
-        "monitoring::MetricsCollector"
-      ],
+      "consumers": ["audit::WriteToAuditLog", "monitoring::MetricsCollector"],
       "payload": {
         "match_id": "ULID",
         "tenant_id": "ULID",
@@ -108,10 +105,7 @@
       "class": "Academorix\\Sports\\Match\\Events\\MatchCompleted",
       "trigger": "Match.status transitions IN_PROGRESS -> COMPLETED. Requires at least one match_results row present.",
       "queue": "matches",
-      "consumers": [
-        "audit::WriteToAuditLog",
-        "monitoring::MetricsCollector"
-      ],
+      "consumers": ["audit::WriteToAuditLog", "monitoring::MetricsCollector"],
       "payload": {
         "match_id": "ULID",
         "tenant_id": "ULID",

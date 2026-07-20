@@ -35,10 +35,7 @@
       "class": "Academorix\\Growth\\Marketing\\Events\\MarketingEventDispatched",
       "trigger": "MarketingEventDispatcher enqueued one DispatchToProviderJob per eligible provider. Fires ONCE per event. Distinct from MarketingDeliveryAttempted (per-provider-per-attempt).",
       "queue": "marketing",
-      "consumers": [
-        "audit::WriteToAuditLog",
-        "monitoring::MetricsCollector"
-      ],
+      "consumers": ["audit::WriteToAuditLog", "monitoring::MetricsCollector"],
       "payload": {
         "marketing_event_id": "ULID",
         "tenant_id": "ULID",
@@ -70,10 +67,7 @@
       "class": "Academorix\\Growth\\Marketing\\Events\\MarketingEventPartiallyDelivered",
       "trigger": "At least one provider succeeded AND at least one failed permanently (dead-lettered). Event.status = 'partially_delivered'. Distinct from MarketingEventFailed (all providers failed).",
       "queue": "marketing",
-      "consumers": [
-        "audit::WriteToAuditLog",
-        "monitoring::MetricsCollector"
-      ],
+      "consumers": ["audit::WriteToAuditLog", "monitoring::MetricsCollector"],
       "payload": {
         "marketing_event_id": "ULID",
         "tenant_id": "ULID",
@@ -124,10 +118,7 @@
       "class": "Academorix\\Growth\\Marketing\\Events\\MarketingEventSuperseded",
       "trigger": "A newer event with the same (tenant_id, deduplication_key) arrived while the earlier event was still in-flight. The observer marks the earlier event.status = 'superseded' + cancels its pending DispatchToProviderJob. Only fires when the old event has NOT yet delivered — delivered events are immutable.",
       "queue": "marketing",
-      "consumers": [
-        "audit::WriteToAuditLog",
-        "monitoring::MetricsCollector"
-      ],
+      "consumers": ["audit::WriteToAuditLog", "monitoring::MetricsCollector"],
       "payload": {
         "superseded_event_id": "ULID (the older event)",
         "superseding_event_id": "ULID (the newer event)",
@@ -224,9 +215,7 @@
       "class": "Academorix\\Growth\\Marketing\\Events\\MarketingDeliverySuppressedByCircuitBreaker",
       "trigger": "DispatchToProviderJob started + the pre-dispatch CircuitBreakerGate check found the (tenant, provider) circuit is OPEN. Delivery.status = 'suppressed_by_circuit_breaker'. Never touches the wire. Retries scheduled when the circuit half-opens.",
       "queue": "marketing",
-      "consumers": [
-        "monitoring::MetricsCollector"
-      ],
+      "consumers": ["monitoring::MetricsCollector"],
       "payload": {
         "marketing_delivery_id": "ULID",
         "marketing_event_id": "ULID",
@@ -280,10 +269,7 @@
       "class": "Academorix\\Growth\\Marketing\\Events\\MarketingProviderCircuitBreakerClosed",
       "trigger": "Provider recovered — half-open probe succeeded OR ops manually reset via marketing:reset-circuit-breaker command / POST /providers/{provider}/reset-circuit-breaker. Resets consecutive_failure_count to 0 + increments circuit_breaker_reset_count when the close was manual.",
       "queue": "marketing",
-      "consumers": [
-        "audit::WriteToAuditLog",
-        "monitoring::MetricsCollector"
-      ],
+      "consumers": ["audit::WriteToAuditLog", "monitoring::MetricsCollector"],
       "payload": {
         "tenant_id": "ULID",
         "provider": "string",
@@ -298,9 +284,7 @@
       "class": "Academorix\\Growth\\Marketing\\Events\\MarketingProviderCircuitBreakerHalfOpen",
       "trigger": "The open_until timer elapsed. HalfOpenCircuitBreakerJob transitions the breaker to HALF_OPEN + dispatches 1 test event (half_open_test_events). Success closes the breaker; failure re-opens it.",
       "queue": "marketing",
-      "consumers": [
-        "monitoring::MetricsCollector"
-      ],
+      "consumers": ["monitoring::MetricsCollector"],
       "payload": {
         "tenant_id": "ULID",
         "provider": "string",
@@ -375,10 +359,7 @@
       "class": "Academorix\\Growth\\Marketing\\Events\\MarketingDeadLetterReplayed",
       "trigger": "Ops or tenant admin invoked POST /dead-letters/{id}/replay OR the marketing:replay-dead-letter command. Enqueues a fresh DispatchToProviderJob with attempt_number=1. Increments dead_letter.replay_attempts + sets last_replay_at.",
       "queue": "marketing",
-      "consumers": [
-        "audit::WriteToAuditLog (retention: 7 years)",
-        "monitoring::MetricsCollector"
-      ],
+      "consumers": ["audit::WriteToAuditLog (retention: 7 years)", "monitoring::MetricsCollector"],
       "payload": {
         "marketing_dead_letter_id": "ULID",
         "marketing_event_id": "ULID",
@@ -393,10 +374,7 @@
       "class": "Academorix\\Growth\\Marketing\\Events\\MarketingDeadLetterResolved",
       "trigger": "Either (a) a replay attempt succeeded (auto-resolved) OR (b) ops manually marked the dead letter resolved via POST /dead-letters/{id}/resolve. Sets resolved_at + resolved_by_user_id + resolution_note.",
       "queue": "marketing",
-      "consumers": [
-        "audit::WriteToAuditLog (retention: 7 years)",
-        "monitoring::MetricsCollector"
-      ],
+      "consumers": ["audit::WriteToAuditLog (retention: 7 years)", "monitoring::MetricsCollector"],
       "payload": {
         "marketing_dead_letter_id": "ULID",
         "marketing_event_id": "ULID",
@@ -412,10 +390,7 @@
       "class": "Academorix\\Growth\\Marketing\\Events\\MarketingProviderTestSent",
       "trigger": "Tenant onboarding flow. POST /providers/{provider}/test invoked OR test_mode=true on a new config. Dispatches a synthetic test event via the provider's sandbox endpoint.",
       "queue": "marketing",
-      "consumers": [
-        "audit::WriteToAuditLog",
-        "monitoring::MetricsCollector"
-      ],
+      "consumers": ["audit::WriteToAuditLog", "monitoring::MetricsCollector"],
       "payload": {
         "provider_config_id": "ULID",
         "tenant_id": "ULID",

@@ -3,4 +3,4 @@
  * @module @stackra/monitoring/react/hooks
  */
 
-export { useMonitoring } from './use-monitoring/use-monitoring.hook';
+export { useMonitoring } from "./use-monitoring/use-monitoring.hook";

@@ -7,7 +7,7 @@
  *   via `meta.skipLocale: true`.
  */
 
-import { Inject, Optional } from '@stackra/container';
+import { Inject, Optional } from "@stackra/container";
 
 import {
   I18N_LOCALE_SERVICE,
@@ -16,9 +16,9 @@ import {
   type IHttpNextFunction,
   type IHttpResponse,
   type II18nLocaleService,
-} from '@stackra/contracts';
+} from "@stackra/contracts";
 
-import { HttpMiddleware } from '../decorators/http-middleware.decorator';
+import { HttpMiddleware } from "../decorators/http-middleware.decorator";
 
 /**
  * Locale header middleware.
@@ -36,13 +36,13 @@ import { HttpMiddleware } from '../decorators/http-middleware.decorator';
  * http.get('/api/translations', { meta: { skipLocale: true } });
  * ```
  */
-@HttpMiddleware({ priority: 16, name: 'locale-header' })
+@HttpMiddleware({ priority: 16, name: "locale-header" })
 export class LocaleHeaderMiddleware implements IHttpMiddleware {
   /**
    * @param localeService - Optional i18n locale service for reading current locale.
    */
   public constructor(
-    @Optional() @Inject(I18N_LOCALE_SERVICE) private readonly localeService?: II18nLocaleService
+    @Optional() @Inject(I18N_LOCALE_SERVICE) private readonly localeService?: II18nLocaleService,
   ) {}
 
   /**
@@ -57,7 +57,7 @@ export class LocaleHeaderMiddleware implements IHttpMiddleware {
       return next(context);
     }
 
-    if (context.request.meta?.['skipLocale'] === true) {
+    if (context.request.meta?.["skipLocale"] === true) {
       return next(context);
     }
 
@@ -65,8 +65,8 @@ export class LocaleHeaderMiddleware implements IHttpMiddleware {
     if (locale) {
       context.request.headers = {
         ...context.request.headers,
-        'X-Language': locale,
-        'Accept-Language': locale,
+        "X-Language": locale,
+        "Accept-Language": locale,
       };
     }
 

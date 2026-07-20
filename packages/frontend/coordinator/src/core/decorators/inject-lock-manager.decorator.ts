@@ -4,8 +4,8 @@
  * @description Parameter decorator for injecting the LockManager.
  */
 
-import { Inject } from '@stackra/container';
-import { TAB_LOCK_MANAGER } from '@/core/constants';
+import { Inject } from "@stackra/container";
+import { TAB_LOCK_MANAGER } from "@/core/constants";
 
 /**
  * Inject the LockManager service.

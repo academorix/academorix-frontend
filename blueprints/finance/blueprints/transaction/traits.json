@@ -33,18 +33,33 @@
     "foundation": [
       { "trait": "Academorix\\Foundation\\Concerns\\HasUlids" },
       { "trait": "Academorix\\Foundation\\Concerns\\HasUserstamps" },
-      { "trait": "Academorix\\Foundation\\Concerns\\HasMetadata", "reason": "Transaction only. TransactionLedgerEntry does NOT carry metadata — the description field is auto-generated + bounded to 256 chars." },
+      {
+        "trait": "Academorix\\Foundation\\Concerns\\HasMetadata",
+        "reason": "Transaction only. TransactionLedgerEntry does NOT carry metadata — the description field is auto-generated + bounded to 256 chars."
+      },
       { "trait": "Academorix\\Foundation\\Concerns\\Filterable" },
-      { "trait": "Academorix\\Foundation\\Concerns\\Searchable", "reason": "Transaction (searchable by transaction_number). NOT TransactionLedgerEntry (accessed via relations from Transaction only)." }
+      {
+        "trait": "Academorix\\Foundation\\Concerns\\Searchable",
+        "reason": "Transaction (searchable by transaction_number). NOT TransactionLedgerEntry (accessed via relations from Transaction only)."
+      }
     ],
     "tenants": [
-      { "trait": "Academorix\\Tenancy\\Concerns\\BelongsToTenant", "reason": "Every owned row carries tenant_id per tenancy-columns.md §3." }
+      {
+        "trait": "Academorix\\Tenancy\\Concerns\\BelongsToTenant",
+        "reason": "Every owned row carries tenant_id per tenancy-columns.md §3."
+      }
     ],
     "audit": [
-      { "trait": "Academorix\\Audit\\Concerns\\Auditable", "reason": "Every write to transactions + transaction_ledger_entries is compliance-critical (SOX 404 + AML + regulator record retention). 7-year audit retention." }
+      {
+        "trait": "Academorix\\Audit\\Concerns\\Auditable",
+        "reason": "Every write to transactions + transaction_ledger_entries is compliance-critical (SOX 404 + AML + regulator record retention). 7-year audit retention."
+      }
     ],
     "activity": [
-      { "trait": "Academorix\\Activity\\Concerns\\HasActivityLog", "reason": "Transaction only (Wave 4.5 will roll up ledger movements onto the tenant admin activity feed). NOT TransactionLedgerEntry — line items are too high-volume for the activity feed + already covered by the transaction-level entry." }
+      {
+        "trait": "Academorix\\Activity\\Concerns\\HasActivityLog",
+        "reason": "Transaction only (Wave 4.5 will roll up ledger movements onto the tenant admin activity feed). NOT TransactionLedgerEntry — line items are too high-volume for the activity feed + already covered by the transaction-level entry."
+      }
     ]
   },
   "composition": {

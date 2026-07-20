@@ -8,14 +8,30 @@
       "model": "Facility",
       "class": "Academorix\\Facility\\Policies\\FacilityPolicy",
       "abilities": [
-        { "action": "viewAny", "permission": "facilities.viewAny", "scope": "any tenant member with facilities entitlement" },
-        { "action": "view", "permission": "facilities.view", "scope": "narrows to caller's active branch scope when set" },
-        { "action": "create", "permission": "facilities.create", "scope": "branch_manager narrowed to their scoped branches" },
+        {
+          "action": "viewAny",
+          "permission": "facilities.viewAny",
+          "scope": "any tenant member with facilities entitlement"
+        },
+        {
+          "action": "view",
+          "permission": "facilities.view",
+          "scope": "narrows to caller's active branch scope when set"
+        },
+        {
+          "action": "create",
+          "permission": "facilities.create",
+          "scope": "branch_manager narrowed to their scoped branches"
+        },
         { "action": "update", "permission": "facilities.update", "scope": "same as create" },
         { "action": "delete", "permission": "facilities.delete", "scope": "admin + owner only" },
         { "action": "retire", "permission": "facilities.retire" },
         { "action": "manageBlackouts", "permission": "facilities.manage-blackouts" },
-        { "action": "managePricing", "permission": "facilities.manage-pricing", "scope": "admin + owner only — financial-audit-critical" },
+        {
+          "action": "managePricing",
+          "permission": "facilities.manage-pricing",
+          "scope": "admin + owner only — financial-audit-critical"
+        },
         { "action": "manageAvailability", "permission": "facilities.manage-availability" },
         { "action": "viewAuditUsage", "permission": "facilities.view-audit-usage" },
         { "action": "platformViewAny", "permission": "platform.facilities.viewAny" },
@@ -54,9 +70,17 @@
         },
         { "action": "markNoShow", "permission": "bookings.mark-no-show" },
         { "action": "checkIn", "permission": "bookings.check-in" },
-        { "action": "complete", "permission": "bookings.complete", "scope": "reserved for Wave 4 refund flow; manual completion refused by observer" },
+        {
+          "action": "complete",
+          "permission": "bookings.complete",
+          "scope": "reserved for Wave 4 refund flow; manual completion refused by observer"
+        },
         { "action": "platformViewAny", "permission": "platform.bookings.viewAny" },
-        { "action": "platformForceCancel", "permission": "platform.bookings.force-cancel", "scope": "audit-critical: every fire notifies the tenant admin and writes an audit row with retention 7 years" }
+        {
+          "action": "platformForceCancel",
+          "permission": "platform.bookings.force-cancel",
+          "scope": "audit-critical: every fire notifies the tenant admin and writes an audit row with retention 7 years"
+        }
       ]
     },
     {
@@ -73,9 +97,17 @@
           "permission": "day_passes.view",
           "scope": "issuer + issued_to_user (if named) + reception in same branch"
         },
-        { "action": "issue", "permission": "day_passes.issue", "scope": "requires facilities_advanced entitlement (Enterprise-only)" },
+        {
+          "action": "issue",
+          "permission": "day_passes.issue",
+          "scope": "requires facilities_advanced entitlement (Enterprise-only)"
+        },
         { "action": "consume", "permission": "day_passes.consume" },
-        { "action": "refund", "permission": "day_passes.refund", "scope": "must be within 30-day refund window per observer" }
+        {
+          "action": "refund",
+          "permission": "day_passes.refund",
+          "scope": "must be within 30-day refund window per observer"
+        }
       ]
     },
     {
@@ -88,10 +120,22 @@
           "scope": "member: own passes only (WHERE auth()->id() IN assignable_user_ids); coaches see passes assigned to their coached athletes; branch_manager+: all in scoped branches"
         },
         { "action": "view", "permission": "passes.view" },
-        { "action": "create", "permission": "passes.create", "scope": "requires facilities_advanced entitlement" },
+        {
+          "action": "create",
+          "permission": "passes.create",
+          "scope": "requires facilities_advanced entitlement"
+        },
         { "action": "update", "permission": "passes.update" },
-        { "action": "transfer", "permission": "passes.transfer", "scope": "refused when pass.is_transferable=false" },
-        { "action": "revoke", "permission": "passes.revoke", "scope": "admin + owner only; revocation is audit-critical" }
+        {
+          "action": "transfer",
+          "permission": "passes.transfer",
+          "scope": "refused when pass.is_transferable=false"
+        },
+        {
+          "action": "revoke",
+          "permission": "passes.revoke",
+          "scope": "admin + owner only; revocation is audit-critical"
+        }
       ]
     }
   ]

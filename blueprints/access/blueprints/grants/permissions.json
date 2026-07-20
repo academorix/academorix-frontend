@@ -43,10 +43,7 @@
       "name": "grants.audit_any",
       "guard": "sanctum",
       "description": "Enumerate grants across the tenant — call `/grants/subject/{id}` for any principal or `/grants/resource/{type}/{id}` for any resource. Admin-level compliance surface.",
-      "grantsPolicies": [
-        "AccessGrantPolicy@auditPrincipal",
-        "AccessGrantPolicy@auditResource"
-      ],
+      "grantsPolicies": ["AccessGrantPolicy@auditPrincipal", "AccessGrantPolicy@auditResource"],
       "seededOn": ["owner", "admin", "compliance_officer"]
     },
     {

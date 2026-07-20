@@ -10,8 +10,18 @@
   "requiresPermission": "monitoring.alert_policies.viewAny",
   "requiresEntitlement": "monitoring_capture",
   "dataSources": [
-    { "name": "policies", "kind": "http.get", "url": "/api/v1/monitoring/alert-policies", "unwrap": "data" },
-    { "name": "slot", "kind": "http.get", "url": "/api/v1/entitlements/monitoring_alert_policy_slot", "unwrap": "data" }
+    {
+      "name": "policies",
+      "kind": "http.get",
+      "url": "/api/v1/monitoring/alert-policies",
+      "unwrap": "data"
+    },
+    {
+      "name": "slot",
+      "kind": "http.get",
+      "url": "/api/v1/entitlements/monitoring_alert_policy_slot",
+      "unwrap": "data"
+    }
   ],
   "nodes": [
     {
@@ -23,25 +33,54 @@
           "kind": "View",
           "props": { "className": "flex items-start justify-between gap-4" },
           "children": [
-            { "kind": "View", "children": [
-              { "kind": "Text", "props": { "as": "h1", "className": "text-2xl font-semibold", "children": "Alert policies" } },
-              { "kind": "Text", "props": { "className": "text-sm text-muted", "children": "Threshold rules that fire monitoring alerts." } }
-            ] },
-            { "kind": "View", "props": { "className": "flex items-center gap-3" }, "children": [
-              {
-                "kind": "Widget",
-                "widget": "entitlements.entitlement-usage-bar",
-                "props": { "size": "sm", "label": "Policy slots" },
-                "bindings": { "cap": { "$ref": "slot.value_cap" }, "used": { "$ref": "slot.value_used" } }
-              },
-              {
-                "kind": "Button",
-                "props": { "variant": "primary", "leadingIcon": "plus", "children": "Add alert policy" },
-                "requiresPermission": "monitoring.alert_policies.create",
-                "bindings": { "disabled": { "$ref": "slot.is_exceeded" } },
-                "actions": { "onPress": { "kind": "navigate", "to": "/tenant/monitoring/alert-policies/new" } }
-              }
-            ] }
+            {
+              "kind": "View",
+              "children": [
+                {
+                  "kind": "Text",
+                  "props": {
+                    "as": "h1",
+                    "className": "text-2xl font-semibold",
+                    "children": "Alert policies"
+                  }
+                },
+                {
+                  "kind": "Text",
+                  "props": {
+                    "className": "text-sm text-muted",
+                    "children": "Threshold rules that fire monitoring alerts."
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "View",
+              "props": { "className": "flex items-center gap-3" },
+              "children": [
+                {
+                  "kind": "Widget",
+                  "widget": "entitlements.entitlement-usage-bar",
+                  "props": { "size": "sm", "label": "Policy slots" },
+                  "bindings": {
+                    "cap": { "$ref": "slot.value_cap" },
+                    "used": { "$ref": "slot.value_used" }
+                  }
+                },
+                {
+                  "kind": "Button",
+                  "props": {
+                    "variant": "primary",
+                    "leadingIcon": "plus",
+                    "children": "Add alert policy"
+                  },
+                  "requiresPermission": "monitoring.alert_policies.create",
+                  "bindings": { "disabled": { "$ref": "slot.is_exceeded" } },
+                  "actions": {
+                    "onPress": { "kind": "navigate", "to": "/tenant/monitoring/alert-policies/new" }
+                  }
+                }
+              ]
+            }
           ]
         },
         {
@@ -55,18 +94,40 @@
               {
                 "field": "severity",
                 "header": "Severity",
-                "cellRenderer": { "kind": "Widget", "widget": "monitoring.severity-chip", "bindings": { "severity": { "$ref": "row.severity" } } }
+                "cellRenderer": {
+                  "kind": "Widget",
+                  "widget": "monitoring.severity-chip",
+                  "bindings": { "severity": { "$ref": "row.severity" } }
+                }
               },
-              { "field": "threshold_value", "header": "Threshold", "cellRenderer": { "kind": "Text", "props": { "children": "{{row.threshold_operator}} {{row.threshold_value}} {{row.threshold_unit}}" } } },
+              {
+                "field": "threshold_value",
+                "header": "Threshold",
+                "cellRenderer": {
+                  "kind": "Text",
+                  "props": {
+                    "children": "{{row.threshold_operator}} {{row.threshold_value}} {{row.threshold_unit}}"
+                  }
+                }
+              },
               { "field": "is_enabled", "header": "Enabled" },
               {
                 "field": "is_silenced",
                 "header": "Silenced",
-                "cellRenderer": { "kind": "Chip", "props": { "size": "sm", "variant": "warning" }, "bindings": { "hidden": { "$expr": "!row.is_silenced" }, "children": "Silenced" } }
+                "cellRenderer": {
+                  "kind": "Chip",
+                  "props": { "size": "sm", "variant": "warning" },
+                  "bindings": { "hidden": { "$expr": "!row.is_silenced" }, "children": "Silenced" }
+                }
               }
             ]
           },
-          "actions": { "onRowPress": { "kind": "navigate", "toExpr": "'/tenant/monitoring/alert-policies/' + row.id + '/edit'" } }
+          "actions": {
+            "onRowPress": {
+              "kind": "navigate",
+              "toExpr": "'/tenant/monitoring/alert-policies/' + row.id + '/edit'"
+            }
+          }
         }
       ]
     }

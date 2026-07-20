@@ -9,26 +9,26 @@
  *   panel is rendered via {@link DevtoolsNavItem}.
  */
 
-import { useMemo, type ReactElement } from 'react';
-import { ScrollShadow } from '@stackra/ui/react';
-import { Str } from '@stackra/support';
-import type { DevtoolsCategory, IDevtoolsPanel } from '@stackra/contracts';
+import { useMemo, type ReactElement } from "react";
+import { ScrollShadow } from "@stackra/ui/react";
+import { Str } from "@stackra/support";
+import type { DevtoolsCategory, IDevtoolsPanel } from "@stackra/contracts";
 
-import { useDevtoolsContext } from '../../hooks/use-devtools-context.hook';
-import { useDevtoolsPanels } from '../../hooks/use-devtools-panels.hook';
-import { DevtoolsNavItem } from '../devtools-nav-item';
-import type { DevtoolsNavRailProps } from './devtools-nav-rail.interface';
+import { useDevtoolsContext } from "../../hooks/use-devtools-context.hook";
+import { useDevtoolsPanels } from "../../hooks/use-devtools-panels.hook";
+import { DevtoolsNavItem } from "../devtools-nav-item";
+import type { DevtoolsNavRailProps } from "./devtools-nav-rail.interface";
 
 /** Rendered label for each category. */
 const CATEGORY_LABELS: Record<DevtoolsCategory, string> = {
-  pinned: 'Pinned',
-  app: 'App',
-  framework: 'Framework',
-  data: 'Data',
-  ui: 'UI',
-  network: 'Network',
-  observability: 'Observability',
-  modules: 'Modules',
+  pinned: "Pinned",
+  app: "App",
+  framework: "Framework",
+  data: "Data",
+  ui: "UI",
+  network: "Network",
+  observability: "Observability",
+  modules: "Modules",
 };
 
 /**
@@ -41,7 +41,7 @@ function matchesSearch(panel: IDevtoolsPanel, query: string): boolean {
   const q = Str.lower(query);
   if (Str.lower(panel.title).includes(q)) return true;
   if (Str.lower(panel.id).includes(q)) return true;
-  const cat = panel.category ?? 'modules';
+  const cat = panel.category ?? "modules";
   if (Str.lower(cat).includes(q)) return true;
   return false;
 }
@@ -63,7 +63,7 @@ export function DevtoolsNavRail({
   // changes.
   const rendered = useMemo(() => {
     const order = config.categoryOrder ?? [];
-    const trimmedQuery = (searchQuery ?? '').trim();
+    const trimmedQuery = (searchQuery ?? "").trim();
 
     return order
       .map((category) => {
@@ -77,7 +77,7 @@ export function DevtoolsNavRail({
   }, [byCategory, config.categoryOrder, searchQuery]);
 
   return (
-    <ScrollShadow className="h-full w-56 shrink-0 border-r border-border" hideScrollBar={false}>
+    <ScrollShadow className="border-border h-full w-56 shrink-0 border-r" hideScrollBar={false}>
       <nav
         aria-label="Devtools panels"
         className="flex flex-col gap-4 p-2"
@@ -85,7 +85,7 @@ export function DevtoolsNavRail({
       >
         {rendered.map((section) => (
           <section key={section.category} className="flex flex-col gap-0.5">
-            <h3 className="px-3 pb-1 text-xs font-semibold uppercase tracking-wide text-muted">
+            <h3 className="text-muted px-3 pb-1 text-xs font-semibold tracking-wide uppercase">
               {CATEGORY_LABELS[section.category]}
             </h3>
             {section.panels.map((panel) => (

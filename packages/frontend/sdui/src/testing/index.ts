@@ -8,11 +8,11 @@ export {
   createMockSduiClient,
   type IMockSduiClient,
   type IMockSduiClientScript,
-} from './create-mock-client';
+} from "./create-mock-client";
 export {
   sduiTestScreens,
   emptyScreen,
   heroScreen,
   unknownComponentScreen,
   outOfRangeScreen,
-} from './screens';
+} from "./screens";

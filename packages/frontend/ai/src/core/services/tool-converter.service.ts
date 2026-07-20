@@ -30,20 +30,20 @@ import {
   Optional,
   type OnModuleInit,
   type OnModuleDestroy,
-} from '@stackra/container';
-import { Logger } from '@stackra/logger';
+} from "@stackra/container";
+import { Logger } from "@stackra/logger";
 import {
   AI_EVENTS,
   AI_TOOL_REGISTRY,
   EVENT_EMITTER,
   type IAiClientToolDefinition,
   type IEventEmitter,
-} from '@stackra/contracts';
+} from "@stackra/contracts";
 
-import { AiSchemaError } from '../errors';
-import { deepEqual } from '../utils/deep-equal.util';
-import type { IToolEntry } from '../registries/tool.registry';
-import { ToolRegistry } from '../registries/tool.registry';
+import { AiSchemaError } from "../errors";
+import { deepEqual } from "../utils/deep-equal.util";
+import type { IToolEntry } from "../registries/tool.registry";
+import { ToolRegistry } from "../registries/tool.registry";
 
 /** Debounce window for proactive re-advertisement, in milliseconds. */
 const DEBOUNCE_MS = 500;
@@ -62,8 +62,8 @@ function isZodLike(value: unknown): value is {
 } {
   return (
     value !== null &&
-    typeof value === 'object' &&
-    typeof (value as { safeParse?: unknown }).safeParse === 'function'
+    typeof value === "object" &&
+    typeof (value as { safeParse?: unknown }).safeParse === "function"
   );
 }
 
@@ -74,49 +74,49 @@ function isZodObject(schema: unknown): schema is {
 } {
   if (!isZodLike(schema)) return false;
   const s = schema as { shape?: unknown; _def?: { typeName?: string }; def?: { type?: string } };
-  if (typeof s.shape !== 'object' || s.shape === null) return false;
+  if (typeof s.shape !== "object" || s.shape === null) return false;
   const v3Name = s._def?.typeName;
   const v4Type = s.def?.type;
   return (
-    v3Name === 'ZodObject' || v4Type === 'object' || (v3Name === undefined && v4Type === undefined)
+    v3Name === "ZodObject" || v4Type === "object" || (v3Name === undefined && v4Type === undefined)
   );
 }
 
 /** Detect a nested optional (zod v3 `ZodOptional` or v4 `optional` flag). */
 function isZodOptional(schema: unknown): boolean {
-  if (!schema || typeof schema !== 'object') return false;
+  if (!schema || typeof schema !== "object") return false;
   const s = schema as {
     _def?: { typeName?: string; innerType?: unknown };
     def?: { type?: string; innerType?: unknown };
     isOptional?: () => boolean;
   };
-  if (s._def?.typeName === 'ZodOptional' || s._def?.typeName === 'ZodDefault') return true;
-  if (s.def?.type === 'optional' || s.def?.type === 'default') return true;
-  if (typeof s.isOptional === 'function' && s.isOptional()) return true;
+  if (s._def?.typeName === "ZodOptional" || s._def?.typeName === "ZodDefault") return true;
+  if (s.def?.type === "optional" || s.def?.type === "default") return true;
+  if (typeof s.isOptional === "function" && s.isOptional()) return true;
   return false;
 }
 
 /** Best-effort primitive typeName extraction (zod v3 / v4). */
 function primitiveType(schema: unknown): string {
-  if (!schema || typeof schema !== 'object') return 'string';
+  if (!schema || typeof schema !== "object") return "string";
   const s = schema as { _def?: { typeName?: string }; def?: { type?: string } };
-  const name = s._def?.typeName ?? s.def?.type ?? '';
-  const lower = name.replace(/^Zod/, '').toLowerCase();
+  const name = s._def?.typeName ?? s.def?.type ?? "";
+  const lower = name.replace(/^Zod/, "").toLowerCase();
   switch (lower) {
-    case 'string':
-      return 'string';
-    case 'number':
-      return 'number';
-    case 'boolean':
-      return 'boolean';
-    case 'bigint':
-      return 'number';
-    case 'array':
-      return 'array';
-    case 'object':
-      return 'object';
+    case "string":
+      return "string";
+    case "number":
+      return "number";
+    case "boolean":
+      return "boolean";
+    case "bigint":
+      return "number";
+    case "array":
+      return "array";
+    case "object":
+      return "object";
     default:
-      return 'string';
+      return "string";
   }
 }
 
@@ -145,14 +145,14 @@ function toJsonSchema(parameters: unknown): unknown {
     properties[key] = fieldSchema(field);
     if (!isZodOptional(field)) required.push(key);
   }
-  const output: Record<string, unknown> = { type: 'object', properties };
+  const output: Record<string, unknown> = { type: "object", properties };
   if (required.length > 0) output.required = required;
   return output;
 }
 
 /** Convert a single zod field to a minimal JSON-schema shape. */
 function fieldSchema(field: unknown): unknown {
-  if (!isZodLike(field)) return { type: 'string' };
+  if (!isZodLike(field)) return { type: "string" };
   if (isZodObject(field)) return toJsonSchema(field);
   // Peel one level of Optional/Default off so `.string().optional()`
   // reports `type: string` rather than `type: optional`.
@@ -187,7 +187,7 @@ export class ToolConverter implements OnModuleInit, OnModuleDestroy {
 
   public constructor(
     @Inject(AI_TOOL_REGISTRY) private readonly registry: ToolRegistry,
-    @Optional() @Inject(EVENT_EMITTER) private readonly events?: IEventEmitter
+    @Optional() @Inject(EVENT_EMITTER) private readonly events?: IEventEmitter,
   ) {}
 
   /** Wire registry subscription in the lifecycle phase. */
@@ -228,7 +228,7 @@ export class ToolConverter implements OnModuleInit, OnModuleDestroy {
       throw new AiSchemaError(
         `[ToolConverter] failed to convert schema for tool "${entry.definition.name}"`,
         entry.definition.name,
-        err
+        err,
       );
     }
   }
@@ -290,7 +290,7 @@ export class ToolConverter implements OnModuleInit, OnModuleDestroy {
       try {
         listener(current);
       } catch (err) {
-        this.logger.warn('[ToolConverter] change listener threw', {
+        this.logger.warn("[ToolConverter] change listener threw", {
           error: err instanceof Error ? err.message : String(err),
         });
       }

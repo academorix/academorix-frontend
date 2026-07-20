@@ -1,57 +1,57 @@
 {
-    "name": "academorix/caching",
-    "type": "library",
-    "description": "Framework primitive: attribute-driven cache composition. Ships #[Cacheable], #[CacheEvict], #[CachePut], #[CacheKey], #[CacheTag], #[CacheTtl], and #[AsCacheTagResolver], plus a driver-agnostic tag builder (CacheTagBuilder), a driver-capability guard (TaggableCacheGuard), a deterministic key composer (CacheKeyBuilder), the CacheTagResolver contract, and a boot-time discovery pass that hydrates a resolver registry via olvlvl/composer-attribute-collector. No knowledge of tenancy, no Eloquent dependency — this package is the cache substrate every other layer builds on.",
-    "license": "proprietary",
-    "keywords": [
-        "academorix",
-        "laravel",
-        "caching",
-        "attributes",
-        "cache-tags",
-        "cache-aside"
-    ],
-    "require": {
-        "php": "^8.3",
-        "academorix/foundation": "@dev",
-        "academorix/service-provider": "@dev",
-        "illuminate/cache": "^13.0",
-        "illuminate/contracts": "^13.0",
-        "illuminate/support": "^13.0",
-        "olvlvl/composer-attribute-collector": "^2.0"
-    },
-    "require-dev": {
-        "mockery/mockery": "^1.6",
-        "orchestra/testbench": "^11.0",
-        "pestphp/pest": "^4.0",
-        "pestphp/pest-plugin-laravel": "^4.0",
-        "phpstan/phpstan": "^2.0"
-    },
-    "autoload": {
-        "psr-4": {
-            "Academorix\\Caching\\": "src/"
-        }
-    },
-    "autoload-dev": {
-        "psr-4": {
-            "Academorix\\Caching\\Tests\\": "tests/"
-        }
-    },
-    "extra": {
-        "laravel": {
-            "providers": [
-                "Academorix\\Caching\\Providers\\CachingServiceProvider"
-            ],
-            "aliases": {}
-        }
-    },
-    "config": {
-        "sort-packages": true,
-        "allow-plugins": {
-            "pestphp/pest-plugin": true,
-            "olvlvl/composer-attribute-collector": true
-        }
-    },
-    "minimum-stability": "stable",
-    "prefer-stable": true
+  "name": "academorix/caching",
+  "type": "library",
+  "description": "Framework primitive: attribute-driven cache composition. Ships #[Cacheable], #[CacheEvict], #[CachePut], #[CacheKey], #[CacheTag], #[CacheTtl], and #[AsCacheTagResolver], plus a driver-agnostic tag builder (CacheTagBuilder), a driver-capability guard (TaggableCacheGuard), a deterministic key composer (CacheKeyBuilder), the CacheTagResolver contract, and a boot-time discovery pass that hydrates a resolver registry via olvlvl/composer-attribute-collector. No knowledge of tenancy, no Eloquent dependency — this package is the cache substrate every other layer builds on.",
+  "license": "proprietary",
+  "keywords": [
+    "academorix",
+    "laravel",
+    "caching",
+    "attributes",
+    "cache-tags",
+    "cache-aside"
+  ],
+  "require": {
+    "php": "^8.3",
+    "academorix/foundation": "@dev",
+    "academorix/service-provider": "@dev",
+    "illuminate/cache": "^13.0",
+    "illuminate/contracts": "^13.0",
+    "illuminate/support": "^13.0",
+    "olvlvl/composer-attribute-collector": "^2.0"
+  },
+  "require-dev": {
+    "mockery/mockery": "^1.6",
+    "orchestra/testbench": "^11.0",
+    "pestphp/pest": "^4.0",
+    "pestphp/pest-plugin-laravel": "^4.0",
+    "phpstan/phpstan": "^2.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "Academorix\\Caching\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Academorix\\Caching\\Tests\\": "tests/"
+    }
+  },
+  "extra": {
+    "laravel": {
+      "providers": [
+        "Academorix\\Caching\\Providers\\CachingServiceProvider"
+      ],
+      "aliases": {}
+    }
+  },
+  "config": {
+    "sort-packages": true,
+    "allow-plugins": {
+      "pestphp/pest-plugin": true,
+      "olvlvl/composer-attribute-collector": true
+    }
+  },
+  "minimum-stability": "stable",
+  "prefer-stable": true
 }

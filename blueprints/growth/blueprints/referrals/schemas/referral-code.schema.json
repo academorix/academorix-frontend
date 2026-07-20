@@ -41,7 +41,12 @@
   "x-database": {
     "engine": "postgres",
     "columns": {
-      "id": { "type": "string", "length": 64, "primary": true, "description": "Prefixed ULID: `rcd_<26>`." },
+      "id": {
+        "type": "string",
+        "length": 64,
+        "primary": true,
+        "description": "Prefixed ULID: `rcd_<26>`."
+      },
       "tenant_id": {
         "type": "string",
         "length": 64,
@@ -66,7 +71,12 @@
         "nullable": false,
         "description": "The visible code string. Format enforced per code_type."
       },
-      "owner_type": { "type": "string", "length": 16, "nullable": true, "description": "Enum: user / campaign / anonymous. Null for opaque codes." },
+      "owner_type": {
+        "type": "string",
+        "length": 16,
+        "nullable": true,
+        "description": "Enum: user / campaign / anonymous. Null for opaque codes."
+      },
       "owner_user_id": {
         "type": "string",
         "length": 64,
@@ -74,11 +84,24 @@
         "foreign": { "table": "users", "column": "id", "onDelete": "restrict" },
         "description": "Non-null for user_scoped codes only."
       },
-      "campaign_name": { "type": "string", "length": 128, "nullable": true, "description": "Non-null for campaign codes only." },
+      "campaign_name": {
+        "type": "string",
+        "length": 128,
+        "nullable": true,
+        "description": "Non-null for campaign codes only."
+      },
       "is_active": { "type": "boolean", "nullable": false, "default": true },
-      "usage_cap": { "type": "integer", "nullable": true, "description": "Max redemptions. Null = unlimited." },
+      "usage_cap": {
+        "type": "integer",
+        "nullable": true,
+        "description": "Max redemptions. Null = unlimited."
+      },
       "usage_count": { "type": "integer", "nullable": false, "default": 0 },
-      "expires_at": { "type": "timestamptz", "nullable": true, "description": "Null = never expires." },
+      "expires_at": {
+        "type": "timestamptz",
+        "nullable": true,
+        "description": "Null = never expires."
+      },
       "metadata": { "type": "jsonb", "nullable": true },
       "created_by": { "type": "string", "length": 64, "nullable": true },
       "updated_by": { "type": "string", "length": 64, "nullable": true },
@@ -95,9 +118,20 @@
         "predicate": "deleted_at IS NULL",
         "description": "One active code per tenant."
       },
-      { "columns": ["tenant_id", "referral_program_id", "is_active"], "name": "referral_codes_program_active_idx" },
-      { "columns": ["tenant_id", "owner_user_id"], "name": "referral_codes_owner_user_idx", "predicate": "owner_user_id IS NOT NULL" },
-      { "columns": ["tenant_id", "campaign_name"], "name": "referral_codes_campaign_idx", "predicate": "campaign_name IS NOT NULL" }
+      {
+        "columns": ["tenant_id", "referral_program_id", "is_active"],
+        "name": "referral_codes_program_active_idx"
+      },
+      {
+        "columns": ["tenant_id", "owner_user_id"],
+        "name": "referral_codes_owner_user_idx",
+        "predicate": "owner_user_id IS NOT NULL"
+      },
+      {
+        "columns": ["tenant_id", "campaign_name"],
+        "name": "referral_codes_campaign_idx",
+        "predicate": "campaign_name IS NOT NULL"
+      }
     ]
   },
   "required": [

@@ -5,24 +5,24 @@
  *   policies combined with the root configuration.
  */
 
-import type { CspSource } from './csp-source.type';
+import type { CspSource } from "./csp-source.type";
 
 /**
  * CSP directive key names that map to standard CSP directives.
  */
 type DirectiveKey =
-  | 'defaultSrc'
-  | 'scriptSrc'
-  | 'styleSrc'
-  | 'imgSrc'
-  | 'connectSrc'
-  | 'fontSrc'
-  | 'frameSrc'
-  | 'objectSrc'
-  | 'workerSrc'
-  | 'mediaSrc'
-  | 'baseUri'
-  | 'formAction';
+  | "defaultSrc"
+  | "scriptSrc"
+  | "styleSrc"
+  | "imgSrc"
+  | "connectSrc"
+  | "fontSrc"
+  | "frameSrc"
+  | "objectSrc"
+  | "workerSrc"
+  | "mediaSrc"
+  | "baseUri"
+  | "formAction";
 
 /**
  * Merged directive sources map.

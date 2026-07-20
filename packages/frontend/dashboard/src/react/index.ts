@@ -18,10 +18,7 @@ export {
   useWidgetLayout,
   writeStoredLayout,
 } from "./hooks/use-widget-layout";
-export type {
-  IUseWidgetLayoutOptions,
-  IUseWidgetLayoutResult,
-} from "./hooks/use-widget-layout";
+export type { IUseWidgetLayoutOptions, IUseWidgetLayoutResult } from "./hooks/use-widget-layout";
 
 export { useDashboards } from "./hooks/use-dashboards";
 export type { IUseDashboardsResult } from "./hooks/use-dashboards";
@@ -34,10 +31,7 @@ export {
 export type { IUseCurrentDashboardResult } from "./hooks/use-current-dashboard";
 
 export { useDashboardEditor } from "./hooks/use-dashboard-editor";
-export type {
-  EditorPersistFn,
-  IUseDashboardEditor,
-} from "./hooks/use-dashboard-editor";
+export type { EditorPersistFn, IUseDashboardEditor } from "./hooks/use-dashboard-editor";
 
 export { useWidgetKeyboardNav } from "./hooks/use-widget-keyboard-nav";
 export type {

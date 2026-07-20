@@ -8,24 +8,65 @@
       "model": "AthleteEnrollment",
       "class": "Academorix\\Sports\\AthleteEnrollment\\Policies\\AthleteEnrollmentPolicy",
       "abilities": [
-        { "action": "viewAny", "permission": "enrollments.viewAny", "scope": "any tenant staff; guardians + adult athletes narrow via .own" },
-        { "action": "view", "permission": "enrollments.view", "scope": "same + .own for self / guardian's assigned athletes" },
-        { "action": "create", "permission": "enrollments.create", "scope": "reception + hr + branch_manager + admin + owner. Guardians / adult athletes via .own for self-submit" },
+        {
+          "action": "viewAny",
+          "permission": "enrollments.viewAny",
+          "scope": "any tenant staff; guardians + adult athletes narrow via .own"
+        },
+        {
+          "action": "view",
+          "permission": "enrollments.view",
+          "scope": "same + .own for self / guardian's assigned athletes"
+        },
+        {
+          "action": "create",
+          "permission": "enrollments.create",
+          "scope": "reception + hr + branch_manager + admin + owner. Guardians / adult athletes via .own for self-submit"
+        },
         { "action": "update", "permission": "enrollments.update" },
-        { "action": "delete", "permission": "enrollments.delete", "scope": "admin + owner. Terminal status required" },
+        {
+          "action": "delete",
+          "permission": "enrollments.delete",
+          "scope": "admin + owner. Terminal status required"
+        },
         { "action": "confirm", "permission": "enrollments.confirm" },
         { "action": "activate", "permission": "enrollments.activate" },
         { "action": "complete", "permission": "enrollments.complete" },
-        { "action": "withdraw", "permission": "enrollments.withdraw", "scope": "hr + coach + branch_manager + admin + owner + .own for guardian / adult athlete" },
-        { "action": "expel", "permission": "enrollments.expel", "scope": "hr + safeguarding_officer + admin + owner only — disciplinary" },
+        {
+          "action": "withdraw",
+          "permission": "enrollments.withdraw",
+          "scope": "hr + coach + branch_manager + admin + owner + .own for guardian / adult athlete"
+        },
+        {
+          "action": "expel",
+          "permission": "enrollments.expel",
+          "scope": "hr + safeguarding_officer + admin + owner only — disciplinary"
+        },
         { "action": "waitlist", "permission": "enrollments.waitlist" },
         { "action": "promoteFromWaitlist", "permission": "enrollments.promote-from-waitlist" },
         { "action": "assignPosition", "permission": "enrollments.assign-position" },
         { "action": "assignJersey", "permission": "enrollments.assign-jersey" },
-        { "action": "auditAtomicity", "permission": "enrollments.audit.atomicity", "scope": "hr + safeguarding_officer + owner. Compliance-critical audit" },
-        { "action": "platformViewAny", "permission": "platform.enrollments.viewAny", "guard": "platform_admin" },
-        { "action": "platformView", "permission": "platform.enrollments.view", "guard": "platform_admin" },
-        { "action": "platformAuditAtomicity", "permission": "platform.enrollments.audit-atomicity", "guard": "platform_admin", "scope": "super_admin only" }
+        {
+          "action": "auditAtomicity",
+          "permission": "enrollments.audit.atomicity",
+          "scope": "hr + safeguarding_officer + owner. Compliance-critical audit"
+        },
+        {
+          "action": "platformViewAny",
+          "permission": "platform.enrollments.viewAny",
+          "guard": "platform_admin"
+        },
+        {
+          "action": "platformView",
+          "permission": "platform.enrollments.view",
+          "guard": "platform_admin"
+        },
+        {
+          "action": "platformAuditAtomicity",
+          "permission": "platform.enrollments.audit-atomicity",
+          "guard": "platform_admin",
+          "scope": "super_admin only"
+        }
       ]
     }
   ]

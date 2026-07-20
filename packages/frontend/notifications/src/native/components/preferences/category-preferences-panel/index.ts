@@ -5,8 +5,8 @@
  *   `CategoryPreferencesPanel` + its owned props interface.
  */
 
-export { CategoryPreferencesPanel } from './category-preferences-panel.component';
+export { CategoryPreferencesPanel } from "./category-preferences-panel.component";
 export type {
   CategoryPreferencesPanelProps,
   ChannelDescriptor,
-} from './category-preferences-panel.interface';
+} from "./category-preferences-panel.interface";

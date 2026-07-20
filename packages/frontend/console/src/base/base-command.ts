@@ -8,8 +8,10 @@
 
 import { Inject } from "@stackra/container";
 import { CONSOLE_OUTPUT } from "@stackra/contracts";
-import type { IConsoleOutput } from "@stackra/contracts";
+
 import { MissingArgumentError } from "../errors";
+
+import type { IConsoleOutput } from "@stackra/contracts";
 
 /**
  * Abstract base class for all console commands.
@@ -41,7 +43,7 @@ export abstract class BaseCommand {
   private _options: Record<string, unknown> = {};
 
   /** The fully qualified command name (set by the runner). */
-  private _commandName: string = "";
+  private _commandName = "";
 
   /**
    * DI-injected console output service for styled terminal interactions.

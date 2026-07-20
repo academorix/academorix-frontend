@@ -12,8 +12,8 @@
  *   normalisation live in `@stackra/storage`.
  */
 
-import { Str } from '@stackra/support';
-import type { IStorage, IStorageManager, ISettingsStore } from '@stackra/contracts';
+import { Str } from "@stackra/support";
+import type { IStorage, IStorageManager, ISettingsStore } from "@stackra/contracts";
 
 /**
  * Options accepted by `StorageSettingsStore`.
@@ -58,7 +58,7 @@ export interface IStorageSettingsStoreOptions {
  */
 export class StorageSettingsStore implements ISettingsStore {
   /** Driver identifier. */
-  public readonly driver = 'storage';
+  public readonly driver = "storage";
 
   /** Resolved backing storage instance. */
   private readonly resolvedStorage: IStorage;
@@ -75,15 +75,15 @@ export class StorageSettingsStore implements ISettingsStore {
     } else if (options.manager) {
       this.resolvedStorage = options.manager.instance(options.instanceName);
     } else {
-      throw new Error('[StorageSettingsStore] Either `storage` or `manager` must be provided.');
+      throw new Error("[StorageSettingsStore] Either `storage` or `manager` must be provided.");
     }
 
     // Normalise the prefix — ensure a trailing colon so builders
     // don't need to think about it.
     if (options.prefix && options.prefix.length > 0) {
-      this.prefix = Str.endsWith(options.prefix, ':') ? options.prefix : `${options.prefix}:`;
+      this.prefix = Str.endsWith(options.prefix, ":") ? options.prefix : `${options.prefix}:`;
     } else {
-      this.prefix = '';
+      this.prefix = "";
     }
   }
 
@@ -122,7 +122,7 @@ export class StorageSettingsStore implements ISettingsStore {
         const groupKey = this.prefix ? fullKey.slice(this.prefix.length) : fullKey;
         const values = await this.resolvedStorage.get<Record<string, unknown>>(fullKey);
         return [groupKey, values ?? {}] as const;
-      })
+      }),
     );
 
     const out: Record<string, Record<string, unknown>> = {};

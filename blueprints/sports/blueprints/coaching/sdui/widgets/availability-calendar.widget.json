@@ -6,9 +6,17 @@
   "widget": "coaching.availability-calendar",
   "description": "Day-of-week grid showing the coach's availability_json ranges. Renders a 7-column grid (Mon-Sun) with time-range chips. When editable=true (used on coach's /me/profile), each day supports adding/removing time ranges. When editable=false (read-only preview), renders as compact chips.",
   "params": {
-    "availability": { "type": ["object", "null"], "required": false, "description": "Day-of-week map: { monday: [{start_hhmm, end_hhmm}], ... }." },
+    "availability": {
+      "type": ["object", "null"],
+      "required": false,
+      "description": "Day-of-week map: { monday: [{start_hhmm, end_hhmm}], ... }."
+    },
     "editable": { "type": "boolean", "required": false, "default": false },
-    "name": { "type": "string", "required": false, "description": "Form field name when editable=true." }
+    "name": {
+      "type": "string",
+      "required": false,
+      "description": "Form field name when editable=true."
+    }
   },
   "nodes": [
     {
@@ -19,7 +27,13 @@
           "kind": "View",
           "props": { "className": "flex flex-col gap-1" },
           "children": [
-            { "kind": "Text", "props": { "className": "text-xs font-medium text-muted uppercase", "children": "Mon" } },
+            {
+              "kind": "Text",
+              "props": {
+                "className": "text-xs font-medium text-muted uppercase",
+                "children": "Mon"
+              }
+            },
             {
               "kind": "View",
               "props": { "className": "flex flex-col gap-1" },
@@ -33,7 +47,9 @@
             {
               "kind": "Text",
               "props": { "className": "text-xs text-muted", "children": "—" },
-              "bindings": { "hidden": { "$expr": "($params.availability.monday || []).length > 0" } }
+              "bindings": {
+                "hidden": { "$expr": "($params.availability.monday || []).length > 0" }
+              }
             }
           ]
         },
@@ -41,7 +57,13 @@
           "kind": "View",
           "props": { "className": "flex flex-col gap-1" },
           "children": [
-            { "kind": "Text", "props": { "className": "text-xs font-medium text-muted uppercase", "children": "Tue" } },
+            {
+              "kind": "Text",
+              "props": {
+                "className": "text-xs font-medium text-muted uppercase",
+                "children": "Tue"
+              }
+            },
             {
               "kind": "View",
               "props": { "className": "flex flex-col gap-1" },
@@ -55,7 +77,9 @@
             {
               "kind": "Text",
               "props": { "className": "text-xs text-muted", "children": "—" },
-              "bindings": { "hidden": { "$expr": "($params.availability.tuesday || []).length > 0" } }
+              "bindings": {
+                "hidden": { "$expr": "($params.availability.tuesday || []).length > 0" }
+              }
             }
           ]
         },
@@ -63,7 +87,13 @@
           "kind": "View",
           "props": { "className": "flex flex-col gap-1" },
           "children": [
-            { "kind": "Text", "props": { "className": "text-xs font-medium text-muted uppercase", "children": "Wed" } },
+            {
+              "kind": "Text",
+              "props": {
+                "className": "text-xs font-medium text-muted uppercase",
+                "children": "Wed"
+              }
+            },
             {
               "kind": "View",
               "props": { "className": "flex flex-col gap-1" },
@@ -77,7 +107,9 @@
             {
               "kind": "Text",
               "props": { "className": "text-xs text-muted", "children": "—" },
-              "bindings": { "hidden": { "$expr": "($params.availability.wednesday || []).length > 0" } }
+              "bindings": {
+                "hidden": { "$expr": "($params.availability.wednesday || []).length > 0" }
+              }
             }
           ]
         },
@@ -85,7 +117,13 @@
           "kind": "View",
           "props": { "className": "flex flex-col gap-1" },
           "children": [
-            { "kind": "Text", "props": { "className": "text-xs font-medium text-muted uppercase", "children": "Thu" } },
+            {
+              "kind": "Text",
+              "props": {
+                "className": "text-xs font-medium text-muted uppercase",
+                "children": "Thu"
+              }
+            },
             {
               "kind": "View",
               "props": { "className": "flex flex-col gap-1" },
@@ -99,7 +137,9 @@
             {
               "kind": "Text",
               "props": { "className": "text-xs text-muted", "children": "—" },
-              "bindings": { "hidden": { "$expr": "($params.availability.thursday || []).length > 0" } }
+              "bindings": {
+                "hidden": { "$expr": "($params.availability.thursday || []).length > 0" }
+              }
             }
           ]
         },
@@ -107,7 +147,13 @@
           "kind": "View",
           "props": { "className": "flex flex-col gap-1" },
           "children": [
-            { "kind": "Text", "props": { "className": "text-xs font-medium text-muted uppercase", "children": "Fri" } },
+            {
+              "kind": "Text",
+              "props": {
+                "className": "text-xs font-medium text-muted uppercase",
+                "children": "Fri"
+              }
+            },
             {
               "kind": "View",
               "props": { "className": "flex flex-col gap-1" },
@@ -121,7 +167,9 @@
             {
               "kind": "Text",
               "props": { "className": "text-xs text-muted", "children": "—" },
-              "bindings": { "hidden": { "$expr": "($params.availability.friday || []).length > 0" } }
+              "bindings": {
+                "hidden": { "$expr": "($params.availability.friday || []).length > 0" }
+              }
             }
           ]
         },
@@ -129,7 +177,13 @@
           "kind": "View",
           "props": { "className": "flex flex-col gap-1" },
           "children": [
-            { "kind": "Text", "props": { "className": "text-xs font-medium text-muted uppercase", "children": "Sat" } },
+            {
+              "kind": "Text",
+              "props": {
+                "className": "text-xs font-medium text-muted uppercase",
+                "children": "Sat"
+              }
+            },
             {
               "kind": "View",
               "props": { "className": "flex flex-col gap-1" },
@@ -143,7 +197,9 @@
             {
               "kind": "Text",
               "props": { "className": "text-xs text-muted", "children": "—" },
-              "bindings": { "hidden": { "$expr": "($params.availability.saturday || []).length > 0" } }
+              "bindings": {
+                "hidden": { "$expr": "($params.availability.saturday || []).length > 0" }
+              }
             }
           ]
         },
@@ -151,7 +207,13 @@
           "kind": "View",
           "props": { "className": "flex flex-col gap-1" },
           "children": [
-            { "kind": "Text", "props": { "className": "text-xs font-medium text-muted uppercase", "children": "Sun" } },
+            {
+              "kind": "Text",
+              "props": {
+                "className": "text-xs font-medium text-muted uppercase",
+                "children": "Sun"
+              }
+            },
             {
               "kind": "View",
               "props": { "className": "flex flex-col gap-1" },
@@ -165,7 +227,9 @@
             {
               "kind": "Text",
               "props": { "className": "text-xs text-muted", "children": "—" },
-              "bindings": { "hidden": { "$expr": "($params.availability.sunday || []).length > 0" } }
+              "bindings": {
+                "hidden": { "$expr": "($params.availability.sunday || []).length > 0" }
+              }
             }
           ]
         }
@@ -178,7 +242,12 @@
       "children": [
         {
           "kind": "Button",
-          "props": { "size": "sm", "variant": "flat", "leadingIcon": "plus", "children": "Add time range" }
+          "props": {
+            "size": "sm",
+            "variant": "flat",
+            "leadingIcon": "plus",
+            "children": "Add time range"
+          }
         }
       ]
     }

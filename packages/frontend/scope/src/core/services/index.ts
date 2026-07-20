@@ -1,1 +1,1 @@
-export { ScopeService, type ScopeListener } from './scope.service';
+export { ScopeService, type ScopeListener } from "./scope.service";

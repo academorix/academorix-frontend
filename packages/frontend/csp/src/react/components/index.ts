@@ -4,5 +4,5 @@
  * @description Components barrel export.
  */
 
-export { Script } from './script';
-export { CspMeta } from './csp-meta';
+export { Script } from "./script";
+export { CspMeta } from "./csp-meta";

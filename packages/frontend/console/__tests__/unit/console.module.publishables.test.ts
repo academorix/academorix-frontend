@@ -10,9 +10,9 @@ import path from "node:path";
 
 import { describe, expect, it, vi } from "vitest";
 
-import { ConsoleModule } from "@/console.module";
-
 import type { IPublishableConsumer, IPublishableEntry } from "@stackra/contracts";
+
+import { ConsoleModule } from "@/console.module";
 
 interface ISpyConsumer extends IPublishableConsumer {
   readonly entries: IPublishableEntry[];

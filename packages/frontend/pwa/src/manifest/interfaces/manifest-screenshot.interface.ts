@@ -22,7 +22,7 @@ export interface IManifestScreenshot {
    * Target form factor. Chromium recognises `'narrow'` (phones) and
    * `'wide'` (desktop / tablet). Missing = any.
    */
-  readonly form_factor?: 'narrow' | 'wide';
+  readonly form_factor?: "narrow" | "wide";
   /** Human-readable label rendered as the screenshot caption. */
   readonly label?: string;
   /** Purpose per W3C — `'any'` or `'maskable'`. */

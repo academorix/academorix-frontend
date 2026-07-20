@@ -18,8 +18,8 @@
  *            a cache.
  */
 
-import { Injectable, Optional, Inject } from '@stackra/container';
-import { Logger } from '@stackra/logger';
+import { Injectable, Optional, Inject } from "@stackra/container";
+import { Logger } from "@stackra/logger";
 import {
   AiRunStatus,
   AiToolState,
@@ -30,7 +30,7 @@ import {
   type IAiThreadSummary,
   type IAiToolCall,
   type IEventEmitter,
-} from '@stackra/contracts';
+} from "@stackra/contracts";
 
 /** Options for creating a new thread. */
 export interface ICreateThreadOptions {
@@ -67,7 +67,7 @@ export class ConversationStore {
 
   /** Create a new thread and return its id. */
   public createThread(options: ICreateThreadOptions): string {
-    const threadId = options.threadId ?? this.mintId('thread');
+    const threadId = options.threadId ?? this.mintId("thread");
     const conversation: IAiConversation = {
       threadId,
       personaSlug: options.personaSlug,
@@ -95,8 +95,8 @@ export class ConversationStore {
   public listThreads(): IAiThreadSummary[] {
     return Array.from(this.threads.values()).map((thread) => ({
       threadId: thread.threadId,
-      title: this.firstUserText(thread) ?? 'New conversation',
-      preview: this.lastAssistantText(thread) ?? '',
+      title: this.firstUserText(thread) ?? "New conversation",
+      preview: this.lastAssistantText(thread) ?? "",
       updatedAt: thread.messages[thread.messages.length - 1]?.createdAt ?? Date.now(),
     }));
   }
@@ -139,10 +139,10 @@ export class ConversationStore {
    * call the thread's messages length is `prior + 1`.
    */
   public appendUser(threadId: string, text: string): string {
-    const id = this.mintId('msg');
+    const id = this.mintId("msg");
     this.appendMessage(threadId, {
       id,
-      role: 'user',
+      role: "user",
       text,
       toolCalls: [],
       createdAt: Date.now(),
@@ -152,11 +152,11 @@ export class ConversationStore {
 
   /** Append an empty assistant message (delta target). */
   public startAssistantMessage(threadId: string, messageId?: string): string {
-    const id = messageId ?? this.mintId('msg');
+    const id = messageId ?? this.mintId("msg");
     this.appendMessage(threadId, {
       id,
-      role: 'assistant',
-      text: '',
+      role: "assistant",
+      text: "",
       toolCalls: [],
       createdAt: Date.now(),
     });
@@ -216,7 +216,7 @@ export class ConversationStore {
     threadId: string,
     messageId: string,
     toolCallId: string,
-    updates: Partial<IAiToolCall>
+    updates: Partial<IAiToolCall>,
   ): void {
     const thread = this.threads.get(threadId);
     const message = thread?.messages.find((m) => m.id === messageId);
@@ -238,7 +238,7 @@ export class ConversationStore {
     threadId: string,
     messageId: string,
     toolCallId: string,
-    state: AiToolState
+    state: AiToolState,
   ): void {
     this.updateToolCall(threadId, messageId, toolCallId, { state });
   }
@@ -276,13 +276,13 @@ export class ConversationStore {
   }
 
   private firstUserText(thread: IAiConversation): string | undefined {
-    return thread.messages.find((m) => m.role === 'user')?.text;
+    return thread.messages.find((m) => m.role === "user")?.text;
   }
 
   private lastAssistantText(thread: IAiConversation): string | undefined {
     for (let i = thread.messages.length - 1; i >= 0; i--) {
       const m = thread.messages[i]!;
-      if (m.role === 'assistant') return m.text;
+      if (m.role === "assistant") return m.text;
     }
     return undefined;
   }
@@ -292,7 +292,7 @@ export class ConversationStore {
       try {
         listener();
       } catch (err) {
-        this.logger.warn('[ConversationStore] change listener threw', {
+        this.logger.warn("[ConversationStore] change listener threw", {
           error: err instanceof Error ? err.message : String(err),
         });
       }

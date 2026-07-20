@@ -76,7 +76,17 @@
       "name": "principals.roles.viewAny.own",
       "guard": "sanctum",
       "description": "List the caller's own roles + permissions. Backs GET /me/roles + GET /me/permissions.",
-      "seededOn": ["owner", "admin", "head_coach", "coach", "receptionist", "medical", "member", "athlete", "parent"]
+      "seededOn": [
+        "owner",
+        "admin",
+        "head_coach",
+        "coach",
+        "receptionist",
+        "medical",
+        "member",
+        "athlete",
+        "parent"
+      ]
     },
     {
       "name": "principals.roles.assign.tenant",

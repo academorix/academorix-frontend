@@ -6,30 +6,132 @@
   "isSystem": true,
   "description": "Two audiences. Tenant plane (sanctum) — provider CRUD by owner + admin; event + delivery reads by owner + admin + marketing role + support role; dead-letter management by owner + admin (replay requires Enterprise entitlement). Platform plane (platform_admin) — cross-tenant support tooling for ops + support cross-tenant P1 review. All tenant-plane permissions carry the `marketing.` prefix (or `platform.marketing.` on the platform audience) per hierarchy.md §4 audience-boundary rules.",
   "permissions": [
-    { "name": "marketing.events.viewAny", "guard": "sanctum", "seededOn": ["marketing", "admin", "owner"] },
-    { "name": "marketing.events.view", "guard": "sanctum", "seededOn": ["marketing", "admin", "owner", "support"] },
-    { "name": "marketing.events.dispatch", "guard": "sanctum", "description": "Manual re-dispatch of an existing event. Support tool.", "seededOn": ["admin", "owner", "support"] },
-    { "name": "marketing.deliveries.viewAny", "guard": "sanctum", "seededOn": ["marketing", "admin", "owner", "support"] },
-    { "name": "marketing.deliveries.view", "guard": "sanctum", "seededOn": ["marketing", "admin", "owner", "support"] },
-    { "name": "marketing.providers.viewAny", "guard": "sanctum", "seededOn": ["marketing", "admin", "owner"] },
-    { "name": "marketing.providers.view", "guard": "sanctum", "seededOn": ["marketing", "admin", "owner", "support"] },
-    { "name": "marketing.providers.create", "guard": "sanctum", "description": "Configure a new marketing provider. Credentials are financial-critical.", "seededOn": ["admin", "owner"] },
+    {
+      "name": "marketing.events.viewAny",
+      "guard": "sanctum",
+      "seededOn": ["marketing", "admin", "owner"]
+    },
+    {
+      "name": "marketing.events.view",
+      "guard": "sanctum",
+      "seededOn": ["marketing", "admin", "owner", "support"]
+    },
+    {
+      "name": "marketing.events.dispatch",
+      "guard": "sanctum",
+      "description": "Manual re-dispatch of an existing event. Support tool.",
+      "seededOn": ["admin", "owner", "support"]
+    },
+    {
+      "name": "marketing.deliveries.viewAny",
+      "guard": "sanctum",
+      "seededOn": ["marketing", "admin", "owner", "support"]
+    },
+    {
+      "name": "marketing.deliveries.view",
+      "guard": "sanctum",
+      "seededOn": ["marketing", "admin", "owner", "support"]
+    },
+    {
+      "name": "marketing.providers.viewAny",
+      "guard": "sanctum",
+      "seededOn": ["marketing", "admin", "owner"]
+    },
+    {
+      "name": "marketing.providers.view",
+      "guard": "sanctum",
+      "seededOn": ["marketing", "admin", "owner", "support"]
+    },
+    {
+      "name": "marketing.providers.create",
+      "guard": "sanctum",
+      "description": "Configure a new marketing provider. Credentials are financial-critical.",
+      "seededOn": ["admin", "owner"]
+    },
     { "name": "marketing.providers.update", "guard": "sanctum", "seededOn": ["admin", "owner"] },
     { "name": "marketing.providers.delete", "guard": "sanctum", "seededOn": ["admin", "owner"] },
-    { "name": "marketing.providers.test", "guard": "sanctum", "description": "Send a synthetic test event via a provider's sandbox endpoint.", "seededOn": ["admin", "owner"] },
-    { "name": "marketing.providers.reset-circuit-breaker", "guard": "sanctum", "description": "Manually reset an OPEN circuit-breaker. Every reset writes an audit row + increments circuit_breaker_reset_count.", "seededOn": ["admin", "owner"] },
-    { "name": "marketing.dead_letters.viewAny", "guard": "sanctum", "seededOn": ["marketing", "admin", "owner", "support"] },
-    { "name": "marketing.dead_letters.view", "guard": "sanctum", "seededOn": ["marketing", "admin", "owner", "support"] },
-    { "name": "marketing.dead_letters.replay", "guard": "sanctum", "description": "Enterprise-only via marketing_dead_letter_replay entitlement.", "seededOn": ["admin", "owner"] },
-    { "name": "marketing.dead_letters.resolve", "guard": "sanctum", "seededOn": ["admin", "owner"] },
-    { "name": "marketing.roas.view", "guard": "sanctum", "description": "Access the ROAS dashboard. Medium+ via marketing_roas_report entitlement.", "seededOn": ["marketing", "admin", "owner"] },
-    { "name": "marketing.reports.consent-suppressions.view", "guard": "sanctum", "description": "Compliance surface: view consent-suppressed events over a date range.", "seededOn": ["admin", "owner", "compliance"] },
-    { "name": "platform.marketing.events.viewAny", "guard": "platform_admin", "seededOn": ["super_admin", "ops", "support"] },
-    { "name": "platform.marketing.events.view", "guard": "platform_admin", "seededOn": ["super_admin", "ops", "support"] },
-    { "name": "platform.marketing.deliveries.viewAny", "guard": "platform_admin", "seededOn": ["super_admin", "ops", "support"] },
-    { "name": "platform.marketing.providers.viewAny", "guard": "platform_admin", "description": "Cross-tenant provider config read (redacted — no credentials).", "seededOn": ["super_admin", "ops", "support"] },
-    { "name": "platform.marketing.dead_letters.viewAny", "guard": "platform_admin", "seededOn": ["super_admin", "ops", "support"] },
-    { "name": "platform.marketing.dead_letters.replay", "guard": "platform_admin", "description": "Cross-tenant support-intervention dead-letter replay. Every fire notifies the tenant admin + writes audit with 7-year retention.", "seededOn": ["super_admin", "ops"] },
-    { "name": "platform.marketing.circuit_breakers.viewAny", "guard": "platform_admin", "description": "Cross-tenant view of OPEN circuit-breakers. Powers the ops health dashboard.", "seededOn": ["super_admin", "ops", "support"] }
+    {
+      "name": "marketing.providers.test",
+      "guard": "sanctum",
+      "description": "Send a synthetic test event via a provider's sandbox endpoint.",
+      "seededOn": ["admin", "owner"]
+    },
+    {
+      "name": "marketing.providers.reset-circuit-breaker",
+      "guard": "sanctum",
+      "description": "Manually reset an OPEN circuit-breaker. Every reset writes an audit row + increments circuit_breaker_reset_count.",
+      "seededOn": ["admin", "owner"]
+    },
+    {
+      "name": "marketing.dead_letters.viewAny",
+      "guard": "sanctum",
+      "seededOn": ["marketing", "admin", "owner", "support"]
+    },
+    {
+      "name": "marketing.dead_letters.view",
+      "guard": "sanctum",
+      "seededOn": ["marketing", "admin", "owner", "support"]
+    },
+    {
+      "name": "marketing.dead_letters.replay",
+      "guard": "sanctum",
+      "description": "Enterprise-only via marketing_dead_letter_replay entitlement.",
+      "seededOn": ["admin", "owner"]
+    },
+    {
+      "name": "marketing.dead_letters.resolve",
+      "guard": "sanctum",
+      "seededOn": ["admin", "owner"]
+    },
+    {
+      "name": "marketing.roas.view",
+      "guard": "sanctum",
+      "description": "Access the ROAS dashboard. Medium+ via marketing_roas_report entitlement.",
+      "seededOn": ["marketing", "admin", "owner"]
+    },
+    {
+      "name": "marketing.reports.consent-suppressions.view",
+      "guard": "sanctum",
+      "description": "Compliance surface: view consent-suppressed events over a date range.",
+      "seededOn": ["admin", "owner", "compliance"]
+    },
+    {
+      "name": "platform.marketing.events.viewAny",
+      "guard": "platform_admin",
+      "seededOn": ["super_admin", "ops", "support"]
+    },
+    {
+      "name": "platform.marketing.events.view",
+      "guard": "platform_admin",
+      "seededOn": ["super_admin", "ops", "support"]
+    },
+    {
+      "name": "platform.marketing.deliveries.viewAny",
+      "guard": "platform_admin",
+      "seededOn": ["super_admin", "ops", "support"]
+    },
+    {
+      "name": "platform.marketing.providers.viewAny",
+      "guard": "platform_admin",
+      "description": "Cross-tenant provider config read (redacted — no credentials).",
+      "seededOn": ["super_admin", "ops", "support"]
+    },
+    {
+      "name": "platform.marketing.dead_letters.viewAny",
+      "guard": "platform_admin",
+      "seededOn": ["super_admin", "ops", "support"]
+    },
+    {
+      "name": "platform.marketing.dead_letters.replay",
+      "guard": "platform_admin",
+      "description": "Cross-tenant support-intervention dead-letter replay. Every fire notifies the tenant admin + writes audit with 7-year retention.",
+      "seededOn": ["super_admin", "ops"]
+    },
+    {
+      "name": "platform.marketing.circuit_breakers.viewAny",
+      "guard": "platform_admin",
+      "description": "Cross-tenant view of OPEN circuit-breakers. Powers the ops health dashboard.",
+      "seededOn": ["super_admin", "ops", "support"]
+    }
   ]
 }

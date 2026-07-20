@@ -5,11 +5,11 @@
  * @description Tests for the built-in web `<ActionsPanel />`.
  */
 
-import { act, cleanup, fireEvent, render } from '@testing-library/react';
-import { afterEach, describe, expect, it, vi } from 'vitest';
-import type { ReactNode } from 'react';
+import { act, cleanup, fireEvent, render } from "@testing-library/react";
+import { afterEach, describe, expect, it, vi } from "vitest";
+import type { ReactNode } from "react";
 
-vi.mock('@stackra/ui/react', () => {
+vi.mock("@stackra/ui/react", () => {
   const Div = ({
     children,
     className,
@@ -29,12 +29,12 @@ vi.mock('@stackra/ui/react', () => {
     children,
     onPress,
     isDisabled,
-    'data-devtools-action': dataAction,
+    "data-devtools-action": dataAction,
   }: {
     readonly children?: ReactNode;
     readonly onPress?: () => void;
     readonly isDisabled?: boolean;
-    readonly 'data-devtools-action'?: string;
+    readonly "data-devtools-action"?: string;
   }) {
     return (
       <button
@@ -74,7 +74,7 @@ vi.mock('@stackra/ui/react', () => {
   return { AlertDialog, Button, Card };
 });
 
-vi.mock('@stackra/ui/icons/heroicon/outline', () => {
+vi.mock("@stackra/ui/icons/heroicon/outline", () => {
   const Stub = () => <span />;
   return {
     ArrowPathIcon: Stub,
@@ -89,7 +89,7 @@ vi.mock('@stackra/ui/icons/heroicon/outline', () => {
 /** All optional injects are absent by default. Test can flip them. */
 const injectMocks: Record<symbol, unknown> = {};
 
-vi.mock('@stackra/container/react', () => ({
+vi.mock("@stackra/container/react", () => ({
   useOptionalInject: <T,>(token: symbol): T | undefined => injectMocks[token] as T,
 }));
 
@@ -99,15 +99,15 @@ import {
   QUEUE_MANAGER,
   SCOPE_SERVICE,
   STATE_REGISTRY,
-} from '@stackra/contracts';
+} from "@stackra/contracts";
 
-import { DevtoolsContext } from '@/react/contexts/devtools.context';
-import type { IDevtoolsContextValue } from '@/react/contexts/devtools-context-value.interface';
-import { ActionsPanel } from '@/react/components/actions-panel';
-import { DevtoolsFrameStateService } from '@/core/services/devtools-frame-state.service';
-import { mergeConfig } from '@/core/utils/merge-config.util';
-import { MockDevtoolsInspectorRegistry } from '@/testing/mock-devtools-inspector-registry';
-import { MockDevtoolsPanelsRegistry } from '@/testing/mock-devtools-panels-registry';
+import { DevtoolsContext } from "@/react/contexts/devtools.context";
+import type { IDevtoolsContextValue } from "@/react/contexts/devtools-context-value.interface";
+import { ActionsPanel } from "@/react/components/actions-panel";
+import { DevtoolsFrameStateService } from "@/core/services/devtools-frame-state.service";
+import { mergeConfig } from "@/core/utils/merge-config.util";
+import { MockDevtoolsInspectorRegistry } from "@/testing/mock-devtools-inspector-registry";
+import { MockDevtoolsPanelsRegistry } from "@/testing/mock-devtools-panels-registry";
 
 afterEach(() => {
   cleanup();
@@ -124,7 +124,7 @@ afterEach(() => {
 /** Build the devtools context. */
 function wrapContext(
   children: ReactNode,
-  analytics: { actionTriggered: ReturnType<typeof vi.fn> }
+  analytics: { actionTriggered: ReturnType<typeof vi.fn> },
 ): React.JSX.Element {
   const frameState = new DevtoolsFrameStateService(mergeConfig());
   frameState.onModuleInit();
@@ -133,23 +133,23 @@ function wrapContext(
     panels: new MockDevtoolsPanelsRegistry(),
     inspector: new MockDevtoolsInspectorRegistry(),
     frameState,
-    analytics: analytics as unknown as IDevtoolsContextValue['analytics'],
+    analytics: analytics as unknown as IDevtoolsContextValue["analytics"],
     mountedAt: Date.now(),
   };
   return <DevtoolsContext.Provider value={value}>{children}</DevtoolsContext.Provider>;
 }
 
-describe('<ActionsPanel />', () => {
-  it('renders every action row', () => {
+describe("<ActionsPanel />", () => {
+  it("renders every action row", () => {
     const analytics = { actionTriggered: vi.fn() };
     const { container } = render(wrapContext(<ActionsPanel />, analytics));
     // Every row surfaces a data-devtools-action attribute; expect
     // at least the six known built-ins.
-    const rows = container.querySelectorAll('[data-devtools-action]');
+    const rows = container.querySelectorAll("[data-devtools-action]");
     expect(rows.length).toBeGreaterThanOrEqual(6);
   });
 
-  it('disables actions whose optional dependency is missing', () => {
+  it("disables actions whose optional dependency is missing", () => {
     const analytics = { actionTriggered: vi.fn() };
     const { container } = render(wrapContext(<ActionsPanel />, analytics));
     const clearCaches = container.querySelector('[data-devtools-action="clear-caches"]');
@@ -158,7 +158,7 @@ describe('<ActionsPanel />', () => {
     expect((clearCaches as HTMLButtonElement).disabled).toBe(true);
   });
 
-  it('opens the confirmation dialog when a destructive action is pressed', () => {
+  it("opens the confirmation dialog when a destructive action is pressed", () => {
     // Wire CACHE_MANAGER so the row is enabled.
     injectMocks[CACHE_MANAGER as unknown as symbol] = {
       instance: () => ({ clear: () => undefined }),
@@ -171,13 +171,13 @@ describe('<ActionsPanel />', () => {
       fireEvent.click(btn);
     });
     // Backdrop should now be open.
-    expect(getByTestId('alert-open').getAttribute('data-open')).toBe('true');
+    expect(getByTestId("alert-open").getAttribute("data-open")).toBe("true");
   });
 
-  it('non-destructive actions fire immediately', () => {
+  it("non-destructive actions fire immediately", () => {
     // Wire STATE_REGISTRY so `dump-state` is enabled.
     injectMocks[STATE_REGISTRY as unknown as symbol] = {
-      getSnapshot: () => ({ foo: 'bar' }),
+      getSnapshot: () => ({ foo: "bar" }),
     };
     const analytics = { actionTriggered: vi.fn() };
     const { container } = render(wrapContext(<ActionsPanel />, analytics));
@@ -185,6 +185,6 @@ describe('<ActionsPanel />', () => {
     act(() => {
       fireEvent.click(btn);
     });
-    expect(analytics.actionTriggered).toHaveBeenCalledWith('actions', 'dump-state');
+    expect(analytics.actionTriggered).toHaveBeenCalledWith("actions", "dump-state");
   });
 });

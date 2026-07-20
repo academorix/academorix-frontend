@@ -9,4 +9,4 @@ export {
   NATIVE_NOTIFICATION_MANAGER,
   EXPO_PUSH_TOKEN_ADAPTER,
   EXPO_NOTIFICATION_LISTENER_ADAPTER,
-} from './tokens.constant';
+} from "./tokens.constant";

@@ -5,9 +5,9 @@
  *   `<SduiScreenView>` when `ISduiScreen.layout` is set.
  */
 
-import { Injectable } from '@stackra/container';
-import { BaseRegistry } from '@stackra/support';
-import type { ISduiLayoutEntry } from '@stackra/contracts';
+import { Injectable } from "@stackra/container";
+import { BaseRegistry } from "@stackra/support";
+import type { ISduiLayoutEntry } from "@stackra/contracts";
 
 /**
  * LayoutRegistry — `BaseRegistry<string, ISduiLayoutEntry>`.

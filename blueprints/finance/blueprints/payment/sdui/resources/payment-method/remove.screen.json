@@ -29,7 +29,14 @@
             {
               "kind": "CardHeader",
               "children": [
-                { "kind": "Text", "props": { "as": "h2", "className": "text-lg font-medium", "children": "Remove payment method?" } }
+                {
+                  "kind": "Text",
+                  "props": {
+                    "as": "h2",
+                    "className": "text-lg font-medium",
+                    "children": "Remove payment method?"
+                  }
+                }
               ]
             },
             {
@@ -48,12 +55,33 @@
                   "kind": "View",
                   "props": { "className": "flex items-center gap-3 p-3 border rounded" },
                   "children": [
-                    { "kind": "Widget", "widget": "payment.method-brand-badge", "bindings": { "props.brand": { "$ref": "method.brand" }, "props.last4": { "$ref": "method.last4" } } },
+                    {
+                      "kind": "Widget",
+                      "widget": "payment.method-brand-badge",
+                      "bindings": {
+                        "props.brand": { "$ref": "method.brand" },
+                        "props.last4": { "$ref": "method.last4" }
+                      }
+                    },
                     {
                       "kind": "View",
                       "children": [
-                        { "kind": "Text", "props": { "className": "text-sm font-medium" }, "bindings": { "children": { "$expr": "method.brand + ' •••• ' + method.last4" } } },
-                        { "kind": "Text", "props": { "className": "text-xs text-muted" }, "bindings": { "children": { "$expr": "'Expires ' + method.exp_month + '/' + method.exp_year" } } }
+                        {
+                          "kind": "Text",
+                          "props": { "className": "text-sm font-medium" },
+                          "bindings": {
+                            "children": { "$expr": "method.brand + ' •••• ' + method.last4" }
+                          }
+                        },
+                        {
+                          "kind": "Text",
+                          "props": { "className": "text-xs text-muted" },
+                          "bindings": {
+                            "children": {
+                              "$expr": "'Expires ' + method.exp_month + '/' + method.exp_year"
+                            }
+                          }
+                        }
                       ]
                     }
                   ]

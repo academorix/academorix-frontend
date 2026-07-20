@@ -6,8 +6,8 @@
  *   ships as a plain `Map` today so the runtime works stand-alone.
  */
 
-import { Injectable } from '@stackra/container';
-import type { ISduiScreen } from '@stackra/contracts';
+import { Injectable } from "@stackra/container";
+import type { ISduiScreen } from "@stackra/contracts";
 
 interface ICacheEntry {
   readonly screen: ISduiScreen;

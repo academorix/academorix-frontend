@@ -9,21 +9,21 @@
  *   diagnostic instead.
  */
 
-import { createElement, type ReactNode } from 'react';
-import { useInject } from '@stackra/container/react';
-import { Alert } from '@stackra/ui/react';
-import type { ISduiScreen } from '@stackra/contracts';
-import { SDUI_COMPONENT_REGISTRY, SDUI_LAYOUT_REGISTRY } from '@stackra/contracts';
-import type { ComponentRegistry } from '@/core/registries/component.registry';
-import type { LayoutRegistry } from '@/core/registries/layout.registry';
+import { createElement, type ReactNode } from "react";
+import { useInject } from "@stackra/container/react";
+import { Alert } from "@stackra/ui/react";
+import type { ISduiScreen } from "@stackra/contracts";
+import { SDUI_COMPONENT_REGISTRY, SDUI_LAYOUT_REGISTRY } from "@stackra/contracts";
+import type { ComponentRegistry } from "@/core/registries/component.registry";
+import type { LayoutRegistry } from "@/core/registries/layout.registry";
 import {
   SDUI_MIN_SUPPORTED_VERSION,
   SDUI_SCHEMA_VERSION,
-} from '@/core/constants/sdui-version.constant';
-import type { ISduiNotification } from '@stackra/contracts';
-import { SduiRuntimeProvider } from '../providers/sdui-runtime.provider';
-import { SduiThemeScope } from '../providers/sdui-theme-scope';
-import { SduiTree } from '../renderer/sdui-tree';
+} from "@/core/constants/sdui-version.constant";
+import type { ISduiNotification } from "@stackra/contracts";
+import { SduiRuntimeProvider } from "../providers/sdui-runtime.provider";
+import { SduiThemeScope } from "../providers/sdui-theme-scope";
+import { SduiTree } from "../renderer/sdui-tree";
 
 /**
  * Props for {@link SduiScreenView}.

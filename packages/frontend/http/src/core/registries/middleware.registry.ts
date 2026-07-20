@@ -8,14 +8,14 @@
  * @module @stackra/http/registries/middleware-registry
  */
 
-import { Injectable } from '@stackra/container';
-import { BaseRegistry } from '@stackra/support';
+import { Injectable } from "@stackra/container";
+import { BaseRegistry } from "@stackra/support";
 
 import type {
   IHttpMiddleware,
   IHttpMiddlewareEntry,
   IHttpMiddlewareRegistry,
-} from '@stackra/contracts';
+} from "@stackra/contracts";
 
 /**
  * Priority-sorted middleware registry.

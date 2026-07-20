@@ -1,5 +1,3 @@
 {
-  "notPath": [
-    "tests/Fixtures/Misc/HasNativeFunctions.php"
-  ]
+  "notPath": ["tests/Fixtures/Misc/HasNativeFunctions.php"]
 }

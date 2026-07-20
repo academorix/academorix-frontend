@@ -10,23 +10,23 @@
  *   present) a "Sign in" button on the `'unauthenticated'` path.
  */
 
-import { type ReactElement } from 'react';
-import { Text, View } from 'react-native';
-import { Button, Card } from '@stackra/ui/native';
-import { useOptionalInject } from '@stackra/container/react';
-import { AUTH_SERVICE } from '@stackra/contracts';
+import { type ReactElement } from "react";
+import { Text, View } from "react-native";
+import { Button, Card } from "@stackra/ui/native";
+import { useOptionalInject } from "@stackra/container/react";
+import { AUTH_SERVICE } from "@stackra/contracts";
 
 import type {
   DevtoolsPanelLockedProps,
   DevtoolsAuthDenyReason,
-} from './devtools-panel-locked.interface';
+} from "./devtools-panel-locked.interface";
 
 /** Fallback copy for each deny reason. */
 const DEFAULT_MESSAGES: Record<DevtoolsAuthDenyReason, { title: string; description: string }> = {
   unauthenticated: {
-    title: 'Sign in required',
+    title: "Sign in required",
     description:
-      'This panel is gated. Sign in with an account that has access to view its contents.',
+      "This panel is gated. Sign in with an account that has access to view its contents.",
   },
   forbidden: {
     title: "You don't have permission",
@@ -43,7 +43,7 @@ export function DevtoolsPanelLocked({ gate, reason }: DevtoolsPanelLockedProps):
   // auth service in the container — otherwise there's no
   // meaningful action to bind the button to.
   const authService = useOptionalInject<{ signIn?: () => void }>(AUTH_SERVICE);
-  const canOfferSignIn = reason === 'unauthenticated' && Boolean(authService);
+  const canOfferSignIn = reason === "unauthenticated" && Boolean(authService);
 
   const defaults = DEFAULT_MESSAGES[reason];
   const description = gate.message ?? defaults.description;
@@ -56,16 +56,16 @@ export function DevtoolsPanelLocked({ gate, reason }: DevtoolsPanelLockedProps):
             {/* Native has no @heroicons/react — render the lock as
                 a Unicode glyph to keep the icon slot cross-
                 platform without a new dep. */}
-            <Text className="text-lg text-warning" accessibilityLabel="Locked">
+            <Text className="text-warning text-lg" accessibilityLabel="Locked">
               🔒
             </Text>
             <Card.Title>{defaults.title}</Card.Title>
           </View>
         </Card.Header>
         <Card.Body>
-          <Text className="text-sm text-muted">{description}</Text>
-          <View className="mt-3 rounded-md bg-surface-secondary p-3">
-            <Text className="text-xs text-muted">
+          <Text className="text-muted text-sm">{description}</Text>
+          <View className="bg-surface-secondary mt-3 rounded-md p-3">
+            <Text className="text-muted text-xs">
               Required ability: {gate.ability}
               {gate.resource ? ` · resource ${String(gate.resource)}` : null}
             </Text>

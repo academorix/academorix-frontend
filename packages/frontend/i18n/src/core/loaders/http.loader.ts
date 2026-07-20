@@ -5,9 +5,9 @@
  *   Suitable for CMS-managed translations or external TMS integrations.
  */
 
-import type { II18nLoader, I18nTranslation } from '@stackra/contracts';
+import type { II18nLoader, I18nTranslation } from "@stackra/contracts";
 
-import type { HttpLoaderOptions } from '../interfaces';
+import type { HttpLoaderOptions } from "../interfaces";
 
 /**
  * Loads translations from a remote HTTP endpoint.
@@ -22,7 +22,7 @@ export class HttpLoader implements II18nLoader {
 
   public constructor(options?: unknown) {
     const opts = (options ?? {}) as HttpLoaderOptions;
-    this.urlPattern = opts.urlPattern ?? '/i18n/{locale}.json';
+    this.urlPattern = opts.urlPattern ?? "/i18n/{locale}.json";
     this.languagesUrl = opts.languagesUrl;
     this.supportedLocales = opts.supportedLocales ?? [];
     this.fetchOptions = opts.fetchOptions ?? {};
@@ -33,7 +33,7 @@ export class HttpLoader implements II18nLoader {
       return this.cache.get(locale)!;
     }
 
-    const url = this.urlPattern.replace('{locale}', locale);
+    const url = this.urlPattern.replace("{locale}", locale);
 
     try {
       const response = await fetch(url, this.fetchOptions);

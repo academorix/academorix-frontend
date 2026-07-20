@@ -5,8 +5,8 @@
  *   trace. Composes HeroUI Pro's `ChainOfThought` (Req 20.1, 20.2).
  */
 
-import type { JSX, ReactNode } from 'react';
-import { ChainOfThought } from '@stackra/ui/react';
+import type { JSX, ReactNode } from "react";
+import { ChainOfThought } from "@stackra/ui/react";
 
 /** A single reasoning step. */
 export interface IAiReasoningStep {
@@ -34,7 +34,7 @@ export interface IAiReasoningProps {
 export function AiReasoning(props: IAiReasoningProps): JSX.Element {
   const {
     steps,
-    triggerLabel = 'Reasoning',
+    triggerLabel = "Reasoning",
     isStreaming = false,
     defaultExpanded = false,
     className,

@@ -1,7 +1,7 @@
 {
   "name": "@stackra/dashboard",
   "version": "0.1.0",
-  "description": "Headless dashboard framework for the Stackra platform — domain types, storage adapter, widget registry, widget catalogue, React hooks, and DI module. HeroUI-heavy visual components live in consuming apps.",
+  "description": "Headless dashboard framework for the Stackra platform \u2014 domain types, storage adapter, widget registry, widget catalogue, React hooks, and DI module. HeroUI-heavy visual components live in consuming apps.",
   "license": "MIT",
   "author": {
     "name": "Stackra L.L.C",
@@ -85,6 +85,8 @@
     }
   },
   "devDependencies": {
+    "@academorix/config-tsconfig": "workspace:*",
+    "@academorix/config-tsup": "workspace:*",
     "@stackra/container": "workspace:*",
     "@stackra/contracts": "workspace:*",
     "@stackra/support": "workspace:*",

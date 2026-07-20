@@ -11,23 +11,23 @@
  *   (nonsensical on RN).
  */
 
-import { useEffect, useMemo, useState, type ReactElement, type ReactNode } from 'react';
-import { useInject, useOptionalInject } from '@stackra/container/react';
+import { useEffect, useMemo, useState, type ReactElement, type ReactNode } from "react";
+import { useInject, useOptionalInject } from "@stackra/container/react";
 import {
   DEVTOOLS_INSPECTOR_REGISTRY,
   DEVTOOLS_REGISTRY,
   type IDevtoolsInspectorRegistry,
   type IDevtoolsPanelsRegistry,
-} from '@stackra/contracts';
+} from "@stackra/contracts";
 
-import { DEFAULT_DEVTOOLS_CONFIG, DEVTOOLS_CONFIG } from '@/core/constants';
-import type { IDevtoolsModuleOptions } from '@/core/interfaces';
-import { DevtoolsAnalyticsService, DevtoolsFrameStateService } from '@/core/services';
-import { mergeConfig } from '@/core/utils';
+import { DEFAULT_DEVTOOLS_CONFIG, DEVTOOLS_CONFIG } from "@/core/constants";
+import type { IDevtoolsModuleOptions } from "@/core/interfaces";
+import { DevtoolsAnalyticsService, DevtoolsFrameStateService } from "@/core/services";
+import { mergeConfig } from "@/core/utils";
 
-import { DevtoolsContext } from '../../contexts/devtools.context';
-import type { IDevtoolsNativeContextValue } from '../../interfaces/devtools-context-value.interface';
-import { ActionsNativeDevtoolsPanel, OverviewNativeDevtoolsPanel } from '../../panels';
+import { DevtoolsContext } from "../../contexts/devtools.context";
+import type { IDevtoolsNativeContextValue } from "../../interfaces/devtools-context-value.interface";
+import { ActionsNativeDevtoolsPanel, OverviewNativeDevtoolsPanel } from "../../panels";
 
 /** Props accepted by {@link DevtoolsProvider}. */
 export interface DevtoolsProviderProps {
@@ -67,7 +67,7 @@ export function DevtoolsProvider({ children }: DevtoolsProviderProps): ReactElem
 
   const contextValue = useMemo<IDevtoolsNativeContextValue>(
     () => ({ config, panels, inspector, frameState, analytics, mountedAt }),
-    [config, panels, inspector, frameState, analytics, mountedAt]
+    [config, panels, inspector, frameState, analytics, mountedAt],
   );
 
   // Register the built-in Overview + Actions panels while the

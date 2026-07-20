@@ -46,11 +46,26 @@
     ],
     "policies": ["PaymentGatewayConfigPolicy", "PaymentMethodPolicy", "GatewayWebhookEventPolicy"],
     "hooks": ["PurgeGatewayForErasedTenant", "DeactivateGatewaysOnTenantSuspended"],
-    "commands": ["gateway:list", "gateway:configure", "gateway:test", "gateway:list-methods", "gateway:list-webhooks", "gateway:replay-webhook"],
+    "commands": [
+      "gateway:list",
+      "gateway:configure",
+      "gateway:test",
+      "gateway:list-methods",
+      "gateway:list-webhooks",
+      "gateway:replay-webhook"
+    ],
     "jobs": ["ProcessGatewayWebhookJob", "VerifyPaymentMethodJob", "RetryFailedWebhookJob"],
-    "notifications": ["PaymentGatewayConnectedNotification", "PaymentGatewayFailureNotification", "WebhookProcessingFailedNotification"],
+    "notifications": [
+      "PaymentGatewayConnectedNotification",
+      "PaymentGatewayFailureNotification",
+      "WebhookProcessingFailedNotification"
+    ],
     "broadcasts": ["tenant.{tenantId}.gateway"],
-    "observers": ["PaymentGatewayConfigObserver", "PaymentMethodObserver", "GatewayWebhookEventObserver"],
+    "observers": [
+      "PaymentGatewayConfigObserver",
+      "PaymentMethodObserver",
+      "GatewayWebhookEventObserver"
+    ],
     "rules": ["valid_provider", "valid_mode", "valid_currency", "valid_card_last4"],
     "casts": ["PaymentGatewayProvider", "PaymentGatewayMode", "GatewayWebhookStatus"],
     "views": [],
@@ -101,10 +116,7 @@
     },
     "central_admin": {
       "description": "Cross-tenant gateway support (no credential reads).",
-      "routes": [
-        "GET /api/v1/platform/gateways",
-        "GET /api/v1/platform/gateway-webhooks"
-      ]
+      "routes": ["GET /api/v1/platform/gateways", "GET /api/v1/platform/gateway-webhooks"]
     }
   }
 }

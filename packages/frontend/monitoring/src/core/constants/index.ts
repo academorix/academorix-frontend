@@ -4,13 +4,13 @@
  * @description Defaults for the monitoring module.
  */
 
-import type { IMonitoringModuleOptions } from '../interfaces';
+import type { IMonitoringModuleOptions } from "../interfaces";
 
 /** Default monitoring configuration — a single console instance. */
 export const DEFAULT_MONITORING_CONFIG: IMonitoringModuleOptions = {
-  default: 'console',
+  default: "console",
   providers: {
-    console: { driver: 'console' },
+    console: { driver: "console" },
   },
 };
 
@@ -22,5 +22,5 @@ export const DEFAULT_MONITORING_CONFIG: IMonitoringModuleOptions = {
  * missing fields (only by `enabled: false`).
  */
 export const MONITORING_REQUIRED_FIELDS: Record<string, string[]> = {
-  sentry: ['dsn'],
+  sentry: ["dsn"],
 };

@@ -21,19 +21,19 @@
  *   deterministic handler.
  */
 
-import { Inject, Injectable, Optional } from '@stackra/container';
-import { Logger } from '@stackra/logger';
+import { Inject, Injectable, Optional } from "@stackra/container";
+import { Logger } from "@stackra/logger";
 import {
   AI_EVENTS,
   EVENT_EMITTER,
   type IAiClientToolDefinition,
   type IEventEmitter,
-} from '@stackra/contracts';
+} from "@stackra/contracts";
 
 /** Handler signature invoked by `ToolExecutor` on a matched tool call. */
 export type ToolHandler = (
   args: unknown,
-  ctx: { signal: AbortSignal }
+  ctx: { signal: AbortSignal },
 ) => Promise<unknown> | unknown;
 
 /** Ref-counted entry stored by the {@link ToolRegistry}. */
@@ -89,7 +89,7 @@ export class ToolRegistry {
       // Same key already present — last-registered-wins for handler +
       // definition, ref-count increments so unmounts stay balanced.
       this.logger.warn(
-        `[ToolRegistry] duplicate client-tool registration for "${key}" — last-registered wins`
+        `[ToolRegistry] duplicate client-tool registration for "${key}" — last-registered wins`,
       );
       this.items.set(key, {
         name: definition.name,
@@ -197,7 +197,7 @@ export class ToolRegistry {
       try {
         listener();
       } catch (err) {
-        this.logger.warn('[ToolRegistry] change listener threw', {
+        this.logger.warn("[ToolRegistry] change listener threw", {
           error: err instanceof Error ? err.message : String(err),
         });
       }

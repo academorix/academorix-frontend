@@ -53,16 +53,28 @@
       { "trait": "Academorix\\Foundation\\Concerns\\HasUserstamps" },
       { "trait": "Academorix\\Foundation\\Concerns\\HasMetadata" },
       { "trait": "Academorix\\Foundation\\Concerns\\Filterable" },
-      { "trait": "Academorix\\Foundation\\Concerns\\Searchable", "reason": "HealthCheck + MonitoringAlertPolicy + MonitoringIncident (searchable by name / slug / title). NOT HealthCheckRun + MonitoringAlert (accessed via relations from their parents)." }
+      {
+        "trait": "Academorix\\Foundation\\Concerns\\Searchable",
+        "reason": "HealthCheck + MonitoringAlertPolicy + MonitoringIncident (searchable by name / slug / title). NOT HealthCheckRun + MonitoringAlert (accessed via relations from their parents)."
+      }
     ],
     "tenants": [
-      { "trait": "Academorix\\Tenancy\\Concerns\\BelongsToTenant", "reason": "Every owned row carries tenant_id per tenancy-columns.md §3." }
+      {
+        "trait": "Academorix\\Tenancy\\Concerns\\BelongsToTenant",
+        "reason": "Every owned row carries tenant_id per tenancy-columns.md §3."
+      }
     ],
     "audit": [
-      { "trait": "Academorix\\Audit\\Concerns\\Auditable", "reason": "Every write to the six tables is compliance-relevant." }
+      {
+        "trait": "Academorix\\Audit\\Concerns\\Auditable",
+        "reason": "Every write to the six tables is compliance-relevant."
+      }
     ],
     "activity": [
-      { "trait": "Academorix\\Activity\\Concerns\\HasActivityLog", "reason": "MonitoringAlertPolicy + MonitoringIncident + MonitoringProviderConfig — admin actions feed the staff-visible activity feed. NOT HealthCheck / HealthCheckRun / MonitoringAlert — either high-volume OR already covered by audit." }
+      {
+        "trait": "Academorix\\Activity\\Concerns\\HasActivityLog",
+        "reason": "MonitoringAlertPolicy + MonitoringIncident + MonitoringProviderConfig — admin actions feed the staff-visible activity feed. NOT HealthCheck / HealthCheckRun / MonitoringAlert — either high-volume OR already covered by audit."
+      }
     ]
   },
   "composition": {

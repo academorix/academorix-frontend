@@ -8,7 +8,12 @@
   "params": {
     "is_active": { "type": "boolean", "required": true },
     "verified_by_admin_at": { "type": ["string", "null"], "required": true },
-    "compact": { "type": "boolean", "required": false, "default": false, "description": "When true, renders icon-only (uses tooltip for label)." }
+    "compact": {
+      "type": "boolean",
+      "required": false,
+      "default": false,
+      "description": "When true, renders icon-only (uses tooltip for label)."
+    }
   },
   "nodes": [
     {

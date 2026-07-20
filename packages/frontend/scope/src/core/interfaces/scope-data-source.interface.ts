@@ -10,8 +10,8 @@
  *   resolve cascading values, and persist the active selection.
  */
 
-import type { IScopeContext } from './scope-context.interface';
-import type { IScopeNodeTreeNode } from './scope-node-tree-node.interface';
+import type { IScopeContext } from "./scope-context.interface";
+import type { IScopeNodeTreeNode } from "./scope-node-tree-node.interface";
 
 /**
  * App-provided data source for the client scope runtime.

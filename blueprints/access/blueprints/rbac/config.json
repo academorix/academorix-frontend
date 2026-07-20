@@ -87,7 +87,16 @@
         {
           "path": "rbac.permissions.allowed_suffixes",
           "type": "array",
-          "default": [".any", ".tenant", ".organization", ".region", ".branch", ".team", ".child", ".own"],
+          "default": [
+            ".any",
+            ".tenant",
+            ".organization",
+            ".region",
+            ".branch",
+            ".team",
+            ".child",
+            ".own"
+          ],
           "description": "The scope-suffix set enforced by valid_permission_name. See `auth::ScopeSuffixResolver` for how each suffix translates to a query filter."
         },
         {

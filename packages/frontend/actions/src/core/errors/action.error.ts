@@ -17,11 +17,11 @@ export class ActionError extends Error {
 
   public constructor(
     message: string,
-    code: string = 'ACTION_ERROR',
-    context?: Record<string, unknown>
+    code: string = "ACTION_ERROR",
+    context?: Record<string, unknown>,
   ) {
     super(message);
-    this.name = 'ActionError';
+    this.name = "ActionError";
     this.code = code;
     this.context = context;
   }

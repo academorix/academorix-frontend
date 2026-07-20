@@ -5,6 +5,7 @@
  */
 
 import { describe, it, expect } from "vitest";
+
 import { renderBanner, renderCompactBanner } from "@/utils/ascii-banner.util";
 
 describe("renderBanner()", () => {

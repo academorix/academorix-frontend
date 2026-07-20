@@ -41,10 +41,7 @@ vi.mock("@stackra/container", () => {
   const Injectable = () => (target: unknown) => target;
   const Inject = () => () => {};
   const Optional = () => () => {};
-  const registerWith = (
-    deps: unknown[],
-    factory: (...args: unknown[]) => void,
-  ) => ({
+  const registerWith = (deps: unknown[], factory: (...args: unknown[]) => void) => ({
     provide: "REGISTER_WITH",
     useFactory: factory,
     inject: deps,
@@ -308,9 +305,8 @@ describe("KbdModule DI bootstrap", () => {
             id: "feat.command",
             title: "Feature Command",
             handler: vi.fn(),
-          } as unknown as Parameters<
-            typeof KbdModule.forFeature
-          >[0]["commands"] extends readonly (infer U)[] | undefined
+          } as unknown as Parameters<typeof KbdModule.forFeature>[0]["commands"] extends
+            readonly (infer U)[] | undefined
             ? U
             : never,
         ],

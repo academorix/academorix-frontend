@@ -42,8 +42,16 @@
         "description": "GA4 Consent Mode v2 signals.",
         "properties": {
           "ad_user_data": { "type": "string", "enum": ["granted", "denied"], "default": "denied" },
-          "ad_personalization": { "type": "string", "enum": ["granted", "denied"], "default": "denied" },
-          "analytics_storage": { "type": "string", "enum": ["granted", "denied"], "default": "granted" },
+          "ad_personalization": {
+            "type": "string",
+            "enum": ["granted", "denied"],
+            "default": "denied"
+          },
+          "analytics_storage": {
+            "type": "string",
+            "enum": ["granted", "denied"],
+            "default": "granted"
+          },
           "ad_storage": { "type": "string", "enum": ["granted", "denied"], "default": "denied" }
         },
         "additionalProperties": false

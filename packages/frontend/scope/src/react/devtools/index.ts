@@ -5,9 +5,9 @@
  *   — the scope panel and the `[data-scope]` inspector source.
  */
 
-export { ScopeDevtoolsPanel } from './scope.devtools-panel';
-export { ScopeInspectorSource } from './scope.inspector-source';
+export { ScopeDevtoolsPanel } from "./scope.devtools-panel";
+export { ScopeInspectorSource } from "./scope.inspector-source";
 export {
   ScopeDevtoolsPanelView,
   type ScopeDevtoolsPanelViewProps,
-} from './scope-devtools-panel-view';
+} from "./scope-devtools-panel-view";

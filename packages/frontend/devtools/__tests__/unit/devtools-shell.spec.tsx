@@ -8,13 +8,13 @@
  *   active panel's viewport.
  */
 
-import { cleanup, render } from '@testing-library/react';
-import { afterEach, describe, expect, it, vi } from 'vitest';
-import type { ReactNode } from 'react';
+import { cleanup, render } from "@testing-library/react";
+import { afterEach, describe, expect, it, vi } from "vitest";
+import type { ReactNode } from "react";
 
 // The shell only cares about a handful of HeroUI primitives; the
 // rest are simple wrappers.
-vi.mock('@stackra/ui/react', () => {
+vi.mock("@stackra/ui/react", () => {
   function Drawer({ children }: { readonly children?: ReactNode }) {
     return <div data-testid="drawer-root">{children}</div>;
   }
@@ -97,7 +97,7 @@ vi.mock('@stackra/ui/react', () => {
   };
 });
 
-vi.mock('@stackra/ui/icons/heroicon/outline', () => {
+vi.mock("@stackra/ui/icons/heroicon/outline", () => {
   const Stub = () => <span />;
   return {
     XMarkIcon: Stub,
@@ -116,37 +116,37 @@ vi.mock('@stackra/ui/icons/heroicon/outline', () => {
 
 // Mock the inspector toolbar / position menu / search — they pull
 // from the inspector context which our test doesn't set up.
-vi.mock('@/react/components/devtools-inspector-toolbar', () => ({
+vi.mock("@/react/components/devtools-inspector-toolbar", () => ({
   DevtoolsInspectorToolbar: () => <div data-testid="inspector-toolbar" />,
 }));
-vi.mock('@/react/components/devtools-position-menu', () => ({
+vi.mock("@/react/components/devtools-position-menu", () => ({
   DevtoolsPositionMenu: () => <div data-testid="position-menu" />,
 }));
-vi.mock('@/react/components/devtools-search', () => ({
+vi.mock("@/react/components/devtools-search", () => ({
   DevtoolsSearch: () => <div data-testid="search" />,
 }));
-vi.mock('@/react/hooks/use-devtools-search.hook', () => ({
-  useDevtoolsSearch: () => ({ query: '', setQuery: () => undefined }),
+vi.mock("@/react/hooks/use-devtools-search.hook", () => ({
+  useDevtoolsSearch: () => ({ query: "", setQuery: () => undefined }),
 }));
-vi.mock('@/react/components/devtools-nav-rail', () => ({
+vi.mock("@/react/components/devtools-nav-rail", () => ({
   DevtoolsNavRail: () => <div data-testid="nav-rail" />,
 }));
-vi.mock('@/react/components/devtools-panel-empty', () => ({
+vi.mock("@/react/components/devtools-panel-empty", () => ({
   DevtoolsPanelEmpty: () => <div data-testid="panel-empty">Empty</div>,
 }));
-vi.mock('@/react/components/devtools-panel-frame', () => ({
+vi.mock("@/react/components/devtools-panel-frame", () => ({
   DevtoolsPanelFrame: ({ panel }: { readonly panel: { readonly id: string } }) => (
     <div data-testid="panel-frame" data-panel-id={panel.id} />
   ),
 }));
 
-import { DevtoolsContext } from '@/react/contexts/devtools.context';
-import type { IDevtoolsContextValue } from '@/react/contexts/devtools-context-value.interface';
-import { DevtoolsFrameStateService } from '@/core/services/devtools-frame-state.service';
-import { DevtoolsShell } from '@/react/components/devtools-shell';
-import { createMockDevtoolsPanel } from '@/testing/create-mock-devtools-panel.util';
-import { mergeConfig } from '@/core/utils/merge-config.util';
-import { MockDevtoolsPanelsRegistry } from '@/testing/mock-devtools-panels-registry';
+import { DevtoolsContext } from "@/react/contexts/devtools.context";
+import type { IDevtoolsContextValue } from "@/react/contexts/devtools-context-value.interface";
+import { DevtoolsFrameStateService } from "@/core/services/devtools-frame-state.service";
+import { DevtoolsShell } from "@/react/components/devtools-shell";
+import { createMockDevtoolsPanel } from "@/testing/create-mock-devtools-panel.util";
+import { mergeConfig } from "@/core/utils/merge-config.util";
+import { MockDevtoolsPanelsRegistry } from "@/testing/mock-devtools-panels-registry";
 
 afterEach(() => {
   cleanup();
@@ -155,7 +155,7 @@ afterEach(() => {
 /** Build a shell context with the given panels + `isOpen`. */
 function withShellContext(
   panels: MockDevtoolsPanelsRegistry,
-  isOpen: boolean
+  isOpen: boolean,
 ): {
   readonly wrapper: ({ children }: { readonly children: ReactNode }) => React.JSX.Element;
 } {
@@ -166,9 +166,9 @@ function withShellContext(
   const value: IDevtoolsContextValue = {
     config: mergeConfig(),
     panels,
-    inspector: null as unknown as IDevtoolsContextValue['inspector'],
+    inspector: null as unknown as IDevtoolsContextValue["inspector"],
     frameState,
-    analytics: analytics as IDevtoolsContextValue['analytics'],
+    analytics: analytics as IDevtoolsContextValue["analytics"],
     mountedAt: Date.now(),
   };
   const wrapper = ({ children }: { readonly children: ReactNode }): React.JSX.Element => (
@@ -177,54 +177,54 @@ function withShellContext(
   return { wrapper };
 }
 
-describe('<DevtoolsShell />', () => {
-  it('renders drawer content when open', () => {
+describe("<DevtoolsShell />", () => {
+  it("renders drawer content when open", () => {
     const registry = new MockDevtoolsPanelsRegistry();
-    registry.register(createMockDevtoolsPanel({ id: 'a', title: 'A' }));
+    registry.register(createMockDevtoolsPanel({ id: "a", title: "A" }));
     const { wrapper: Wrapper } = withShellContext(registry, true);
     const { getByTestId } = render(
       <Wrapper>
         <DevtoolsShell />
-      </Wrapper>
+      </Wrapper>,
     );
-    expect(getByTestId('drawer-backdrop').getAttribute('data-open')).toBe('true');
+    expect(getByTestId("drawer-backdrop").getAttribute("data-open")).toBe("true");
   });
 
-  it('collapses drawer content when closed', () => {
+  it("collapses drawer content when closed", () => {
     const registry = new MockDevtoolsPanelsRegistry();
     const { wrapper: Wrapper } = withShellContext(registry, false);
     const { getByTestId } = render(
       <Wrapper>
         <DevtoolsShell />
-      </Wrapper>
+      </Wrapper>,
     );
-    expect(getByTestId('drawer-backdrop').getAttribute('data-open')).toBe('false');
+    expect(getByTestId("drawer-backdrop").getAttribute("data-open")).toBe("false");
   });
 
-  it('shows the empty state when no panels are registered', () => {
+  it("shows the empty state when no panels are registered", () => {
     const registry = new MockDevtoolsPanelsRegistry();
     const { wrapper: Wrapper } = withShellContext(registry, true);
     const { getByTestId } = render(
       <Wrapper>
         <DevtoolsShell />
-      </Wrapper>
+      </Wrapper>,
     );
-    expect(getByTestId('panel-empty')).toBeDefined();
+    expect(getByTestId("panel-empty")).toBeDefined();
   });
 
-  it('renders the active panel frame when a panel is selected', () => {
+  it("renders the active panel frame when a panel is selected", () => {
     const registry = new MockDevtoolsPanelsRegistry();
-    registry.register(createMockDevtoolsPanel({ id: 'first', title: 'First' }));
-    registry.register(createMockDevtoolsPanel({ id: 'second', title: 'Second' }));
+    registry.register(createMockDevtoolsPanel({ id: "first", title: "First" }));
+    registry.register(createMockDevtoolsPanel({ id: "second", title: "Second" }));
     const { wrapper: Wrapper } = withShellContext(registry, true);
     const { getByTestId } = render(
       <Wrapper>
         <DevtoolsShell />
-      </Wrapper>
+      </Wrapper>,
     );
     // Auto-select is applied by the shell — the first panel wins
     // once the drawer is open with no active id.
-    const frame = getByTestId('panel-frame');
-    expect(frame.getAttribute('data-panel-id')).toBe('first');
+    const frame = getByTestId("panel-frame");
+    expect(frame.getAttribute("data-panel-id")).toBe("first");
   });
 });

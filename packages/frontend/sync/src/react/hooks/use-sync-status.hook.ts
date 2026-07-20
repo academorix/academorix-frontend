@@ -5,12 +5,12 @@
  *   online status, pending count, syncing flag — plus manual controls.
  */
 
-import { useCallback, useEffect, useState } from 'react';
-import { useInject } from '@stackra/container/react';
-import { NETWORK_DETECTOR, OPERATION_QUEUE, SYNC_ENGINE } from '@stackra/contracts';
-import type { NetworkDetector } from '@/core/services/network-detector.service';
-import type { OperationQueue } from '@/core/services/operation-queue.service';
-import type { SyncEngine } from '@/core/services/sync-engine.service';
+import { useCallback, useEffect, useState } from "react";
+import { useInject } from "@stackra/container/react";
+import { NETWORK_DETECTOR, OPERATION_QUEUE, SYNC_ENGINE } from "@stackra/contracts";
+import type { NetworkDetector } from "@/core/services/network-detector.service";
+import type { OperationQueue } from "@/core/services/operation-queue.service";
+import type { SyncEngine } from "@/core/services/sync-engine.service";
 
 /**
  * Result returned by {@link useSyncStatus}.

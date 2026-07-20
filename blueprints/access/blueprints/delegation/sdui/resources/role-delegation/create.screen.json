@@ -39,7 +39,11 @@
           "children": [
             {
               "kind": "Text",
-              "props": { "as": "h1", "className": "text-2xl font-semibold", "children": "Delegate a role" }
+              "props": {
+                "as": "h1",
+                "className": "text-2xl font-semibold",
+                "children": "Delegate a role"
+              }
             },
             {
               "kind": "Text",

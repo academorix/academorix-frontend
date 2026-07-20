@@ -8,7 +8,7 @@
  *   without a switch statement.
  */
 
-import type { SnoozePreset } from '../interfaces';
+import type { SnoozePreset } from "../interfaces";
 
 /**
  * Snooze durations in milliseconds.

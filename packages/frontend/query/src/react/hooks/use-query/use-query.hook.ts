@@ -22,17 +22,17 @@
  *   all come from TanStack Query.
  */
 
-import { useEffect, useMemo } from 'react';
-import { useInject, useOptionalInject } from '@stackra/container/react';
-import type { Store } from '@tanstack/store';
-import { useQuery as useTanstackQuery, useQueryClient } from '@tanstack/react-query';
-import type { QueryClient } from '@tanstack/query-core';
-import { EVENT_EMITTER, STATE_EVENTS } from '@stackra/contracts';
-import type { IEventEmitter, ILiveEvent, IQueryConfig, QueryLiveMode } from '@stackra/contracts';
-import { StateRegistry } from '@stackra/state';
-import { QUERY_CONFIG } from '@/core/tokens/query.tokens';
-import type { QueryModuleOptions } from '@/core/interfaces/query-module-options.interface';
-import { useLiveSubscription } from '../use-live-subscription';
+import { useEffect, useMemo } from "react";
+import { useInject, useOptionalInject } from "@stackra/container/react";
+import type { Store } from "@tanstack/store";
+import { useQuery as useTanstackQuery, useQueryClient } from "@tanstack/react-query";
+import type { QueryClient } from "@tanstack/query-core";
+import { EVENT_EMITTER, STATE_EVENTS } from "@stackra/contracts";
+import type { IEventEmitter, ILiveEvent, IQueryConfig, QueryLiveMode } from "@stackra/contracts";
+import { StateRegistry } from "@stackra/state";
+import { QUERY_CONFIG } from "@/core/tokens/query.tokens";
+import type { QueryModuleOptions } from "@/core/interfaces/query-module-options.interface";
+import { useLiveSubscription } from "../use-live-subscription";
 
 /**
  * Return type of `useQuery()`.
@@ -90,15 +90,15 @@ export interface UseQueryReturn<S> {
  */
 export function useQuery<S, TData = S>(
   token: symbol,
-  config: IQueryConfig<S, TData>
+  config: IQueryConfig<S, TData>,
 ): UseQueryReturn<S>;
 export function useQuery<S, TData = S>(config: IQueryConfig<S, TData>): UseQueryReturn<S>;
 export function useQuery<S, TData = S>(
   tokenOrConfig: symbol | IQueryConfig<S, TData>,
-  maybeConfig?: IQueryConfig<S, TData>
+  maybeConfig?: IQueryConfig<S, TData>,
 ): UseQueryReturn<S> {
   // ── Normalise call signature ─────────────────────────────────────
-  const hasToken = typeof tokenOrConfig === 'symbol';
+  const hasToken = typeof tokenOrConfig === "symbol";
   const token: symbol | undefined = hasToken ? tokenOrConfig : undefined;
   const config: IQueryConfig<S, TData> = hasToken
     ? (maybeConfig as IQueryConfig<S, TData>)
@@ -115,12 +115,12 @@ export function useQuery<S, TData = S>(
   const refetchInterval = config.refetchInterval ?? defaults?.defaultRefetchInterval ?? 0;
   const refetchOnWindowFocus =
     config.refetchOnWindowFocus ?? defaults?.refetchOnWindowFocus ?? false;
-  const liveMode: QueryLiveMode = config.liveMode ?? defaults?.defaultLiveMode ?? 'off';
+  const liveMode: QueryLiveMode = config.liveMode ?? defaults?.defaultLiveMode ?? "off";
 
   // ── Store name for event prefixing (only when there's a store) ───
   const storeName = useMemo(
-    () => (token ? (registry?.getNameByToken(token) ?? 'unknown') : 'query'),
-    [registry, token]
+    () => (token ? (registry?.getNameByToken(token) ?? "unknown") : "query"),
+    [registry, token],
   );
 
   // ── TanStack Query hook ──────────────────────────────────────────
@@ -161,7 +161,7 @@ export function useQuery<S, TData = S>(
 
   // ── Live-mode: subscribe to realtime channel + invalidate ────────
   useLiveSubscription({
-    enabled: liveMode !== 'off' && (config.enabled ?? true),
+    enabled: liveMode !== "off" && (config.enabled ?? true),
     ...(config.liveChannel !== undefined ? { channel: config.liveChannel } : {}),
     ...(config.liveTypes !== undefined ? { types: config.liveTypes } : {}),
     ...(config.liveConnection !== undefined ? { connection: config.liveConnection } : {}),
@@ -172,7 +172,7 @@ export function useQuery<S, TData = S>(
       } catch {
         // fail-soft — a broken observer must not stop invalidation.
       }
-      if (liveMode === 'auto') {
+      if (liveMode === "auto") {
         void tanstackClient.invalidateQueries({ queryKey: [...config.queryKey] });
       }
     },

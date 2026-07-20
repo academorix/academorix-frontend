@@ -4,7 +4,7 @@
  * @description A single home-screen shortcut.
  */
 
-import type { IManifestIcon } from './manifest-icon.interface';
+import type { IManifestIcon } from "./manifest-icon.interface";
 
 /**
  * Home-screen shortcut declared in the manifest.

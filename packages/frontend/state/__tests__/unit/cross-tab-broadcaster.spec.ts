@@ -17,16 +17,16 @@
  *   relies on.
  */
 
-import { describe, it, expect, beforeEach } from 'vitest';
-import { Store } from '@tanstack/store';
+import { describe, it, expect, beforeEach } from "vitest";
+import { Store } from "@tanstack/store";
 
-import { STATE_EVENTS, type IEventEmitter } from '@stackra/contracts';
+import { STATE_EVENTS, type IEventEmitter } from "@stackra/contracts";
 
-import { CrossTabBroadcaster } from '@/core/broadcasters/cross-tab.broadcaster';
-import { MockStateRegistry } from '@/testing/mock-state-registry';
-import { MockTabTransportManager } from '@stackra/coordinator/testing';
+import { CrossTabBroadcaster } from "@/core/broadcasters/cross-tab.broadcaster";
+import { MockStateRegistry } from "@/testing/mock-state-registry";
+import { MockTabTransportManager } from "@stackra/coordinator/testing";
 
-const CHANNEL_NAME = '__stackra_state_sync';
+const CHANNEL_NAME = "__stackra_state_sync";
 
 // ════════════════════════════════════════════════════════════════════════════════
 // Mock IEventEmitter — supports the wildcard listener contract the
@@ -54,7 +54,7 @@ class MockEmitter implements IEventEmitter {
   }
 
   public on(event: string, listener: (payload: unknown) => void | Promise<void>): () => void {
-    const wildcard = event.includes('*');
+    const wildcard = event.includes("*");
     const entry: Listener = {
       fn: listener as (...args: unknown[]) => void,
       pattern: event,
@@ -72,7 +72,7 @@ class MockEmitter implements IEventEmitter {
   }
 
   public listenerCount(event: string | symbol): number {
-    if (typeof event !== 'string') return 0;
+    if (typeof event !== "string") return 0;
     return this.listeners.filter((l) => {
       if (l.wildcard) return this.matchesWildcard(l.pattern, event);
       return l.pattern === event;
@@ -90,11 +90,11 @@ class MockEmitter implements IEventEmitter {
   }
 
   private matchesWildcard(pattern: string, event: string): boolean {
-    const pp = pattern.split('.');
-    const ep = event.split('.');
+    const pp = pattern.split(".");
+    const ep = event.split(".");
     if (pp.length !== ep.length) return false;
     for (let i = 0; i < pp.length; i++) {
-      if (pp[i] === '*') continue;
+      if (pp[i] === "*") continue;
       if (pp[i] !== ep[i]) return false;
     }
     return true;
@@ -105,9 +105,9 @@ class MockEmitter implements IEventEmitter {
 // Spec
 // ════════════════════════════════════════════════════════════════════════════════
 
-const THEME_TOKEN = Symbol.for('THEME_STORE');
+const THEME_TOKEN = Symbol.for("THEME_STORE");
 
-describe('CrossTabBroadcaster', () => {
+describe("CrossTabBroadcaster", () => {
   let emitter: MockEmitter;
   let registry: MockStateRegistry;
   let manager: MockTabTransportManager;
@@ -121,85 +121,85 @@ describe('CrossTabBroadcaster', () => {
       emitter as unknown as IEventEmitter,
       // The runtime type is StateRegistry; MockStateRegistry mirrors the
       // subset the broadcaster reads (`get(name)`).
-      registry as unknown as import('@/core/registries/state.registry').StateRegistry,
-      manager
+      registry as unknown as import("@/core/registries/state.registry").StateRegistry,
+      manager,
     );
   });
 
-  describe('onModuleInit', () => {
-    it('opens the shared channel and subscribes to store changes when both events + manager are present', () => {
+  describe("onModuleInit", () => {
+    it("opens the shared channel and subscribes to store changes when both events + manager are present", () => {
       broadcaster.onModuleInit();
       expect(manager.hasChannel(CHANNEL_NAME)).toBe(true);
       // The broadcaster registered a wildcard listener for `*.changed`.
-      expect(emitter.listenerCount('theme.changed')).toBeGreaterThanOrEqual(1);
+      expect(emitter.listenerCount("theme.changed")).toBeGreaterThanOrEqual(1);
     });
 
-    it('is inert when EventEmitter is missing', () => {
+    it("is inert when EventEmitter is missing", () => {
       const noEmitter = new CrossTabBroadcaster(
         undefined,
-        registry as unknown as import('@/core/registries/state.registry').StateRegistry,
-        manager
+        registry as unknown as import("@/core/registries/state.registry").StateRegistry,
+        manager,
       );
       noEmitter.onModuleInit();
       expect(manager.hasChannel(CHANNEL_NAME)).toBe(false);
     });
 
-    it('is inert when the tab transport manager is missing', () => {
+    it("is inert when the tab transport manager is missing", () => {
       const noManager = new CrossTabBroadcaster(
         emitter as unknown as IEventEmitter,
-        registry as unknown as import('@/core/registries/state.registry').StateRegistry,
-        undefined
+        registry as unknown as import("@/core/registries/state.registry").StateRegistry,
+        undefined,
       );
       noManager.onModuleInit();
       // Nothing to open — the listener registration is skipped.
-      expect(emitter.listenerCount('theme.changed')).toBe(0);
+      expect(emitter.listenerCount("theme.changed")).toBe(0);
     });
 
-    it('is inert when the manager reports unsupported', () => {
+    it("is inert when the manager reports unsupported", () => {
       manager.simulateUnsupported();
       broadcaster.onModuleInit();
       expect(manager.hasChannel(CHANNEL_NAME)).toBe(false);
     });
   });
 
-  describe('outbound path', () => {
+  describe("outbound path", () => {
     beforeEach(() => {
       broadcaster.onModuleInit();
     });
 
-    it('broadcasts a CrossTabMessage when an enabled store fires *.changed', async () => {
-      broadcaster.enableForStore('theme');
+    it("broadcasts a CrossTabMessage when an enabled store fires *.changed", async () => {
+      broadcaster.enableForStore("theme");
       const peer = manager.createPeer();
       const peerChan = peer.channel(CHANNEL_NAME);
       const seen: unknown[] = [];
       peerChan.subscribe((data) => seen.push(data));
 
-      await emitter.emit('theme.changed', { state: { mode: 'dark' } });
+      await emitter.emit("theme.changed", { state: { mode: "dark" } });
 
       expect(seen).toHaveLength(1);
       const msg = seen[0] as { storeName: string; state: unknown; timestamp: number };
-      expect(msg.storeName).toBe('theme');
-      expect(msg.state).toEqual({ mode: 'dark' });
-      expect(typeof msg.timestamp).toBe('number');
+      expect(msg.storeName).toBe("theme");
+      expect(msg.state).toEqual({ mode: "dark" });
+      expect(typeof msg.timestamp).toBe("number");
     });
 
-    it('does NOT broadcast when the store is not enabled', async () => {
+    it("does NOT broadcast when the store is not enabled", async () => {
       // Enable `theme` but fire `i18n.changed` — the broadcaster
       // should ignore it.
-      broadcaster.enableForStore('theme');
+      broadcaster.enableForStore("theme");
 
       const peer = manager.createPeer();
       const seen: unknown[] = [];
       peer.channel(CHANNEL_NAME).subscribe((data) => seen.push(data));
 
-      await emitter.emit('i18n.changed', { state: { locale: 'fr' } });
+      await emitter.emit("i18n.changed", { state: { locale: "fr" } });
 
       expect(seen).toHaveLength(0);
     });
 
-    it('supports multiple enabled stores simultaneously', async () => {
-      broadcaster.enableForStore('theme');
-      broadcaster.enableForStore('i18n');
+    it("supports multiple enabled stores simultaneously", async () => {
+      broadcaster.enableForStore("theme");
+      broadcaster.enableForStore("i18n");
 
       const peer = manager.createPeer();
       const seen: string[] = [];
@@ -208,37 +208,37 @@ describe('CrossTabBroadcaster', () => {
         seen.push(msg.storeName);
       });
 
-      await emitter.emit('theme.changed', { state: {} });
-      await emitter.emit('i18n.changed', { state: {} });
+      await emitter.emit("theme.changed", { state: {} });
+      await emitter.emit("i18n.changed", { state: {} });
 
-      expect(seen).toEqual(['theme', 'i18n']);
+      expect(seen).toEqual(["theme", "i18n"]);
     });
   });
 
-  describe('inbound path', () => {
+  describe("inbound path", () => {
     beforeEach(() => {
       broadcaster.onModuleInit();
     });
 
-    it('applies inbound state to the matching store via setState', () => {
-      const store = new Store({ mode: 'light' });
-      registry.registerStore('theme', THEME_TOKEN, store as Store<unknown>);
-      broadcaster.enableForStore('theme');
+    it("applies inbound state to the matching store via setState", () => {
+      const store = new Store({ mode: "light" });
+      registry.registerStore("theme", THEME_TOKEN, store as Store<unknown>);
+      broadcaster.enableForStore("theme");
 
       const peer = manager.createPeer();
       peer.channel(CHANNEL_NAME).broadcast({
-        storeName: 'theme',
-        state: { mode: 'dark' },
+        storeName: "theme",
+        state: { mode: "dark" },
         timestamp: Date.now(),
       });
 
-      expect(store.state).toEqual({ mode: 'dark' });
+      expect(store.state).toEqual({ mode: "dark" });
     });
 
-    it('emits a `.sync.received` event on the emitter after applying', async () => {
-      const store = new Store({ mode: 'light' });
-      registry.registerStore('theme', THEME_TOKEN, store as Store<unknown>);
-      broadcaster.enableForStore('theme');
+    it("emits a `.sync.received` event on the emitter after applying", async () => {
+      const store = new Store({ mode: "light" });
+      registry.registerStore("theme", THEME_TOKEN, store as Store<unknown>);
+      broadcaster.enableForStore("theme");
 
       const received: Array<[string, unknown]> = [];
       emitter.on(`theme.${STATE_EVENTS.SYNC_RECEIVED}`, (payload) => {
@@ -247,17 +247,17 @@ describe('CrossTabBroadcaster', () => {
 
       const peer = manager.createPeer();
       peer.channel(CHANNEL_NAME).broadcast({
-        storeName: 'theme',
-        state: { mode: 'dark' },
+        storeName: "theme",
+        state: { mode: "dark" },
         timestamp: 12345,
       });
 
       expect(received).toHaveLength(1);
-      expect(received[0]?.[1]).toEqual({ state: { mode: 'dark' }, timestamp: 12345 });
+      expect(received[0]?.[1]).toEqual({ state: { mode: "dark" }, timestamp: 12345 });
     });
 
-    it('sets the isSyncing guard so a synchronous *.changed emit inside setState does NOT re-broadcast', () => {
-      const store = new Store({ mode: 'light' });
+    it("sets the isSyncing guard so a synchronous *.changed emit inside setState does NOT re-broadcast", () => {
+      const store = new Store({ mode: "light" });
 
       // Simulate the `createReactiveStore` integration — every
       // setState synchronously emits `theme.changed`. If the guard
@@ -266,11 +266,11 @@ describe('CrossTabBroadcaster', () => {
       store.subscribe(() => {
         // fire the reactive change event synchronously — this is
         // the exact critical section the isSyncing guard protects.
-        void emitter.emit('theme.changed', { state: store.state });
+        void emitter.emit("theme.changed", { state: store.state });
       });
 
-      registry.registerStore('theme', THEME_TOKEN, store as Store<unknown>);
-      broadcaster.enableForStore('theme');
+      registry.registerStore("theme", THEME_TOKEN, store as Store<unknown>);
+      broadcaster.enableForStore("theme");
 
       const peer = manager.createPeer();
       const seen: unknown[] = [];
@@ -280,93 +280,93 @@ describe('CrossTabBroadcaster', () => {
       // which emits `theme.changed`. Without the guard, this would
       // ping back through outbound and re-broadcast.
       peer.channel(CHANNEL_NAME).broadcast({
-        storeName: 'theme',
-        state: { mode: 'dark' },
+        storeName: "theme",
+        state: { mode: "dark" },
         timestamp: Date.now(),
       });
 
-      expect(store.state).toEqual({ mode: 'dark' });
+      expect(store.state).toEqual({ mode: "dark" });
       // Guard held — no re-broadcast to the peer.
       expect(seen).toEqual([]);
     });
 
-    it('ignores messages for unregistered store names', () => {
-      broadcaster.enableForStore('missing');
+    it("ignores messages for unregistered store names", () => {
+      broadcaster.enableForStore("missing");
 
       const peer = manager.createPeer();
       // No store registered for `missing` — the inbound message
       // must be silently skipped.
       expect(() =>
         peer.channel(CHANNEL_NAME).broadcast({
-          storeName: 'missing',
+          storeName: "missing",
           state: { x: 1 },
           timestamp: Date.now(),
-        })
+        }),
       ).not.toThrow();
     });
 
-    it('ignores messages for disabled store names', () => {
-      const store = new Store({ mode: 'light' });
-      registry.registerStore('theme', THEME_TOKEN, store as Store<unknown>);
+    it("ignores messages for disabled store names", () => {
+      const store = new Store({ mode: "light" });
+      registry.registerStore("theme", THEME_TOKEN, store as Store<unknown>);
       // Not calling enableForStore('theme') — the message should
       // be discarded, leaving the store's state untouched.
 
       const peer = manager.createPeer();
       peer.channel(CHANNEL_NAME).broadcast({
-        storeName: 'theme',
-        state: { mode: 'dark' },
+        storeName: "theme",
+        state: { mode: "dark" },
         timestamp: Date.now(),
       });
 
-      expect(store.state).toEqual({ mode: 'light' });
+      expect(store.state).toEqual({ mode: "light" });
     });
 
-    it('ignores malformed inbound messages (missing storeName)', () => {
-      const store = new Store({ mode: 'light' });
-      registry.registerStore('theme', THEME_TOKEN, store as Store<unknown>);
-      broadcaster.enableForStore('theme');
+    it("ignores malformed inbound messages (missing storeName)", () => {
+      const store = new Store({ mode: "light" });
+      registry.registerStore("theme", THEME_TOKEN, store as Store<unknown>);
+      broadcaster.enableForStore("theme");
 
       const peer = manager.createPeer();
       expect(() => peer.channel(CHANNEL_NAME).broadcast(null)).not.toThrow();
       expect(() => peer.channel(CHANNEL_NAME).broadcast({})).not.toThrow();
 
       // Store state is untouched.
-      expect(store.state).toEqual({ mode: 'light' });
+      expect(store.state).toEqual({ mode: "light" });
     });
   });
 
-  describe('onModuleDestroy', () => {
-    it('unsubscribes but leaves the shared channel cached in the manager', () => {
+  describe("onModuleDestroy", () => {
+    it("unsubscribes but leaves the shared channel cached in the manager", () => {
       broadcaster.onModuleInit();
       expect(manager.hasChannel(CHANNEL_NAME)).toBe(true);
 
       // Snapshot state before destroy — after destroy, an inbound
       // peer broadcast must NOT update the store.
-      const store = new Store({ mode: 'light' });
-      registry.registerStore('theme', THEME_TOKEN, store as Store<unknown>);
-      broadcaster.enableForStore('theme');
+      const store = new Store({ mode: "light" });
+      registry.registerStore("theme", THEME_TOKEN, store as Store<unknown>);
+      broadcaster.enableForStore("theme");
 
       broadcaster.onModuleDestroy();
 
       const peer = manager.createPeer();
       peer.channel(CHANNEL_NAME).broadcast({
-        storeName: 'theme',
-        state: { mode: 'dark' },
+        storeName: "theme",
+        state: { mode: "dark" },
         timestamp: Date.now(),
       });
 
       // Store state unchanged because the broadcaster is unsubbed.
-      expect(store.state).toEqual({ mode: 'light' });
+      expect(store.state).toEqual({ mode: "light" });
       // But the manager still holds the channel — its lifecycle is
       // the manager's, not the broadcaster's.
       expect(manager.hasChannel(CHANNEL_NAME)).toBe(true);
     });
 
-    it('is safe to call before onModuleInit', () => {
+    it("is safe to call before onModuleInit", () => {
       const b = new CrossTabBroadcaster(
         emitter as unknown as IEventEmitter,
-        registry as unknown as import('@/core/registries/state.registry').StateRegistry,
-        manager
+        registry as unknown as import("@/core/registries/state.registry").StateRegistry,
+        manager,
       );
       expect(() => b.onModuleDestroy()).not.toThrow();
     });

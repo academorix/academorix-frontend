@@ -5,6 +5,7 @@
 Every model must define `$fillable` (whitelist) or `$guarded` (blacklist).
 
 Incorrect:
+
 ```php
 class User extends Model
 {
@@ -13,6 +14,7 @@ class User extends Model
 ```
 
 Correct:
+
 ```php
 class User extends Model
 {
@@ -31,6 +33,7 @@ Never use `$guarded = []` on models that accept user input.
 Use policies or gates in controllers. Never skip authorization.
 
 Incorrect:
+
 ```php
 public function update(UpdatePostRequest $request, Post $post)
 {
@@ -39,6 +42,7 @@ public function update(UpdatePostRequest $request, Post $post)
 ```
 
 Correct:
+
 ```php
 public function update(UpdatePostRequest $request, Post $post)
 {
@@ -62,11 +66,13 @@ public function authorize(): bool
 Always use parameter binding. Never interpolate user input into queries.
 
 Incorrect:
+
 ```php
 DB::select("SELECT * FROM users WHERE name = '{$request->name}'");
 ```
 
 Correct:
+
 ```php
 User::where('name', $request->name)->get();
 
@@ -76,23 +82,28 @@ User::whereRaw('LOWER(name) = ?', [strtolower($request->name)])->get();
 
 ## Escape Output to Prevent XSS
 
-Use `{{ }}` for HTML escaping. Only use `{!! !!}` for trusted, pre-sanitized content.
+Use `{{ }}` for HTML escaping. Only use `{!! !!}` for trusted, pre-sanitized
+content.
 
 Incorrect:
+
 ```blade
 {!! $user->bio !!}
 ```
 
 Correct:
+
 ```blade
 {{ $user->bio }}
 ```
 
 ## CSRF Protection
 
-Include `@csrf` in all POST/PUT/DELETE Blade forms. In Inertia apps, the `@csrf` directive is automatically applied.
+Include `@csrf` in all POST/PUT/DELETE Blade forms. In Inertia apps, the `@csrf`
+directive is automatically applied.
 
 Incorrect:
+
 ```blade
 <form method="POST" action="/posts">
     <input type="text" name="title">
@@ -100,6 +111,7 @@ Incorrect:
 ```
 
 Correct:
+
 ```blade
 <form method="POST" action="/posts">
     @csrf
@@ -121,7 +133,9 @@ Route::post('/login', LoginController::class)->middleware('throttle:login');
 
 ## Validate File Uploads
 
-Validate extension, MIME type, and size. The `mimes` rule checks extensions; use `mimetypes` for actual MIME type validation. Never trust client-provided filenames.
+Validate extension, MIME type, and size. The `mimes` rule checks extensions; use
+`mimetypes` for actual MIME type validation. Never trust client-provided
+filenames.
 
 ```php
 public function rules(): array
@@ -143,11 +157,13 @@ $path = $request->file('avatar')->store('avatars', 'public');
 Never commit `.env`. Access secrets via `config()` only.
 
 Incorrect:
+
 ```php
 $key = env('API_KEY');
 ```
 
 Correct:
+
 ```php
 // config/services.php
 'api_key' => env('API_KEY'),
@@ -158,7 +174,8 @@ $key = config('services.api_key');
 
 ## Audit Dependencies
 
-Run `composer audit` periodically to check for known vulnerabilities in dependencies. Automate this in CI to catch issues before deployment.
+Run `composer audit` periodically to check for known vulnerabilities in
+dependencies. Automate this in CI to catch issues before deployment.
 
 ```bash
 composer audit
@@ -169,6 +186,7 @@ composer audit
 Use `encrypted` cast for API keys/tokens and mark the attribute as `hidden`.
 
 Incorrect:
+
 ```php
 class Integration extends Model
 {
@@ -182,6 +200,7 @@ class Integration extends Model
 ```
 
 Correct:
+
 ```php
 class Integration extends Model
 {

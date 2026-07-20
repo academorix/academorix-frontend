@@ -4,15 +4,91 @@
   "title": "marketplace-fee — error codes",
   "namespace": "marketplace_fee",
   "errors": [
-    { "code": "FEE_SCHEDULE_NOT_FOUND", "http": 404, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "marketplace_fee.errors.schedule_not_found" },
-    { "code": "FEE_SCHEDULE_ALREADY_ACTIVE", "http": 409, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "marketplace_fee.errors.schedule_already_active" },
-    { "code": "FEE_SCHEDULE_RETROACTIVE_FORBIDDEN", "http": 422, "retryable": false, "user_facing": true, "audit_severity": "warn", "i18n_key": "marketplace_fee.errors.schedule_retroactive_forbidden", "description": "Cannot activate a schedule with effective_from in the past. Increases + decreases apply forward only." },
-    { "code": "FEE_SCHEDULE_INVALID_TIERS", "http": 422, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "marketplace_fee.errors.schedule_invalid_tiers", "description": "Tier config invalid: rates must monotonically decrease, up_to_minor must monotonically increase, last tier must be open-ended (null up_to)." },
-    { "code": "FEE_SCHEDULE_UPDATE_LOCKED", "http": 422, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "marketplace_fee.errors.schedule_update_locked", "description": "Cannot update an active schedule — create a new version instead." },
-    { "code": "FEE_APPLICATION_NOT_FOUND", "http": 404, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "marketplace_fee.errors.application_not_found" },
-    { "code": "FEE_APPLICATION_NO_ACTIVE_SCHEDULE", "http": 422, "retryable": false, "user_facing": false, "audit_severity": "warn", "i18n_key": "marketplace_fee.errors.no_active_schedule", "description": "No active fee schedule for this tenant + application at charge time. Charge proceeds with fee=0 but this is logged as a WARN incident." },
-    { "code": "FEE_PAYOUT_NOT_FOUND", "http": 404, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "marketplace_fee.errors.payout_not_found" },
-    { "code": "FEE_PAYOUT_NOT_PENDING", "http": 409, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "marketplace_fee.errors.payout_not_pending", "description": "settle action only valid when status='pending'." },
-    { "code": "FEE_PAYOUT_STRIPE_TRANSFER_FAILED", "http": 502, "retryable": true, "user_facing": false, "audit_severity": "warn", "i18n_key": "marketplace_fee.errors.stripe_transfer_failed", "description": "Stripe transfer API returned error. Retry with exponential backoff." }
+    {
+      "code": "FEE_SCHEDULE_NOT_FOUND",
+      "http": 404,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "marketplace_fee.errors.schedule_not_found"
+    },
+    {
+      "code": "FEE_SCHEDULE_ALREADY_ACTIVE",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "marketplace_fee.errors.schedule_already_active"
+    },
+    {
+      "code": "FEE_SCHEDULE_RETROACTIVE_FORBIDDEN",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "warn",
+      "i18n_key": "marketplace_fee.errors.schedule_retroactive_forbidden",
+      "description": "Cannot activate a schedule with effective_from in the past. Increases + decreases apply forward only."
+    },
+    {
+      "code": "FEE_SCHEDULE_INVALID_TIERS",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "marketplace_fee.errors.schedule_invalid_tiers",
+      "description": "Tier config invalid: rates must monotonically decrease, up_to_minor must monotonically increase, last tier must be open-ended (null up_to)."
+    },
+    {
+      "code": "FEE_SCHEDULE_UPDATE_LOCKED",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "marketplace_fee.errors.schedule_update_locked",
+      "description": "Cannot update an active schedule — create a new version instead."
+    },
+    {
+      "code": "FEE_APPLICATION_NOT_FOUND",
+      "http": 404,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "marketplace_fee.errors.application_not_found"
+    },
+    {
+      "code": "FEE_APPLICATION_NO_ACTIVE_SCHEDULE",
+      "http": 422,
+      "retryable": false,
+      "user_facing": false,
+      "audit_severity": "warn",
+      "i18n_key": "marketplace_fee.errors.no_active_schedule",
+      "description": "No active fee schedule for this tenant + application at charge time. Charge proceeds with fee=0 but this is logged as a WARN incident."
+    },
+    {
+      "code": "FEE_PAYOUT_NOT_FOUND",
+      "http": 404,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "marketplace_fee.errors.payout_not_found"
+    },
+    {
+      "code": "FEE_PAYOUT_NOT_PENDING",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "marketplace_fee.errors.payout_not_pending",
+      "description": "settle action only valid when status='pending'."
+    },
+    {
+      "code": "FEE_PAYOUT_STRIPE_TRANSFER_FAILED",
+      "http": 502,
+      "retryable": true,
+      "user_facing": false,
+      "audit_severity": "warn",
+      "i18n_key": "marketplace_fee.errors.stripe_transfer_failed",
+      "description": "Stripe transfer API returned error. Retry with exponential backoff."
+    }
   ]
 }

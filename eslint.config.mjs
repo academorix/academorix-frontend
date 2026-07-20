@@ -1,4 +1,4 @@
-import react from "@academorix/eslint-config/react";
+import react from "@academorix/config-eslint/react";
 
 /**
  * Root ESLint config. Used when linting from the repo root (e.g. lint-staged).
@@ -18,7 +18,7 @@ export default [
   {
     // Ported pointer-driven components (pattern-lock, pin-lock, file-upload)
     // can't cleanly satisfy these; keep them visible as warnings.
-    files: ["packages/ui/**/*.{ts,tsx}"],
+    files: ["packages/frontend/ui/**/*.{ts,tsx}"],
     rules: {
       "jsx-a11y/click-events-have-key-events": "warn",
       "jsx-a11y/no-noninteractive-element-interactions": "warn",

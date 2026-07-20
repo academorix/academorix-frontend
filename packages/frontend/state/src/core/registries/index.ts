@@ -4,4 +4,4 @@
  * @description Registries barrel export.
  */
 
-export { StateRegistry, type StoreEntry } from './state.registry';
+export { StateRegistry, type StoreEntry } from "./state.registry";

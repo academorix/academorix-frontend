@@ -10,7 +10,10 @@
   },
   "kinds": [
     { "kind": "boolean", "description": "On/off feature enablement." },
-    { "kind": "pool", "description": "Consumable pool decremented on submit. Resets on period roll." }
+    {
+      "kind": "pool",
+      "description": "Consumable pool decremented on submit. Resets on period roll."
+    }
   ],
   "entitlements": [
     {

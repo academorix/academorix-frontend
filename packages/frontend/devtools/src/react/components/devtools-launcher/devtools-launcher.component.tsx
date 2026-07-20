@@ -9,13 +9,13 @@
  *   feedback and a `Chip` for the label.
  */
 
-import { useCallback, type ReactElement } from 'react';
-import { Chip, PressableFeedback } from '@stackra/ui/react';
-import { WrenchScrewdriverIcon } from '@stackra/ui/icons/heroicon/outline';
+import { useCallback, type ReactElement } from "react";
+import { Chip, PressableFeedback } from "@stackra/ui/react";
+import { WrenchScrewdriverIcon } from "@stackra/ui/icons/heroicon/outline";
 
-import { useDevtoolsFrameState } from '../../hooks/use-devtools-frame-state.hook';
-import { useDevtoolsPanels } from '../../hooks/use-devtools-panels.hook';
-import type { DevtoolsLauncherProps } from './devtools-launcher.interface';
+import { useDevtoolsFrameState } from "../../hooks/use-devtools-frame-state.hook";
+import { useDevtoolsPanels } from "../../hooks/use-devtools-panels.hook";
+import type { DevtoolsLauncherProps } from "./devtools-launcher.interface";
 
 /**
  * The floating launcher pill.
@@ -40,7 +40,7 @@ export function DevtoolsLauncher({ className }: DevtoolsLauncherProps): ReactEle
   return (
     <PressableFeedback
       aria-label="Open devtools"
-      className={className ?? 'fixed bottom-4 right-4 z-[2147483000] flex items-center gap-2'}
+      className={className ?? "fixed right-4 bottom-4 z-[2147483000] flex items-center gap-2"}
       onClick={handlePress}
       data-devtools-launcher=""
     >
@@ -49,7 +49,7 @@ export function DevtoolsLauncher({ className }: DevtoolsLauncherProps): ReactEle
           <span className="flex items-center gap-1.5">
             <WrenchScrewdriverIcon aria-hidden="true" className="size-3.5" />
             <span>Devtools</span>
-            <span className="tabular-nums text-xs opacity-70">{panels.length}</span>
+            <span className="text-xs tabular-nums opacity-70">{panels.length}</span>
           </span>
         </Chip.Label>
       </Chip>

@@ -8,7 +8,7 @@
  *   layer their real stores on top via `forRoot`'s `stores` field.
  */
 
-import type { IStorageConfig } from '@stackra/contracts';
+import type { IStorageConfig } from "@stackra/contracts";
 
 /**
  * Default merged config bound under `STORAGE_CONFIG` when the caller
@@ -19,8 +19,8 @@ import type { IStorageConfig } from '@stackra/contracts';
  *   so callers never mutate this constant directly.
  */
 export const DEFAULT_STORAGE_CONFIG: IStorageConfig = {
-  default: 'memory',
+  default: "memory",
   stores: {
-    memory: { driver: 'memory' },
+    memory: { driver: "memory" },
   },
 };

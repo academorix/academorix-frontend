@@ -59,11 +59,18 @@
               "children": [
                 {
                   "kind": "Text",
-                  "props": { "as": "h1", "className": "text-2xl font-semibold", "children": "Athletes" }
+                  "props": {
+                    "as": "h1",
+                    "className": "text-2xl font-semibold",
+                    "children": "Athletes"
+                  }
                 },
                 {
                   "kind": "Text",
-                  "props": { "className": "text-sm text-muted", "children": "The people being coached at your academy." }
+                  "props": {
+                    "className": "text-sm text-muted",
+                    "children": "The people being coached at your academy."
+                  }
                 }
               ]
             },
@@ -186,9 +193,21 @@
             "kind": "View",
             "props": { "className": "text-center py-12" },
             "children": [
-              { "kind": "Icon", "props": { "name": "user-group", "className": "size-12 mx-auto text-muted" } },
-              { "kind": "Text", "props": { "className": "mt-4 text-lg font-medium", "children": "No athletes yet" } },
-              { "kind": "Text", "props": { "className": "text-sm text-muted", "children": "Add your first athlete to get started." } }
+              {
+                "kind": "Icon",
+                "props": { "name": "user-group", "className": "size-12 mx-auto text-muted" }
+              },
+              {
+                "kind": "Text",
+                "props": { "className": "mt-4 text-lg font-medium", "children": "No athletes yet" }
+              },
+              {
+                "kind": "Text",
+                "props": {
+                  "className": "text-sm text-muted",
+                  "children": "Add your first athlete to get started."
+                }
+              }
             ]
           },
           "columns": [
@@ -203,7 +222,9 @@
                     "kind": "Avatar",
                     "props": { "size": "sm" },
                     "bindings": {
-                      "src": { "$expr": "row.consent_photo_release ? row.profile_photo_url : null" },
+                      "src": {
+                        "$expr": "row.consent_photo_release ? row.profile_photo_url : null"
+                      },
                       "name": { "$ref": "row.display_name" }
                     }
                   },
@@ -231,7 +252,11 @@
                       {
                         "kind": "Text",
                         "props": { "className": "text-xs text-muted" },
-                        "bindings": { "children": { "$expr": "row.age_years ? row.age_years + ' years old' : ''" } }
+                        "bindings": {
+                          "children": {
+                            "$expr": "row.age_years ? row.age_years + ' years old' : ''"
+                          }
+                        }
                       }
                     ]
                   }

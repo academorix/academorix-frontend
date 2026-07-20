@@ -1,7 +1,7 @@
 {
   "name": "@stackra/coordinator",
   "version": "0.1.0",
-  "description": "Cross-tab coordination for browser apps — leader election, distributed locks, and event relay across tabs.",
+  "description": "Cross-tab coordination for browser apps \u2014 leader election, distributed locks, and event relay across tabs.",
   "license": "MIT",
   "author": {
     "name": "Stackra L.L.C",
@@ -87,6 +87,8 @@
     }
   },
   "devDependencies": {
+    "@academorix/config-tsconfig": "workspace:*",
+    "@academorix/config-tsup": "workspace:*",
     "@stackra/container": "workspace:*",
     "@stackra/contracts": "workspace:*",
     "@stackra/support": "workspace:*",

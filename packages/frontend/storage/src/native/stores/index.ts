@@ -4,4 +4,4 @@
  * @description Barrel export for the native-only stores.
  */
 
-export { AsyncStorageStore, type AsyncStorageStoreConfig } from './async-storage.store';
+export { AsyncStorageStore, type AsyncStorageStoreConfig } from "./async-storage.store";

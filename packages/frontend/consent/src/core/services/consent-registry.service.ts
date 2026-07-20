@@ -9,12 +9,12 @@
  *   factory).
  */
 
-import { Injectable, Inject } from '@stackra/container';
-import type { OnModuleInit } from '@stackra/contracts';
+import { Injectable, Inject } from "@stackra/container";
+import type { OnModuleInit } from "@stackra/contracts";
 
-import { CONSENT_CONFIG } from '@stackra/contracts';
-import type { IConsentCategory } from '@stackra/contracts';
-import type { IConsentModuleOptions } from '../types';
+import { CONSENT_CONFIG } from "@stackra/contracts";
+import type { IConsentCategory } from "@stackra/contracts";
+import type { IConsentModuleOptions } from "../types";
 
 /**
  * Consent category registry.

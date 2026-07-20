@@ -50,19 +50,34 @@
     "engine": "postgres",
     "description": "Third-level table. Unique on (discipline_id, slug) partial.",
     "columns": {
-      "id": { "type": "string", "length": 30, "primary": true, "description": "Prefixed ULID: `pos_<26 chars>`." },
+      "id": {
+        "type": "string",
+        "length": 30,
+        "primary": true,
+        "description": "Prefixed ULID: `pos_<26 chars>`."
+      },
       "tenant_id": {
         "type": "string",
         "length": 30,
         "nullable": true,
-        "foreign": { "table": "tenants", "column": "id", "onUpdate": "cascade", "onDelete": "cascade" },
+        "foreign": {
+          "table": "tenants",
+          "column": "id",
+          "onUpdate": "cascade",
+          "onDelete": "cascade"
+        },
         "description": "NULL = platform-scoped. Non-null = tenant custom."
       },
       "discipline_id": {
         "type": "string",
         "length": 30,
         "nullable": false,
-        "foreign": { "table": "disciplines", "column": "id", "onUpdate": "cascade", "onDelete": "restrict" },
+        "foreign": {
+          "table": "disciplines",
+          "column": "id",
+          "onUpdate": "cascade",
+          "onDelete": "restrict"
+        },
         "description": "The parent Discipline. RESTRICT. IMMUTABLE post-create."
       },
       "name": {
@@ -77,7 +92,11 @@
         "nullable": false,
         "description": "URL-safe identifier. Convention: prefix with the parent Sport's slug (e.g. `football_goalkeeper`, `basketball_point_guard`, `swimming_freestyler`). Regex `^[a-z][a-z0-9_]*$`. IMMUTABLE post-create."
       },
-      "description": { "type": "text", "nullable": true, "description": "Free-form description. Localizable." },
+      "description": {
+        "type": "text",
+        "nullable": true,
+        "description": "Free-form description. Localizable."
+      },
       "is_field_position": {
         "type": "boolean",
         "nullable": false,
@@ -106,7 +125,12 @@
       },
       "sort_order": { "type": "integer", "nullable": false, "default": 100 },
       "is_active": { "type": "boolean", "nullable": false, "default": true },
-      "is_platform_seeded": { "type": "boolean", "nullable": false, "default": false, "description": "IMMUTABLE." },
+      "is_platform_seeded": {
+        "type": "boolean",
+        "nullable": false,
+        "default": false,
+        "description": "IMMUTABLE."
+      },
       "metadata": { "type": "jsonb", "nullable": true },
       "created_by": { "type": "string", "length": 30, "nullable": true },
       "updated_by": { "type": "string", "length": 30, "nullable": true },
@@ -123,12 +147,36 @@
         "predicate": "deleted_at IS NULL"
       },
       { "columns": ["tenant_id", "slug"], "unique": false, "name": "positions_tenant_slug_idx" },
-      { "columns": ["discipline_id", "sort_order"], "unique": false, "name": "positions_picker_idx" },
-      { "columns": ["discipline_id", "is_field_position"], "unique": false, "name": "positions_field_filter_idx", "description": "Filter query for on-field vs bench pickers." },
-      { "columns": ["is_platform_seeded", "is_active"], "unique": false, "name": "positions_flags_idx" }
+      {
+        "columns": ["discipline_id", "sort_order"],
+        "unique": false,
+        "name": "positions_picker_idx"
+      },
+      {
+        "columns": ["discipline_id", "is_field_position"],
+        "unique": false,
+        "name": "positions_field_filter_idx",
+        "description": "Filter query for on-field vs bench pickers."
+      },
+      {
+        "columns": ["is_platform_seeded", "is_active"],
+        "unique": false,
+        "name": "positions_flags_idx"
+      }
     ]
   },
-  "required": ["id", "discipline_id", "name", "slug", "is_field_position", "sort_order", "is_active", "is_platform_seeded", "created_at", "updated_at"],
+  "required": [
+    "id",
+    "discipline_id",
+    "name",
+    "slug",
+    "is_field_position",
+    "sort_order",
+    "is_active",
+    "is_platform_seeded",
+    "created_at",
+    "updated_at"
+  ],
   "properties": {
     "id": { "type": "string", "pattern": "^pos_[0-9A-HJKMNP-TV-Z]{26}$" },
     "tenant_id": { "type": ["string", "null"], "pattern": "^ten_[0-9A-HJKMNP-TV-Z]{26}$" },

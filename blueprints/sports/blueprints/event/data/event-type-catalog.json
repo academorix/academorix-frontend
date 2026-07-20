@@ -7,7 +7,13 @@
       "label": "Tournament",
       "typical_duration_hours": 8,
       "typical_duration_days": 3,
-      "compatible_formats": ["single_elimination", "double_elimination", "round_robin", "group_stage", "seeded_bracket"],
+      "compatible_formats": [
+        "single_elimination",
+        "double_elimination",
+        "round_robin",
+        "group_stage",
+        "seeded_bracket"
+      ],
       "business_types": ["sports_academy", "federation", "club"],
       "description": "Competitive multi-round tournament. Teams or individuals compete for placement + prize pool."
     },

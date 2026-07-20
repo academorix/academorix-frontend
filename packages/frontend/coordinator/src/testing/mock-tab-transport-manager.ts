@@ -13,7 +13,7 @@
  *   the full fan-out.
  */
 
-import type { ITabTransport, ITabTransportManager, TabTransportListener } from '@stackra/contracts';
+import type { ITabTransport, ITabTransportManager, TabTransportListener } from "@stackra/contracts";
 
 // ════════════════════════════════════════════════════════════════════════════════
 // Channel bus (shared by all transports opened on a channel name)
@@ -66,7 +66,7 @@ export class MockTabTransport implements ITabTransport {
    */
   public constructor(
     public readonly channelName: string,
-    private readonly bus: MockChannelBus
+    private readonly bus: MockChannelBus,
   ) {
     this.bus.transports.add(this);
   }

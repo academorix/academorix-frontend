@@ -15,7 +15,9 @@
     "incrementing": false,
     "model": "Academorix\\Growth\\Attribution\\Models\\AttributionTouchpoint",
     "interface": "Academorix\\Growth\\Attribution\\Contracts\\Data\\AttributionTouchpointInterface",
-    "implements": ["Academorix\\Growth\\Attribution\\Contracts\\Data\\AttributionTouchpointInterface"],
+    "implements": [
+      "Academorix\\Growth\\Attribution\\Contracts\\Data\\AttributionTouchpointInterface"
+    ],
     "traits": [
       "HasFactory",
       "HasUlids",

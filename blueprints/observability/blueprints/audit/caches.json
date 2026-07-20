@@ -44,9 +44,7 @@
       "description": "Freeze marker written by FreezeRetentionOnTenantSuspendedListener when a tenant is suspended. When present, PurgeExpiredAuditsJob skips the tenant. Removed by ThawRetentionOnTenantResumedListener on resume.",
       "ttlSeconds": null,
       "tags": ["audit", "retention", "freeze", "tenant"],
-      "invalidatedBy": [
-        "TenantResumed event"
-      ]
+      "invalidatedBy": ["TenantResumed event"]
     },
     {
       "pattern": "audit:fire_rate:baseline:{tenant_id}:{day_bucket}",

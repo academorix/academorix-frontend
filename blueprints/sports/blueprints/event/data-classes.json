@@ -60,9 +60,7 @@
       "EventFacility.sort_order",
       "EventFacility.metadata"
     ],
-    "confidential": [
-      "Event.livestream_password"
-    ],
+    "confidential": ["Event.livestream_password"],
     "restricted": [],
     "regulated_minor": [
       "Event.min_age (when set to a value <= 18)",

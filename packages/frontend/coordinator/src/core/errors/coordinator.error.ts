@@ -15,11 +15,11 @@ export class CoordinatorError extends Error {
 
   public constructor(
     message: string,
-    code: string = 'COORDINATOR_ERROR',
-    details?: Record<string, unknown>
+    code: string = "COORDINATOR_ERROR",
+    details?: Record<string, unknown>,
   ) {
     super(message);
-    this.name = 'CoordinatorError';
+    this.name = "CoordinatorError";
     this.code = code;
     this.details = details;
     Object.setPrototypeOf(this, CoordinatorError.prototype);

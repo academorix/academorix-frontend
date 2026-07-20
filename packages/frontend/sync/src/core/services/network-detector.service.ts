@@ -7,17 +7,17 @@
  *   shared event bus every time the debounced status flips.
  */
 
-import { Inject, Injectable, Optional } from '@stackra/container';
-import { BehaviorSubject, fromEvent, merge, type Observable } from 'rxjs';
-import { debounceTime, distinctUntilChanged, map, startWith } from 'rxjs/operators';
+import { Inject, Injectable, Optional } from "@stackra/container";
+import { BehaviorSubject, fromEvent, merge, type Observable } from "rxjs";
+import { debounceTime, distinctUntilChanged, map, startWith } from "rxjs/operators";
 import type {
   IConnectivityCheck,
   IEventEmitter,
   INetworkDetectorConfig,
   INetworkStatus,
-} from '@stackra/contracts';
-import { EVENT_EMITTER, NETWORK_DETECTOR_CONFIG, NETWORK_STATUS_CHANGED } from '@stackra/contracts';
-import { Logger } from '@stackra/logger';
+} from "@stackra/contracts";
+import { EVENT_EMITTER, NETWORK_DETECTOR_CONFIG, NETWORK_STATUS_CHANGED } from "@stackra/contracts";
+import { Logger } from "@stackra/logger";
 
 /**
  * NetworkDetector — monitors connectivity with debouncing and an optional
@@ -41,24 +41,24 @@ export class NetworkDetector {
 
   public constructor(
     @Optional() @Inject(NETWORK_DETECTOR_CONFIG) config: INetworkDetectorConfig = {},
-    @Optional() @Inject(EVENT_EMITTER) private readonly events?: IEventEmitter
+    @Optional() @Inject(EVENT_EMITTER) private readonly events?: IEventEmitter,
   ) {
     this.config = {
       customCheck:
         config.customCheck ??
-        (() => Promise.resolve(typeof navigator === 'undefined' ? true : navigator.onLine)),
+        (() => Promise.resolve(typeof navigator === "undefined" ? true : navigator.onLine)),
       debounceTime: config.debounceTime ?? 1000,
       enableCustomChecks: config.enableCustomChecks ?? false,
       customCheckInterval: config.customCheckInterval ?? 30_000,
     };
 
     this.statusSubject = new BehaviorSubject<INetworkStatus>({
-      isOnline: typeof navigator === 'undefined' ? true : navigator.onLine,
+      isOnline: typeof navigator === "undefined" ? true : navigator.onLine,
     });
 
     this.status$ = this.statusSubject.asObservable().pipe(
       debounceTime(this.config.debounceTime),
-      distinctUntilChanged((prev, curr) => prev.isOnline === curr.isOnline)
+      distinctUntilChanged((prev, curr) => prev.isOnline === curr.isOnline),
     );
 
     this.startMonitoring();
@@ -87,9 +87,9 @@ export class NetworkDetector {
   }
 
   private startMonitoring(): void {
-    if (typeof window !== 'undefined') {
-      const online$ = fromEvent(window, 'online').pipe(map(() => true));
-      const offline$ = fromEvent(window, 'offline').pipe(map(() => false));
+    if (typeof window !== "undefined") {
+      const online$ = fromEvent(window, "online").pipe(map(() => true));
+      const offline$ = fromEvent(window, "offline").pipe(map(() => false));
 
       merge(online$, offline$)
         .pipe(startWith(navigator.onLine))
@@ -99,7 +99,7 @@ export class NetworkDetector {
     if (this.config.enableCustomChecks) {
       this.customCheckInterval = setInterval(
         () => void this.checkConnectivity(),
-        this.config.customCheckInterval
+        this.config.customCheckInterval,
       );
     }
   }
@@ -116,13 +116,13 @@ export class NetworkDetector {
 
   private dispatchStatusChangedEvent(
     status: INetworkStatus,
-    previousStatus?: INetworkStatus
+    previousStatus?: INetworkStatus,
   ): void {
     if (!this.events) return;
     try {
       void this.events.emit(NETWORK_STATUS_CHANGED, { status, previousStatus });
     } catch (error: unknown) {
-      this.logger.warn('[NetworkDetector] Failed to emit status change', { error });
+      this.logger.warn("[NetworkDetector] Failed to emit status change", { error });
     }
   }
 

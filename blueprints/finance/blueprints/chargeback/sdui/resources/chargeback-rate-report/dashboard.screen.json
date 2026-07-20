@@ -19,7 +19,11 @@
     }
   ],
   "broadcasts": [
-    { "channel": "tenant.{tenantId}.chargebacks.rate-alerts", "onEvent": ["ChargebackRateThresholdExceeded"], "action": "refresh" }
+    {
+      "channel": "tenant.{tenantId}.chargebacks.rate-alerts",
+      "onEvent": ["ChargebackRateThresholdExceeded"],
+      "action": "refresh"
+    }
   ],
   "nodes": [
     {
@@ -34,8 +38,21 @@
             {
               "kind": "View",
               "children": [
-                { "kind": "Text", "props": { "as": "h1", "className": "text-2xl font-semibold", "children": "Chargeback rate" } },
-                { "kind": "Text", "props": { "className": "text-sm text-muted", "children": "Rolling 60-day rate per network with VDMP/MDMP threshold monitoring." } }
+                {
+                  "kind": "Text",
+                  "props": {
+                    "as": "h1",
+                    "className": "text-2xl font-semibold",
+                    "children": "Chargeback rate"
+                  }
+                },
+                {
+                  "kind": "Text",
+                  "props": {
+                    "className": "text-sm text-muted",
+                    "children": "Rolling 60-day rate per network with VDMP/MDMP threshold monitoring."
+                  }
+                }
               ]
             },
             {
@@ -52,14 +69,26 @@
                     { "id": "180", "label": "Last 6 months" }
                   ],
                   "actions": {
-                    "onSelectionChange": { "kind": "filter.set", "field": "period_days", "valueExpr": "$selectedKey" }
+                    "onSelectionChange": {
+                      "kind": "filter.set",
+                      "field": "period_days",
+                      "valueExpr": "$selectedKey"
+                    }
                   }
                 },
                 {
                   "kind": "Button",
-                  "props": { "variant": "outline", "leadingIcon": "arrow-down-tray", "children": "Export CSV" },
+                  "props": {
+                    "variant": "outline",
+                    "leadingIcon": "arrow-down-tray",
+                    "children": "Export CSV"
+                  },
                   "actions": {
-                    "onPress": { "kind": "http.get", "url": "/api/v1/reports/chargeback-rate?format=csv", "responseType": "download" }
+                    "onPress": {
+                      "kind": "http.get",
+                      "url": "/api/v1/reports/chargeback-rate?format=csv",
+                      "responseType": "download"
+                    }
                   }
                 }
               ]
@@ -73,7 +102,13 @@
             "hidden": { "$expr": "!report.any_threshold_exceeded" }
           },
           "children": [
-            { "kind": "Text", "props": { "className": "font-medium", "children": "Merchant-account risk: threshold exceeded" } },
+            {
+              "kind": "Text",
+              "props": {
+                "className": "font-medium",
+                "children": "Merchant-account risk: threshold exceeded"
+              }
+            },
             {
               "kind": "Text",
               "props": { "className": "text-sm" },
@@ -93,7 +128,13 @@
               "kind": "Card",
               "props": { "className": "p-4" },
               "children": [
-                { "kind": "Text", "props": { "className": "text-xs text-muted uppercase", "children": "Total chargebacks" } },
+                {
+                  "kind": "Text",
+                  "props": {
+                    "className": "text-xs text-muted uppercase",
+                    "children": "Total chargebacks"
+                  }
+                },
                 {
                   "kind": "Text",
                   "props": { "className": "text-2xl font-semibold" },
@@ -105,7 +146,10 @@
               "kind": "Card",
               "props": { "className": "p-4" },
               "children": [
-                { "kind": "Text", "props": { "className": "text-xs text-muted uppercase", "children": "Total lost" } },
+                {
+                  "kind": "Text",
+                  "props": { "className": "text-xs text-muted uppercase", "children": "Total lost" }
+                },
                 {
                   "kind": "Text",
                   "props": { "className": "text-2xl font-semibold" },
@@ -121,7 +165,13 @@
               "kind": "Card",
               "props": { "className": "p-4" },
               "children": [
-                { "kind": "Text", "props": { "className": "text-xs text-muted uppercase", "children": "Network fees" } },
+                {
+                  "kind": "Text",
+                  "props": {
+                    "className": "text-xs text-muted uppercase",
+                    "children": "Network fees"
+                  }
+                },
                 {
                   "kind": "Text",
                   "props": { "className": "text-2xl font-semibold" },
@@ -137,7 +187,10 @@
               "kind": "Card",
               "props": { "className": "p-4" },
               "children": [
-                { "kind": "Text", "props": { "className": "text-xs text-muted uppercase", "children": "Win rate" } },
+                {
+                  "kind": "Text",
+                  "props": { "className": "text-xs text-muted uppercase", "children": "Win rate" }
+                },
                 {
                   "kind": "Text",
                   "props": { "className": "text-2xl font-semibold" },
@@ -153,7 +206,10 @@
           "kind": "Card",
           "props": { "className": "p-6" },
           "children": [
-            { "kind": "Text", "props": { "className": "font-medium mb-4", "children": "Rate by network" } },
+            {
+              "kind": "Text",
+              "props": { "className": "font-medium mb-4", "children": "Rate by network" }
+            },
             {
               "kind": "Grid",
               "props": { "className": "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4" },
@@ -190,7 +246,9 @@
                   {
                     "kind": "Text",
                     "props": { "className": "text-2xl font-semibold" },
-                    "bindings": { "children": { "$expr": "(row.rate_percent * 100).toFixed(2) + '%'" } }
+                    "bindings": {
+                      "children": { "$expr": "(row.rate_percent * 100).toFixed(2) + '%'" }
+                    }
                   },
                   {
                     "kind": "Text",
@@ -214,7 +272,13 @@
               "kind": "Card",
               "props": { "className": "p-6" },
               "children": [
-                { "kind": "Text", "props": { "className": "font-medium mb-4", "children": "Reason category distribution" } },
+                {
+                  "kind": "Text",
+                  "props": {
+                    "className": "font-medium mb-4",
+                    "children": "Reason category distribution"
+                  }
+                },
                 {
                   "kind": "Text",
                   "props": { "className": "text-sm text-muted" },
@@ -226,7 +290,10 @@
               "kind": "Card",
               "props": { "className": "p-6" },
               "children": [
-                { "kind": "Text", "props": { "className": "font-medium mb-4", "children": "Provider distribution" } },
+                {
+                  "kind": "Text",
+                  "props": { "className": "font-medium mb-4", "children": "Provider distribution" }
+                },
                 {
                   "kind": "Text",
                   "props": { "className": "text-sm text-muted" },
@@ -240,7 +307,10 @@
           "kind": "Card",
           "props": { "className": "p-6" },
           "children": [
-            { "kind": "Text", "props": { "className": "font-medium mb-4", "children": "Top reason codes" } },
+            {
+              "kind": "Text",
+              "props": { "className": "font-medium mb-4", "children": "Top reason codes" }
+            },
             {
               "kind": "Text",
               "props": { "className": "text-sm text-muted" },

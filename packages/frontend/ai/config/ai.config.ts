@@ -9,8 +9,8 @@
  *   other field falls back to the package defaults when omitted.
  */
 
-import type { IAiCredentials } from '@stackra/contracts';
-import { defineConfig } from '@stackra/ai';
+import type { IAiCredentials } from "@stackra/contracts";
+import { defineConfig } from "@stackra/ai";
 
 /**
  * A placeholder auth provider used purely to make this sample type-check.
@@ -29,7 +29,7 @@ const sampleAuthProvider = {
  * Sample authored config.
  */
 export const sampleAiConfig = defineConfig({
-  baseUrl: 'https://api.example.com',
+  baseUrl: "https://api.example.com",
   authProvider: sampleAuthProvider,
   context: {
     debounceMs: 500,

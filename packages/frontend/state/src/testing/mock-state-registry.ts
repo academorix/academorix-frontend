@@ -9,7 +9,7 @@
  *   deterministically.
  */
 
-import type { Store } from '@tanstack/store';
+import type { Store } from "@tanstack/store";
 
 /** Metadata entry for a registered store (mirrors the runtime `StoreEntry`). */
 export interface MockStoreEntry {
@@ -34,7 +34,7 @@ export class MockStateRegistry {
     name: string,
     token: symbol,
     store: Store<unknown>,
-    initialState?: unknown
+    initialState?: unknown,
   ): void {
     this.entries.set(name, { name, token, store, initialState });
   }

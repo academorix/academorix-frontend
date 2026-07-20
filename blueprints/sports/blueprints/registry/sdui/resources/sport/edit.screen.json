@@ -13,7 +13,12 @@
     "slug, category, is_platform_seeded, tenant_id are IMMUTABLE post-create — always read-only regardless of tier."
   ],
   "dataSources": [
-    { "name": "sport", "kind": "http.get", "urlExpr": "'/api/v1/sports/' + route.sport", "unwrap": "data" }
+    {
+      "name": "sport",
+      "kind": "http.get",
+      "urlExpr": "'/api/v1/sports/' + route.sport",
+      "unwrap": "data"
+    }
   ],
   "nodes": [
     {
@@ -33,7 +38,11 @@
           "kind": "View",
           "props": { "className": "flex items-center gap-2" },
           "children": [
-            { "kind": "Text", "props": { "as": "h1", "className": "text-2xl font-semibold" }, "bindings": { "children": { "$expr": "'Edit ' + sport.name" } } },
+            {
+              "kind": "Text",
+              "props": { "as": "h1", "className": "text-2xl font-semibold" },
+              "bindings": { "children": { "$expr": "'Edit ' + sport.name" } }
+            },
             {
               "kind": "Chip",
               "props": { "size": "xs", "variant": "info", "children": "Platform" },
@@ -43,22 +52,60 @@
         },
         {
           "kind": "Alert",
-          "props": { "variant": "info", "children": "This is a platform-seeded sport. All fields are read-only on the tenant plane. Platform admins may edit it on the platform-admin surface." },
+          "props": {
+            "variant": "info",
+            "children": "This is a platform-seeded sport. All fields are read-only on the tenant plane. Platform admins may edit it on the platform-admin surface."
+          },
           "bindings": { "hidden": { "$expr": "!sport.is_platform_seeded" } }
         },
         {
           "kind": "Card",
           "children": [
-            { "kind": "Card.Header", "children": [{ "kind": "Text", "props": { "as": "h2", "className": "text-lg font-medium", "children": "Identity" } }] },
+            {
+              "kind": "Card.Header",
+              "children": [
+                {
+                  "kind": "Text",
+                  "props": {
+                    "as": "h2",
+                    "className": "text-lg font-medium",
+                    "children": "Identity"
+                  }
+                }
+              ]
+            },
             {
               "kind": "Card.Content",
               "props": { "className": "flex flex-col gap-4" },
               "children": [
-                { "kind": "TextField", "props": { "name": "name", "label": "Name" }, "bindings": { "props": { "defaultValue": { "$ref": "sport.name" }, "isDisabled": { "$ref": "sport.is_platform_seeded" } } } },
-                { "kind": "TextField", "props": { "name": "slug", "label": "Slug", "isReadOnly": true, "helpText": "Immutable after creation." }, "bindings": { "props": { "defaultValue": { "$ref": "sport.slug" } } } },
                 {
                   "kind": "TextField",
-                  "props": { "name": "category", "label": "Category", "isReadOnly": true, "helpText": "Immutable after creation." },
+                  "props": { "name": "name", "label": "Name" },
+                  "bindings": {
+                    "props": {
+                      "defaultValue": { "$ref": "sport.name" },
+                      "isDisabled": { "$ref": "sport.is_platform_seeded" }
+                    }
+                  }
+                },
+                {
+                  "kind": "TextField",
+                  "props": {
+                    "name": "slug",
+                    "label": "Slug",
+                    "isReadOnly": true,
+                    "helpText": "Immutable after creation."
+                  },
+                  "bindings": { "props": { "defaultValue": { "$ref": "sport.slug" } } }
+                },
+                {
+                  "kind": "TextField",
+                  "props": {
+                    "name": "category",
+                    "label": "Category",
+                    "isReadOnly": true,
+                    "helpText": "Immutable after creation."
+                  },
                   "bindings": { "props": { "defaultValue": { "$ref": "sport.category" } } }
                 }
               ]
@@ -68,13 +115,43 @@
         {
           "kind": "Card",
           "children": [
-            { "kind": "Card.Header", "children": [{ "kind": "Text", "props": { "as": "h2", "className": "text-lg font-medium", "children": "Metadata" } }] },
+            {
+              "kind": "Card.Header",
+              "children": [
+                {
+                  "kind": "Text",
+                  "props": {
+                    "as": "h2",
+                    "className": "text-lg font-medium",
+                    "children": "Metadata"
+                  }
+                }
+              ]
+            },
             {
               "kind": "Card.Content",
               "props": { "className": "flex flex-col gap-4" },
               "children": [
-                { "kind": "TextArea", "props": { "name": "description", "label": "Description" }, "bindings": { "props": { "defaultValue": { "$ref": "sport.description" }, "isDisabled": { "$ref": "sport.is_platform_seeded" } } } },
-                { "kind": "TextField", "props": { "name": "governing_body", "label": "Governing body" }, "bindings": { "props": { "defaultValue": { "$ref": "sport.governing_body" }, "isDisabled": { "$ref": "sport.is_platform_seeded" } } } },
+                {
+                  "kind": "TextArea",
+                  "props": { "name": "description", "label": "Description" },
+                  "bindings": {
+                    "props": {
+                      "defaultValue": { "$ref": "sport.description" },
+                      "isDisabled": { "$ref": "sport.is_platform_seeded" }
+                    }
+                  }
+                },
+                {
+                  "kind": "TextField",
+                  "props": { "name": "governing_body", "label": "Governing body" },
+                  "bindings": {
+                    "props": {
+                      "defaultValue": { "$ref": "sport.governing_body" },
+                      "isDisabled": { "$ref": "sport.is_platform_seeded" }
+                    }
+                  }
+                },
                 {
                   "kind": "Select",
                   "props": { "name": "gender_typical", "label": "Gender profile" },
@@ -84,7 +161,12 @@
                     { "key": "female_only", "label": "Female-only" },
                     { "key": "mixed", "label": "Mixed" }
                   ],
-                  "bindings": { "props": { "defaultSelectedKey": { "$ref": "sport.gender_typical" }, "isDisabled": { "$ref": "sport.is_platform_seeded" } } }
+                  "bindings": {
+                    "props": {
+                      "defaultSelectedKey": { "$ref": "sport.gender_typical" },
+                      "isDisabled": { "$ref": "sport.is_platform_seeded" }
+                    }
+                  }
                 }
               ]
             }
@@ -93,14 +175,53 @@
         {
           "kind": "Card",
           "children": [
-            { "kind": "Card.Header", "children": [{ "kind": "Text", "props": { "as": "h2", "className": "text-lg font-medium", "children": "Presentation" } }] },
+            {
+              "kind": "Card.Header",
+              "children": [
+                {
+                  "kind": "Text",
+                  "props": {
+                    "as": "h2",
+                    "className": "text-lg font-medium",
+                    "children": "Presentation"
+                  }
+                }
+              ]
+            },
             {
               "kind": "Card.Content",
               "props": { "className": "flex flex-col gap-4" },
               "children": [
-                { "kind": "ColorField", "props": { "name": "primary_color", "label": "Primary color" }, "bindings": { "props": { "defaultValue": { "$ref": "sport.primary_color" }, "isDisabled": { "$ref": "sport.is_platform_seeded" } } } },
-                { "kind": "TextField", "props": { "name": "icon", "label": "Icon (Iconify identifier)" }, "bindings": { "props": { "defaultValue": { "$ref": "sport.icon" }, "isDisabled": { "$ref": "sport.is_platform_seeded" } } } },
-                { "kind": "NumberField", "props": { "name": "sort_order", "label": "Sort order", "min": 0, "max": 9999 }, "bindings": { "props": { "defaultValue": { "$ref": "sport.sort_order" }, "isDisabled": { "$ref": "sport.is_platform_seeded" } } } }
+                {
+                  "kind": "ColorField",
+                  "props": { "name": "primary_color", "label": "Primary color" },
+                  "bindings": {
+                    "props": {
+                      "defaultValue": { "$ref": "sport.primary_color" },
+                      "isDisabled": { "$ref": "sport.is_platform_seeded" }
+                    }
+                  }
+                },
+                {
+                  "kind": "TextField",
+                  "props": { "name": "icon", "label": "Icon (Iconify identifier)" },
+                  "bindings": {
+                    "props": {
+                      "defaultValue": { "$ref": "sport.icon" },
+                      "isDisabled": { "$ref": "sport.is_platform_seeded" }
+                    }
+                  }
+                },
+                {
+                  "kind": "NumberField",
+                  "props": { "name": "sort_order", "label": "Sort order", "min": 0, "max": 9999 },
+                  "bindings": {
+                    "props": {
+                      "defaultValue": { "$ref": "sport.sort_order" },
+                      "isDisabled": { "$ref": "sport.is_platform_seeded" }
+                    }
+                  }
+                }
               ]
             }
           ]
@@ -109,7 +230,13 @@
           "kind": "View",
           "props": { "className": "flex items-center justify-end gap-2" },
           "children": [
-            { "kind": "Button", "props": { "variant": "ghost", "children": "Cancel" }, "actions": { "onPress": { "kind": "navigate", "to": "/settings/sports/{{sport.id}}" } } },
+            {
+              "kind": "Button",
+              "props": { "variant": "ghost", "children": "Cancel" },
+              "actions": {
+                "onPress": { "kind": "navigate", "to": "/settings/sports/{{sport.id}}" }
+              }
+            },
             {
               "kind": "Button",
               "props": { "variant": "primary", "type": "submit", "children": "Save changes" },

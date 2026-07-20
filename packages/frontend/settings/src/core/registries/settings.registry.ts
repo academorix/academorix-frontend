@@ -11,7 +11,7 @@
  *   agnostic.
  */
 
-import { Injectable, Optional, Inject } from '@stackra/container';
+import { Injectable, Optional, Inject } from "@stackra/container";
 import {
   LOGGER_MANAGER,
   type ISettingDefinition,
@@ -19,15 +19,15 @@ import {
   type ISettingSection,
   type ILoggerManager,
   type Type,
-} from '@stackra/contracts';
+} from "@stackra/contracts";
 
 import {
   getFieldDescriptors,
   getGroupDescriptors,
   getSectionDescriptors,
   getSettingMetadata,
-} from '@/core/decorators';
-import { SettingsError } from '@/core/errors';
+} from "@/core/decorators";
+import { SettingsError } from "@/core/errors";
 
 /**
  * In-memory registry of every registered setting group.
@@ -46,7 +46,7 @@ export class SettingsRegistry implements ISettingsRegistry {
    *   `@Field()` properties, an overwrite via `registerFromSchema`).
    */
   public constructor(
-    @Optional() @Inject(LOGGER_MANAGER) private readonly logger?: ILoggerManager
+    @Optional() @Inject(LOGGER_MANAGER) private readonly logger?: ILoggerManager,
   ) {}
 
   // ══════════════════════════════════════════════════════════════════
@@ -64,13 +64,13 @@ export class SettingsRegistry implements ISettingsRegistry {
     if (!meta) {
       throw new SettingsError(
         `Class "${dto.name}" is not decorated with @Setting(). ` +
-          `Add @Setting({ key, label, ... }) to the class.`
+          `Add @Setting({ key, label, ... }) to the class.`,
       );
     }
 
     if (this.definitions.has(meta.key)) {
       throw new SettingsError(
-        `Settings group "${meta.key}" is already registered. ` + `Each group key must be unique.`
+        `Settings group "${meta.key}" is already registered. ` + `Each group key must be unique.`,
       );
     }
 
@@ -196,8 +196,8 @@ export class SettingsRegistry implements ISettingsRegistry {
   private warn(message: string, cause?: unknown): void {
     if (!this.logger) return;
     try {
-      const suffix = cause ? `: ${String(cause)}` : '';
-      this.logger.create('settings').warn(`${message}${suffix}`);
+      const suffix = cause ? `: ${String(cause)}` : "";
+      this.logger.create("settings").warn(`${message}${suffix}`);
     } catch {
       // Fail-soft — internal logging must never surface.
     }

@@ -8,16 +8,16 @@
  *   This barrel exports package-owned symbols.
  */
 
-import 'reflect-metadata';
+import "reflect-metadata";
 
 // Module
-export { SduiModule, type ISduiForRootOptions } from './sdui.module';
+export { SduiModule, type ISduiForRootOptions } from "./sdui.module";
 
 // Services
-export { NullSduiClient, SchemaCache, SduiService } from './services';
+export { NullSduiClient, SchemaCache, SduiService } from "./services";
 
 // Registries
-export { ComponentRegistry, LayoutRegistry, SduiPageRegistry } from './registries';
+export { ComponentRegistry, LayoutRegistry, SduiPageRegistry } from "./registries";
 
 // Expression evaluator
 export {
@@ -26,7 +26,7 @@ export {
   resolveBindable,
   evaluateBoolean,
   OPERATORS,
-} from './expression';
+} from "./expression";
 
 // Validator
 export {
@@ -35,13 +35,13 @@ export {
   type ISduiValidationIssue,
   type ISduiValidationResult,
   type IComponentRegistryLike,
-} from './validator';
+} from "./validator";
 
 // Version constants (package-owned)
-export { SDUI_SCHEMA_VERSION, SDUI_MIN_SUPPORTED_VERSION } from './constants';
+export { SDUI_SCHEMA_VERSION, SDUI_MIN_SUPPORTED_VERSION } from "./constants";
 
 // Errors
-export { SduiError, SduiSchemaVersionError, SduiValidationError } from './errors';
+export { SduiError, SduiSchemaVersionError, SduiValidationError } from "./errors";
 
 // Utilities
-export { getAtPath, setAtPath } from './utils';
+export { getAtPath, setAtPath } from "./utils";

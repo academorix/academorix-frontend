@@ -5,7 +5,7 @@
  *   lifecycle event emission.
  */
 
-import type { IEventEmitter } from '@stackra/contracts';
+import type { IEventEmitter } from "@stackra/contracts";
 
 /** One recorded emit. */
 export interface IRecordedEmit {

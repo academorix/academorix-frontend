@@ -9,7 +9,7 @@
       "description": "Percentage discount applied to the source_amount_cents.",
       "amount_unit": "fraction",
       "amount_min": 0.01,
-      "amount_max": 1.00,
+      "amount_max": 1.0,
       "requires_currency": false,
       "computation": "floor(source_amount_cents * discount_amount)",
       "clamp_max_to_source": true,
@@ -18,7 +18,12 @@
       "enterprise_tier_allowed": true,
       "typical_range": [0.05, 0.25],
       "example_display": "25% off",
-      "applicable_to": ["any", "membership_only", "specific_membership_plans", "minimum_order_value"]
+      "applicable_to": [
+        "any",
+        "membership_only",
+        "specific_membership_plans",
+        "minimum_order_value"
+      ]
     },
     {
       "discount_type": "fixed_amount",
@@ -35,7 +40,12 @@
       "enterprise_tier_allowed": true,
       "typical_range": [500, 5000],
       "example_display": "$25 off",
-      "applicable_to": ["any", "membership_only", "specific_membership_plans", "minimum_order_value"]
+      "applicable_to": [
+        "any",
+        "membership_only",
+        "specific_membership_plans",
+        "minimum_order_value"
+      ]
     },
     {
       "discount_type": "free_period",

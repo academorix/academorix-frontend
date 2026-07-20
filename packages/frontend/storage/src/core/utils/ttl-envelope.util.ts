@@ -55,7 +55,7 @@ export function unwrapTtl<T>(raw: unknown): T | null {
   // Duck-type an envelope: an object literal with a `v` field and,
   // when present, a numeric `e` field. Everything else is treated
   // as a raw pre-envelope value and passed through.
-  if (typeof raw !== 'object' || Array.isArray(raw) || !('v' in raw)) {
+  if (typeof raw !== "object" || Array.isArray(raw) || !("v" in raw)) {
     return raw as T;
   }
 

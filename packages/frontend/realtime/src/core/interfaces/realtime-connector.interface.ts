@@ -4,8 +4,8 @@
  * @description Factory interface for creating realtime connections.
  */
 
-import type { IRealtimeConnection } from './realtime-connection.interface';
-import type { IRealtimeConnectionConfig } from './realtime-module-options.interface';
+import type { IRealtimeConnection } from "./realtime-connection.interface";
+import type { IRealtimeConnectionConfig } from "./realtime-module-options.interface";
 
 /**
  * Factory that creates a realtime connection from configuration.

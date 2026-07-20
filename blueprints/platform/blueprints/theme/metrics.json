@@ -7,7 +7,14 @@
   "labelConventions": {
     "always": [],
     "commonlyAvailable": ["mode", "category"],
-    "forbiddenAsLabels": ["tenant_id", "user_id", "theme_id", "preset_id", "token_key", "token_value"]
+    "forbiddenAsLabels": [
+      "tenant_id",
+      "user_id",
+      "theme_id",
+      "preset_id",
+      "token_key",
+      "token_value"
+    ]
   },
   "metrics": [
     {

@@ -4,8 +4,8 @@ Reactive state management for the Stackra framework — DI-managed
 [TanStack Store](https://tanstack.com/store) instances with optimistic
 mutations, cross-tab sync, realtime updates, and persistence.
 
-`@stackra/state` owns the **global-state / store** leg. The store-backed
-**query / server-state** leg lives in the companion [`@stackra/query`](../query)
+`@stackra/state` owns the **global-state / store** leg. The store-backed **query
+/ server-state** leg lives in the companion [`@stackra/query`](../query)
 package, which builds on this one.
 
 ## Install
@@ -30,19 +30,19 @@ pnpm add @stackra/state @tanstack/store @tanstack/react-store
 ## Quick start
 
 ```typescript
-import { Module } from '@stackra/container';
-import { StateModule } from '@stackra/state';
-import { THEME_STORE } from '@stackra/contracts';
+import { Module } from "@stackra/container";
+import { StateModule } from "@stackra/state";
+import { THEME_STORE } from "@stackra/contracts";
 
 @Module({
   imports: [
     StateModule.forRoot(),
     StateModule.forFeature({
-      name: 'theme',
+      name: "theme",
       token: THEME_STORE,
-      initialState: { mode: 'system' },
+      initialState: { mode: "system" },
       crossTab: true,
-      persistence: 'localStorage',
+      persistence: "localStorage",
     }),
   ],
 })
@@ -52,8 +52,8 @@ export class AppModule {}
 Read reactively from React:
 
 ```tsx
-import { useStore, useStoreDispatch } from '@stackra/state/react';
-import { THEME_STORE } from '@stackra/contracts';
+import { useStore, useStoreDispatch } from "@stackra/state/react";
+import { THEME_STORE } from "@stackra/contracts";
 
 function ThemeToggle() {
   const mode = useStore<ThemeState, string>(THEME_STORE, (s) => s.mode);
@@ -61,7 +61,9 @@ function ThemeToggle() {
 
   return (
     <Button
-      onPress={() => dispatch((s) => ({ ...s, mode: s.mode === 'light' ? 'dark' : 'light' }))}
+      onPress={() =>
+        dispatch((s) => ({ ...s, mode: s.mode === "light" ? "dark" : "light" }))
+      }
     >
       {mode}
     </Button>
@@ -88,12 +90,12 @@ For optimistic writes that persist to a server, use `useMutation` from
 ## Testing
 
 ```ts
-import { createMockStateRegistry } from '@stackra/state/testing';
+import { createMockStateRegistry } from "@stackra/state/testing";
 
 const registry = createMockStateRegistry();
-registry.registerStore('theme', THEME_STORE, store);
-expect(registry.getNames()).toContain('theme');
-expect(registry.$.wasCalled('registerStore')).toBe(true);
+registry.registerStore("theme", THEME_STORE, store);
+expect(registry.getNames()).toContain("theme");
+expect(registry.$.wasCalled("registerStore")).toBe(true);
 ```
 
 ## License

@@ -22,13 +22,13 @@
  *   drive the 3s auto-expiry deterministically.
  */
 
-import { act, cleanup, renderHook } from '@testing-library/react';
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { act, cleanup, renderHook } from "@testing-library/react";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-import { COLLABORATION_EVENTS } from '@stackra/contracts';
+import { COLLABORATION_EVENTS } from "@stackra/contracts";
 
-import { MockRoomManager, MockCollaborationTransport } from '@/testing';
-import type { RoomMember } from '@/interfaces/room-member.interface';
+import { MockRoomManager, MockCollaborationTransport } from "@/testing";
+import type { RoomMember } from "@/interfaces/room-member.interface";
 
 // ── Mock `@stackra/container/react` ─────────────────────────────────────────
 
@@ -36,20 +36,20 @@ const state = vi.hoisted(() => ({
   manager: null as MockRoomManager | null,
 }));
 
-vi.mock('@stackra/container/react', () => ({
+vi.mock("@stackra/container/react", () => ({
   useInject: () => state.manager,
 }));
 
 // AFTER the mock — import the hook.
-import { useTypingIndicator } from '@/hooks/use-typing-indicator/use-typing-indicator.hook';
+import { useTypingIndicator } from "@/hooks/use-typing-indicator/use-typing-indicator.hook";
 
 // ── Helpers ─────────────────────────────────────────────────────────────────
 
 function member(overrides: Partial<RoomMember> = {}): RoomMember {
   return {
-    userId: overrides.userId ?? 'user-remote',
-    name: overrides.name ?? 'Remote',
-    color: overrides.color ?? '#3498db',
+    userId: overrides.userId ?? "user-remote",
+    name: overrides.name ?? "Remote",
+    color: overrides.color ?? "#3498db",
     joinedAt: overrides.joinedAt ?? Date.now(),
     presence: overrides.presence ?? {},
   };
@@ -57,7 +57,7 @@ function member(overrides: Partial<RoomMember> = {}): RoomMember {
 
 // ── Spec ────────────────────────────────────────────────────────────────────
 
-describe('useTypingIndicator', () => {
+describe("useTypingIndicator", () => {
   let manager: MockRoomManager;
   let transport: MockCollaborationTransport;
 
@@ -80,79 +80,79 @@ describe('useTypingIndicator', () => {
 
   // ── Inbound TYPING_START ────────────────────────────────────────────────
 
-  describe('inbound TYPING_START', () => {
-    it('adds the sender name to typingUsers', () => {
-      const { result } = renderHook(() => useTypingIndicator('room-1'));
+  describe("inbound TYPING_START", () => {
+    it("adds the sender name to typingUsers", () => {
+      const { result } = renderHook(() => useTypingIndicator("room-1"));
 
       act(() => {
         transport.simulateBroadcast(
-          'room-1',
+          "room-1",
           COLLABORATION_EVENTS.TYPING_START,
           {},
-          member({ userId: 'user-a', name: 'Alice' })
+          member({ userId: "user-a", name: "Alice" }),
         );
       });
 
-      expect(result.current.typingUsers).toEqual(['Alice']);
+      expect(result.current.typingUsers).toEqual(["Alice"]);
     });
 
-    it('deduplicates the same user typing multiple times', () => {
-      const { result } = renderHook(() => useTypingIndicator('room-1'));
-      const alice = member({ userId: 'user-a', name: 'Alice' });
+    it("deduplicates the same user typing multiple times", () => {
+      const { result } = renderHook(() => useTypingIndicator("room-1"));
+      const alice = member({ userId: "user-a", name: "Alice" });
 
       act(() => {
-        transport.simulateBroadcast('room-1', COLLABORATION_EVENTS.TYPING_START, {}, alice);
-        transport.simulateBroadcast('room-1', COLLABORATION_EVENTS.TYPING_START, {}, alice);
+        transport.simulateBroadcast("room-1", COLLABORATION_EVENTS.TYPING_START, {}, alice);
+        transport.simulateBroadcast("room-1", COLLABORATION_EVENTS.TYPING_START, {}, alice);
       });
 
       // Deduped via Set — one entry.
-      expect(result.current.typingUsers).toEqual(['Alice']);
+      expect(result.current.typingUsers).toEqual(["Alice"]);
     });
 
-    it('tracks multiple typing users concurrently', () => {
-      const { result } = renderHook(() => useTypingIndicator('room-1'));
+    it("tracks multiple typing users concurrently", () => {
+      const { result } = renderHook(() => useTypingIndicator("room-1"));
 
       act(() => {
         transport.simulateBroadcast(
-          'room-1',
+          "room-1",
           COLLABORATION_EVENTS.TYPING_START,
           {},
-          member({ userId: 'user-a', name: 'Alice' })
+          member({ userId: "user-a", name: "Alice" }),
         );
         transport.simulateBroadcast(
-          'room-1',
+          "room-1",
           COLLABORATION_EVENTS.TYPING_START,
           {},
-          member({ userId: 'user-b', name: 'Bob' })
+          member({ userId: "user-b", name: "Bob" }),
         );
       });
 
-      expect(result.current.typingUsers).toEqual(expect.arrayContaining(['Alice', 'Bob']));
+      expect(result.current.typingUsers).toEqual(expect.arrayContaining(["Alice", "Bob"]));
       expect(result.current.typingUsers).toHaveLength(2);
     });
   });
 
   // ── Auto-expiry (3s) ────────────────────────────────────────────────────
 
-  describe('auto-expiry', () => {
-    it('drops the user from typingUsers after 3s of no further TYPING_START', () => {
-      const { result } = renderHook(() => useTypingIndicator('room-1'));
+  describe("auto-expiry", () => {
+    it("drops the user from typingUsers after 3s of no further TYPING_START", () => {
+      const { result } = renderHook(() => useTypingIndicator("room-1"));
 
       act(() => {
         transport.simulateBroadcast(
-          'room-1',
+          "room-1",
           COLLABORATION_EVENTS.TYPING_START,
           {},
-          member({ userId: 'user-a', name: 'Alice' })
+          member({ userId: "user-a", name: "Alice" }),
         );
       });
-      expect(result.current.typingUsers).toEqual(['Alice']);
+      expect(result.current.typingUsers).toEqual(["Alice"]);
 
       // Just before expiry — still typing.
       act(() => {
         vi.advanceTimersByTime(2999);
       });
-      expect(result.current.typingUsers).toEqual(['Alice']);
+      expect(result.current.typingUsers).toEqual(["Alice"]);
 
       // Cross the 3s boundary — should auto-drop.
       act(() => {
@@ -161,19 +161,19 @@ describe('useTypingIndicator', () => {
       expect(result.current.typingUsers).toEqual([]);
     });
 
-    it('resets the 3s window when the same user types again before expiry', () => {
-      const { result } = renderHook(() => useTypingIndicator('room-1'));
-      const alice = member({ userId: 'user-a', name: 'Alice' });
+    it("resets the 3s window when the same user types again before expiry", () => {
+      const { result } = renderHook(() => useTypingIndicator("room-1"));
+      const alice = member({ userId: "user-a", name: "Alice" });
 
       act(() => {
-        transport.simulateBroadcast('room-1', COLLABORATION_EVENTS.TYPING_START, {}, alice);
+        transport.simulateBroadcast("room-1", COLLABORATION_EVENTS.TYPING_START, {}, alice);
       });
 
       // Half-way through — user types again, which should reset the
       // timer.
       act(() => {
         vi.advanceTimersByTime(1500);
-        transport.simulateBroadcast('room-1', COLLABORATION_EVENTS.TYPING_START, {}, alice);
+        transport.simulateBroadcast("room-1", COLLABORATION_EVENTS.TYPING_START, {}, alice);
       });
 
       // Original expiry would have fired at 3000ms; check we're
@@ -181,7 +181,7 @@ describe('useTypingIndicator', () => {
       act(() => {
         vi.advanceTimersByTime(2500);
       });
-      expect(result.current.typingUsers).toEqual(['Alice']);
+      expect(result.current.typingUsers).toEqual(["Alice"]);
 
       // Full 3s AFTER the reset — now expiry fires.
       act(() => {
@@ -193,31 +193,31 @@ describe('useTypingIndicator', () => {
 
   // ── Inbound TYPING_STOP ─────────────────────────────────────────────────
 
-  describe('inbound TYPING_STOP', () => {
-    it('removes the sender immediately', () => {
-      const { result } = renderHook(() => useTypingIndicator('room-1'));
-      const alice = member({ userId: 'user-a', name: 'Alice' });
+  describe("inbound TYPING_STOP", () => {
+    it("removes the sender immediately", () => {
+      const { result } = renderHook(() => useTypingIndicator("room-1"));
+      const alice = member({ userId: "user-a", name: "Alice" });
 
       act(() => {
-        transport.simulateBroadcast('room-1', COLLABORATION_EVENTS.TYPING_START, {}, alice);
+        transport.simulateBroadcast("room-1", COLLABORATION_EVENTS.TYPING_START, {}, alice);
       });
-      expect(result.current.typingUsers).toEqual(['Alice']);
+      expect(result.current.typingUsers).toEqual(["Alice"]);
 
       act(() => {
-        transport.simulateBroadcast('room-1', COLLABORATION_EVENTS.TYPING_STOP, {}, alice);
+        transport.simulateBroadcast("room-1", COLLABORATION_EVENTS.TYPING_STOP, {}, alice);
       });
       expect(result.current.typingUsers).toEqual([]);
     });
 
-    it('cancels the auto-expiry timeout so the user cannot reappear', () => {
-      const { result } = renderHook(() => useTypingIndicator('room-1'));
-      const alice = member({ userId: 'user-a', name: 'Alice' });
+    it("cancels the auto-expiry timeout so the user cannot reappear", () => {
+      const { result } = renderHook(() => useTypingIndicator("room-1"));
+      const alice = member({ userId: "user-a", name: "Alice" });
 
       act(() => {
-        transport.simulateBroadcast('room-1', COLLABORATION_EVENTS.TYPING_START, {}, alice);
+        transport.simulateBroadcast("room-1", COLLABORATION_EVENTS.TYPING_START, {}, alice);
       });
       act(() => {
-        transport.simulateBroadcast('room-1', COLLABORATION_EVENTS.TYPING_STOP, {}, alice);
+        transport.simulateBroadcast("room-1", COLLABORATION_EVENTS.TYPING_STOP, {}, alice);
       });
 
       // Advance well past the 3s expiry — no ghost expiry callback
@@ -231,71 +231,71 @@ describe('useTypingIndicator', () => {
 
   // ── Member leave ────────────────────────────────────────────────────────
 
-  describe('member leave', () => {
-    it('drops the leaving user from typingUsers', () => {
-      const { result } = renderHook(() => useTypingIndicator('room-1'));
-      const alice = member({ userId: 'user-a', name: 'Alice' });
-      const bob = member({ userId: 'user-b', name: 'Bob' });
+  describe("member leave", () => {
+    it("drops the leaving user from typingUsers", () => {
+      const { result } = renderHook(() => useTypingIndicator("room-1"));
+      const alice = member({ userId: "user-a", name: "Alice" });
+      const bob = member({ userId: "user-b", name: "Bob" });
 
       act(() => {
-        transport.simulateBroadcast('room-1', COLLABORATION_EVENTS.TYPING_START, {}, alice);
-        transport.simulateBroadcast('room-1', COLLABORATION_EVENTS.TYPING_START, {}, bob);
-        transport.simulateMemberJoin('room-1', alice);
-        transport.simulateMemberJoin('room-1', bob);
+        transport.simulateBroadcast("room-1", COLLABORATION_EVENTS.TYPING_START, {}, alice);
+        transport.simulateBroadcast("room-1", COLLABORATION_EVENTS.TYPING_START, {}, bob);
+        transport.simulateMemberJoin("room-1", alice);
+        transport.simulateMemberJoin("room-1", bob);
       });
       expect(result.current.typingUsers).toHaveLength(2);
 
       act(() => {
-        transport.simulateMemberLeave('room-1', 'user-a');
+        transport.simulateMemberLeave("room-1", "user-a");
       });
 
-      expect(result.current.typingUsers).toEqual(['Bob']);
+      expect(result.current.typingUsers).toEqual(["Bob"]);
     });
   });
 
   // ── startTyping / stopTyping ────────────────────────────────────────────
 
-  describe('startTyping / stopTyping', () => {
-    it('startTyping broadcasts TYPING_START with an empty payload', () => {
-      const { result } = renderHook(() => useTypingIndicator('room-1'));
+  describe("startTyping / stopTyping", () => {
+    it("startTyping broadcasts TYPING_START with an empty payload", () => {
+      const { result } = renderHook(() => useTypingIndicator("room-1"));
 
       act(() => {
         result.current.startTyping();
       });
 
       const [broadcast] = transport.broadcasts.filter(
-        (b) => b.event === COLLABORATION_EVENTS.TYPING_START
+        (b) => b.event === COLLABORATION_EVENTS.TYPING_START,
       );
-      expect(broadcast?.roomId).toBe('room-1');
+      expect(broadcast?.roomId).toBe("room-1");
       expect(broadcast?.data).toEqual({});
     });
 
-    it('stopTyping broadcasts TYPING_STOP with an empty payload', () => {
-      const { result } = renderHook(() => useTypingIndicator('room-1'));
+    it("stopTyping broadcasts TYPING_STOP with an empty payload", () => {
+      const { result } = renderHook(() => useTypingIndicator("room-1"));
 
       act(() => {
         result.current.stopTyping();
       });
 
       const [broadcast] = transport.broadcasts.filter(
-        (b) => b.event === COLLABORATION_EVENTS.TYPING_STOP
+        (b) => b.event === COLLABORATION_EVENTS.TYPING_STOP,
       );
-      expect(broadcast?.roomId).toBe('room-1');
+      expect(broadcast?.roomId).toBe("room-1");
       expect(broadcast?.data).toEqual({});
     });
   });
 
   // ── Cleanup ────────────────────────────────────────────────────────────
 
-  describe('cleanup', () => {
-    it('clears every outstanding timeout and empties typingUsers on unmount', () => {
-      const { unmount, result } = renderHook(() => useTypingIndicator('room-1'));
-      const alice = member({ userId: 'user-a', name: 'Alice' });
+  describe("cleanup", () => {
+    it("clears every outstanding timeout and empties typingUsers on unmount", () => {
+      const { unmount, result } = renderHook(() => useTypingIndicator("room-1"));
+      const alice = member({ userId: "user-a", name: "Alice" });
 
       act(() => {
-        transport.simulateBroadcast('room-1', COLLABORATION_EVENTS.TYPING_START, {}, alice);
+        transport.simulateBroadcast("room-1", COLLABORATION_EVENTS.TYPING_START, {}, alice);
       });
-      expect(result.current.typingUsers).toEqual(['Alice']);
+      expect(result.current.typingUsers).toEqual(["Alice"]);
 
       unmount();
 
@@ -306,7 +306,7 @@ describe('useTypingIndicator', () => {
       });
 
       const rooms = (transport as unknown as { rooms: Map<string, unknown> }).rooms;
-      const room = rooms.get('room-1') as {
+      const room = rooms.get("room-1") as {
         memberLeaveListeners: Set<unknown>;
         broadcastListeners: Map<string, Set<unknown>>;
       };

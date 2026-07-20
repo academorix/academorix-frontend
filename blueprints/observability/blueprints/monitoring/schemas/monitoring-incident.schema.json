@@ -15,7 +15,9 @@
     "incrementing": false,
     "model": "Academorix\\Observability\\Monitoring\\Models\\MonitoringIncident",
     "interface": "Academorix\\Observability\\Monitoring\\Contracts\\Data\\MonitoringIncidentInterface",
-    "implements": ["Academorix\\Observability\\Monitoring\\Contracts\\Data\\MonitoringIncidentInterface"],
+    "implements": [
+      "Academorix\\Observability\\Monitoring\\Contracts\\Data\\MonitoringIncidentInterface"
+    ],
     "traits": [
       "HasFactory",
       "HasUlids",
@@ -144,19 +146,45 @@
       "updated_at": { "type": "timestamptz", "nullable": false }
     },
     "indexes": [
-      { "columns": ["tenant_id", "status", "opened_at"], "name": "monitoring_incidents_status_idx" },
-      { "columns": ["tenant_id", "severity", "status"], "name": "monitoring_incidents_severity_idx" },
-      { "columns": ["opened_at"], "name": "monitoring_incidents_grouping_window_idx", "predicate": "status IN ('open', 'acknowledged', 'investigating', 'mitigating')" }
+      {
+        "columns": ["tenant_id", "status", "opened_at"],
+        "name": "monitoring_incidents_status_idx"
+      },
+      {
+        "columns": ["tenant_id", "severity", "status"],
+        "name": "monitoring_incidents_severity_idx"
+      },
+      {
+        "columns": ["opened_at"],
+        "name": "monitoring_incidents_grouping_window_idx",
+        "predicate": "status IN ('open', 'acknowledged', 'investigating', 'mitigating')"
+      }
     ]
   },
-  "required": ["id", "tenant_id", "title", "severity", "status", "opened_at", "affected_services", "alert_count", "notify_provider_configs", "oncall_page_config", "created_at", "updated_at"],
+  "required": [
+    "id",
+    "tenant_id",
+    "title",
+    "severity",
+    "status",
+    "opened_at",
+    "affected_services",
+    "alert_count",
+    "notify_provider_configs",
+    "oncall_page_config",
+    "created_at",
+    "updated_at"
+  ],
   "properties": {
     "id": { "type": "string", "pattern": "^mci_[0-9A-HJKMNP-TV-Z]{26}$" },
     "tenant_id": { "type": "string", "pattern": "^ten_[0-9A-HJKMNP-TV-Z]{26}$" },
     "title": { "type": "string", "minLength": 1, "maxLength": 256 },
     "description": { "type": ["string", "null"] },
     "severity": { "type": "string", "enum": ["p1", "p2", "p3", "p4"] },
-    "status": { "type": "string", "enum": ["open", "acknowledged", "investigating", "mitigating", "resolved", "postmortem"] },
+    "status": {
+      "type": "string",
+      "enum": ["open", "acknowledged", "investigating", "mitigating", "resolved", "postmortem"]
+    },
     "opened_at": { "type": "string", "format": "date-time" },
     "acknowledged_at": { "type": ["string", "null"], "format": "date-time" },
     "acknowledged_by_user_id": { "type": ["string", "null"] },
@@ -173,7 +201,10 @@
     "oncall_page_config": {
       "type": "object",
       "properties": {
-        "primary_provider": { "type": ["string", "null"], "pattern": "^mpr_[0-9A-HJKMNP-TV-Z]{26}$" },
+        "primary_provider": {
+          "type": ["string", "null"],
+          "pattern": "^mpr_[0-9A-HJKMNP-TV-Z]{26}$"
+        },
         "escalation_policy": {
           "type": ["object", "null"],
           "properties": {

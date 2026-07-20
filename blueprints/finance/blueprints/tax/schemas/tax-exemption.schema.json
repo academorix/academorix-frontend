@@ -113,7 +113,11 @@
         "description": "The reviewer who verified. Null when automatic registry cross-check succeeded."
       },
       "verified_at": { "type": "timestamptz", "nullable": true },
-      "metadata": { "type": "jsonb", "nullable": true, "description": "Includes rejection_reason, warnings_sent (60/30/7-day cadence tracking), verifier_response (registry cross-check response snapshot)." },
+      "metadata": {
+        "type": "jsonb",
+        "nullable": true,
+        "description": "Includes rejection_reason, warnings_sent (60/30/7-day cadence tracking), verifier_response (registry cross-check response snapshot)."
+      },
       "created_by": { "type": "string", "length": 64, "nullable": true },
       "updated_by": { "type": "string", "length": 64, "nullable": true },
       "deleted_by": { "type": "string", "length": 64, "nullable": true },
@@ -123,30 +127,78 @@
     },
     "indexes": [
       {
-        "columns": ["tenant_id", "customer_type", "customer_id", "exemption_type", "issuing_jurisdiction_id"],
+        "columns": [
+          "tenant_id",
+          "customer_type",
+          "customer_id",
+          "exemption_type",
+          "issuing_jurisdiction_id"
+        ],
         "unique": true,
         "name": "tax_exemptions_customer_type_jurisdiction_unique",
         "predicate": "deleted_at IS NULL AND verification_status = 'verified'"
       },
-      { "columns": ["tenant_id", "customer_type", "customer_id"], "name": "tax_exemptions_customer_idx" },
-      { "columns": ["tenant_id", "verification_status", "valid_until"], "name": "tax_exemptions_status_expiry_idx" },
+      {
+        "columns": ["tenant_id", "customer_type", "customer_id"],
+        "name": "tax_exemptions_customer_idx"
+      },
+      {
+        "columns": ["tenant_id", "verification_status", "valid_until"],
+        "name": "tax_exemptions_status_expiry_idx"
+      },
       { "columns": ["issuing_jurisdiction_id"], "name": "tax_exemptions_jurisdiction_idx" }
     ]
   },
-  "required": ["id", "tenant_id", "customer_type", "exemption_type", "certificate_number", "certificate_document_url", "issuing_jurisdiction_id", "valid_from", "verification_status", "created_at", "updated_at"],
+  "required": [
+    "id",
+    "tenant_id",
+    "customer_type",
+    "exemption_type",
+    "certificate_number",
+    "certificate_document_url",
+    "issuing_jurisdiction_id",
+    "valid_from",
+    "verification_status",
+    "created_at",
+    "updated_at"
+  ],
   "properties": {
     "id": { "type": "string", "pattern": "^txe_[0-9A-HJKMNP-TV-Z]{26}$" },
     "tenant_id": { "type": "string", "pattern": "^ten_[0-9A-HJKMNP-TV-Z]{26}$" },
     "customer_type": { "type": "string" },
     "customer_id": { "type": ["string", "null"] },
-    "exemption_type": { "type": "string", "enum": ["reseller", "non_profit", "diplomatic", "rural", "religious", "educational", "government", "medical", "disability"] },
+    "exemption_type": {
+      "type": "string",
+      "enum": [
+        "reseller",
+        "non_profit",
+        "diplomatic",
+        "rural",
+        "religious",
+        "educational",
+        "government",
+        "medical",
+        "disability"
+      ]
+    },
     "certificate_number": { "type": "string", "minLength": 1, "maxLength": 128 },
-    "certificate_document_url": { "type": "string", "format": "uri", "maxLength": 512, "pattern": "^https://" },
+    "certificate_document_url": {
+      "type": "string",
+      "format": "uri",
+      "maxLength": 512,
+      "pattern": "^https://"
+    },
     "issuing_jurisdiction_id": { "type": "string", "pattern": "^txj_[0-9A-HJKMNP-TV-Z]{26}$" },
     "valid_from": { "type": "string", "format": "date" },
     "valid_until": { "type": ["string", "null"], "format": "date" },
-    "verification_status": { "type": "string", "enum": ["pending", "verified", "rejected", "expired"] },
-    "verified_by_user_id": { "type": ["string", "null"], "pattern": "^usr_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "verification_status": {
+      "type": "string",
+      "enum": ["pending", "verified", "rejected", "expired"]
+    },
+    "verified_by_user_id": {
+      "type": ["string", "null"],
+      "pattern": "^usr_[0-9A-HJKMNP-TV-Z]{26}$"
+    },
     "verified_at": { "type": ["string", "null"], "format": "date-time" },
     "metadata": { "type": ["object", "null"] },
     "created_at": { "type": "string", "format": "date-time" },

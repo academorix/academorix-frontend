@@ -22,7 +22,10 @@
         "trait": "Illuminate\\Database\\Eloquent\\SoftDeletes",
         "reason": "SAs retain a retention hold (default 90 days after deleted_at) before hard delete so downstream compliance queries can still resolve historical audit trails."
       },
-      { "trait": "Illuminate\\Notifications\\Notifiable", "reason": "SA is never a mail-notification recipient itself, but Notifiable is composed so downstream modules can route notifications ABOUT the SA (dispatched to Application owners) via the standard framework primitives." }
+      {
+        "trait": "Illuminate\\Notifications\\Notifiable",
+        "reason": "SA is never a mail-notification recipient itself, but Notifiable is composed so downstream modules can route notifications ABOUT the SA (dispatched to Application owners) via the standard framework primitives."
+      }
     ],
     "foundation": [
       { "trait": "Academorix\\Foundation\\Concerns\\HasUlids" },
@@ -31,12 +34,8 @@
       { "trait": "Academorix\\Foundation\\Concerns\\Filterable" },
       { "trait": "Academorix\\Foundation\\Concerns\\Searchable" }
     ],
-    "activity": [
-      { "trait": "Academorix\\Activity\\Concerns\\HasActivityLog" }
-    ],
-    "audit": [
-      { "trait": "Academorix\\Audit\\Concerns\\HasAudit" }
-    ]
+    "activity": [{ "trait": "Academorix\\Activity\\Concerns\\HasActivityLog" }],
+    "audit": [{ "trait": "Academorix\\Audit\\Concerns\\HasAudit" }]
   },
   "composition": {
     "service_account": {

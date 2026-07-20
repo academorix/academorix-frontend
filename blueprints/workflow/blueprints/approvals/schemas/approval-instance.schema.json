@@ -49,7 +49,12 @@
   "x-database": {
     "engine": "postgres",
     "columns": {
-      "id": { "type": "string", "length": 64, "primary": true, "description": "Prefixed ULID: `api_<26>`." },
+      "id": {
+        "type": "string",
+        "length": 64,
+        "primary": true,
+        "description": "Prefixed ULID: `api_<26>`."
+      },
       "tenant_id": {
         "type": "string",
         "length": 64,
@@ -123,7 +128,11 @@
         "description": "SHA-256(request()->ip()) at request time. Never plaintext."
       },
       "requested_at": { "type": "timestamptz", "nullable": false },
-      "expires_at": { "type": "timestamptz", "nullable": false, "description": "= requested_at + template.expires_after_hours" },
+      "expires_at": {
+        "type": "timestamptz",
+        "nullable": false,
+        "description": "= requested_at + template.expires_after_hours"
+      },
       "decided_at": { "type": "timestamptz", "nullable": true },
       "executed_at": { "type": "timestamptz", "nullable": true },
       "rejected_at": { "type": "timestamptz", "nullable": true },
@@ -185,7 +194,22 @@
       }
     ]
   },
-  "required": ["id", "tenant_id", "application_id", "action_key", "approval_template_id", "template_version", "requester_id", "status", "context_json", "payload_json", "requested_at", "expires_at", "created_at", "updated_at"],
+  "required": [
+    "id",
+    "tenant_id",
+    "application_id",
+    "action_key",
+    "approval_template_id",
+    "template_version",
+    "requester_id",
+    "status",
+    "context_json",
+    "payload_json",
+    "requested_at",
+    "expires_at",
+    "created_at",
+    "updated_at"
+  ],
   "properties": {
     "id": { "type": "string", "pattern": "^api_[0-9A-HJKMNP-TV-Z]{26}$" },
     "tenant_id": { "type": "string", "pattern": "^ten_[0-9A-HJKMNP-TV-Z]{26}$" },
@@ -194,7 +218,10 @@
     "approval_template_id": { "type": "string", "pattern": "^apt_[0-9A-HJKMNP-TV-Z]{26}$" },
     "template_version": { "type": "integer", "minimum": 1 },
     "requester_id": { "type": "string" },
-    "status": { "type": "string", "enum": ["pending", "approved", "rejected", "executed", "expired", "cancelled"] },
+    "status": {
+      "type": "string",
+      "enum": ["pending", "approved", "rejected", "executed", "expired", "cancelled"]
+    },
     "subject_type": { "type": ["string", "null"] },
     "subject_id": { "type": ["string", "null"] },
     "context_json": { "type": "object" },

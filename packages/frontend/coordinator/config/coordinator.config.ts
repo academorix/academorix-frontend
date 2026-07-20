@@ -5,7 +5,7 @@
  *   Consumed by `CoordinatorModule.forRoot()` at bootstrap.
  */
 
-import { defineConfig } from '@stackra/coordinator';
+import { defineConfig } from "@stackra/coordinator";
 
 export const coordinatorConfig = defineConfig({
   /*
@@ -19,7 +19,7 @@ export const coordinatorConfig = defineConfig({
   | running on the same origin.
   |
   */
-  channelName: 'stackra-coordinator',
+  channelName: "stackra-coordinator",
 
   /*
   |--------------------------------------------------------------------------
@@ -68,7 +68,7 @@ export const coordinatorConfig = defineConfig({
   | Only events matching at least one pattern are broadcast.
   |
   */
-  broadcastPatterns: ['sync:**', 'auth:**', 'state:**'],
+  broadcastPatterns: ["sync:**", "auth:**", "state:**"],
 
   /*
   |--------------------------------------------------------------------------

@@ -4,15 +4,15 @@
  * @description RefreshHandler — invalidate one or more cached queries.
  */
 
-import { Inject, Injectable } from '@stackra/container';
+import { Inject, Injectable } from "@stackra/container";
 import type {
   IActionContext,
   IActionHandler,
   IActionResponse,
   IQueryClient,
   IRefreshAction,
-} from '@stackra/contracts';
-import { ActionKind, QUERY_CLIENT } from '@stackra/contracts';
+} from "@stackra/contracts";
+import { ActionKind, QUERY_CLIENT } from "@stackra/contracts";
 
 /**
  * `RefreshHandler` — dispatch handler for `ActionKind.Refresh`.
@@ -25,9 +25,9 @@ export class RefreshHandler implements IActionHandler<IRefreshAction, { invalida
 
   public async execute(
     descriptor: IRefreshAction,
-    context: IActionContext
+    context: IActionContext,
   ): Promise<IActionResponse<{ invalidated: number }>> {
-    if (context.signal?.aborted) return { success: false, message: 'Aborted' };
+    if (context.signal?.aborted) return { success: false, message: "Aborted" };
 
     const keys: ReadonlyArray<readonly unknown[]> =
       descriptor.keys ?? this.deriveKeys(descriptor.resource);

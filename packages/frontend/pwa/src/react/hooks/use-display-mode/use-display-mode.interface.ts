@@ -4,4 +4,4 @@
  * @description Types the `useDisplayMode()` hook re-exports.
  */
 
-export type { PwaDisplayMode } from '@/core/interfaces';
+export type { PwaDisplayMode } from "@/core/interfaces";

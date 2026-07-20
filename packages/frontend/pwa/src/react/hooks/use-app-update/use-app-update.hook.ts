@@ -9,13 +9,13 @@
  *   to be called at module setup — otherwise `useInject` throws.
  */
 
-import { useCallback, useSyncExternalStore } from 'react';
-import { useInject } from '@stackra/container/react';
+import { useCallback, useSyncExternalStore } from "react";
+import { useInject } from "@stackra/container/react";
 
-import { APP_UPDATE_SERVICE } from '@/core/constants';
-import type { AppUpdateService } from '@/core/services';
+import { APP_UPDATE_SERVICE } from "@/core/constants";
+import type { AppUpdateService } from "@/core/services";
 
-import type { IUseAppUpdateResult } from './use-app-update.interface';
+import type { IUseAppUpdateResult } from "./use-app-update.interface";
 
 /**
  * Access reactive app-update state.
@@ -51,13 +51,13 @@ export function useAppUpdate(): IUseAppUpdateResult {
     (listener) => service.subscribe(listener),
     () => service.getState(),
     // SSR getSnapshot — safe on server, no listeners will ever fire.
-    () => service.getState()
+    () => service.getState(),
   );
 
   const check = useCallback(() => service.check(), [service]);
   const accept = useCallback(
     (options?: { readonly openWindow?: boolean }) => service.accept(options),
-    [service]
+    [service],
   );
   const dismiss = useCallback(() => service.dismiss(), [service]);
 

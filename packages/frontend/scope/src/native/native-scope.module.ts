@@ -16,11 +16,11 @@
  *   and doesn't pass an explicit `persistAdapter`.
  */
 
-import { Module, type DynamicModule } from '@stackra/container';
+import { Module, type DynamicModule } from "@stackra/container";
 
-import { ScopeModule, type ScopeRootOptions } from '@/core/scope.module';
-import { withPersistAdapter } from '@/core/utils/with-persist-adapter.util';
-import type { IScopePersistAdapter } from '@/core/interfaces';
+import { ScopeModule, type ScopeRootOptions } from "@/core/scope.module";
+import { withPersistAdapter } from "@/core/utils/with-persist-adapter.util";
+import type { IScopePersistAdapter } from "@/core/interfaces";
 
 /** Options accepted by `NativeScopeModule.forRoot`. */
 export interface NativeScopeRootOptions extends ScopeRootOptions {
@@ -66,7 +66,7 @@ export class NativeScopeModule {
         imports: [
           ScopeModule.forRoot({
             ...rest,
-            storage: 'memory',
+            storage: "memory",
             ...(dataSource ? { dataSource } : {}),
           }),
         ],
@@ -90,7 +90,7 @@ export class NativeScopeModule {
             ...rest,
             // Explicit `'memory'` so the core module skips its own
             // storage-backed wiring — the caller already provided one.
-            storage: 'memory',
+            storage: "memory",
             ...(wrappedDataSource ? { dataSource: wrappedDataSource } : {}),
           }),
         ],
@@ -107,7 +107,7 @@ export class NativeScopeModule {
       global: true,
       imports: [
         ScopeModule.forRoot({
-          storage: 'asyncStorage',
+          storage: "asyncStorage",
           ...rest,
           ...(dataSource ? { dataSource } : {}),
         }),

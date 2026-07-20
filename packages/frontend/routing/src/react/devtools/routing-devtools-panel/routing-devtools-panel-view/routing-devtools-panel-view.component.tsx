@@ -92,8 +92,8 @@ export function RoutingDevtoolsPanelView({
     <div className="flex flex-col gap-4">
       {/* Section header — Title Case, muted description. */}
       <header className="flex flex-col gap-1">
-        <h3 className="text-base font-semibold text-foreground">Routing Runtime</h3>
-        <p className="text-xs text-muted">
+        <h3 className="text-foreground text-base font-semibold">Routing Runtime</h3>
+        <p className="text-muted text-xs">
           Live hydration state and the composition of the route registry.
         </p>
       </header>
@@ -111,7 +111,7 @@ export function RoutingDevtoolsPanelView({
           </div>
           <Card.Description className="text-xs">
             Current URL:{" "}
-            <code className="font-mono text-foreground tabular-nums">{href || "(none)"}</code>
+            <code className="text-foreground font-mono tabular-nums">{href || "(none)"}</code>
           </Card.Description>
         </Card.Header>
       </Card>
@@ -129,15 +129,15 @@ export function RoutingDevtoolsPanelView({
           <ul className="flex flex-col gap-2 text-sm">
             <li className="flex items-center justify-between">
               <span className="text-muted">Root (forRoot)</span>
-              <span className="font-mono text-foreground tabular-nums">{tally.root}</span>
+              <span className="text-foreground font-mono tabular-nums">{tally.root}</span>
             </li>
             <li className="flex items-center justify-between">
               <span className="text-muted">Feature (forFeature)</span>
-              <span className="font-mono text-foreground tabular-nums">{tally.feature}</span>
+              <span className="text-foreground font-mono tabular-nums">{tally.feature}</span>
             </li>
             <li className="flex items-center justify-between">
               <span className="text-muted">Discovery (@Route)</span>
-              <span className="font-mono text-foreground tabular-nums">{tally.discovery}</span>
+              <span className="text-foreground font-mono tabular-nums">{tally.discovery}</span>
             </li>
           </ul>
         </Card.Content>

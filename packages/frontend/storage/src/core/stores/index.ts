@@ -6,5 +6,5 @@
  *   under `./react/stores` and `./native/stores`.
  */
 
-export { MemoryStore } from './memory.store';
-export { NullStore } from './null.store';
+export { MemoryStore } from "./memory.store";
+export { NullStore } from "./null.store";

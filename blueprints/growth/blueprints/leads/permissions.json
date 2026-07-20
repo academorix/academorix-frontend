@@ -6,24 +6,110 @@
   "isSystem": true,
   "description": "Two audiences per hierarchy.md §4. Tenant plane (sanctum) — reception + marketing + admin + owner manage the CRM funnel; coach role sees only leads for their own athlete via policy narrowing; parent role never sees the surface. Platform plane (platform_admin) — ops + support read cross-tenant leads for support-ticket triage (never mutate). Every tenant-plane permission carries the `leads.` prefix (or `platform.leads.` on the platform audience).",
   "permissions": [
-    { "name": "leads.viewAny", "guard": "sanctum", "seededOn": ["marketing", "admin", "owner", "support", "receptionist"] },
-    { "name": "leads.view", "guard": "sanctum", "description": "Reading a specific lead. Coach role narrowed to own athlete via policy.", "seededOn": ["marketing", "admin", "owner", "support", "receptionist", "coach"] },
-    { "name": "leads.create", "guard": "sanctum", "seededOn": ["admin", "owner", "marketing", "receptionist"] },
-    { "name": "leads.update", "guard": "sanctum", "description": "Marketing role restricted to leads they own via policy narrowing.", "seededOn": ["admin", "owner", "marketing", "receptionist"] },
-    { "name": "leads.delete", "guard": "sanctum", "description": "Soft-delete only. Admin + owner only.", "seededOn": ["admin", "owner"] },
-    { "name": "leads.assign", "guard": "sanctum", "description": "Assign / reassign a lead to a staff owner.", "seededOn": ["admin", "owner"] },
-    { "name": "leads.convert", "guard": "sanctum", "description": "Trigger LeadConversionService — materialises athletes into sports::registrations and marks stage=WON.", "seededOn": ["admin", "owner", "marketing", "receptionist"] },
-    { "name": "lead-activities.viewAny", "guard": "sanctum", "seededOn": ["marketing", "admin", "owner", "support", "receptionist"] },
-    { "name": "lead-activities.view", "guard": "sanctum", "seededOn": ["marketing", "admin", "owner", "support", "receptionist"] },
-    { "name": "lead-activities.create", "guard": "sanctum", "description": "Manually log a touchpoint. System-generated activities bypass this check.", "seededOn": ["marketing", "admin", "owner", "receptionist"] },
-    { "name": "lead-tasks.viewAny", "guard": "sanctum", "seededOn": ["marketing", "admin", "owner", "support", "receptionist"] },
-    { "name": "lead-tasks.view", "guard": "sanctum", "seededOn": ["marketing", "admin", "owner", "support", "receptionist"] },
-    { "name": "lead-tasks.create", "guard": "sanctum", "seededOn": ["admin", "owner", "marketing", "receptionist"] },
-    { "name": "lead-tasks.update", "guard": "sanctum", "description": "Edit title / due_at / priority / assignee. Assignee-only mutations for reception via policy.", "seededOn": ["admin", "owner", "marketing", "receptionist"] },
-    { "name": "lead-tasks.delete", "guard": "sanctum", "description": "Soft-delete. Admin + owner only.", "seededOn": ["admin", "owner"] },
-    { "name": "lead-tasks.complete", "guard": "sanctum", "description": "Assignee-only via policy; admin + owner override.", "seededOn": ["admin", "owner", "marketing", "receptionist"] },
-    { "name": "leads.funnel-report.view", "guard": "sanctum", "description": "Access the funnel-conversion + source-attribution rollup dashboard.", "seededOn": ["admin", "owner", "marketing"] },
-    { "name": "platform.leads.viewAny", "guard": "platform_admin", "seededOn": ["super_admin", "ops", "support"] },
-    { "name": "platform.leads.view", "guard": "platform_admin", "seededOn": ["super_admin", "ops", "support"] }
+    {
+      "name": "leads.viewAny",
+      "guard": "sanctum",
+      "seededOn": ["marketing", "admin", "owner", "support", "receptionist"]
+    },
+    {
+      "name": "leads.view",
+      "guard": "sanctum",
+      "description": "Reading a specific lead. Coach role narrowed to own athlete via policy.",
+      "seededOn": ["marketing", "admin", "owner", "support", "receptionist", "coach"]
+    },
+    {
+      "name": "leads.create",
+      "guard": "sanctum",
+      "seededOn": ["admin", "owner", "marketing", "receptionist"]
+    },
+    {
+      "name": "leads.update",
+      "guard": "sanctum",
+      "description": "Marketing role restricted to leads they own via policy narrowing.",
+      "seededOn": ["admin", "owner", "marketing", "receptionist"]
+    },
+    {
+      "name": "leads.delete",
+      "guard": "sanctum",
+      "description": "Soft-delete only. Admin + owner only.",
+      "seededOn": ["admin", "owner"]
+    },
+    {
+      "name": "leads.assign",
+      "guard": "sanctum",
+      "description": "Assign / reassign a lead to a staff owner.",
+      "seededOn": ["admin", "owner"]
+    },
+    {
+      "name": "leads.convert",
+      "guard": "sanctum",
+      "description": "Trigger LeadConversionService — materialises athletes into sports::registrations and marks stage=WON.",
+      "seededOn": ["admin", "owner", "marketing", "receptionist"]
+    },
+    {
+      "name": "lead-activities.viewAny",
+      "guard": "sanctum",
+      "seededOn": ["marketing", "admin", "owner", "support", "receptionist"]
+    },
+    {
+      "name": "lead-activities.view",
+      "guard": "sanctum",
+      "seededOn": ["marketing", "admin", "owner", "support", "receptionist"]
+    },
+    {
+      "name": "lead-activities.create",
+      "guard": "sanctum",
+      "description": "Manually log a touchpoint. System-generated activities bypass this check.",
+      "seededOn": ["marketing", "admin", "owner", "receptionist"]
+    },
+    {
+      "name": "lead-tasks.viewAny",
+      "guard": "sanctum",
+      "seededOn": ["marketing", "admin", "owner", "support", "receptionist"]
+    },
+    {
+      "name": "lead-tasks.view",
+      "guard": "sanctum",
+      "seededOn": ["marketing", "admin", "owner", "support", "receptionist"]
+    },
+    {
+      "name": "lead-tasks.create",
+      "guard": "sanctum",
+      "seededOn": ["admin", "owner", "marketing", "receptionist"]
+    },
+    {
+      "name": "lead-tasks.update",
+      "guard": "sanctum",
+      "description": "Edit title / due_at / priority / assignee. Assignee-only mutations for reception via policy.",
+      "seededOn": ["admin", "owner", "marketing", "receptionist"]
+    },
+    {
+      "name": "lead-tasks.delete",
+      "guard": "sanctum",
+      "description": "Soft-delete. Admin + owner only.",
+      "seededOn": ["admin", "owner"]
+    },
+    {
+      "name": "lead-tasks.complete",
+      "guard": "sanctum",
+      "description": "Assignee-only via policy; admin + owner override.",
+      "seededOn": ["admin", "owner", "marketing", "receptionist"]
+    },
+    {
+      "name": "leads.funnel-report.view",
+      "guard": "sanctum",
+      "description": "Access the funnel-conversion + source-attribution rollup dashboard.",
+      "seededOn": ["admin", "owner", "marketing"]
+    },
+    {
+      "name": "platform.leads.viewAny",
+      "guard": "platform_admin",
+      "seededOn": ["super_admin", "ops", "support"]
+    },
+    {
+      "name": "platform.leads.view",
+      "guard": "platform_admin",
+      "seededOn": ["super_admin", "ops", "support"]
+    }
   ]
 }

@@ -4,4 +4,4 @@
  * @description Barrel for settings registries.
  */
 
-export { SettingsRegistry } from './settings.registry';
+export { SettingsRegistry } from "./settings.registry";

@@ -31,8 +31,21 @@
             {
               "kind": "View",
               "children": [
-                { "kind": "Text", "props": { "as": "h1", "className": "text-2xl font-semibold", "children": "Refund volume" } },
-                { "kind": "Text", "props": { "className": "text-sm text-muted", "children": "Refund trends, reason distribution, and provider performance." } }
+                {
+                  "kind": "Text",
+                  "props": {
+                    "as": "h1",
+                    "className": "text-2xl font-semibold",
+                    "children": "Refund volume"
+                  }
+                },
+                {
+                  "kind": "Text",
+                  "props": {
+                    "className": "text-sm text-muted",
+                    "children": "Refund trends, reason distribution, and provider performance."
+                  }
+                }
               ]
             },
             {
@@ -50,12 +63,20 @@
                     { "id": "custom", "label": "Custom range..." }
                   ],
                   "actions": {
-                    "onSelectionChange": { "kind": "filter.set", "field": "period", "valueExpr": "$selectedKey" }
+                    "onSelectionChange": {
+                      "kind": "filter.set",
+                      "field": "period",
+                      "valueExpr": "$selectedKey"
+                    }
                   }
                 },
                 {
                   "kind": "Button",
-                  "props": { "variant": "outline", "leadingIcon": "arrow-down-tray", "children": "Export CSV" },
+                  "props": {
+                    "variant": "outline",
+                    "leadingIcon": "arrow-down-tray",
+                    "children": "Export CSV"
+                  },
                   "actions": {
                     "onPress": {
                       "kind": "http.get",
@@ -76,7 +97,10 @@
               "kind": "Card",
               "props": { "className": "p-4" },
               "children": [
-                { "kind": "Text", "props": { "className": "text-sm text-muted", "children": "Total initiated" } },
+                {
+                  "kind": "Text",
+                  "props": { "className": "text-sm text-muted", "children": "Total initiated" }
+                },
                 {
                   "kind": "Text",
                   "props": { "className": "text-2xl font-semibold mt-1" },
@@ -88,7 +112,10 @@
               "kind": "Card",
               "props": { "className": "p-4" },
               "children": [
-                { "kind": "Text", "props": { "className": "text-sm text-muted", "children": "Total succeeded" } },
+                {
+                  "kind": "Text",
+                  "props": { "className": "text-sm text-muted", "children": "Total succeeded" }
+                },
                 {
                   "kind": "Text",
                   "props": { "className": "text-2xl font-semibold mt-1" },
@@ -100,7 +127,13 @@
               "kind": "Card",
               "props": { "className": "p-4" },
               "children": [
-                { "kind": "Text", "props": { "className": "text-sm text-muted", "children": "Total refunded amount" } },
+                {
+                  "kind": "Text",
+                  "props": {
+                    "className": "text-sm text-muted",
+                    "children": "Total refunded amount"
+                  }
+                },
                 {
                   "kind": "Text",
                   "props": { "className": "text-2xl font-semibold mt-1" },
@@ -116,7 +149,13 @@
               "kind": "Card",
               "props": { "className": "p-4" },
               "children": [
-                { "kind": "Text", "props": { "className": "text-sm text-muted", "children": "Median approval-to-success" } },
+                {
+                  "kind": "Text",
+                  "props": {
+                    "className": "text-sm text-muted",
+                    "children": "Median approval-to-success"
+                  }
+                },
                 {
                   "kind": "Text",
                   "props": { "className": "text-2xl font-semibold mt-1" },
@@ -138,7 +177,14 @@
               "kind": "Card",
               "props": { "className": "p-4" },
               "children": [
-                { "kind": "Text", "props": { "as": "h3", "className": "font-medium mb-2", "children": "Reason distribution" } },
+                {
+                  "kind": "Text",
+                  "props": {
+                    "as": "h3",
+                    "className": "font-medium mb-2",
+                    "children": "Reason distribution"
+                  }
+                },
                 {
                   "kind": "DonutChart",
                   "bindings": {
@@ -153,7 +199,14 @@
               "kind": "Card",
               "props": { "className": "p-4" },
               "children": [
-                { "kind": "Text", "props": { "as": "h3", "className": "font-medium mb-2", "children": "Provider distribution" } },
+                {
+                  "kind": "Text",
+                  "props": {
+                    "as": "h3",
+                    "className": "font-medium mb-2",
+                    "children": "Provider distribution"
+                  }
+                },
                 {
                   "kind": "DonutChart",
                   "bindings": {
@@ -170,7 +223,14 @@
           "kind": "Card",
           "props": { "className": "p-4" },
           "children": [
-            { "kind": "Text", "props": { "as": "h3", "className": "font-medium mb-2", "children": "Daily refund trend" } },
+            {
+              "kind": "Text",
+              "props": {
+                "as": "h3",
+                "className": "font-medium mb-2",
+                "children": "Daily refund trend"
+              }
+            },
             {
               "kind": "LineChart",
               "bindings": {
@@ -188,7 +248,14 @@
           "kind": "Card",
           "props": { "className": "p-4" },
           "children": [
-            { "kind": "Text", "props": { "as": "h3", "className": "font-medium mb-2", "children": "Top refunded invoices" } },
+            {
+              "kind": "Text",
+              "props": {
+                "as": "h3",
+                "className": "font-medium mb-2",
+                "children": "Top refunded invoices"
+              }
+            },
             {
               "kind": "Table",
               "bindings": {
@@ -197,7 +264,13 @@
               "columns": [
                 { "key": "invoice_id", "label": "Invoice", "renderer": "monospace" },
                 { "key": "refund_count", "label": "Refunds" },
-                { "key": "total_refunded_cents", "label": "Total refunded", "renderer": "currency", "params": { "currency": "row.currency" }, "hidden_when": "!hasPermission('refunds.view-financials')" }
+                {
+                  "key": "total_refunded_cents",
+                  "label": "Total refunded",
+                  "renderer": "currency",
+                  "params": { "currency": "row.currency" },
+                  "hidden_when": "!hasPermission('refunds.view-financials')"
+                }
               ]
             }
           ]

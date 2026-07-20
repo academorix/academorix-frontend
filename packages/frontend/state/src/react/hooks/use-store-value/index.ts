@@ -4,4 +4,4 @@
  * @description Barrel export for the `useStoreValue` hook.
  */
 
-export { useStoreValue } from './use-store-value.hook';
+export { useStoreValue } from "./use-store-value.hook";

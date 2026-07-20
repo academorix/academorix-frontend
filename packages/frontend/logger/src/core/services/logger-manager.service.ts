@@ -311,7 +311,12 @@ export class LoggerManager extends Manager<ILogChannel> implements ILoggerManage
     // severity (EMERGENCY=0 … DEBUG=7), so an entry is "below" the
     // threshold when its priority number is GREATER than the
     // channel's. Channels without an explicit level accept everything.
-    if (chConfig.level && LOG_LEVEL_PRIORITY[entry.level] > LOG_LEVEL_PRIORITY[chConfig.level]) {
+    // Safe non-null: LOG_LEVEL_PRIORITY is a complete map over
+    // every LogLevel enum value, and both `entry.level` and
+    // `chConfig.level` are typed as LogLevel — noUncheckedIndexedAccess
+    // widens the lookup to `number | undefined`, but the runtime
+    // guarantee holds.
+    if (chConfig.level && LOG_LEVEL_PRIORITY[entry.level]! > LOG_LEVEL_PRIORITY[chConfig.level]!) {
       return;
     }
 

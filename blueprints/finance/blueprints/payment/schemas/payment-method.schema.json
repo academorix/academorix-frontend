@@ -166,9 +166,21 @@
         "predicate": "deleted_at IS NULL",
         "description": "Prevents storing the same card multiple times per customer. Duplicate detected → observer re-activates existing instead of creating new."
       },
-      { "columns": ["tenant_id", "customer_type", "customer_id"], "name": "payment_methods_customer_idx" },
-      { "columns": ["tenant_id", "customer_type", "customer_id", "is_default"], "name": "payment_methods_default_idx", "predicate": "is_default = true AND is_active = true AND deleted_at IS NULL" },
-      { "columns": ["exp_year", "exp_month"], "name": "payment_methods_expiry_idx", "predicate": "is_active = true AND method_type = 'card' AND deleted_at IS NULL", "description": "For SyncPaymentMethodExpiryJob — weekly sweep flags cards expiring in 30 days." },
+      {
+        "columns": ["tenant_id", "customer_type", "customer_id"],
+        "name": "payment_methods_customer_idx"
+      },
+      {
+        "columns": ["tenant_id", "customer_type", "customer_id", "is_default"],
+        "name": "payment_methods_default_idx",
+        "predicate": "is_default = true AND is_active = true AND deleted_at IS NULL"
+      },
+      {
+        "columns": ["exp_year", "exp_month"],
+        "name": "payment_methods_expiry_idx",
+        "predicate": "is_active = true AND method_type = 'card' AND deleted_at IS NULL",
+        "description": "For SyncPaymentMethodExpiryJob — weekly sweep flags cards expiring in 30 days."
+      },
       { "columns": ["tenant_id", "provider"], "name": "payment_methods_provider_idx" }
     ]
   },
@@ -202,7 +214,23 @@
     },
     "brand": {
       "type": ["string", "null"],
-      "enum": [null, "visa", "mastercard", "amex", "discover", "jcb", "unionpay", "sepa", "ach", "apple_pay", "google_pay", "paypal", "venmo", "cash_app", "other"]
+      "enum": [
+        null,
+        "visa",
+        "mastercard",
+        "amex",
+        "discover",
+        "jcb",
+        "unionpay",
+        "sepa",
+        "ach",
+        "apple_pay",
+        "google_pay",
+        "paypal",
+        "venmo",
+        "cash_app",
+        "other"
+      ]
     },
     "last4": { "type": ["string", "null"], "pattern": "^\\d{4}$" },
     "exp_month": { "type": ["integer", "null"], "minimum": 1, "maximum": 12 },
@@ -226,7 +254,14 @@
     "verified_at": { "type": ["string", "null"], "format": "date-time" },
     "deactivated_reason": {
       "type": ["string", "null"],
-      "enum": [null, "customer_removed", "card_expired", "provider_failure", "duplicate", "fraud_flag"]
+      "enum": [
+        null,
+        "customer_removed",
+        "card_expired",
+        "provider_failure",
+        "duplicate",
+        "fraud_flag"
+      ]
     },
     "metadata": { "type": ["object", "null"] },
     "created_at": { "type": "string", "format": "date-time" },

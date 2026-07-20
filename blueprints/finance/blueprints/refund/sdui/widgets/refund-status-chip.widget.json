@@ -5,8 +5,26 @@
   "kind": "SduiWidget",
   "description": "Composite chip showing the refund's overall state — combines status + optional provider_error indicator + optional requires_approval indicator into a single at-a-glance signal. Colour + icon + text label. Never colour-alone. Priority order: 'Failed' > 'Provider error' > 'Rejected' > 'Cancelled' > 'Succeeded' > 'Processing' > 'Approved' > 'Awaiting approval' > 'Pending'.",
   "props": {
-    "status": { "type": "string", "required": true, "enum": ["pending", "awaiting_approval", "approved", "processing", "succeeded", "failed", "cancelled", "provider_error", "rejected"] },
-    "requiresApproval": { "type": "boolean", "default": false, "description": "When status='awaiting_approval', show an 'Approval required' variant of the awaiting_approval chip." },
+    "status": {
+      "type": "string",
+      "required": true,
+      "enum": [
+        "pending",
+        "awaiting_approval",
+        "approved",
+        "processing",
+        "succeeded",
+        "failed",
+        "cancelled",
+        "provider_error",
+        "rejected"
+      ]
+    },
+    "requiresApproval": {
+      "type": "boolean",
+      "default": false,
+      "description": "When status='awaiting_approval', show an 'Approval required' variant of the awaiting_approval chip."
+    },
     "size": { "type": "string", "default": "sm", "enum": ["xs", "sm", "md", "lg"] },
     "showIcon": { "type": "boolean", "default": true }
   },

@@ -5,20 +5,20 @@
  *   pluralization, fallback chains, and namespace management.
  */
 
-import { Injectable, Inject } from '@stackra/container';
-import type { II18nLoader, I18nTranslation, TranslateOptions } from '@stackra/contracts';
+import { Injectable, Inject } from "@stackra/container";
+import type { II18nLoader, I18nTranslation, TranslateOptions } from "@stackra/contracts";
 
-import { I18N_CONFIG } from '../constants';
-import type { II18nConfig } from '../interfaces';
-import { interpolate } from '../utils/interpolate.util';
-import { getPluralObject, selectPlural } from '../utils/pluralize.util';
-import { resolveLanguage, getNextFallbackLanguage } from '../utils/resolve-language.util';
+import { I18N_CONFIG } from "../constants";
+import type { II18nConfig } from "../interfaces";
+import { interpolate } from "../utils/interpolate.util";
+import { getPluralObject, selectPlural } from "../utils/pluralize.util";
+import { resolveLanguage, getNextFallbackLanguage } from "../utils/resolve-language.util";
 import {
   DEFAULT_KEY_SEPARATOR,
   DEFAULT_NAMESPACE_SEPARATOR,
   DEFAULT_INTERPOLATION_PREFIX,
   DEFAULT_INTERPOLATION_SUFFIX,
-} from '../constants';
+} from "../constants";
 
 // ============================================================================
 // Service
@@ -58,7 +58,7 @@ export class I18nManager {
 
     // Initialize the loader from config
     if (config.loader) {
-      if (typeof config.loader === 'string') {
+      if (typeof config.loader === "string") {
         // String driver name — resolved lazily when translations are loaded
         // Built-in drivers: 'static', 'http', 'bundled'
         // The actual loader class is resolved by the module or provided via loaderOptions
@@ -96,7 +96,7 @@ export class I18nManager {
   public translate(key: string, options?: TranslateOptions): string {
     const lang = options?.lang ?? this.getCurrentLocale();
 
-    if (options?.debug || lang === 'debug') return key;
+    if (options?.debug || lang === "debug") return key;
 
     const resolvedLang = resolveLanguage(lang, this.supportedLocales, this.config.fallbacks);
     const translationsByLang = this.translations[resolvedLang];
@@ -163,7 +163,7 @@ export class I18nManager {
   /** Merge namespace-scoped translations. */
   public mergeTranslations(
     namespace: string,
-    localeTranslations: Record<string, Record<string, unknown>>
+    localeTranslations: Record<string, Record<string, unknown>>,
   ): void {
     for (const [locale, trans] of Object.entries(localeTranslations)) {
       if (!this.translations[locale]) this.translations[locale] = {};
@@ -185,7 +185,7 @@ export class I18nManager {
     key: string,
     translations: I18nTranslation | undefined,
     lang: string,
-    options?: TranslateOptions
+    options?: TranslateOptions,
   ): string | undefined {
     if (!translations) return undefined;
 
@@ -205,34 +205,34 @@ export class I18nManager {
     }
 
     // Object/array returns
-    if (typeof value === 'object' && value !== null) {
+    if (typeof value === "object" && value !== null) {
       const shouldReturn = options?.returnObjects ?? this.config.returnObjects ?? true;
       if (!shouldReturn) return key;
       if (Array.isArray(value)) {
         const join = options?.joinArrays ?? this.config.joinArrays;
-        if (typeof join === 'string') return (value as unknown[]).map(String).join(join);
+        if (typeof join === "string") return (value as unknown[]).map(String).join(join);
       }
       return JSON.stringify(value);
     }
 
     // String interpolation
-    if (typeof value === 'string' && args) {
+    if (typeof value === "string" && args) {
       const prefix = this.config.interpolation?.prefix ?? DEFAULT_INTERPOLATION_PREFIX;
       const suffix = this.config.interpolation?.suffix ?? DEFAULT_INTERPOLATION_SUFFIX;
       const argsObj = Array.isArray(args)
-        ? Object.assign({}, ...args.filter((a) => typeof a === 'object'))
+        ? Object.assign({}, ...args.filter((a) => typeof a === "object"))
         : args;
       if (count !== undefined) (argsObj as any).count = count;
       return interpolate(value, argsObj as Record<string, unknown>, prefix, suffix);
     }
 
-    return typeof value === 'string' ? value : String(value);
+    return typeof value === "string" ? value : String(value);
   }
 
   private getByPath(
     translations: I18nTranslation,
     key: string,
-    options?: TranslateOptions
+    options?: TranslateOptions,
   ): unknown {
     // Direct match
     if (key in translations) return translations[key];
@@ -244,7 +244,7 @@ export class I18nManager {
       const ns = key.slice(0, idx);
       const rest = key.slice(idx + (nsSep as string).length);
       const nsTranslations = translations[ns];
-      if (nsTranslations && typeof nsTranslations === 'object') {
+      if (nsTranslations && typeof nsTranslations === "object") {
         return this.getByPath(nsTranslations as I18nTranslation, rest, {
           ...options,
           nsSeparator: false,
@@ -260,7 +260,7 @@ export class I18nManager {
     let current: unknown = translations;
 
     for (const segment of segments) {
-      if (current === null || current === undefined || typeof current !== 'object')
+      if (current === null || current === undefined || typeof current !== "object")
         return undefined;
       current = (current as Record<string, unknown>)[segment];
     }
@@ -269,9 +269,9 @@ export class I18nManager {
   }
 
   private handleMissingKey(key: string): string {
-    const behavior = this.config.missingKeyBehavior ?? 'key';
-    if (behavior === 'empty') return '';
-    if (behavior === 'throw') throw new Error(`[i18n] Missing translation key: "${key}"`);
+    const behavior = this.config.missingKeyBehavior ?? "key";
+    if (behavior === "empty") return "";
+    if (behavior === "throw") throw new Error(`[i18n] Missing translation key: "${key}"`);
     return key;
   }
 }

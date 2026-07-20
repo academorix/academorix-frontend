@@ -4,7 +4,7 @@
  * @description Props for the {@link NotificationBadge} component.
  */
 
-import type { ReactNode } from 'react';
+import type { ReactNode } from "react";
 
 /**
  * Props accepted by {@link NotificationBadge}.

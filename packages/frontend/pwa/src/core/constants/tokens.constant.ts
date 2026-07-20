@@ -15,10 +15,10 @@
  */
 
 /** DI token for the merged {@link IPwaModuleOptions}. */
-export const PWA_CONFIG = Symbol.for('PWA_CONFIG');
+export const PWA_CONFIG = Symbol.for("PWA_CONFIG");
 
 /** DI token for the {@link PwaService} singleton. */
-export const PWA_SERVICE = Symbol.for('PWA_SERVICE');
+export const PWA_SERVICE = Symbol.for("PWA_SERVICE");
 
 /**
  * DI token for the {@link AppUpdateService} — backend-published app
@@ -28,4 +28,4 @@ export const PWA_SERVICE = Symbol.for('PWA_SERVICE');
  * called; consumers who don't configure app updates never see this
  * token registered.
  */
-export const APP_UPDATE_SERVICE = Symbol.for('APP_UPDATE_SERVICE');
+export const APP_UPDATE_SERVICE = Symbol.for("APP_UPDATE_SERVICE");

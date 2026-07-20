@@ -6,8 +6,22 @@
   "namespace": "academorix.facility",
   "labelConventions": {
     "always": [],
-    "commonlyAvailable": ["facility_type", "sport_category", "status", "cascade_trigger", "payment_method"],
-    "forbiddenAsLabels": ["tenant_id", "facility_id", "booking_id", "user_id", "pass_id", "receipt_number", "price_amount_cents"]
+    "commonlyAvailable": [
+      "facility_type",
+      "sport_category",
+      "status",
+      "cascade_trigger",
+      "payment_method"
+    ],
+    "forbiddenAsLabels": [
+      "tenant_id",
+      "facility_id",
+      "booking_id",
+      "user_id",
+      "pass_id",
+      "receipt_number",
+      "price_amount_cents"
+    ]
   },
   "metrics": [
     {

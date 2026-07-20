@@ -77,7 +77,10 @@
               "kind": "Card",
               "props": { "className": "p-4" },
               "children": [
-                { "kind": "Text", "props": { "as": "h3", "className": "font-semibold mb-3", "children": "Parties" } },
+                {
+                  "kind": "Text",
+                  "props": { "as": "h3", "className": "font-semibold mb-3", "children": "Parties" }
+                },
                 {
                   "kind": "View",
                   "props": { "className": "flex flex-col gap-2 text-sm" },
@@ -85,22 +88,55 @@
                     {
                       "kind": "View",
                       "children": [
-                        { "kind": "Text", "props": { "className": "text-xs text-muted", "children": "Referrer" } },
-                        { "kind": "Text", "props": { "className": "font-medium" }, "bindings": { "children": { "$expr": "referral.referrer?.display_name || referral.referrer_id" } } }
+                        {
+                          "kind": "Text",
+                          "props": { "className": "text-xs text-muted", "children": "Referrer" }
+                        },
+                        {
+                          "kind": "Text",
+                          "props": { "className": "font-medium" },
+                          "bindings": {
+                            "children": {
+                              "$expr": "referral.referrer?.display_name || referral.referrer_id"
+                            }
+                          }
+                        }
                       ]
                     },
                     {
                       "kind": "View",
                       "children": [
-                        { "kind": "Text", "props": { "className": "text-xs text-muted", "children": "Referred" } },
-                        { "kind": "Text", "props": { "className": "font-medium" }, "bindings": { "children": { "$expr": "referral.referred?.display_name || referral.referred_email || '—'" } } }
+                        {
+                          "kind": "Text",
+                          "props": { "className": "text-xs text-muted", "children": "Referred" }
+                        },
+                        {
+                          "kind": "Text",
+                          "props": { "className": "font-medium" },
+                          "bindings": {
+                            "children": {
+                              "$expr": "referral.referred?.display_name || referral.referred_email || '—'"
+                            }
+                          }
+                        }
                       ]
                     },
                     {
                       "kind": "View",
                       "children": [
-                        { "kind": "Text", "props": { "className": "text-xs text-muted", "children": "Code used" } },
-                        { "kind": "Text", "props": { "className": "font-mono" }, "bindings": { "children": { "$expr": "referral.code?.code || 'Attribution only (no code)'" } } }
+                        {
+                          "kind": "Text",
+                          "props": { "className": "text-xs text-muted", "children": "Code used" }
+                        },
+                        {
+                          "kind": "Text",
+                          "props": { "className": "font-mono" },
+                          "bindings": {
+                            "children": {
+                              "$expr": "referral.code?.code || 'Attribution only (no code)'"
+                            }
+                          }
+                        }
                       ]
                     }
                   ]
@@ -111,7 +147,14 @@
               "kind": "Card",
               "props": { "className": "p-4" },
               "children": [
-                { "kind": "Text", "props": { "as": "h3", "className": "font-semibold mb-3", "children": "Attribution snapshot" } },
+                {
+                  "kind": "Text",
+                  "props": {
+                    "as": "h3",
+                    "className": "font-semibold mb-3",
+                    "children": "Attribution snapshot"
+                  }
+                },
                 {
                   "kind": "View",
                   "props": { "className": "flex flex-col gap-2 text-sm" },
@@ -119,26 +162,54 @@
                     {
                       "kind": "View",
                       "children": [
-                        { "kind": "Text", "props": { "className": "text-xs text-muted", "children": "UTM source" } },
-                        { "kind": "Text", "bindings": { "children": { "$expr": "referral.attribution_snapshot?.last_touch?.source || '—'" } } }
+                        {
+                          "kind": "Text",
+                          "props": { "className": "text-xs text-muted", "children": "UTM source" }
+                        },
+                        {
+                          "kind": "Text",
+                          "bindings": {
+                            "children": {
+                              "$expr": "referral.attribution_snapshot?.last_touch?.source || '—'"
+                            }
+                          }
+                        }
                       ]
                     },
                     {
                       "kind": "View",
                       "children": [
-                        { "kind": "Text", "props": { "className": "text-xs text-muted", "children": "Campaign" } },
-                        { "kind": "Text", "bindings": { "children": { "$expr": "referral.attribution_snapshot?.last_touch?.campaign || '—'" } } }
+                        {
+                          "kind": "Text",
+                          "props": { "className": "text-xs text-muted", "children": "Campaign" }
+                        },
+                        {
+                          "kind": "Text",
+                          "bindings": {
+                            "children": {
+                              "$expr": "referral.attribution_snapshot?.last_touch?.campaign || '—'"
+                            }
+                          }
+                        }
                       ]
                     },
                     {
                       "kind": "View",
                       "children": [
-                        { "kind": "Text", "props": { "className": "text-xs text-muted", "children": "Click ID provider" } },
+                        {
+                          "kind": "Text",
+                          "props": {
+                            "className": "text-xs text-muted",
+                            "children": "Click ID provider"
+                          }
+                        },
                         {
                           "kind": "Chip",
                           "props": { "size": "xs" },
                           "bindings": {
-                            "children": { "$expr": "referral.attribution_snapshot?.last_touch?.click_id?.provider_hint || 'none'" }
+                            "children": {
+                              "$expr": "referral.attribution_snapshot?.last_touch?.click_id?.provider_hint || 'none'"
+                            }
                           }
                         }
                       ]
@@ -152,16 +223,23 @@
         {
           "kind": "Card",
           "props": { "className": "p-4" },
-          "bindings": { "hidden": { "$expr": "!referral.rewards || referral.rewards.length === 0" } },
+          "bindings": {
+            "hidden": { "$expr": "!referral.rewards || referral.rewards.length === 0" }
+          },
           "children": [
-            { "kind": "Text", "props": { "as": "h3", "className": "font-semibold mb-3", "children": "Rewards" } },
+            {
+              "kind": "Text",
+              "props": { "as": "h3", "className": "font-semibold mb-3", "children": "Rewards" }
+            },
             {
               "kind": "View",
               "props": { "className": "flex flex-col gap-2" },
               "bindings": { "items": { "$ref": "referral.rewards" } },
               "itemRenderer": {
                 "kind": "View",
-                "props": { "className": "flex items-center justify-between border-b py-2 last:border-0" },
+                "props": {
+                  "className": "flex items-center justify-between border-b py-2 last:border-0"
+                },
                 "children": [
                   {
                     "kind": "Widget",
@@ -190,16 +268,27 @@
         {
           "kind": "Card",
           "props": { "className": "p-4 border-warning" },
-          "bindings": { "hidden": { "$expr": "!referral.fraud_flags || referral.fraud_flags.length === 0" } },
+          "bindings": {
+            "hidden": { "$expr": "!referral.fraud_flags || referral.fraud_flags.length === 0" }
+          },
           "children": [
-            { "kind": "Text", "props": { "as": "h3", "className": "font-semibold mb-3 text-warning", "children": "Fraud flags" } },
+            {
+              "kind": "Text",
+              "props": {
+                "as": "h3",
+                "className": "font-semibold mb-3 text-warning",
+                "children": "Fraud flags"
+              }
+            },
             {
               "kind": "View",
               "props": { "className": "flex flex-col gap-2" },
               "bindings": { "items": { "$ref": "referral.fraud_flags" } },
               "itemRenderer": {
                 "kind": "View",
-                "props": { "className": "flex items-center justify-between border-b py-2 last:border-0" },
+                "props": {
+                  "className": "flex items-center justify-between border-b py-2 last:border-0"
+                },
                 "children": [
                   {
                     "kind": "Text",
@@ -226,8 +315,16 @@
           "children": [
             {
               "kind": "Button",
-              "props": { "variant": "warning", "leadingIcon": "x-mark", "children": "Cancel referral" },
-              "bindings": { "hidden": { "$expr": "['rewarded','cancelled','expired','fraudulent'].includes(referral.status)" } },
+              "props": {
+                "variant": "warning",
+                "leadingIcon": "x-mark",
+                "children": "Cancel referral"
+              },
+              "bindings": {
+                "hidden": {
+                  "$expr": "['rewarded','cancelled','expired','fraudulent'].includes(referral.status)"
+                }
+              },
               "actions": {
                 "onPress": {
                   "kind": "modal.open",
@@ -241,7 +338,9 @@
               "kind": "Button",
               "props": { "variant": "primary", "leadingIcon": "bolt", "children": "Force-vest" },
               "bindings": {
-                "hidden": { "$expr": "!manualOverrideEntitlement.enabled || !['trigger_pending','vesting'].includes(referral.status)" }
+                "hidden": {
+                  "$expr": "!manualOverrideEntitlement.enabled || !['trigger_pending','vesting'].includes(referral.status)"
+                }
               },
               "actions": {
                 "onPress": {

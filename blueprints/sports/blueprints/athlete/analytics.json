@@ -9,7 +9,14 @@
       "name": "Athlete Created",
       "kind": "track",
       "consent_required": "functional",
-      "properties": ["tenant_id", "branch_id", "age_bucket", "is_minor", "has_user_at_create", "source"],
+      "properties": [
+        "tenant_id",
+        "branch_id",
+        "age_bucket",
+        "is_minor",
+        "has_user_at_create",
+        "source"
+      ],
       "description": "age_bucket is pre-computed (under_10 / 10_to_14 / 15_to_17 / 18_to_25 / 26_plus) to avoid high-cardinality DOB / age labels."
     },
     {
@@ -29,13 +36,24 @@
       "name": "Athlete Graduated",
       "kind": "track",
       "consent_required": "functional",
-      "properties": ["tenant_id", "branch_id", "days_of_membership_bucket", "age_bucket_at_graduation"]
+      "properties": [
+        "tenant_id",
+        "branch_id",
+        "days_of_membership_bucket",
+        "age_bucket_at_graduation"
+      ]
     },
     {
       "name": "Athlete Withdrawn",
       "kind": "track",
       "consent_required": "functional",
-      "properties": ["tenant_id", "branch_id", "withdrawal_reason", "days_of_membership_bucket", "was_guardian_initiated"]
+      "properties": [
+        "tenant_id",
+        "branch_id",
+        "withdrawal_reason",
+        "days_of_membership_bucket",
+        "was_guardian_initiated"
+      ]
     },
     {
       "name": "Athlete Medical Updated",
@@ -48,7 +66,13 @@
       "name": "Athlete Consent Recorded",
       "kind": "track",
       "consent_required": "functional",
-      "properties": ["tenant_id", "consent_photo_release", "consent_medical_disclosure", "consent_third_party", "was_by_guardian"]
+      "properties": [
+        "tenant_id",
+        "consent_photo_release",
+        "consent_medical_disclosure",
+        "consent_third_party",
+        "was_by_guardian"
+      ]
     },
     {
       "name": "Athlete Consent Revoked",

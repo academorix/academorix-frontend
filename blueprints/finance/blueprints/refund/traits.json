@@ -37,13 +37,22 @@
       { "trait": "Academorix\\Foundation\\Concerns\\Searchable" }
     ],
     "tenants": [
-      { "trait": "Academorix\\Tenancy\\Concerns\\BelongsToTenant", "reason": "Every owned row carries tenant_id per tenancy-columns.md §3." }
+      {
+        "trait": "Academorix\\Tenancy\\Concerns\\BelongsToTenant",
+        "reason": "Every owned row carries tenant_id per tenancy-columns.md §3."
+      }
     ],
     "audit": [
-      { "trait": "Academorix\\Audit\\Concerns\\Auditable", "reason": "Every write is compliance-relevant (financial-record 7-year retention). Every state transition on Refund (status, approved_by, rejected_by, processed_at, credit_note_id, transaction_id) + every RefundLine creation is audit-critical." }
+      {
+        "trait": "Academorix\\Audit\\Concerns\\Auditable",
+        "reason": "Every write is compliance-relevant (financial-record 7-year retention). Every state transition on Refund (status, approved_by, rejected_by, processed_at, credit_note_id, transaction_id) + every RefundLine creation is audit-critical."
+      }
     ],
     "activity": [
-      { "trait": "Academorix\\Activity\\Concerns\\HasActivityLog", "reason": "Refund lifecycle transitions (requested / approved / rejected / cancelled / succeeded / failed) feed the staff-visible activity feed. NOT on RefundLine (immutable pivot row — already covered by parent refund activity log)." }
+      {
+        "trait": "Academorix\\Activity\\Concerns\\HasActivityLog",
+        "reason": "Refund lifecycle transitions (requested / approved / rejected / cancelled / succeeded / failed) feed the staff-visible activity feed. NOT on RefundLine (immutable pivot row — already covered by parent refund activity log)."
+      }
     ]
   },
   "composition": {

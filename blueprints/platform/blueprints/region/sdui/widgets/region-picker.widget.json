@@ -140,17 +140,30 @@
                               },
                               {
                                 "kind": "Chip",
-                                "props": { "size": "xs", "variant": "accent", "leadingIcon": "star-solid", "children": "Default" },
+                                "props": {
+                                  "size": "xs",
+                                  "variant": "accent",
+                                  "leadingIcon": "star-solid",
+                                  "children": "Default"
+                                },
                                 "bindings": { "hidden": { "$expr": "!item.is_default" } }
                               },
                               {
                                 "kind": "Chip",
-                                "props": { "size": "xs", "variant": "warning", "children": "Paused" },
+                                "props": {
+                                  "size": "xs",
+                                  "variant": "warning",
+                                  "children": "Paused"
+                                },
                                 "bindings": { "hidden": { "$expr": "item.status !== 'paused'" } }
                               },
                               {
                                 "kind": "Chip",
-                                "props": { "size": "xs", "variant": "neutral", "children": "Archived" },
+                                "props": {
+                                  "size": "xs",
+                                  "variant": "neutral",
+                                  "children": "Archived"
+                                },
                                 "bindings": { "hidden": { "$expr": "item.status !== 'archived'" } }
                               }
                             ]
@@ -166,7 +179,10 @@
                           }
                         ]
                       },
-                      { "kind": "ListBox.ItemIndicator", "props": { "className": "size-4 text-accent" } }
+                      {
+                        "kind": "ListBox.ItemIndicator",
+                        "props": { "className": "size-4 text-accent" }
+                      }
                     ]
                   }
                 ]

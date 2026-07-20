@@ -10,7 +10,12 @@
       "description": "Per-branch facility catalogue (list of facility rows for a branch, filtered by status='active'). Read by SDUI list screens + the available-slots widget's facility picker.",
       "ttlSeconds": 300,
       "tags": ["facility", "tenant"],
-      "invalidatedBy": ["FacilityObserver.created", "FacilityObserver.updated", "FacilityObserver.deleted", "FacilityStatusChanged"]
+      "invalidatedBy": [
+        "FacilityObserver.created",
+        "FacilityObserver.updated",
+        "FacilityObserver.deleted",
+        "FacilityStatusChanged"
+      ]
     },
     {
       "pattern": "fac:catalogue:{tenant_id}",
@@ -24,7 +29,12 @@
       "description": "Facility.availability_json + blackout_dates + status. Read hot by the available-slots endpoint (fac-heavy tenant hits this thousands of times per day).",
       "ttlSeconds": 300,
       "tags": ["facility", "facility.availability"],
-      "invalidatedBy": ["FacilityAvailabilityChanged", "FacilityBlackoutAdded", "FacilityBlackoutRemoved", "FacilityStatusChanged"]
+      "invalidatedBy": [
+        "FacilityAvailabilityChanged",
+        "FacilityBlackoutAdded",
+        "FacilityBlackoutRemoved",
+        "FacilityStatusChanged"
+      ]
     },
     {
       "pattern": "fac:pricing:{facility_id}",
@@ -38,21 +48,38 @@
       "description": "Computed available slot list for a facility on a specific date. Materialised on first request; invalidated on any booking-create for the facility on that date OR any blackout-add on that date.",
       "ttlSeconds": 300,
       "tags": ["facility", "facility.bookings", "facility.availability"],
-      "invalidatedBy": ["BookingCreated (per-date)", "BookingCancelled (per-date)", "BookingRescheduled (both source + dest dates)", "FacilityBlackoutAdded (per overlapping date)", "FacilityBlackoutRemoved (per date)"]
+      "invalidatedBy": [
+        "BookingCreated (per-date)",
+        "BookingCancelled (per-date)",
+        "BookingRescheduled (both source + dest dates)",
+        "FacilityBlackoutAdded (per overlapping date)",
+        "FacilityBlackoutRemoved (per date)"
+      ]
     },
     {
       "pattern": "fac:bookings-count:{facility_id}:{date}",
       "description": "Booked slot count for a facility on a specific date. Feeds the utilisation-bar widget.",
       "ttlSeconds": 300,
       "tags": ["facility", "facility.bookings"],
-      "invalidatedBy": ["BookingCreated (per-date)", "BookingCancelled (per-date)", "BookingRescheduled (both dates)"]
+      "invalidatedBy": [
+        "BookingCreated (per-date)",
+        "BookingCancelled (per-date)",
+        "BookingRescheduled (both dates)"
+      ]
     },
     {
       "pattern": "fac:passes:user:{user_id}",
       "description": "Active passes for a user (used by the pass-credits-remaining widget + the booking flow's PassCreditGate). TTL is short because credit consumption invalidates aggressively.",
       "ttlSeconds": 60,
       "tags": ["facility", "user"],
-      "invalidatedBy": ["PassIssued", "PassCreditConsumed", "PassExhausted", "PassExpired", "PassRevoked", "PassTransferred"]
+      "invalidatedBy": [
+        "PassIssued",
+        "PassCreditConsumed",
+        "PassExhausted",
+        "PassExpired",
+        "PassRevoked",
+        "PassTransferred"
+      ]
     },
     {
       "pattern": "fac:passes:facility:{facility_id}",
@@ -73,7 +100,12 @@
       "description": "Utilisation + revenue rollup per facility per (day/week/month) window. Powers the audit-usage dashboards on both tenant + platform planes.",
       "ttlSeconds": 3600,
       "tags": ["facility", "facility.bookings", "tenant"],
-      "invalidatedBy": ["BookingCompleted", "BookingCancelled", "DayPassConsumed", "PassCreditConsumed"]
+      "invalidatedBy": [
+        "BookingCompleted",
+        "BookingCancelled",
+        "DayPassConsumed",
+        "PassCreditConsumed"
+      ]
     }
   ]
 }

@@ -23,7 +23,11 @@
       "kind": "View",
       "props": { "className": "max-w-2xl mx-auto p-6 flex flex-col gap-6" },
       "children": [
-        { "kind": "Text", "props": { "as": "h1", "className": "text-2xl font-semibold" }, "bindings": { "children": { "$expr": "'Test ' + provider.provider" } } },
+        {
+          "kind": "Text",
+          "props": { "as": "h1", "className": "text-2xl font-semibold" },
+          "bindings": { "children": { "$expr": "'Test ' + provider.provider" } }
+        },
         {
           "kind": "Alert",
           "props": {
@@ -41,7 +45,11 @@
               "props": { "label": "Event type", "menuTrigger": "focus" },
               "bindings": { "items": { "$ref": "provider.enabled_event_types" } },
               "actions": {
-                "onSelectionChange": { "kind": "form.set", "field": "event_type", "valueExpr": "$selectedKey" }
+                "onSelectionChange": {
+                  "kind": "form.set",
+                  "field": "event_type",
+                  "valueExpr": "$selectedKey"
+                }
               }
             },
             {
@@ -51,12 +59,20 @@
                 "hidden": { "$expr": "provider.provider !== 'meta_capi'" }
               },
               "actions": {
-                "onChange": { "kind": "form.set", "field": "test_event_code", "valueExpr": "$value" }
+                "onChange": {
+                  "kind": "form.set",
+                  "field": "test_event_code",
+                  "valueExpr": "$value"
+                }
               }
             },
             {
               "kind": "Button",
-              "props": { "variant": "primary", "leadingIcon": "paper-airplane", "children": "Send test event" },
+              "props": {
+                "variant": "primary",
+                "leadingIcon": "paper-airplane",
+                "children": "Send test event"
+              },
               "bindings": { "disabled": { "$expr": "!form.event_type" } },
               "actions": {
                 "onPress": {
@@ -80,15 +96,30 @@
           "props": { "className": "p-6" },
           "bindings": { "hidden": { "$expr": "!state.test_result" } },
           "children": [
-            { "kind": "Text", "props": { "as": "h2", "className": "text-lg font-semibold mb-3", "children": "Test result" } },
+            {
+              "kind": "Text",
+              "props": {
+                "as": "h2",
+                "className": "text-lg font-semibold mb-3",
+                "children": "Test result"
+              }
+            },
             {
               "kind": "DescriptionList",
               "props": {
                 "items": [
                   { "label": "Outcome", "field": "state.test_result.outcome" },
                   { "label": "HTTP status", "field": "state.test_result.response_status_code" },
-                  { "label": "Latency", "field": "state.test_result.latency_ms", "formatter": "duration-ms" },
-                  { "label": "Provider event ID", "field": "state.test_result.provider_event_id", "className": "font-mono" },
+                  {
+                    "label": "Latency",
+                    "field": "state.test_result.latency_ms",
+                    "formatter": "duration-ms"
+                  },
+                  {
+                    "label": "Provider event ID",
+                    "field": "state.test_result.provider_event_id",
+                    "className": "font-mono"
+                  },
                   { "label": "Error", "field": "state.test_result.error_message" }
                 ]
               }

@@ -3,14 +3,25 @@
   "$version": 1,
   "title": "referrals — cache keys + tags",
   "driver": "redis",
-  "ownedTags": ["referrals", "referrals.programs", "referrals.codes", "referrals.rewards", "referrals.fraud"],
+  "ownedTags": [
+    "referrals",
+    "referrals.programs",
+    "referrals.codes",
+    "referrals.rewards",
+    "referrals.fraud"
+  ],
   "keys": [
     {
       "pattern": "ref:programs:{tenant_id}",
       "description": "Per-tenant program catalogue (list of programs filtered by status='active'). Read by /me/referral-code + SDUI list screens.",
       "ttlSeconds": 600,
       "tags": ["referrals", "referrals.programs"],
-      "invalidatedBy": ["ReferralProgramObserver.*", "ReferralProgramActivated", "ReferralProgramPaused", "ReferralProgramArchived"]
+      "invalidatedBy": [
+        "ReferralProgramObserver.*",
+        "ReferralProgramActivated",
+        "ReferralProgramPaused",
+        "ReferralProgramArchived"
+      ]
     },
     {
       "pattern": "ref:program:{program_id}",
@@ -24,49 +35,80 @@
       "description": "Code -> {program_id, code_id, is_active, expires_at, usage_cap, usage_count} lookup. Read hot on the claim path.",
       "ttlSeconds": 60,
       "tags": ["referrals", "referrals.codes"],
-      "invalidatedBy": ["ReferralCodeObserver.*", "ReferralCodeExpired", "ReferralCodeUsageCapReached"]
+      "invalidatedBy": [
+        "ReferralCodeObserver.*",
+        "ReferralCodeExpired",
+        "ReferralCodeUsageCapReached"
+      ]
     },
     {
       "pattern": "ref:user:code:{user_id}",
       "description": "User's active user_scoped codes per active program. Read by /me/referral-code + invitation composer.",
       "ttlSeconds": 300,
       "tags": ["referrals", "referrals.codes"],
-      "invalidatedBy": ["ReferralCodeIssued (where owner_user_id = user_id)", "ReferralCodeObserver.updated"]
+      "invalidatedBy": [
+        "ReferralCodeIssued (where owner_user_id = user_id)",
+        "ReferralCodeObserver.updated"
+      ]
     },
     {
       "pattern": "ref:user:referrals:{user_id}",
       "description": "User's own referral history (as referrer). Read by /me/referrals + the my-referrals SDUI screen. Short TTL because claim + signup events invalidate.",
       "ttlSeconds": 60,
       "tags": ["referrals", "user"],
-      "invalidatedBy": ["ReferralClaimed (where referrer_id = user_id)", "ReferralSignedUp", "ReferralVested", "ReferralCancelled", "ReferralRewarded"]
+      "invalidatedBy": [
+        "ReferralClaimed (where referrer_id = user_id)",
+        "ReferralSignedUp",
+        "ReferralVested",
+        "ReferralCancelled",
+        "ReferralRewarded"
+      ]
     },
     {
       "pattern": "ref:user:rewards:{user_id}",
       "description": "User's own rewards (as recipient). Read by /me/referral-rewards.",
       "ttlSeconds": 60,
       "tags": ["referrals", "referrals.rewards", "user"],
-      "invalidatedBy": ["ReferralRewardMaterialized (where recipient_id = user_id)", "ReferralRewarded", "ReferralClawback"]
+      "invalidatedBy": [
+        "ReferralRewardMaterialized (where recipient_id = user_id)",
+        "ReferralRewarded",
+        "ReferralClawback"
+      ]
     },
     {
       "pattern": "ref:user:referrer-cap:{user_id}:{program_id}",
       "description": "User's current referral count per program (against max_rewards_per_referrer + max_rewards_per_period). Read on every claim to short-circuit refund path.",
       "ttlSeconds": 60,
       "tags": ["referrals", "user"],
-      "invalidatedBy": ["ReferralVested (where referrer_id = user_id AND referral_program_id = program_id)", "ReferralClawback"]
+      "invalidatedBy": [
+        "ReferralVested (where referrer_id = user_id AND referral_program_id = program_id)",
+        "ReferralClawback"
+      ]
     },
     {
       "pattern": "ref:program:budget:{program_id}",
       "description": "Running rewards_issued_count + rewards_issued_amount_cents per program. Cached snapshot of the counter columns; invalidated on any reward transition.",
       "ttlSeconds": 60,
       "tags": ["referrals", "referrals.programs", "referrals.rewards"],
-      "invalidatedBy": ["ReferralRewardMaterialized", "ReferralRewarded", "ReferralClawback", "ReconcileProgramBudgetJob"]
+      "invalidatedBy": [
+        "ReferralRewardMaterialized",
+        "ReferralRewarded",
+        "ReferralClawback",
+        "ReconcileProgramBudgetJob"
+      ]
     },
     {
       "pattern": "ref:program:analytics:{program_id}:{window}",
       "description": "Program-level analytics rollup: claims count, signups count, vested count, rewarded count, clawback count, revenue attribution, per (day/week/month) window. Powers the program-detail dashboards.",
       "ttlSeconds": 300,
       "tags": ["referrals", "referrals.programs"],
-      "invalidatedBy": ["ReferralClaimed", "ReferralSignedUp", "ReferralVested", "ReferralRewarded", "ReferralClawback (all filtered per program)"]
+      "invalidatedBy": [
+        "ReferralClaimed",
+        "ReferralSignedUp",
+        "ReferralVested",
+        "ReferralRewarded",
+        "ReferralClawback (all filtered per program)"
+      ]
     },
     {
       "pattern": "ref:fraud:flags-open:{tenant_id}",

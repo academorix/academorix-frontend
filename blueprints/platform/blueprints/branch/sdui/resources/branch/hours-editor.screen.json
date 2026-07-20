@@ -49,7 +49,11 @@
                 {
                   "kind": "Text",
                   "props": { "className": "text-sm text-muted" },
-                  "bindings": { "children": { "$expr": "'All times local to ' + branch.timezone + '. Currently ' + (hours.is_open_now ? 'open' : 'closed') + '.'" } }
+                  "bindings": {
+                    "children": {
+                      "$expr": "'All times local to ' + branch.timezone + '. Currently ' + (hours.is_open_now ? 'open' : 'closed') + '.'"
+                    }
+                  }
                 }
               ]
             },
@@ -80,7 +84,10 @@
           "props": {
             "action": "http.patch",
             "urlExpr": "'/api/v1/branches/' + route.branch_id + '/hours'",
-            "onSuccess": { "kind": "toast", "message": "Hours updated. Members with active memberships will be notified." }
+            "onSuccess": {
+              "kind": "toast",
+              "message": "Hours updated. Members with active memberships will be notified."
+            }
           },
           "children": [
             {
@@ -91,13 +98,23 @@
                   "kind": "HoursEditor",
                   "props": {
                     "name": "opening_hours",
-                    "days": ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"],
+                    "days": [
+                      "monday",
+                      "tuesday",
+                      "wednesday",
+                      "thursday",
+                      "friday",
+                      "saturday",
+                      "sunday"
+                    ],
                     "timezone_label": { "$ref": "branch.timezone" }
                   },
                   "bindings": {
                     "defaultValue": { "$ref": "hours" },
                     "props": {
-                      "allowMultiPeriod": { "$expr": "me.features.indexOf('branch.multi_period_hours') > -1" }
+                      "allowMultiPeriod": {
+                        "$expr": "me.features.indexOf('branch.multi_period_hours') > -1"
+                      }
                     }
                   }
                 }
@@ -105,7 +122,10 @@
             },
             {
               "kind": "Fieldset",
-              "props": { "legend": "Exceptions", "description": "Holidays + one-off closures + special hours." },
+              "props": {
+                "legend": "Exceptions",
+                "description": "Holidays + one-off closures + special hours."
+              },
               "children": [
                 {
                   "kind": "ExceptionsEditor",
@@ -121,9 +141,14 @@
                 {
                   "kind": "Button",
                   "props": { "variant": "ghost", "children": "Cancel" },
-                  "actions": { "onPress": { "kind": "navigate", "toExpr": "'/branches/' + route.branch_id" } }
+                  "actions": {
+                    "onPress": { "kind": "navigate", "toExpr": "'/branches/' + route.branch_id" }
+                  }
                 },
-                { "kind": "SubmitButton", "props": { "variant": "primary", "children": "Save schedule" } }
+                {
+                  "kind": "SubmitButton",
+                  "props": { "variant": "primary", "children": "Save schedule" }
+                }
               ]
             }
           ]

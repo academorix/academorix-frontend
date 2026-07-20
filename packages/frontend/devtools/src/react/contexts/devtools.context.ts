@@ -9,9 +9,9 @@
  *   companions (`useDevtoolsPanels`, `useDevtoolsFrameState`, …).
  */
 
-import { createContext } from 'react';
+import { createContext } from "react";
 
-import type { IDevtoolsContextValue } from './devtools-context-value.interface';
+import type { IDevtoolsContextValue } from "./devtools-context-value.interface";
 
 /**
  * The devtools React context — `null` by default so consumers can
@@ -20,4 +20,4 @@ import type { IDevtoolsContextValue } from './devtools-context-value.interface';
 export const DevtoolsContext = createContext<IDevtoolsContextValue | null>(null);
 
 /** Display name for React DevTools introspection. */
-DevtoolsContext.displayName = 'DevtoolsContext';
+DevtoolsContext.displayName = "DevtoolsContext";

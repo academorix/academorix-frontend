@@ -10,7 +10,7 @@
  *   scatter `config.enabled` checks across the codebase.
  */
 
-import { useDevtoolsContext } from './use-devtools-context.hook';
+import { useDevtoolsContext } from "./use-devtools-context.hook";
 
 /**
  * @returns `true` when the shell should mount, `false` otherwise.

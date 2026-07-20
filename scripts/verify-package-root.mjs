@@ -20,9 +20,7 @@ console.log("ConfigModule.PACKAGE_ROOT:  ", ConfigModule.PACKAGE_ROOT);
 // than src/, which changes the correct `levels` value.
 import { pathToFileURL } from "node:url";
 import path from "node:path";
-const srcUrl = pathToFileURL(
-  path.resolve("packages/queue/src/core/queue.module.ts"),
-).href;
+const srcUrl = pathToFileURL(path.resolve("packages/queue/src/core/queue.module.ts")).href;
 console.log("");
 console.log("=== From-source simulation (packages/queue/src/core/queue.module.ts) ===");
 console.log("Path.dirname:               ", Path.dirname(srcUrl));

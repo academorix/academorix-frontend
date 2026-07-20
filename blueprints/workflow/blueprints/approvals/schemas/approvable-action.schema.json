@@ -122,10 +122,23 @@
       }
     ]
   },
-  "required": ["id", "action_key", "namespace", "action_class_fqcn", "is_active", "is_system", "created_at", "updated_at"],
+  "required": [
+    "id",
+    "action_key",
+    "namespace",
+    "action_class_fqcn",
+    "is_active",
+    "is_system",
+    "created_at",
+    "updated_at"
+  ],
   "properties": {
     "id": { "type": "string", "pattern": "^aac_[0-9A-HJKMNP-TV-Z]{26}$" },
-    "action_key": { "type": "string", "pattern": "^[a-z][a-z0-9]*(\\.[a-z][a-z0-9_]*)+$", "maxLength": 200 },
+    "action_key": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9]*(\\.[a-z][a-z0-9_]*)+$",
+      "maxLength": 200
+    },
     "namespace": { "type": "string", "pattern": "^[a-z][a-z0-9_]*$", "maxLength": 64 },
     "action_class_fqcn": { "type": "string", "maxLength": 512 },
     "label": { "type": ["string", "null"], "maxLength": 200 },

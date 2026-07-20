@@ -32,8 +32,21 @@
             {
               "kind": "View",
               "children": [
-                { "kind": "Text", "props": { "as": "h1", "className": "text-2xl font-semibold", "children": "Dead-letter queue" } },
-                { "kind": "Text", "props": { "className": "text-sm text-muted", "children": "Marketing events that exhausted their retry budget. Each represents a paid conversion loss." } }
+                {
+                  "kind": "Text",
+                  "props": {
+                    "as": "h1",
+                    "className": "text-2xl font-semibold",
+                    "children": "Dead-letter queue"
+                  }
+                },
+                {
+                  "kind": "Text",
+                  "props": {
+                    "className": "text-sm text-muted",
+                    "children": "Marketing events that exhausted their retry budget. Each represents a paid conversion loss."
+                  }
+                }
               ]
             }
           ]
@@ -55,7 +68,11 @@
               "props": { "label": "Provider", "menuTrigger": "focus", "className": "min-w-48" },
               "props_items_source": "marketing.providers",
               "actions": {
-                "onSelectionChange": { "kind": "filter.set", "field": "provider", "valueExpr": "$selectedKey" }
+                "onSelectionChange": {
+                  "kind": "filter.set",
+                  "field": "provider",
+                  "valueExpr": "$selectedKey"
+                }
               }
             },
             {
@@ -69,7 +86,11 @@
                 { "id": "auth_failure", "label": "Auth failure" }
               ],
               "actions": {
-                "onSelectionChange": { "kind": "filter.set", "field": "reason", "valueExpr": "$selectedKey" }
+                "onSelectionChange": {
+                  "kind": "filter.set",
+                  "field": "reason",
+                  "valueExpr": "$selectedKey"
+                }
               }
             },
             {
@@ -92,8 +113,20 @@
               { "field": "provider", "label": "Provider", "sortable": true, "width": 180 },
               { "field": "reason", "label": "Reason", "sortable": true, "width": 220 },
               { "field": "replay_attempts", "label": "Replays", "width": 90 },
-              { "field": "created_at", "label": "Created", "sortable": true, "defaultSort": "desc", "width": 160, "formatter": "datetime-relative" },
-              { "field": "resolved_at", "label": "Resolved", "width": 160, "formatter": "datetime-relative" }
+              {
+                "field": "created_at",
+                "label": "Created",
+                "sortable": true,
+                "defaultSort": "desc",
+                "width": 160,
+                "formatter": "datetime-relative"
+              },
+              {
+                "field": "resolved_at",
+                "label": "Resolved",
+                "width": 160,
+                "formatter": "datetime-relative"
+              }
             ],
             "actionRenderer": [
               {
@@ -135,9 +168,21 @@
             "kind": "View",
             "props": { "className": "text-center py-12" },
             "children": [
-              { "kind": "Icon", "props": { "name": "check-circle", "className": "size-12 mx-auto text-success" } },
-              { "kind": "Text", "props": { "className": "mt-4 text-lg font-medium", "children": "No dead letters" } },
-              { "kind": "Text", "props": { "className": "text-sm text-muted", "children": "All good — every dispatched event has landed successfully." } }
+              {
+                "kind": "Icon",
+                "props": { "name": "check-circle", "className": "size-12 mx-auto text-success" }
+              },
+              {
+                "kind": "Text",
+                "props": { "className": "mt-4 text-lg font-medium", "children": "No dead letters" }
+              },
+              {
+                "kind": "Text",
+                "props": {
+                  "className": "text-sm text-muted",
+                  "children": "All good — every dispatched event has landed successfully."
+                }
+              }
             ]
           }
         }

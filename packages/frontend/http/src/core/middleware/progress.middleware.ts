@@ -8,8 +8,8 @@
  * @module @stackra/http/middleware/progress
  */
 
-import { Inject } from '@stackra/container';
-import { Logger } from '@stackra/logger';
+import { Inject } from "@stackra/container";
+import { Logger } from "@stackra/logger";
 
 import {
   HTTP_CONFIG,
@@ -20,14 +20,14 @@ import {
   type IHttpProgressEvent,
   type IHttpProgressListener,
   type IHttpResponse,
-} from '@stackra/contracts';
+} from "@stackra/contracts";
 
-import { HttpMiddleware } from '../decorators/http-middleware.decorator';
+import { HttpMiddleware } from "../decorators/http-middleware.decorator";
 
 /**
  * Progress middleware.
  */
-@HttpMiddleware({ priority: 80, name: 'progress' })
+@HttpMiddleware({ priority: 80, name: "progress" })
 export class ProgressMiddleware implements IHttpMiddleware {
   /** Scoped logger. */
   private readonly logger = new Logger(ProgressMiddleware.name);
@@ -59,7 +59,7 @@ export class ProgressMiddleware implements IHttpMiddleware {
       const evt = raw as { loaded?: number; total?: number };
       this.emit({
         requestId,
-        type: 'upload',
+        type: "upload",
         loaded: evt.loaded ?? 0,
         total: evt.total ?? 0,
         percentage: evt.total ? ((evt.loaded ?? 0) / evt.total) * 100 : 0,
@@ -70,7 +70,7 @@ export class ProgressMiddleware implements IHttpMiddleware {
       const evt = raw as { loaded?: number; total?: number };
       this.emit({
         requestId,
-        type: 'download',
+        type: "download",
         loaded: evt.loaded ?? 0,
         total: evt.total ?? 0,
         percentage: evt.total ? ((evt.loaded ?? 0) / evt.total) * 100 : 0,
@@ -118,7 +118,7 @@ export class ProgressMiddleware implements IHttpMiddleware {
       if (this.throttleTimers.has(key)) return;
       this.throttleTimers.set(
         key,
-        setTimeout(() => this.throttleTimers.delete(key), throttle)
+        setTimeout(() => this.throttleTimers.delete(key), throttle),
       );
     }
 
@@ -126,7 +126,7 @@ export class ProgressMiddleware implements IHttpMiddleware {
       try {
         callback(event);
       } catch (err: Error | any) {
-        this.logger.warn('progress subscriber threw', {
+        this.logger.warn("progress subscriber threw", {
           error: err instanceof Error ? err.message : String(err),
         });
       }

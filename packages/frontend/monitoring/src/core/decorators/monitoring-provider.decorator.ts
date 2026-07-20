@@ -4,9 +4,9 @@
  * @description Marks a class as a discoverable monitoring provider.
  */
 
-import { defineMetadata } from '@vivtel/metadata';
-import { Injectable } from '@stackra/container';
-import { MONITORING_PROVIDER_METADATA_KEY } from '@stackra/contracts';
+import { defineMetadata } from "@vivtel/metadata";
+import { Injectable } from "@stackra/container";
+import { MONITORING_PROVIDER_METADATA_KEY } from "@stackra/contracts";
 
 /** Options accepted by `@MonitoringProvider()`. */
 export interface MonitoringProviderOptions {

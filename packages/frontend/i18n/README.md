@@ -39,11 +39,11 @@ function MyComponent() {
 ## Quick Start (React Native)
 
 ```typescript
-import { NativeI18nModule, useI18n } from '@stackra/i18n/native';
+import { NativeI18nModule, useI18n } from "@stackra/i18n/native";
 
 const { needsRestart } = NativeI18nModule.forRoot({
-  defaultLocale: 'en',
-  supportedLocales: ['en', 'ar'],
+  defaultLocale: "en",
+  supportedLocales: ["en", "ar"],
   loader: StaticLoader,
   loaderOptions: { translations: { en, ar } },
 });
@@ -54,11 +54,11 @@ if (needsRestart) await Updates.reloadAsync();
 ## Quick Start (NestJS)
 
 ```typescript
-import { NestI18nModule } from '@stackra/i18n/nestjs';
+import { NestI18nModule } from "@stackra/i18n/nestjs";
 
 NestI18nModule.forRoot({
-  defaultLocale: 'en',
-  supportedLocales: ['en', 'ar'],
+  defaultLocale: "en",
+  supportedLocales: ["en", "ar"],
   loader: StaticLoader,
   loaderOptions: { translations: { en, ar } },
 });
@@ -74,7 +74,7 @@ Direction is handled automatically:
 - **NestJS**: No-op (server-side, no DOM)
 
 ```typescript
-import { useDirection } from '@stackra/i18n/react';
+import { useDirection } from "@stackra/i18n/react";
 
 const { dir, isRTL } = useDirection();
 ```
@@ -112,10 +112,10 @@ NestJS resolvers:
 ## Vite Plugin
 
 ```typescript
-import { i18nPlugin } from '@stackra/i18n/vite';
+import { i18nPlugin } from "@stackra/i18n/vite";
 
 export default defineConfig({
-  plugins: [i18nPlugin({ translationsDir: './src/i18n' })],
+  plugins: [i18nPlugin({ translationsDir: "./src/i18n" })],
 });
 ```
 
@@ -126,11 +126,11 @@ Exposes `virtual:i18n/translations` with HMR support.
 Generate types from translation files:
 
 ```typescript
-import { generateI18nTypes } from '@stackra/i18n/commands';
+import { generateI18nTypes } from "@stackra/i18n/commands";
 
 generateI18nTypes({
-  translationsPath: './src/i18n',
-  outputPath: './src/@types/i18n.generated.d.ts',
+  translationsPath: "./src/i18n",
+  outputPath: "./src/@types/i18n.generated.d.ts",
 });
 ```
 

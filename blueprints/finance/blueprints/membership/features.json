@@ -7,16 +7,82 @@
     "resolvedBy": "GET /api/auth/me → data.features"
   },
   "features": [
-    { "key": "membership.core", "displayName": "Memberships", "description": "The customer subscription catalog + lifecycle. On every tier.", "defaultEnabled": true, "planTiers": ["small", "medium", "enterprise"] },
-    { "key": "membership.plans", "displayName": "Plan catalog management", "description": "Admin can define + edit MembershipPlan SKUs. On every tier (subject to plan slot cap).", "defaultEnabled": true, "planTiers": ["small", "medium", "enterprise"] },
-    { "key": "membership.trial_periods", "displayName": "Trial periods", "description": "Medium+. Plans can offer a free trial period before first paid renewal.", "defaultEnabled": false, "planTiers": ["medium", "enterprise"] },
-    { "key": "membership.multi_currency", "displayName": "Multi-currency memberships", "description": "Medium+. Memberships in currencies other than the tenant's default region currency.", "defaultEnabled": false, "planTiers": ["medium", "enterprise"] },
-    { "key": "membership.hard_cancel", "displayName": "Hard-cancel with prorated refund", "description": "Enterprise-only. Immediate cancellation + prorated refund.", "defaultEnabled": false, "planTiers": ["enterprise"] },
-    { "key": "membership.gift", "displayName": "Gift memberships", "description": "Enterprise-only. One family purchases a membership on behalf of another family's athlete.", "defaultEnabled": false, "planTiers": ["enterprise"] },
-    { "key": "membership.addons", "displayName": "Plan add-ons", "description": "Medium+. Bundled add-ons (equipment rental, kit included, tournament entry credit).", "defaultEnabled": false, "planTiers": ["medium", "enterprise"] },
-    { "key": "membership.extended_retention", "displayName": "Extended retention (10 years)", "description": "Enterprise-only. Terminal memberships retain 10 years instead of the default 7.", "defaultEnabled": false, "planTiers": ["enterprise"] },
-    { "key": "membership.passes", "displayName": "Pass-based admission", "description": "Enables per-session Pass credit accounting on plans. When off, plans grant unlimited access.", "defaultEnabled": true, "planTiers": ["small", "medium", "enterprise"] },
-    { "key": "membership.dunning_sms", "displayName": "SMS dunning notifications", "description": "Medium+. Adds SMS channel to the dunning ladder at attempt 3+.", "defaultEnabled": false, "planTiers": ["medium", "enterprise"] },
-    { "key": "membership.reporting", "displayName": "MRR + churn dashboards", "description": "Admin dashboards showing MRR, ARR, churn, LTV, dunning recovery. On every tier.", "defaultEnabled": true, "planTiers": ["small", "medium", "enterprise"] }
+    {
+      "key": "membership.core",
+      "displayName": "Memberships",
+      "description": "The customer subscription catalog + lifecycle. On every tier.",
+      "defaultEnabled": true,
+      "planTiers": ["small", "medium", "enterprise"]
+    },
+    {
+      "key": "membership.plans",
+      "displayName": "Plan catalog management",
+      "description": "Admin can define + edit MembershipPlan SKUs. On every tier (subject to plan slot cap).",
+      "defaultEnabled": true,
+      "planTiers": ["small", "medium", "enterprise"]
+    },
+    {
+      "key": "membership.trial_periods",
+      "displayName": "Trial periods",
+      "description": "Medium+. Plans can offer a free trial period before first paid renewal.",
+      "defaultEnabled": false,
+      "planTiers": ["medium", "enterprise"]
+    },
+    {
+      "key": "membership.multi_currency",
+      "displayName": "Multi-currency memberships",
+      "description": "Medium+. Memberships in currencies other than the tenant's default region currency.",
+      "defaultEnabled": false,
+      "planTiers": ["medium", "enterprise"]
+    },
+    {
+      "key": "membership.hard_cancel",
+      "displayName": "Hard-cancel with prorated refund",
+      "description": "Enterprise-only. Immediate cancellation + prorated refund.",
+      "defaultEnabled": false,
+      "planTiers": ["enterprise"]
+    },
+    {
+      "key": "membership.gift",
+      "displayName": "Gift memberships",
+      "description": "Enterprise-only. One family purchases a membership on behalf of another family's athlete.",
+      "defaultEnabled": false,
+      "planTiers": ["enterprise"]
+    },
+    {
+      "key": "membership.addons",
+      "displayName": "Plan add-ons",
+      "description": "Medium+. Bundled add-ons (equipment rental, kit included, tournament entry credit).",
+      "defaultEnabled": false,
+      "planTiers": ["medium", "enterprise"]
+    },
+    {
+      "key": "membership.extended_retention",
+      "displayName": "Extended retention (10 years)",
+      "description": "Enterprise-only. Terminal memberships retain 10 years instead of the default 7.",
+      "defaultEnabled": false,
+      "planTiers": ["enterprise"]
+    },
+    {
+      "key": "membership.passes",
+      "displayName": "Pass-based admission",
+      "description": "Enables per-session Pass credit accounting on plans. When off, plans grant unlimited access.",
+      "defaultEnabled": true,
+      "planTiers": ["small", "medium", "enterprise"]
+    },
+    {
+      "key": "membership.dunning_sms",
+      "displayName": "SMS dunning notifications",
+      "description": "Medium+. Adds SMS channel to the dunning ladder at attempt 3+.",
+      "defaultEnabled": false,
+      "planTiers": ["medium", "enterprise"]
+    },
+    {
+      "key": "membership.reporting",
+      "displayName": "MRR + churn dashboards",
+      "description": "Admin dashboards showing MRR, ARR, churn, LTV, dunning recovery. On every tier.",
+      "defaultEnabled": true,
+      "planTiers": ["small", "medium", "enterprise"]
+    }
   ]
 }

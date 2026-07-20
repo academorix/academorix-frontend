@@ -3,23 +3,23 @@
 Pre-enrollment CRM funnel. Wave 5 growth infrastructure. Owns the top-of-funnel
 sales pipeline that sits upstream of `sports::registrations` (which owns actual
 enrollment). Every prospective family lands as a `Lead`, moves through a
-deterministic state machine (`NEW → CONTACTED → QUALIFIED → TRIAL → WON /
-LOST`), and — on conversion — hands materialised athlete records off to the
-sports side while the attribution snapshot travels to `marketing` for
-ad-network fan-out.
+deterministic state machine
+(`NEW → CONTACTED → QUALIFIED → TRIAL → WON / LOST`), and — on conversion —
+hands materialised athlete records off to the sports side while the attribution
+snapshot travels to `marketing` for ad-network fan-out.
 
 ## 1. What this module owns
 
-| Concern                             | Owned artefact                                                                                                          |
-| ----------------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
-| Canonical prospect row              | `Lead` — one row per prospective family; carries source, stage, assigned owner, attribution snapshot, LTV estimate.     |
-| Timeline of touchpoints             | `LeadActivity` — append-only per-lead activity log. Every note, email, call, meeting, stage-change, assignment.         |
-| Follow-up work                      | `LeadTask` — assigned tasks with priority + due date + status. Powers the reception day-plan.                           |
-| State machine                       | `LeadStageTransitionValidator` — enforces the six-stage progression + guards against illegal reverse transitions.       |
-| Attribution snapshot                | `LeadAttributionSnapshotter` — pulls from `growth::attribution` at capture + freezes into `leads.attribution_snapshot`. |
-| Conversion pipeline                 | `LeadConversionService` — materialises athlete records via `sports::registrations` + fires `LeadConverted`.             |
-| Funnel reporting                    | `LeadFunnelReporter` — funnel-conversion + source-attribution rollups over the lead + activity ledgers.                 |
-| Stale-lead reassignment             | `ReassignStaleLeadsJob` — round-robin reassigns leads without recent activity to the next available staff owner.        |
+| Concern                 | Owned artefact                                                                                                          |
+| ----------------------- | ----------------------------------------------------------------------------------------------------------------------- |
+| Canonical prospect row  | `Lead` — one row per prospective family; carries source, stage, assigned owner, attribution snapshot, LTV estimate.     |
+| Timeline of touchpoints | `LeadActivity` — append-only per-lead activity log. Every note, email, call, meeting, stage-change, assignment.         |
+| Follow-up work          | `LeadTask` — assigned tasks with priority + due date + status. Powers the reception day-plan.                           |
+| State machine           | `LeadStageTransitionValidator` — enforces the six-stage progression + guards against illegal reverse transitions.       |
+| Attribution snapshot    | `LeadAttributionSnapshotter` — pulls from `growth::attribution` at capture + freezes into `leads.attribution_snapshot`. |
+| Conversion pipeline     | `LeadConversionService` — materialises athlete records via `sports::registrations` + fires `LeadConverted`.             |
+| Funnel reporting        | `LeadFunnelReporter` — funnel-conversion + source-attribution rollups over the lead + activity ledgers.                 |
+| Stale-lead reassignment | `ReassignStaleLeadsJob` — round-robin reassigns leads without recent activity to the next available staff owner.        |
 
 ### 1.1 The three owned tables
 

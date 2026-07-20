@@ -7,10 +7,10 @@
  *   call-sites that prefer the more explicit "value" verb.
  */
 
-import { useSelector } from '@tanstack/react-store';
-import { useInject } from '@stackra/container/react';
-import type { Store } from '@tanstack/store';
-import type { StateSelector } from '@/core/types/state-selector.type';
+import { useSelector } from "@tanstack/react-store";
+import { useInject } from "@stackra/container/react";
+import type { Store } from "@tanstack/store";
+import type { StateSelector } from "@/core/types/state-selector.type";
 
 /**
  * Read a reactive slice from a DI-managed store.

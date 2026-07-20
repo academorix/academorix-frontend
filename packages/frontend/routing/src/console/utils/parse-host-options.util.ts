@@ -28,6 +28,9 @@ export function parseHostOptions(argv: readonly string[]): IHostOptions {
   // token as `--rootDomain`'s value when it uses the space form.
   for (let i = 0; i < argv.length; i += 1) {
     const token = argv[i];
+    // Loop bound guarantees `argv[i]` is defined, but `noUncheckedIndexedAccess`
+    // widens the lookup to `string | undefined` — guard once so TS narrows.
+    if (token === undefined) continue;
 
     if (token === "--remove") {
       remove = true;

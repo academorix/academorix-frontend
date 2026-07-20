@@ -28,8 +28,8 @@
  * ```
  */
 
-export { MockTabCoordinator } from './mock-tab-coordinator';
-export { MockLockManager } from './mock-lock-manager';
-export { MockTabTransport, MockTabTransportManager } from './mock-tab-transport-manager';
-export { createMockCoordinator, createMockLockManager } from './create-mock-coordinator';
-export { createMockTabTransportManager } from './create-mock-tab-transport-manager';
+export { MockTabCoordinator } from "./mock-tab-coordinator";
+export { MockLockManager } from "./mock-lock-manager";
+export { MockTabTransport, MockTabTransportManager } from "./mock-tab-transport-manager";
+export { createMockCoordinator, createMockLockManager } from "./create-mock-coordinator";
+export { createMockTabTransportManager } from "./create-mock-tab-transport-manager";

@@ -5,5 +5,5 @@
  *   compound.
  */
 
-export { NotificationPreferencesPage } from './notification-preferences-page.component';
-export type { NotificationPreferencesPageProps } from './notification-preferences-page.interface';
+export { NotificationPreferencesPage } from "./notification-preferences-page.component";
+export type { NotificationPreferencesPageProps } from "./notification-preferences-page.interface";

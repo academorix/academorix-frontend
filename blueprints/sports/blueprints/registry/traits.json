@@ -44,7 +44,10 @@
     "framework": [
       { "trait": "Illuminate\\Database\\Eloquent\\Factories\\HasFactory" },
       { "trait": "Illuminate\\Database\\Eloquent\\Concerns\\HasUlids" },
-      { "trait": "Illuminate\\Database\\Eloquent\\SoftDeletes", "reason": "Sports / Disciplines / Positions all use SoftDeletes for the retention window on custom rows (platform rows never soft-delete)." }
+      {
+        "trait": "Illuminate\\Database\\Eloquent\\SoftDeletes",
+        "reason": "Sports / Disciplines / Positions all use SoftDeletes for the retention window on custom rows (platform rows never soft-delete)."
+      }
     ],
     "foundation": [
       { "trait": "Academorix\\Foundation\\Concerns\\HasPrefixedUlid" },
@@ -55,16 +58,28 @@
       { "trait": "Academorix\\Foundation\\Concerns\\Searchable" }
     ],
     "tenants": [
-      { "trait": "Academorix\\Tenancy\\Concerns\\BelongsToTenant", "reason": "Applies the tenant scope + auto-fills on save. Nullable tenant_id semantics: NULL = platform (visible to every tenant via the merged scope); non-null = tenant custom (visible only to owner + platform staff)." }
+      {
+        "trait": "Academorix\\Tenancy\\Concerns\\BelongsToTenant",
+        "reason": "Applies the tenant scope + auto-fills on save. Nullable tenant_id semantics: NULL = platform (visible to every tenant via the merged scope); non-null = tenant custom (visible only to owner + platform staff)."
+      }
     ],
     "audit": [
-      { "trait": "Academorix\\Audit\\Concerns\\Auditable", "reason": "Every Sport / Discipline / Position mutation writes to the `audits` table. SportPrefixResolutionFailed rows retained 7 years (dangling-reference signal); other mutations 2 years." }
+      {
+        "trait": "Academorix\\Audit\\Concerns\\Auditable",
+        "reason": "Every Sport / Discipline / Position mutation writes to the `audits` table. SportPrefixResolutionFailed rows retained 7 years (dangling-reference signal); other mutations 2 years."
+      }
     ],
     "activity": [
-      { "trait": "Academorix\\Activity\\Concerns\\HasActivityLog", "reason": "Registry lifecycle events feed the tenant admin's product-facing activity feed." }
+      {
+        "trait": "Academorix\\Activity\\Concerns\\HasActivityLog",
+        "reason": "Registry lifecycle events feed the tenant admin's product-facing activity feed."
+      }
     ],
     "localization": [
-      { "trait": "Academorix\\Localization\\Concerns\\HasTranslations", "reason": "Sport.name + Sport.description + Discipline.name + Discipline.description + Position.name + Position.description all localize via the JSONB translations column. Platform-seeded rows carry translations for every enabled locale (per SportCatalogSeeder); tenant customs are en-only unless the tenant admin adds translations via the localization module." }
+      {
+        "trait": "Academorix\\Localization\\Concerns\\HasTranslations",
+        "reason": "Sport.name + Sport.description + Discipline.name + Discipline.description + Position.name + Position.description all localize via the JSONB translations column. Platform-seeded rows carry translations for every enabled locale (per SportCatalogSeeder); tenant customs are en-only unless the tenant admin adds translations via the localization module."
+      }
     ]
   },
   "composition": {

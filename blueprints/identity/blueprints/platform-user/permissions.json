@@ -76,14 +76,38 @@
       "name": "platform.platform_profiles.view.self",
       "guard": "platform_admin",
       "description": "Read own PlatformProfile row (self-service).",
-      "seededOn": ["super_admin", "ops", "product", "security", "hr", "compliance", "engineering", "support", "sales", "finance", "legal"],
+      "seededOn": [
+        "super_admin",
+        "ops",
+        "product",
+        "security",
+        "hr",
+        "compliance",
+        "engineering",
+        "support",
+        "sales",
+        "finance",
+        "legal"
+      ],
       "seeded_on_every_platform_role": true
     },
     {
       "name": "platform.platform_profiles.update.self",
       "guard": "platform_admin",
       "description": "Update own PlatformProfile fields (except first_name + last_name, which are HR-controlled).",
-      "seededOn": ["super_admin", "ops", "product", "security", "hr", "compliance", "engineering", "support", "sales", "finance", "legal"],
+      "seededOn": [
+        "super_admin",
+        "ops",
+        "product",
+        "security",
+        "hr",
+        "compliance",
+        "engineering",
+        "support",
+        "sales",
+        "finance",
+        "legal"
+      ],
       "seeded_on_every_platform_role": true
     },
     {

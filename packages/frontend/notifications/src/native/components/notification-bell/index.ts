@@ -5,5 +5,5 @@
  *   compound.
  */
 
-export { NotificationBell } from './notification-bell.component';
-export type { NotificationBellProps } from './notification-bell.interface';
+export { NotificationBell } from "./notification-bell.component";
+export type { NotificationBellProps } from "./notification-bell.interface";

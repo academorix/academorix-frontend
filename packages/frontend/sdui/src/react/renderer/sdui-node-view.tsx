@@ -16,14 +16,14 @@
  *   6. Wraps every node in a `<NodeErrorBoundary>`.
  */
 
-import { createElement, useCallback, type ReactNode } from 'react';
-import { Alert } from '@stackra/ui/react';
-import type { ISduiAction, ISduiNode } from '@stackra/contracts';
-import { evaluateBoolean, resolveBindable } from '@/core/expression/evaluator';
-import type { ComponentRegistry } from '@/core/registries/component.registry';
-import { useSduiRuntime } from '../providers/sdui-runtime.provider';
-import { useSduiActionAdapter } from '../action-adapter/action-adapter';
-import { NodeErrorBoundary } from './node-error-boundary';
+import { createElement, useCallback, type ReactNode } from "react";
+import { Alert } from "@stackra/ui/react";
+import type { ISduiAction, ISduiNode } from "@stackra/contracts";
+import { evaluateBoolean, resolveBindable } from "@/core/expression/evaluator";
+import type { ComponentRegistry } from "@/core/registries/component.registry";
+import { useSduiRuntime } from "../providers/sdui-runtime.provider";
+import { useSduiActionAdapter } from "../action-adapter/action-adapter";
+import { NodeErrorBoundary } from "./node-error-boundary";
 
 /**
  * Props for {@link SduiNodeView}.
@@ -70,8 +70,8 @@ export function SduiNodeView({ node, registry }: ISduiNodeViewProps) {
   }
 
   // Class + leaf-value passthroughs.
-  if (node.className && !('className' in props)) props.className = node.className;
-  if (node.value !== undefined && !('value' in props)) props.value = node.value;
+  if (node.className && !("className" in props)) props.className = node.className;
+  if (node.value !== undefined && !("value" in props)) props.value = node.value;
   // Runtime always sets a stable key.
   const finalProps: Record<string, unknown> = {
     ...(entry.mapProps ? entry.mapProps(props) : props),
@@ -124,7 +124,7 @@ function collectChildren(node: ISduiNode): readonly ISduiNode[] {
  */
 function runSequence(
   list: readonly ISduiAction[],
-  dispatch: (action: ISduiAction) => Promise<unknown>
+  dispatch: (action: ISduiAction) => Promise<unknown>,
 ): void {
   // Fire-and-forget from the DOM handler's perspective; each iteration
   // awaits so the sequence is truly ordered.
@@ -148,7 +148,7 @@ function UnknownComponentDiagnostic({ node }: { node: ISduiNode }) {
       <Alert.Content>
         <Alert.Title>Unknown SDUI component &ldquo;{node.type}&rdquo;</Alert.Title>
         <Alert.Description>
-          No component is registered for node &ldquo;{node.id}&rdquo;. Register it via{' '}
+          No component is registered for node &ldquo;{node.id}&rdquo;. Register it via{" "}
           <code>SduiModule.forFeature</code>.
         </Alert.Description>
       </Alert.Content>

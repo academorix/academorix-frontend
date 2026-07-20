@@ -1,16 +1,48 @@
 # @stackra/notifications
 
-Enterprise multi-channel notification orchestrator for the Stackra framework — Web Push subscription management, an in-app notification centre backed by `@stackra/storage`, Expo native push token handling, permission management, per-user preferences with quiet-hours + DND, snooze registry, priority-derived HeroUI toast bridge, HeroUI Pro-based bell / drawer / row / preferences UI, and a full testing subpath with in-memory mocks + assertable factories.
+Enterprise multi-channel notification orchestrator for the Stackra framework —
+Web Push subscription management, an in-app notification centre backed by
+`@stackra/storage`, Expo native push token handling, permission management,
+per-user preferences with quiet-hours + DND, snooze registry, priority-derived
+HeroUI toast bridge, HeroUI Pro-based bell / drawer / row / preferences UI, and
+a full testing subpath with in-memory mocks + assertable factories.
 
 ## What ships
 
-- **Runtime (DI + React)** — `NotificationModule` binds a `NotificationManager` (channel dispatch orchestrator), an `InAppNotificationCentre` (durable queue backed by `@stackra/storage`), a `NotificationPreferencesService` (per-user category × channel matrix + quiet hours), a shared `PushSubscriptionManager` (platform adapters wired by `PushModule` on web or `NativeNotificationModule` on native), the built-in `InAppChannelDriver`, and the fail-soft `AnalyticsBridgeService`.
-- **HeroUI Pro components (web)** — `NotificationBell`, `NotificationDrawer`, `NotificationList`, `NotificationRow`, `NotificationEmptyState`, `NotificationBadge`, `PushPermissionBanner`, `ChannelToggle`, `QuietHoursPicker`, `CategoryPreferencesPanel`. Plus two full-page routes: `InboxPage` and `NotificationPreferencesPage`.
-- **HeroUI Native components (native)** — a lean starting set (`NotificationBell`) that binds against the same DI-registered manager + centre. The web hooks translate 1:1 to native — HeroUI Native is the visual layer, the framework layer is shared.
-- **React hooks** — `useInAppNotifications`, `useNotificationCentre`, `useNotificationActions`, `useNotificationPermission`, `usePushSubscription`, `useNotificationPreferences`, `useNotificationToast`, `useNotificationWrites`, `useRenderableNotifications`, `useSnoozeStore` — every reader over the DI singleton via `useSyncExternalStore` for tearing-free reads under concurrent React.
-- **Adapter pattern** — one `IPushSubscriptionAdapter` contract, two implementations (`WebPushAdapter` bound by `PushModule`, `ExpoPushTokenAdapter` bound by `NativeNotificationModule`). Both plug into a single platform-agnostic `PushSubscriptionManager` in core.
-- **OS-level dispatch** — `WebNotificationChannelDriver` (fires `new Notification(...)`) and `ExpoNotificationChannelDriver` (fires `scheduleNotificationAsync` with `trigger: null`) both register on the manager under `id = 'os-notification'` automatically.
-- **Testing** — `MockNotificationManager`, `MockInAppNotificationCentre`, `MockPushSubscriptionAdapter`, `MockPushSubscriptionManager`, `MockNotificationPreferences`, `MockSnoozeStore`, plus `createMock*` assertable factories in `@stackra/notifications/testing`.
+- **Runtime (DI + React)** — `NotificationModule` binds a `NotificationManager`
+  (channel dispatch orchestrator), an `InAppNotificationCentre` (durable queue
+  backed by `@stackra/storage`), a `NotificationPreferencesService` (per-user
+  category × channel matrix + quiet hours), a shared `PushSubscriptionManager`
+  (platform adapters wired by `PushModule` on web or `NativeNotificationModule`
+  on native), the built-in `InAppChannelDriver`, and the fail-soft
+  `AnalyticsBridgeService`.
+- **HeroUI Pro components (web)** — `NotificationBell`, `NotificationDrawer`,
+  `NotificationList`, `NotificationRow`, `NotificationEmptyState`,
+  `NotificationBadge`, `PushPermissionBanner`, `ChannelToggle`,
+  `QuietHoursPicker`, `CategoryPreferencesPanel`. Plus two full-page routes:
+  `InboxPage` and `NotificationPreferencesPage`.
+- **HeroUI Native components (native)** — a lean starting set
+  (`NotificationBell`) that binds against the same DI-registered manager +
+  centre. The web hooks translate 1:1 to native — HeroUI Native is the visual
+  layer, the framework layer is shared.
+- **React hooks** — `useInAppNotifications`, `useNotificationCentre`,
+  `useNotificationActions`, `useNotificationPermission`, `usePushSubscription`,
+  `useNotificationPreferences`, `useNotificationToast`, `useNotificationWrites`,
+  `useRenderableNotifications`, `useSnoozeStore` — every reader over the DI
+  singleton via `useSyncExternalStore` for tearing-free reads under concurrent
+  React.
+- **Adapter pattern** — one `IPushSubscriptionAdapter` contract, two
+  implementations (`WebPushAdapter` bound by `PushModule`,
+  `ExpoPushTokenAdapter` bound by `NativeNotificationModule`). Both plug into a
+  single platform-agnostic `PushSubscriptionManager` in core.
+- **OS-level dispatch** — `WebNotificationChannelDriver` (fires
+  `new Notification(...)`) and `ExpoNotificationChannelDriver` (fires
+  `scheduleNotificationAsync` with `trigger: null`) both register on the manager
+  under `id = 'os-notification'` automatically.
+- **Testing** — `MockNotificationManager`, `MockInAppNotificationCentre`,
+  `MockPushSubscriptionAdapter`, `MockPushSubscriptionManager`,
+  `MockNotificationPreferences`, `MockSnoozeStore`, plus `createMock*`
+  assertable factories in `@stackra/notifications/testing`.
 
 ## Install
 
@@ -28,22 +60,22 @@ pnpm add expo-notifications
 ## Bootstrap — web
 
 ```typescript
-import { Module } from '@stackra/container';
-import { WebStorageModule } from '@stackra/storage';
-import { AnalyticsModule } from '@stackra/analytics';
-import { NotificationModule } from '@stackra/notifications';
+import { Module } from "@stackra/container";
+import { WebStorageModule } from "@stackra/storage";
+import { AnalyticsModule } from "@stackra/analytics";
+import { NotificationModule } from "@stackra/notifications";
 
 @Module({
   imports: [
     WebStorageModule.forRoot({
-      default: 'localStorage',
-      stores: { localStorage: { driver: 'localStorage' } },
+      default: "localStorage",
+      stores: { localStorage: { driver: "localStorage" } },
     }),
     AnalyticsModule.forRoot({
-      providers: { ga4: { driver: 'ga4', measurementId: 'G-XXXXXX' } },
+      providers: { ga4: { driver: "ga4", measurementId: "G-XXXXXX" } },
     }),
     NotificationModule.forRoot({
-      centre: { storage: 'localStorage', maxItems: 200 },
+      centre: { storage: "localStorage", maxItems: 200 },
       // When `push` is supplied, `NotificationModule.forRoot` transitively
       // imports `PushModule.forRoot(push)` — one entry point wires both.
       push: { vapidPublicKey: import.meta.env.VITE_VAPID_KEY as string },
@@ -56,7 +88,7 @@ export class AppModule {}
 ## Bell + drawer
 
 ```tsx
-import { NotificationBell } from '@stackra/notifications/react';
+import { NotificationBell } from "@stackra/notifications/react";
 
 function Header() {
   return (
@@ -68,10 +100,11 @@ function Header() {
 }
 ```
 
-The bell owns the drawer's open state internally. Consumers who want an external trigger use the drawer directly:
+The bell owns the drawer's open state internally. Consumers who want an external
+trigger use the drawer directly:
 
 ```tsx
-import { NotificationDrawer } from '@stackra/notifications/react';
+import { NotificationDrawer } from "@stackra/notifications/react";
 
 function AppShell() {
   const [open, setOpen] = useState(false);
@@ -81,7 +114,7 @@ function AppShell() {
       <NotificationDrawer
         isOpen={open}
         onOpenChange={setOpen}
-        onOpenPreferences={() => navigate('/notifications/preferences')}
+        onOpenPreferences={() => navigate("/notifications/preferences")}
       />
     </>
   );
@@ -91,7 +124,7 @@ function AppShell() {
 ## Preferences page
 
 ```tsx
-import { NotificationPreferencesPage } from '@stackra/notifications/react';
+import { NotificationPreferencesPage } from "@stackra/notifications/react";
 
 // Route at /notifications/preferences
 function PreferencesRoute() {
@@ -99,7 +132,7 @@ function PreferencesRoute() {
     <NotificationPreferencesPage
       writer={{
         updatePreferences: async (next) => {
-          await api.put('/notifications/preferences', next);
+          await api.put("/notifications/preferences", next);
         },
       }}
     />
@@ -118,20 +151,20 @@ The page composes:
 ## Custom channel driver
 
 ```typescript
-import { Injectable } from '@stackra/container';
+import { Injectable } from "@stackra/container";
 import {
   NotificationModule,
   type INotificationChannelDriver,
   type INotificationPayload,
-} from '@stackra/notifications';
+} from "@stackra/notifications";
 
 @Injectable()
 class SlackChannelDriver implements INotificationChannelDriver {
-  public readonly id = 'slack';
+  public readonly id = "slack";
   public async deliver(payload: INotificationPayload): Promise<void> {
-    await fetch('https://hooks.slack.com/...', {
-      method: 'POST',
-      body: JSON.stringify({ text: `${payload.title}\n${payload.body ?? ''}` }),
+    await fetch("https://hooks.slack.com/...", {
+      method: "POST",
+      body: JSON.stringify({ text: `${payload.title}\n${payload.body ?? ""}` }),
     });
   }
 }
@@ -142,33 +175,37 @@ class SlackChannelDriver implements INotificationChannelDriver {
 export class SlackModule {}
 
 // Later, dispatch through the shared manager:
-await manager.dispatch({ title: 'Deploy succeeded' }, { channels: ['in-app', 'slack'] });
+await manager.dispatch(
+  { title: "Deploy succeeded" },
+  { channels: ["in-app", "slack"] },
+);
 ```
 
 ## Web Push subscription flow
 
 ```tsx
-import { usePushSubscription } from '@stackra/notifications/react';
-import { Button } from '@stackra/ui/react';
+import { usePushSubscription } from "@stackra/notifications/react";
+import { Button } from "@stackra/ui/react";
 
 function PushToggle() {
-  const { subscription, subscribe, unsubscribe, isPending } = usePushSubscription({
-    vapidPublicKey: import.meta.env.VITE_VAPID_KEY as string,
-  });
+  const { subscription, subscribe, unsubscribe, isPending } =
+    usePushSubscription({
+      vapidPublicKey: import.meta.env.VITE_VAPID_KEY as string,
+    });
   return (
     <Button
       isDisabled={isPending}
       onPress={async () => {
         if (subscription) {
           await unsubscribe();
-          await api.delete('/push/subscribe');
+          await api.delete("/push/subscribe");
         } else {
           const sub = await subscribe();
-          if (sub) await api.post('/push/subscribe', sub.value);
+          if (sub) await api.post("/push/subscribe", sub.value);
         }
       }}
     >
-      {subscription ? 'Disable push' : 'Enable push'}
+      {subscription ? "Disable push" : "Enable push"}
     </Button>
   );
 }
@@ -177,42 +214,50 @@ function PushToggle() {
 ## Native (Expo)
 
 ```typescript
-import { Module } from '@stackra/container';
-import { NativeStorageModule } from '@stackra/storage/native';
-import { NativeNotificationModule } from '@stackra/notifications/native';
+import { Module } from "@stackra/container";
+import { NativeStorageModule } from "@stackra/storage/native";
+import { NativeNotificationModule } from "@stackra/notifications/native";
 
 @Module({
   imports: [
     NativeStorageModule.forRoot({
-      default: 'asyncStorage',
-      stores: { asyncStorage: { driver: 'asyncStorage' } },
+      default: "asyncStorage",
+      stores: { asyncStorage: { driver: "asyncStorage" } },
     }),
     NativeNotificationModule.forRoot({
-      centre: { storage: 'asyncStorage', maxItems: 200 },
-      push: { projectId: '00000000-0000-0000-0000-000000000000' },
+      centre: { storage: "asyncStorage", maxItems: 200 },
+      push: { projectId: "00000000-0000-0000-0000-000000000000" },
     }),
   ],
 })
 export class AppModule {}
 ```
 
-`NativeNotificationModule` binds the {@link ExpoPushTokenAdapter} under `PUSH_SUBSCRIPTION_ADAPTER`, so the shared `PushSubscriptionManager` in core works uniformly on native. It also auto-registers the `ExpoNotificationChannelDriver` under `id = 'os-notification'` — dispatching with `channels: ['in-app', 'os-notification']` fires both an in-app entry and an OS-level `scheduleNotificationAsync` call.
+`NativeNotificationModule` binds the {@link ExpoPushTokenAdapter} under
+`PUSH_SUBSCRIPTION_ADAPTER`, so the shared `PushSubscriptionManager` in core
+works uniformly on native. It also auto-registers the
+`ExpoNotificationChannelDriver` under `id = 'os-notification'` — dispatching
+with `channels: ['in-app', 'os-notification']` fires both an in-app entry and an
+OS-level `scheduleNotificationAsync` call.
 
 ## Testing
 
 ```typescript
-import { Container } from '@stackra/container';
+import { Container } from "@stackra/container";
 import {
   createMockPushSubscriptionAdapter,
   createMockNotificationManager,
   createMockNotificationPreferences,
   mockNotificationPayload,
-} from '@stackra/notifications/testing';
-import { PUSH_SUBSCRIPTION_ADAPTER, NOTIFICATION_MANAGER } from '@stackra/notifications';
+} from "@stackra/notifications/testing";
+import {
+  PUSH_SUBSCRIPTION_ADAPTER,
+  NOTIFICATION_MANAGER,
+} from "@stackra/notifications";
 
-const adapter = createMockPushSubscriptionAdapter({ platform: 'web' });
+const adapter = createMockPushSubscriptionAdapter({ platform: "web" });
 const manager = createMockNotificationManager({
-  permission: { supported: true, permission: 'granted' },
+  permission: { supported: true, permission: "granted" },
 });
 const preferences = createMockNotificationPreferences();
 
@@ -221,13 +266,16 @@ app.register(PUSH_SUBSCRIPTION_ADAPTER, { useValue: adapter });
 app.register(NOTIFICATION_MANAGER, { useValue: manager });
 // …
 
-await manager.dispatch(mockNotificationPayload({ title: 'Hello' }));
-expect(manager.$.wasCalled('dispatch')).toBe(true);
+await manager.dispatch(mockNotificationPayload({ title: "Hello" }));
+expect(manager.$.wasCalled("dispatch")).toBe(true);
 ```
 
 ## Analytics events
 
-Every state change flows through the optional `IAnalyticsManager` (`ANALYTICS_MANAGER` token from `@stackra/contracts`). Consumers who ship `@stackra/analytics` at the app root receive every event automatically — no adapter provider needed.
+Every state change flows through the optional `IAnalyticsManager`
+(`ANALYTICS_MANAGER` token from `@stackra/contracts`). Consumers who ship
+`@stackra/analytics` at the app root receive every event automatically — no
+adapter provider needed.
 
 | Event                                          | When it fires                                                                                                                                                                                                      |
 | ---------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |

@@ -4,8 +4,8 @@
  * @description Factory returning an assertable mock state registry.
  */
 
-import { createAssertableProxy, type AssertableProxy } from '@stackra/testing';
-import { MockStateRegistry } from './mock-state-registry';
+import { createAssertableProxy, type AssertableProxy } from "@stackra/testing";
+import { MockStateRegistry } from "./mock-state-registry";
 
 /**
  * Create an assertable mock state registry.

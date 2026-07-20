@@ -9,7 +9,14 @@
       "name": "Team Created",
       "kind": "track",
       "consent_required": "functional",
-      "properties": ["tenant_id", "branch_id", "team_type", "sport_key", "competitive_level", "capacity_bucket"],
+      "properties": [
+        "tenant_id",
+        "branch_id",
+        "team_type",
+        "sport_key",
+        "competitive_level",
+        "capacity_bucket"
+      ],
       "description": "Admin created a team. Powers onboarding funnel + team-mix insight."
     },
     {
@@ -90,7 +97,14 @@
       "name": "Trial Scheduled",
       "kind": "track",
       "consent_required": "functional",
-      "properties": ["tenant_id", "team_id", "trial_type", "trialist_type", "session_count", "days_ahead_bucket"]
+      "properties": [
+        "tenant_id",
+        "team_id",
+        "trial_type",
+        "trialist_type",
+        "session_count",
+        "days_ahead_bucket"
+      ]
     },
     {
       "name": "Trial Completed",

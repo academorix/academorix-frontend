@@ -4,46 +4,370 @@
   "title": "refund — error codes",
   "namespace": "refund",
   "errors": [
-    { "code": "REFUND_NOT_FOUND", "http": 404, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "refund.errors.not_found" },
-    { "code": "REFUND_CAPTURE_NOT_ENTITLED", "http": 402, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "refund.errors.capture_not_entitled", "description": "Tenant lacks the `refund_capture` gate. Response includes upgrade CTA." },
-    { "code": "REFUND_CUSTOMER_SELF_SERVICE_NOT_ENTITLED", "http": 402, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "refund.errors.customer_self_service_not_entitled", "description": "Tenant does not permit customer-initiated refund requests. Customer must contact support." },
-    { "code": "REFUND_PARTIAL_NOT_ENTITLED", "http": 402, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "refund.errors.partial_not_entitled", "description": "Partial refunds require Medium+ tier (`refund_partial`)." },
-    { "code": "REFUND_PRORATED_NOT_ENTITLED", "http": 402, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "refund.errors.prorated_not_entitled", "description": "Prorated refunds require Medium+ tier (`refund_prorated`)." },
-    { "code": "REFUND_MULTI_CURRENCY_NOT_ENTITLED", "http": 402, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "refund.errors.multi_currency_not_entitled", "description": "Cross-currency refunds require Medium+ tier (`refund_multi_currency`)." },
-    { "code": "REFUND_BULK_PROCESSING_NOT_ENTITLED", "http": 402, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "refund.errors.bulk_processing_not_entitled", "description": "Bulk refund processing requires Enterprise tier (`refund_bulk_processing`)." },
-    { "code": "REFUND_INVALID_REASON", "http": 422, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "refund.errors.invalid_reason", "description": "Reason must be one of the enum values. Customer path additionally restricted to customer-allowed reasons only." },
-    { "code": "REFUND_ADMIN_REASON_FROM_CUSTOMER", "http": 403, "retryable": false, "user_facing": true, "audit_severity": "warn", "i18n_key": "refund.errors.admin_reason_from_customer", "description": "Customer path submitted an admin-only reason (fraud_confirmed / admin_correction / regulator_required / accounting_correction / chargeback_prevention). Refused." },
-    { "code": "REFUND_INVALID_REFUND_TYPE", "http": 422, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "refund.errors.invalid_refund_type", "description": "refund_type must be one of: full / partial / prorated." },
-    { "code": "REFUND_INVALID_REFUNDED_TO", "http": 422, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "refund.errors.invalid_refunded_to", "description": "refunded_to must be one of: original_payment_method / customer_balance / bank_transfer / check." },
-    { "code": "REFUND_INVALID_AMOUNT", "http": 422, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "refund.errors.invalid_amount", "description": "amount_cents must be positive integer." },
-    { "code": "REFUND_AMOUNT_EXCEEDS_REFUNDABLE", "http": 422, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "refund.errors.amount_exceeds_refundable", "description": "Requested amount exceeds the remaining refundable amount (payment.amount_cents - previously_refunded_cents)." },
-    { "code": "REFUND_CURRENCY_MISMATCH", "http": 422, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "refund.errors.currency_mismatch", "description": "Refund currency does not match parent payment currency, and tenant does not hold refund_multi_currency entitlement." },
-    { "code": "REFUND_PAYMENT_NOT_FOUND", "http": 404, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "refund.errors.payment_not_found", "description": "Parent payment_id does not exist or is soft-deleted." },
-    { "code": "REFUND_PAYMENT_NOT_SUCCEEDED", "http": 409, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "refund.errors.payment_not_succeeded", "description": "Cannot refund a payment that is not in succeeded status. Failed / pending payments have no money to reverse." },
-    { "code": "REFUND_INVOICE_MISMATCH", "http": 422, "retryable": false, "user_facing": true, "audit_severity": "warn", "i18n_key": "refund.errors.invoice_mismatch", "description": "invoice_id does not match parent payment.invoice_id." },
-    { "code": "REFUND_INVALID_PRORATION_CONFIG", "http": 422, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "refund.errors.invalid_proration_config", "description": "proration_config JSONB is malformed. Expected shape: { unused_period_start, unused_period_end, total_period_days, unused_days, unused_pass_count, unused_pass_credit_cents }." },
-    { "code": "REFUND_PRORATION_TARGET_NOT_MEMBERSHIP", "http": 422, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "refund.errors.proration_target_not_membership", "description": "refund_type='prorated' requires the parent invoice.applied_to_type='membership'." },
-    { "code": "REFUND_SELF_APPROVAL_REFUSED", "http": 403, "retryable": false, "user_facing": true, "audit_severity": "warn", "i18n_key": "refund.errors.self_approval_refused", "description": "Segregation of duties (SOX §404) — approver cannot be the initiator. Another approver must review." },
-    { "code": "REFUND_APPROVAL_REQUIRED", "http": 409, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "refund.errors.approval_required", "description": "This refund requires approval. Status is awaiting_approval; the caller cannot force through to processing." },
-    { "code": "REFUND_INVALID_STATE_TRANSITION", "http": 409, "retryable": false, "user_facing": true, "audit_severity": "warn", "i18n_key": "refund.errors.invalid_state_transition", "description": "The requested state transition is not permitted by the refund state machine." },
-    { "code": "REFUND_TERMINAL_STATE", "http": 409, "retryable": false, "user_facing": true, "audit_severity": "warn", "i18n_key": "refund.errors.terminal_state", "description": "Cannot modify a refund in terminal state (failed / rejected / cancelled)." },
-    { "code": "REFUND_IMMUTABLE", "http": 409, "retryable": false, "user_facing": false, "audit_severity": "critical", "i18n_key": "refund.errors.immutable", "description": "P1 signal. Attempted mutation of a succeeded refund. Refunds are IMMUTABLE post-succeeded. Corrections require a new refund with reason='accounting_correction'." },
-    { "code": "REFUND_TERMS_LOCKED", "http": 409, "retryable": false, "user_facing": true, "audit_severity": "warn", "i18n_key": "refund.errors.terms_locked", "description": "Refund terms (amount_cents / currency / reason / refund_type / payment_id) cannot be edited once approval starts." },
-    { "code": "REFUND_NUMBER_IMMUTABLE", "http": 409, "retryable": false, "user_facing": false, "audit_severity": "warn", "i18n_key": "refund.errors.refund_number_immutable", "description": "refund_number is immutable — sequential generator handles allocation; direct mutation refused." },
-    { "code": "REFUND_LINE_PARENT_LOCKED", "http": 409, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "refund.errors.line_parent_locked", "description": "Refund lines cannot be added once parent refund enters processing / succeeded / failed / rejected / cancelled." },
-    { "code": "REFUND_LINE_INVOICE_MISMATCH", "http": 422, "retryable": false, "user_facing": true, "audit_severity": "warn", "i18n_key": "refund.errors.line_invoice_mismatch", "description": "invoice_line.invoice_id does not match parent refund.invoice_id (cross-invoice guard)." },
-    { "code": "REFUND_LINE_INVALID_AMOUNT", "http": 422, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "refund.errors.line_invalid_amount" },
-    { "code": "REFUND_LINE_AMOUNT_EXCEEDS_LINE_TOTAL", "http": 422, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "refund.errors.line_amount_exceeds_line_total", "description": "Refund line amount exceeds the underlying invoice_line.total_cents - previously_refunded_on_line." },
-    { "code": "REFUND_LINE_CURRENCY_MISMATCH", "http": 422, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "refund.errors.line_currency_mismatch" },
-    { "code": "REFUND_LINE_DUPLICATE_INVOICE_LINE", "http": 409, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "refund.errors.line_duplicate_invoice_line", "description": "Two refund lines within the same refund cannot target the same invoice_line (composite unique refused)." },
-    { "code": "REFUND_LINE_PRORATION_CONFIG_MISUSE", "http": 422, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "refund.errors.line_proration_config_misuse", "description": "proration_config is only valid when parent refund.refund_type='prorated'." },
-    { "code": "REFUND_LINE_SUM_MISMATCH", "http": 422, "retryable": false, "user_facing": true, "audit_severity": "warn", "i18n_key": "refund.errors.line_sum_mismatch", "description": "Sum of refund_lines.amount_cents does not equal parent refund.amount_cents (invariant check)." },
-    { "code": "REFUND_LINE_IMMUTABLE", "http": 409, "retryable": false, "user_facing": false, "audit_severity": "warn", "i18n_key": "refund.errors.line_immutable", "description": "Refund lines are immutable at creation — corrections require cancelling the parent refund + creating a new one." },
-    { "code": "REFUND_CUSTOMER_SCOPE_VIOLATION", "http": 403, "retryable": false, "user_facing": true, "audit_severity": "warn", "i18n_key": "refund.errors.customer_scope_violation", "description": "Customer attempted to access a refund tied to a payment where they were not the customer, or to a refund they did not initiate." },
-    { "code": "REFUND_PROVIDER_DISPATCH_FAILED", "http": 502, "retryable": true, "user_facing": false, "audit_severity": "critical", "i18n_key": "refund.errors.provider_dispatch_failed", "description": "P1 signal. Provider-side createRefund call failed. Retryable via ReconcileRefundsJob." },
-    { "code": "REFUND_PROVIDER_TIMEOUT", "http": 504, "retryable": true, "user_facing": false, "audit_severity": "warn", "i18n_key": "refund.errors.provider_timeout" },
-    { "code": "REFUND_ATOMICITY_FAILED", "http": 500, "retryable": false, "user_facing": false, "audit_severity": "critical", "i18n_key": "refund.errors.atomicity_failed", "description": "P1 signal. The refund transaction failed to commit atomically with its finalization chain (credit note + transaction + clawback fan-out + marketing negative-conversion)." },
-    { "code": "REFUND_FINALIZATION_FAILED", "http": 500, "retryable": true, "user_facing": false, "audit_severity": "critical", "i18n_key": "refund.errors.finalization_failed", "description": "P1 signal. FinalizeRefundJob step failed. Refund transitions to provider_error for retry via ReconcileRefundsJob or refund:generate-credit-note admin CLI." },
-    { "code": "REFUND_CLAWBACK_FAILED", "http": 500, "retryable": true, "user_facing": false, "audit_severity": "critical", "i18n_key": "refund.errors.clawback_failed", "description": "P1 signal. RefundClawbackReferral or RefundClawbackCoupon downstream event failed to process. Retried up to 5 times before dead-lettering." }
+    {
+      "code": "REFUND_NOT_FOUND",
+      "http": 404,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "refund.errors.not_found"
+    },
+    {
+      "code": "REFUND_CAPTURE_NOT_ENTITLED",
+      "http": 402,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "refund.errors.capture_not_entitled",
+      "description": "Tenant lacks the `refund_capture` gate. Response includes upgrade CTA."
+    },
+    {
+      "code": "REFUND_CUSTOMER_SELF_SERVICE_NOT_ENTITLED",
+      "http": 402,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "refund.errors.customer_self_service_not_entitled",
+      "description": "Tenant does not permit customer-initiated refund requests. Customer must contact support."
+    },
+    {
+      "code": "REFUND_PARTIAL_NOT_ENTITLED",
+      "http": 402,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "refund.errors.partial_not_entitled",
+      "description": "Partial refunds require Medium+ tier (`refund_partial`)."
+    },
+    {
+      "code": "REFUND_PRORATED_NOT_ENTITLED",
+      "http": 402,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "refund.errors.prorated_not_entitled",
+      "description": "Prorated refunds require Medium+ tier (`refund_prorated`)."
+    },
+    {
+      "code": "REFUND_MULTI_CURRENCY_NOT_ENTITLED",
+      "http": 402,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "refund.errors.multi_currency_not_entitled",
+      "description": "Cross-currency refunds require Medium+ tier (`refund_multi_currency`)."
+    },
+    {
+      "code": "REFUND_BULK_PROCESSING_NOT_ENTITLED",
+      "http": 402,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "refund.errors.bulk_processing_not_entitled",
+      "description": "Bulk refund processing requires Enterprise tier (`refund_bulk_processing`)."
+    },
+    {
+      "code": "REFUND_INVALID_REASON",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "refund.errors.invalid_reason",
+      "description": "Reason must be one of the enum values. Customer path additionally restricted to customer-allowed reasons only."
+    },
+    {
+      "code": "REFUND_ADMIN_REASON_FROM_CUSTOMER",
+      "http": 403,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "warn",
+      "i18n_key": "refund.errors.admin_reason_from_customer",
+      "description": "Customer path submitted an admin-only reason (fraud_confirmed / admin_correction / regulator_required / accounting_correction / chargeback_prevention). Refused."
+    },
+    {
+      "code": "REFUND_INVALID_REFUND_TYPE",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "refund.errors.invalid_refund_type",
+      "description": "refund_type must be one of: full / partial / prorated."
+    },
+    {
+      "code": "REFUND_INVALID_REFUNDED_TO",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "refund.errors.invalid_refunded_to",
+      "description": "refunded_to must be one of: original_payment_method / customer_balance / bank_transfer / check."
+    },
+    {
+      "code": "REFUND_INVALID_AMOUNT",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "refund.errors.invalid_amount",
+      "description": "amount_cents must be positive integer."
+    },
+    {
+      "code": "REFUND_AMOUNT_EXCEEDS_REFUNDABLE",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "refund.errors.amount_exceeds_refundable",
+      "description": "Requested amount exceeds the remaining refundable amount (payment.amount_cents - previously_refunded_cents)."
+    },
+    {
+      "code": "REFUND_CURRENCY_MISMATCH",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "refund.errors.currency_mismatch",
+      "description": "Refund currency does not match parent payment currency, and tenant does not hold refund_multi_currency entitlement."
+    },
+    {
+      "code": "REFUND_PAYMENT_NOT_FOUND",
+      "http": 404,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "refund.errors.payment_not_found",
+      "description": "Parent payment_id does not exist or is soft-deleted."
+    },
+    {
+      "code": "REFUND_PAYMENT_NOT_SUCCEEDED",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "refund.errors.payment_not_succeeded",
+      "description": "Cannot refund a payment that is not in succeeded status. Failed / pending payments have no money to reverse."
+    },
+    {
+      "code": "REFUND_INVOICE_MISMATCH",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "warn",
+      "i18n_key": "refund.errors.invoice_mismatch",
+      "description": "invoice_id does not match parent payment.invoice_id."
+    },
+    {
+      "code": "REFUND_INVALID_PRORATION_CONFIG",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "refund.errors.invalid_proration_config",
+      "description": "proration_config JSONB is malformed. Expected shape: { unused_period_start, unused_period_end, total_period_days, unused_days, unused_pass_count, unused_pass_credit_cents }."
+    },
+    {
+      "code": "REFUND_PRORATION_TARGET_NOT_MEMBERSHIP",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "refund.errors.proration_target_not_membership",
+      "description": "refund_type='prorated' requires the parent invoice.applied_to_type='membership'."
+    },
+    {
+      "code": "REFUND_SELF_APPROVAL_REFUSED",
+      "http": 403,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "warn",
+      "i18n_key": "refund.errors.self_approval_refused",
+      "description": "Segregation of duties (SOX §404) — approver cannot be the initiator. Another approver must review."
+    },
+    {
+      "code": "REFUND_APPROVAL_REQUIRED",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "refund.errors.approval_required",
+      "description": "This refund requires approval. Status is awaiting_approval; the caller cannot force through to processing."
+    },
+    {
+      "code": "REFUND_INVALID_STATE_TRANSITION",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "warn",
+      "i18n_key": "refund.errors.invalid_state_transition",
+      "description": "The requested state transition is not permitted by the refund state machine."
+    },
+    {
+      "code": "REFUND_TERMINAL_STATE",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "warn",
+      "i18n_key": "refund.errors.terminal_state",
+      "description": "Cannot modify a refund in terminal state (failed / rejected / cancelled)."
+    },
+    {
+      "code": "REFUND_IMMUTABLE",
+      "http": 409,
+      "retryable": false,
+      "user_facing": false,
+      "audit_severity": "critical",
+      "i18n_key": "refund.errors.immutable",
+      "description": "P1 signal. Attempted mutation of a succeeded refund. Refunds are IMMUTABLE post-succeeded. Corrections require a new refund with reason='accounting_correction'."
+    },
+    {
+      "code": "REFUND_TERMS_LOCKED",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "warn",
+      "i18n_key": "refund.errors.terms_locked",
+      "description": "Refund terms (amount_cents / currency / reason / refund_type / payment_id) cannot be edited once approval starts."
+    },
+    {
+      "code": "REFUND_NUMBER_IMMUTABLE",
+      "http": 409,
+      "retryable": false,
+      "user_facing": false,
+      "audit_severity": "warn",
+      "i18n_key": "refund.errors.refund_number_immutable",
+      "description": "refund_number is immutable — sequential generator handles allocation; direct mutation refused."
+    },
+    {
+      "code": "REFUND_LINE_PARENT_LOCKED",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "refund.errors.line_parent_locked",
+      "description": "Refund lines cannot be added once parent refund enters processing / succeeded / failed / rejected / cancelled."
+    },
+    {
+      "code": "REFUND_LINE_INVOICE_MISMATCH",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "warn",
+      "i18n_key": "refund.errors.line_invoice_mismatch",
+      "description": "invoice_line.invoice_id does not match parent refund.invoice_id (cross-invoice guard)."
+    },
+    {
+      "code": "REFUND_LINE_INVALID_AMOUNT",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "refund.errors.line_invalid_amount"
+    },
+    {
+      "code": "REFUND_LINE_AMOUNT_EXCEEDS_LINE_TOTAL",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "refund.errors.line_amount_exceeds_line_total",
+      "description": "Refund line amount exceeds the underlying invoice_line.total_cents - previously_refunded_on_line."
+    },
+    {
+      "code": "REFUND_LINE_CURRENCY_MISMATCH",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "refund.errors.line_currency_mismatch"
+    },
+    {
+      "code": "REFUND_LINE_DUPLICATE_INVOICE_LINE",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "refund.errors.line_duplicate_invoice_line",
+      "description": "Two refund lines within the same refund cannot target the same invoice_line (composite unique refused)."
+    },
+    {
+      "code": "REFUND_LINE_PRORATION_CONFIG_MISUSE",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "refund.errors.line_proration_config_misuse",
+      "description": "proration_config is only valid when parent refund.refund_type='prorated'."
+    },
+    {
+      "code": "REFUND_LINE_SUM_MISMATCH",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "warn",
+      "i18n_key": "refund.errors.line_sum_mismatch",
+      "description": "Sum of refund_lines.amount_cents does not equal parent refund.amount_cents (invariant check)."
+    },
+    {
+      "code": "REFUND_LINE_IMMUTABLE",
+      "http": 409,
+      "retryable": false,
+      "user_facing": false,
+      "audit_severity": "warn",
+      "i18n_key": "refund.errors.line_immutable",
+      "description": "Refund lines are immutable at creation — corrections require cancelling the parent refund + creating a new one."
+    },
+    {
+      "code": "REFUND_CUSTOMER_SCOPE_VIOLATION",
+      "http": 403,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "warn",
+      "i18n_key": "refund.errors.customer_scope_violation",
+      "description": "Customer attempted to access a refund tied to a payment where they were not the customer, or to a refund they did not initiate."
+    },
+    {
+      "code": "REFUND_PROVIDER_DISPATCH_FAILED",
+      "http": 502,
+      "retryable": true,
+      "user_facing": false,
+      "audit_severity": "critical",
+      "i18n_key": "refund.errors.provider_dispatch_failed",
+      "description": "P1 signal. Provider-side createRefund call failed. Retryable via ReconcileRefundsJob."
+    },
+    {
+      "code": "REFUND_PROVIDER_TIMEOUT",
+      "http": 504,
+      "retryable": true,
+      "user_facing": false,
+      "audit_severity": "warn",
+      "i18n_key": "refund.errors.provider_timeout"
+    },
+    {
+      "code": "REFUND_ATOMICITY_FAILED",
+      "http": 500,
+      "retryable": false,
+      "user_facing": false,
+      "audit_severity": "critical",
+      "i18n_key": "refund.errors.atomicity_failed",
+      "description": "P1 signal. The refund transaction failed to commit atomically with its finalization chain (credit note + transaction + clawback fan-out + marketing negative-conversion)."
+    },
+    {
+      "code": "REFUND_FINALIZATION_FAILED",
+      "http": 500,
+      "retryable": true,
+      "user_facing": false,
+      "audit_severity": "critical",
+      "i18n_key": "refund.errors.finalization_failed",
+      "description": "P1 signal. FinalizeRefundJob step failed. Refund transitions to provider_error for retry via ReconcileRefundsJob or refund:generate-credit-note admin CLI."
+    },
+    {
+      "code": "REFUND_CLAWBACK_FAILED",
+      "http": 500,
+      "retryable": true,
+      "user_facing": false,
+      "audit_severity": "critical",
+      "i18n_key": "refund.errors.clawback_failed",
+      "description": "P1 signal. RefundClawbackReferral or RefundClawbackCoupon downstream event failed to process. Retried up to 5 times before dead-lettering."
+    }
   ]
 }

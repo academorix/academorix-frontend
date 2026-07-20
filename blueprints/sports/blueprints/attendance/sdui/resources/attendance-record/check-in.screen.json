@@ -9,7 +9,13 @@
   "resource": { "module": "attendance", "entity": "attendance-record", "action": "create" },
   "requiresPermission": "attendance.create",
   "dataSources": [
-    { "name": "sessions", "kind": "http.get", "url": "/api/v1/sessions?filter[status]=scheduled,confirmed,in_progress", "unwrap": "data", "cache": { "ttlSeconds": 60 } }
+    {
+      "name": "sessions",
+      "kind": "http.get",
+      "url": "/api/v1/sessions?filter[status]=scheduled,confirmed,in_progress",
+      "unwrap": "data",
+      "cache": { "ttlSeconds": 60 }
+    }
   ],
   "nodes": [
     {
@@ -17,11 +23,21 @@
       "kind": "View",
       "props": { "className": "flex flex-col gap-4 p-6 max-w-3xl mx-auto" },
       "children": [
-        { "kind": "Text", "props": { "as": "h1", "className": "text-2xl font-semibold", "children": "Record attendance" } },
+        {
+          "kind": "Text",
+          "props": {
+            "as": "h1",
+            "className": "text-2xl font-semibold",
+            "children": "Record attendance"
+          }
+        },
         {
           "kind": "Card",
           "children": [
-            { "kind": "Card.Header", "children": [{ "kind": "Text", "props": { "children": "Attendee + session" } }] },
+            {
+              "kind": "Card.Header",
+              "children": [{ "kind": "Text", "props": { "children": "Attendee + session" } }]
+            },
             {
               "kind": "Card.Content",
               "props": { "className": "flex flex-col gap-3" },
@@ -30,14 +46,30 @@
                   "kind": "ComboBox",
                   "props": { "label": "Session", "menuTrigger": "focus", "isRequired": true },
                   "bindings": { "items": { "$ref": "sessions" } },
-                  "actions": { "onSelectionChange": { "kind": "field.set", "field": "session_id", "valueExpr": "$selectedKey" } }
+                  "actions": {
+                    "onSelectionChange": {
+                      "kind": "field.set",
+                      "field": "session_id",
+                      "valueExpr": "$selectedKey"
+                    }
+                  }
                 },
                 {
                   "kind": "Widget",
                   "widget": "athlete.athlete-picker",
-                  "props": { "label": "Athlete", "isRequired": true, "filterByEnrollmentInSession": true },
+                  "props": {
+                    "label": "Athlete",
+                    "isRequired": true,
+                    "filterByEnrollmentInSession": true
+                  },
                   "bindings": { "session_id": { "$ref": "form.session_id" } },
-                  "actions": { "onChange": { "kind": "field.set", "field": "athlete_id", "valueExpr": "$value" } }
+                  "actions": {
+                    "onChange": {
+                      "kind": "field.set",
+                      "field": "athlete_id",
+                      "valueExpr": "$value"
+                    }
+                  }
                 }
               ]
             }
@@ -46,34 +78,64 @@
         {
           "kind": "Card",
           "children": [
-            { "kind": "Card.Header", "children": [{ "kind": "Text", "props": { "children": "Check-in details" } }] },
+            {
+              "kind": "Card.Header",
+              "children": [{ "kind": "Text", "props": { "children": "Check-in details" } }]
+            },
             {
               "kind": "Card.Content",
               "props": { "className": "flex flex-col gap-3" },
               "children": [
                 {
                   "kind": "ComboBox",
-                  "props": { "label": "Method", "menuTrigger": "focus", "isRequired": true, "defaultSelectedKey": "admin_recorded" },
+                  "props": {
+                    "label": "Method",
+                    "menuTrigger": "focus",
+                    "isRequired": true,
+                    "defaultSelectedKey": "admin_recorded"
+                  },
                   "props_items": [
                     { "id": "admin_recorded", "label": "Admin recorded" },
                     { "id": "coach_verified", "label": "Coach verified" }
                   ],
-                  "actions": { "onSelectionChange": { "kind": "field.set", "field": "checked_in_via", "valueExpr": "$selectedKey" } }
+                  "actions": {
+                    "onSelectionChange": {
+                      "kind": "field.set",
+                      "field": "checked_in_via",
+                      "valueExpr": "$selectedKey"
+                    }
+                  }
                 },
                 {
                   "kind": "DatePicker",
                   "props": { "label": "Checked in at (defaults to now)", "granularity": "minute" },
-                  "actions": { "onChange": { "kind": "field.set", "field": "checked_in_at", "valueExpr": "$value" } }
+                  "actions": {
+                    "onChange": {
+                      "kind": "field.set",
+                      "field": "checked_in_at",
+                      "valueExpr": "$value"
+                    }
+                  }
                 },
                 {
                   "kind": "ComboBox",
-                  "props": { "label": "Initial status", "menuTrigger": "focus", "defaultSelectedKey": "present" },
+                  "props": {
+                    "label": "Initial status",
+                    "menuTrigger": "focus",
+                    "defaultSelectedKey": "present"
+                  },
                   "props_items": [
                     { "id": "present", "label": "Present" },
                     { "id": "late", "label": "Late (explicit)" },
                     { "id": "present_with_note", "label": "Present with note" }
                   ],
-                  "actions": { "onSelectionChange": { "kind": "field.set", "field": "status", "valueExpr": "$selectedKey" } }
+                  "actions": {
+                    "onSelectionChange": {
+                      "kind": "field.set",
+                      "field": "status",
+                      "valueExpr": "$selectedKey"
+                    }
+                  }
                 }
               ]
             }

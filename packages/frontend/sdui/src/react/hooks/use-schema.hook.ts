@@ -5,11 +5,11 @@
  *   the DI-managed {@link SduiService}.
  */
 
-import { useCallback, useEffect, useState } from 'react';
-import { useInject } from '@stackra/container/react';
-import type { ISduiScreen } from '@stackra/contracts';
-import { SDUI_SERVICE } from '@stackra/contracts';
-import type { SduiService } from '@/core/services/sdui.service';
+import { useCallback, useEffect, useState } from "react";
+import { useInject } from "@stackra/container/react";
+import type { ISduiScreen } from "@stackra/contracts";
+import { SDUI_SERVICE } from "@stackra/contracts";
+import type { SduiService } from "@/core/services/sdui.service";
 
 /**
  * Return shape of {@link useSchema}.
@@ -29,7 +29,7 @@ export interface IUseSchemaResult {
  */
 export function useSchema(
   path: string | null,
-  options: { force?: boolean } = {}
+  options: { force?: boolean } = {},
 ): IUseSchemaResult {
   const service = useInject<SduiService>(SDUI_SERVICE);
   const [state, setState] = useState<{

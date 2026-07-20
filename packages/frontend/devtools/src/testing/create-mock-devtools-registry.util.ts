@@ -7,9 +7,9 @@
  *   `registry.$.wasCalledWith('register', panel)` etc.
  */
 
-import { createAssertableProxy, type AssertableProxy } from '@stackra/testing';
+import { createAssertableProxy, type AssertableProxy } from "@stackra/testing";
 
-import { MockDevtoolsPanelsRegistry } from './mock-devtools-panels-registry';
+import { MockDevtoolsPanelsRegistry } from "./mock-devtools-panels-registry";
 
 /**
  * Build an assertable {@link MockDevtoolsPanelsRegistry}.

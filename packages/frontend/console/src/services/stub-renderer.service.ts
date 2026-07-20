@@ -18,10 +18,23 @@ import { basename, extname, resolve } from "node:path";
 
 import { Injectable } from "@stackra/container";
 import { Str } from "@stackra/support";
-// @ts-ignore — ejs has no type declarations
+// ejs ships no type declarations; `@ts-expect-error` would flip to an
+// error if @types/ejs were ever added, so `@ts-ignore` is the correct
+// long-lived escape here.
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore -- ejs has no bundled type declarations.
 import ejs from "ejs";
 
 import type { IStubRenderOptions, IStubRenderResult } from "../interfaces";
+
+/**
+ * Minimal type surface we consume from `ejs` — kept local so the whole
+ * file doesn't need `@ts-expect-error` on every call site.
+ */
+interface IEjsRenderer {
+  render(template: string, data: Record<string, unknown>, options: { filename: string }): string;
+}
+const ejsRenderer = ejs as unknown as IEjsRenderer;
 
 /**
  * EJS-based stub template renderer.
@@ -61,7 +74,7 @@ export class StubRenderer {
     }
 
     const template = readFileSync(templatePath, "utf-8");
-    const content = ejs.render(
+    const content = ejsRenderer.render(
       template,
       {
         ...options.variables,
@@ -82,7 +95,7 @@ export class StubRenderer {
    * @param stubsDir - Custom stubs directory name (default: 'stubs')
    * @returns Array of stub names (without .ejs extension)
    */
-  public listStubs(packageRoot: string, stubsDir: string = "stubs"): string[] {
+  public listStubs(packageRoot: string, stubsDir = "stubs"): string[] {
     const dir = resolve(packageRoot, stubsDir);
     if (!existsSync(dir)) return [];
 
@@ -99,7 +112,7 @@ export class StubRenderer {
    * @param stubsDir - Custom stubs directory name
    * @returns True if the stub file exists
    */
-  public hasStub(stub: string, packageRoot: string, stubsDir: string = "stubs"): boolean {
+  public hasStub(stub: string, packageRoot: string, stubsDir = "stubs"): boolean {
     const filePath = resolve(packageRoot, stubsDir, `${stub}.ejs`);
     return existsSync(filePath);
   }

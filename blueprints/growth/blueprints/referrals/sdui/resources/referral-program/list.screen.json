@@ -37,8 +37,21 @@
             {
               "kind": "View",
               "children": [
-                { "kind": "Text", "props": { "as": "h1", "className": "text-2xl font-semibold", "children": "Referral programs" } },
-                { "kind": "Text", "props": { "className": "text-sm text-muted", "children": "Reward existing customers for bringing new ones." } }
+                {
+                  "kind": "Text",
+                  "props": {
+                    "as": "h1",
+                    "className": "text-2xl font-semibold",
+                    "children": "Referral programs"
+                  }
+                },
+                {
+                  "kind": "Text",
+                  "props": {
+                    "className": "text-sm text-muted",
+                    "children": "Reward existing customers for bringing new ones."
+                  }
+                }
               ]
             },
             {
@@ -56,8 +69,14 @@
                 },
                 {
                   "kind": "Button",
-                  "props": { "variant": "primary", "leadingIcon": "plus", "children": "New program" },
-                  "actions": { "onPress": { "kind": "navigate", "to": "/tenant/referral-programs/new" } },
+                  "props": {
+                    "variant": "primary",
+                    "leadingIcon": "plus",
+                    "children": "New program"
+                  },
+                  "actions": {
+                    "onPress": { "kind": "navigate", "to": "/tenant/referral-programs/new" }
+                  },
                   "bindings": { "disabled": { "$ref": "slot_entitlement.is_exceeded" } },
                   "requiresPermission": "referral_programs.create"
                 }
@@ -94,7 +113,11 @@
                 { "id": "double_sided", "label": "Double-sided" }
               ],
               "actions": {
-                "onSelectionChange": { "kind": "filter.set", "field": "side", "valueExpr": "$selectedKey" }
+                "onSelectionChange": {
+                  "kind": "filter.set",
+                  "field": "side",
+                  "valueExpr": "$selectedKey"
+                }
               }
             },
             {
@@ -109,7 +132,11 @@
                 { "id": "point_award", "label": "Points" }
               ],
               "actions": {
-                "onSelectionChange": { "kind": "filter.set", "field": "reward_type", "valueExpr": "$selectedKey" }
+                "onSelectionChange": {
+                  "kind": "filter.set",
+                  "field": "reward_type",
+                  "valueExpr": "$selectedKey"
+                }
               }
             }
           ]
@@ -125,9 +152,24 @@
             "kind": "View",
             "props": { "className": "col-span-full text-center py-12" },
             "children": [
-              { "kind": "Icon", "props": { "name": "gift", "className": "size-12 mx-auto text-muted" } },
-              { "kind": "Text", "props": { "className": "mt-4 text-lg font-medium", "children": "No referral programs yet" } },
-              { "kind": "Text", "props": { "className": "text-sm text-muted", "children": "Launch your first program to turn happy customers into your best marketing channel." } }
+              {
+                "kind": "Icon",
+                "props": { "name": "gift", "className": "size-12 mx-auto text-muted" }
+              },
+              {
+                "kind": "Text",
+                "props": {
+                  "className": "mt-4 text-lg font-medium",
+                  "children": "No referral programs yet"
+                }
+              },
+              {
+                "kind": "Text",
+                "props": {
+                  "className": "text-sm text-muted",
+                  "children": "Launch your first program to turn happy customers into your best marketing channel."
+                }
+              }
             ]
           },
           "itemRenderer": {

@@ -5,7 +5,7 @@
  *   component.
  */
 
-import type { ReactNode } from 'react';
+import type { ReactNode } from "react";
 
 /**
  * Props accepted by the native {@link NotificationBadge}.

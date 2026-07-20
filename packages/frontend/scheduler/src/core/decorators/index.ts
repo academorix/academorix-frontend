@@ -9,5 +9,5 @@
  *   single import path: `from '@stackra/scheduler'`.
  */
 
-export { Scheduled } from './scheduled.decorator';
-export type { IScheduledOptions } from '@/core/interfaces/scheduled-options.interface';
+export { Scheduled } from "./scheduled.decorator";
+export type { IScheduledOptions } from "@/core/interfaces/scheduled-options.interface";

@@ -1,10 +1,9 @@
 # academorix/database
 
-Data-layer building blocks for every Academorix module: base
-model concerns, schema Blueprint macros, data-shaping attributes,
-and tenant-aware cache tag helpers. Answers **"what the data
-IS"** — pair with `academorix/crud` for **"how the data is
-QUERIED"**.
+Data-layer building blocks for every Academorix module: base model concerns,
+schema Blueprint macros, data-shaping attributes, and tenant-aware cache tag
+helpers. Answers **"what the data IS"** — pair with `academorix/crud` for **"how
+the data is QUERIED"**.
 
 ## Package layout
 
@@ -68,8 +67,7 @@ src/
 
 ### Data attributes
 
-Slap them on models (or on migrations, in the case of
-`AsDatabaseBlueprint`):
+Slap them on models (or on migrations, in the case of `AsDatabaseBlueprint`):
 
 - `#[Archivable(column: 'archived_at')]`
 - `#[Metadatable(column: 'metadata')]`
@@ -108,8 +106,7 @@ And these standalone concerns (no attribute needed):
 
 ### Schema Blueprint macros
 
-Registered automatically at boot via
-`#[AsDatabaseBlueprint]` discovery:
+Registered automatically at boot via `#[AsDatabaseBlueprint]` discovery:
 
 ```php
 Schema::create('projects', function (Blueprint $table) {

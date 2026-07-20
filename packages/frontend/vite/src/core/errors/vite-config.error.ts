@@ -42,7 +42,7 @@ export class ViteConfigError extends Error {
    * a plugin factory throws — the original exception is preserved
    * here for debugging without polluting the outer message.
    */
-  public readonly cause?: Error;
+  public override readonly cause?: Error;
 
   /**
    * @param message - Human-readable error description.

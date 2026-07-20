@@ -6,72 +6,177 @@
     {
       "name": "Fresh signup (minor)",
       "flow": [
-        { "status": "active", "at": "2026-06-01T10:00:00Z", "event": "AthleteCreated", "notes": "Parent registers via self-serve; welcome notification dispatched" },
-        { "status": "active", "at": "2026-06-02T09:00:00Z", "event": "AthleteConsentRecorded", "notes": "Guardian records consents" },
-        { "status": "active", "at": "2026-06-05T14:00:00Z", "event": "athlete-enrollment::EnrollmentSubmitted", "notes": "Athlete signs up for a team (Wave 3a sibling)" }
+        {
+          "status": "active",
+          "at": "2026-06-01T10:00:00Z",
+          "event": "AthleteCreated",
+          "notes": "Parent registers via self-serve; welcome notification dispatched"
+        },
+        {
+          "status": "active",
+          "at": "2026-06-02T09:00:00Z",
+          "event": "AthleteConsentRecorded",
+          "notes": "Guardian records consents"
+        },
+        {
+          "status": "active",
+          "at": "2026-06-05T14:00:00Z",
+          "event": "athlete-enrollment::EnrollmentSubmitted",
+          "notes": "Athlete signs up for a team (Wave 3a sibling)"
+        }
       ]
     },
     {
       "name": "Safeguarding pause + return",
       "flow": [
         { "status": "active", "at": "2026-06-01T10:00:00Z", "event": "AthleteCreated" },
-        { "status": "paused", "at": "2026-07-10T09:00:00Z", "event": "AthletePausedForSafeguarding", "notes": "HR pauses following incident report. paused_reason recorded (HR-visible only)" },
-        { "status": "active", "at": "2026-07-25T09:00:00Z", "event": "AthleteReturnedFromPause", "notes": "Safeguarding investigation concluded; athlete returned to active" }
+        {
+          "status": "paused",
+          "at": "2026-07-10T09:00:00Z",
+          "event": "AthletePausedForSafeguarding",
+          "notes": "HR pauses following incident report. paused_reason recorded (HR-visible only)"
+        },
+        {
+          "status": "active",
+          "at": "2026-07-25T09:00:00Z",
+          "event": "AthleteReturnedFromPause",
+          "notes": "Safeguarding investigation concluded; athlete returned to active"
+        }
       ]
     },
     {
       "name": "Graduation (soft-terminal)",
       "flow": [
         { "status": "active", "at": "2024-09-01T10:00:00Z", "event": "AthleteCreated" },
-        { "status": "active", "at": "2026-06-15T14:00:00Z", "event": "AthleteAgeGroupSnapshotUpdated", "notes": "U18 → Adult transition via nightly job" },
-        { "status": "graduated", "at": "2026-07-15T10:00:00Z", "event": "AthleteGraduated", "notes": "End-of-season graduation with cascade=true; active enrollments closed" }
+        {
+          "status": "active",
+          "at": "2026-06-15T14:00:00Z",
+          "event": "AthleteAgeGroupSnapshotUpdated",
+          "notes": "U18 → Adult transition via nightly job"
+        },
+        {
+          "status": "graduated",
+          "at": "2026-07-15T10:00:00Z",
+          "event": "AthleteGraduated",
+          "notes": "End-of-season graduation with cascade=true; active enrollments closed"
+        }
       ]
     },
     {
       "name": "Withdrawal (parent-initiated)",
       "flow": [
         { "status": "active", "at": "2026-01-15T10:00:00Z", "event": "AthleteCreated" },
-        { "status": "withdrawn", "at": "2026-07-15T14:00:00Z", "event": "AthleteWithdrawn", "notes": "Parent invokes /me/athletes/{athlete}/withdraw with withdrawal_reason=relocated + guardian_initiated=true" }
+        {
+          "status": "withdrawn",
+          "at": "2026-07-15T14:00:00Z",
+          "event": "AthleteWithdrawn",
+          "notes": "Parent invokes /me/athletes/{athlete}/withdraw with withdrawal_reason=relocated + guardian_initiated=true"
+        }
       ]
     },
     {
       "name": "Withdrawal (admin-initiated, disciplinary)",
       "flow": [
         { "status": "active", "at": "2025-09-01T10:00:00Z", "event": "AthleteCreated" },
-        { "status": "paused", "at": "2026-07-01T09:00:00Z", "event": "AthletePausedForSafeguarding", "notes": "HR pauses following code-of-conduct violation" },
-        { "status": "withdrawn", "at": "2026-07-15T14:00:00Z", "event": "AthleteWithdrawn", "notes": "Following disciplinary review, HR invokes /withdraw with withdrawal_reason=disciplinary" }
+        {
+          "status": "paused",
+          "at": "2026-07-01T09:00:00Z",
+          "event": "AthletePausedForSafeguarding",
+          "notes": "HR pauses following code-of-conduct violation"
+        },
+        {
+          "status": "withdrawn",
+          "at": "2026-07-15T14:00:00Z",
+          "event": "AthleteWithdrawn",
+          "notes": "Following disciplinary review, HR invokes /withdraw with withdrawal_reason=disciplinary"
+        }
       ]
     },
     {
       "name": "Minor turned adult",
       "flow": [
-        { "status": "active", "at": "2020-09-01T10:00:00Z", "event": "AthleteCreated", "notes": "Signed up at age 12" },
-        { "status": "active", "at": "2024-07-15T00:00:00Z", "event": "AthleteMinorTurnedAdult", "notes": "16th birthday: boundary_crossed=minor_min_age (default). age-group snapshot flips to Adult" },
-        { "status": "active", "at": "2026-07-15T00:00:00Z", "event": "AthleteMinorTurnedAdult", "notes": "18th birthday: boundary_crossed=legal_adult_18. Prior guardian-recorded consents flagged consent_re_record_required=true. Re-consent workflow triggers" },
-        { "status": "active", "at": "2026-07-16T10:00:00Z", "event": "AthleteConsentRecorded", "notes": "Adult athlete self-records consents. consent_recorded_by_user_id transitions from guardian to self" }
+        {
+          "status": "active",
+          "at": "2020-09-01T10:00:00Z",
+          "event": "AthleteCreated",
+          "notes": "Signed up at age 12"
+        },
+        {
+          "status": "active",
+          "at": "2024-07-15T00:00:00Z",
+          "event": "AthleteMinorTurnedAdult",
+          "notes": "16th birthday: boundary_crossed=minor_min_age (default). age-group snapshot flips to Adult"
+        },
+        {
+          "status": "active",
+          "at": "2026-07-15T00:00:00Z",
+          "event": "AthleteMinorTurnedAdult",
+          "notes": "18th birthday: boundary_crossed=legal_adult_18. Prior guardian-recorded consents flagged consent_re_record_required=true. Re-consent workflow triggers"
+        },
+        {
+          "status": "active",
+          "at": "2026-07-16T10:00:00Z",
+          "event": "AthleteConsentRecorded",
+          "notes": "Adult athlete self-records consents. consent_recorded_by_user_id transitions from guardian to self"
+        }
       ]
     },
     {
       "name": "Archive + restore (rare)",
       "flow": [
         { "status": "active", "at": "2024-09-01T10:00:00Z", "event": "AthleteCreated" },
-        { "status": "archived", "at": "2026-07-15T14:00:00Z", "event": "AthleteArchived", "notes": "Erroneous archive by admin" },
-        { "status": "active", "at": "2026-07-16T09:00:00Z", "event": "AthleteRestored", "notes": "Restore within retention window. Consumes 1 unit of athlete_slot. Age-group snapshot recomputed" }
+        {
+          "status": "archived",
+          "at": "2026-07-15T14:00:00Z",
+          "event": "AthleteArchived",
+          "notes": "Erroneous archive by admin"
+        },
+        {
+          "status": "active",
+          "at": "2026-07-16T09:00:00Z",
+          "event": "AthleteRestored",
+          "notes": "Restore within retention window. Consumes 1 unit of athlete_slot. Age-group snapshot recomputed"
+        }
       ]
     },
     {
       "name": "Birthday drift — age group flip",
       "flow": [
-        { "status": "active", "at": "2024-01-01T10:00:00Z", "event": "AthleteCreated", "notes": "DOB=2014-06-30 — U10 at signup" },
-        { "status": "active", "at": "2024-07-01T02:00:00Z", "event": "AthleteAgeGroupSnapshotUpdated", "notes": "Nightly job — resolver detects rolling_from_birthday flip: U10 → U12" }
+        {
+          "status": "active",
+          "at": "2024-01-01T10:00:00Z",
+          "event": "AthleteCreated",
+          "notes": "DOB=2014-06-30 — U10 at signup"
+        },
+        {
+          "status": "active",
+          "at": "2024-07-01T02:00:00Z",
+          "event": "AthleteAgeGroupSnapshotUpdated",
+          "notes": "Nightly job — resolver detects rolling_from_birthday flip: U10 → U12"
+        }
       ]
     },
     {
       "name": "Auto-link user (adult self-signup)",
       "flow": [
-        { "status": "active", "at": "2026-07-15T10:00:00Z", "event": "AthleteCreated", "notes": "Adult athlete signed up. user_id NULL at create; metadata.email_hint set to their email" },
-        { "status": "active", "at": "2026-07-15T10:05:00Z", "event": "user::UserActivated", "notes": "Athlete verifies email + activates their User account" },
-        { "status": "active", "at": "2026-07-15T10:15:00Z", "event": "AthleteLinkedToUser", "notes": "AutoLinkAthleteToUserOnEmailMatchJob picks up the email match + auto-links. trigger=self_serve_signup" }
+        {
+          "status": "active",
+          "at": "2026-07-15T10:00:00Z",
+          "event": "AthleteCreated",
+          "notes": "Adult athlete signed up. user_id NULL at create; metadata.email_hint set to their email"
+        },
+        {
+          "status": "active",
+          "at": "2026-07-15T10:05:00Z",
+          "event": "user::UserActivated",
+          "notes": "Athlete verifies email + activates their User account"
+        },
+        {
+          "status": "active",
+          "at": "2026-07-15T10:15:00Z",
+          "event": "AthleteLinkedToUser",
+          "notes": "AutoLinkAthleteToUserOnEmailMatchJob picks up the email match + auto-links. trigger=self_serve_signup"
+        }
       ]
     }
   ]

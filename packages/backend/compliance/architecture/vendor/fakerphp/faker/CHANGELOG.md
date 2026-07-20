@@ -18,17 +18,21 @@
 - Fixed polish license plates (#685)
 - Stopped using `static` in callables in `Provider\pt_BR\PhoneNumber` (#785)
 - Fixed incorrect female name (#794)
-- Stopped using the deprecated `MT_RAND_PHP` constant to seed the random generator on PHP 8.3 (#844)
+- Stopped using the deprecated `MT_RAND_PHP` constant to seed the random
+  generator on PHP 8.3 (#844)
 
 ## [2023-06-12, v1.23.0](https://github.com/FakerPHP/Faker/compare/v1.22.0..v1.23.0)
 
-- Update `randomElements` to return random number of elements when no count is provided (#658)
+- Update `randomElements` to return random number of elements when no count is
+  provided (#658)
 
 ## [2023-05-14, v1.22.0](https://github.com/FakerPHP/Faker/compare/v1.21.0..v1.22.0)
 
 - Fixed `randomElements()` to accept empty iterator (#605)
-- Added support for passing an `Enum` to `randomElement()` and `randomElements()` (#620)
-- Started rejecting invalid arguments passed to `randomElement()` and `randomElements()` (#642)
+- Added support for passing an `Enum` to `randomElement()` and
+  `randomElements()` (#620)
+- Started rejecting invalid arguments passed to `randomElement()` and
+  `randomElements()` (#642)
 
 ## [2022-12-13, v1.21.0](https://github.com/FakerPHP/Faker/compare/v1.20.0..v1.21.0)
 
@@ -88,7 +92,8 @@
 - Add Person extension
 - Add PhoneNumber extension
 - Add VersionExtension (#350)
-- Stricter types in Extension\Container and Extension\GeneratorAwareExtension (#345)
+- Stricter types in Extension\Container and Extension\GeneratorAwareExtension
+  (#345)
 - Fix deprecated property access in `nl_NL` (#348)
 - Add support for `psr/container` >= 2.0 (#354)
 - Add missing union types in Faker\Generator (#352)
@@ -113,7 +118,8 @@
 - Deprecate zh_TW methods that only call base methods (#122)
 - Add used extensions to composer.json as suggestion (#120)
 - Moved TCNo and INN from calculator to localized providers (#108)
-- Fix regex dot/backslash issue where a dot is replaced with a backslash as escape character (#206)
+- Fix regex dot/backslash issue where a dot is replaced with a backslash as
+  escape character (#206)
 - Deprecate direct property access (#164)
 - Added test to assert unique() behaviour (#233)
 - Added RUC for the es_PE locale (#244)
@@ -122,7 +128,8 @@
 - Added new districts for the ne_NP locale (#258)
 - Fix for U.S. Area Code Generation (#261)
 - Fix in numerify where a better random numeric value is guaranteed (#256)
-- Fix e164PhoneNumber to only generate valid phone numbers with valid country codes (#264)
+- Fix e164PhoneNumber to only generate valid phone numbers with valid country
+  codes (#264)
 - Extract fixtures into separate classes (#234)
 - Remove french domains that no longer exists (#277)
 - Fix error that occurs when getting a polish title (#279)

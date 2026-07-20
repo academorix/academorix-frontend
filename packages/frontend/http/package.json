@@ -1,7 +1,7 @@
 {
   "name": "@stackra/http",
   "version": "0.1.0",
-  "description": "Multi-driver HTTP client for the Stackra framework — axios/fetch connectors, middleware + interceptor pipelines, streaming (SSE/NDJSON), circuit breaker, rate limiting, and React hooks.",
+  "description": "Multi-driver HTTP client for the Stackra framework \u2014 axios/fetch connectors, middleware + interceptor pipelines, streaming (SSE/NDJSON), circuit breaker, rate limiting, and React hooks.",
   "license": "MIT",
   "author": {
     "name": "Stackra L.L.C",
@@ -118,6 +118,8 @@
     }
   },
   "devDependencies": {
+    "@academorix/config-tsconfig": "workspace:*",
+    "@academorix/config-tsup": "workspace:*",
     "@stackra/actions": "workspace:*",
     "@stackra/container": "workspace:*",
     "@stackra/contracts": "workspace:*",

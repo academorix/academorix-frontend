@@ -7,10 +7,10 @@
  *   OSS `Chip` + `Popover` (Req 20.1, 20.2, 20.5).
  */
 
-import type { JSX } from 'react';
-import { Chip, Popover } from '@stackra/ui/react';
+import type { JSX } from "react";
+import { Chip, Popover } from "@stackra/ui/react";
 
-import { useAiContext } from '@/core/hooks/use-ai-context';
+import { useAiContext } from "@/core/hooks/use-ai-context";
 
 /** Props accepted by {@link AiContextIndicator}. */
 export interface IAiContextIndicatorProps {
@@ -28,10 +28,10 @@ export function AiContextIndicator(props: IAiContextIndicatorProps): JSX.Element
       <Popover.Trigger>
         <Chip
           className={className}
-          aria-label={`AI context: ${count} frame${count === 1 ? '' : 's'}`}
+          aria-label={`AI context: ${count} frame${count === 1 ? "" : "s"}`}
           size="sm"
         >
-          {count} context frame{count === 1 ? '' : 's'}
+          {count} context frame{count === 1 ? "" : "s"}
         </Chip>
       </Popover.Trigger>
       <Popover.Content className="max-w-sm">
@@ -42,7 +42,7 @@ export function AiContextIndicator(props: IAiContextIndicatorProps): JSX.Element
           ) : (
             <ul className="flex flex-col gap-1 text-sm">
               {stack.map((frame) => (
-                <li key={`${frame.scope ?? ''}::${frame.key}::${frame.seq}`}>
+                <li key={`${frame.scope ?? ""}::${frame.key}::${frame.seq}`}>
                   <span className="font-mono text-xs">{frame.key}</span>
                   <span className="text-muted ml-2 text-xs">priority {frame.priority}</span>
                 </li>

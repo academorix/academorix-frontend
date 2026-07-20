@@ -6,7 +6,7 @@
  *   locale-keyed maps — no i18n runtime dependency.
  */
 
-import { defineConfig } from '@stackra/consent';
+import { defineConfig } from "@stackra/consent";
 
 export const consentConfig = defineConfig({
   // ──────────────────────────────────────────────────────────────────────────
@@ -14,37 +14,37 @@ export const consentConfig = defineConfig({
   // ──────────────────────────────────────────────────────────────────────────
   categories: [
     {
-      slug: 'necessary',
-      label: { en: 'Necessary', ar: 'ضروري' },
-      description: { en: 'Essential cookies', ar: 'ملفات تعريف الارتباط الأساسية' },
+      slug: "necessary",
+      label: { en: "Necessary", ar: "ضروري" },
+      description: { en: "Essential cookies", ar: "ملفات تعريف الارتباط الأساسية" },
       required: true,
       default: true,
     },
     {
-      slug: 'functional',
-      label: { en: 'Functional', ar: 'وظيفي' },
-      description: { en: 'Enhanced functionality', ar: 'وظائف محسّنة' },
+      slug: "functional",
+      label: { en: "Functional", ar: "وظيفي" },
+      description: { en: "Enhanced functionality", ar: "وظائف محسّنة" },
       required: false,
       default: true,
     },
     {
-      slug: 'analytics',
-      label: { en: 'Analytics', ar: 'تحليلات' },
-      description: { en: 'Usage analytics', ar: 'تحليلات الاستخدام' },
+      slug: "analytics",
+      label: { en: "Analytics", ar: "تحليلات" },
+      description: { en: "Usage analytics", ar: "تحليلات الاستخدام" },
       required: false,
       default: false,
     },
     {
-      slug: 'marketing',
-      label: { en: 'Marketing', ar: 'تسويق' },
-      description: { en: 'Marketing cookies', ar: 'ملفات التسويق' },
+      slug: "marketing",
+      label: { en: "Marketing", ar: "تسويق" },
+      description: { en: "Marketing cookies", ar: "ملفات التسويق" },
       required: false,
       default: false,
     },
     {
-      slug: 'advertising',
-      label: { en: 'Advertising', ar: 'إعلانات' },
-      description: { en: 'Ad targeting', ar: 'استهداف الإعلانات' },
+      slug: "advertising",
+      label: { en: "Advertising", ar: "إعلانات" },
+      description: { en: "Ad targeting", ar: "استهداف الإعلانات" },
       required: false,
       default: false,
     },
@@ -53,12 +53,12 @@ export const consentConfig = defineConfig({
   // ──────────────────────────────────────────────────────────────────────────
   // │ Storage                                                                │
   // ──────────────────────────────────────────────────────────────────────────
-  storage: 'localStorage',
-  cookieName: 'consent_preferences',
+  storage: "localStorage",
+  cookieName: "consent_preferences",
 
   // ──────────────────────────────────────────────────────────────────────────
   // │ Behavior                                                               │
   // ──────────────────────────────────────────────────────────────────────────
-  defaultMode: 'opt-in',
+  defaultMode: "opt-in",
   emitEvents: true,
 });

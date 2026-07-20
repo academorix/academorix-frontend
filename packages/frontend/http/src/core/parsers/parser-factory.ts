@@ -8,14 +8,14 @@
  * @module @stackra/http/parsers/parser-factory
  */
 
-import { HttpStreamFormat } from '@stackra/contracts';
+import { HttpStreamFormat } from "@stackra/contracts";
 
-import type { IStreamParser } from './stream-parser.interface';
-import { BinaryStreamParser } from './binary-parser';
-import { JsonStreamParser } from './json-stream-parser';
-import { NdjsonStreamParser } from './ndjson-parser';
-import { SseStreamParser } from './sse-parser';
-import { TextStreamParser } from './text-parser';
+import type { IStreamParser } from "./stream-parser.interface";
+import { BinaryStreamParser } from "./binary-parser";
+import { JsonStreamParser } from "./json-stream-parser";
+import { NdjsonStreamParser } from "./ndjson-parser";
+import { SseStreamParser } from "./sse-parser";
+import { TextStreamParser } from "./text-parser";
 
 /**
  * Build the right parser for a streaming format.

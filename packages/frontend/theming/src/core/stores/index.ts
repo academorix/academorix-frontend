@@ -4,4 +4,4 @@
  * @description Barrel export for theming stores.
  */
 
-export { ThemeTokenStore, type IThemeState } from './theme-token.store';
+export { ThemeTokenStore, type IThemeState } from "./theme-token.store";

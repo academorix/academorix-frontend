@@ -1,7 +1,8 @@
 # Academorix Nightwatch
 
 Laravel Nightwatch production monitoring integration with attribute-driven
-context discovery, sampling, filtering, and redaction for Academorix applications.
+context discovery, sampling, filtering, and redaction for Academorix
+applications.
 
 ## Features
 

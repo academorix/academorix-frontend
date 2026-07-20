@@ -1,16 +1,34 @@
 # @stackra/pwa
 
-Production-grade PWA runtime and build-time toolkit for the Stackra framework — one package, one config, install prompts, service-worker updates, standalone detection, and the manifest / Workbox / Vite / TWA config builders.
+Production-grade PWA runtime and build-time toolkit for the Stackra framework —
+one package, one config, install prompts, service-worker updates, standalone
+detection, and the manifest / Workbox / Vite / TWA config builders.
 
 ## What ships
 
-- **Runtime (DI + React)** — `PwaModule` binds a singleton `PwaService` (install prompt, service-worker update, standalone detection, install-source attribution) and an `AnalyticsBridgeService` that fails soft when `@stackra/analytics` isn't wired.
-- **React hooks** — 13 hooks over the singleton store, all backed by `useSyncExternalStore` for tearing-free reads under concurrent React.
-- **HeroUI-based components** — install prompt (with iOS Safari tutorial fallback), update prompt, splash screen, install-QR code, and a `<PwaHead>` meta emitter.
-- **Build-time helpers** — locale-aware Web App Manifest builder (`@stackra/pwa/manifest`), curated Workbox runtime-caching (`@stackra/pwa/workbox`), `vite-plugin-pwa` + `@vite-pwa/assets-generator` config builders (`@stackra/pwa/vite`), and a Bubblewrap TWA config builder (`@stackra/pwa/twa`) for Android APK/AAB generation.
-- **Testing** — `MockPwaService`, `MockBeforeInstallPromptEvent`, `MockServiceWorkerRegistration`, `MockAnalyticsClient`, and a `createMockPwa()` assertable factory in `@stackra/pwa/testing`.
+- **Runtime (DI + React)** — `PwaModule` binds a singleton `PwaService` (install
+  prompt, service-worker update, standalone detection, install-source
+  attribution) and an `AnalyticsBridgeService` that fails soft when
+  `@stackra/analytics` isn't wired.
+- **React hooks** — 13 hooks over the singleton store, all backed by
+  `useSyncExternalStore` for tearing-free reads under concurrent React.
+- **HeroUI-based components** — install prompt (with iOS Safari tutorial
+  fallback), update prompt, splash screen, install-QR code, and a `<PwaHead>`
+  meta emitter.
+- **Build-time helpers** — locale-aware Web App Manifest builder
+  (`@stackra/pwa/manifest`), curated Workbox runtime-caching
+  (`@stackra/pwa/workbox`), `vite-plugin-pwa` + `@vite-pwa/assets-generator`
+  config builders (`@stackra/pwa/vite`), and a Bubblewrap TWA config builder
+  (`@stackra/pwa/twa`) for Android APK/AAB generation.
+- **Testing** — `MockPwaService`, `MockBeforeInstallPromptEvent`,
+  `MockServiceWorkerRegistration`, `MockAnalyticsClient`, and a
+  `createMockPwa()` assertable factory in `@stackra/pwa/testing`.
 
-Push notifications, in-app notification centres, and native push tokens live in a dedicated package: [`@stackra/notifications`](../notifications/README.md). This package is web-only — native PWA installation is a browser-specific paradigm, and RN apps use their own app-store distribution and don't need PWA install prompts.
+Push notifications, in-app notification centres, and native push tokens live in
+a dedicated package: [`@stackra/notifications`](../notifications/README.md).
+This package is web-only — native PWA installation is a browser-specific
+paradigm, and RN apps use their own app-store distribution and don't need PWA
+install prompts.
 
 ## Install
 
@@ -28,10 +46,10 @@ pnpm add @stackra/notifications
 ## Wire the module
 
 ```typescript
-import { Module } from '@stackra/container';
-import { PwaModule } from '@stackra/pwa';
-import { WebNetworkModule } from '@stackra/network/react';
-import { AnalyticsModule } from '@stackra/analytics';
+import { Module } from "@stackra/container";
+import { PwaModule } from "@stackra/pwa";
+import { WebNetworkModule } from "@stackra/network/react";
+import { AnalyticsModule } from "@stackra/analytics";
 
 @Module({
   imports: [
@@ -40,7 +58,7 @@ import { AnalyticsModule } from '@stackra/analytics';
     // event auto-flows through `manager.track(...)`. No adapter
     // provider needed.
     AnalyticsModule.forRoot({
-      providers: { ga4: { driver: 'ga4', measurementId: 'G-XXXXXX' } },
+      providers: { ga4: { driver: "ga4", measurementId: "G-XXXXXX" } },
     }),
     PwaModule.forRoot({
       install: { delayMs: 20_000, maxDismissals: 2 },
@@ -55,10 +73,10 @@ export class AppModule {}
 ## `vite.config.ts`
 
 ```typescript
-import { defineConfig } from 'vite';
-import react from '@vitejs/plugin-react';
-import { VitePWA, type VitePWAOptions } from 'vite-plugin-pwa';
-import { getVitePwaOptions } from '@stackra/pwa/vite';
+import { defineConfig } from "vite";
+import react from "@vitejs/plugin-react";
+import { VitePWA, type VitePWAOptions } from "vite-plugin-pwa";
+import { getVitePwaOptions } from "@stackra/pwa/vite";
 
 export default defineConfig({
   plugins: [
@@ -66,37 +84,41 @@ export default defineConfig({
     VitePWA(
       getVitePwaOptions({
         manifest: {
-          name: 'Stackra',
-          shortName: 'Stackra',
-          description: 'The operating system for modern teams.',
-          lang: 'en-US',
-          themeColor: '#0EA5E9',
-          backgroundColor: '#FFFFFF',
+          name: "Stackra",
+          shortName: "Stackra",
+          description: "The operating system for modern teams.",
+          lang: "en-US",
+          themeColor: "#0EA5E9",
+          backgroundColor: "#FFFFFF",
           icons: [
-            { src: '/pwa-192.png', sizes: '192x192', type: 'image/png' },
-            { src: '/pwa-512.png', sizes: '512x512', type: 'image/png' },
+            { src: "/pwa-192.png", sizes: "192x192", type: "image/png" },
+            { src: "/pwa-512.png", sizes: "512x512", type: "image/png" },
           ],
           translations: {
-            'ar-EG': { name: 'ستكرا', short_name: 'ستكرا' },
+            "ar-EG": { name: "ستكرا", short_name: "ستكرا" },
           },
-          orientation: 'portrait',
-          categories: ['productivity'],
+          orientation: "portrait",
+          categories: ["productivity"],
           // Full W3C + Chromium surface — `launch_handler`,
           // `share_target`, `file_handlers`, `protocol_handlers`,
           // `widgets`, `tab_strip`, `edge_side_panel`, `note_taking`,
           // `capture_links`, `handle_links`, `scope_extensions` all
           // pass through untouched when supplied.
-          launchHandler: { client_mode: 'focus-existing' },
+          launchHandler: { client_mode: "focus-existing" },
           shareTarget: {
-            action: '/share',
-            method: 'POST',
-            enctype: 'multipart/form-data',
-            params: { title: 't', text: 'x', files: [{ name: 'attachment', accept: ['image/*'] }] },
+            action: "/share",
+            method: "POST",
+            enctype: "multipart/form-data",
+            params: {
+              title: "t",
+              text: "x",
+              files: [{ name: "attachment", accept: ["image/*"] }],
+            },
           },
         },
-        runtimeCaching: { apiPathPrefix: '/api' },
-        registerType: 'prompt',
-      }) as VitePWAOptions
+        runtimeCaching: { apiPathPrefix: "/api" },
+        registerType: "prompt",
+      }) as VitePWAOptions,
     ),
   ],
 });
@@ -111,18 +133,21 @@ import {
   UpdatePromptBanner,
   OfflineBanner,
   SplashScreen,
-} from '@stackra/pwa/react';
+} from "@stackra/pwa/react";
 
 export function AppRoot() {
   return (
     <>
       <PwaHead
         themeColor="#0EA5E9"
-        appleIcons={[{ href: '/apple-touch-icon.png', sizes: '180x180' }]}
+        appleIcons={[{ href: "/apple-touch-icon.png", sizes: "180x180" }]}
         appleStartupImages={applePwaStartupImages}
         appleWebAppTitle="Stackra"
       />
-      <SplashScreen isVisible={!ready} logo={<img src="/logo.svg" width={72} />} />
+      <SplashScreen
+        isVisible={!ready}
+        logo={<img src="/logo.svg" width={72} />}
+      />
       <MainRoutes />
       <div className="fixed inset-x-0 top-2 z-40 mx-auto max-w-3xl px-4">
         <UpdatePromptBanner />
@@ -136,7 +161,9 @@ export function AppRoot() {
 }
 ```
 
-`<InstallPromptBanner>` auto-detects iOS Safari and renders a two-step "Share → Add to Home Screen" tutorial. On every other browser it renders the standard `Card` + install button and drives the browser's own `beforeinstallprompt`.
+`<InstallPromptBanner>` auto-detects iOS Safari and renders a two-step "Share →
+Add to Home Screen" tutorial. On every other browser it renders the standard
+`Card` + install button and drives the browser's own `beforeinstallprompt`.
 
 ## Hooks
 
@@ -157,28 +184,35 @@ import {
   useAdaptiveLoading,
   useSafeAreaInsets,
   useNetworkStatus,
-} from '@stackra/pwa/react';
+} from "@stackra/pwa/react";
 ```
 
-Every hook is SSR-safe. Every observable hook is a thin slice over the DI singleton via `useSyncExternalStore`.
+Every hook is SSR-safe. Every observable hook is a thin slice over the DI
+singleton via `useSyncExternalStore`.
 
 ## Offline mutation queueing
 
-`@stackra/pwa` does not ship a durable offline mutation queue. For durable offline mutation queues, compose:
+`@stackra/pwa` does not ship a durable offline mutation queue. For durable
+offline mutation queues, compose:
 
-- `@stackra/sync`'s `OperationQueue` + `SyncEngine` — full conflict resolution + auto-drain on reconnect. Best fit for enterprise apps that need bidirectional sync.
-- Or `@stackra/queue`'s `IndexedDBConnector` / `LocalStorageConnector` — a queueing primitive if you own the drain logic.
+- `@stackra/sync`'s `OperationQueue` + `SyncEngine` — full conflict resolution +
+  auto-drain on reconnect. Best fit for enterprise apps that need bidirectional
+  sync.
+- Or `@stackra/queue`'s `IndexedDBConnector` / `LocalStorageConnector` — a
+  queueing primitive if you own the drain logic.
 
 ```tsx
 // Illustrative composition — see @stackra/sync's README for the full API.
-import { useSyncEngine } from '@stackra/sync/react';
-import { useNetworkStatus } from '@stackra/network/react';
+import { useSyncEngine } from "@stackra/sync/react";
+import { useNetworkStatus } from "@stackra/network/react";
 
 function ChatComposer({ api }) {
   const { enqueue } = useSyncEngine();
   const { isOnline } = useNetworkStatus();
   const send = async (text: string) =>
-    isOnline ? api.sendMessage(text) : enqueue({ type: 'chat.send', payload: { text } });
+    isOnline
+      ? api.sendMessage(text)
+      : enqueue({ type: "chat.send", payload: { text } });
   return null;
 }
 ```
@@ -187,11 +221,11 @@ function ChatComposer({ api }) {
 
 ```typescript
 // scripts/generate-pwa-assets.ts
-import { getAssetsGeneratorConfig } from '@stackra/pwa/vite';
+import { getAssetsGeneratorConfig } from "@stackra/pwa/vite";
 
 const config = getAssetsGeneratorConfig({
-  source: './public/logo.svg',
-  preset: 'minimal-2023',
+  source: "./public/logo.svg",
+  preset: "minimal-2023",
 });
 // Feed the config into the generator's programmatic API.
 ```
@@ -200,24 +234,24 @@ const config = getAssetsGeneratorConfig({
 
 ```typescript
 // scripts/generate-twa-manifest.ts
-import { writeFileSync } from 'node:fs';
-import { getBubblewrapConfig } from '@stackra/pwa/twa';
+import { writeFileSync } from "node:fs";
+import { getBubblewrapConfig } from "@stackra/pwa/twa";
 
 const manifest = getBubblewrapConfig({
-  host: 'app.stackra.com',
-  name: 'Stackra',
-  launcherName: 'Stackra',
-  manifestUrl: 'https://app.stackra.com/manifest.webmanifest',
-  startUrl: '/',
-  themeColor: '#0EA5E9',
-  backgroundColor: '#FFFFFF',
-  iconUrl: 'https://app.stackra.com/pwa-512.png',
-  maskableIconUrl: 'https://app.stackra.com/maskable-512.png',
-  orientation: 'portrait',
-  shortcuts: [{ name: 'Inbox', shortName: 'In', url: '/inbox' }],
+  host: "app.stackra.com",
+  name: "Stackra",
+  launcherName: "Stackra",
+  manifestUrl: "https://app.stackra.com/manifest.webmanifest",
+  startUrl: "/",
+  themeColor: "#0EA5E9",
+  backgroundColor: "#FFFFFF",
+  iconUrl: "https://app.stackra.com/pwa-512.png",
+  maskableIconUrl: "https://app.stackra.com/maskable-512.png",
+  orientation: "portrait",
+  shortcuts: [{ name: "Inbox", shortName: "In", url: "/inbox" }],
 });
 
-writeFileSync('./twa-manifest.json', JSON.stringify(manifest, null, 2));
+writeFileSync("./twa-manifest.json", JSON.stringify(manifest, null, 2));
 ```
 
 Then:
@@ -229,11 +263,19 @@ pnpm dlx @bubblewrap/cli build
 
 ## Push notifications
 
-Push notifications, in-app notification centres, and native push tokens have moved to their own package. See [`@stackra/notifications`](../notifications/README.md) for the full surface — Web Push subscription management, an in-app notification centre backed by `@stackra/storage`, Expo push tokens on native, HeroUI-based permission prompt + list + badge components, and a `testing/` subpath.
+Push notifications, in-app notification centres, and native push tokens have
+moved to their own package. See
+[`@stackra/notifications`](../notifications/README.md) for the full surface —
+Web Push subscription management, an in-app notification centre backed by
+`@stackra/storage`, Expo push tokens on native, HeroUI-based permission prompt +
+list + badge components, and a `testing/` subpath.
 
 ## Analytics events
 
-`PwaService` emits every lifecycle event through the optional `IAnalyticsManager` (`ANALYTICS_MANAGER` token from `@stackra/contracts`). When `@stackra/analytics` is installed and imported at the app root, PWA events auto-flow through it — no adapter provider needed.
+`PwaService` emits every lifecycle event through the optional
+`IAnalyticsManager` (`ANALYTICS_MANAGER` token from `@stackra/contracts`). When
+`@stackra/analytics` is installed and imported at the app root, PWA events
+auto-flow through it — no adapter provider needed.
 
 | Event                            | When it fires                                            |
 | -------------------------------- | -------------------------------------------------------- |
@@ -264,13 +306,13 @@ import {
   MockBeforeInstallPromptEvent,
   MockAnalyticsClient,
   createMockPwa,
-} from '@stackra/pwa/testing';
+} from "@stackra/pwa/testing";
 
 const pwa = createMockPwa({
   install: { isSupported: true, isVisible: true, dismissCount: 0 },
 });
 await pwa.promptInstall();
-expect(pwa.$.wasCalled('promptInstall')).toBe(true);
+expect(pwa.$.wasCalled("promptInstall")).toBe(true);
 ```
 
 ## License

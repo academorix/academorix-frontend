@@ -4,9 +4,9 @@
  * @description Wrapper around `navigator.share` — the OS share sheet.
  */
 
-import { useCallback, useMemo } from 'react';
+import { useCallback, useMemo } from "react";
 
-import type { IUseWebShareResult, IWebShareData } from './use-web-share.interface';
+import type { IUseWebShareResult, IWebShareData } from "./use-web-share.interface";
 
 /**
  * Web Share API hook.
@@ -31,8 +31,8 @@ export function useWebShare(): IUseWebShareResult {
   // `isSupported` is memoised because `navigator.share` is a stable
   // reference for the lifetime of the tab.
   const isSupported = useMemo(
-    () => typeof navigator !== 'undefined' && typeof navigator.share === 'function',
-    []
+    () => typeof navigator !== "undefined" && typeof navigator.share === "function",
+    [],
   );
 
   const share = useCallback(
@@ -49,7 +49,7 @@ export function useWebShare(): IUseWebShareResult {
         return false;
       }
     },
-    [isSupported]
+    [isSupported],
   );
 
   return { isSupported, share };

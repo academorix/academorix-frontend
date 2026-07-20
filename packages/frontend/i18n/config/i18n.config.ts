@@ -5,7 +5,7 @@
  *   Consumed by `I18nModule.forRoot()` at bootstrap.
  */
 
-import { defineConfig } from '@stackra/i18n';
+import { defineConfig } from "@stackra/i18n";
 
 export const i18nConfig = defineConfig({
   /*
@@ -17,7 +17,7 @@ export const i18nConfig = defineConfig({
   | browser, device settings, or request headers.
   |
   */
-  defaultLocale: 'en',
+  defaultLocale: "en",
 
   /*
   |--------------------------------------------------------------------------
@@ -28,7 +28,7 @@ export const i18nConfig = defineConfig({
   | locale is tried before returning the key itself.
   |
   */
-  fallbackLocale: 'en',
+  fallbackLocale: "en",
 
   /*
   |--------------------------------------------------------------------------
@@ -39,7 +39,7 @@ export const i18nConfig = defineConfig({
   | validation and URL prefix generation.
   |
   */
-  supportedLocales: ['en', 'ar'],
+  supportedLocales: ["en", "ar"],
 
   /*
   |--------------------------------------------------------------------------
@@ -50,7 +50,7 @@ export const i18nConfig = defineConfig({
   | to automatically flip layouts and apply RTL-specific styles.
   |
   */
-  rtlLocales: ['ar', 'he', 'fa', 'ur'],
+  rtlLocales: ["ar", "he", "fa", "ur"],
 
   /*
   |--------------------------------------------------------------------------
@@ -63,7 +63,7 @@ export const i18nConfig = defineConfig({
   |   - "bundled" — React Native bundled assets
   |
   */
-  loader: 'static',
+  loader: "static",
 
   /*
   |--------------------------------------------------------------------------
@@ -76,7 +76,7 @@ export const i18nConfig = defineConfig({
   |   - "throw"   — throw an error (development only)
   |
   */
-  missingKeyBehavior: 'key',
+  missingKeyBehavior: "key",
 
   /*
   |--------------------------------------------------------------------------
@@ -88,7 +88,7 @@ export const i18nConfig = defineConfig({
   |
   */
   interpolation: {
-    prefix: '{{',
-    suffix: '}}',
+    prefix: "{{",
+    suffix: "}}",
   },
 });

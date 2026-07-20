@@ -7,7 +7,16 @@
   "labelConventions": {
     "always": [],
     "commonlyAvailable": ["tenant_tier", "status", "reason", "series", "currency"],
-    "forbiddenAsLabels": ["tenant_id", "invoice_id", "invoice_line_id", "credit_note_id", "customer_id", "customer_email", "total_cents_raw", "amount_cents_raw"]
+    "forbiddenAsLabels": [
+      "tenant_id",
+      "invoice_id",
+      "invoice_line_id",
+      "credit_note_id",
+      "customer_id",
+      "customer_email",
+      "total_cents_raw",
+      "amount_cents_raw"
+    ]
   },
   "metrics": [
     {

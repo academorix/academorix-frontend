@@ -7,15 +7,23 @@
 	<a href="https://phpstan.org/"><img src="https://img.shields.io/badge/PHPStan-enabled-brightgreen.svg?style=flat" alt="PHPStan Enabled"></a>
 </p>
 
-This library `phpstan/phpdoc-parser` represents PHPDocs with an AST (Abstract Syntax Tree). It supports parsing and modifying PHPDocs.
+This library `phpstan/phpdoc-parser` represents PHPDocs with an AST (Abstract
+Syntax Tree). It supports parsing and modifying PHPDocs.
 
-For the complete list of supported PHPDoc features check out PHPStan documentation. PHPStan is the main (but not the only) user of this library.
+For the complete list of supported PHPDoc features check out PHPStan
+documentation. PHPStan is the main (but not the only) user of this library.
 
-* [PHPDoc Basics](https://phpstan.org/writing-php-code/phpdocs-basics) (list of PHPDoc tags)
-* [PHPDoc Types](https://phpstan.org/writing-php-code/phpdoc-types) (list of PHPDoc types)
-* [phpdoc-parser API Reference](https://phpstan.github.io/phpdoc-parser/2.3.x/namespace-PHPStan.PhpDocParser.html) with all the AST node types etc.
+- [PHPDoc Basics](https://phpstan.org/writing-php-code/phpdocs-basics) (list of
+  PHPDoc tags)
+- [PHPDoc Types](https://phpstan.org/writing-php-code/phpdoc-types) (list of
+  PHPDoc types)
+- [phpdoc-parser API Reference](https://phpstan.github.io/phpdoc-parser/2.3.x/namespace-PHPStan.PhpDocParser.html)
+  with all the AST node types etc.
 
-This parser also supports parsing [Doctrine Annotations](https://github.com/doctrine/annotations). The AST nodes live in the [PHPStan\PhpDocParser\Ast\PhpDoc\Doctrine namespace](https://phpstan.github.io/phpdoc-parser/2.1.x/namespace-PHPStan.PhpDocParser.Ast.PhpDoc.Doctrine.html).
+This parser also supports parsing
+[Doctrine Annotations](https://github.com/doctrine/annotations). The AST nodes
+live in the
+[PHPStan\PhpDocParser\Ast\PhpDoc\Doctrine namespace](https://phpstan.github.io/phpdoc-parser/2.1.x/namespace-PHPStan.PhpDocParser.Ast.PhpDoc.Doctrine.html).
 
 ## Features
 
@@ -44,7 +52,9 @@ Constant expressions used in PHPDoc tags are parsed via `ConstExprParser`:
 
 ### AST node traversal
 
-The library provides a visitor-based traversal system (inspired by [nikic/PHP-Parser](https://github.com/nikic/PHP-Parser)) for reading and transforming the AST.
+The library provides a visitor-based traversal system (inspired by
+[nikic/PHP-Parser](https://github.com/nikic/PHP-Parser)) for reading and
+transforming the AST.
 
 ```php
 use PHPStan\PhpDocParser\Ast\AbstractNodeVisitor;
@@ -65,17 +75,22 @@ $traverser = new NodeTraverser([$visitor]);
 $traverser->traverse([$phpDocNode]);
 ```
 
-The `NodeTraverser` supports `DONT_TRAVERSE_CHILDREN`, `STOP_TRAVERSAL`, `REMOVE_NODE`, and `DONT_TRAVERSE_CURRENT_AND_CHILDREN` control constants. A built-in `CloningVisitor` is included for creating deep copies of the AST (used by the format-preserving printer).
+The `NodeTraverser` supports `DONT_TRAVERSE_CHILDREN`, `STOP_TRAVERSAL`,
+`REMOVE_NODE`, and `DONT_TRAVERSE_CURRENT_AND_CHILDREN` control constants. A
+built-in `CloningVisitor` is included for creating deep copies of the AST (used
+by the format-preserving printer).
 
 ### Node attributes
 
-Nodes can carry attributes such as line numbers, token indexes, and comments. Enable them via `ParserConfig`:
+Nodes can carry attributes such as line numbers, token indexes, and comments.
+Enable them via `ParserConfig`:
 
 ```php
 $config = new ParserConfig(usedAttributes: ['lines' => true, 'indexes' => true, 'comments' => true]);
 ```
 
-These attributes are required for the format-preserving printer and can also be used for mapping AST nodes back to source positions.
+These attributes are required for the format-preserving printer and can also be
+used for mapping AST nodes back to source positions.
 
 ## Installation
 
@@ -119,10 +134,11 @@ echo $paramTags[0]->type; // IdentifierTypeNode - 'Lorem'
 
 ### Format-preserving printer
 
-This component can be used to modify the AST
-and print it again as close as possible to the original.
+This component can be used to modify the AST and print it again as close as
+possible to the original.
 
-It's heavily inspired by format-preserving printer component in [nikic/PHP-Parser](https://github.com/nikic/PHP-Parser).
+It's heavily inspired by format-preserving printer component in
+[nikic/PHP-Parser](https://github.com/nikic/PHP-Parser).
 
 ```php
 <?php
@@ -168,13 +184,17 @@ echo $newPhpDoc; // '/** @param Ipsum $a */'
 
 ## Code of Conduct
 
-This project adheres to a [Contributor Code of Conduct](CODE_OF_CONDUCT.md). By participating in this project and its community, you are expected to uphold this code.
+This project adheres to a [Contributor Code of Conduct](CODE_OF_CONDUCT.md). By
+participating in this project and its community, you are expected to uphold this
+code.
 
 ## Building
 
-Initially you need to run `composer install`, or `composer update` in case you aren't working in a folder which was built before.
+Initially you need to run `composer install`, or `composer update` in case you
+aren't working in a folder which was built before.
 
-Afterwards you can either run the whole build including linting and coding standards using
+Afterwards you can either run the whole build including linting and coding
+standards using
 
     make
 

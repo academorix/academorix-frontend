@@ -6,7 +6,11 @@
   "widget": "attendance.absence-reason-picker",
   "description": "Filterable picker of canonical absence reasons from data/absence-reason-catalog.json. Uses HeroUI ComboBox per ui-components rule — always prefer ComboBox over Select for filterable single-choice.",
   "params": {
-    "value": { "type": "string", "required": false, "description": "Currently selected reason value." },
+    "value": {
+      "type": "string",
+      "required": false,
+      "description": "Currently selected reason value."
+    },
     "label": { "type": "string", "required": false, "default": "Reason" },
     "placeholder": { "type": "string", "required": false, "default": "Search reason..." },
     "required": { "type": "boolean", "required": false, "default": false },
@@ -26,7 +30,11 @@
       "kind": "ComboBox",
       "propsExpr": "{ size: $params.size, selectedKey: $params.value, menuTrigger: 'focus', isRequired: $params.required }",
       "actions": {
-        "onSelectionChange": { "kind": "emit", "name": "reason.changed", "valueExpr": "$selectedKey" }
+        "onSelectionChange": {
+          "kind": "emit",
+          "name": "reason.changed",
+          "valueExpr": "$selectedKey"
+        }
       },
       "children": [
         {
@@ -57,8 +65,14 @@
                     "kind": "View",
                     "props": { "className": "flex flex-col gap-0.5" },
                     "children": [
-                      { "kind": "Text", "propsExpr": "{ className: 'font-medium', children: item.display_name }" },
-                      { "kind": "Text", "propsExpr": "{ className: 'text-xs text-muted', children: item.description }" }
+                      {
+                        "kind": "Text",
+                        "propsExpr": "{ className: 'font-medium', children: item.display_name }"
+                      },
+                      {
+                        "kind": "Text",
+                        "propsExpr": "{ className: 'text-xs text-muted', children: item.description }"
+                      }
                     ]
                   },
                   { "kind": "ListBox.ItemIndicator" }

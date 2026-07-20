@@ -6,8 +6,29 @@
   "namespace": "academorix.coaching",
   "labelConventions": {
     "always": [],
-    "commonlyAvailable": ["primary_sport_key", "role", "assignable_type", "issuing_body_bucket", "rating_scale", "trigger", "cadence_days"],
-    "forbiddenAsLabels": ["tenant_id", "coaching_profile_id", "staff_id", "user_id", "assignment_id", "certification_id", "rating_id", "first_name", "last_name", "bio", "hourly_rate_cents", "verification_notes"]
+    "commonlyAvailable": [
+      "primary_sport_key",
+      "role",
+      "assignable_type",
+      "issuing_body_bucket",
+      "rating_scale",
+      "trigger",
+      "cadence_days"
+    ],
+    "forbiddenAsLabels": [
+      "tenant_id",
+      "coaching_profile_id",
+      "staff_id",
+      "user_id",
+      "assignment_id",
+      "certification_id",
+      "rating_id",
+      "first_name",
+      "last_name",
+      "bio",
+      "hourly_rate_cents",
+      "verification_notes"
+    ]
   },
   "metrics": [
     {

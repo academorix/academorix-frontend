@@ -3,7 +3,12 @@
   "$version": 1,
   "title": "attribution — cache keys + tags",
   "driver": "redis",
-  "ownedTags": ["attribution", "attribution.touchpoints", "attribution.rollup", "attribution.subject"],
+  "ownedTags": [
+    "attribution",
+    "attribution.touchpoints",
+    "attribution.rollup",
+    "attribution.subject"
+  ],
   "keys": [
     {
       "pattern": "att:profile:{tenant_id}:{subject_type}:{subject_id}",

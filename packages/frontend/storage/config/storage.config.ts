@@ -6,7 +6,7 @@
  *   `NativeStorageModule.forRoot()` (React Native) at bootstrap.
  */
 
-import { defineConfig } from '@stackra/storage';
+import { defineConfig } from "@stackra/storage";
 
 export const storageConfig = defineConfig({
   /*
@@ -18,7 +18,7 @@ export const storageConfig = defineConfig({
   | no argument. Must be a key of `stores`.
   |
   */
-  default: 'localStorage',
+  default: "localStorage",
 
   /*
   |--------------------------------------------------------------------------
@@ -40,10 +40,10 @@ export const storageConfig = defineConfig({
   |
   */
   stores: {
-    localStorage: { driver: 'localStorage', prefix: 'stackra:' },
-    sessionStorage: { driver: 'sessionStorage', prefix: 'stackra:' },
-    indexedDB: { driver: 'indexedDB', database: 'stackra', tableName: 'kv' },
-    cookie: { driver: 'cookie', path: '/', sameSite: 'Lax', prefix: 'stackra:' },
-    memory: { driver: 'memory' },
+    localStorage: { driver: "localStorage", prefix: "stackra:" },
+    sessionStorage: { driver: "sessionStorage", prefix: "stackra:" },
+    indexedDB: { driver: "indexedDB", database: "stackra", tableName: "kv" },
+    cookie: { driver: "cookie", path: "/", sameSite: "Lax", prefix: "stackra:" },
+    memory: { driver: "memory" },
   },
 });

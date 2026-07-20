@@ -37,8 +37,21 @@
             {
               "kind": "View",
               "children": [
-                { "kind": "Text", "props": { "as": "h1", "className": "text-2xl font-semibold", "children": "Marketing events" } },
-                { "kind": "Text", "props": { "className": "text-sm text-muted", "children": "Every business milestone captured + dispatched to your ad networks." } }
+                {
+                  "kind": "Text",
+                  "props": {
+                    "as": "h1",
+                    "className": "text-2xl font-semibold",
+                    "children": "Marketing events"
+                  }
+                },
+                {
+                  "kind": "Text",
+                  "props": {
+                    "className": "text-sm text-muted",
+                    "children": "Every business milestone captured + dispatched to your ad networks."
+                  }
+                }
               ]
             },
             {
@@ -61,7 +74,11 @@
               "props": { "label": "Event type", "menuTrigger": "focus", "className": "min-w-56" },
               "props_items_source": "marketing.event-type-catalog",
               "actions": {
-                "onSelectionChange": { "kind": "filter.set", "field": "event_type", "valueExpr": "$selectedKey" }
+                "onSelectionChange": {
+                  "kind": "filter.set",
+                  "field": "event_type",
+                  "valueExpr": "$selectedKey"
+                }
               }
             },
             {
@@ -77,7 +94,11 @@
                 { "id": "superseded", "label": "Superseded" }
               ],
               "actions": {
-                "onSelectionChange": { "kind": "filter.set", "field": "status", "valueExpr": "$selectedKey" }
+                "onSelectionChange": {
+                  "kind": "filter.set",
+                  "field": "status",
+                  "valueExpr": "$selectedKey"
+                }
               }
             },
             {
@@ -85,7 +106,11 @@
               "props": { "label": "Provider", "menuTrigger": "focus", "className": "min-w-48" },
               "props_items_source": "marketing.providers",
               "actions": {
-                "onSelectionChange": { "kind": "filter.set", "field": "provider", "valueExpr": "$selectedKey" }
+                "onSelectionChange": {
+                  "kind": "filter.set",
+                  "field": "provider",
+                  "valueExpr": "$selectedKey"
+                }
               }
             },
             {
@@ -110,13 +135,32 @@
             "className": "w-full",
             "columns": [
               { "field": "event_type", "label": "Event type", "sortable": true, "width": 200 },
-              { "field": "status", "label": "Status", "sortable": true, "width": 160, "renderer": { "widget": "marketing.provider-status-chip" } },
+              {
+                "field": "status",
+                "label": "Status",
+                "sortable": true,
+                "width": 160,
+                "renderer": { "widget": "marketing.provider-status-chip" }
+              },
               { "field": "subject_type", "label": "Subject", "width": 140 },
-              { "field": "value_amount_cents", "label": "Value", "sortable": true, "width": 120, "renderer": { "kind": "Text", "formatter": "currency" } },
+              {
+                "field": "value_amount_cents",
+                "label": "Value",
+                "sortable": true,
+                "width": 120,
+                "renderer": { "kind": "Text", "formatter": "currency" }
+              },
               { "field": "eligible_provider_count", "label": "Eligible", "width": 90 },
               { "field": "delivered_provider_count", "label": "Delivered", "width": 100 },
               { "field": "attribution.utm_campaign", "label": "Campaign", "width": 180 },
-              { "field": "created_at", "label": "Captured", "sortable": true, "defaultSort": "desc", "width": 160, "formatter": "datetime-relative" }
+              {
+                "field": "created_at",
+                "label": "Captured",
+                "sortable": true,
+                "defaultSort": "desc",
+                "width": 160,
+                "formatter": "datetime-relative"
+              }
             ],
             "onRowPress": {
               "kind": "navigate",
@@ -127,9 +171,24 @@
             "kind": "View",
             "props": { "className": "text-center py-12" },
             "children": [
-              { "kind": "Icon", "props": { "name": "megaphone", "className": "size-12 mx-auto text-muted" } },
-              { "kind": "Text", "props": { "className": "mt-4 text-lg font-medium", "children": "No marketing events yet" } },
-              { "kind": "Text", "props": { "className": "text-sm text-muted", "children": "Events appear here as customers hit business milestones (signup, subscription, purchase, ...)." } }
+              {
+                "kind": "Icon",
+                "props": { "name": "megaphone", "className": "size-12 mx-auto text-muted" }
+              },
+              {
+                "kind": "Text",
+                "props": {
+                  "className": "mt-4 text-lg font-medium",
+                  "children": "No marketing events yet"
+                }
+              },
+              {
+                "kind": "Text",
+                "props": {
+                  "className": "text-sm text-muted",
+                  "children": "Events appear here as customers hit business milestones (signup, subscription, purchase, ...)."
+                }
+              }
             ]
           }
         }

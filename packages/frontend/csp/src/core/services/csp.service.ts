@@ -8,14 +8,14 @@
  *   with a fresh cryptographic nonce, and produces the full header string.
  */
 
-import { Injectable, Inject } from '@stackra/container';
-import { CSP_CONFIG, CSP_REGISTRY } from '@stackra/contracts';
-import type { ICspService, ICspPolicyResult } from '@stackra/contracts';
+import { Injectable, Inject } from "@stackra/container";
+import { CSP_CONFIG, CSP_REGISTRY } from "@stackra/contracts";
+import type { ICspService, ICspPolicyResult } from "@stackra/contracts";
 
-import { NonceGenerator } from './nonce-generator.service';
-import { CspRegistry } from '../registries/csp.registry';
-import type { CspModuleOptions } from '../interfaces/csp-module-options.interface';
-import type { CspSource } from '../types/csp-source.type';
+import { NonceGenerator } from "./nonce-generator.service";
+import { CspRegistry } from "../registries/csp.registry";
+import type { CspModuleOptions } from "../interfaces/csp-module-options.interface";
+import type { CspSource } from "../types/csp-source.type";
 
 /**
  * Internal directive map type.
@@ -46,7 +46,7 @@ export class CspService implements ICspService {
   public constructor(
     @Inject(CSP_CONFIG) private readonly config: CspModuleOptions,
     private readonly nonceGenerator: NonceGenerator,
-    @Inject(CSP_REGISTRY) private readonly registry: CspRegistry
+    @Inject(CSP_REGISTRY) private readonly registry: CspRegistry,
   ) {}
 
   /**
@@ -56,12 +56,12 @@ export class CspService implements ICspService {
    * @returns The generated policy with nonce and header string.
    */
   public generatePolicy(): ICspPolicyResult {
-    const nonce = this.config.nonce !== false ? this.nonceGenerator.generate() : '';
+    const nonce = this.config.nonce !== false ? this.nonceGenerator.generate() : "";
     const directives = this.buildDirectives(nonce);
     const header = this.serializeDirectives(directives);
     const headerName = this.config.reportOnly
-      ? 'Content-Security-Policy-Report-Only'
-      : 'Content-Security-Policy';
+      ? "Content-Security-Policy-Report-Only"
+      : "Content-Security-Policy";
 
     return { nonce, header, headerName };
   }
@@ -105,7 +105,7 @@ export class CspService implements ICspService {
       name: string,
       configSources: CspSource[] | undefined,
       registryKey: keyof typeof registrySources,
-      defaults: CspSource[]
+      defaults: CspSource[],
     ): void => {
       const base = configSources ?? defaults;
       const extra = registrySources[registryKey] ?? [];
@@ -126,25 +126,25 @@ export class CspService implements ICspService {
       directives.push([name, resolved]);
     };
 
-    add('default-src', this.config.defaultSrc, 'defaultSrc', ["'self'"]);
-    add('script-src', this.config.scriptSrc, 'scriptSrc', ["'self'", "'nonce'"]);
-    add('style-src', this.config.styleSrc, 'styleSrc', ["'self'", "'unsafe-inline'"]);
-    add('img-src', this.config.imgSrc, 'imgSrc', ["'self'", 'data:']);
-    add('connect-src', this.config.connectSrc, 'connectSrc', ["'self'"]);
-    add('font-src', this.config.fontSrc, 'fontSrc', ["'self'"]);
-    add('frame-src', this.config.frameSrc, 'frameSrc', ["'none'"]);
-    add('object-src', this.config.objectSrc, 'objectSrc', ["'none'"]);
-    add('worker-src', this.config.workerSrc, 'workerSrc', ["'self'"]);
-    add('media-src', this.config.mediaSrc, 'mediaSrc', ["'self'"]);
-    add('base-uri', this.config.baseUri, 'baseUri', ["'self'"]);
-    add('form-action', this.config.formAction, 'formAction', ["'self'"]);
+    add("default-src", this.config.defaultSrc, "defaultSrc", ["'self'"]);
+    add("script-src", this.config.scriptSrc, "scriptSrc", ["'self'", "'nonce'"]);
+    add("style-src", this.config.styleSrc, "styleSrc", ["'self'", "'unsafe-inline'"]);
+    add("img-src", this.config.imgSrc, "imgSrc", ["'self'", "data:"]);
+    add("connect-src", this.config.connectSrc, "connectSrc", ["'self'"]);
+    add("font-src", this.config.fontSrc, "fontSrc", ["'self'"]);
+    add("frame-src", this.config.frameSrc, "frameSrc", ["'none'"]);
+    add("object-src", this.config.objectSrc, "objectSrc", ["'none'"]);
+    add("worker-src", this.config.workerSrc, "workerSrc", ["'self'"]);
+    add("media-src", this.config.mediaSrc, "mediaSrc", ["'self'"]);
+    add("base-uri", this.config.baseUri, "baseUri", ["'self'"]);
+    add("form-action", this.config.formAction, "formAction", ["'self'"]);
 
     if (this.config.upgradeInsecureRequests) {
-      directives.push(['upgrade-insecure-requests', []]);
+      directives.push(["upgrade-insecure-requests", []]);
     }
 
     if (this.config.reportUri) {
-      directives.push(['report-uri', [this.config.reportUri]]);
+      directives.push(["report-uri", [this.config.reportUri]]);
     }
 
     return directives;
@@ -160,8 +160,8 @@ export class CspService implements ICspService {
     return directives
       .map(([name, sources]) => {
         if (sources.length === 0) return name;
-        return `${name} ${sources.join(' ')}`;
+        return `${name} ${sources.join(" ")}`;
       })
-      .join('; ');
+      .join("; ");
   }
 }

@@ -30,7 +30,12 @@
   "x-database": {
     "engine": "postgres",
     "columns": {
-      "id": { "type": "string", "length": 64, "primary": true, "description": "Prefixed ULID: `apd_<26>`." },
+      "id": {
+        "type": "string",
+        "length": 64,
+        "primary": true,
+        "description": "Prefixed ULID: `apd_<26>`."
+      },
       "approval_requirement_id": {
         "type": "string",
         "length": 64,
@@ -100,7 +105,16 @@
       }
     ]
   },
-  "required": ["id", "approval_requirement_id", "tenant_id", "approver_id", "decision", "decided_at", "created_at", "updated_at"],
+  "required": [
+    "id",
+    "approval_requirement_id",
+    "tenant_id",
+    "approver_id",
+    "decision",
+    "decided_at",
+    "created_at",
+    "updated_at"
+  ],
   "properties": {
     "id": { "type": "string", "pattern": "^apd_[0-9A-HJKMNP-TV-Z]{26}$" },
     "approval_requirement_id": { "type": "string", "pattern": "^apr_[0-9A-HJKMNP-TV-Z]{26}$" },
@@ -111,7 +125,10 @@
     "comment": { "type": ["string", "null"], "maxLength": 1000 },
     "decided_at": { "type": "string", "format": "date-time" },
     "request_ip_hash": { "type": ["string", "null"] },
-    "is_delegated": { "type": "boolean", "description": "Computed. delegated_from_id IS NOT NULL." },
+    "is_delegated": {
+      "type": "boolean",
+      "description": "Computed. delegated_from_id IS NOT NULL."
+    },
     "metadata": { "type": ["object", "null"] },
     "created_at": { "type": "string", "format": "date-time" },
     "updated_at": { "type": "string", "format": "date-time" }

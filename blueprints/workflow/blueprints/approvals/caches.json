@@ -10,7 +10,10 @@
       "description": "Compiled expression AST from symfony/expression-language. Keyed on SHA-256 of the raw expression source so identical expressions across templates share a cache entry. Read on every template.when_expression evaluation + selector_expression resolution. Bypasses per approvals.expression_cache_enabled feature flag.",
       "ttlSeconds": 60,
       "tags": ["approvals", "approval-expressions"],
-      "invalidatedBy": ["approvals.expression_cache_enabled kill-switch flip", "manual cache clear via `approvals:cache-clear`"]
+      "invalidatedBy": [
+        "approvals.expression_cache_enabled kill-switch flip",
+        "manual cache clear via `approvals:cache-clear`"
+      ]
     },
     {
       "pattern": "apv:tpl:active:{tenant_id}:{application_id}:{action_key}",
@@ -40,7 +43,11 @@
       "description": "ApprovalPresenter's per-instance projection. Keyed on (instance_id, caller's classifications-visible list hash) so different tenants of the same admin dashboard get correctly-redacted views without recomputing. TTL short — instance state changes need to be visible quickly.",
       "ttlSeconds": 30,
       "tags": ["approvals", "approval-instances"],
-      "invalidatedBy": ["ApprovalInstanceObserver.updated / .deleted", "ApprovalRequirementObserver.updated", "ApprovalDecisionObserver.created"]
+      "invalidatedBy": [
+        "ApprovalInstanceObserver.updated / .deleted",
+        "ApprovalRequirementObserver.updated",
+        "ApprovalDecisionObserver.created"
+      ]
     },
     {
       "pattern": "apv:approver:index:{user_id}:pending",

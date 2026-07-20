@@ -29,7 +29,10 @@
         {
           "kind": "Breadcrumb",
           "children": [
-            { "kind": "BreadcrumbItem", "props": { "to": "/platform/service-accounts", "children": "Service accounts" } },
+            {
+              "kind": "BreadcrumbItem",
+              "props": { "to": "/platform/service-accounts", "children": "Service accounts" }
+            },
             { "kind": "BreadcrumbItem", "props": { "children": "Provision" } }
           ]
         },
@@ -148,11 +151,18 @@
                 {
                   "kind": "Button",
                   "props": { "variant": "ghost", "children": "Cancel" },
-                  "actions": { "onPress": { "kind": "navigate", "to": "/platform/service-accounts" } }
+                  "actions": {
+                    "onPress": { "kind": "navigate", "to": "/platform/service-accounts" }
+                  }
                 },
                 {
                   "kind": "Button",
-                  "props": { "type": "submit", "variant": "primary", "leadingIcon": "check", "children": "Provision" }
+                  "props": {
+                    "type": "submit",
+                    "variant": "primary",
+                    "leadingIcon": "check",
+                    "children": "Provision"
+                  }
                 }
               ]
             }

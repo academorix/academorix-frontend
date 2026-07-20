@@ -73,12 +73,7 @@
       "class": "Academorix\\Finance\\Membership\\Broadcasts\\MembershipPassesChannel",
       "description": "Per-membership pass stream. Fires each PassIssued / PassConsumed / PassExpired / PassRefunded so kiosk + coach UIs see live pass-count updates during check-in.",
       "authorization": "sanctum::authed AND (permission `passes.view.own` scoped to membership OR permission `passes.viewAny` on tenant)",
-      "events": [
-        "PassIssued",
-        "PassConsumed",
-        "PassExpired",
-        "PassRefunded"
-      ],
+      "events": ["PassIssued", "PassConsumed", "PassExpired", "PassRefunded"],
       "throttle": "20 events/minute"
     }
   ]

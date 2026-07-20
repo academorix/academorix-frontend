@@ -18,7 +18,9 @@
     {
       "entity": "Coupon",
       "hot": { "days": "while active + 1 year" },
-      "cold": { "days": "2555 (7 years) post-expiry; 3650 (10 years) with `coupon_extended_retention` (Enterprise)" },
+      "cold": {
+        "days": "2555 (7 years) post-expiry; 3650 (10 years) with `coupon_extended_retention` (Enterprise)"
+      },
       "purge": {
         "trigger": "> 7 (or 10) years past valid_until (when set) OR past deactivated_at + zero non-reversed redemption references",
         "action": "hard delete via PurgeExpiredCouponsJob",

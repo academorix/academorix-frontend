@@ -34,16 +34,17 @@
   cpu_usage, disk_usage, http_endpoint, dns_lookup, tls_expiry, custom_script.
 - Seven signal types day-1: health_check_status, error_rate, latency_p95,
   latency_p99, queue_depth, worker_health, custom_metric.
-- Four severity levels: p1 / p2 / p3 / p4 — with distinct provider routing +
-  SLA definitions.
+- Four severity levels: p1 / p2 / p3 / p4 — with distinct provider routing + SLA
+  definitions.
 - Retry with exponential backoff (1m/5m/30m/2h/12h/24h; max 6 attempts) +
   per-tenant-per-provider circuit-breaker (opens after 5 consecutive failures;
   1h open duration; half-open probe).
 - Alert grouping into incidents (within 5-min window, same severity, related
   signal source). Auto-resolves incident when last alert clears.
-- Suppression policies: after_hours_suppress + weekend_suppress + silenced_until.
-- 22 events published; 7 notification categories; 10 background jobs; 14
-  Artisan commands.
+- Suppression policies: after_hours_suppress + weekend_suppress +
+  silenced_until.
+- 22 events published; 7 notification categories; 10 background jobs; 14 Artisan
+  commands.
 - 4 broadcast channels: `tenant.{id}.monitoring`,
   `tenant.{id}.monitoring.alerts`, `tenant.{id}.monitoring.incidents`,
   `tenant.{id}.monitoring.providers`.
@@ -62,29 +63,29 @@
 
 ### Design notes
 
-- Monitoring does NOT carry `application_id` / `region_id` / `organization_id`
-  / `scope_node_id`. Every row is tenant-scoped per tenancy-columns.md §3, with
+- Monitoring does NOT carry `application_id` / `region_id` / `organization_id` /
+  `scope_node_id`. Every row is tenant-scoped per tenancy-columns.md §3, with
   the forbidden columns of §5 explicitly absent. Per §2 of that steering, the
   only 8 rows that carry `application_id` directly are `tenants`, `users`,
   `roles`, `permissions`, `tenant_subscriptions`, `entitlement_licenses`,
   `audits`, and `activity_log`. **None of the six monitoring rows are among
   them.** This module is NOT audit — the sibling audit + activity modules own
   those two rows.
-- Every write to health_checks / health_check_runs / monitoring_alert_policies
-  / monitoring_alerts / monitoring_incidents / monitoring_provider_configs
-  emits an audit row (Auditable trait) with 7-year retention.
+- Every write to health_checks / health_check_runs / monitoring_alert_policies /
+  monitoring_alerts / monitoring_incidents / monitoring_provider_configs emits
+  an audit row (Auditable trait) with 7-year retention.
 - The two-phase circuit-breaker pattern is by-design — an open circuit-breaker
-  on a paging provider (PagerDuty) is itself a P1 alert. The system pages
-  ops via the fallback provider (Opsgenie).
+  on a paging provider (PagerDuty) is itself a P1 alert. The system pages ops
+  via the fallback provider (Opsgenie).
 - The alert → incident grouping is by-design — 20 correlated alerts collapse
   into 1 incident so the on-call gets one page, not 20.
-- The MultipleInstanceManager pattern enables provider fan-out without a
-  bespoke registry — each config is a first-class instance name.
-- The circuit-breaker is PER (tenant, provider). A PagerDuty outage for tenant
-  A does NOT affect tenant B or Sentry dispatch for tenant A.
+- The MultipleInstanceManager pattern enables provider fan-out without a bespoke
+  registry — each config is a first-class instance name.
+- The circuit-breaker is PER (tenant, provider). A PagerDuty outage for tenant A
+  does NOT affect tenant B or Sentry dispatch for tenant A.
 - HealthCheckRun rows are append-only + short-retention (7d hot / 30d cold) —
-  the value drops fast; the trend + policy evaluation are what matter beyond
-  the debug window.
+  the value drops fast; the trend + policy evaluation are what matter beyond the
+  debug window.
 - Health check intervals are rate-limited to >=15 seconds. Sub-15-second
   intervals would DDoS the tenant's own infrastructure.
 - Every health check response body is scanned + truncated to 8KB. PII regex
@@ -100,22 +101,22 @@
 - **SOC 2 CC7.2** — anomaly detection + incident response formalised.
   MonitoringIncidentOpened + MonitoringProviderCircuitBreakerOpened + P1
   MonitoringAlertFired are the P1 signals that page on-call.
-- **NIST 800-53 IR-4** — incident handling. MonitoringIncident lifecycle
-  matches the NIST incident response phases (open → acknowledged → investigating
-  → mitigating → resolved → postmortem).
+- **NIST 800-53 IR-4** — incident handling. MonitoringIncident lifecycle matches
+  the NIST incident response phases (open → acknowledged → investigating →
+  mitigating → resolved → postmortem).
 - **PCI-DSS 10.7** — audit trail retention. Alerts + incidents retain 30d/90d
   hot/cold; Enterprise extends to 1-year.
 - **GDPR Art. 32** — technical measures to ensure security. This module IS the
   security-monitoring evidence.
-- **PII policy** — health check response bodies scanned + truncated to 8KB;
-  PII regex triggers redaction. Provider config credentials encrypted at rest.
+- **PII policy** — health check response bodies scanned + truncated to 8KB; PII
+  regex triggers redaction. Provider config credentials encrypted at rest.
 
 ### Non-goals
 
 - No log aggregation (Sentry + Datadog integrations forward; we don't store
   logs).
-- No metric time-series storage (Prometheus + Datadog own that; we store
-  fired alerts only).
+- No metric time-series storage (Prometheus + Datadog own that; we store fired
+  alerts only).
 - No full APM (Datadog integration only — we forward events, not distributed
   traces).
 - No cross-tenant monitoring.

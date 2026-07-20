@@ -17,7 +17,10 @@
       "children": [
         {
           "kind": "Step",
-          "props": { "title": "Customer", "description": "Which customer does this exemption apply to?" },
+          "props": {
+            "title": "Customer",
+            "description": "Which customer does this exemption apply to?"
+          },
           "children": [
             {
               "kind": "ComboBox",
@@ -28,7 +31,11 @@
                 { "id": "organization", "label": "Organization" }
               ],
               "actions": {
-                "onSelectionChange": { "kind": "form.set", "field": "customer_type", "valueExpr": "$selectedKey" }
+                "onSelectionChange": {
+                  "kind": "form.set",
+                  "field": "customer_type",
+                  "valueExpr": "$selectedKey"
+                }
               }
             },
             {
@@ -37,7 +44,11 @@
               "props_items_source": "customers.by-type",
               "bindings": { "queryParams": { "type": { "$ref": "form.customer_type" } } },
               "actions": {
-                "onSelectionChange": { "kind": "form.set", "field": "customer_id", "valueExpr": "$selectedKey" }
+                "onSelectionChange": {
+                  "kind": "form.set",
+                  "field": "customer_id",
+                  "valueExpr": "$selectedKey"
+                }
               }
             }
           ]
@@ -51,20 +62,35 @@
               "props": { "className": "grid grid-cols-1 gap-3" },
               "props_items_source": "tax.exemption-type-catalog",
               "actions": {
-                "onSelectionChange": { "kind": "form.set", "field": "exemption_type", "valueExpr": "$selectedKey" }
+                "onSelectionChange": {
+                  "kind": "form.set",
+                  "field": "exemption_type",
+                  "valueExpr": "$selectedKey"
+                }
               }
             }
           ]
         },
         {
           "kind": "Step",
-          "props": { "title": "Certificate", "description": "Upload the exemption certificate document." },
+          "props": {
+            "title": "Certificate",
+            "description": "Upload the exemption certificate document."
+          },
           "children": [
             {
               "kind": "Input",
-              "props": { "label": "Certificate number", "required": true, "helpText": "Tax authority-issued identifier. Restricted — legal document." },
+              "props": {
+                "label": "Certificate number",
+                "required": true,
+                "helpText": "Tax authority-issued identifier. Restricted — legal document."
+              },
               "actions": {
-                "onChange": { "kind": "form.set", "field": "certificate_number", "valueExpr": "$value" }
+                "onChange": {
+                  "kind": "form.set",
+                  "field": "certificate_number",
+                  "valueExpr": "$value"
+                }
               }
             },
             {
@@ -81,16 +107,28 @@
                   "kind": "s3.presign",
                   "bucket": "academorix-tax-certificates",
                   "keyPattern": "tenants/{{tenant.id}}/exemptions/{{form.customer_type}}/{{form.customer_id}}/{{uuid()}}.{{ext}}",
-                  "onResult": { "kind": "form.set", "field": "certificate_document_url", "valueExpr": "$signed_url" }
+                  "onResult": {
+                    "kind": "form.set",
+                    "field": "certificate_document_url",
+                    "valueExpr": "$signed_url"
+                  }
                 }
               }
             },
             {
               "kind": "Widget",
               "widget": "tax.jurisdiction-picker",
-              "props": { "label": "Issuing jurisdiction", "required": true, "helpText": "The jurisdiction that ISSUED the certificate (e.g. US IRS for federal 501(c)(3), state Board of Equalization for reseller)." },
+              "props": {
+                "label": "Issuing jurisdiction",
+                "required": true,
+                "helpText": "The jurisdiction that ISSUED the certificate (e.g. US IRS for federal 501(c)(3), state Board of Equalization for reseller)."
+              },
               "actions": {
-                "onSelectionChange": { "kind": "form.set", "field": "issuing_jurisdiction_id", "valueExpr": "$selectedKey" }
+                "onSelectionChange": {
+                  "kind": "form.set",
+                  "field": "issuing_jurisdiction_id",
+                  "valueExpr": "$selectedKey"
+                }
               }
             }
           ]
@@ -108,7 +146,10 @@
             },
             {
               "kind": "DateField",
-              "props": { "label": "Valid until (optional)", "helpText": "Empty = perpetual (rare — typically diplomatic)." },
+              "props": {
+                "label": "Valid until (optional)",
+                "helpText": "Empty = perpetual (rare — typically diplomatic)."
+              },
               "actions": {
                 "onChange": { "kind": "form.set", "field": "valid_until", "valueExpr": "$value" }
               }

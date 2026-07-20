@@ -5,5 +5,5 @@
  *   `PushPermissionBanner` component + its owned props interface.
  */
 
-export { PushPermissionBanner } from './push-permission-banner.component';
-export type { PushPermissionBannerProps } from './push-permission-banner.interface';
+export { PushPermissionBanner } from "./push-permission-banner.component";
+export type { PushPermissionBannerProps } from "./push-permission-banner.interface";

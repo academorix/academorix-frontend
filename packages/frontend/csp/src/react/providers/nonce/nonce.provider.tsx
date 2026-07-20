@@ -8,10 +8,10 @@
  *   no markup, so it is exempt from the HeroUI UI rule.
  */
 
-import { type PropsWithChildren, type ReactElement } from 'react';
+import { type PropsWithChildren, type ReactElement } from "react";
 
-import { NonceContext } from '@/react/contexts/nonce.context';
-import type { NonceProviderProps } from '@/react/interfaces/nonce-provider-props.interface';
+import { NonceContext } from "@/react/contexts/nonce.context";
+import type { NonceProviderProps } from "@/react/interfaces/nonce-provider-props.interface";
 
 /**
  * Provides the CSP nonce to all child components via React context.
@@ -34,4 +34,4 @@ export function NonceProvider({
   return <NonceContext.Provider value={nonce}>{children}</NonceContext.Provider>;
 }
 
-NonceProvider.displayName = 'NonceProvider';
+NonceProvider.displayName = "NonceProvider";

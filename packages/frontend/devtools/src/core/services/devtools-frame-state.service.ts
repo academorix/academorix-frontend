@@ -12,13 +12,13 @@
  *   those paths instead of a thrown error.
  */
 
-import { Inject, Injectable, Optional, type OnModuleInit } from '@stackra/container';
-import { STORAGE_MANAGER, type IStorage, type IStorageManager } from '@stackra/contracts';
+import { Inject, Injectable, Optional, type OnModuleInit } from "@stackra/container";
+import { STORAGE_MANAGER, type IStorage, type IStorageManager } from "@stackra/contracts";
 
-import { DEFAULT_DEVTOOLS_CONFIG, DEVTOOLS_CONFIG, DEVTOOLS_FRAME_STATE_KEY } from '../constants';
-import type { IDevtoolsFrameState } from '../interfaces/devtools-frame-state.interface';
-import type { IDevtoolsModuleOptions } from '../interfaces/devtools-module-options.interface';
-import type { DevtoolsShellPosition } from '../types/devtools-shell-position.type';
+import { DEFAULT_DEVTOOLS_CONFIG, DEVTOOLS_CONFIG, DEVTOOLS_FRAME_STATE_KEY } from "../constants";
+import type { IDevtoolsFrameState } from "../interfaces/devtools-frame-state.interface";
+import type { IDevtoolsModuleOptions } from "../interfaces/devtools-module-options.interface";
+import type { DevtoolsShellPosition } from "../types/devtools-shell-position.type";
 
 /** Listener fired when the persisted state changes. */
 export type DevtoolsFrameStateListener = () => void;
@@ -36,7 +36,7 @@ function seedFromConfig(config: IDevtoolsModuleOptions): IDevtoolsFrameState {
       (DEFAULT_DEVTOOLS_CONFIG.position as DevtoolsShellPosition),
     size: config.initialSize ?? DEFAULT_DEVTOOLS_CONFIG.initialSize ?? 480,
     isInspectorEnabled: false,
-    searchQuery: '',
+    searchQuery: "",
   };
 }
 
@@ -62,7 +62,7 @@ export class DevtoolsFrameStateService implements OnModuleInit {
 
   public constructor(
     @Inject(DEVTOOLS_CONFIG) private readonly config: IDevtoolsModuleOptions,
-    @Optional() @Inject(STORAGE_MANAGER) private readonly manager?: IStorageManager
+    @Optional() @Inject(STORAGE_MANAGER) private readonly manager?: IStorageManager,
   ) {
     this.state = seedFromConfig(config);
   }
@@ -143,10 +143,10 @@ export class DevtoolsFrameStateService implements OnModuleInit {
       if (raw === null || raw === undefined) return;
 
       let parsed: unknown = raw;
-      if (typeof raw === 'string') {
+      if (typeof raw === "string") {
         parsed = JSON.parse(raw);
       }
-      if (!parsed || typeof parsed !== 'object') return;
+      if (!parsed || typeof parsed !== "object") return;
 
       // Merge over the seed rather than replacing wholesale so a
       // stored snapshot missing a newer field doesn't corrupt the
@@ -165,7 +165,7 @@ export class DevtoolsFrameStateService implements OnModuleInit {
       // safe against the string-only drivers (localStorage).
       (this.storage.set as (k: string, v: unknown) => unknown)(
         DEVTOOLS_FRAME_STATE_KEY,
-        JSON.stringify(this.state)
+        JSON.stringify(this.state),
       );
     } catch {
       // fail-soft — a failed persist must not block the UI update.

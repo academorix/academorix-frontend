@@ -7,9 +7,9 @@
 // ============================================================================
 // Module
 // ============================================================================
-export { NativeThemingModule } from './native-theming.module';
+export { NativeThemingModule } from "./native-theming.module";
 
 // ============================================================================
 // Bindings
 // ============================================================================
-export { NativeThemeBindings } from './bindings';
+export { NativeThemeBindings } from "./bindings";

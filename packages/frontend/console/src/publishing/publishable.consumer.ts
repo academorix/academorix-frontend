@@ -14,14 +14,13 @@
  *   - Returning `this` from every `.publish(...)` call so chaining works.
  */
 
+import type { PublishableRegistry } from "./registries/publishable.registry";
 import type {
   IPublishableConsumer,
   IPublishableEntry,
   IPublishableFile,
   Type,
 } from "@stackra/contracts";
-
-import type { PublishableRegistry } from "./registries/publishable.registry";
 
 /**
  * Structural shape the consumer probes for on the source module class

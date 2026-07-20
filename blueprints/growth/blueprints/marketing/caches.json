@@ -64,10 +64,7 @@
       "description": "Unresolved dead-letter count per tenant. Feeds the SDUI dead-letter-count badge.",
       "ttlSeconds": 60,
       "tags": ["marketing", "marketing.dead_letters", "tenant"],
-      "invalidatedBy": [
-        "MarketingDeadLetterCreated",
-        "MarketingDeadLetterResolved"
-      ]
+      "invalidatedBy": ["MarketingDeadLetterCreated", "MarketingDeadLetterResolved"]
     },
     {
       "pattern": "mkt:roas:{tenant_id}:{from}:{to}:{group_by}",

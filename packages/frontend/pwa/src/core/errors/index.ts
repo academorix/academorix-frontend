@@ -4,4 +4,4 @@
  * @description Barrel export for PWA error classes.
  */
 
-export { PwaError } from './pwa.error';
+export { PwaError } from "./pwa.error";

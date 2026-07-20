@@ -157,7 +157,10 @@
                                 }
                               ]
                             },
-                            { "kind": "ListBox.ItemIndicator", "props": { "className": "size-4 text-accent" } }
+                            {
+                              "kind": "ListBox.ItemIndicator",
+                              "props": { "className": "size-4 text-accent" }
+                            }
                           ]
                         }
                       ]

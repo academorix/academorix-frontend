@@ -3,7 +3,15 @@
   "title": "Trial workflow — narrative examples",
   "description": "Concrete examples of the trial lifecycle for each trial_type + trialist_type combination. Consumed by SDUI documentation panels + test fixtures. Illustrates the atomic conversion path + rejection defence-record path + anonymous PII redaction schedule.",
   "state_machine": {
-    "states": ["scheduled", "in_progress", "completed", "converted", "rejected", "no_show", "cancelled"],
+    "states": [
+      "scheduled",
+      "in_progress",
+      "completed",
+      "converted",
+      "rejected",
+      "no_show",
+      "cancelled"
+    ],
     "transitions": {
       "created": "scheduled",
       "scheduled_to_in_progress": "coach starts the first session",

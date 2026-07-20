@@ -27,11 +27,41 @@
     }
   },
   "buckets": [
-    { "field": "current_cents", "label": "Current", "color": "success", "bucket_key": "current", "filter": { "past_due": false } },
-    { "field": "past_due_1_30_cents", "label": "1-30d", "color": "warning-light", "bucket_key": "1_30", "filter": { "past_due": true, "days_past_due_min": 1, "days_past_due_max": 30 } },
-    { "field": "past_due_31_60_cents", "label": "31-60d", "color": "warning", "bucket_key": "31_60", "filter": { "past_due": true, "days_past_due_min": 31, "days_past_due_max": 60 } },
-    { "field": "past_due_61_90_cents", "label": "61-90d", "color": "danger-light", "bucket_key": "61_90", "filter": { "past_due": true, "days_past_due_min": 61, "days_past_due_max": 90 } },
-    { "field": "past_due_91_plus_cents", "label": "91+d", "color": "danger", "bucket_key": "91_plus", "filter": { "past_due": true, "days_past_due_min": 91 } }
+    {
+      "field": "current_cents",
+      "label": "Current",
+      "color": "success",
+      "bucket_key": "current",
+      "filter": { "past_due": false }
+    },
+    {
+      "field": "past_due_1_30_cents",
+      "label": "1-30d",
+      "color": "warning-light",
+      "bucket_key": "1_30",
+      "filter": { "past_due": true, "days_past_due_min": 1, "days_past_due_max": 30 }
+    },
+    {
+      "field": "past_due_31_60_cents",
+      "label": "31-60d",
+      "color": "warning",
+      "bucket_key": "31_60",
+      "filter": { "past_due": true, "days_past_due_min": 31, "days_past_due_max": 60 }
+    },
+    {
+      "field": "past_due_61_90_cents",
+      "label": "61-90d",
+      "color": "danger-light",
+      "bucket_key": "61_90",
+      "filter": { "past_due": true, "days_past_due_min": 61, "days_past_due_max": 90 }
+    },
+    {
+      "field": "past_due_91_plus_cents",
+      "label": "91+d",
+      "color": "danger",
+      "bucket_key": "91_plus",
+      "filter": { "past_due": true, "days_past_due_min": 91 }
+    }
   ],
   "logic": {
     "totalCents": {

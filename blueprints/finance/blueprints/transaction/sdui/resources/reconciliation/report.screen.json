@@ -28,8 +28,21 @@
         {
           "kind": "View",
           "children": [
-            { "kind": "Text", "props": { "as": "h1", "className": "text-2xl font-semibold", "children": "Ledger reconciliation" } },
-            { "kind": "Text", "props": { "className": "text-sm text-muted", "children": "Nightly reconciler runs + detected imbalances. Every LedgerImbalanceDetected fire is a P0 signal — new transactions halt until resolved." } }
+            {
+              "kind": "Text",
+              "props": {
+                "as": "h1",
+                "className": "text-2xl font-semibold",
+                "children": "Ledger reconciliation"
+              }
+            },
+            {
+              "kind": "Text",
+              "props": {
+                "className": "text-sm text-muted",
+                "children": "Nightly reconciler runs + detected imbalances. Every LedgerImbalanceDetected fire is a P0 signal — new transactions halt until resolved."
+              }
+            }
           ]
         },
         {
@@ -40,26 +53,84 @@
               "kind": "Card",
               "props": { "className": "p-4" },
               "children": [
-                { "kind": "Text", "props": { "className": "text-sm text-muted", "children": "Latest run" } },
-                { "kind": "Text", "props": { "as": "div", "className": "text-lg font-mono mt-2" }, "bindings": { "children": { "$ref": "reconciliation.latest_run.completed_at", "formatter": "datetime" } } },
-                { "kind": "Chip", "props": { "className": "mt-2" }, "bindings": { "variant": { "$expr": "$ref('reconciliation.latest_run.outcome') === 'balanced' ? 'success' : 'danger'" }, "children": { "$ref": "reconciliation.latest_run.outcome" } } }
+                {
+                  "kind": "Text",
+                  "props": { "className": "text-sm text-muted", "children": "Latest run" }
+                },
+                {
+                  "kind": "Text",
+                  "props": { "as": "div", "className": "text-lg font-mono mt-2" },
+                  "bindings": {
+                    "children": {
+                      "$ref": "reconciliation.latest_run.completed_at",
+                      "formatter": "datetime"
+                    }
+                  }
+                },
+                {
+                  "kind": "Chip",
+                  "props": { "className": "mt-2" },
+                  "bindings": {
+                    "variant": {
+                      "$expr": "$ref('reconciliation.latest_run.outcome') === 'balanced' ? 'success' : 'danger'"
+                    },
+                    "children": { "$ref": "reconciliation.latest_run.outcome" }
+                  }
+                }
               ]
             },
             {
               "kind": "Card",
               "props": { "className": "p-4" },
               "children": [
-                { "kind": "Text", "props": { "className": "text-sm text-muted", "children": "Unresolved imbalances" } },
-                { "kind": "Text", "props": { "as": "div", "className": "text-2xl font-mono font-semibold mt-2" }, "bindings": { "children": { "$ref": "reconciliation.unresolved_imbalance_count" } } },
-                { "kind": "Chip", "props": { "className": "mt-2" }, "bindings": { "variant": { "$expr": "$ref('reconciliation.unresolved_imbalance_count') === 0 ? 'success' : 'danger'" }, "children": { "$expr": "$ref('reconciliation.unresolved_imbalance_count') === 0 ? 'All resolved' : 'ATTENTION REQUIRED'" } } }
+                {
+                  "kind": "Text",
+                  "props": {
+                    "className": "text-sm text-muted",
+                    "children": "Unresolved imbalances"
+                  }
+                },
+                {
+                  "kind": "Text",
+                  "props": { "as": "div", "className": "text-2xl font-mono font-semibold mt-2" },
+                  "bindings": {
+                    "children": { "$ref": "reconciliation.unresolved_imbalance_count" }
+                  }
+                },
+                {
+                  "kind": "Chip",
+                  "props": { "className": "mt-2" },
+                  "bindings": {
+                    "variant": {
+                      "$expr": "$ref('reconciliation.unresolved_imbalance_count') === 0 ? 'success' : 'danger'"
+                    },
+                    "children": {
+                      "$expr": "$ref('reconciliation.unresolved_imbalance_count') === 0 ? 'All resolved' : 'ATTENTION REQUIRED'"
+                    }
+                  }
+                }
               ]
             },
             {
               "kind": "Card",
               "props": { "className": "p-4" },
               "children": [
-                { "kind": "Text", "props": { "className": "text-sm text-muted", "children": "Halt flag" } },
-                { "kind": "Chip", "props": { "className": "mt-2 text-lg" }, "bindings": { "variant": { "$expr": "$ref('reconciliation.halt_active') ? 'danger' : 'success'" }, "children": { "$expr": "$ref('reconciliation.halt_active') ? 'HALTED — new transactions refused' : 'Accepting new transactions'" } } }
+                {
+                  "kind": "Text",
+                  "props": { "className": "text-sm text-muted", "children": "Halt flag" }
+                },
+                {
+                  "kind": "Chip",
+                  "props": { "className": "mt-2 text-lg" },
+                  "bindings": {
+                    "variant": {
+                      "$expr": "$ref('reconciliation.halt_active') ? 'danger' : 'success'"
+                    },
+                    "children": {
+                      "$expr": "$ref('reconciliation.halt_active') ? 'HALTED — new transactions refused' : 'Accepting new transactions'"
+                    }
+                  }
+                }
               ]
             }
           ]
@@ -68,19 +139,74 @@
           "kind": "Card",
           "props": { "className": "p-6" },
           "children": [
-            { "kind": "Text", "props": { "as": "h2", "className": "text-lg font-medium mb-4", "children": "Reconciler runs" } },
+            {
+              "kind": "Text",
+              "props": {
+                "as": "h2",
+                "className": "text-lg font-medium mb-4",
+                "children": "Reconciler runs"
+              }
+            },
             {
               "kind": "DataGrid",
               "bindings": { "items": { "$ref": "reconciliation.runs" } },
               "props": {
                 "className": "w-full",
                 "columns": [
-                  { "field": "completed_at", "label": "Completed", "sortable": true, "defaultSort": "desc", "width": 180, "formatter": "datetime" },
-                  { "field": "outcome", "label": "Outcome", "width": 140, "renderer": { "kind": "Chip", "bindings": { "variant": { "$expr": "row.outcome === 'balanced' ? 'success' : 'danger'" }, "children": { "$ref": "row.outcome" } } } },
-                  { "field": "transactions_scanned", "label": "Transactions", "width": 140, "renderer": { "kind": "Text", "className": "text-right font-mono" } },
-                  { "field": "accounts_scanned", "label": "Accounts", "width": 120, "renderer": { "kind": "Text", "className": "text-right font-mono" } },
-                  { "field": "imbalances_detected", "label": "Imbalances", "width": 140, "renderer": { "kind": "Text", "className": "text-right font-mono", "conditionalClass": { "$expr": "row.imbalances_detected > 0 ? 'text-danger font-semibold' : ''" } } },
-                  { "field": "reconciliation_duration_ms", "label": "Duration", "width": 140, "renderer": { "kind": "Text", "className": "text-right font-mono", "formatter": "duration-ms" } }
+                  {
+                    "field": "completed_at",
+                    "label": "Completed",
+                    "sortable": true,
+                    "defaultSort": "desc",
+                    "width": 180,
+                    "formatter": "datetime"
+                  },
+                  {
+                    "field": "outcome",
+                    "label": "Outcome",
+                    "width": 140,
+                    "renderer": {
+                      "kind": "Chip",
+                      "bindings": {
+                        "variant": { "$expr": "row.outcome === 'balanced' ? 'success' : 'danger'" },
+                        "children": { "$ref": "row.outcome" }
+                      }
+                    }
+                  },
+                  {
+                    "field": "transactions_scanned",
+                    "label": "Transactions",
+                    "width": 140,
+                    "renderer": { "kind": "Text", "className": "text-right font-mono" }
+                  },
+                  {
+                    "field": "accounts_scanned",
+                    "label": "Accounts",
+                    "width": 120,
+                    "renderer": { "kind": "Text", "className": "text-right font-mono" }
+                  },
+                  {
+                    "field": "imbalances_detected",
+                    "label": "Imbalances",
+                    "width": 140,
+                    "renderer": {
+                      "kind": "Text",
+                      "className": "text-right font-mono",
+                      "conditionalClass": {
+                        "$expr": "row.imbalances_detected > 0 ? 'text-danger font-semibold' : ''"
+                      }
+                    }
+                  },
+                  {
+                    "field": "reconciliation_duration_ms",
+                    "label": "Duration",
+                    "width": 140,
+                    "renderer": {
+                      "kind": "Text",
+                      "className": "text-right font-mono",
+                      "formatter": "duration-ms"
+                    }
+                  }
                 ]
               }
             }
@@ -91,20 +217,72 @@
           "bindings": { "hidden": { "$expr": "$ref('reconciliation.imbalances').length === 0" } },
           "props": { "className": "p-6" },
           "children": [
-            { "kind": "Text", "props": { "as": "h2", "className": "text-lg font-medium mb-4 text-danger", "children": "Detected imbalances" } },
+            {
+              "kind": "Text",
+              "props": {
+                "as": "h2",
+                "className": "text-lg font-medium mb-4 text-danger",
+                "children": "Detected imbalances"
+              }
+            },
             {
               "kind": "DataGrid",
               "bindings": { "items": { "$ref": "reconciliation.imbalances" } },
               "props": {
                 "className": "w-full",
                 "columns": [
-                  { "field": "detected_at", "label": "Detected", "sortable": true, "defaultSort": "desc", "width": 180, "formatter": "datetime" },
-                  { "field": "scope", "label": "Scope", "width": 180, "renderer": { "kind": "Chip", "bindings": { "children": { "$ref": "row.scope" } } } },
+                  {
+                    "field": "detected_at",
+                    "label": "Detected",
+                    "sortable": true,
+                    "defaultSort": "desc",
+                    "width": 180,
+                    "formatter": "datetime"
+                  },
+                  {
+                    "field": "scope",
+                    "label": "Scope",
+                    "width": 180,
+                    "renderer": {
+                      "kind": "Chip",
+                      "bindings": { "children": { "$ref": "row.scope" } }
+                    }
+                  },
                   { "field": "account", "label": "Account", "width": 200 },
-                  { "field": "imbalance_cents", "label": "Delta", "width": 160, "renderer": { "kind": "Text", "formatter": "currency", "className": "text-right font-mono text-danger" } },
+                  {
+                    "field": "imbalance_cents",
+                    "label": "Delta",
+                    "width": 160,
+                    "renderer": {
+                      "kind": "Text",
+                      "formatter": "currency",
+                      "className": "text-right font-mono text-danger"
+                    }
+                  },
                   { "field": "currency", "label": "Currency", "width": 90 },
-                  { "field": "resolved_at", "label": "Resolved", "width": 180, "renderer": { "kind": "Chip", "bindings": { "hidden": { "$expr": "!row.resolved_at" }, "variant": "success", "children": "Resolved" } } },
-                  { "field": "transaction_id", "label": "Transaction", "width": 200, "renderer": { "kind": "Link", "toExpr": "row.transaction_id ? ('/tenant/finance/transactions/' + row.transaction_id) : null", "className": "font-mono text-sm" } }
+                  {
+                    "field": "resolved_at",
+                    "label": "Resolved",
+                    "width": 180,
+                    "renderer": {
+                      "kind": "Chip",
+                      "bindings": {
+                        "hidden": { "$expr": "!row.resolved_at" },
+                        "variant": "success",
+                        "children": "Resolved"
+                      }
+                    }
+                  },
+                  {
+                    "field": "transaction_id",
+                    "label": "Transaction",
+                    "width": 200,
+                    "renderer": {
+                      "kind": "Link",
+                      "toExpr": "row.transaction_id ? ('/tenant/finance/transactions/' + row.transaction_id) : null",
+                      "className": "font-mono text-sm"
+                    }
+                  }
                 ]
               }
             }

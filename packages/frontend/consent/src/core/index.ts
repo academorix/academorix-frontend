@@ -11,16 +11,16 @@
  *   in `@stackra/contracts` — consumers import those directly.
  */
 
-import 'reflect-metadata';
+import "reflect-metadata";
 
 // Module
-export { ConsentModule } from './consent.module';
+export { ConsentModule } from "./consent.module";
 
 // Services
-export { ConsentRegistry, ConsentManager } from './services';
+export { ConsentRegistry, ConsentManager } from "./services";
 
 // Adapters (platform-agnostic only)
-export { MemoryConsentAdapter } from './adapters';
+export { MemoryConsentAdapter } from "./adapters";
 
 // Package-owned constants + the sole package-owned DI token
 export {
@@ -31,10 +31,10 @@ export {
   DEFAULT_MODE,
   DEFAULT_CATEGORIES,
   DEFAULT_CONSENT_CONFIG,
-} from './constants';
+} from "./constants";
 
 // Utilities
-export { defineConfig } from './utils';
+export { defineConfig } from "./utils";
 
 // Package-owned types
-export type { IConsentModuleOptions } from './types';
+export type { IConsentModuleOptions } from "./types";

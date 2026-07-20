@@ -4,9 +4,9 @@
  * @description Factories returning assertable coordinator mocks.
  */
 
-import { createAssertableProxy, type AssertableProxy } from '@stackra/testing';
-import { MockTabCoordinator } from './mock-tab-coordinator';
-import { MockLockManager } from './mock-lock-manager';
+import { createAssertableProxy, type AssertableProxy } from "@stackra/testing";
+import { MockTabCoordinator } from "./mock-tab-coordinator";
+import { MockLockManager } from "./mock-lock-manager";
 
 /**
  * Create an assertable mock tab coordinator.

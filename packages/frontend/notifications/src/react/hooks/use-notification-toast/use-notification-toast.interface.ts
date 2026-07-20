@@ -4,7 +4,7 @@
  * @description Options + result for {@link useNotificationToast}.
  */
 
-import type { NotificationPriority } from '@/core/interfaces';
+import type { NotificationPriority } from "@/core/interfaces";
 
 /**
  * Options accepted by {@link useNotificationToast}.

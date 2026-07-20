@@ -1,213 +1,392 @@
 # Agent directory
 
-Kiro sub-agents that operate inside this repo. Each `.md` file in this folder is
-a specialized agent with its own tools, orientation reading list, scope, and
-required output shape.
+Kiro sub-agents that operate inside the Academorix stack. Every `.md` file in
+this folder is a specialised agent with its own tools, orient-first reading
+list, scope, out-of-scope, and required output shape.
+
+This directory is the runtime surface: `invoke_sub_agent(name: "<slug>")`
+resolves to the matching `<slug>.md` file. The plan-level narrative lives in
+[`../../AGENT_ROSTER.md`](../../AGENT_ROSTER.md); the human dossier lives in
+[`../product/agent-personas.md`](../product/agent-personas.md).
 
 Every agent orients against the repo's ground truth before acting:
-[`AGENTS.md`](../../AGENTS.md),
-[`docs/architecture.md`](../../docs/architecture.md),
-[`docs/adr/`](../../docs/adr/), [`docs/contracts/`](../../docs/contracts/), and
-every steering file under [`.kiro/steering/`](../steering/).
+`AGENT_ROSTER.md`, `.kiro/steering/*.md`, the ADRs under
+[`../../docs/adr/`](../../docs/adr/), and the cross-service contract schemas
+under [`../../docs/contracts/`](../../docs/contracts/) when present.
 
-## The roster
+## Cross-repo strategy
 
-Nine backend agents split into two rings: **reviewers** produce reports and
-never modify code; **writers** modify code (or docs, or tests) in bounded,
-verifiable ways.
+Academorix spans three repos with overlapping agent needs (frontend, backend, AI
+service). The canonical directory model is defined in
+[`../../docs/adr/0026-agent-canonical-directory.md`](../../docs/adr/0026-agent-canonical-directory.md).
+Three tiers govern where a given charter lives:
 
-### Reviewers (READ-ONLY, produce reports)
+1. **Truly cross-repo agents** (product, security, docs, delivery leads;
+   translator; docs stewards) live in the parent `academorix/.kiro/agents/` with
+   sub-repo symlinks. This directory carries the live copies until the parent is
+   bootstrapped; ADR-0026 covers the migration.
+2. **Repo-specific agents** live in this repo's `.kiro/agents/`
+   (`heroui-ui-builder`, `framework-core-builder`, `heroui-native-builder`,
+   `vitest-test-engineer`, `translator`).
+3. **Reference-only copies** live under `.ref/agents/` and are never
+   authoritative.
 
-| Agent                                                               | Owns                                                                                                                                                                                                                                                                     | Report shape                                                                                  |
-| ------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------- |
-| [`backend-architecture-reviewer`](backend-architecture-reviewer.md) | Actions-only architecture, attribute-driven discovery + DI, package boundaries, headless mandate, Octane-first DI correctness                                                                                                                                            | Findings / Naming & consistency / What's solid / Open questions                               |
-| [`backend-platform-reviewer`](backend-platform-reviewer.md)         | Containers, Turborepo, CI/CD, Horizon, Octane runtime, Doppler mechanics, release-please                                                                                                                                                                                 | Findings / Naming & consistency / What's solid / Open questions                               |
-| [`security-compliance-reviewer`](security-compliance-reviewer.md)   | Sanctum PATs + `service_accounts`, HS256 service JWT, RBAC (authorization vs access), tenancy isolation as a security property, Doppler secrets, minor consent + retention                                                                                               | Findings / Naming & consistency / What's solid / Open questions                               |
-| [`standards-steward`](standards-steward.md)                         | Cross-cutting per-file compliance: docblocks, folder placement, attribute-first, data-first DTOs, column constants, console contract, testing layout, ADR-driven rules                                                                                                   | Findings (grouped by steering concern) / Naming & consistency / What's solid / Open questions |
-| [`tenancy-compliance-auditor`](tenancy-compliance-auditor.md)       | Row-level attribution: `tenant_id` / `application_id` / `scope_node_id` column contract per `.kiro/steering/tenancy-columns.md` (the eight-row `application_id` list, `BelongsToTenant` trait presence, forbidden shortcut FKs, scope-consumer discipline, naming drift) | Summary / Violations / Warnings / Expected gaps / Passing checks                              |
+See [ADR-0026](../../docs/adr/0026-agent-canonical-directory.md) for the
+migration plan, rollout timeline, and reversibility clause.
 
-### Writers (modify code / docs / tests, bounded scope)
+## The full 51-agent roster
 
-| Agent                                                   | Writes                                                                                                                                                                                                                                                                         | Never writes                                                                                                                                                                                                                                    |
-| ------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| [`laravel-feature-builder`](laravel-feature-builder.md) | Features + packages + actions + Sanctum wiring + tenancy wiring                                                                                                                                                                                                                | Infrastructure / CI / auth policy                                                                                                                                                                                                               |
-| [`codebase-housekeeper`](codebase-housekeeper.md)       | Mechanical compliance fixes only: docblocks, strict types, attribute migrations, column constants, folder moves, console-contract fixes                                                                                                                                        | Features, behaviour changes, tests (without approval)                                                                                                                                                                                           |
-| [`docs-adr-steward`](docs-adr-steward.md)               | ADRs, steering files, top-level docs, cross-service JSON schemas                                                                                                                                                                                                               | Source code, migrations, CI workflows                                                                                                                                                                                                           |
-| [`test-mutation-engineer`](test-mutation-engineer.md)   | Pest v4 tests + fixtures + factory states, Infection mutation runs                                                                                                                                                                                                             | Production code (surfaces bugs as findings, never fixes silently)                                                                                                                                                                               |
-| [`translator`](translator.md)                           | Per-package frontend i18n catalogs — two JSON files per package at `packages/<pkg>/src/core/i18n/`: `en.json` (source of truth) + `ar.json` (machine-generated Modern Standard Arabic). Matches the `.ref/packages/i18n/` reference runtime's Vite plugin discovery convention | Any TypeScript, any interface, any register helper, any barrel edit, any manifest edit, existing component source, tests. Arabic is machine-generated and flagged in the scaffold report for a native Arabic-speaking reviewer pass before ship |
+Fifty-one agents across eight pipeline phases. Some are directory-only in the
+persona dossier (recognised but without a live charter yet); the rest have
+charter files here (or in a sibling repo for AI-service specialists).
 
-## Which agent for which task
+### Executive tier (1)
 
-Task-to-agent lookup. When multiple agents fit, invoke them in the listed order.
+| Slug                 | Role                         | Charter                                        |
+| -------------------- | ---------------------------- | ---------------------------------------------- |
+| `chief-orchestrator` | Head of Engineering Delivery | [chief-orchestrator.md](chief-orchestrator.md) |
 
-### Building
+### Vertical leads (7)
 
-| Task                                                             | Agent(s)                                                                                           |
-| ---------------------------------------------------------------- | -------------------------------------------------------------------------------------------------- |
-| Add a new endpoint (create/update/delete/show/list)              | `laravel-feature-builder`                                                                          |
-| Add a new package under `packages/framework/`                    | `laravel-feature-builder` (implementation), then `docs-adr-steward` (docs + steering pointer)      |
-| Add a new app under `apps/`                                      | `docs-adr-steward` (author the ADR justifying the new app first), then `laravel-feature-builder`   |
-| Wire Sanctum PATs, service accounts, or the service JWT boundary | `laravel-feature-builder` — but ping `security-compliance-reviewer` for a review pass before merge |
-| Add a new attribute + registry + bootstrapper trio               | `laravel-feature-builder`                                                                          |
+| Slug            | Role          | Owns                                         |
+| --------------- | ------------- | -------------------------------------------- |
+| `product-lead`  | Product Lead  | Discovery + Definition                       |
+| `design-lead`   | Design Lead   | Design phase, UX system, design taste        |
+| `delivery-lead` | Delivery Lead | Build phase across all four lanes            |
+| `quality-lead`  | Quality Lead  | Verify phase; all reviewers                  |
+| `security-lead` | Security Lead | Threat model, RBAC, minor consent, retention |
+| `data-lead`     | Data Lead     | Data model, analytics, ML ops                |
+| `docs-lead`     | Docs Lead     | ADRs, steering, changesets, contracts        |
 
-### Cleaning
+### Product + Discovery (4)
 
-| Task                                                                           | Agent(s)                                                                                                       |
-| ------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------- |
-| Bring an old module into compliance with current steering                      | `standards-steward` (audit) → `codebase-housekeeper` (fix)                                                     |
-| Migrate `FormRequest` → Spatie `Data` classes                                  | `codebase-housekeeper` (mechanical), or `laravel-feature-builder` if the FormRequest carries non-trivial logic |
-| Migrate `$fillable` / `$hidden` / `$table` properties to attributes            | `codebase-housekeeper`                                                                                         |
-| Migrate raw column strings to `ATTR_*` constants                               | `codebase-housekeeper`                                                                                         |
-| Move mislocated files (registry in `Support/` → `Registry/`, etc.)             | `codebase-housekeeper`                                                                                         |
-| Migrate `Auth::user()` / `Log::info(...)` facade calls to container attributes | `codebase-housekeeper` (only when unambiguously safe)                                                          |
+| Slug                      | Role                         | Phases | Charter present |
+| ------------------------- | ---------------------------- | ------ | --------------- |
+| `spec-intake-analyst`     | Intake analyst               | 0, 1   | yes             |
+| `academorix-product`      | Product manager (enterprise) | 1, 2   | yes (existing)  |
+| `ux-research-lead`        | UX research lead             | 1      | directory-only  |
+| `market-research-analyst` | Market research analyst      | 1      | directory-only  |
 
-### Reviewing
+### Design (6)
 
-| Task                                                                                                | Agent(s)                                                                                                                                                                                                                                               |
-| --------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| Pre-release full audit                                                                              | All five reviewers in parallel: `backend-architecture-reviewer`, `backend-platform-reviewer`, `security-compliance-reviewer`, `standards-steward`, `tenancy-compliance-auditor`                                                                        |
-| "Is this PR safe to merge?" for a feature                                                           | `backend-architecture-reviewer` (structural), `standards-steward` (per-file), `security-compliance-reviewer` (if the diff touches auth / tenancy / secrets), `tenancy-compliance-auditor` (if the diff touches models / migrations / column constants) |
-| "Is this PR safe to merge?" for infrastructure                                                      | `backend-platform-reviewer`                                                                                                                                                                                                                            |
-| Verify the boundary contract still holds after schema changes                                       | `security-compliance-reviewer` + `docs-adr-steward`                                                                                                                                                                                                    |
-| Audit `tenant_id` / `application_id` / `scope_node_id` column contract on a new module or migration | `tenancy-compliance-auditor`                                                                                                                                                                                                                           |
+| Slug                    | Role                          | Charter present |
+| ----------------------- | ----------------------------- | --------------- |
+| `solution-architect`    | Pre-code cross-cutting design | yes             |
+| `api-contract-designer` | Schema-first API design       | yes             |
+| `data-modeler`          | ERD + column contracts        | yes             |
+| `threat-modeler`        | STRIDE + attack trees         | yes             |
+| `product-designer`      | IA + wireframes-as-markdown   | yes             |
+| `content-designer`      | Voice + terminology system    | directory-only  |
 
-### Documenting
+### Backend build lane (5)
 
-| Task                                                                                               | Agent(s)                                                                       |
-| -------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------ |
-| Record a decision as an ADR                                                                        | `docs-adr-steward`                                                             |
-| Update a steering file to reflect an ADR change                                                    | `docs-adr-steward`                                                             |
-| Update the cross-service contract schemas under `docs/contracts/`                                  | `docs-adr-steward` (then flag both PHP + Python sides for coordinated updates) |
-| Author or update `docs/architecture.md` / `docs/package-authoring.md` / `docs/domain-hierarchy.md` | `docs-adr-steward`                                                             |
+| Slug                         | Role                       | Charter present |
+| ---------------------------- | -------------------------- | --------------- |
+| `laravel-feature-builder`    | Backend feature builder    | yes (existing)  |
+| `standards-steward`          | Backend standards steward  | yes (existing)  |
+| `codebase-housekeeper`       | Backend compliance sweeper | yes (existing)  |
+| `tenancy-compliance-auditor` | Row-attribution auditor    | yes (existing)  |
+| `test-mutation-engineer`     | Pest + mutation engineer   | yes (existing)  |
 
-### Testing
+### Frontend web build lane (7)
 
-| Task                                                                         | Agent(s)                                                                                    |
-| ---------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------- |
-| Add feature + unit tests for a new action                                    | `test-mutation-engineer`                                                                    |
-| Close coverage gaps in an existing module                                    | `test-mutation-engineer`                                                                    |
-| Kill surviving Infection mutants                                             | `test-mutation-engineer`                                                                    |
-| Write JWT conformance tests against `docs/contracts/service-jwt.schema.json` | `test-mutation-engineer` (writes tests), `security-compliance-reviewer` (verifies coverage) |
+| Slug                        | Role                              | Charter present |
+| --------------------------- | --------------------------------- | --------------- |
+| `framework-core-builder`    | Non-UI `@stackra/*` builder       | yes (existing)  |
+| `heroui-ui-builder`         | React + HeroUI builder            | yes (existing)  |
+| `code-standards-steward`    | Frontend standards steward        | yes (existing)  |
+| `code-documentation-writer` | In-source docblock writer         | yes (existing)  |
+| `support-utilities-steward` | Support-utility migration steward | yes (existing)  |
+| `translator`                | i18n catalog scaffolder           | yes (existing)  |
+| `vitest-test-engineer`      | Vitest + RTL test engineer        | yes (existing)  |
 
-### Translating / localization
+### Frontend native build lane (2)
 
-Frontend-only, targets `packages/*/src/` in the `academorix-frontend` monorepo.
-The `translator` operates alongside `code-standards-steward` (file layout),
-`code-documentation-writer` (docblocks), and `contract-reexports.md` (imports
-`I18nTranslation` from `@stackra/contracts` directly — never re-exports).
+| Slug                    | Role                                 | Charter present |
+| ----------------------- | ------------------------------------ | --------------- |
+| `heroui-native-builder` | React Native + HeroUI Native builder | directory-only  |
+| `native-test-engineer`  | Jest + Detox test engineer           | directory-only  |
 
-| Task                                                                                                             | Agent(s)                                                                                                          |
-| ---------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
-| Audit a package for translatable strings (component defaults, JSX text, `aria-label`, `placeholder`, label maps) | `translator` (audit mode)                                                                                         |
-| Scaffold a per-package i18n catalog (two JSON files: `en.json` + `ar.json` under `src/core/i18n/`)               | `translator` (scaffold mode)                                                                                      |
-| Verify a machine-generated Arabic catalog before shipping                                                        | Human native-speaker reviewer — the `translator` marks every uncertain entry with a `// review: <note>` comment   |
-| Add a new locale beyond `en` / `ar` to an existing package                                                       | `translator` (scaffold mode, targeted at the single package) — updates `SUPPORTED_LOCALES` + adds the new catalog |
-| Migrate a component from a hard-coded default (`title = "..."`) to a `t(...)` call once the runtime lands        | `framework-core-builder` or `heroui-ui-builder` — NOT the translator (component-source lane)                      |
-| Build the `@stackra/i18n` runtime package (`I18nManager`, `LocaleService`, direction adapter)                    | `framework-core-builder` — NOT the translator (runtime lane)                                                      |
+### AI service build lane (3)
 
-## Handoff chains
+| Slug                      | Role                               | Charter present               |
+| ------------------------- | ---------------------------------- | ----------------------------- |
+| `python-service-builder`  | AI service builder                 | directory-only (sibling repo) |
+| `mlops-reviewer`          | AI deploy + observability reviewer | directory-only                |
+| `data-scientist-reviewer` | Prompt + eval reviewer             | directory-only                |
 
-Common multi-agent workflows.
+### Cross-cutting stewards (3)
 
-### Ship a new feature end-to-end
+| Slug                                | Role                               | Charter present |
+| ----------------------------------- | ---------------------------------- | --------------- |
+| `workspace-standardization-steward` | Package manifest normaliser        | yes (existing)  |
+| `docs-adr-steward`                  | ADR + steering + contracts steward | yes (existing)  |
+| `docs-changesets-steward`           | READMEs + changesets + CHANGELOGs  | yes (existing)  |
 
-```
-laravel-feature-builder (implement)
-   ↓
-test-mutation-engineer (feature + unit + mutation tests)
-   ↓
-standards-steward (per-file audit)
-   ↓
-backend-architecture-reviewer (structural audit)
-   ↓
-security-compliance-reviewer (if auth / tenancy / secrets touched)
-   ↓
-docs-adr-steward (if a decision needs recording)
-```
+### Verify tier — reviewers + specialists (7)
 
-### Rehabilitate a legacy module
+| Slug                                 | Role                                 | Charter present |
+| ------------------------------------ | ------------------------------------ | --------------- |
+| `backend-architecture-reviewer`      | Laravel architecture reviewer        | yes (existing)  |
+| `backend-platform-reviewer`          | Backend platform + release reviewer  | yes (existing)  |
+| `container-di-architecture-reviewer` | DI + framework architecture reviewer | yes (existing)  |
+| `package-api-release-reviewer`       | Package API surface reviewer         | yes (existing)  |
+| `security-compliance-reviewer`       | Security + compliance reviewer       | yes (existing)  |
+| `ui-design-a11y-reviewer`            | UI design + a11y reviewer            | yes (existing)  |
+| `e2e-test-engineer`                  | Playwright + Detox E2E               | yes             |
 
-```
-standards-steward (audit — produces the findings list)
-   ↓
-codebase-housekeeper (mechanical fixes for P0 → P1 → P2 → P3)
-   ↓
-laravel-feature-builder (non-mechanical remediation: Service → Action, etc.)
-   ↓
-test-mutation-engineer (add tests that pin the new behaviour)
-   ↓
-standards-steward (second pass — confirm compliance)
-```
+### Verify tier — specialists (2)
 
-### Land a new architectural decision
+| Slug                       | Role                             | Charter present |
+| -------------------------- | -------------------------------- | --------------- |
+| `performance-engineer`     | Lighthouse + k6 + bundle budgets | yes             |
+| `accessibility-audit-lead` | WCAG 2.2 AA audit                | yes             |
 
-```
-docs-adr-steward (write the ADR + update steering)
-   ↓
-laravel-feature-builder (implement the decision)
-   ↓
-test-mutation-engineer (test the invariants the ADR pins)
-   ↓
-standards-steward (audit that consumers follow the new rule)
-```
+### Ship tier (2)
 
-## Reviewer verticals — no overlap by design
+| Slug              | Role                            | Charter present |
+| ----------------- | ------------------------------- | --------------- |
+| `release-manager` | Release cadence + version bumps | yes             |
+| `deploy-engineer` | Canary + promote + rollback     | yes             |
 
-The five reviewers own strictly disjoint lanes. When a finding sits at the
-boundary, the owning reviewer flags it and defers with a pointer — never
-double-audits.
+### Operate tier (6)
 
-| Concern                                                                                                                                    | Owner                           |
-| ------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------- |
-| Actions-only architecture, attribute discovery, package boundaries, headless mandate                                                       | `backend-architecture-reviewer` |
-| Containers, Turborepo, CI, Horizon, Octane runtime, Doppler mechanics                                                                      | `backend-platform-reviewer`     |
-| Sanctum, service JWT, RBAC, tenancy isolation as a security property, secrets, minor consent                                               | `security-compliance-reviewer`  |
-| Per-file compliance: docblocks, folder placement, attribute-first, data-first, column constants, console contract, testing layout          | `standards-steward`             |
-| Row-level attribution: `tenant_id` / `application_id` / `scope_node_id` column contract; forbidden shortcut FKs; scope-consumer discipline | `tenancy-compliance-auditor`    |
+| Slug                       | Role                                           | Charter present |
+| -------------------------- | ---------------------------------------------- | --------------- |
+| `sre-lead`                 | SLIs + SLOs + runbooks                         | yes             |
+| `observability-engineer`   | Sentry + Grafana + tracing                     | yes             |
+| `incident-commander`       | Sev1/Sev2 incident lead                        | directory-only  |
+| `analytics-engineer`       | Analytics catalogue owner                      | directory-only  |
+| `support-liaison`          | Support-to-engineering interface               | directory-only  |
+| `legal-compliance-officer` | Regime-evidence owner (GDPR/FERPA/COPPA/SOC 2) | directory-only  |
 
-The `docs-adr-steward` is orthogonal — it works alongside every reviewer,
-translating findings that warrant a rule into ADRs + steering.
+## Task-to-agent mapping
 
-## What lives in `.ref/agents/`
+The most common workflows and which agents each phase invokes. Every row is a
+sub-agent invocation; every column is a phase.
 
-The [`../../.ref/agents/`](../../.ref/agents/) directory carries source-of-truth
-copies for agents that span both this repo AND the `academorix-ai` sibling.
-Backend-only variants live here; AI-only variants (`data-scientist-reviewer`,
-`devops-platform-reviewer`, `mlops-reviewer`, `python-service-builder`) are
-consumed directly from `.ref/` by the AI repo's agent runtime.
+### Ingesting a new project (Phase 0 → 3)
 
-Do not edit files under `.ref/agents/` from this repo — those are cross-repo
-sources of truth. Edit the backend-specific copies here in `.kiro/agents/`.
+| Step                                           | Phase | Sub-agent(s)                                                        |
+| ---------------------------------------------- | ----- | ------------------------------------------------------------------- |
+| Convert PDF/DOCX brief to `brief.md`           | 0     | `spec-intake-analyst`                                               |
+| Personas + JTBD + competitive matrix           | 1     | `academorix-product`, `ux-research-lead`, `market-research-analyst` |
+| PRD + INVEST stories + v1/v2/later             | 2     | `academorix-product`                                                |
+| Cross-cutting ADRs                             | 3     | `solution-architect`                                                |
+| API contracts (`docs/contracts/*.schema.json`) | 3     | `api-contract-designer`                                             |
+| ERD + row-attribution                          | 3     | `data-modeler`                                                      |
+| STRIDE threat model                            | 3     | `threat-modeler`                                                    |
+| IA + wireframes-as-markdown                    | 3     | `product-designer`, `content-designer`                              |
 
-## Agent file shape
+### Building a feature (Phase 4)
 
-Every agent follows the same frontmatter + section shape:
+| Concern                                        | Sub-agent(s)                                    |
+| ---------------------------------------------- | ----------------------------------------------- |
+| Backend feature                                | `laravel-feature-builder` + `standards-steward` |
+| Row-attribution audit on new tables            | `tenancy-compliance-auditor`                    |
+| Backend tests + mutation coverage              | `test-mutation-engineer`                        |
+| Frontend feature (web)                         | `heroui-ui-builder` + `code-standards-steward`  |
+| Frontend feature (native)                      | `heroui-native-builder`                         |
+| Framework-level primitive                      | `framework-core-builder`                        |
+| Docblocks + JSDoc on new exports               | `code-documentation-writer`                     |
+| Native-utility migration to `@stackra/support` | `support-utilities-steward`                     |
+| i18n catalog scaffolding                       | `translator`                                    |
+| AI-service endpoint                            | `python-service-builder`                        |
+| Package-manifest normalisation                 | `workspace-standardization-steward`             |
+| ADR authoring for design decisions             | `docs-adr-steward`                              |
+| Changesets + CHANGELOG entries                 | `docs-changesets-steward`                       |
 
-```yaml
----
-description: >-
-  One-paragraph summary the runtime uses to route tasks.
-tools: ["read", "shell"] # or ["read", "write", "shell"]
----
-You are a <role>...
-## Operating constraints
-## Orient first
-## Scope you own
-## Explicitly out of scope (defer to sibling reviewers)
-## Required output format
-```
+### Verifying a build (Phase 5)
 
-Writers add `## Verify before done` and `## Required output` (vs "output
-format"). Read any existing agent file for the canonical shape.
+| Concern                                   | Sub-agent                            |
+| ----------------------------------------- | ------------------------------------ |
+| Backend architecture correctness          | `backend-architecture-reviewer`      |
+| Backend platform + release surface        | `backend-platform-reviewer`          |
+| Container + DI + module lifecycle         | `container-di-architecture-reviewer` |
+| Package API surface + tsup + exports maps | `package-api-release-reviewer`       |
+| Security + privacy + minor consent        | `security-compliance-reviewer`       |
+| UI design + component-level a11y          | `ui-design-a11y-reviewer`            |
+| End-to-end (web + mobile)                 | `e2e-test-engineer`                  |
+| Performance budgets                       | `performance-engineer`               |
+| App-level WCAG 2.2 AA                     | `accessibility-audit-lead`           |
+| Vitest suite strength                     | `vitest-test-engineer`               |
+| Pest suite strength + mutation            | `test-mutation-engineer`             |
+| Native suite strength                     | `native-test-engineer`               |
+| Row-attribution across new tables         | `tenancy-compliance-auditor`         |
 
-## Adding a new agent
+### Shipping (Phase 6)
 
-1. Copy the closest existing agent (reviewer vs writer) as the template.
-2. Set `tools:` — `["read", "shell"]` for reviewers,
-   `["read", "write", "shell"]` for writers.
-3. Fill the Orient section with the specific steering + ADR references the agent
-   depends on.
-4. Cite lanes owned + lanes deferred so no overlap with sibling agents.
-5. Add a row to this README's roster + relevant task-to-agent tables.
-6. If the agent codifies a genuinely new lane, write an ADR (`docs-adr-steward`
-   can help) so the decision is recorded.
+| Step                              | Sub-agent         |
+| --------------------------------- | ----------------- |
+| Version bumps + changelog roll-up | `release-manager` |
+| Deploy runbook + canary plan      | `deploy-engineer` |
+
+### Operating (Phase 7)
+
+| Signal                             | Sub-agent                  |
+| ---------------------------------- | -------------------------- |
+| SLI/SLO drift                      | `sre-lead`                 |
+| Missing traces / alert noise       | `observability-engineer`   |
+| Sev1 / Sev2 incident               | `incident-commander`       |
+| Analytics catalogue drift          | `analytics-engineer`       |
+| Ticket-to-bug conversion           | `support-liaison`          |
+| DSAR / retention / regime evidence | `legal-compliance-officer` |
+
+## Handoff chain — Day-0 to Day-90 walkthrough
+
+The following narrative walks one small feature through the full pipeline. Every
+step is one supervisor turn.
+
+**Day 0.** A customer stakeholder emails a 40-page PDF describing what they
+want. The supervisor invokes `spec-intake-analyst` with the PDF path. Rafael
+emits
+`.kiro/product/intake/<slug>/{brief.md,blueprint-draft.md, assumptions.md,reading-list.md}`.
+Phase 0 closes.
+
+**Day 2.** Ifeoma opens Phase 1. Supervisor invokes three sub-agents in
+parallel: `academorix-product` (persona + JTBD synthesis), `ux-research-lead`
+(user-interview plan), `market-research-analyst` (competitive matrix). Each
+writes its artefact under `.kiro/product/intake/<slug>/`. Phase 1 closes.
+
+**Day 5.** Rohan opens Phase 2. Supervisor invokes `academorix-product` alone.
+PRD lands with locked v1 scope, INVEST stories, deferred v2/later. Phase 2
+closes.
+
+**Day 8.** Yuki opens Phase 3. Supervisor invokes five sub-agents in parallel:
+`solution-architect` (ADRs), `api-contract-designer` (JSON schemas),
+`data-modeler` (ERD), `threat-modeler` (STRIDE table), `product-designer` (IA +
+wireframes-as-markdown). Every one writes to a disjoint tree. Phase 3 closes.
+
+**Day 15.** Priya opens Phase 4. Supervisor invokes builders per lane in
+parallel: backend + frontend web + frontend native + AI service. Each lane runs
+its own steward-then-test-writer loop internally. Every closed lane ships
+changesets via `docs-changesets-steward`. `pnpm build/typecheck/ test/lint`
+green on every touched package. Phase 4 closes.
+
+**Day 25.** Idris opens Phase 5. Supervisor invokes every reviewer in parallel
+against the same build. Findings sort into P0/P1/P2/P3. All P0/P1 close before
+Phase 6. Phase 5 closes.
+
+**Day 28.** Salim opens Phase 6. Supervisor invokes `release-manager` (version
+bumps + notes) then `deploy-engineer` (canary + promote plan). Phase 6 closes at
+canary promotion.
+
+**Day 30.** Farid opens Phase 7. On-call rotation active; observability signal
+captured; incident-commander on standby. Phase 7 stays open for the life of the
+feature.
+
+**Day 90.** First quarterly review of the feature. Cross-agent audit runs the
+reviewer verticals matrix (below). Any findings reopen a phase.
+
+## Reviewer verticals matrix
+
+Fifteen concerns; every concern has exactly one owner. Non-overlap is a
+governance rule (`AGENT_ROSTER.md §VI.1`). If two reviewers file findings on the
+same concern, `chief-orchestrator` routes to the owner and drops the duplicate.
+
+| #   | Concern                                                            | Owner                                 |
+| --- | ------------------------------------------------------------------ | ------------------------------------- |
+| 1   | Laravel architecture correctness (actions-only, attribute DI)      | `backend-architecture-reviewer`       |
+| 2   | Backend platform (queues, Octane, Doppler, Turborepo, CI, release) | `backend-platform-reviewer`           |
+| 3   | Backend cross-cutting standards (steering, ADRs, docblock hygiene) | `standards-steward`                   |
+| 4   | Row-level attribution (tenant_id / application_id / scope_node_id) | `tenancy-compliance-auditor`          |
+| 5   | Docs (ADRs, steering, contracts)                                   | `docs-adr-steward`                    |
+| 6   | Docs (READMEs, changesets, CHANGELOGs)                             | `docs-changesets-steward`             |
+| 7   | Pest test suite strength + mutation                                | `test-mutation-engineer`              |
+| 8   | Vitest test suite strength                                         | `vitest-test-engineer`                |
+| 9   | Native Jest + Detox suite strength                                 | `native-test-engineer`                |
+| 10  | Performance budgets (Lighthouse, k6, bundle)                       | `performance-engineer`                |
+| 11  | App-level WCAG 2.2 AA                                              | `accessibility-audit-lead`            |
+| 12  | Component-level UI design + a11y                                   | `ui-design-a11y-reviewer`             |
+| 13  | Release engineering + deploy runbook                               | `release-manager` + `deploy-engineer` |
+| 14  | DI / container / framework architecture                            | `container-di-architecture-reviewer`  |
+| 15  | Package API surface + tsup + tree-shaking                          | `package-api-release-reviewer`        |
+
+Plus two AI-service-specific concerns:
+
+| #   | Concern                                             | Owner                     |
+| --- | --------------------------------------------------- | ------------------------- |
+| 16  | AI deploy + observability + canary                  | `mlops-reviewer`          |
+| 17  | Prompt design + eval harnesses + statistical rigour | `data-scientist-reviewer` |
+
+## Agent file organisation
+
+Every charter follows the same shape. Copy-paste template lives in
+`AGENT_ROSTER.md §Appendix B`; also see any existing charter in this folder for
+a live example (`laravel-feature-builder.md`, `academorix-product.md` are the
+canonical references).
+
+### Required frontmatter fields
+
+- `description` — one-line role summary. First 200 chars must convey the agent's
+  scope so it renders in tool listings.
+- `tools` — comma-separated list of tools the agent is allowed to invoke.
+  Advisory agents (reviewers, leads) get `["read"]`; delegated agents that
+  modify code get `["read", "write", "shell"]`.
+- `includeMcpJson`, `includePowers` — usually `false`. Set only when the agent
+  needs the workspace's MCP servers or installed Powers.
+
+### Required sections
+
+- **Role intro** — one paragraph. First person for advisory agents (leads,
+  reviewers, planners); second person for delegated agents (builders, stewards).
+- **Operating constraints (non-negotiable)** — hard rules; what this agent will
+  never do.
+- **Orient first** — numbered reading list. Steering docs, ADRs, existing code
+  the agent must read before acting.
+- **Scope you own** — bullet list of exact deliverables.
+- **Explicitly out of scope** — bullet list; what other agents own.
+- **Required output format** — how the agent's output must be shaped (markdown
+  report, code diff, ADR draft, etc.).
+- **Verify before done** — verification checklist the agent runs against its own
+  output before returning.
+
+### Cross-references every charter includes
+
+- The agent's manager (matches persona dossier org chart).
+- `AGENT_ROSTER.md §Phase-N` for phase context.
+- Matrix relationships (dotted lines to cross-cutting stewards).
+- Direct reports (for leads) or downstream handoffs (for specialists).
+
+## Adding new agents
+
+Every new agent lands in one commit with the following files touched:
+
+1. **Charter** at `.kiro/agents/<slug>.md`. Follow the shape above.
+2. **Persona** appended to `.kiro/product/agent-personas.md`. Full persona if
+   the agent is leadership / flagship / marquee; lightweight directory entry
+   otherwise.
+3. **Roster row** appended to `AGENT_ROSTER.md §Part IV` under the correct
+   phase.
+4. **Roster row** appended to this file (`.kiro/agents/README.md`) under the
+   correct tier table.
+5. **ADR** at `docs/adr/<next>-<slug-or-rename>.md`. Renames and splits require
+   an ADR (see `AGENT_ROSTER.md §VI.4`).
+6. **Hook update** (optional): if the new agent introduces a new file-save
+   trigger, add a matching hook under `.kiro/hooks/`.
+
+### Naming rules
+
+- Slugs are kebab-case, lowercase, and descriptive of the role (`data-modeler`,
+  not `data`; `heroui-ui-builder`, not `builder`).
+- Slugs never carry a level suffix (`v2`, `next`, `alt`).
+- Renames land in the same commit that adds the ADR; no orphan aliases.
+
+### Deleting an agent
+
+Delete requires an ADR and a coordinated update across the four canonical
+locations above (roster, dossier, README table, charter file). The persona
+dossier keeps the entry marked as retired with a pointer to the successor.
+
+## Related
+
+- [`AGENT_ROSTER.md`](../../AGENT_ROSTER.md) — the master roster + pipeline
+  plan.
+- [`agent-personas.md`](../product/agent-personas.md) — the human-readable
+  dossier for all 51 agents.
+- [`docs/adr/0026-agent-canonical-directory.md`](../../docs/adr/0026-agent-canonical-directory.md)
+  — the cross-repo canonical directory model.
+- [`AGENT_QUICKSTART.md`](../../AGENT_QUICKSTART.md) — the two-minute onboard
+  narrative for new supervisors.
+- [`.kiro/hooks/`](../hooks/) — session-lifecycle hooks that keep this directory
+  in sync with the dossier and the roster.

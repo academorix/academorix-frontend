@@ -4,8 +4,8 @@
  * @description Props for the {@link NotificationRow} component.
  */
 
-import type { IRenderableNotification } from '@/core/interfaces';
-import type { NotificationWriter } from '../../hooks/use-notification-writes';
+import type { IRenderableNotification } from "@/core/interfaces";
+import type { NotificationWriter } from "../../hooks/use-notification-writes";
 
 /**
  * Props accepted by {@link NotificationRow}.

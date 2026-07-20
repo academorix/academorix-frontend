@@ -4,8 +4,8 @@
  * @description Barrel for the {@link usePushSubscription} hook.
  */
 
-export { usePushSubscription } from './use-push-subscription.hook';
+export { usePushSubscription } from "./use-push-subscription.hook";
 export type {
   IUsePushSubscriptionOptions,
   IUsePushSubscriptionResult,
-} from './use-push-subscription.interface';
+} from "./use-push-subscription.interface";

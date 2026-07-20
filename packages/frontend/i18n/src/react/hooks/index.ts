@@ -7,7 +7,7 @@
  *   re-exported by the react interfaces barrel for consumer convenience.
  */
 
-export { useI18n, useLocale, useDirection, useFormat } from '@/core/hooks';
+export { useI18n, useLocale, useDirection, useFormat } from "@/core/hooks";
 
 // Re-export formatter types for direct hook consumers who don't
 // reach the react/interfaces barrel.
@@ -19,10 +19,10 @@ export type {
   RelativeTimeUnit,
   IIntlFormatter,
   DateStyle,
-} from '@/core/services/intl-formatter.service';
+} from "@/core/services/intl-formatter.service";
 export type {
   IUseFormatReturn,
   UseI18nReturn,
   UseLocaleReturn,
   UseDirectionReturn,
-} from '@/core/interfaces';
+} from "@/core/interfaces";

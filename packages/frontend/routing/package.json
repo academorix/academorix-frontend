@@ -1,7 +1,7 @@
 {
   "name": "@stackra/routing",
   "version": "0.1.0",
-  "description": "Client-side routing for the Stackra framework — guards, middleware, SEO, analytics, breadcrumbs, route modes (page/dialog/drawer/sheet), advanced matchers (subdomain/query/header/hash), and a `defineRoute()` builder that composes with React Router v7.",
+  "description": "Client-side routing for the Stackra framework \u2014 guards, middleware, SEO, analytics, breadcrumbs, route modes (page/dialog/drawer/sheet), advanced matchers (subdomain/query/header/hash), and a `defineRoute()` builder that composes with React Router v7.",
   "license": "MIT",
   "author": {
     "name": "Stackra L.L.C",
@@ -128,6 +128,8 @@
     }
   },
   "devDependencies": {
+    "@academorix/config-tsconfig": "workspace:*",
+    "@academorix/config-tsup": "workspace:*",
     "@stackra/console": "workspace:*",
     "@stackra/container": "workspace:*",
     "@stackra/contracts": "workspace:*",

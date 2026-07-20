@@ -8,7 +8,7 @@
  *   with the `simulate*` hooks to exercise consumer code paths.
  */
 
-import type { CollaborationTransport, RoomMember } from '@/interfaces';
+import type { CollaborationTransport, RoomMember } from "@/interfaces";
 
 /** Recorded broadcast entry — event + data + originating room. */
 export interface RecordedBroadcast {
@@ -53,14 +53,14 @@ export class MockCollaborationTransport implements CollaborationTransport {
   public async connect(
     roomId: string,
     userId: string,
-    userInfo: Record<string, unknown>
+    userInfo: Record<string, unknown>,
   ): Promise<void> {
     const room = this.getOrCreateRoom(roomId);
     room.currentUserId = userId;
     const member: RoomMember = {
       userId,
       name: (userInfo.name as string) ?? userId,
-      color: (userInfo.color as string) ?? '#000000',
+      color: (userInfo.color as string) ?? "#000000",
       joinedAt: Date.now(),
       presence: userInfo,
     };

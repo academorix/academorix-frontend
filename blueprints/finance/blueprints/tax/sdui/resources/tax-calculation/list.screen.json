@@ -27,8 +27,21 @@
         {
           "kind": "View",
           "children": [
-            { "kind": "Text", "props": { "as": "h1", "className": "text-2xl font-semibold", "children": "Tax calculations" } },
-            { "kind": "Text", "props": { "className": "text-sm text-muted", "children": "Read-only calculation ledger. Every row is IMMUTABLE — regulator audit trail." } }
+            {
+              "kind": "Text",
+              "props": {
+                "as": "h1",
+                "className": "text-2xl font-semibold",
+                "children": "Tax calculations"
+              }
+            },
+            {
+              "kind": "Text",
+              "props": {
+                "className": "text-sm text-muted",
+                "children": "Read-only calculation ledger. Every row is IMMUTABLE — regulator audit trail."
+              }
+            }
           ]
         },
         {
@@ -54,7 +67,11 @@
                 { "id": "custom_webhook", "label": "Custom Webhook" }
               ],
               "actions": {
-                "onSelectionChange": { "kind": "filter.set", "field": "provider", "valueExpr": "$selectedKey" }
+                "onSelectionChange": {
+                  "kind": "filter.set",
+                  "field": "provider",
+                  "valueExpr": "$selectedKey"
+                }
               }
             },
             {
@@ -77,13 +94,49 @@
           },
           "props": {
             "columns": [
-              { "field": "invoice_line_id", "label": "Invoice line", "width": 200, "formatter": "ulid-short" },
+              {
+                "field": "invoice_line_id",
+                "label": "Invoice line",
+                "width": 200,
+                "formatter": "ulid-short"
+              },
               { "field": "provider", "label": "Provider", "sortable": true, "width": 160 },
-              { "field": "source_amount_cents", "label": "Pre-tax", "sortable": true, "width": 130, "renderer": { "kind": "Text", "formatter": "currency" }, "currencyField": "source_currency" },
-              { "field": "tax_amount_cents", "label": "Tax", "sortable": true, "width": 130, "renderer": { "kind": "Text", "formatter": "currency" }, "currencyField": "source_currency" },
-              { "field": "tax_rate_snapshot.percentage", "label": "Rate", "width": 90, "renderer": { "widget": "tax.rate-badge" } },
-              { "field": "exemption_applied", "label": "Exemption", "width": 130, "formatter": "boolean-yes-no" },
-              { "field": "calculated_at", "label": "Calculated", "sortable": true, "defaultSort": "desc", "width": 160, "formatter": "datetime-relative" }
+              {
+                "field": "source_amount_cents",
+                "label": "Pre-tax",
+                "sortable": true,
+                "width": 130,
+                "renderer": { "kind": "Text", "formatter": "currency" },
+                "currencyField": "source_currency"
+              },
+              {
+                "field": "tax_amount_cents",
+                "label": "Tax",
+                "sortable": true,
+                "width": 130,
+                "renderer": { "kind": "Text", "formatter": "currency" },
+                "currencyField": "source_currency"
+              },
+              {
+                "field": "tax_rate_snapshot.percentage",
+                "label": "Rate",
+                "width": 90,
+                "renderer": { "widget": "tax.rate-badge" }
+              },
+              {
+                "field": "exemption_applied",
+                "label": "Exemption",
+                "width": 130,
+                "formatter": "boolean-yes-no"
+              },
+              {
+                "field": "calculated_at",
+                "label": "Calculated",
+                "sortable": true,
+                "defaultSort": "desc",
+                "width": 160,
+                "formatter": "datetime-relative"
+              }
             ],
             "onRowPress": {
               "kind": "navigate",

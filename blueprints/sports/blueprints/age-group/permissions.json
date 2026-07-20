@@ -6,22 +6,103 @@
   "isSystem": true,
   "scope_suffix_convention": "Every read permission may be seeded WITH a scope suffix (`.any`, `.tenant`). The base permission (no suffix) is the highest-tier variant, effectively `.tenant`. Age groups are tenant-wide reference data — no `.branch` / `.own` variants exist.",
   "permissions": [
-    { "name": "age_groups.viewAny", "guard": "sanctum", "seededOn": ["admin", "owner", "member", "coach", "reception", "athlete", "guardian"], "description": "Every tenant role reads the age-group list — age groups are UI reference data (every enrollment + roster + team form reads them)." },
-    { "name": "age_groups.viewAny.tenant", "guard": "sanctum", "seededOn": ["admin", "owner", "member", "coach", "reception", "athlete", "guardian"] },
-    { "name": "age_groups.view", "guard": "sanctum", "seededOn": ["admin", "owner", "member", "coach", "reception", "athlete", "guardian"] },
-    { "name": "age_groups.resolve", "guard": "sanctum", "seededOn": ["admin", "owner", "member", "coach", "reception", "athlete", "guardian"], "description": "Read-only resolver endpoint. Widely used across enrollment + team-invite flows." },
-    { "name": "age_groups.create", "guard": "sanctum", "seededOn": ["admin", "owner"], "description": "Consumes 1 age_group_slot entitlement. Refused for Small tier via AGE_GROUP_CUSTOM_DISABLED." },
-    { "name": "age_groups.create.sport_specific", "guard": "sanctum", "seededOn": ["admin", "owner"], "description": "Gates the sport_key column on creation. Enterprise-only via age_group_sport_specific entitlement." },
-    { "name": "age_groups.update", "guard": "sanctum", "seededOn": ["admin", "owner"], "description": "Mutable fields: name, slug, description, color, gender_category, sort_order. Bounds/cutoff/sport_key edits gated further." },
-    { "name": "age_groups.update.bounds", "guard": "sanctum", "seededOn": ["admin", "owner"], "description": "Separated from base update — bounds changes fire AgeGroupBoundsChanged (audit-critical, 7-year retention). Admin + owner." },
-    { "name": "age_groups.update.cutoff", "guard": "sanctum", "seededOn": ["admin", "owner"], "description": "Separated from base update — cutoff changes fire AgeGroupCutoffChanged (audit-critical). Admin + owner." },
-    { "name": "age_groups.update.sport_key", "guard": "sanctum", "seededOn": ["admin", "owner"], "description": "Enterprise-only via age_group_sport_specific entitlement." },
-    { "name": "age_groups.set_default", "guard": "sanctum", "seededOn": ["admin", "owner"], "description": "Flip is_default within a (tenant, organization, sport_key) tuple." },
-    { "name": "age_groups.archive", "guard": "sanctum", "seededOn": ["admin", "owner"], "description": "Refused when is_default=true, is_seeded=true, OR when inbound Team/EventDivision rows exist." },
-    { "name": "age_groups.restore", "guard": "sanctum", "seededOn": ["admin", "owner"], "description": "Reverse of archive. Only within the 1095-day retention window." },
-    { "name": "age_groups.delete", "guard": "sanctum", "seededOn": ["owner"], "description": "Owner only. Same guards as archive — plus hard-delete happens only via PurgeArchivedAgeGroupsJob after retention window." },
-    { "name": "age_groups.manage", "guard": "sanctum", "seededOn": ["admin", "owner"], "description": "Umbrella permission for the settings blueprint gate. Admin + owner." },
-    { "name": "platform.age_groups.viewAny", "guard": "platform_admin", "seededOn": ["super_admin", "ops", "support"] },
-    { "name": "platform.age_groups.view", "guard": "platform_admin", "seededOn": ["super_admin", "ops", "support"] }
+    {
+      "name": "age_groups.viewAny",
+      "guard": "sanctum",
+      "seededOn": ["admin", "owner", "member", "coach", "reception", "athlete", "guardian"],
+      "description": "Every tenant role reads the age-group list — age groups are UI reference data (every enrollment + roster + team form reads them)."
+    },
+    {
+      "name": "age_groups.viewAny.tenant",
+      "guard": "sanctum",
+      "seededOn": ["admin", "owner", "member", "coach", "reception", "athlete", "guardian"]
+    },
+    {
+      "name": "age_groups.view",
+      "guard": "sanctum",
+      "seededOn": ["admin", "owner", "member", "coach", "reception", "athlete", "guardian"]
+    },
+    {
+      "name": "age_groups.resolve",
+      "guard": "sanctum",
+      "seededOn": ["admin", "owner", "member", "coach", "reception", "athlete", "guardian"],
+      "description": "Read-only resolver endpoint. Widely used across enrollment + team-invite flows."
+    },
+    {
+      "name": "age_groups.create",
+      "guard": "sanctum",
+      "seededOn": ["admin", "owner"],
+      "description": "Consumes 1 age_group_slot entitlement. Refused for Small tier via AGE_GROUP_CUSTOM_DISABLED."
+    },
+    {
+      "name": "age_groups.create.sport_specific",
+      "guard": "sanctum",
+      "seededOn": ["admin", "owner"],
+      "description": "Gates the sport_key column on creation. Enterprise-only via age_group_sport_specific entitlement."
+    },
+    {
+      "name": "age_groups.update",
+      "guard": "sanctum",
+      "seededOn": ["admin", "owner"],
+      "description": "Mutable fields: name, slug, description, color, gender_category, sort_order. Bounds/cutoff/sport_key edits gated further."
+    },
+    {
+      "name": "age_groups.update.bounds",
+      "guard": "sanctum",
+      "seededOn": ["admin", "owner"],
+      "description": "Separated from base update — bounds changes fire AgeGroupBoundsChanged (audit-critical, 7-year retention). Admin + owner."
+    },
+    {
+      "name": "age_groups.update.cutoff",
+      "guard": "sanctum",
+      "seededOn": ["admin", "owner"],
+      "description": "Separated from base update — cutoff changes fire AgeGroupCutoffChanged (audit-critical). Admin + owner."
+    },
+    {
+      "name": "age_groups.update.sport_key",
+      "guard": "sanctum",
+      "seededOn": ["admin", "owner"],
+      "description": "Enterprise-only via age_group_sport_specific entitlement."
+    },
+    {
+      "name": "age_groups.set_default",
+      "guard": "sanctum",
+      "seededOn": ["admin", "owner"],
+      "description": "Flip is_default within a (tenant, organization, sport_key) tuple."
+    },
+    {
+      "name": "age_groups.archive",
+      "guard": "sanctum",
+      "seededOn": ["admin", "owner"],
+      "description": "Refused when is_default=true, is_seeded=true, OR when inbound Team/EventDivision rows exist."
+    },
+    {
+      "name": "age_groups.restore",
+      "guard": "sanctum",
+      "seededOn": ["admin", "owner"],
+      "description": "Reverse of archive. Only within the 1095-day retention window."
+    },
+    {
+      "name": "age_groups.delete",
+      "guard": "sanctum",
+      "seededOn": ["owner"],
+      "description": "Owner only. Same guards as archive — plus hard-delete happens only via PurgeArchivedAgeGroupsJob after retention window."
+    },
+    {
+      "name": "age_groups.manage",
+      "guard": "sanctum",
+      "seededOn": ["admin", "owner"],
+      "description": "Umbrella permission for the settings blueprint gate. Admin + owner."
+    },
+    {
+      "name": "platform.age_groups.viewAny",
+      "guard": "platform_admin",
+      "seededOn": ["super_admin", "ops", "support"]
+    },
+    {
+      "name": "platform.age_groups.view",
+      "guard": "platform_admin",
+      "seededOn": ["super_admin", "ops", "support"]
+    }
   ]
 }

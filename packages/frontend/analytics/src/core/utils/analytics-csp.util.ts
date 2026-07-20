@@ -6,11 +6,11 @@
  *   active providers.
  */
 
-import type { IAnalyticsCspDirectives, IAnalyticsModuleOptions } from '../interfaces';
-import { GA4_CSP } from '../providers/ga4-analytics.provider';
-import { META_PIXEL_CSP } from '../providers/meta-pixel.provider';
-import { TIKTOK_PIXEL_CSP } from '../providers/tiktok-pixel.provider';
-import { SNAPCHAT_PIXEL_CSP } from '../providers/snapchat-pixel.provider';
+import type { IAnalyticsCspDirectives, IAnalyticsModuleOptions } from "../interfaces";
+import { GA4_CSP } from "../providers/ga4-analytics.provider";
+import { META_PIXEL_CSP } from "../providers/meta-pixel.provider";
+import { TIKTOK_PIXEL_CSP } from "../providers/tiktok-pixel.provider";
+import { SNAPCHAT_PIXEL_CSP } from "../providers/snapchat-pixel.provider";
 
 /**
  * Return the CSP directive fragments required by the script-injecting
@@ -31,13 +31,13 @@ import { SNAPCHAT_PIXEL_CSP } from '../providers/snapchat-pixel.provider';
  * @returns One {@link IAnalyticsCspDirectives} per enabled network provider.
  */
 export function getAnalyticsCspPolicies(
-  config: IAnalyticsModuleOptions
+  config: IAnalyticsModuleOptions,
 ): IAnalyticsCspDirectives[] {
   const byDriver: Record<string, IAnalyticsCspDirectives> = {
     ga4: GA4_CSP,
-    'meta-pixel': META_PIXEL_CSP,
-    'tiktok-pixel': TIKTOK_PIXEL_CSP,
-    'snapchat-pixel': SNAPCHAT_PIXEL_CSP,
+    "meta-pixel": META_PIXEL_CSP,
+    "tiktok-pixel": TIKTOK_PIXEL_CSP,
+    "snapchat-pixel": SNAPCHAT_PIXEL_CSP,
   };
 
   const policies: IAnalyticsCspDirectives[] = [];

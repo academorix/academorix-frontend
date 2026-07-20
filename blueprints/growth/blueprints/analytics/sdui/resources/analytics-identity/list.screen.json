@@ -29,7 +29,11 @@
           "children": [
             {
               "kind": "Text",
-              "props": { "as": "h1", "className": "text-2xl font-semibold", "children": "Analytics identities" }
+              "props": {
+                "as": "h1",
+                "className": "text-2xl font-semibold",
+                "children": "Analytics identities"
+              }
             },
             {
               "kind": "Text",
@@ -46,7 +50,11 @@
           "children": [
             {
               "kind": "Select",
-              "props": { "label": "Identified", "name": "filter[is_identified]", "placeholder": "All" },
+              "props": {
+                "label": "Identified",
+                "name": "filter[is_identified]",
+                "placeholder": "All"
+              },
               "options": [
                 { "key": "true", "label": "Identified" },
                 { "key": "false", "label": "Anonymous only" }

@@ -1,13 +1,14 @@
 # academorix/wallet
 
-Server-side Laravel package for the `wallet` module. Auto-generated from
-the blueprint at `modules/finance/blueprints/wallet/`.
+Server-side Laravel package for the `wallet` module. Auto-generated from the
+blueprint at `modules/finance/blueprints/wallet/`.
 
 ## Entities
 
 - **WalletHold** (`whd_...`) — Reserved balance during in-progress checkout.
 - **WalletTransaction** (`wtx_...`) — Immutable debit/credit against a wallet.
-- **Wallet** (`wal_...`) — One wallet per (owner_type, owner_id, kind, currency).
+- **Wallet** (`wal_...`) — One wallet per (owner_type, owner_id, kind,
+  currency).
 
 ## Layout
 
@@ -39,11 +40,12 @@ python3 modules/shared/blueprints/foundation/scripts/generate-module.py \
     finance wallet --force
 ```
 
-Files carrying the `AUTO-GENERATED` header are safe to regenerate; every
-other file is a hand-tuned override that survives regeneration.
+Files carrying the `AUTO-GENERATED` header are safe to regenerate; every other
+file is a hand-tuned override that survives regeneration.
 
 ## Companion wire SDK
 
-The wire-visible Saloon + Spatie Data package lives at `academorix-finance/wallet-sdk`
-under `sdk/finance-wallet-sdk/`. Consumers cross the service boundary
-through the SDK; this package is the SERVER-side owner of the domain.
+The wire-visible Saloon + Spatie Data package lives at
+`academorix-finance/wallet-sdk` under `sdk/finance-wallet-sdk/`. Consumers cross
+the service boundary through the SDK; this package is the SERVER-side owner of
+the domain.

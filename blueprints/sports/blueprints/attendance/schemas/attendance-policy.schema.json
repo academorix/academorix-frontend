@@ -46,23 +46,121 @@
   "x-database": {
     "engine": "postgres",
     "columns": {
-      "id": { "type": "string", "length": 30, "primary": true, "description": "Prefixed ULID: `apo_<26>`." },
-      "tenant_id": { "type": "string", "length": 30, "nullable": false, "foreign": { "table": "tenants", "column": "id", "onUpdate": "cascade", "onDelete": "cascade" } },
-      "branch_id": { "type": "string", "length": 30, "nullable": true, "foreign": { "table": "branches", "column": "id", "onUpdate": "cascade", "onDelete": "restrict" }, "description": "Branch scope. NULL = tenant-wide default. IMMUTABLE post-create." },
-      "membership_plan_id": { "type": "string", "length": 30, "nullable": true, "foreign": { "table": "membership_plans", "column": "id", "onUpdate": "cascade", "onDelete": "restrict" }, "description": "Plan scope. NULL = applies to all plans on the branch. IMMUTABLE post-create. Requires attendance_advanced_policies entitlement when set." },
-      "name": { "type": "string", "length": 128, "nullable": false, "description": "Human-readable policy name (e.g. 'Youth Academy Attendance Policy')." },
-      "grace_period_minutes": { "type": "integer", "nullable": false, "default": 15, "description": "Minutes past session.starts_at during which check-in counts as 'present'. Beyond this = 'late'." },
-      "late_after_minutes": { "type": "integer", "nullable": false, "default": 30, "description": "Minutes past session.starts_at at which late-arrival penalty applies. Must be strictly greater than grace_period_minutes." },
-      "late_arrival_penalty_type": { "type": "string", "length": 32, "nullable": false, "default": "'notify_only'", "description": "Enum: none / consume_pass_anyway / fractional_pass_consume / notify_only." },
-      "no_show_fee_cents": { "type": "bigint", "nullable": true, "description": "Fee charged per unexcused absence. NULL = no fee. When set, no_show_fee_currency required. Requires attendance_no_show_fees entitlement to actually invoice." },
-      "no_show_fee_currency": { "type": "string", "length": 3, "nullable": true, "description": "ISO 4217 3-letter currency code. Required when no_show_fee_cents > 0." },
-      "max_unexcused_absences_per_period": { "type": "integer", "nullable": false, "default": 3, "description": "Rolling-window unexcused-absence count that triggers freeze cascade. Range 1..100." },
-      "absence_freeze_period_days": { "type": "integer", "nullable": false, "default": 30, "description": "Rolling-window size in days. Range 7..365." },
-      "auto_excuse_reasons": { "type": "jsonb", "nullable": true, "description": "Array of absence_reason values that auto-flip status to 'excused' when supplied via guardian self-report > 24h in advance." },
-      "notification_config": { "type": "jsonb", "nullable": true, "description": "Object: { notify_athlete_on_first_absence: bool, notify_guardian_on_second: bool, notify_admin_on_third: bool, notify_on_late: bool }." },
-      "is_active": { "type": "boolean", "nullable": false, "default": true, "description": "Only active policies participate in PolicyResolver lookups. Deactivate to disable without deleting." },
-      "effective_from": { "type": "timestamptz", "nullable": true, "description": "Optional start of the policy's effective window." },
-      "effective_until": { "type": "timestamptz", "nullable": true, "description": "Optional end of the policy's effective window." },
+      "id": {
+        "type": "string",
+        "length": 30,
+        "primary": true,
+        "description": "Prefixed ULID: `apo_<26>`."
+      },
+      "tenant_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": {
+          "table": "tenants",
+          "column": "id",
+          "onUpdate": "cascade",
+          "onDelete": "cascade"
+        }
+      },
+      "branch_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": true,
+        "foreign": {
+          "table": "branches",
+          "column": "id",
+          "onUpdate": "cascade",
+          "onDelete": "restrict"
+        },
+        "description": "Branch scope. NULL = tenant-wide default. IMMUTABLE post-create."
+      },
+      "membership_plan_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": true,
+        "foreign": {
+          "table": "membership_plans",
+          "column": "id",
+          "onUpdate": "cascade",
+          "onDelete": "restrict"
+        },
+        "description": "Plan scope. NULL = applies to all plans on the branch. IMMUTABLE post-create. Requires attendance_advanced_policies entitlement when set."
+      },
+      "name": {
+        "type": "string",
+        "length": 128,
+        "nullable": false,
+        "description": "Human-readable policy name (e.g. 'Youth Academy Attendance Policy')."
+      },
+      "grace_period_minutes": {
+        "type": "integer",
+        "nullable": false,
+        "default": 15,
+        "description": "Minutes past session.starts_at during which check-in counts as 'present'. Beyond this = 'late'."
+      },
+      "late_after_minutes": {
+        "type": "integer",
+        "nullable": false,
+        "default": 30,
+        "description": "Minutes past session.starts_at at which late-arrival penalty applies. Must be strictly greater than grace_period_minutes."
+      },
+      "late_arrival_penalty_type": {
+        "type": "string",
+        "length": 32,
+        "nullable": false,
+        "default": "'notify_only'",
+        "description": "Enum: none / consume_pass_anyway / fractional_pass_consume / notify_only."
+      },
+      "no_show_fee_cents": {
+        "type": "bigint",
+        "nullable": true,
+        "description": "Fee charged per unexcused absence. NULL = no fee. When set, no_show_fee_currency required. Requires attendance_no_show_fees entitlement to actually invoice."
+      },
+      "no_show_fee_currency": {
+        "type": "string",
+        "length": 3,
+        "nullable": true,
+        "description": "ISO 4217 3-letter currency code. Required when no_show_fee_cents > 0."
+      },
+      "max_unexcused_absences_per_period": {
+        "type": "integer",
+        "nullable": false,
+        "default": 3,
+        "description": "Rolling-window unexcused-absence count that triggers freeze cascade. Range 1..100."
+      },
+      "absence_freeze_period_days": {
+        "type": "integer",
+        "nullable": false,
+        "default": 30,
+        "description": "Rolling-window size in days. Range 7..365."
+      },
+      "auto_excuse_reasons": {
+        "type": "jsonb",
+        "nullable": true,
+        "description": "Array of absence_reason values that auto-flip status to 'excused' when supplied via guardian self-report > 24h in advance."
+      },
+      "notification_config": {
+        "type": "jsonb",
+        "nullable": true,
+        "description": "Object: { notify_athlete_on_first_absence: bool, notify_guardian_on_second: bool, notify_admin_on_third: bool, notify_on_late: bool }."
+      },
+      "is_active": {
+        "type": "boolean",
+        "nullable": false,
+        "default": true,
+        "description": "Only active policies participate in PolicyResolver lookups. Deactivate to disable without deleting."
+      },
+      "effective_from": {
+        "type": "timestamptz",
+        "nullable": true,
+        "description": "Optional start of the policy's effective window."
+      },
+      "effective_until": {
+        "type": "timestamptz",
+        "nullable": true,
+        "description": "Optional end of the policy's effective window."
+      },
       "metadata": { "type": "jsonb", "nullable": true },
       "created_by": { "type": "string", "length": 30, "nullable": true },
       "updated_by": { "type": "string", "length": 30, "nullable": true },

@@ -4,9 +4,9 @@
  * @description Factories returning assertable scheduler mocks.
  */
 
-import { createAssertableProxy, type AssertableProxy } from '@stackra/testing';
-import { MockScheduler } from './mock-scheduler';
-import { MockTaskRunner } from './mock-task-runner';
+import { createAssertableProxy, type AssertableProxy } from "@stackra/testing";
+import { MockScheduler } from "./mock-scheduler";
+import { MockTaskRunner } from "./mock-task-runner";
 
 /**
  * Create an assertable mock scheduler.

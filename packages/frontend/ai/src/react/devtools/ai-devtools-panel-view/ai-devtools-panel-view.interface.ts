@@ -5,9 +5,9 @@
  *   React body of the `@stackra/devtools` AI panel.
  */
 
-import type { IAiClient } from '@stackra/contracts';
+import type { IAiClient } from "@stackra/contracts";
 
-import type { ChatOrchestrator } from '@/core/services/chat-orchestrator.service';
+import type { ChatOrchestrator } from "@/core/services/chat-orchestrator.service";
 
 /**
  * Props accepted by {@link AiDevtoolsPanelView}.

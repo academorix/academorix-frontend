@@ -93,8 +93,18 @@
         "nullable": true,
         "description": "Primary contact email. Not unique — the same family may raise multiple leads over time."
       },
-      "contact_phone": { "type": "string", "length": 64, "nullable": true, "description": "E.164 preferred but tolerated as raw." },
-      "contact_language": { "type": "string", "length": 8, "nullable": true, "description": "ISO 639-1 language code for follow-up communication preference." },
+      "contact_phone": {
+        "type": "string",
+        "length": 64,
+        "nullable": true,
+        "description": "E.164 preferred but tolerated as raw."
+      },
+      "contact_language": {
+        "type": "string",
+        "length": 8,
+        "nullable": true,
+        "description": "ISO 639-1 language code for follow-up communication preference."
+      },
       "athlete_names": {
         "type": "jsonb",
         "nullable": true,
@@ -166,7 +176,11 @@
         "nullable": true,
         "description": "General notes on the lead. Prefer lead_activities entries for time-stamped touchpoints."
       },
-      "metadata": { "type": "jsonb", "nullable": true, "description": "Free-form metadata bag for tenant-authored custom fields." },
+      "metadata": {
+        "type": "jsonb",
+        "nullable": true,
+        "description": "Free-form metadata bag for tenant-authored custom fields."
+      },
       "created_by": { "type": "string", "length": 64, "nullable": true },
       "updated_by": { "type": "string", "length": 64, "nullable": true },
       "deleted_by": { "type": "string", "length": 64, "nullable": true },
@@ -178,26 +192,36 @@
       { "columns": ["tenant_id", "stage", "created_at"], "name": "leads_stage_idx" },
       { "columns": ["tenant_id", "owner_id", "stage"], "name": "leads_owner_stage_idx" },
       { "columns": ["tenant_id", "source"], "name": "leads_source_idx" },
-      { "columns": ["tenant_id", "converted_at"], "name": "leads_converted_at_idx", "predicate": "converted_at IS NOT NULL" },
-      { "columns": ["tenant_id", "branch_id", "stage"], "name": "leads_branch_stage_idx", "predicate": "branch_id IS NOT NULL" },
+      {
+        "columns": ["tenant_id", "converted_at"],
+        "name": "leads_converted_at_idx",
+        "predicate": "converted_at IS NOT NULL"
+      },
+      {
+        "columns": ["tenant_id", "branch_id", "stage"],
+        "name": "leads_branch_stage_idx",
+        "predicate": "branch_id IS NOT NULL"
+      },
       { "columns": ["tenant_id", "created_at"], "name": "leads_recent_idx" }
     ]
   },
-  "required": [
-    "id",
-    "tenant_id",
-    "source",
-    "stage",
-    "contact_name",
-    "created_at",
-    "updated_at"
-  ],
+  "required": ["id", "tenant_id", "source", "stage", "contact_name", "created_at", "updated_at"],
   "properties": {
     "id": { "type": "string", "pattern": "^led_[0-9A-HJKMNP-TV-Z]{26}$" },
     "tenant_id": { "type": "string", "pattern": "^ten_[0-9A-HJKMNP-TV-Z]{26}$" },
     "source": {
       "type": "string",
-      "enum": ["web_form", "referral", "walk_in", "call", "email", "social", "trial_signup", "import", "api"]
+      "enum": [
+        "web_form",
+        "referral",
+        "walk_in",
+        "call",
+        "email",
+        "social",
+        "trial_signup",
+        "import",
+        "api"
+      ]
     },
     "source_reference": { "type": ["string", "null"], "maxLength": 255 },
     "stage": {

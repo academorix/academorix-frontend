@@ -4,4 +4,4 @@
  * @description Interfaces barrel export.
  */
 
-export type { StateFeatureOptions } from './state-feature-options.interface';
+export type { StateFeatureOptions } from "./state-feature-options.interface";

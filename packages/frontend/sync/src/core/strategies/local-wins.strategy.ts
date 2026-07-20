@@ -5,7 +5,7 @@
  *   wins.
  */
 
-import type { IConflict, IConflictResolverFn } from '@stackra/contracts';
+import type { IConflict, IConflictResolverFn } from "@stackra/contracts";
 
 /**
  * Local-wins conflict resolution strategy.

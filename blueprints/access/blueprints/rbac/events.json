@@ -71,10 +71,7 @@
       "class": "Academorix\\Rbac\\Events\\PermissionCreated",
       "trigger": "New row inserted into `permissions`. Fires for both catalogue-loader inserts (created_by null) and tenant-created custom permissions.",
       "queue": "notifications",
-      "consumers": [
-        "activity::WriteToActivityLog",
-        "observability::EmitPermissionCreatedMetric"
-      ],
+      "consumers": ["activity::WriteToActivityLog", "observability::EmitPermissionCreatedMetric"],
       "payload": {
         "permission_id": "ULID (`per_...`)",
         "tenant_id": "ULID | null",
@@ -283,10 +280,7 @@
       "class": "Academorix\\Rbac\\Events\\TenantDefaultRolesSeeded",
       "trigger": "TenantDefaultRoleSeeder finished seeding a tenant's default role set on TenantProvisioned OR on `rbac:seed-defaults --force` re-seed.",
       "queue": "notifications",
-      "consumers": [
-        "activity::WriteToActivityLog",
-        "observability::EmitDefaultRolesSeededMetric"
-      ],
+      "consumers": ["activity::WriteToActivityLog", "observability::EmitDefaultRolesSeededMetric"],
       "payload": {
         "tenant_id": "ULID",
         "application_id": "ULID",
@@ -302,9 +296,7 @@
       "class": "Academorix\\Rbac\\Events\\PermissionCacheInvalidated",
       "trigger": "PermissionCacheManager purged one or more cache keys. Fires ONCE per invalidation call (may batch many keys).",
       "queue": null,
-      "consumers": [
-        "observability::EmitPermissionCacheInvalidatedMetric"
-      ],
+      "consumers": ["observability::EmitPermissionCacheInvalidatedMetric"],
       "payload": {
         "tenant_id": "ULID | null",
         "principal_type": "string | null (null = tenant-wide)",
@@ -318,10 +310,7 @@
       "class": "Academorix\\Rbac\\Events\\GuardMismatchRefused",
       "trigger": "RoleHasPermissionsObserver OR ModelHasRolesObserver refused a cross-guard write. Compliance-critical.",
       "queue": "notifications-critical",
-      "consumers": [
-        "audit::WriteToAuditLog",
-        "observability::EmitGuardMismatchMetric"
-      ],
+      "consumers": ["audit::WriteToAuditLog", "observability::EmitGuardMismatchMetric"],
       "payload": {
         "actor_id": "ULID",
         "attempted_role_guard": "string",
@@ -336,10 +325,7 @@
       "class": "Academorix\\Rbac\\Events\\ApplicationMismatchRefused",
       "trigger": "RoleHasPermissionsObserver OR ModelHasRolesObserver refused a cross-Application write.",
       "queue": "notifications-critical",
-      "consumers": [
-        "audit::WriteToAuditLog",
-        "observability::EmitApplicationMismatchMetric"
-      ],
+      "consumers": ["audit::WriteToAuditLog", "observability::EmitApplicationMismatchMetric"],
       "payload": {
         "actor_id": "ULID",
         "attempted_role_application_id": "ULID",

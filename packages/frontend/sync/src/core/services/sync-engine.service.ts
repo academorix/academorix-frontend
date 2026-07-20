@@ -8,8 +8,8 @@
  *   auto-sync behind the {@link ITabCoordinator} leader when present.
  */
 
-import { Inject, Injectable, Optional } from '@stackra/container';
-import { BehaviorSubject, type Observable, type Subscription } from 'rxjs';
+import { Inject, Injectable, Optional } from "@stackra/container";
+import { BehaviorSubject, type Observable, type Subscription } from "rxjs";
 import type {
   IGlobalSyncState,
   ISyncConfig,
@@ -18,7 +18,7 @@ import type {
   ISyncResult,
   ISyncState,
   ITabCoordinator,
-} from '@stackra/contracts';
+} from "@stackra/contracts";
 import {
   CHECKPOINT_SERVICE,
   NETWORK_DETECTOR,
@@ -28,14 +28,14 @@ import {
   SyncDirection,
   SyncStatus,
   TAB_COORDINATOR,
-} from '@stackra/contracts';
-import { Logger } from '@stackra/logger';
+} from "@stackra/contracts";
+import { Logger } from "@stackra/logger";
 
-import { SyncError } from '../errors/sync.error';
-import type { CheckpointService } from './checkpoint.service';
-import type { NetworkDetector } from './network-detector.service';
-import type { PullService } from './pull.service';
-import type { PushService } from './push.service';
+import { SyncError } from "../errors/sync.error";
+import type { CheckpointService } from "./checkpoint.service";
+import type { NetworkDetector } from "./network-detector.service";
+import type { PullService } from "./pull.service";
+import type { PushService } from "./push.service";
 
 /**
  * SyncEngine — orchestrates bidirectional synchronization.
@@ -64,7 +64,7 @@ export class SyncEngine {
     @Inject(PULL_SERVICE) private readonly pullService: PullService,
     @Inject(PUSH_SERVICE) private readonly pushService: PushService,
     @Inject(CHECKPOINT_SERVICE) private readonly checkpointService: CheckpointService,
-    @Optional() @Inject(TAB_COORDINATOR) private readonly coordinator?: ITabCoordinator
+    @Optional() @Inject(TAB_COORDINATOR) private readonly coordinator?: ITabCoordinator,
   ) {
     this.config = {
       baseUrl: config.baseUrl,
@@ -106,7 +106,7 @@ export class SyncEngine {
           SyncDirection.Pull,
           collection,
           (i / collectionsToSync.length) * 100,
-          'Pulling'
+          "Pulling",
         );
 
         const result = await this.pullService.pull(collection, {
@@ -137,7 +137,7 @@ export class SyncEngine {
         });
       }
 
-      this.emitProgress(SyncDirection.Pull, collectionsToSync[0]!, 100, 'Pull completed');
+      this.emitProgress(SyncDirection.Pull, collectionsToSync[0]!, 100, "Pull completed");
 
       return {
         direction: SyncDirection.Pull,
@@ -152,8 +152,8 @@ export class SyncEngine {
     } catch (error: unknown) {
       throw new SyncError(
         `Pull failed: ${error instanceof Error ? error.message : String(error)}`,
-        'PULL_FAILED',
-        { collections: collectionsToSync }
+        "PULL_FAILED",
+        { collections: collectionsToSync },
       );
     }
   }
@@ -174,7 +174,7 @@ export class SyncEngine {
           SyncDirection.Push,
           collection,
           (i / collectionsToSync.length) * 100,
-          'Pushing'
+          "Pushing",
         );
 
         const result = await this.pushService.push(collection, {
@@ -203,7 +203,7 @@ export class SyncEngine {
         });
       }
 
-      this.emitProgress(SyncDirection.Push, collectionsToSync[0]!, 100, 'Push completed');
+      this.emitProgress(SyncDirection.Push, collectionsToSync[0]!, 100, "Push completed");
 
       return {
         direction: SyncDirection.Push,
@@ -218,8 +218,8 @@ export class SyncEngine {
     } catch (error: unknown) {
       throw new SyncError(
         `Push failed: ${error instanceof Error ? error.message : String(error)}`,
-        'PUSH_FAILED',
-        { collections: collectionsToSync }
+        "PUSH_FAILED",
+        { collections: collectionsToSync },
       );
     }
   }
@@ -236,7 +236,7 @@ export class SyncEngine {
         SyncDirection.Bidirectional,
         collectionsToSync[0]!,
         0,
-        'Starting full sync'
+        "Starting full sync",
       );
 
       const pushResult = await this.pushChanges(collectionsToSync);
@@ -244,7 +244,7 @@ export class SyncEngine {
         SyncDirection.Bidirectional,
         collectionsToSync[0]!,
         50,
-        'Push done, pulling'
+        "Push done, pulling",
       );
 
       const pullResult = await this.pullChanges(collectionsToSync);
@@ -252,7 +252,7 @@ export class SyncEngine {
         SyncDirection.Bidirectional,
         collectionsToSync[0]!,
         100,
-        'Full sync completed'
+        "Full sync completed",
       );
 
       return {
@@ -268,8 +268,8 @@ export class SyncEngine {
     } catch (error: unknown) {
       throw new SyncError(
         `Full sync failed: ${error instanceof Error ? error.message : String(error)}`,
-        'FULL_SYNC_FAILED',
-        { collections: collectionsToSync }
+        "FULL_SYNC_FAILED",
+        { collections: collectionsToSync },
       );
     }
   }
@@ -295,7 +295,7 @@ export class SyncEngine {
   public startAutoSync(intervalMs?: number): void {
     const interval = intervalMs ?? this.config.autoSyncInterval;
     if (interval <= 0) {
-      throw new SyncError('Auto-sync interval must be > 0', 'INVALID_INTERVAL');
+      throw new SyncError("Auto-sync interval must be > 0", "INVALID_INTERVAL");
     }
 
     this.stopAutoSync();
@@ -353,7 +353,7 @@ export class SyncEngine {
   private resolveCollections(collections?: string[]): string[] {
     const resolved = collections ?? Array.from(this.syncStates.keys());
     if (resolved.length === 0) {
-      throw new SyncError('No collections specified for sync', 'NO_COLLECTIONS');
+      throw new SyncError("No collections specified for sync", "NO_COLLECTIONS");
     }
     return resolved;
   }
@@ -413,7 +413,7 @@ export class SyncEngine {
     direction: SyncDirection,
     collection: string,
     progress: number,
-    operation: string
+    operation: string,
   ): void {
     this.progressSubject.next({
       direction,
@@ -430,7 +430,7 @@ export class SyncEngine {
       const isLeader = this.coordinator ? this.coordinator.isLeader() : true;
       if (!isLeader) return;
       if (this.networkDetector.isOnline()) {
-        this.fullSync().catch((e) => this.logger.error('Auto-sync failed', { error: e }));
+        this.fullSync().catch((e) => this.logger.error("Auto-sync failed", { error: e }));
       }
     }, interval);
   }
@@ -446,8 +446,8 @@ export class SyncEngine {
     this.networkSubscription = this.networkDetector.status$.subscribe((status) => {
       const isLeader = this.coordinator ? this.coordinator.isLeader() : true;
       if (status.isOnline && isLeader) {
-        this.logger.info('[SyncEngine] Network reconnected — triggering sync');
-        this.fullSync().catch((e) => this.logger.error('Reconnect sync failed', { error: e }));
+        this.logger.info("[SyncEngine] Network reconnected — triggering sync");
+        this.fullSync().catch((e) => this.logger.error("Reconnect sync failed", { error: e }));
       }
     });
   }
@@ -469,7 +469,7 @@ export class SyncEngine {
       }
       this.updateGlobalState();
     } catch (error: unknown) {
-      this.logger.warn('[SyncEngine] Failed to restore checkpoints', { error });
+      this.logger.warn("[SyncEngine] Failed to restore checkpoints", { error });
     }
   }
 }

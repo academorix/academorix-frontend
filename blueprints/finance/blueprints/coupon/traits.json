@@ -37,13 +37,22 @@
       { "trait": "Academorix\\Foundation\\Concerns\\Searchable" }
     ],
     "tenants": [
-      { "trait": "Academorix\\Tenancy\\Concerns\\BelongsToTenant", "reason": "Every owned row carries tenant_id per tenancy-columns.md §3." }
+      {
+        "trait": "Academorix\\Tenancy\\Concerns\\BelongsToTenant",
+        "reason": "Every owned row carries tenant_id per tenancy-columns.md §3."
+      }
     ],
     "audit": [
-      { "trait": "Academorix\\Audit\\Concerns\\Auditable", "reason": "Every write is compliance-relevant (financial-record 7-year retention). Every state transition on Coupon (is_active, valid_until, usage_count, applicable_plan_ids) + every reversed_at on CouponRedemption is audit-critical." }
+      {
+        "trait": "Academorix\\Audit\\Concerns\\Auditable",
+        "reason": "Every write is compliance-relevant (financial-record 7-year retention). Every state transition on Coupon (is_active, valid_until, usage_count, applicable_plan_ids) + every reversed_at on CouponRedemption is audit-critical."
+      }
     ],
     "activity": [
-      { "trait": "Academorix\\Activity\\Concerns\\HasActivityLog", "reason": "Coupon lifecycle transitions (created / activated / deactivated / expired / usage_cap_reached) feed the staff-visible activity feed. NOT on CouponRedemption (high volume — redemptions surface via CouponRedeemed event + the redemption ledger UI instead)." }
+      {
+        "trait": "Academorix\\Activity\\Concerns\\HasActivityLog",
+        "reason": "Coupon lifecycle transitions (created / activated / deactivated / expired / usage_cap_reached) feed the staff-visible activity feed. NOT on CouponRedemption (high volume — redemptions surface via CouponRedeemed event + the redemption ledger UI instead)."
+      }
     ]
   },
   "composition": {

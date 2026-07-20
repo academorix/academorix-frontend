@@ -6,10 +6,7 @@
     "publishedBy": "entitlements",
     "seededFrom": "BusinessType.default_config.entitlements"
   },
-  "kinds": [
-    { "kind": "boolean" },
-    { "kind": "slot" }
-  ],
+  "kinds": [{ "kind": "boolean" }, { "kind": "slot" }],
   "entitlements": [
     {
       "key": "theme_capture",

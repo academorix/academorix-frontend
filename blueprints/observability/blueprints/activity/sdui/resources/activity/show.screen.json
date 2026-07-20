@@ -71,7 +71,9 @@
                           "kind": "Text",
                           "props": { "as": "p", "className": "text-muted text-sm" },
                           "bindings": {
-                            "children": { "$expr": "formatDateTime(activity.created_at) + ' • ' + activity.log_name" }
+                            "children": {
+                              "$expr": "formatDateTime(activity.created_at) + ' • ' + activity.log_name"
+                            }
                           }
                         }
                       ]

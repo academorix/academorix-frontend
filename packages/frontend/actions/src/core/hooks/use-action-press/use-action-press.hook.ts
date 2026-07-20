@@ -5,11 +5,11 @@
  *   descriptor to an `onPress` handler for HeroUI/RN pressables.
  */
 
-import { useCallback } from 'react';
-import type { IActionDescriptor, IActionResponse } from '@stackra/contracts';
+import { useCallback } from "react";
+import type { IActionDescriptor, IActionResponse } from "@stackra/contracts";
 
-import { useAction } from '../use-action';
-import type { IUseActionPressOptions, IUseActionPressResult } from './use-action-press.interface';
+import { useAction } from "../use-action";
+import type { IUseActionPressOptions, IUseActionPressResult } from "./use-action-press.interface";
 
 /**
  * Bind a single descriptor to a stable `onPress` handler suitable for
@@ -40,7 +40,7 @@ import type { IUseActionPressOptions, IUseActionPressResult } from './use-action
  */
 export function useActionPress<D extends IActionDescriptor = IActionDescriptor, R = unknown>(
   descriptor: D,
-  options: IUseActionPressOptions<D, R> = {}
+  options: IUseActionPressOptions<D, R> = {},
 ): IUseActionPressResult<R> {
   const { run, reset, isPending, response, data, error } = useAction<D, R>(descriptor.kind);
   const { context, onDone } = options;

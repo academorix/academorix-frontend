@@ -43,23 +43,97 @@
   "x-database": {
     "engine": "postgres",
     "columns": {
-      "id": { "type": "string", "length": 64, "primary": true, "description": "Prefixed ULID: `crn_<26>`." },
-      "tenant_id": { "type": "string", "length": 64, "nullable": false, "foreign": { "table": "tenants", "column": "id", "onDelete": "cascade" } },
-      "credit_note_number": { "type": "string", "length": 32, "nullable": false, "description": "Sequential per tenant per year. Format: 'CN-{YYYY}-{seq:06}'. Generated via Postgres advisory lock." },
-      "original_invoice_id": { "type": "string", "length": 64, "nullable": false, "foreign": { "table": "invoices", "column": "id", "onDelete": "restrict" }, "description": "The paid invoice this credit note reverses. RESTRICT — invoices cannot be hard-deleted while credit notes reference them." },
-      "reason": { "type": "string", "length": 48, "nullable": false, "description": "Enum: refund / adjustment / write_off / duplicate / customer_dispute_resolved / accounting_correction." },
-      "reason_note": { "type": "text", "nullable": true, "description": "Free-form explanation. Required when reason IN ('adjustment', 'customer_dispute_resolved', 'accounting_correction')." },
-      "amount_cents": { "type": "bigint", "nullable": false, "description": "Always POSITIVE. Represents the credit issued back to the customer." },
-      "currency": { "type": "string", "length": 3, "nullable": false, "description": "Must match original_invoice.currency." },
-      "tax_amount_cents": { "type": "bigint", "nullable": false, "default": 0, "description": "Proportional tax reversal: (amount_cents / original_invoice.total_cents) × original_invoice.tax_amount_cents. Rounded via bankers'." },
-      "issue_date": { "type": "date", "nullable": false, "description": "Frozen at creation. Never mutated." },
-      "issued_by_user_id": { "type": "string", "length": 64, "nullable": false, "foreign": { "table": "users", "column": "id", "onDelete": "restrict" }, "description": "The admin who issued. RESTRICT for audit integrity." },
-      "applied_to_type": { "type": "string", "length": 96, "nullable": true, "description": "Polymorphic target when applied: refund::Refund / invoice::Invoice / user::UserBalance." },
+      "id": {
+        "type": "string",
+        "length": 64,
+        "primary": true,
+        "description": "Prefixed ULID: `crn_<26>`."
+      },
+      "tenant_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "foreign": { "table": "tenants", "column": "id", "onDelete": "cascade" }
+      },
+      "credit_note_number": {
+        "type": "string",
+        "length": 32,
+        "nullable": false,
+        "description": "Sequential per tenant per year. Format: 'CN-{YYYY}-{seq:06}'. Generated via Postgres advisory lock."
+      },
+      "original_invoice_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "foreign": { "table": "invoices", "column": "id", "onDelete": "restrict" },
+        "description": "The paid invoice this credit note reverses. RESTRICT — invoices cannot be hard-deleted while credit notes reference them."
+      },
+      "reason": {
+        "type": "string",
+        "length": 48,
+        "nullable": false,
+        "description": "Enum: refund / adjustment / write_off / duplicate / customer_dispute_resolved / accounting_correction."
+      },
+      "reason_note": {
+        "type": "text",
+        "nullable": true,
+        "description": "Free-form explanation. Required when reason IN ('adjustment', 'customer_dispute_resolved', 'accounting_correction')."
+      },
+      "amount_cents": {
+        "type": "bigint",
+        "nullable": false,
+        "description": "Always POSITIVE. Represents the credit issued back to the customer."
+      },
+      "currency": {
+        "type": "string",
+        "length": 3,
+        "nullable": false,
+        "description": "Must match original_invoice.currency."
+      },
+      "tax_amount_cents": {
+        "type": "bigint",
+        "nullable": false,
+        "default": 0,
+        "description": "Proportional tax reversal: (amount_cents / original_invoice.total_cents) × original_invoice.tax_amount_cents. Rounded via bankers'."
+      },
+      "issue_date": {
+        "type": "date",
+        "nullable": false,
+        "description": "Frozen at creation. Never mutated."
+      },
+      "issued_by_user_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "foreign": { "table": "users", "column": "id", "onDelete": "restrict" },
+        "description": "The admin who issued. RESTRICT for audit integrity."
+      },
+      "applied_to_type": {
+        "type": "string",
+        "length": 96,
+        "nullable": true,
+        "description": "Polymorphic target when applied: refund::Refund / invoice::Invoice / user::UserBalance."
+      },
       "applied_to_id": { "type": "string", "length": 64, "nullable": true },
-      "pdf_url": { "type": "string", "length": 512, "nullable": true, "description": "Signed S3 URL to the credit-note PDF. Regenerated per viewer request." },
-      "status": { "type": "string", "length": 24, "nullable": false, "default": "'draft'", "description": "Enum: draft / issued / applied / voided." },
+      "pdf_url": {
+        "type": "string",
+        "length": 512,
+        "nullable": true,
+        "description": "Signed S3 URL to the credit-note PDF. Regenerated per viewer request."
+      },
+      "status": {
+        "type": "string",
+        "length": 24,
+        "nullable": false,
+        "default": "'draft'",
+        "description": "Enum: draft / issued / applied / voided."
+      },
       "applied_at": { "type": "timestamptz", "nullable": true },
-      "voided_at": { "type": "timestamptz", "nullable": true, "description": "Set only when status transitions draft → voided. issued/applied credit notes are IMMUTABLE." },
+      "voided_at": {
+        "type": "timestamptz",
+        "nullable": true,
+        "description": "Set only when status transitions draft → voided. issued/applied credit notes are IMMUTABLE."
+      },
       "void_reason": { "type": "string", "length": 256, "nullable": true },
       "created_by": { "type": "string", "length": 64, "nullable": true },
       "updated_by": { "type": "string", "length": 64, "nullable": true },
@@ -67,10 +141,24 @@
       "updated_at": { "type": "timestamptz", "nullable": false }
     },
     "indexes": [
-      { "columns": ["tenant_id", "credit_note_number"], "unique": true, "name": "credit_notes_tenant_number_unique" },
-      { "columns": ["tenant_id", "original_invoice_id"], "name": "credit_notes_original_invoice_idx" },
-      { "columns": ["tenant_id", "status", "issue_date"], "name": "credit_notes_status_recent_idx" },
-      { "columns": ["applied_to_type", "applied_to_id"], "name": "credit_notes_applied_to_idx", "predicate": "applied_to_id IS NOT NULL" }
+      {
+        "columns": ["tenant_id", "credit_note_number"],
+        "unique": true,
+        "name": "credit_notes_tenant_number_unique"
+      },
+      {
+        "columns": ["tenant_id", "original_invoice_id"],
+        "name": "credit_notes_original_invoice_idx"
+      },
+      {
+        "columns": ["tenant_id", "status", "issue_date"],
+        "name": "credit_notes_status_recent_idx"
+      },
+      {
+        "columns": ["applied_to_type", "applied_to_id"],
+        "name": "credit_notes_applied_to_idx",
+        "predicate": "applied_to_id IS NOT NULL"
+      }
     ]
   },
   "required": [
@@ -93,7 +181,17 @@
     "tenant_id": { "type": "string", "pattern": "^ten_[0-9A-HJKMNP-TV-Z]{26}$" },
     "credit_note_number": { "type": "string", "pattern": "^CN-[0-9]{4}-[0-9]{6}$" },
     "original_invoice_id": { "type": "string", "pattern": "^ivc_[0-9A-HJKMNP-TV-Z]{26}$" },
-    "reason": { "type": "string", "enum": ["refund", "adjustment", "write_off", "duplicate", "customer_dispute_resolved", "accounting_correction"] },
+    "reason": {
+      "type": "string",
+      "enum": [
+        "refund",
+        "adjustment",
+        "write_off",
+        "duplicate",
+        "customer_dispute_resolved",
+        "accounting_correction"
+      ]
+    },
     "reason_note": { "type": ["string", "null"] },
     "amount_cents": { "type": "integer", "exclusiveMinimum": 0 },
     "currency": { "type": "string", "pattern": "^[A-Z]{3}$" },

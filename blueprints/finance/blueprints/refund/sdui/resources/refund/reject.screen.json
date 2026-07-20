@@ -33,8 +33,19 @@
             "hidden": { "$expr": "refund.initiated_by_user_id !== auth.user.id" }
           },
           "children": [
-            { "kind": "Text", "props": { "className": "font-medium", "children": "You cannot reject your own refund request." } },
-            { "kind": "Text", "props": { "children": "Segregation of duties (SOX §404) requires another approver to review this refund. Please forward to a colleague." } }
+            {
+              "kind": "Text",
+              "props": {
+                "className": "font-medium",
+                "children": "You cannot reject your own refund request."
+              }
+            },
+            {
+              "kind": "Text",
+              "props": {
+                "children": "Segregation of duties (SOX §404) requires another approver to review this refund. Please forward to a colleague."
+              }
+            }
           ]
         },
         {
@@ -61,18 +72,34 @@
                 "required": true,
                 "maxLength": 256
               },
-              "actions": { "onChange": { "kind": "form.set", "field": "rejection_reason", "valueExpr": "$value" } }
+              "actions": {
+                "onChange": {
+                  "kind": "form.set",
+                  "field": "rejection_reason",
+                  "valueExpr": "$value"
+                }
+              }
             },
             {
               "kind": "TextArea",
-              "props": { "label": "Internal notes (optional)", "placeholder": "Notes for the audit trail — not customer-visible." },
-              "actions": { "onChange": { "kind": "form.set", "field": "notes", "valueExpr": "$value" } }
+              "props": {
+                "label": "Internal notes (optional)",
+                "placeholder": "Notes for the audit trail — not customer-visible."
+              },
+              "actions": {
+                "onChange": { "kind": "form.set", "field": "notes", "valueExpr": "$value" }
+              }
             },
             {
               "kind": "Alert",
               "props": { "variant": "warning" },
               "children": [
-                { "kind": "Text", "props": { "children": "Rejecting this refund is final. The customer will be notified with your reason. The original payment remains unchanged." } }
+                {
+                  "kind": "Text",
+                  "props": {
+                    "children": "Rejecting this refund is final. The customer will be notified with your reason. The original payment remains unchanged."
+                  }
+                }
               ]
             },
             {
@@ -86,7 +113,11 @@
                 },
                 {
                   "kind": "Button",
-                  "props": { "variant": "danger", "leadingIcon": "x-mark", "children": "Reject refund" },
+                  "props": {
+                    "variant": "danger",
+                    "leadingIcon": "x-mark",
+                    "children": "Reject refund"
+                  },
                   "actions": {
                     "onPress": {
                       "kind": "http.post",
@@ -100,7 +131,9 @@
                     }
                   },
                   "bindings": {
-                    "disabled": { "$expr": "!form.rejection_reason || form.rejection_reason.length < 1" }
+                    "disabled": {
+                      "$expr": "!form.rejection_reason || form.rejection_reason.length < 1"
+                    }
                   }
                 }
               ]

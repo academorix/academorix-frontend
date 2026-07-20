@@ -4,9 +4,9 @@
  * @description Vitest configuration for @stackra/monitoring.
  */
 
-import { defineConfig, mergeConfig } from 'vitest/config';
-import path from 'node:path';
-import preset from '@stackra/testing/preset';
+import { defineConfig, mergeConfig } from "vitest/config";
+import path from "node:path";
+import preset from "@stackra/testing/preset";
 
 export default mergeConfig(
   preset,
@@ -14,12 +14,12 @@ export default mergeConfig(
     oxc: false,
     esbuild: false,
     test: {
-      environment: 'node',
+      environment: "node",
     },
     resolve: {
       alias: {
-        '@': path.resolve(__dirname, './src'),
+        "@": path.resolve(__dirname, "./src"),
       },
     },
-  })
+  }),
 );

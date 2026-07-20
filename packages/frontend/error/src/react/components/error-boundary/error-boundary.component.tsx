@@ -44,7 +44,7 @@ interface IErrorBoundaryState {
  * ```
  */
 export class ErrorBoundary extends Component<IErrorBoundaryProps, IErrorBoundaryState> {
-  public state: IErrorBoundaryState = {
+  public override state: IErrorBoundaryState = {
     error: null,
   };
 
@@ -64,7 +64,7 @@ export class ErrorBoundary extends Component<IErrorBoundaryProps, IErrorBoundary
    * @param error - The thrown error.
    * @param info - React error info (component stack).
    */
-  public componentDidCatch(error: Error, info: ErrorInfo): void {
+  public override componentDidCatch(error: Error, info: ErrorInfo): void {
     this.props.onError?.(error, info);
   }
 
@@ -73,7 +73,7 @@ export class ErrorBoundary extends Component<IErrorBoundaryProps, IErrorBoundary
    *
    * @param prevProps - The previous props.
    */
-  public componentDidUpdate(prevProps: Readonly<IErrorBoundaryProps>): void {
+  public override componentDidUpdate(prevProps: Readonly<IErrorBoundaryProps>): void {
     if (this.state.error === null) return;
     if (haveKeysChanged(prevProps.resetKeys, this.props.resetKeys)) {
       this.reset("keys");
@@ -95,7 +95,7 @@ export class ErrorBoundary extends Component<IErrorBoundaryProps, IErrorBoundary
    *
    * @returns The rendered subtree.
    */
-  public render(): ReactNode {
+  public override render(): ReactNode {
     const { error } = this.state;
 
     if (error === null) {

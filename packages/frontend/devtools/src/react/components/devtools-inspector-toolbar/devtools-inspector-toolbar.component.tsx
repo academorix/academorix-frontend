@@ -4,13 +4,13 @@
  * @description Header button that toggles the inspector overlay.
  */
 
-import { useCallback, type ReactElement } from 'react';
-import { Button, Tooltip } from '@stackra/ui/react';
-import { CursorArrowRaysIcon } from '@stackra/ui/icons/heroicon/outline';
+import { useCallback, type ReactElement } from "react";
+import { Button, Tooltip } from "@stackra/ui/react";
+import { CursorArrowRaysIcon } from "@stackra/ui/icons/heroicon/outline";
 
-import { useDevtoolsContext } from '../../hooks/use-devtools-context.hook';
-import { useDevtoolsInspector } from '../../hooks/use-devtools-inspector.hook';
-import type { DevtoolsInspectorToolbarProps } from './devtools-inspector-toolbar.interface';
+import { useDevtoolsContext } from "../../hooks/use-devtools-context.hook";
+import { useDevtoolsInspector } from "../../hooks/use-devtools-inspector.hook";
+import type { DevtoolsInspectorToolbarProps } from "./devtools-inspector-toolbar.interface";
 
 /**
  * Inspector-toolbar toggle.
@@ -41,11 +41,11 @@ export function DevtoolsInspectorToolbar({
     <Tooltip>
       <Tooltip.Trigger>
         <Button
-          aria-label={enabled ? 'Disable inspector' : 'Enable inspector'}
+          aria-label={enabled ? "Disable inspector" : "Enable inspector"}
           aria-pressed={enabled}
           className={className}
           size="sm"
-          variant={enabled ? 'primary' : 'ghost'}
+          variant={enabled ? "primary" : "ghost"}
           isIconOnly
           onPress={handleToggle}
           data-devtools-inspector-toolbar=""

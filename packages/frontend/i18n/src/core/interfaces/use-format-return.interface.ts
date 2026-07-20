@@ -4,7 +4,7 @@
  * @description Return type of `useFormat()`.
  */
 
-import type { IIntlFormatter } from '../services';
+import type { IIntlFormatter } from "../services";
 
 /**
  * Return type of `useFormat()` — an `IIntlFormatter` extended with the

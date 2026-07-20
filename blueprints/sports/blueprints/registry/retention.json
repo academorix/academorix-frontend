@@ -50,7 +50,11 @@
         "state": "is_active=false OR deleted_at IS NOT NULL",
         "days": "sports_registry.retention.custom_deactivated_days (default 730)"
       },
-      "purge": { "trigger": "deactivation window past + no references", "action": "hard delete", "job": "PurgeArchivedRegistryRowsJob" }
+      "purge": {
+        "trigger": "deactivation window past + no references",
+        "action": "hard delete",
+        "job": "PurgeArchivedRegistryRowsJob"
+      }
     },
     {
       "entity": "Position (platform-seeded)",
@@ -65,7 +69,11 @@
         "state": "is_active=false OR deleted_at IS NOT NULL",
         "days": "sports_registry.retention.custom_deactivated_days (default 730)"
       },
-      "purge": { "trigger": "deactivation window past + no references", "action": "hard delete", "job": "PurgeArchivedRegistryRowsJob" }
+      "purge": {
+        "trigger": "deactivation window past + no references",
+        "action": "hard delete",
+        "job": "PurgeArchivedRegistryRowsJob"
+      }
     },
     {
       "entity": "audits (SportPrefixResolutionFailed)",
@@ -89,7 +97,10 @@
     {
       "entity": "cache keys (sports:*)",
       "hot": { "days": "seconds — TTL-driven" },
-      "purge": { "trigger": "TTL expiry OR invalidation on Registry mutation", "action": "Redis EXPIRE" }
+      "purge": {
+        "trigger": "TTL expiry OR invalidation on Registry mutation",
+        "action": "Redis EXPIRE"
+      }
     }
   ],
   "notes": [

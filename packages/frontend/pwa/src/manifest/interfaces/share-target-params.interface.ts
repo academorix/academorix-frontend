@@ -6,7 +6,7 @@
  *   and any attached files.
  */
 
-import type { IShareTargetFile } from './share-target-file.interface';
+import type { IShareTargetFile } from "./share-target-file.interface";
 
 /**
  * Names of the form fields the PWA expects the browser to POST when

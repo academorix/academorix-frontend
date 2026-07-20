@@ -22,11 +22,11 @@
  * ```
  */
 
-export { MockRealtimeManager } from './mock-realtime-manager';
-export { MockRealtimeConnection } from './mock-realtime-connection';
+export { MockRealtimeManager } from "./mock-realtime-manager";
+export { MockRealtimeConnection } from "./mock-realtime-connection";
 export {
   MockRealtimeChannel,
   MockRealtimePresenceChannel,
   type RecordedWhisper,
-} from './mock-realtime-channel';
-export { createMockRealtime, createMockRealtimeConnection } from './create-mock-realtime';
+} from "./mock-realtime-channel";
+export { createMockRealtime, createMockRealtimeConnection } from "./create-mock-realtime";

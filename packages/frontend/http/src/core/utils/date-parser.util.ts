@@ -33,11 +33,11 @@ export class DateParser {
   public static parseDates(input: unknown): unknown {
     if (input === null || input === undefined) return input;
 
-    if (typeof input === 'string' && DateParser.ISO_8601_REGEX.test(input)) {
+    if (typeof input === "string" && DateParser.ISO_8601_REGEX.test(input)) {
       return new Date(input);
     }
 
-    if (typeof input !== 'object') return input;
+    if (typeof input !== "object") return input;
     if (input instanceof Date) return input;
 
     if (Array.isArray(input)) {
@@ -61,7 +61,7 @@ export class DateParser {
   public static serializeDates(input: unknown): unknown {
     if (input === null || input === undefined) return input;
     if (input instanceof Date) return input.toISOString();
-    if (typeof input !== 'object') return input;
+    if (typeof input !== "object") return input;
 
     if (Array.isArray(input)) {
       return input.map((item) => DateParser.serializeDates(item));

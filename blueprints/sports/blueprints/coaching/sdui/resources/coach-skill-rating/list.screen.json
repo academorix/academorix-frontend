@@ -32,7 +32,11 @@
       "children": [
         {
           "kind": "Alert",
-          "props": { "variant": "info", "title": "Enterprise feature", "children": "Skill ratings require the Medium+ tier. Upgrade to enable." },
+          "props": {
+            "variant": "info",
+            "title": "Enterprise feature",
+            "children": "Skill ratings require the Medium+ tier. Upgrade to enable."
+          },
           "bindings": { "hidden": { "$expr": "$ref('features.coaching.skill_ratings')" } }
         },
         {
@@ -43,14 +47,29 @@
             {
               "kind": "View",
               "children": [
-                { "kind": "Text", "props": { "as": "h1", "className": "text-2xl font-semibold", "children": "Coach skill ratings" } },
-                { "kind": "Text", "props": { "className": "text-sm text-muted", "children": "Per-coach per-Sport/Discipline/Position ratings. Feed athlete↔coach match-making." } }
+                {
+                  "kind": "Text",
+                  "props": {
+                    "as": "h1",
+                    "className": "text-2xl font-semibold",
+                    "children": "Coach skill ratings"
+                  }
+                },
+                {
+                  "kind": "Text",
+                  "props": {
+                    "className": "text-sm text-muted",
+                    "children": "Per-coach per-Sport/Discipline/Position ratings. Feed athlete↔coach match-making."
+                  }
+                }
               ]
             },
             {
               "kind": "Button",
               "props": { "variant": "primary", "leadingIcon": "star", "children": "Record rating" },
-              "actions": { "onPress": { "kind": "navigate", "toExpr": "'/tenant/coach-skill-ratings/create'" } },
+              "actions": {
+                "onPress": { "kind": "navigate", "toExpr": "'/tenant/coach-skill-ratings/create'" }
+              },
               "requiresPermission": "coach_skill_ratings.create"
             }
           ]
@@ -58,9 +77,21 @@
         {
           "kind": "Table",
           "props": { "aria-label": "Skill ratings table" },
-          "bindings": { "rows": { "$ref": "ratings" }, "isLoading": { "$ref": "ratings.isLoading" }, "hidden": { "$expr": "!$ref('features.coaching.skill_ratings')" } },
+          "bindings": {
+            "rows": { "$ref": "ratings" },
+            "isLoading": { "$ref": "ratings.isLoading" },
+            "hidden": { "$expr": "!$ref('features.coaching.skill_ratings')" }
+          },
           "columns": [
-            { "key": "coach", "label": "Coach", "renderer": { "kind": "Text", "props": { "className": "font-medium" }, "bindings": { "children": { "$ref": "row.coach_display_name" } } } },
+            {
+              "key": "coach",
+              "label": "Coach",
+              "renderer": {
+                "kind": "Text",
+                "props": { "className": "font-medium" },
+                "bindings": { "children": { "$ref": "row.coach_display_name" } }
+              }
+            },
             {
               "key": "ratable",
               "label": "Rating on",
@@ -68,8 +99,16 @@
                 "kind": "View",
                 "props": { "className": "flex items-center gap-2" },
                 "children": [
-                  { "kind": "Chip", "props": { "size": "xs" }, "bindings": { "children": { "$ref": "row.ratable_type" } } },
-                  { "kind": "Text", "props": { "className": "text-sm" }, "bindings": { "children": { "$ref": "row.ratable_display_name" } } }
+                  {
+                    "kind": "Chip",
+                    "props": { "size": "xs" },
+                    "bindings": { "children": { "$ref": "row.ratable_type" } }
+                  },
+                  {
+                    "kind": "Text",
+                    "props": { "className": "text-sm" },
+                    "bindings": { "children": { "$ref": "row.ratable_display_name" } }
+                  }
                 ]
               }
             },
@@ -85,13 +124,24 @@
                 }
               }
             },
-            { "key": "rated_at", "label": "Rated", "renderer": { "kind": "Text", "bindings": { "children": { "$expr": "$formatDate(row.rated_at, 'MMM d, yyyy')" } } } },
+            {
+              "key": "rated_at",
+              "label": "Rated",
+              "renderer": {
+                "kind": "Text",
+                "bindings": { "children": { "$expr": "$formatDate(row.rated_at, 'MMM d, yyyy')" } }
+              }
+            },
             {
               "key": "expires_at",
               "label": "Expires",
               "renderer": {
                 "kind": "Text",
-                "bindings": { "children": { "$expr": "row.expires_at ? $formatDate(row.expires_at, 'MMM d, yyyy') : 'Never'" } }
+                "bindings": {
+                  "children": {
+                    "$expr": "row.expires_at ? $formatDate(row.expires_at, 'MMM d, yyyy') : 'Never'"
+                  }
+                }
               }
             }
           ]

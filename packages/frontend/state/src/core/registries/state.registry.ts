@@ -9,9 +9,9 @@
  *   index for devtools, debugging, and runtime store discovery.
  */
 
-import { Injectable } from '@stackra/container';
-import { BaseRegistry } from '@stackra/support';
-import type { Store } from '@tanstack/store';
+import { Injectable } from "@stackra/container";
+import { BaseRegistry } from "@stackra/support";
+import type { Store } from "@tanstack/store";
 
 /**
  * Metadata entry for a registered store.
@@ -65,7 +65,7 @@ export class StateRegistry extends BaseRegistry<string, StoreEntry> {
     name: string,
     token: symbol,
     store: Store<unknown>,
-    initialState?: unknown
+    initialState?: unknown,
   ): void {
     this.replace(name, { name, token, store, initialState });
   }

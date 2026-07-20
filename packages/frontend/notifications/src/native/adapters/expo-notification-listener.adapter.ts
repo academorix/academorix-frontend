@@ -8,10 +8,10 @@
  *   it and silently no-ops on non-Expo runtimes.
  */
 
-import { Injectable } from '@stackra/container';
+import { Injectable } from "@stackra/container";
 
-import { InAppNotificationCentre } from '@/core/services';
-import type { INotificationPayload } from '@/core/interfaces';
+import { InAppNotificationCentre } from "@/core/services";
+import type { INotificationPayload } from "@/core/interfaces";
 
 /**
  * The subset of `expo-notifications` the listener needs.
@@ -28,7 +28,7 @@ interface IExpoNotificationsListenerModule {
           data?: Record<string, unknown> | null;
         };
       };
-    }) => void
+    }) => void,
   ): { remove: () => void };
 }
 
@@ -37,10 +37,10 @@ interface IExpoNotificationsListenerModule {
  */
 async function loadExpoNotifications(): Promise<IExpoNotificationsListenerModule | null> {
   try {
-    const moduleName = 'expo-notifications';
+    const moduleName = "expo-notifications";
     const mod = (await import(/* @vite-ignore */ moduleName)) as
       { default?: IExpoNotificationsListenerModule } | IExpoNotificationsListenerModule;
-    return 'default' in mod && mod.default
+    return "default" in mod && mod.default
       ? mod.default
       : (mod as IExpoNotificationsListenerModule);
   } catch {
@@ -91,7 +91,7 @@ export class ExpoNotificationListenerAdapter {
       const request = event.request;
       const content = request?.content;
       const payload: INotificationPayload = {
-        title: content?.title ?? '',
+        title: content?.title ?? "",
         ...(content?.body ? { body: content.body } : {}),
         ...(content?.data ? { data: content.data } : {}),
       };

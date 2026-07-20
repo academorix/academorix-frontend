@@ -5,11 +5,15 @@
 [![GitHub Actions](https://img.shields.io/endpoint.svg?url=https%3A%2F%2Factions-badge.atrox.dev%2FCarbonPHP%2Fcarbon%2Fbadge&style=flat-square&label=Build&logo=none)](https://github.com/CarbonPHP/carbon/actions)
 [![codecov.io](https://img.shields.io/codecov/c/github/CarbonPHP/carbon.svg?style=flat-square)](https://codecov.io/github/CarbonPHP/carbon/actions?branch=master)
 
-An international PHP extension for DateTime. [Documentation](https://carbonphp.github.io/carbon/)
+An international PHP extension for DateTime.
+[Documentation](https://carbonphp.github.io/carbon/)
 
 > [!NOTE]  
-> We're migrating the repository from [briannesbitt/Carbon](https://github.com/briannesbitt/Carbon) to [CarbonPHP/carbon](https://github.com/CarbonPHP/carbon),
-> which means if you're looking specific issues/pull-requests, you may have to search both. No other impact as code on both will be kept up to date. 
+> We're migrating the repository from
+> [briannesbitt/Carbon](https://github.com/briannesbitt/Carbon) to
+> [CarbonPHP/carbon](https://github.com/CarbonPHP/carbon), which means if you're
+> looking specific issues/pull-requests, you may have to search both. No other
+> impact as code on both will be kept up to date.
 
 ```php
 <?php
@@ -72,9 +76,9 @@ $ composer require nesbot/carbon
 
 ```json
 {
-    "require": {
-        "nesbot/carbon": "^3"
-    }
+  "require": {
+    "nesbot/carbon": "^3"
+  }
 }
 ```
 
@@ -89,7 +93,10 @@ printf("Now: %s", Carbon::now());
 
 ### Without Composer
 
-Why are you not using [composer](https://getcomposer.org/)? Download the Carbon [latest release](https://github.com/CarbonPHP/carbon/releases) and put the contents of the ZIP archive into a directory in your project. Then require the file `autoload.php` to get all classes and dependencies loaded on need.
+Why are you not using [composer](https://getcomposer.org/)? Download the Carbon
+[latest release](https://github.com/CarbonPHP/carbon/releases) and put the
+contents of the ZIP archive into a directory in your project. Then require the
+file `autoload.php` to get all classes and dependencies loaded on need.
 
 ```php
 <?php
@@ -107,14 +114,14 @@ printf("Now: %s", Carbon::now());
 ## Security contact information
 
 To report a security vulnerability, please use the
-[Tidelift security contact](https://tidelift.com/security).
-Tidelift will coordinate the fix and disclosure.
+[Tidelift security contact](https://tidelift.com/security). Tidelift will
+coordinate the fix and disclosure.
 
 ## Credits
 
 ### Contributors
 
-This project exists thanks to all the people who contribute. 
+This project exists thanks to all the people who contribute.
 
 <a href="https://github.com/CarbonPHP/carbon/graphs/contributors" target="_blank"><img src="https://opencollective.com/Carbon/contributors.svg?width=890&button=false" /></a>
 
@@ -124,7 +131,8 @@ This project exists thanks to all the people who contribute.
 
 ### Sponsors
 
-Support this project by becoming a sponsor. Your logo will show up here with a link to your website.
+Support this project by becoming a sponsor. Your logo will show up here with a
+link to your website.
 
 <!-- <open-collective-sponsors> -->
 <table>
@@ -230,7 +238,8 @@ Support this project by becoming a sponsor. Your logo will show up here with a l
 
 [[Become a sponsor via GitHub*](https://github.com/sponsors/kylekatarnls)]
 
-<small>* This is a donation. No goods or services are expected in return. Any requests for refunds for those purposes will be rejected.</small>
+<small>* This is a donation. No goods or services are expected in return. Any
+requests for refunds for those purposes will be rejected.</small>
 
 ### Backers
 
@@ -244,4 +253,9 @@ Thank you to all our backers! 🙏
 
 Available as part of the Tidelift Subscription.
 
-The maintainers of ``Carbon`` and thousands of other packages are working with Tidelift to deliver commercial support and maintenance for the open source dependencies you use to build your applications. Save time, reduce risk, and improve code health, while paying the maintainers of the exact dependencies you use. [Learn more.](https://tidelift.com/subscription/pkg/packagist-nesbot-carbon?utm_source=packagist-nesbot-carbon&utm_medium=referral&utm_campaign=enterprise&utm_term=repo)
+The maintainers of `Carbon` and thousands of other packages are working with
+Tidelift to deliver commercial support and maintenance for the open source
+dependencies you use to build your applications. Save time, reduce risk, and
+improve code health, while paying the maintainers of the exact dependencies you
+use.
+[Learn more.](https://tidelift.com/subscription/pkg/packagist-nesbot-carbon?utm_source=packagist-nesbot-carbon&utm_medium=referral&utm_campaign=enterprise&utm_term=repo)

@@ -4,9 +4,9 @@
  * @description Props for the {@link DevtoolsPanelLocked} state.
  */
 
-import type { IDevtoolsAuthGate } from '@stackra/contracts';
+import type { IDevtoolsAuthGate } from "@stackra/contracts";
 
-import type { DevtoolsAuthDenyReason } from '../../hooks/use-devtools-auth-guard.hook';
+import type { DevtoolsAuthDenyReason } from "../../hooks/use-devtools-auth-guard.hook";
 
 /**
  * Props accepted by {@link DevtoolsPanelLocked}.

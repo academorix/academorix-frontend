@@ -49,9 +49,7 @@
       "class": "Academorix\\Finance\\Chargeback\\Broadcasts\\TenantChargebacksRateAlertsChannel",
       "description": "Merchant-account risk stream. Powers the real-time rate-threshold-alerts dashboard. Fires when ChargebackRateThresholdExceeded fires (rate crossed VDMP/MDMP threshold) OR when rate clears back below threshold. High-signal — every fire is actionable.",
       "authorization": "sanctum::authed AND tenant_matches AND has_permission('chargebacks.view-report')",
-      "events": [
-        "ChargebackRateThresholdExceeded"
-      ],
+      "events": ["ChargebackRateThresholdExceeded"],
       "throttle": "12 events/minute per channel",
       "notes": "Very low volume — MonitorChargebackRateJob is nightly, so at most one alert per tenant per network per night. Payload includes current_rate_percent + threshold_percent + days_over_threshold + prevention recommendations."
     }

@@ -56,7 +56,10 @@
         {
           "kind": "ComboBox.InputGroup",
           "children": [
-            { "kind": "Input", "bindings": { "props": { "placeholder": { "$ref": "props.placeholder" } } } },
+            {
+              "kind": "Input",
+              "bindings": { "props": { "placeholder": { "$ref": "props.placeholder" } } }
+            },
             { "kind": "ComboBox.Trigger" }
           ]
         },
@@ -98,7 +101,9 @@
                               {
                                 "kind": "Widget",
                                 "props": { "id": "event.event-status-chip" },
-                                "bindings": { "props": { "status": { "$ref": "item.status" }, "size": "xs" } }
+                                "bindings": {
+                                  "props": { "status": { "$ref": "item.status" }, "size": "xs" }
+                                }
                               }
                             ]
                           },
@@ -113,7 +118,10 @@
                           }
                         ]
                       },
-                      { "kind": "ListBox.ItemIndicator", "props": { "className": "size-4 text-accent" } }
+                      {
+                        "kind": "ListBox.ItemIndicator",
+                        "props": { "className": "size-4 text-accent" }
+                      }
                     ]
                   }
                 ]

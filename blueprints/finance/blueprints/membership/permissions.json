@@ -6,39 +6,192 @@
   "isSystem": true,
   "description": "Two audiences. Tenant plane (sanctum) — membership CRUD + plan catalog management + report by staff roles; guardian/adult-athlete self-serve via .own scope. Refund + chargeback audit gated to finance-officer + admin + owner. Platform plane (platform_admin) — cross-tenant support read + escalation audit.",
   "permissions": [
-    { "name": "memberships.viewAny", "guard": "sanctum", "seededOn": ["finance_officer", "reception", "branch_manager", "admin", "owner"] },
-    { "name": "memberships.viewAny.own", "guard": "sanctum", "description": "Guardian + adult-athlete scoped listing.", "seededOn": ["guardian", "athlete"] },
-    { "name": "memberships.view", "guard": "sanctum", "seededOn": ["finance_officer", "reception", "branch_manager", "admin", "owner"] },
-    { "name": "memberships.view.own", "guard": "sanctum", "seededOn": ["athlete", "guardian", "reception", "finance_officer", "branch_manager", "admin", "owner"] },
-    { "name": "memberships.create", "guard": "sanctum", "seededOn": ["reception", "finance_officer", "branch_manager", "admin", "owner"] },
-    { "name": "memberships.create.own", "guard": "sanctum", "description": "Guardians + adult athletes may self-subscribe.", "seededOn": ["athlete", "guardian"] },
-    { "name": "memberships.pause", "guard": "sanctum", "description": "Freeze billing + pass consumption — resumable.", "seededOn": ["finance_officer", "branch_manager", "admin", "owner"] },
-    { "name": "memberships.pause.own", "guard": "sanctum", "description": "Guardians can pause their own memberships (limited hardship pause).", "seededOn": ["guardian", "athlete"] },
-    { "name": "memberships.resume", "guard": "sanctum", "seededOn": ["finance_officer", "branch_manager", "admin", "owner"] },
+    {
+      "name": "memberships.viewAny",
+      "guard": "sanctum",
+      "seededOn": ["finance_officer", "reception", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "memberships.viewAny.own",
+      "guard": "sanctum",
+      "description": "Guardian + adult-athlete scoped listing.",
+      "seededOn": ["guardian", "athlete"]
+    },
+    {
+      "name": "memberships.view",
+      "guard": "sanctum",
+      "seededOn": ["finance_officer", "reception", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "memberships.view.own",
+      "guard": "sanctum",
+      "seededOn": [
+        "athlete",
+        "guardian",
+        "reception",
+        "finance_officer",
+        "branch_manager",
+        "admin",
+        "owner"
+      ]
+    },
+    {
+      "name": "memberships.create",
+      "guard": "sanctum",
+      "seededOn": ["reception", "finance_officer", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "memberships.create.own",
+      "guard": "sanctum",
+      "description": "Guardians + adult athletes may self-subscribe.",
+      "seededOn": ["athlete", "guardian"]
+    },
+    {
+      "name": "memberships.pause",
+      "guard": "sanctum",
+      "description": "Freeze billing + pass consumption — resumable.",
+      "seededOn": ["finance_officer", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "memberships.pause.own",
+      "guard": "sanctum",
+      "description": "Guardians can pause their own memberships (limited hardship pause).",
+      "seededOn": ["guardian", "athlete"]
+    },
+    {
+      "name": "memberships.resume",
+      "guard": "sanctum",
+      "seededOn": ["finance_officer", "branch_manager", "admin", "owner"]
+    },
     { "name": "memberships.resume.own", "guard": "sanctum", "seededOn": ["guardian", "athlete"] },
-    { "name": "memberships.cancel", "guard": "sanctum", "description": "Soft or hard cancel. Hard requires membership_hard_cancel_prorated_refund entitlement.", "seededOn": ["finance_officer", "branch_manager", "admin", "owner"] },
-    { "name": "memberships.cancel.own", "guard": "sanctum", "description": "Guardians + adult athletes may cancel own memberships (soft-cancel only).", "seededOn": ["guardian", "athlete"] },
-    { "name": "memberships.reissue-passes", "guard": "sanctum", "description": "Admin issues bonus/promotional passes outside per-period grant. Audit-critical.", "seededOn": ["finance_officer", "branch_manager", "admin", "owner"] },
-    { "name": "memberships.report", "guard": "sanctum", "description": "MRR + churn + dunning-recovery dashboards. Business-sensitive.", "seededOn": ["finance_officer", "branch_manager", "admin", "owner"] },
-    { "name": "memberships.audit.refund", "guard": "sanctum", "description": "Read refund history + investigate chargebacks. Compliance-critical.", "seededOn": ["finance_officer", "admin", "owner"] },
-    { "name": "memberships.audit.chargeback", "guard": "sanctum", "description": "Read chargeback history for a membership. Admin + owner + finance_officer.", "seededOn": ["finance_officer", "admin", "owner"] },
+    {
+      "name": "memberships.cancel",
+      "guard": "sanctum",
+      "description": "Soft or hard cancel. Hard requires membership_hard_cancel_prorated_refund entitlement.",
+      "seededOn": ["finance_officer", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "memberships.cancel.own",
+      "guard": "sanctum",
+      "description": "Guardians + adult athletes may cancel own memberships (soft-cancel only).",
+      "seededOn": ["guardian", "athlete"]
+    },
+    {
+      "name": "memberships.reissue-passes",
+      "guard": "sanctum",
+      "description": "Admin issues bonus/promotional passes outside per-period grant. Audit-critical.",
+      "seededOn": ["finance_officer", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "memberships.report",
+      "guard": "sanctum",
+      "description": "MRR + churn + dunning-recovery dashboards. Business-sensitive.",
+      "seededOn": ["finance_officer", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "memberships.audit.refund",
+      "guard": "sanctum",
+      "description": "Read refund history + investigate chargebacks. Compliance-critical.",
+      "seededOn": ["finance_officer", "admin", "owner"]
+    },
+    {
+      "name": "memberships.audit.chargeback",
+      "guard": "sanctum",
+      "description": "Read chargeback history for a membership. Admin + owner + finance_officer.",
+      "seededOn": ["finance_officer", "admin", "owner"]
+    },
 
-    { "name": "membership_plans.viewAny", "guard": "sanctum", "description": "The plan catalog is customer-readable for signup flow.", "seededOn": ["athlete", "guardian", "reception", "finance_officer", "coach", "branch_manager", "admin", "owner"] },
-    { "name": "membership_plans.view", "guard": "sanctum", "seededOn": ["athlete", "guardian", "reception", "finance_officer", "coach", "branch_manager", "admin", "owner"] },
-    { "name": "membership_plans.create", "guard": "sanctum", "seededOn": ["finance_officer", "branch_manager", "admin", "owner"] },
-    { "name": "membership_plans.update", "guard": "sanctum", "seededOn": ["finance_officer", "branch_manager", "admin", "owner"] },
-    { "name": "membership_plans.archive", "guard": "sanctum", "seededOn": ["finance_officer", "branch_manager", "admin", "owner"] },
+    {
+      "name": "membership_plans.viewAny",
+      "guard": "sanctum",
+      "description": "The plan catalog is customer-readable for signup flow.",
+      "seededOn": [
+        "athlete",
+        "guardian",
+        "reception",
+        "finance_officer",
+        "coach",
+        "branch_manager",
+        "admin",
+        "owner"
+      ]
+    },
+    {
+      "name": "membership_plans.view",
+      "guard": "sanctum",
+      "seededOn": [
+        "athlete",
+        "guardian",
+        "reception",
+        "finance_officer",
+        "coach",
+        "branch_manager",
+        "admin",
+        "owner"
+      ]
+    },
+    {
+      "name": "membership_plans.create",
+      "guard": "sanctum",
+      "seededOn": ["finance_officer", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "membership_plans.update",
+      "guard": "sanctum",
+      "seededOn": ["finance_officer", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "membership_plans.archive",
+      "guard": "sanctum",
+      "seededOn": ["finance_officer", "branch_manager", "admin", "owner"]
+    },
 
-    { "name": "membership_renewals.viewAny", "guard": "sanctum", "description": "Read renewal history for staff analytics.", "seededOn": ["finance_officer", "reception", "branch_manager", "admin", "owner"] },
-    { "name": "membership_renewals.view.own", "guard": "sanctum", "seededOn": ["guardian", "athlete"] },
+    {
+      "name": "membership_renewals.viewAny",
+      "guard": "sanctum",
+      "description": "Read renewal history for staff analytics.",
+      "seededOn": ["finance_officer", "reception", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "membership_renewals.view.own",
+      "guard": "sanctum",
+      "seededOn": ["guardian", "athlete"]
+    },
 
-    { "name": "passes.viewAny", "guard": "sanctum", "seededOn": ["reception", "coach", "finance_officer", "branch_manager", "admin", "owner"] },
+    {
+      "name": "passes.viewAny",
+      "guard": "sanctum",
+      "seededOn": ["reception", "coach", "finance_officer", "branch_manager", "admin", "owner"]
+    },
     { "name": "passes.view.own", "guard": "sanctum", "seededOn": ["athlete", "guardian"] },
-    { "name": "passes.consume", "guard": "sanctum", "description": "Consume a pass at session check-in. Held by the reception + coach + kiosk roles + session module's internal service account.", "seededOn": ["reception", "coach", "branch_manager", "admin", "owner"] },
-    { "name": "passes.refund", "guard": "sanctum", "description": "Return a consumed pass (session cancelled). Admin oversight required.", "seededOn": ["reception", "finance_officer", "branch_manager", "admin", "owner"] },
+    {
+      "name": "passes.consume",
+      "guard": "sanctum",
+      "description": "Consume a pass at session check-in. Held by the reception + coach + kiosk roles + session module's internal service account.",
+      "seededOn": ["reception", "coach", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "passes.refund",
+      "guard": "sanctum",
+      "description": "Return a consumed pass (session cancelled). Admin oversight required.",
+      "seededOn": ["reception", "finance_officer", "branch_manager", "admin", "owner"]
+    },
 
-    { "name": "platform.memberships.viewAny", "guard": "platform_admin", "seededOn": ["super_admin", "ops", "support"] },
-    { "name": "platform.memberships.view", "guard": "platform_admin", "seededOn": ["super_admin", "ops", "support"] },
-    { "name": "platform.memberships.audit.refund", "guard": "platform_admin", "description": "Cross-tenant refund investigation. Super_admin + ops only.", "seededOn": ["super_admin", "ops"] }
+    {
+      "name": "platform.memberships.viewAny",
+      "guard": "platform_admin",
+      "seededOn": ["super_admin", "ops", "support"]
+    },
+    {
+      "name": "platform.memberships.view",
+      "guard": "platform_admin",
+      "seededOn": ["super_admin", "ops", "support"]
+    },
+    {
+      "name": "platform.memberships.audit.refund",
+      "guard": "platform_admin",
+      "description": "Cross-tenant refund investigation. Super_admin + ops only.",
+      "seededOn": ["super_admin", "ops"]
+    }
   ]
 }

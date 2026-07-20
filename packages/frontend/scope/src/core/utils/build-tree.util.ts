@@ -5,7 +5,7 @@
  *   a flat list of scope definitions.
  */
 
-import type { IScopeDefinition, IScopeDefinitionTreeNode } from '../interfaces';
+import type { IScopeDefinition, IScopeDefinitionTreeNode } from "../interfaces";
 
 // ════════════════════════════════════════════════════════════════════════════════
 // Utility

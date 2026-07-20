@@ -31,8 +31,21 @@
             {
               "kind": "View",
               "children": [
-                { "kind": "Text", "props": { "as": "h1", "className": "text-2xl font-semibold", "children": "Credit notes" } },
-                { "kind": "Text", "props": { "className": "text-sm text-muted", "children": "Reversal invoices for refunds, adjustments, and write-offs. Every credit note references a paid invoice." } }
+                {
+                  "kind": "Text",
+                  "props": {
+                    "as": "h1",
+                    "className": "text-2xl font-semibold",
+                    "children": "Credit notes"
+                  }
+                },
+                {
+                  "kind": "Text",
+                  "props": {
+                    "className": "text-sm text-muted",
+                    "children": "Reversal invoices for refunds, adjustments, and write-offs. Every credit note references a paid invoice."
+                  }
+                }
               ]
             }
           ]
@@ -53,7 +66,11 @@
                 { "id": "accounting_correction", "label": "Accounting correction" }
               ],
               "actions": {
-                "onSelectionChange": { "kind": "filter.set", "field": "reason", "valueExpr": "$selectedKey" }
+                "onSelectionChange": {
+                  "kind": "filter.set",
+                  "field": "reason",
+                  "valueExpr": "$selectedKey"
+                }
               }
             },
             {
@@ -66,7 +83,11 @@
                 { "id": "voided", "label": "Voided" }
               ],
               "actions": {
-                "onSelectionChange": { "kind": "filter.set", "field": "status", "valueExpr": "$selectedKey" }
+                "onSelectionChange": {
+                  "kind": "filter.set",
+                  "field": "status",
+                  "valueExpr": "$selectedKey"
+                }
               }
             },
             {
@@ -91,12 +112,40 @@
             "className": "w-full",
             "columns": [
               { "field": "credit_note_number", "label": "Number", "sortable": true, "width": 180 },
-              { "field": "original_invoice_number", "label": "Original invoice", "sortable": false, "width": 180 },
+              {
+                "field": "original_invoice_number",
+                "label": "Original invoice",
+                "sortable": false,
+                "width": 180
+              },
               { "field": "reason", "label": "Reason", "sortable": true, "width": 200 },
-              { "field": "amount_cents", "label": "Amount", "sortable": true, "width": 140, "renderer": { "kind": "Text", "formatter": "currency", "currencyField": "currency", "align": "right" } },
+              {
+                "field": "amount_cents",
+                "label": "Amount",
+                "sortable": true,
+                "width": 140,
+                "renderer": {
+                  "kind": "Text",
+                  "formatter": "currency",
+                  "currencyField": "currency",
+                  "align": "right"
+                }
+              },
               { "field": "status", "label": "Status", "sortable": true, "width": 100 },
-              { "field": "applied_to_type", "label": "Applied to", "sortable": false, "width": 140 },
-              { "field": "issue_date", "label": "Issued", "sortable": true, "defaultSort": "desc", "width": 120, "formatter": "date" }
+              {
+                "field": "applied_to_type",
+                "label": "Applied to",
+                "sortable": false,
+                "width": 140
+              },
+              {
+                "field": "issue_date",
+                "label": "Issued",
+                "sortable": true,
+                "defaultSort": "desc",
+                "width": 120,
+                "formatter": "date"
+              }
             ],
             "onRowPress": {
               "kind": "navigate",
@@ -109,7 +158,11 @@
                 "icon": "check",
                 "visibleWhen": "row.status == 'issued'",
                 "requiresPermission": "invoice.credit-notes.apply",
-                "onPress": { "kind": "modal.open", "modal": "invoice.credit-note-apply-dialog", "bindings": { "credit_note_id": "row.id" } }
+                "onPress": {
+                  "kind": "modal.open",
+                  "modal": "invoice.credit-note-apply-dialog",
+                  "bindings": { "credit_note_id": "row.id" }
+                }
               }
             ]
           },
@@ -117,9 +170,24 @@
             "kind": "View",
             "props": { "className": "text-center py-12" },
             "children": [
-              { "kind": "Icon", "props": { "name": "arrow-uturn-left", "className": "size-12 mx-auto text-muted" } },
-              { "kind": "Text", "props": { "className": "mt-4 text-lg font-medium", "children": "No credit notes yet" } },
-              { "kind": "Text", "props": { "className": "text-sm text-muted", "children": "Credit notes are issued when you refund or adjust a paid invoice. They preserve the immutability of the original invoice." } }
+              {
+                "kind": "Icon",
+                "props": { "name": "arrow-uturn-left", "className": "size-12 mx-auto text-muted" }
+              },
+              {
+                "kind": "Text",
+                "props": {
+                  "className": "mt-4 text-lg font-medium",
+                  "children": "No credit notes yet"
+                }
+              },
+              {
+                "kind": "Text",
+                "props": {
+                  "className": "text-sm text-muted",
+                  "children": "Credit notes are issued when you refund or adjust a paid invoice. They preserve the immutability of the original invoice."
+                }
+              }
             ]
           }
         }

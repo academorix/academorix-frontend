@@ -20,7 +20,7 @@ export class CommandCancelledError extends ConsoleError {
   /**
    * @param message - Description of why the command was cancelled
    */
-  public constructor(message: string = "Command was cancelled by the user.") {
+  public constructor(message = "Command was cancelled by the user.") {
     super(message);
     this.name = "CommandCancelledError";
   }

@@ -4,5 +4,5 @@
  * @description Barrel for the {@link NotificationList} compound.
  */
 
-export { NotificationList } from './notification-list.component';
-export type { NotificationListProps } from './notification-list.interface';
+export { NotificationList } from "./notification-list.component";
+export type { NotificationListProps } from "./notification-list.interface";

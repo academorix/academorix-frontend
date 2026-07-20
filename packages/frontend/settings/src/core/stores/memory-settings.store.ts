@@ -7,7 +7,7 @@
  *   as the fallback when no persistent store is configured.
  */
 
-import type { ISettingsStore } from '@stackra/contracts';
+import type { ISettingsStore } from "@stackra/contracts";
 
 /**
  * In-memory settings store.
@@ -17,7 +17,7 @@ import type { ISettingsStore } from '@stackra/contracts';
  */
 export class MemorySettingsStore implements ISettingsStore {
   /** Driver identifier surfaced by `ISettingsStore`. */
-  public readonly driver = 'memory';
+  public readonly driver = "memory";
 
   /** Values keyed by group key. */
   private readonly data = new Map<string, Record<string, unknown>>();

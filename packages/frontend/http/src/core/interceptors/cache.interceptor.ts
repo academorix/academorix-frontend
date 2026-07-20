@@ -9,8 +9,8 @@
  * @module @stackra/http/interceptors/cache
  */
 
-import { Inject, Optional } from '@stackra/container';
-import { Logger } from '@stackra/logger';
+import { Inject, Optional } from "@stackra/container";
+import { Logger } from "@stackra/logger";
 
 import {
   CACHE_MANAGER,
@@ -22,10 +22,10 @@ import {
   type IHttpNextFunction,
   type IHttpRequestConfig,
   type IHttpResponse,
-} from '@stackra/contracts';
+} from "@stackra/contracts";
 
-import { HttpInterceptor } from '../decorators/http-interceptor.decorator';
-import { HttpCacheError } from '../errors';
+import { HttpInterceptor } from "../decorators/http-interceptor.decorator";
+import { HttpCacheError } from "../errors";
 
 /**
  * Cached response wrapper.
@@ -58,7 +58,7 @@ interface ICacheManagerLike {
 /**
  * Cache interceptor.
  */
-@HttpInterceptor({ priority: 60, name: 'cache' })
+@HttpInterceptor({ priority: 60, name: "cache" })
 export class CacheInterceptor implements IHttpInterceptor {
   /** Scoped logger. */
   private readonly logger = new Logger(CacheInterceptor.name);
@@ -69,7 +69,7 @@ export class CacheInterceptor implements IHttpInterceptor {
    */
   public constructor(
     @Inject(HTTP_CONFIG) private readonly config: IHttpModuleOptions,
-    @Optional() @Inject(CACHE_MANAGER) private readonly cache?: ICacheManagerLike
+    @Optional() @Inject(CACHE_MANAGER) private readonly cache?: ICacheManagerLike,
   ) {}
 
   /** @inheritdoc */
@@ -77,13 +77,13 @@ export class CacheInterceptor implements IHttpInterceptor {
     const cacheConfig = this.config.connections[this.config.default]?.cache;
     if (!cacheConfig?.enabled || !this.cache) return next(context);
     if (context.request.method !== HttpMethod.GET) return next(context);
-    if (context.request.meta?.['skipCache'] === true) return next(context);
-    if (this.shouldExclude(context.request.url ?? '')) return next(context);
+    if (context.request.meta?.["skipCache"] === true) return next(context);
+    if (this.shouldExclude(context.request.url ?? "")) return next(context);
 
     try {
       return await this.handleCachedRequest(context, next);
     } catch (err: Error | any) {
-      this.logger.error('cache operation failed', {
+      this.logger.error("cache operation failed", {
         error: err instanceof Error ? err.message : String(err),
       });
       return next(context);
@@ -101,14 +101,14 @@ export class CacheInterceptor implements IHttpInterceptor {
     try {
       await this.cache.tags(tags).flush();
     } catch (err: Error | any) {
-      throw new HttpCacheError(`Failed to invalidate tags: ${tags.join(', ')}`, err as Error);
+      throw new HttpCacheError(`Failed to invalidate tags: ${tags.join(", ")}`, err as Error);
     }
   }
 
   /** Cache-aware request handling. */
   private async handleCachedRequest(
     context: IHttpContext,
-    next: IHttpNextFunction
+    next: IHttpNextFunction,
   ): Promise<IHttpResponse> {
     const cache = this.cache!;
     const cacheKey = this.cacheKey(context.request);
@@ -124,7 +124,7 @@ export class CacheInterceptor implements IHttpInterceptor {
     if (cached?.etag) {
       context.request.headers = {
         ...context.request.headers,
-        'If-None-Match': cached.etag,
+        "If-None-Match": cached.etag,
       };
     }
 
@@ -136,7 +136,7 @@ export class CacheInterceptor implements IHttpInterceptor {
 
     const ttlMs = this.resolveTtl(response);
     if (ttlMs > 0) {
-      const etag = response.headers?.['etag'];
+      const etag = response.headers?.["etag"];
       const value: ICachedResponse = {
         response,
         ...(etag !== undefined ? { etag } : {}),
@@ -151,18 +151,18 @@ export class CacheInterceptor implements IHttpInterceptor {
 
   /** `http:{METHOD}:{URL}:{params}` */
   private cacheKey(request: IHttpRequestConfig): string {
-    const params = request.params ? JSON.stringify(request.params) : '';
-    return `http:${request.method ?? 'GET'}:${request.url ?? ''}:${params}`;
+    const params = request.params ? JSON.stringify(request.params) : "";
+    return `http:${request.method ?? "GET"}:${request.url ?? ""}:${params}`;
   }
 
   /** Build the tag set for a request. */
   private tagsFor(request: IHttpRequestConfig): string[] {
-    const tags: string[] = ['api'];
+    const tags: string[] = ["api"];
     if (request.url) {
-      const segments = request.url.split('/').filter(Boolean);
+      const segments = request.url.split("/").filter(Boolean);
       if (segments.length > 0 && segments[0]) tags.push(segments[0]);
     }
-    const custom = request.meta?.['cacheTags'] as string[] | undefined;
+    const custom = request.meta?.["cacheTags"] as string[] | undefined;
     if (Array.isArray(custom)) tags.push(...custom);
     return tags;
   }
@@ -179,7 +179,7 @@ export class CacheInterceptor implements IHttpInterceptor {
     const fallback = cacheConfig?.ttl ?? 0;
 
     if (cacheConfig?.respectCacheControl) {
-      const cacheControl = response.headers?.['cache-control'];
+      const cacheControl = response.headers?.["cache-control"];
       if (cacheControl) {
         const match = /max-age=(\d+)/.exec(cacheControl);
         if (match?.[1]) return Number.parseInt(match[1], 10) * 1000;

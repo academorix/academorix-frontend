@@ -8,21 +8,21 @@
  * @module @stackra/http/interceptors/logging
  */
 
-import { Logger } from '@stackra/logger';
+import { Logger } from "@stackra/logger";
 
 import type {
   IHttpContext,
   IHttpInterceptor,
   IHttpNextFunction,
   IHttpResponse,
-} from '@stackra/contracts';
+} from "@stackra/contracts";
 
-import { HttpInterceptor } from '../decorators/http-interceptor.decorator';
+import { HttpInterceptor } from "../decorators/http-interceptor.decorator";
 
 /**
  * Logging interceptor.
  */
-@HttpInterceptor({ priority: 95, name: 'logging' })
+@HttpInterceptor({ priority: 95, name: "logging" })
 export class LoggingInterceptor implements IHttpInterceptor {
   /** Scoped logger. */
   private readonly logger = new Logger(LoggingInterceptor.name);
@@ -36,7 +36,7 @@ export class LoggingInterceptor implements IHttpInterceptor {
     try {
       const response = await next(context);
       const duration = Date.now() - startedAt;
-      const message = `[HTTP] ${method ?? 'GET'} ${fullUrl} → ${response.status} (${duration}ms)`;
+      const message = `[HTTP] ${method ?? "GET"} ${fullUrl} → ${response.status} (${duration}ms)`;
       if (response.status >= 500) this.logger.error(message);
       else if (response.status >= 400) this.logger.warn(message);
       else this.logger.debug(message);
@@ -44,16 +44,16 @@ export class LoggingInterceptor implements IHttpInterceptor {
     } catch (err: Error | any) {
       const duration = Date.now() - startedAt;
       const status = (err as { statusCode?: number }).statusCode ?? 0;
-      this.logger.warn(`[HTTP] ${method ?? 'GET'} ${fullUrl} → ${status} (${duration}ms)`);
+      this.logger.warn(`[HTTP] ${method ?? "GET"} ${fullUrl} → ${status} (${duration}ms)`);
       throw err;
     }
   }
 
   /** Concatenate baseURL + url defensively. */
   private static fullUrl(baseURL?: string, url?: string): string {
-    if (!url) return baseURL ?? '/';
-    if (url.startsWith('http')) return url;
+    if (!url) return baseURL ?? "/";
+    if (url.startsWith("http")) return url;
     if (!baseURL) return url;
-    return `${baseURL.replace(/\/+$/, '')}/${url.replace(/^\/+/, '')}`;
+    return `${baseURL.replace(/\/+$/, "")}/${url.replace(/^\/+/, "")}`;
   }
 }

@@ -20,14 +20,14 @@
  *   reads within the same snapshot window.
  */
 
-import { Inject, Injectable, Optional, type OnModuleDestroy } from '@stackra/container';
+import { Inject, Injectable, Optional, type OnModuleDestroy } from "@stackra/container";
 import {
   EVENT_EMITTER,
   type IDevtoolsInspectorRegion,
   type IDevtoolsInspectorRegionSource,
   type IDevtoolsInspectorRegistry,
   type IEventEmitter,
-} from '@stackra/contracts';
+} from "@stackra/contracts";
 
 /**
  * The container-scoped inspector registry.

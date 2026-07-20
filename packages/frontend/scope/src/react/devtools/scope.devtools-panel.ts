@@ -12,19 +12,19 @@
  *   `DevtoolsModule.forFeature([...])`.
  */
 
-import { createElement, type ReactNode } from 'react';
-import { RectangleStackIcon } from '@stackra/ui/icons/heroicon/outline';
-import { Inject, Injectable, Optional } from '@stackra/container';
-import { DevtoolsPanel } from '@stackra/devtools';
+import { createElement, type ReactNode } from "react";
+import { RectangleStackIcon } from "@stackra/ui/icons/heroicon/outline";
+import { Inject, Injectable, Optional } from "@stackra/container";
+import { DevtoolsPanel } from "@stackra/devtools";
 import {
   SCOPE_SERVICE,
   type DevtoolsCategory,
   type IDevtoolsPanel,
   type IDevtoolsView,
-} from '@stackra/contracts';
+} from "@stackra/contracts";
 
-import type { ScopeService } from '@/core/services/scope.service';
-import { ScopeDevtoolsPanelView } from './scope-devtools-panel-view';
+import type { ScopeService } from "@/core/services/scope.service";
+import { ScopeDevtoolsPanelView } from "./scope-devtools-panel-view";
 
 /**
  * The devtools scope panel.
@@ -40,23 +40,23 @@ import { ScopeDevtoolsPanelView } from './scope-devtools-panel-view';
  */
 @Injectable()
 @DevtoolsPanel({
-  id: 'scope',
-  title: 'Scope',
-  category: 'framework',
+  id: "scope",
+  title: "Scope",
+  category: "framework",
   order: 30,
 })
 export class ScopeDevtoolsPanel implements IDevtoolsPanel {
   /** @inheritdoc */
-  public readonly id = 'scope';
+  public readonly id = "scope";
   /** @inheritdoc */
-  public readonly title = 'Scope';
+  public readonly title = "Scope";
   /** @inheritdoc */
-  public readonly category: DevtoolsCategory = 'framework';
+  public readonly category: DevtoolsCategory = "framework";
   /** @inheritdoc */
   public readonly order = 30;
   /** @inheritdoc */
   public readonly icon: ReactNode = createElement(RectangleStackIcon, {
-    className: 'size-4',
+    className: "size-4",
   });
   /** @inheritdoc */
   public readonly view: IDevtoolsView;
@@ -69,7 +69,7 @@ export class ScopeDevtoolsPanel implements IDevtoolsPanel {
    */
   public constructor(@Optional() @Inject(SCOPE_SERVICE) private readonly service?: ScopeService) {
     this.view = {
-      type: 'component',
+      type: "component",
       render: (): ReactNode => createElement(ScopeDevtoolsPanelView, { service: this.service }),
     };
   }

@@ -1,7 +1,7 @@
 {
   "name": "@stackra/i18n",
   "version": "0.1.0",
-  "description": "Unified internationalization runtime for the Stackra framework — translation engine, locale management, RTL/LTR direction, Intl formatting, pluggable loaders + resolvers, a Vite plugin for auto-discovery, and React / React Native bindings.",
+  "description": "Unified internationalization runtime for the Stackra framework \u2014 translation engine, locale management, RTL/LTR direction, Intl formatting, pluggable loaders + resolvers, a Vite plugin for auto-discovery, and React / React Native bindings.",
   "license": "MIT",
   "author": {
     "name": "Stackra L.L.C",
@@ -121,6 +121,8 @@
     }
   },
   "devDependencies": {
+    "@academorix/config-tsconfig": "workspace:*",
+    "@academorix/config-tsup": "workspace:*",
     "@stackra/container": "workspace:*",
     "@stackra/contracts": "workspace:*",
     "@stackra/storage": "workspace:*",

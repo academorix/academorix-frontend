@@ -7,7 +7,7 @@
  * @module @stackra/http/services/circuit-breaker
  */
 
-import { Inject, Injectable, Optional } from '@stackra/container';
+import { Inject, Injectable, Optional } from "@stackra/container";
 
 import {
   CircuitBreakerState,
@@ -18,9 +18,9 @@ import {
   type IHttpModuleOptions,
   EVENT_EMITTER,
   HTTP_EVENTS,
-} from '@stackra/contracts';
+} from "@stackra/contracts";
 
-import { DEFAULT_CIRCUIT_BREAKER } from '../constants';
+import { DEFAULT_CIRCUIT_BREAKER } from "../constants";
 
 /**
  * One breaker per endpoint.
@@ -48,7 +48,7 @@ class CircuitBreaker {
    */
   public constructor(
     private readonly config: IHttpCircuitBreakerConfig,
-    private readonly onStateTransition?: (next: CircuitBreakerState) => void
+    private readonly onStateTransition?: (next: CircuitBreakerState) => void,
   ) {}
 
   /** Whether this breaker should reject the next request. */
@@ -177,7 +177,7 @@ export class CircuitBreakerService {
    */
   public constructor(
     @Inject(HTTP_CONFIG) httpConfig: IHttpModuleOptions,
-    @Optional() @Inject(EVENT_EMITTER) private readonly eventEmitter?: IEventEmitter
+    @Optional() @Inject(EVENT_EMITTER) private readonly eventEmitter?: IEventEmitter,
   ) {
     const defaultConn = httpConfig.connections[httpConfig.default];
     this.config = defaultConn?.circuitBreaker ?? DEFAULT_CIRCUIT_BREAKER;

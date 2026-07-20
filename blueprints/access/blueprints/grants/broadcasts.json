@@ -28,11 +28,7 @@
       "description": "Per-subject channel — every grant on this User broadcasts here. Consumed by the subject's 'my access' view in the tenant dashboard so they see grants appear + disappear live. Also consumed by the notification bell for the subject.",
       "authorize": "auth_user.id === userId",
       "authCallback": "fn (User $user, string $userId) => $user->id === $userId",
-      "events": [
-        "GrantIssued",
-        "GrantExpired",
-        "GrantRevoked"
-      ],
+      "events": ["GrantIssued", "GrantExpired", "GrantRevoked"],
       "filter": "Only broadcasts when the User (userId) is the SUBJECT of the grant. Not the grantor — grantors see events on the tenant channel."
     }
   ]

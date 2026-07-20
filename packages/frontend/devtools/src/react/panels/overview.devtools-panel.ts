@@ -10,12 +10,12 @@
  *   contribution uses, so the "built-in" set has no special path.
  */
 
-import { createElement, type ReactNode } from 'react';
-import { Injectable } from '@stackra/container';
-import type { DevtoolsCategory, IDevtoolsPanel, IDevtoolsView } from '@stackra/contracts';
+import { createElement, type ReactNode } from "react";
+import { Injectable } from "@stackra/container";
+import type { DevtoolsCategory, IDevtoolsPanel, IDevtoolsView } from "@stackra/contracts";
 
-import { DevtoolsPanel } from '@/core/decorators';
-import { OverviewPanel } from '../components/overview-panel';
+import { DevtoolsPanel } from "@/core/decorators";
+import { OverviewPanel } from "../components/overview-panel";
 
 /**
  * The built-in Overview panel.
@@ -27,20 +27,20 @@ import { OverviewPanel } from '../components/overview-panel';
  * ```
  */
 @Injectable()
-@DevtoolsPanel({ id: 'overview', title: 'Overview', category: 'pinned', order: 0 })
+@DevtoolsPanel({ id: "overview", title: "Overview", category: "pinned", order: 0 })
 export class OverviewDevtoolsPanel implements IDevtoolsPanel {
   /** @inheritdoc */
-  public readonly id = 'overview';
+  public readonly id = "overview";
   /** @inheritdoc */
-  public readonly title = 'Overview';
+  public readonly title = "Overview";
   /** @inheritdoc */
-  public readonly category: DevtoolsCategory = 'pinned';
+  public readonly category: DevtoolsCategory = "pinned";
   /** @inheritdoc */
   public readonly order = 0;
 
   /** @inheritdoc */
   public readonly view: IDevtoolsView = {
-    type: 'component',
+    type: "component",
     // Rendering the React element inline is fine — `render()` is
     // called by the shell only when the panel is active, so we
     // don't pay the cost of mounting the OverviewPanel until the

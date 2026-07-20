@@ -96,8 +96,16 @@
         "description": "The provider endpoint URL the request went to. Includes query params for GA4."
       },
       "response_status_code": { "type": "integer", "nullable": true },
-      "response_headers": { "type": "jsonb", "nullable": true, "description": "Truncated to essential headers (Content-Type, X-Response-Id, Retry-After)." },
-      "response_body": { "type": "jsonb", "nullable": true, "description": "Truncated to 4KB. Encrypted at rest." },
+      "response_headers": {
+        "type": "jsonb",
+        "nullable": true,
+        "description": "Truncated to essential headers (Content-Type, X-Response-Id, Retry-After)."
+      },
+      "response_body": {
+        "type": "jsonb",
+        "nullable": true,
+        "description": "Truncated to 4KB. Encrypted at rest."
+      },
       "provider_event_id": {
         "type": "string",
         "length": 256,
@@ -112,7 +120,11 @@
       "dispatched_at": { "type": "timestamptz", "nullable": true },
       "responded_at": { "type": "timestamptz", "nullable": true },
       "latency_ms": { "type": "integer", "nullable": true },
-      "next_retry_at": { "type": "timestamptz", "nullable": true, "description": "When the next retry attempt should fire. NULL = terminal (no retry)." },
+      "next_retry_at": {
+        "type": "timestamptz",
+        "nullable": true,
+        "description": "When the next retry attempt should fire. NULL = terminal (no retry)."
+      },
       "metadata": { "type": "jsonb", "nullable": true },
       "created_by": { "type": "string", "length": 64, "nullable": true },
       "updated_by": { "type": "string", "length": 64, "nullable": true },
@@ -120,13 +132,35 @@
       "updated_at": { "type": "timestamptz", "nullable": false }
     },
     "indexes": [
-      { "columns": ["marketing_event_id", "provider", "attempt_number"], "unique": true, "name": "marketing_deliveries_event_provider_attempt_unique" },
-      { "columns": ["tenant_id", "provider", "status"], "name": "marketing_deliveries_provider_status_idx" },
-      { "columns": ["status", "next_retry_at"], "name": "marketing_deliveries_retry_sweep_idx", "predicate": "status IN ('failed', 'rate_limited') AND next_retry_at IS NOT NULL" },
+      {
+        "columns": ["marketing_event_id", "provider", "attempt_number"],
+        "unique": true,
+        "name": "marketing_deliveries_event_provider_attempt_unique"
+      },
+      {
+        "columns": ["tenant_id", "provider", "status"],
+        "name": "marketing_deliveries_provider_status_idx"
+      },
+      {
+        "columns": ["status", "next_retry_at"],
+        "name": "marketing_deliveries_retry_sweep_idx",
+        "predicate": "status IN ('failed', 'rate_limited') AND next_retry_at IS NOT NULL"
+      },
       { "columns": ["tenant_id", "created_at"], "name": "marketing_deliveries_recent_idx" }
     ]
   },
-  "required": ["id", "tenant_id", "marketing_event_id", "provider_config_id", "provider", "status", "attempt_number", "request_url", "created_at", "updated_at"],
+  "required": [
+    "id",
+    "tenant_id",
+    "marketing_event_id",
+    "provider_config_id",
+    "provider",
+    "status",
+    "attempt_number",
+    "request_url",
+    "created_at",
+    "updated_at"
+  ],
   "properties": {
     "id": { "type": "string", "pattern": "^mdv_[0-9A-HJKMNP-TV-Z]{26}$" },
     "tenant_id": { "type": "string", "pattern": "^ten_[0-9A-HJKMNP-TV-Z]{26}$" },
@@ -134,11 +168,30 @@
     "provider_config_id": { "type": "string", "pattern": "^mpc_[0-9A-HJKMNP-TV-Z]{26}$" },
     "provider": {
       "type": "string",
-      "enum": ["meta_capi", "google_ads", "google_analytics_4", "gtm_server", "tiktok_events", "linkedin_insight", "snapchat_capi", "pinterest_capi", "custom_webhook"]
+      "enum": [
+        "meta_capi",
+        "google_ads",
+        "google_analytics_4",
+        "gtm_server",
+        "tiktok_events",
+        "linkedin_insight",
+        "snapchat_capi",
+        "pinterest_capi",
+        "custom_webhook"
+      ]
     },
     "status": {
       "type": "string",
-      "enum": ["pending", "dispatching", "succeeded", "failed", "suppressed_by_consent", "suppressed_by_provider_off", "suppressed_by_circuit_breaker", "rate_limited"]
+      "enum": [
+        "pending",
+        "dispatching",
+        "succeeded",
+        "failed",
+        "suppressed_by_consent",
+        "suppressed_by_provider_off",
+        "suppressed_by_circuit_breaker",
+        "rate_limited"
+      ]
     },
     "attempt_number": { "type": "integer", "minimum": 1, "maximum": 20 },
     "request_url": { "type": "string", "format": "uri", "maxLength": 512 },

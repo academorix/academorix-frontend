@@ -16,21 +16,21 @@
  *   import internal modules without deep relative paths.
  */
 
-import { defineConfig, mergeConfig } from 'vitest/config';
-import path from 'node:path';
-import preset from '@stackra/testing/preset';
+import { defineConfig, mergeConfig } from "vitest/config";
+import path from "node:path";
+import preset from "@stackra/testing/preset";
 
 export default mergeConfig(
   preset,
   defineConfig({
     test: {
-      environment: 'node',
-      setupFiles: ['./__tests__/vitest.setup.ts'],
+      environment: "node",
+      setupFiles: ["./__tests__/vitest.setup.ts"],
     },
     resolve: {
       alias: {
-        '@': path.resolve(__dirname, './src'),
+        "@": path.resolve(__dirname, "./src"),
       },
     },
-  })
+  }),
 );

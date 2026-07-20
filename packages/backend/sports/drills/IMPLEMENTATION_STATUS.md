@@ -4,9 +4,9 @@
 
 ## Scope
 
-Coaching drill library — the reusable exercises coaches assemble into
-sessions. Attribute-driven per sport (a football drill has different
-metadata from a swim drill).
+Coaching drill library — the reusable exercises coaches assemble into sessions.
+Attribute-driven per sport (a football drill has different metadata from a swim
+drill).
 
 ## What landed
 
@@ -18,14 +18,13 @@ metadata from a swim drill).
 ### Actions
 
 - **`CreateDrillAction`** — coach or admin authored.
-- **`AttachToSessionAction`** — POST /sessions/{session}/drills.
-  Feeds the session's plan.
+- **`AttachToSessionAction`** — POST /sessions/{session}/drills. Feeds the
+  session's plan.
 - **`ListMyDrillsAction`** — GET /drills?author=me.
 
 ### Services
 
-- **`DrillLibraryImporter`** — bulk-import from CSV / vendor
-  drill libraries.
+- **`DrillLibraryImporter`** — bulk-import from CSV / vendor drill libraries.
 
 ### Cross-module dependencies
 

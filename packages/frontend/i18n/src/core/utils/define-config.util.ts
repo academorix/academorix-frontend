@@ -4,7 +4,7 @@
  * @description Typed identity helper for authoring `i18n.config.ts`.
  */
 
-import type { II18nConfig } from '../interfaces';
+import type { II18nConfig } from "../interfaces";
 
 /**
  * Type-safe i18n configuration helper — identity pass-through for

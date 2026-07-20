@@ -4,9 +4,9 @@
 
 ## Implementation plan
 
-Dunning is the retry ladder for failed recurring charges (memberships).
-When a subscription renewal fails, this module runs the tenant's
-configured retry cadence + escalation (email → SMS → in-app → suspension).
+Dunning is the retry ladder for failed recurring charges (memberships). When a
+subscription renewal fails, this module runs the tenant's configured retry
+cadence + escalation (email → SMS → in-app → suspension).
 
 ### The retry ladder (per tenant policy — `settings.dunning.*`)
 
@@ -32,18 +32,17 @@ Standard CRUD on `dunning_runs` + admin action endpoints:
 - `SkipDunningRunAction` — POST /dunning-runs/{run}/skip — admin waives.
 - `PauseDunningRunAction` / `ResumeDunningRunAction` — admin holds during
   investigation.
-- `AbandonDunningRunAction` — POST /dunning-runs/{run}/abandon — admin
-  gives up early, triggers `DunningRunExhausted`.
+- `AbandonDunningRunAction` — POST /dunning-runs/{run}/abandon — admin gives up
+  early, triggers `DunningRunExhausted`.
 
 ### Support services
 
-- `DunningScheduler` (Services/, queued cron every 15min) — reads
-  `dunning_runs` where `next_retry_at <= now` and dispatches
-  `RetryDunningRunJob` for each. The job runs one retry step + updates
-  `next_retry_at` per the tenant's cadence.
-- `DunningPolicyResolver` (Services/) — reads the tenant's cadence config
-  from `settings.dunning` and produces the next retry interval + channel
-  for a given step number.
+- `DunningScheduler` (Services/, queued cron every 15min) — reads `dunning_runs`
+  where `next_retry_at <= now` and dispatches `RetryDunningRunJob` for each. The
+  job runs one retry step + updates `next_retry_at` per the tenant's cadence.
+- `DunningPolicyResolver` (Services/) — reads the tenant's cadence config from
+  `settings.dunning` and produces the next retry interval + channel for a given
+  step number.
 - `DunningNotifier` (Services/) — routes to `notifications` with the right
   template per step + channel.
 
@@ -58,5 +57,6 @@ Standard CRUD on `dunning_runs` + admin action endpoints:
 ### Entitlement revocation cascade
 
 `DunningRunExhausted` fires `MembershipSuspended` in `finance/membership`
-+ `EntitlementRevoked` in `entitlements`. Access disappears immediately
-(guest sessions kept alive with reduced permissions).
+
+- `EntitlementRevoked` in `entitlements`. Access disappears immediately (guest
+  sessions kept alive with reduced permissions).

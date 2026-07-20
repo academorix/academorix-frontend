@@ -7,8 +7,8 @@
  *   defaults stay consistent.
  */
 
-import type { ICoordinatorModuleOptions } from '@/core/interfaces';
-import { DEFAULT_COORDINATOR_CONFIG } from '@/core/constants/default-coordinator-config.constant';
+import type { ICoordinatorModuleOptions } from "@/core/interfaces";
+import { DEFAULT_COORDINATOR_CONFIG } from "@/core/constants/default-coordinator-config.constant";
 
 /**
  * Merge user options into the default coordinator config.
@@ -17,7 +17,7 @@ import { DEFAULT_COORDINATOR_CONFIG } from '@/core/constants/default-coordinator
  * @returns Resolved coordinator configuration with defaults applied.
  */
 export function mergeConfig(
-  options: Partial<ICoordinatorModuleOptions> = {}
+  options: Partial<ICoordinatorModuleOptions> = {},
 ): ICoordinatorModuleOptions {
   return {
     ...DEFAULT_COORDINATOR_CONFIG,

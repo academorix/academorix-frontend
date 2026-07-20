@@ -4,13 +4,45 @@
   "title": "attendance — helper functions",
   "namespace": "Academorix\\Sports\\Attendance\\Support",
   "helpers": [
-    { "signature": "current_attendance_for_session(Session $session): Collection<AttendanceRecord>", "purpose": "Returns non-cancelled attendance records for a session.", "delegates_to": "AttendanceRecordRepository::currentForSession()" },
-    { "signature": "athlete_attendance_rate(Athlete $athlete, Season $season): float", "purpose": "Returns attendance rate = (present + late) / expected for athlete in the season. 0.0 when no expected sessions.", "delegates_to": "AttendanceReporter::rateForAthlete()" },
-    { "signature": "athlete_unexcused_absences_in_window(Athlete $athlete, int $days): int", "purpose": "Returns count of unexcused absences with counted_toward_freeze=true in the rolling window.", "delegates_to": "AbsenceRecordRepository::unexcusedCountInWindow()" },
-    { "signature": "resolve_policy_for_session(Session $session): ?AttendancePolicy", "purpose": "Runs the PolicyResolver nearest-match cascade for a session.", "delegates_to": "PolicyResolver::resolveFor()" },
-    { "signature": "attendance_status_for_check_in(Session $session, DateTime $checkedInAt, AttendancePolicy $policy): string", "purpose": "Computes status ('present' | 'late') from session.starts_at + checked_in_at + policy.grace_period_minutes.", "delegates_to": "AttendanceOrchestrator::computeStatus()" },
-    { "signature": "session_expected_attendee_ids(Session $session): array<string>", "purpose": "Returns the array of athlete IDs expected at the session (from active AthleteEnrollment on the team+season).", "delegates_to": "AttendanceOrchestrator::expectedAttendees()" },
-    { "signature": "has_reached_absence_freeze_threshold(Athlete $athlete, AttendancePolicy $policy): bool", "purpose": "True when the athlete's unexcused-absence count in policy.absence_freeze_period_days window >= policy.max_unexcused_absences_per_period.", "delegates_to": "AbsenceThresholdEvaluator::isReached()" },
-    { "signature": "athlete_has_unconsumed_pass_for_session(Athlete $athlete, Session $session): bool", "purpose": "True when the athlete's active Membership has at least one unconsumed Pass in the current period whose valid_from..valid_until brackets session.starts_at.", "delegates_to": "AttendanceOrchestrator::hasUnconsumedPass()" }
+    {
+      "signature": "current_attendance_for_session(Session $session): Collection<AttendanceRecord>",
+      "purpose": "Returns non-cancelled attendance records for a session.",
+      "delegates_to": "AttendanceRecordRepository::currentForSession()"
+    },
+    {
+      "signature": "athlete_attendance_rate(Athlete $athlete, Season $season): float",
+      "purpose": "Returns attendance rate = (present + late) / expected for athlete in the season. 0.0 when no expected sessions.",
+      "delegates_to": "AttendanceReporter::rateForAthlete()"
+    },
+    {
+      "signature": "athlete_unexcused_absences_in_window(Athlete $athlete, int $days): int",
+      "purpose": "Returns count of unexcused absences with counted_toward_freeze=true in the rolling window.",
+      "delegates_to": "AbsenceRecordRepository::unexcusedCountInWindow()"
+    },
+    {
+      "signature": "resolve_policy_for_session(Session $session): ?AttendancePolicy",
+      "purpose": "Runs the PolicyResolver nearest-match cascade for a session.",
+      "delegates_to": "PolicyResolver::resolveFor()"
+    },
+    {
+      "signature": "attendance_status_for_check_in(Session $session, DateTime $checkedInAt, AttendancePolicy $policy): string",
+      "purpose": "Computes status ('present' | 'late') from session.starts_at + checked_in_at + policy.grace_period_minutes.",
+      "delegates_to": "AttendanceOrchestrator::computeStatus()"
+    },
+    {
+      "signature": "session_expected_attendee_ids(Session $session): array<string>",
+      "purpose": "Returns the array of athlete IDs expected at the session (from active AthleteEnrollment on the team+season).",
+      "delegates_to": "AttendanceOrchestrator::expectedAttendees()"
+    },
+    {
+      "signature": "has_reached_absence_freeze_threshold(Athlete $athlete, AttendancePolicy $policy): bool",
+      "purpose": "True when the athlete's unexcused-absence count in policy.absence_freeze_period_days window >= policy.max_unexcused_absences_per_period.",
+      "delegates_to": "AbsenceThresholdEvaluator::isReached()"
+    },
+    {
+      "signature": "athlete_has_unconsumed_pass_for_session(Athlete $athlete, Session $session): bool",
+      "purpose": "True when the athlete's active Membership has at least one unconsumed Pass in the current period whose valid_from..valid_until brackets session.starts_at.",
+      "delegates_to": "AttendanceOrchestrator::hasUnconsumedPass()"
+    }
   ]
 }

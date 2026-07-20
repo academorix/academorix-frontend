@@ -1,1 +1,1 @@
-export { useSduiActionAdapter } from './action-adapter';
+export { useSduiActionAdapter } from "./action-adapter";

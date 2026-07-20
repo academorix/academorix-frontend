@@ -4,7 +4,7 @@
  * @description Props for the {@link NotificationEmptyState} component.
  */
 
-import type { ReactNode } from 'react';
+import type { ReactNode } from "react";
 
 /**
  * Props accepted by {@link NotificationEmptyState}.
@@ -24,7 +24,7 @@ export interface NotificationEmptyStateProps {
    *
    * @default 'drawer'
    */
-  readonly variant?: 'drawer' | 'page';
+  readonly variant?: "drawer" | "page";
   /** Optional action element rendered inside `EmptyState.Content`. */
   readonly action?: ReactNode;
   /** Additional CSS classes appended to the root. */

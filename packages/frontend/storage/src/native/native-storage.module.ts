@@ -6,19 +6,19 @@
  *   resolved `StorageManager` via `manager.extend(...)`.
  */
 
-import { Global, Module, type DynamicModule } from '@stackra/container';
-import { createSeedLoader, seedLoaderToken } from '@stackra/support';
-import type { IStorageModuleOptions } from '@stackra/contracts';
+import { Global, Module, type DynamicModule } from "@stackra/container";
+import { createSeedLoader, seedLoaderToken } from "@stackra/support";
+import type { IStorageModuleOptions } from "@stackra/contracts";
 
-import { StorageModule } from '@/core/storage.module';
-import { StorageManager } from '@/core/services/storage-manager.service';
+import { StorageModule } from "@/core/storage.module";
+import { StorageManager } from "@/core/services/storage-manager.service";
 
-import { AsyncStorageStore } from './stores/async-storage.store';
+import { AsyncStorageStore } from "./stores/async-storage.store";
 
 /** Read an optional string field from a raw store-config record. */
 function readString(config: Record<string, unknown>, key: string): string | undefined {
   const raw = config[key];
-  return typeof raw === 'string' ? raw : undefined;
+  return typeof raw === "string" ? raw : undefined;
 }
 
 /**
@@ -26,7 +26,7 @@ function readString(config: Record<string, unknown>, key: string): string | unde
  * explicit `prefix` → manager-supplied instance name → empty string.
  */
 function derivePrefix(config: Record<string, unknown>): string {
-  return readString(config, 'prefix') ?? readString(config, '__instanceName') ?? '';
+  return readString(config, "prefix") ?? readString(config, "__instanceName") ?? "";
 }
 
 /**
@@ -78,10 +78,10 @@ export class NativeStorageModule {
       imports: [StorageModule.forRoot(options)],
       providers: [
         {
-          provide: seedLoaderToken('storage:native-drivers'),
+          provide: seedLoaderToken("storage:native-drivers"),
           useFactory: (manager: StorageManager) =>
             createSeedLoader(() => {
-              manager.extend('asyncStorage', (config) => {
+              manager.extend("asyncStorage", (config) => {
                 return new AsyncStorageStore({ prefix: derivePrefix(config) });
               });
             }),

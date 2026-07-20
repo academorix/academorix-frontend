@@ -6,7 +6,7 @@
  *   tests can spin one up without decorators.
  */
 
-import type { ISettingDefinition, ISettingsRegistry, Type } from '@stackra/contracts';
+import type { ISettingDefinition, ISettingsRegistry, Type } from "@stackra/contracts";
 
 /** Minimal `ISettingsRegistry` mock backed by a plain `Map`. */
 export class MockSettingsRegistry implements ISettingsRegistry {
@@ -17,7 +17,7 @@ export class MockSettingsRegistry implements ISettingsRegistry {
   public registerClass(dto: Type): void {
     throw new Error(
       `[MockSettingsRegistry] registerClass is not implemented — tests should ` +
-        `call registerFromSchema(${dto.name}) with a hand-rolled definition.`
+        `call registerFromSchema(${dto.name}) with a hand-rolled definition.`,
     );
   }
 

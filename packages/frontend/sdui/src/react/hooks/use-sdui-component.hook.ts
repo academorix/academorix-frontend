@@ -5,10 +5,10 @@
  *   component entry from the DI-managed {@link ComponentRegistry}.
  */
 
-import { useInject } from '@stackra/container/react';
-import type { ISduiComponentEntry } from '@stackra/contracts';
-import { SDUI_COMPONENT_REGISTRY } from '@stackra/contracts';
-import type { ComponentRegistry } from '@/core/registries/component.registry';
+import { useInject } from "@stackra/container/react";
+import type { ISduiComponentEntry } from "@stackra/contracts";
+import { SDUI_COMPONENT_REGISTRY } from "@stackra/contracts";
+import type { ComponentRegistry } from "@/core/registries/component.registry";
 
 /**
  * Resolve an SDUI component entry by node `type`.

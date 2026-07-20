@@ -79,7 +79,9 @@
                     "leadingIcon": "plus",
                     "children": "Create custom role"
                   },
-                  "actions": { "onPress": { "kind": "navigate", "to": "/tenant/settings/roles/create" } },
+                  "actions": {
+                    "onPress": { "kind": "navigate", "to": "/tenant/settings/roles/create" }
+                  },
                   "bindings": {
                     "disabled": {
                       "$expr": "!customRolesEntitled.value || customRoleSlot.is_exceeded"

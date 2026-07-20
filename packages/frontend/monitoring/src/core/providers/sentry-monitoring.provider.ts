@@ -11,9 +11,9 @@ import type {
   IMonitoringProvider,
   IMonitoringUser,
   MonitoringSeverity,
-} from '@stackra/contracts';
+} from "@stackra/contracts";
 
-import type { ISentryProviderOptions } from '../interfaces';
+import type { ISentryProviderOptions } from "../interfaces";
 
 /** Minimal structural view of the bits of `@sentry/browser` we use. */
 interface SentryLike {
@@ -27,14 +27,14 @@ interface SentryLike {
 
 /** Map our severity vocabulary onto Sentry's. */
 function toSentryLevel(severity: MonitoringSeverity | undefined): string {
-  return severity ?? 'error';
+  return severity ?? "error";
 }
 
 /**
  * Sentry-backed monitoring provider.
  */
 export class SentryMonitoringProvider implements IMonitoringProvider {
-  public readonly name = 'sentry';
+  public readonly name = "sentry";
 
   private client: SentryLike | undefined;
 
@@ -44,19 +44,19 @@ export class SentryMonitoringProvider implements IMonitoringProvider {
    */
   public constructor(
     private readonly options: ISentryProviderOptions,
-    private readonly defaults: { environment?: string; release?: string } = {}
+    private readonly defaults: { environment?: string; release?: string } = {},
   ) {}
 
   /** Lazily import and initialise the Sentry SDK. */
   public async init(): Promise<void> {
     // Variable specifier keeps TS from statically requiring the optional dep.
-    const moduleName = '@sentry/browser';
+    const moduleName = "@sentry/browser";
     const mod = (await import(/* @vite-ignore */ moduleName).catch(() => undefined)) as
       SentryLike | undefined;
 
     if (!mod) {
       // eslint-disable-next-line no-console
-      console.warn('[monitoring] @sentry/browser is not installed — Sentry provider disabled.');
+      console.warn("[monitoring] @sentry/browser is not installed — Sentry provider disabled.");
       return;
     }
 

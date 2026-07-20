@@ -4,10 +4,10 @@
  * @description React hook that returns whether the current tab is the leader.
  */
 
-import { useState, useEffect } from 'react';
-import { useInject } from '@stackra/container/react';
-import { TAB_COORDINATOR } from '@stackra/contracts';
-import { TabCoordinator } from '@/core/services/tab-coordinator.service';
+import { useState, useEffect } from "react";
+import { useInject } from "@stackra/container/react";
+import { TAB_COORDINATOR } from "@stackra/contracts";
+import { TabCoordinator } from "@/core/services/tab-coordinator.service";
 
 /**
  * Returns whether this tab is the elected leader.
@@ -30,7 +30,7 @@ export function useIsLeader(): boolean {
 
   useEffect(() => {
     const unsubscribe = coordinator.onRoleChange((role) => {
-      setIsLeader(role === 'leader');
+      setIsLeader(role === "leader");
     });
     return unsubscribe;
   }, [coordinator]);

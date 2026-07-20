@@ -5,12 +5,14 @@
  */
 
 import "reflect-metadata";
-import { describe, it, expect } from "vitest";
 import { getMetadata } from "@vivtel/metadata";
-import { Command } from "@/decorators";
-import { COMMAND_METADATA_KEY } from "@/constants";
-import { InvalidCommandNameError } from "@/errors";
+import { describe, it, expect } from "vitest";
+
 import type { ICommandMetadata } from "@/interfaces";
+
+import { COMMAND_METADATA_KEY } from "@/constants";
+import { Command } from "@/decorators";
+import { InvalidCommandNameError } from "@/errors";
 
 describe("@Command() decorator", () => {
   it("should store metadata on the decorated class", () => {

@@ -6,11 +6,11 @@
  *   snapshot suitable for rendering an `AiContextIndicator`.
  */
 
-import { useEffect, useState } from 'react';
-import { useInject } from '@stackra/container/react';
-import { AI_CONTEXT_REGISTRY, type IAiContextFrame } from '@stackra/contracts';
+import { useEffect, useState } from "react";
+import { useInject } from "@stackra/container/react";
+import { AI_CONTEXT_REGISTRY, type IAiContextFrame } from "@stackra/contracts";
 
-import { ContextRegistry } from '@/core/registries/context.registry';
+import { ContextRegistry } from "@/core/registries/context.registry";
 
 /** The value returned by {@link useAiContext}. */
 export interface IUseAiContextResult {

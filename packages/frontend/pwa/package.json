@@ -1,7 +1,7 @@
 {
   "name": "@stackra/pwa",
   "version": "0.1.0",
-  "description": "Production-grade PWA runtime + build-time toolkit for the Stackra framework — install prompt handling (with iOS Safari tutorial), service-worker update prompts, standalone detection, UTM attribution, Web Share, Vibration, Wake Lock, safe-area insets, adaptive loading, QR-code install helper, splash screen, PwaHead meta emitter, locale-aware Web App Manifest builder, curated Workbox runtime-caching, vite-plugin-pwa options builder, @vite-pwa/assets-generator config builder, and a Bubblewrap TWA config builder.",
+  "description": "Production-grade PWA runtime + build-time toolkit for the Stackra framework \u2014 install prompt handling (with iOS Safari tutorial), service-worker update prompts, standalone detection, UTM attribution, Web Share, Vibration, Wake Lock, safe-area insets, adaptive loading, QR-code install helper, splash screen, PwaHead meta emitter, locale-aware Web App Manifest builder, curated Workbox runtime-caching, vite-plugin-pwa options builder, @vite-pwa/assets-generator config builder, and a Bubblewrap TWA config builder.",
   "license": "MIT",
   "author": {
     "name": "Stackra L.L.C",
@@ -130,6 +130,8 @@
     }
   },
   "devDependencies": {
+    "@academorix/config-tsconfig": "workspace:*",
+    "@academorix/config-tsup": "workspace:*",
     "@stackra/container": "workspace:*",
     "@stackra/contracts": "workspace:*",
     "@stackra/network": "workspace:*",

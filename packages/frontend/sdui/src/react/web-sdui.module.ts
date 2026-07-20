@@ -10,16 +10,16 @@
  *   - `WebSduiModule.forRoot(...)` — web + HeroUI defaults out of the box.
  */
 
-import { Module, type DynamicModule } from '@stackra/container';
-import { createSeedLoader, seedLoaderToken } from '@stackra/support';
-import { SduiModule, type ISduiForRootOptions } from '../core/sdui.module';
-import { ComponentRegistry } from '../core/registries/component.registry';
-import { LayoutRegistry } from '../core/registries/layout.registry';
+import { Module, type DynamicModule } from "@stackra/container";
+import { createSeedLoader, seedLoaderToken } from "@stackra/support";
+import { SduiModule, type ISduiForRootOptions } from "../core/sdui.module";
+import { ComponentRegistry } from "../core/registries/component.registry";
+import { LayoutRegistry } from "../core/registries/layout.registry";
 import {
   registerBuiltInLayouts,
   registerCorePrimitives,
   registerHeroUiComponents,
-} from './registry';
+} from "./registry";
 
 /**
  * WebSduiModule — SDUI wired for web with the default component set.
@@ -38,7 +38,7 @@ export class WebSduiModule {
       imports: [SduiModule.forRoot(options)],
       providers: [
         {
-          provide: seedLoaderToken('sdui:web-registry'),
+          provide: seedLoaderToken("sdui:web-registry"),
           useFactory: (components: ComponentRegistry, layouts: LayoutRegistry) =>
             createSeedLoader(() => {
               registerCorePrimitives(components);

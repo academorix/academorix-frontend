@@ -114,9 +114,7 @@
       "description": "Aggregated downstream reference count for one Sport (sum across every table in `reference_tables`). Read by the deactivate-preview UI + the observer's `is_in_use` check.",
       "ttlSeconds": 600,
       "tags": ["sports-registry"],
-      "invalidatedBy": [
-        "downstream Wave 3 row INSERT/UPDATE/DELETE with matching sport_key"
-      ]
+      "invalidatedBy": ["downstream Wave 3 row INSERT/UPDATE/DELETE with matching sport_key"]
     }
   ]
 }

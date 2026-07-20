@@ -1,1 +1,1 @@
-export { SduiError, SduiSchemaVersionError, SduiValidationError } from './sdui.error';
+export { SduiError, SduiSchemaVersionError, SduiValidationError } from "./sdui.error";

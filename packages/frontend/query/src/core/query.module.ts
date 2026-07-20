@@ -23,18 +23,18 @@
  *   is fully self-contained.
  */
 
-import { Module } from '@stackra/container';
-import type { DynamicModule } from '@stackra/container';
-import { DevtoolsModule } from '@stackra/devtools';
-import { QueryClient } from '@tanstack/query-core';
-import { QUERY_CLIENT, UNDOABLE_QUEUE, type IAsyncModuleOptions } from '@stackra/contracts';
+import { Module } from "@stackra/container";
+import type { DynamicModule } from "@stackra/container";
+import { DevtoolsModule } from "@stackra/devtools";
+import { QueryClient } from "@tanstack/query-core";
+import { QUERY_CLIENT, UNDOABLE_QUEUE, type IAsyncModuleOptions } from "@stackra/contracts";
 
-import { QUERY_CONFIG } from './tokens/query.tokens';
-import type { QueryModuleOptions } from './interfaces/query-module-options.interface';
-import { mergeConfig } from './utils/merge-config.util';
-import { UndoableQueueService } from './services/undoable-queue.service';
-import { QueryService } from './services/query.service';
-import { QueryDevtoolsPanel } from '../react/devtools/query.devtools-panel';
+import { QUERY_CONFIG } from "./tokens/query.tokens";
+import type { QueryModuleOptions } from "./interfaces/query-module-options.interface";
+import { mergeConfig } from "./utils/merge-config.util";
+import { UndoableQueueService } from "./services/undoable-queue.service";
+import { QueryService } from "./services/query.service";
+import { QueryDevtoolsPanel } from "../react/devtools/query.devtools-panel";
 
 /**
  * Build a `QueryClient` from the merged module config. Extracted to

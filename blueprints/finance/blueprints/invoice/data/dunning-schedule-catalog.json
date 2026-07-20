@@ -7,11 +7,41 @@
       "display_name": "Default (recommended)",
       "description": "Balanced cadence for most tenants. Not too aggressive; not too passive. Suitable for B2C subscriptions + individual customers.",
       "stages": [
-        { "day": 3, "stage_key": "day_3", "severity": "friendly", "channels": ["mail", "in_app"], "copy_summary": "Reminder — your invoice from {issue_date} is now 3 days past due. Please pay when convenient." },
-        { "day": 7, "stage_key": "day_7", "severity": "reminder", "channels": ["mail", "in_app"], "copy_summary": "Your invoice from {issue_date} is 7 days past due. Please pay to avoid interruption of service." },
-        { "day": 14, "stage_key": "day_14", "severity": "firm", "channels": ["mail", "in_app", "push"], "copy_summary": "Your invoice from {issue_date} is now 14 days past due. Please contact support if there's an issue." },
-        { "day": 30, "stage_key": "day_30", "severity": "final", "channels": ["mail", "in_app", "push"], "copy_summary": "Final notice — your invoice from {issue_date} is 30 days past due. Service may be suspended if not paid within 7 days." },
-        { "day": 60, "stage_key": "day_60", "severity": "collections", "channels": ["mail", "in_app", "push"], "copy_summary": "Your invoice will be referred to a collections agency in 3 days if not resolved. Please contact support urgently." }
+        {
+          "day": 3,
+          "stage_key": "day_3",
+          "severity": "friendly",
+          "channels": ["mail", "in_app"],
+          "copy_summary": "Reminder — your invoice from {issue_date} is now 3 days past due. Please pay when convenient."
+        },
+        {
+          "day": 7,
+          "stage_key": "day_7",
+          "severity": "reminder",
+          "channels": ["mail", "in_app"],
+          "copy_summary": "Your invoice from {issue_date} is 7 days past due. Please pay to avoid interruption of service."
+        },
+        {
+          "day": 14,
+          "stage_key": "day_14",
+          "severity": "firm",
+          "channels": ["mail", "in_app", "push"],
+          "copy_summary": "Your invoice from {issue_date} is now 14 days past due. Please contact support if there's an issue."
+        },
+        {
+          "day": 30,
+          "stage_key": "day_30",
+          "severity": "final",
+          "channels": ["mail", "in_app", "push"],
+          "copy_summary": "Final notice — your invoice from {issue_date} is 30 days past due. Service may be suspended if not paid within 7 days."
+        },
+        {
+          "day": 60,
+          "stage_key": "day_60",
+          "severity": "collections",
+          "channels": ["mail", "in_app", "push"],
+          "copy_summary": "Your invoice will be referred to a collections agency in 3 days if not resolved. Please contact support urgently."
+        }
       ]
     },
     "aggressive": {
@@ -19,11 +49,32 @@
       "description": "Faster cadence for B2B with net-30 or net-60 terms where any past-due is unusual. Enterprise-only.",
       "requires_entitlement": "invoice_dunning_advanced",
       "stages": [
-        { "day": 1, "stage_key": "day_1", "severity": "friendly", "channels": ["mail"], "copy_summary": "Invoice past due by 1 day — please pay at your earliest convenience." },
+        {
+          "day": 1,
+          "stage_key": "day_1",
+          "severity": "friendly",
+          "channels": ["mail"],
+          "copy_summary": "Invoice past due by 1 day — please pay at your earliest convenience."
+        },
         { "day": 3, "stage_key": "day_3", "severity": "reminder", "channels": ["mail", "in_app"] },
-        { "day": 7, "stage_key": "day_7", "severity": "firm", "channels": ["mail", "in_app", "push"] },
-        { "day": 14, "stage_key": "day_14", "severity": "final", "channels": ["mail", "in_app", "push"] },
-        { "day": 30, "stage_key": "day_30", "severity": "collections", "channels": ["mail", "in_app", "push"] }
+        {
+          "day": 7,
+          "stage_key": "day_7",
+          "severity": "firm",
+          "channels": ["mail", "in_app", "push"]
+        },
+        {
+          "day": 14,
+          "stage_key": "day_14",
+          "severity": "final",
+          "channels": ["mail", "in_app", "push"]
+        },
+        {
+          "day": 30,
+          "stage_key": "day_30",
+          "severity": "collections",
+          "channels": ["mail", "in_app", "push"]
+        }
       ]
     },
     "gentle": {
@@ -32,10 +83,25 @@
       "requires_entitlement": "invoice_dunning_advanced",
       "stages": [
         { "day": 7, "stage_key": "day_7", "severity": "friendly", "channels": ["mail"] },
-        { "day": 21, "stage_key": "day_21", "severity": "reminder", "channels": ["mail", "in_app"] },
+        {
+          "day": 21,
+          "stage_key": "day_21",
+          "severity": "reminder",
+          "channels": ["mail", "in_app"]
+        },
         { "day": 45, "stage_key": "day_45", "severity": "firm", "channels": ["mail", "in_app"] },
-        { "day": 75, "stage_key": "day_75", "severity": "final", "channels": ["mail", "in_app", "push"] },
-        { "day": 120, "stage_key": "day_120", "severity": "collections", "channels": ["mail", "in_app", "push"] }
+        {
+          "day": 75,
+          "stage_key": "day_75",
+          "severity": "final",
+          "channels": ["mail", "in_app", "push"]
+        },
+        {
+          "day": 120,
+          "stage_key": "day_120",
+          "severity": "collections",
+          "channels": ["mail", "in_app", "push"]
+        }
       ]
     }
   },

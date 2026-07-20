@@ -6,14 +6,14 @@
  *   that need "a panel" without caring about the specifics.
  */
 
-import type { IDevtoolsPanel, IDevtoolsView } from '@stackra/contracts';
+import type { IDevtoolsPanel, IDevtoolsView } from "@stackra/contracts";
 
 /**
  * Default component view — renders `null`. Overridden when the
  * caller passes a custom `view` in `overrides`.
  */
 const DEFAULT_VIEW: IDevtoolsView = {
-  type: 'component',
+  type: "component",
   render: () => null,
 };
 
@@ -29,11 +29,11 @@ const DEFAULT_VIEW: IDevtoolsView = {
  * ```
  */
 export function createMockDevtoolsPanel(overrides: Partial<IDevtoolsPanel> = {}): IDevtoolsPanel {
-  const id = overrides.id ?? 'mock-panel';
+  const id = overrides.id ?? "mock-panel";
   return {
     id,
     title: overrides.title ?? id,
-    category: overrides.category ?? 'modules',
+    category: overrides.category ?? "modules",
     order: overrides.order ?? 100,
     view: overrides.view ?? DEFAULT_VIEW,
     ...(overrides.icon !== undefined ? { icon: overrides.icon } : {}),

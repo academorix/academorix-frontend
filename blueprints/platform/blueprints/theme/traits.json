@@ -41,7 +41,11 @@
     "tenancy": [
       {
         "trait": "Academorix\\Tenancy\\Concerns\\BelongsToTenant",
-        "usedBy": ["Theme", "ThemePreset (nullable tenant_id — trait applied but nullable behavior configured)", "ThemeTokenOverride"]
+        "usedBy": [
+          "Theme",
+          "ThemePreset (nullable tenant_id — trait applied but nullable behavior configured)",
+          "ThemeTokenOverride"
+        ]
       }
     ],
     "audit": [

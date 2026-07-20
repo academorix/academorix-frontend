@@ -5,8 +5,8 @@
  *   that maps a `ControlType` to the matching HeroUI compound.
  */
 
-import type { ReactNode } from 'react';
-import type { ISettingField } from '@stackra/contracts';
+import type { ReactNode } from "react";
+import type { ISettingField } from "@stackra/contracts";
 
 /** Props accepted by `<SettingField>`. */
 export interface ISettingFieldProps {

@@ -4,7 +4,7 @@
  * @description Props for {@link DevtoolsPanelView}.
  */
 
-import type { IDevtoolsPanel } from '@stackra/contracts';
+import type { IDevtoolsPanel } from "@stackra/contracts";
 
 /** Props for {@link DevtoolsPanelView}. */
 export interface DevtoolsPanelViewProps {

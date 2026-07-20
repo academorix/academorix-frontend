@@ -4,9 +4,9 @@
  * @description Factories returning assertable mock consent instances.
  */
 
-import { createAssertableProxy, type AssertableProxy } from '@stackra/testing';
-import { MockConsentManager } from './mock-consent-manager';
-import { MockConsentStorageAdapter } from './mock-consent-storage-adapter';
+import { createAssertableProxy, type AssertableProxy } from "@stackra/testing";
+import { MockConsentManager } from "./mock-consent-manager";
+import { MockConsentStorageAdapter } from "./mock-consent-storage-adapter";
 
 /** Options accepted by {@link createMockConsentManager}. */
 export interface CreateMockConsentManagerOptions {
@@ -37,7 +37,7 @@ export interface CreateMockConsentManagerOptions {
  * ```
  */
 export function createMockConsentManager(
-  options: CreateMockConsentManagerOptions = {}
+  options: CreateMockConsentManagerOptions = {},
 ): AssertableProxy<MockConsentManager> {
   return createAssertableProxy(new MockConsentManager(options));
 }
@@ -50,7 +50,7 @@ export function createMockConsentManager(
  * and the mock's `.calls` array.
  */
 export function createMockConsentStorageAdapter(
-  seed?: Record<string, boolean> | null
+  seed?: Record<string, boolean> | null,
 ): AssertableProxy<MockConsentStorageAdapter> {
   return createAssertableProxy(new MockConsentStorageAdapter(seed));
 }

@@ -9,8 +9,8 @@
  *   field.
  */
 
-import { getMetadata } from '@vivtel/metadata';
-import type { IDiscoveryProvider, IDiscoveryService } from '@stackra/contracts';
+import { getMetadata } from "@vivtel/metadata";
+import type { IDiscoveryProvider, IDiscoveryService } from "@stackra/contracts";
 
 /** One decorated class instance registered with the mock. */
 export interface IMockProviderInput {

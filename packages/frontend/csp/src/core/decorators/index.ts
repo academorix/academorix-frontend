@@ -4,4 +4,4 @@
  * @description Decorators barrel export.
  */
 
-export { CspPolicy } from './csp-policy.decorator';
+export { CspPolicy } from "./csp-policy.decorator";

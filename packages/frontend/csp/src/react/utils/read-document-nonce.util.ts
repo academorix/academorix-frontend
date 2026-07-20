@@ -24,6 +24,6 @@
  * ```
  */
 export function readDocumentNonce(): string {
-  if (typeof document === 'undefined') return '';
-  return document.querySelector<HTMLScriptElement>('script[nonce]')?.nonce ?? '';
+  if (typeof document === "undefined") return "";
+  return document.querySelector<HTMLScriptElement>("script[nonce]")?.nonce ?? "";
 }

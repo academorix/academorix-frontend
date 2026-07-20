@@ -22,8 +22,8 @@
  * ```
  */
 
-export { MockDevtoolsPanelsRegistry } from './mock-devtools-panels-registry';
-export { MockDevtoolsInspectorRegistry } from './mock-devtools-inspector-registry';
-export { createMockDevtoolsPanel } from './create-mock-devtools-panel.util';
-export { createMockDevtoolsRegistry } from './create-mock-devtools-registry.util';
-export { createMockInspectorRegistry } from './create-mock-inspector-registry.util';
+export { MockDevtoolsPanelsRegistry } from "./mock-devtools-panels-registry";
+export { MockDevtoolsInspectorRegistry } from "./mock-devtools-inspector-registry";
+export { createMockDevtoolsPanel } from "./create-mock-devtools-panel.util";
+export { createMockDevtoolsRegistry } from "./create-mock-devtools-registry.util";
+export { createMockInspectorRegistry } from "./create-mock-inspector-registry.util";

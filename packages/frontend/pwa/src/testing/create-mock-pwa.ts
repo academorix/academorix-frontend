@@ -4,15 +4,15 @@
  * @description Factory returning an assertable {@link MockPwaService}.
  */
 
-import { createAssertableProxy, type AssertableProxy } from '@stackra/testing';
+import { createAssertableProxy, type AssertableProxy } from "@stackra/testing";
 
-import { MockPwaService } from './mock-pwa-service';
+import { MockPwaService } from "./mock-pwa-service";
 import type {
   IPwaAttribution,
   IPwaInstallState,
   IPwaUpdateState,
   PwaDisplayMode,
-} from '@/core/interfaces';
+} from "@/core/interfaces";
 
 /** Options accepted by {@link createMockPwa}. */
 export interface ICreateMockPwaOptions {
@@ -39,7 +39,7 @@ export interface ICreateMockPwaOptions {
  * ```
  */
 export function createMockPwa(
-  options: ICreateMockPwaOptions = {}
+  options: ICreateMockPwaOptions = {},
 ): AssertableProxy<MockPwaService> {
   return createAssertableProxy(new MockPwaService(options));
 }

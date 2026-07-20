@@ -32,8 +32,21 @@
             {
               "kind": "View",
               "children": [
-                { "kind": "Text", "props": { "as": "h1", "className": "text-2xl font-semibold", "children": "General Ledger" } },
-                { "kind": "Text", "props": { "className": "text-sm text-muted", "children": "Per-account opening balance, all posted transactions, closing balance, total debits + credits for the selected period." } }
+                {
+                  "kind": "Text",
+                  "props": {
+                    "as": "h1",
+                    "className": "text-2xl font-semibold",
+                    "children": "General Ledger"
+                  }
+                },
+                {
+                  "kind": "Text",
+                  "props": {
+                    "className": "text-sm text-muted",
+                    "children": "Per-account opening balance, all posted transactions, closing balance, total debits + credits for the selected period."
+                  }
+                }
               ]
             },
             {
@@ -44,12 +57,20 @@
                   "kind": "DateRangePicker",
                   "props": { "label": "Period", "className": "min-w-64" },
                   "actions": {
-                    "onChange": { "kind": "filter.setMany", "fields": { "from": "$value.start", "to": "$value.end" } }
+                    "onChange": {
+                      "kind": "filter.setMany",
+                      "fields": { "from": "$value.start", "to": "$value.end" }
+                    }
                   }
                 },
                 {
                   "kind": "Button",
-                  "props": { "variant": "outline", "size": "md", "children": "Export CSV", "leadingIcon": "arrow-down-tray" },
+                  "props": {
+                    "variant": "outline",
+                    "size": "md",
+                    "children": "Export CSV",
+                    "leadingIcon": "arrow-down-tray"
+                  },
                   "actions": {
                     "onPress": {
                       "kind": "download",
@@ -59,7 +80,12 @@
                 },
                 {
                   "kind": "Button",
-                  "props": { "variant": "outline", "size": "md", "children": "Export JSONL", "leadingIcon": "arrow-down-tray" },
+                  "props": {
+                    "variant": "outline",
+                    "size": "md",
+                    "children": "Export JSONL",
+                    "leadingIcon": "arrow-down-tray"
+                  },
                   "actions": {
                     "onPress": {
                       "kind": "download",
@@ -79,40 +105,96 @@
               "kind": "Card",
               "props": { "className": "p-4" },
               "children": [
-                { "kind": "Text", "props": { "className": "text-sm text-muted", "children": "Total debits" } },
-                { "kind": "Text", "props": { "as": "div", "className": "text-2xl font-mono font-semibold mt-2", "formatter": "currency" }, "bindings": { "children": { "$ref": "report.total_debits_cents" }, "currency": { "$ref": "report.currency" } } }
+                {
+                  "kind": "Text",
+                  "props": { "className": "text-sm text-muted", "children": "Total debits" }
+                },
+                {
+                  "kind": "Text",
+                  "props": {
+                    "as": "div",
+                    "className": "text-2xl font-mono font-semibold mt-2",
+                    "formatter": "currency"
+                  },
+                  "bindings": {
+                    "children": { "$ref": "report.total_debits_cents" },
+                    "currency": { "$ref": "report.currency" }
+                  }
+                }
               ]
             },
             {
               "kind": "Card",
               "props": { "className": "p-4" },
               "children": [
-                { "kind": "Text", "props": { "className": "text-sm text-muted", "children": "Total credits" } },
-                { "kind": "Text", "props": { "as": "div", "className": "text-2xl font-mono font-semibold mt-2", "formatter": "currency" }, "bindings": { "children": { "$ref": "report.total_credits_cents" }, "currency": { "$ref": "report.currency" } } }
+                {
+                  "kind": "Text",
+                  "props": { "className": "text-sm text-muted", "children": "Total credits" }
+                },
+                {
+                  "kind": "Text",
+                  "props": {
+                    "as": "div",
+                    "className": "text-2xl font-mono font-semibold mt-2",
+                    "formatter": "currency"
+                  },
+                  "bindings": {
+                    "children": { "$ref": "report.total_credits_cents" },
+                    "currency": { "$ref": "report.currency" }
+                  }
+                }
               ]
             },
             {
               "kind": "Card",
               "props": { "className": "p-4" },
               "children": [
-                { "kind": "Text", "props": { "className": "text-sm text-muted", "children": "Transactions" } },
-                { "kind": "Text", "props": { "as": "div", "className": "text-2xl font-mono font-semibold mt-2" }, "bindings": { "children": { "$ref": "report.transaction_count" } } }
+                {
+                  "kind": "Text",
+                  "props": { "className": "text-sm text-muted", "children": "Transactions" }
+                },
+                {
+                  "kind": "Text",
+                  "props": { "as": "div", "className": "text-2xl font-mono font-semibold mt-2" },
+                  "bindings": { "children": { "$ref": "report.transaction_count" } }
+                }
               ]
             },
             {
               "kind": "Card",
               "props": { "className": "p-4" },
               "children": [
-                { "kind": "Text", "props": { "className": "text-sm text-muted", "children": "Balance check" } },
-                { "kind": "Chip", "props": { "variant": "success", "className": "mt-2", "children": "Balanced" }, "bindings": { "hidden": { "$expr": "$ref('report.total_debits_cents') !== $ref('report.total_credits_cents')" } } },
-                { "kind": "Chip", "props": { "variant": "danger", "className": "mt-2", "children": "IMBALANCED" }, "bindings": { "hidden": { "$expr": "$ref('report.total_debits_cents') === $ref('report.total_credits_cents')" } } }
+                {
+                  "kind": "Text",
+                  "props": { "className": "text-sm text-muted", "children": "Balance check" }
+                },
+                {
+                  "kind": "Chip",
+                  "props": { "variant": "success", "className": "mt-2", "children": "Balanced" },
+                  "bindings": {
+                    "hidden": {
+                      "$expr": "$ref('report.total_debits_cents') !== $ref('report.total_credits_cents')"
+                    }
+                  }
+                },
+                {
+                  "kind": "Chip",
+                  "props": { "variant": "danger", "className": "mt-2", "children": "IMBALANCED" },
+                  "bindings": {
+                    "hidden": {
+                      "$expr": "$ref('report.total_debits_cents') === $ref('report.total_credits_cents')"
+                    }
+                  }
+                }
               ]
             }
           ]
         },
         {
           "kind": "GroupedView",
-          "bindings": { "groups": { "$groupBy": "$ref('report.accounts')", "field": "regulator_category" } },
+          "bindings": {
+            "groups": { "$groupBy": "$ref('report.accounts')", "field": "regulator_category" }
+          },
           "props": {
             "className": "flex flex-col gap-6",
             "groupOrder": ["asset", "liability", "revenue", "expense", "equity"]
@@ -122,7 +204,11 @@
               "kind": "Card",
               "props": { "className": "p-6" },
               "children": [
-                { "kind": "Text", "props": { "as": "h2", "className": "text-lg font-medium mb-4 capitalize" }, "bindings": { "children": { "$ref": "$group.name" } } },
+                {
+                  "kind": "Text",
+                  "props": { "as": "h2", "className": "text-lg font-medium mb-4 capitalize" },
+                  "bindings": { "children": { "$ref": "$group.name" } }
+                },
                 {
                   "kind": "DataGrid",
                   "bindings": { "items": { "$ref": "$group.items" } },
@@ -130,10 +216,46 @@
                     "className": "w-full",
                     "columns": [
                       { "field": "display_name", "label": "Account", "width": 220 },
-                      { "field": "opening_balance_cents", "label": "Opening", "width": 160, "renderer": { "kind": "Text", "formatter": "currency", "className": "text-right font-mono" } },
-                      { "field": "total_debits_cents", "label": "Debits", "width": 160, "renderer": { "kind": "Text", "formatter": "currency", "className": "text-right font-mono" } },
-                      { "field": "total_credits_cents", "label": "Credits", "width": 160, "renderer": { "kind": "Text", "formatter": "currency", "className": "text-right font-mono" } },
-                      { "field": "closing_balance_cents", "label": "Closing", "width": 160, "renderer": { "kind": "Text", "formatter": "currency", "className": "text-right font-mono font-semibold" } }
+                      {
+                        "field": "opening_balance_cents",
+                        "label": "Opening",
+                        "width": 160,
+                        "renderer": {
+                          "kind": "Text",
+                          "formatter": "currency",
+                          "className": "text-right font-mono"
+                        }
+                      },
+                      {
+                        "field": "total_debits_cents",
+                        "label": "Debits",
+                        "width": 160,
+                        "renderer": {
+                          "kind": "Text",
+                          "formatter": "currency",
+                          "className": "text-right font-mono"
+                        }
+                      },
+                      {
+                        "field": "total_credits_cents",
+                        "label": "Credits",
+                        "width": 160,
+                        "renderer": {
+                          "kind": "Text",
+                          "formatter": "currency",
+                          "className": "text-right font-mono"
+                        }
+                      },
+                      {
+                        "field": "closing_balance_cents",
+                        "label": "Closing",
+                        "width": 160,
+                        "renderer": {
+                          "kind": "Text",
+                          "formatter": "currency",
+                          "className": "text-right font-mono font-semibold"
+                        }
+                      }
                     ]
                   }
                 }

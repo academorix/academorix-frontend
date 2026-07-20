@@ -129,7 +129,18 @@
                         "kind": "form.hydrate_from_country_defaults",
                         "source": "countryDefaults",
                         "keyExpr": "selectedKey",
-                        "targetFields": ["currency", "currency_symbol", "timezone", "locale", "rtl", "weekend_days", "tax_config.default_rate_percent", "tax_config.name", "tax_config.inclusive", "fiscal_year_start_month"]
+                        "targetFields": [
+                          "currency",
+                          "currency_symbol",
+                          "timezone",
+                          "locale",
+                          "rtl",
+                          "weekend_days",
+                          "tax_config.default_rate_percent",
+                          "tax_config.name",
+                          "tax_config.inclusive",
+                          "fiscal_year_start_month"
+                        ]
                       }
                     }
                   }
@@ -335,7 +346,9 @@
                     "helpText": "Tenant's tax registration ID for this jurisdiction. Confidential — visible only to admins + owners."
                   },
                   "bindings": {
-                    "hidden": { "$expr": "!me.permissions.includes('regions.view.tax_registration')" }
+                    "hidden": {
+                      "$expr": "!me.permissions.includes('regions.view.tax_registration')"
+                    }
                   }
                 },
                 {
@@ -345,7 +358,9 @@
                     "children": "You don't have the `regions.view.tax_registration` permission. The registration number field is hidden. Ask your owner to grant it."
                   },
                   "bindings": {
-                    "hidden": { "$expr": "me.permissions.includes('regions.view.tax_registration')" }
+                    "hidden": {
+                      "$expr": "me.permissions.includes('regions.view.tax_registration')"
+                    }
                   }
                 },
                 {

@@ -6,18 +6,18 @@
  *   returns the currently-active thread.
  */
 
-import { useEffect, useState } from 'react';
-import { useInject } from '@stackra/container/react';
-import { AI_CONVERSATION_STORE, type IAiConversation } from '@stackra/contracts';
+import { useEffect, useState } from "react";
+import { useInject } from "@stackra/container/react";
+import { AI_CONVERSATION_STORE, type IAiConversation } from "@stackra/contracts";
 
-import { ConversationStore } from '@/core/services/conversation-store.service';
+import { ConversationStore } from "@/core/services/conversation-store.service";
 
 /** The value returned by {@link useAiConversation}. */
 export interface IUseAiConversationResult {
   /** The active or specified conversation, or `null`. */
   conversation: IAiConversation | null;
   /** Convenience alias for `conversation?.messages ?? []`. */
-  messages: IAiConversation['messages'];
+  messages: IAiConversation["messages"];
   /** Currently-active thread id. */
   activeThreadId: string | null;
 }

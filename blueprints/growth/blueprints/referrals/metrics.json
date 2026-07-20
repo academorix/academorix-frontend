@@ -6,8 +6,30 @@
   "namespace": "academorix.referrals",
   "labelConventions": {
     "always": [],
-    "commonlyAvailable": ["reward_type", "trigger_event", "vesting_rule", "cancellation_reason", "clawback_reason", "flag_type", "severity", "code_type", "click_id_provider"],
-    "forbiddenAsLabels": ["tenant_id", "program_id", "code_id", "referral_id", "reward_id", "flag_id", "user_id", "recipient_id", "referrer_id", "referred_id", "reward_amount"]
+    "commonlyAvailable": [
+      "reward_type",
+      "trigger_event",
+      "vesting_rule",
+      "cancellation_reason",
+      "clawback_reason",
+      "flag_type",
+      "severity",
+      "code_type",
+      "click_id_provider"
+    ],
+    "forbiddenAsLabels": [
+      "tenant_id",
+      "program_id",
+      "code_id",
+      "referral_id",
+      "reward_id",
+      "flag_id",
+      "user_id",
+      "recipient_id",
+      "referrer_id",
+      "referred_id",
+      "reward_amount"
+    ]
   },
   "metrics": [
     {

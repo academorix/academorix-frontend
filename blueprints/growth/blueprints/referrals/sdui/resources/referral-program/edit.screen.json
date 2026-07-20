@@ -100,8 +100,14 @@
                 },
                 {
                   "kind": "NumberField",
-                  "props": { "label": "Fraud hard-block threshold", "minValue": 0, "maxValue": 100 },
-                  "bindings": { "defaultValue": { "$ref": "program.fraud_config.hard_block_threshold" } },
+                  "props": {
+                    "label": "Fraud hard-block threshold",
+                    "minValue": 0,
+                    "maxValue": 100
+                  },
+                  "bindings": {
+                    "defaultValue": { "$ref": "program.fraud_config.hard_block_threshold" }
+                  },
                   "form": { "field": "fraud_config.hard_block_threshold" }
                 }
               ]
@@ -114,14 +120,21 @@
                   "kind": "Card",
                   "props": { "className": "p-4" },
                   "children": [
-                    { "kind": "Text", "props": { "as": "h3", "className": "font-semibold", "children": "Lifecycle" } },
+                    {
+                      "kind": "Text",
+                      "props": { "as": "h3", "className": "font-semibold", "children": "Lifecycle" }
+                    },
                     {
                       "kind": "View",
                       "props": { "className": "flex flex-col gap-2 mt-3" },
                       "children": [
                         {
                           "kind": "Button",
-                          "props": { "variant": "primary", "leadingIcon": "play", "children": "Activate" },
+                          "props": {
+                            "variant": "primary",
+                            "leadingIcon": "play",
+                            "children": "Activate"
+                          },
                           "bindings": { "hidden": { "$expr": "program.status === 'active'" } },
                           "actions": {
                             "onPress": {
@@ -134,7 +147,11 @@
                         },
                         {
                           "kind": "Button",
-                          "props": { "variant": "warning", "leadingIcon": "pause", "children": "Pause" },
+                          "props": {
+                            "variant": "warning",
+                            "leadingIcon": "pause",
+                            "children": "Pause"
+                          },
                           "bindings": { "hidden": { "$expr": "program.status !== 'active'" } },
                           "actions": {
                             "onPress": {
@@ -147,7 +164,11 @@
                         },
                         {
                           "kind": "Button",
-                          "props": { "variant": "danger", "leadingIcon": "archive-box", "children": "Archive" },
+                          "props": {
+                            "variant": "danger",
+                            "leadingIcon": "archive-box",
+                            "children": "Archive"
+                          },
                           "actions": {
                             "onPress": {
                               "kind": "modal.open",

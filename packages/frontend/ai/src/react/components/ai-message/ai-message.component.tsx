@@ -10,13 +10,13 @@
  *   assistive technology hears incremental updates (Req 20.7).
  */
 
-import type { JSX } from 'react';
-import { ChatMessage, ChatMessageActions } from '@stackra/ui/react';
-import type { IAiMessage } from '@stackra/contracts';
+import type { JSX } from "react";
+import { ChatMessage, ChatMessageActions } from "@stackra/ui/react";
+import type { IAiMessage } from "@stackra/contracts";
 
-import { AiMarkdown } from '../ai-markdown';
-import { AiSources } from '../ai-sources';
-import { AiToolCall } from '../ai-tool-call';
+import { AiMarkdown } from "../ai-markdown";
+import { AiSources } from "../ai-sources";
+import { AiToolCall } from "../ai-tool-call";
 
 /** Props accepted by {@link AiMessage}. */
 export interface IAiMessageProps {
@@ -36,7 +36,7 @@ export interface IAiMessageProps {
 export function AiMessage(props: IAiMessageProps): JSX.Element {
   const { message, onApproveTool, onRejectTool, isStreaming = false, className } = props;
 
-  if (message.role === 'user') {
+  if (message.role === "user") {
     return (
       <ChatMessage.User className={className}>
         <ChatMessage.Bubble>
@@ -51,7 +51,7 @@ export function AiMessage(props: IAiMessageProps): JSX.Element {
     <ChatMessage.Assistant className={className}>
       <ChatMessage.Avatar show alt="Assistant" fallback="AI" />
       <ChatMessage.Body>
-        <ChatMessage.Content aria-live={isStreaming ? 'polite' : undefined} aria-atomic="false">
+        <ChatMessage.Content aria-live={isStreaming ? "polite" : undefined} aria-atomic="false">
           <AiMarkdown>{message.text}</AiMarkdown>
         </ChatMessage.Content>
 

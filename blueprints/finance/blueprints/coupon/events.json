@@ -56,10 +56,7 @@
       "class": "Academorix\\Finance\\Coupon\\Events\\CouponActivated",
       "trigger": "Coupon.is_active transitioned false -> true. Common paths: manual reactivation before expiry OR admin-initiated activate after a `deactivate` reversal.",
       "queue": "coupons",
-      "consumers": [
-        "audit::WriteToAuditLog",
-        "activity::WriteToActivityLog"
-      ],
+      "consumers": ["audit::WriteToAuditLog", "activity::WriteToActivityLog"],
       "payload": {
         "coupon_id": "ULID",
         "tenant_id": "ULID",
@@ -209,10 +206,7 @@
       "class": "Academorix\\Finance\\Coupon\\Events\\CouponIssuedManually",
       "trigger": "CouponIssuer::issueManually() or CouponIssuer::bulkIssue() successfully created one or more Coupon rows with issuance_source IN ('manual', 'marketing_campaign', 'import', 'api'). Fires per created row.",
       "queue": "coupons",
-      "consumers": [
-        "audit::WriteToAuditLog",
-        "activity::WriteToActivityLog"
-      ],
+      "consumers": ["audit::WriteToAuditLog", "activity::WriteToActivityLog"],
       "payload": {
         "coupon_id": "ULID",
         "tenant_id": "ULID",

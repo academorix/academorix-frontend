@@ -51,7 +51,12 @@
       "provider_metadata": "encrypted:array"
     },
     "observers": ["PaymentObserver"],
-    "appends": ["is_fully_refunded", "is_partially_refunded", "has_open_dispute", "captured_this_month"]
+    "appends": [
+      "is_fully_refunded",
+      "is_partially_refunded",
+      "has_open_dispute",
+      "captured_this_month"
+    ]
   },
   "x-database": {
     "engine": "postgres",
@@ -251,11 +256,32 @@
         "name": "payments_tenant_number_unique",
         "description": "Sequential numbering per tenant — accounting compliance."
       },
-      { "columns": ["tenant_id", "invoice_id", "captured_at"], "name": "payments_invoice_captured_idx", "description": "For per-invoice payment lookup + aging reports (DESC)." },
-      { "columns": ["tenant_id", "provider", "captured_at"], "name": "payments_provider_captured_idx", "description": "For per-provider aggregation + reconciliation." },
-      { "columns": ["provider_reference_id"], "name": "payments_provider_reference_idx", "description": "For webhook dispatch lookup — the webhook body carries provider_reference_id; we join on it." },
-      { "columns": ["tenant_id", "captured_at"], "name": "payments_tenant_captured_idx", "description": "Recent payments query." },
-      { "columns": ["payment_intent_id"], "unique": true, "name": "payments_intent_unique", "description": "One Payment per succeeded PaymentIntent (defense-in-depth — PaymentObserver already enforces)." }
+      {
+        "columns": ["tenant_id", "invoice_id", "captured_at"],
+        "name": "payments_invoice_captured_idx",
+        "description": "For per-invoice payment lookup + aging reports (DESC)."
+      },
+      {
+        "columns": ["tenant_id", "provider", "captured_at"],
+        "name": "payments_provider_captured_idx",
+        "description": "For per-provider aggregation + reconciliation."
+      },
+      {
+        "columns": ["provider_reference_id"],
+        "name": "payments_provider_reference_idx",
+        "description": "For webhook dispatch lookup — the webhook body carries provider_reference_id; we join on it."
+      },
+      {
+        "columns": ["tenant_id", "captured_at"],
+        "name": "payments_tenant_captured_idx",
+        "description": "Recent payments query."
+      },
+      {
+        "columns": ["payment_intent_id"],
+        "unique": true,
+        "name": "payments_intent_unique",
+        "description": "One Payment per succeeded PaymentIntent (defense-in-depth — PaymentObserver already enforces)."
+      }
     ]
   },
   "required": [
@@ -302,11 +328,36 @@
     "capture_method": { "type": "string", "enum": ["automatic", "manual"] },
     "payment_method_type": {
       "type": "string",
-      "enum": ["card", "bank_debit", "bank_transfer", "wallet", "installment", "crypto", "cash", "check"]
+      "enum": [
+        "card",
+        "bank_debit",
+        "bank_transfer",
+        "wallet",
+        "installment",
+        "crypto",
+        "cash",
+        "check"
+      ]
     },
     "payment_method_brand": {
       "type": ["string", "null"],
-      "enum": [null, "visa", "mastercard", "amex", "discover", "jcb", "unionpay", "sepa", "ach", "apple_pay", "google_pay", "paypal", "venmo", "cash_app", "other"]
+      "enum": [
+        null,
+        "visa",
+        "mastercard",
+        "amex",
+        "discover",
+        "jcb",
+        "unionpay",
+        "sepa",
+        "ach",
+        "apple_pay",
+        "google_pay",
+        "paypal",
+        "venmo",
+        "cash_app",
+        "other"
+      ]
     },
     "payment_method_last4": { "type": ["string", "null"], "pattern": "^\\d{4}$" },
     "payment_method_exp_month": { "type": ["integer", "null"], "minimum": 1, "maximum": 12 },

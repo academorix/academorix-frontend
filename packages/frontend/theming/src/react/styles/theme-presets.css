@@ -11,7 +11,7 @@
 /* ============================================================================
  * SKY THEME
  * ========================================================================= */
-[data-design-theme='sky'] {
+[data-design-theme="sky"] {
   --accent: oklch(0.59 0.17 231);
   --accent-foreground: oklch(1 0 0);
   --surface: oklch(0.97 0.005 231);
@@ -24,7 +24,7 @@
   --chart-5: oklch(0.76 0.09 231);
 }
 
-:is(.dark, [data-theme='dark'])[data-design-theme='sky'] {
+:is(.dark, [data-theme="dark"])[data-design-theme="sky"] {
   --accent: oklch(0.65 0.18 231);
   --accent-foreground: oklch(0.15 0.01 231);
   --surface: oklch(0.15 0.015 231);
@@ -40,7 +40,7 @@
 /* ============================================================================
  * LAVENDER THEME
  * ========================================================================= */
-[data-design-theme='lavender'] {
+[data-design-theme="lavender"] {
   --accent: oklch(0.59 0.19 292);
   --accent-foreground: oklch(1 0 0);
   --surface: oklch(0.97 0.005 292);
@@ -53,7 +53,7 @@
   --chart-5: oklch(0.76 0.11 292);
 }
 
-:is(.dark, [data-theme='dark'])[data-design-theme='lavender'] {
+:is(.dark, [data-theme="dark"])[data-design-theme="lavender"] {
   --accent: oklch(0.65 0.2 292);
   --accent-foreground: oklch(0.15 0.01 292);
   --surface: oklch(0.15 0.015 292);
@@ -69,7 +69,7 @@
 /* ============================================================================
  * MINT THEME
  * ========================================================================= */
-[data-design-theme='mint'] {
+[data-design-theme="mint"] {
   --accent: oklch(0.62 0.15 165);
   --accent-foreground: oklch(1 0 0);
   --surface: oklch(0.97 0.005 165);
@@ -82,7 +82,7 @@
   --chart-5: oklch(0.79 0.07 165);
 }
 
-:is(.dark, [data-theme='dark'])[data-design-theme='mint'] {
+:is(.dark, [data-theme="dark"])[data-design-theme="mint"] {
   --accent: oklch(0.68 0.16 165);
   --accent-foreground: oklch(0.15 0.01 165);
   --surface: oklch(0.15 0.015 165);
@@ -98,7 +98,7 @@
 /* ============================================================================
  * NETFLIX THEME
  * ========================================================================= */
-[data-design-theme='netflix'] {
+[data-design-theme="netflix"] {
   --accent: oklch(0.52 0.22 27);
   --accent-foreground: oklch(1 0 0);
   --surface: oklch(0.97 0.003 27);
@@ -111,7 +111,7 @@
   --chart-5: oklch(0.72 0.14 27);
 }
 
-:is(.dark, [data-theme='dark'])[data-design-theme='netflix'] {
+:is(.dark, [data-theme="dark"])[data-design-theme="netflix"] {
   --accent: oklch(0.58 0.23 27);
   --accent-foreground: oklch(1 0 0);
   --surface: oklch(0.12 0.005 27);
@@ -127,7 +127,7 @@
 /* ============================================================================
  * UBER THEME
  * ========================================================================= */
-[data-design-theme='uber'] {
+[data-design-theme="uber"] {
   --accent: oklch(0.25 0 0);
   --accent-foreground: oklch(1 0 0);
   --surface: oklch(0.98 0 0);
@@ -140,7 +140,7 @@
   --chart-5: oklch(0.65 0 0);
 }
 
-:is(.dark, [data-theme='dark'])[data-design-theme='uber'] {
+:is(.dark, [data-theme="dark"])[data-design-theme="uber"] {
   --accent: oklch(0.95 0 0);
   --accent-foreground: oklch(0.15 0 0);
   --surface: oklch(0.12 0 0);
@@ -156,7 +156,7 @@
 /* ============================================================================
  * SPOTIFY THEME
  * ========================================================================= */
-[data-design-theme='spotify'] {
+[data-design-theme="spotify"] {
   --accent: oklch(0.62 0.18 151);
   --accent-foreground: oklch(0.15 0.01 151);
   --surface: oklch(0.97 0.003 151);
@@ -169,7 +169,7 @@
   --chart-5: oklch(0.79 0.1 151);
 }
 
-:is(.dark, [data-theme='dark'])[data-design-theme='spotify'] {
+:is(.dark, [data-theme="dark"])[data-design-theme="spotify"] {
   --accent: oklch(0.68 0.19 151);
   --accent-foreground: oklch(0.15 0.01 151);
   --surface: oklch(0.12 0.01 151);
@@ -185,7 +185,7 @@
 /* ============================================================================
  * COINBASE THEME
  * ========================================================================= */
-[data-design-theme='coinbase'] {
+[data-design-theme="coinbase"] {
   --accent: oklch(0.52 0.2 255);
   --accent-foreground: oklch(1 0 0);
   --surface: oklch(0.97 0.003 255);
@@ -198,7 +198,7 @@
   --chart-5: oklch(0.72 0.12 255);
 }
 
-:is(.dark, [data-theme='dark'])[data-design-theme='coinbase'] {
+:is(.dark, [data-theme="dark"])[data-design-theme="coinbase"] {
   --accent: oklch(0.58 0.21 255);
   --accent-foreground: oklch(1 0 0);
   --surface: oklch(0.12 0.01 255);
@@ -214,7 +214,7 @@
 /* ============================================================================
  * AIRBNB THEME
  * ========================================================================= */
-[data-design-theme='airbnb'] {
+[data-design-theme="airbnb"] {
   --accent: oklch(0.58 0.18 15);
   --accent-foreground: oklch(1 0 0);
   --surface: oklch(0.97 0.003 15);
@@ -227,7 +227,7 @@
   --chart-5: oklch(0.78 0.1 15);
 }
 
-:is(.dark, [data-theme='dark'])[data-design-theme='airbnb'] {
+:is(.dark, [data-theme="dark"])[data-design-theme="airbnb"] {
   --accent: oklch(0.64 0.19 15);
   --accent-foreground: oklch(1 0 0);
   --surface: oklch(0.12 0.005 15);
@@ -243,7 +243,7 @@
 /* ============================================================================
  * DISCORD THEME
  * ========================================================================= */
-[data-design-theme='discord'] {
+[data-design-theme="discord"] {
   --accent: oklch(0.55 0.18 268);
   --accent-foreground: oklch(1 0 0);
   --surface: oklch(0.97 0.005 268);
@@ -256,7 +256,7 @@
   --chart-5: oklch(0.75 0.1 268);
 }
 
-:is(.dark, [data-theme='dark'])[data-design-theme='discord'] {
+:is(.dark, [data-theme="dark"])[data-design-theme="discord"] {
   --accent: oklch(0.61 0.19 268);
   --accent-foreground: oklch(1 0 0);
   --surface: oklch(0.14 0.015 268);
@@ -272,7 +272,7 @@
 /* ============================================================================
  * RABBIT THEME
  * ========================================================================= */
-[data-design-theme='rabbit'] {
+[data-design-theme="rabbit"] {
   --accent: oklch(0.65 0.2 48);
   --accent-foreground: oklch(0.15 0.01 48);
   --surface: oklch(0.97 0.005 48);
@@ -285,7 +285,7 @@
   --chart-5: oklch(0.79 0.12 48);
 }
 
-:is(.dark, [data-theme='dark'])[data-design-theme='rabbit'] {
+:is(.dark, [data-theme="dark"])[data-design-theme="rabbit"] {
   --accent: oklch(0.71 0.21 48);
   --accent-foreground: oklch(0.15 0.01 48);
   --surface: oklch(0.15 0.01 48);

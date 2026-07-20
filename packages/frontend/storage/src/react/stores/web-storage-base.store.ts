@@ -6,10 +6,10 @@
  *   piece of behaviour except the backing store itself lives here.
  */
 
-import type { IStorage, IStorageSetOptions } from '@stackra/contracts';
+import type { IStorage, IStorageSetOptions } from "@stackra/contracts";
 
-import { prefixKey, stripPrefix } from '@/core/utils/prefix-key.util';
-import { unwrapTtl, wrapTtl } from '@/core/utils/ttl-envelope.util';
+import { prefixKey, stripPrefix } from "@/core/utils/prefix-key.util";
+import { unwrapTtl, wrapTtl } from "@/core/utils/ttl-envelope.util";
 
 /**
  * Constructor config accepted by every DOM-`Storage` driver.
@@ -58,7 +58,7 @@ export abstract class WebStorageBase implements IStorage {
    *   name so keys are namespaced.
    */
   public constructor(config: WebStorageBaseConfig = {}) {
-    this.prefix = config.prefix ?? '';
+    this.prefix = config.prefix ?? "";
   }
 
   /**

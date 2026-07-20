@@ -4,4 +4,4 @@
  * @description Barrel export for theming registries.
  */
 
-export { ThemeRegistry } from './theme.registry';
+export { ThemeRegistry } from "./theme.registry";

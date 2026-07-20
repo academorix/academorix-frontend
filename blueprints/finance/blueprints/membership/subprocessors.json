@@ -5,13 +5,41 @@
   "description": "The Membership module engages ZERO direct third-party subprocessors — every state transition is first-party. Downstream: payment (PCI-DSS regulated stripe/paddle), notifications (email/SMS providers), storage (Wave 4+ for statement PDFs).",
   "subprocessors": [],
   "downstream_subprocessors_referenced": [
-    { "module": "payment", "reference": "payment::subprocessors.json (Wave 4.5+)", "used_for": "Payment tokenization + PaymentIntent settlement (Stripe/Paddle/Adyen). PCI-DSS scope lives there, not here." },
-    { "module": "invoice", "reference": "invoice::subprocessors.json (Wave 4.5+)", "used_for": "Invoice generation + PDF rendering + delivery." },
-    { "module": "refund", "reference": "refund::subprocessors.json (Wave 4.5+)", "used_for": "Refund orchestration via gateway APIs." },
-    { "module": "chargeback", "reference": "chargeback::subprocessors.json (Wave 4.5+)", "used_for": "Dispute lifecycle + evidence submission to gateway." },
-    { "module": "notifications", "reference": "notifications::subprocessors.json", "used_for": "Membership notification delivery — email (Postmark/SES), SMS (Twilio), in-app." },
-    { "module": "tax", "reference": "tax::subprocessors.json", "used_for": "Tax rate lookups via TaxJar / Avalara / Stripe Tax." },
-    { "module": "storage", "reference": "storage::subprocessors.json (Wave 4+)", "used_for": "Monthly statement PDF storage." }
+    {
+      "module": "payment",
+      "reference": "payment::subprocessors.json (Wave 4.5+)",
+      "used_for": "Payment tokenization + PaymentIntent settlement (Stripe/Paddle/Adyen). PCI-DSS scope lives there, not here."
+    },
+    {
+      "module": "invoice",
+      "reference": "invoice::subprocessors.json (Wave 4.5+)",
+      "used_for": "Invoice generation + PDF rendering + delivery."
+    },
+    {
+      "module": "refund",
+      "reference": "refund::subprocessors.json (Wave 4.5+)",
+      "used_for": "Refund orchestration via gateway APIs."
+    },
+    {
+      "module": "chargeback",
+      "reference": "chargeback::subprocessors.json (Wave 4.5+)",
+      "used_for": "Dispute lifecycle + evidence submission to gateway."
+    },
+    {
+      "module": "notifications",
+      "reference": "notifications::subprocessors.json",
+      "used_for": "Membership notification delivery — email (Postmark/SES), SMS (Twilio), in-app."
+    },
+    {
+      "module": "tax",
+      "reference": "tax::subprocessors.json",
+      "used_for": "Tax rate lookups via TaxJar / Avalara / Stripe Tax."
+    },
+    {
+      "module": "storage",
+      "reference": "storage::subprocessors.json (Wave 4+)",
+      "used_for": "Monthly statement PDF storage."
+    }
   ],
   "notes": [
     "GDPR Art. 30 requires this record even when empty — a zero-subprocessor module is still auditable.",

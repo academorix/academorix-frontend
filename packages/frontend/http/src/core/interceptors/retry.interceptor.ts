@@ -10,7 +10,7 @@
  * @module @stackra/http/interceptors/retry
  */
 
-import { Inject, Optional } from '@stackra/container';
+import { Inject, Optional } from "@stackra/container";
 
 import {
   EVENT_EMITTER,
@@ -20,29 +20,29 @@ import {
   type IHttpInterceptor,
   type IHttpNextFunction,
   type IHttpResponse,
-} from '@stackra/contracts';
-import { retry } from '@stackra/support';
+} from "@stackra/contracts";
+import { retry } from "@stackra/support";
 
-import { DEFAULT_MAX_RETRIES, DEFAULT_RETRY_BACKOFF } from '../constants';
-import { HttpInterceptor } from '../decorators/http-interceptor.decorator';
+import { DEFAULT_MAX_RETRIES, DEFAULT_RETRY_BACKOFF } from "../constants";
+import { HttpInterceptor } from "../decorators/http-interceptor.decorator";
 
 /**
  * Retry interceptor.
  */
-@HttpInterceptor({ priority: 20, name: 'retry' })
+@HttpInterceptor({ priority: 20, name: "retry" })
 export class RetryInterceptor implements IHttpInterceptor {
   /**
    * @param eventEmitter - Optional emitter for retry lifecycle events.
    */
   public constructor(
-    @Optional() @Inject(EVENT_EMITTER) private readonly eventEmitter?: IEventEmitter
+    @Optional() @Inject(EVENT_EMITTER) private readonly eventEmitter?: IEventEmitter,
   ) {}
 
   /** @inheritdoc */
   public async intercept(context: IHttpContext, next: IHttpNextFunction): Promise<IHttpResponse> {
     const meta = context.request.meta ?? {};
-    const maxRetries = (meta['maxRetries'] as number | undefined) ?? DEFAULT_MAX_RETRIES;
-    const backoff = (meta['retryBackoff'] as number[] | undefined) ?? DEFAULT_RETRY_BACKOFF;
+    const maxRetries = (meta["maxRetries"] as number | undefined) ?? DEFAULT_MAX_RETRIES;
+    const backoff = (meta["retryBackoff"] as number[] | undefined) ?? DEFAULT_RETRY_BACKOFF;
 
     // `retry({ times })` counts total attempts INCLUDING the first —
     // maxRetries is the number of RE-tries, so the total is +1.
@@ -68,7 +68,7 @@ export class RetryInterceptor implements IHttpInterceptor {
 
   /** Retryable: network errors (status 0) or 5xx. */
   private isRetryable(err: unknown): boolean {
-    if (typeof err !== 'object' || err === null) return false;
+    if (typeof err !== "object" || err === null) return false;
     const status = (err as { statusCode?: number }).statusCode;
     if (status === 0) return true;
     if (status !== undefined && status >= 500 && status < 600) return true;

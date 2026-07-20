@@ -5,7 +5,7 @@
  *   Consumed by `QueryModule.forRoot()` at bootstrap.
  */
 
-import type { QueryModuleOptions } from '@stackra/query';
+import type { QueryModuleOptions } from "@stackra/query";
 
 export const queryConfig: QueryModuleOptions = {
   /*
@@ -51,7 +51,7 @@ export const queryConfig: QueryModuleOptions = {
   | `'optimistic'` / `'undoable'` per mutation.
   |
   */
-  defaultMutationMode: 'pessimistic',
+  defaultMutationMode: "pessimistic",
 
   /*
   |--------------------------------------------------------------------------
@@ -73,5 +73,5 @@ export const queryConfig: QueryModuleOptions = {
   | channel. `'off'` disables live-invalidation by default.
   |
   */
-  defaultLiveMode: 'off',
+  defaultLiveMode: "off",
 };

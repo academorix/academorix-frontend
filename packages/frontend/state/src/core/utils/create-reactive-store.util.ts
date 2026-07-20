@@ -8,9 +8,9 @@
  *   need manual `events.emit()` calls.
  */
 
-import { Store } from '@tanstack/store';
-import { STATE_EVENTS } from '@stackra/contracts';
-import type { IEventEmitter } from '@stackra/contracts';
+import { Store } from "@tanstack/store";
+import { STATE_EVENTS } from "@stackra/contracts";
+import type { IEventEmitter } from "@stackra/contracts";
 
 /**
  * Create a TanStack Store that auto-emits `{name}.changed` on every mutation.
@@ -34,7 +34,7 @@ import type { IEventEmitter } from '@stackra/contracts';
 export function createReactiveStore<S extends Record<string, unknown>>(
   name: string,
   initialState: S,
-  emitter?: IEventEmitter | null
+  emitter?: IEventEmitter | null,
 ): Store<S> {
   const store = new Store<S>(initialState);
 

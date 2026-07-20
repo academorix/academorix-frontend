@@ -12,8 +12,8 @@
  *   rendering.
  */
 
-import type { IScopeContext } from './scope-context.interface';
-import type { IScopeNodeTreeNode } from './scope-node-tree-node.interface';
+import type { IScopeContext } from "./scope-context.interface";
+import type { IScopeNodeTreeNode } from "./scope-node-tree-node.interface";
 
 /**
  * A referentially stable snapshot of the scope service's observable state.

@@ -7,9 +7,9 @@ export type {
   IRealtimeConnection,
   IRealtimeChannel,
   IRealtimePresenceChannel,
-} from './realtime-connection.interface';
-export type { IRealtimeConnector } from './realtime-connector.interface';
+} from "./realtime-connection.interface";
+export type { IRealtimeConnector } from "./realtime-connector.interface";
 export type {
   IRealtimeConnectionConfig,
   IRealtimeModuleOptions,
-} from './realtime-module-options.interface';
+} from "./realtime-module-options.interface";

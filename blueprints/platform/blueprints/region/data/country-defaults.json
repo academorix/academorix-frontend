@@ -18,13 +18,21 @@
       "name": "United States",
       "currency": "USD",
       "currency_symbol": "$",
-      "timezone_options": ["America/New_York", "America/Chicago", "America/Denver", "America/Los_Angeles", "America/Anchorage", "Pacific/Honolulu", "America/Phoenix"],
+      "timezone_options": [
+        "America/New_York",
+        "America/Chicago",
+        "America/Denver",
+        "America/Los_Angeles",
+        "America/Anchorage",
+        "Pacific/Honolulu",
+        "America/Phoenix"
+      ],
       "default_timezone": "America/New_York",
       "locale": "en-US",
       "rtl": false,
       "weekend_days": ["saturday", "sunday"],
       "tax_config": {
-        "default_rate_percent": 0.000,
+        "default_rate_percent": 0.0,
         "name": "Sales Tax",
         "inclusive": false,
         "notes": "US federal has no sales tax. State-level rates range 0-11%. Tenants should override default_rate_percent per state (typical: CA 7.25%, NY 4.00%, TX 6.25%, WA 6.50%). Multi-rate configs require `region_custom_tax_rules`."
@@ -42,7 +50,7 @@
       "rtl": false,
       "weekend_days": ["saturday", "sunday"],
       "tax_config": {
-        "default_rate_percent": 20.000,
+        "default_rate_percent": 20.0,
         "name": "VAT",
         "inclusive": true,
         "notes": "Standard rate 20%. Reduced rates (5% domestic fuel/energy, 0% children's clothing) require `region_custom_tax_rules`."
@@ -60,7 +68,7 @@
       "rtl": false,
       "weekend_days": ["saturday", "sunday"],
       "tax_config": {
-        "default_rate_percent": 23.000,
+        "default_rate_percent": 23.0,
         "name": "VAT",
         "inclusive": true,
         "notes": "Standard rate 23%. Reduced rates (13.5% + 9% + 4.8% + 0%) require `region_custom_tax_rules`. Fiscal year Jan-Dec."
@@ -78,7 +86,7 @@
       "rtl": true,
       "weekend_days": ["saturday", "sunday"],
       "tax_config": {
-        "default_rate_percent": 5.000,
+        "default_rate_percent": 5.0,
         "name": "VAT",
         "inclusive": false,
         "notes": "Standard rate 5% since 2018-01-01. Free-zone entities often exempt — set `default_rate_percent: 0` on those Regions. Weekend moved from [friday,saturday] to [saturday,sunday] in 2022."
@@ -96,7 +104,7 @@
       "rtl": true,
       "weekend_days": ["friday", "saturday"],
       "tax_config": {
-        "default_rate_percent": 15.000,
+        "default_rate_percent": 15.0,
         "name": "VAT",
         "inclusive": false,
         "notes": "Rate raised from 5% to 15% in July 2020. Fiscal year Jan-Dec (Gregorian for tax purposes)."
@@ -114,7 +122,7 @@
       "rtl": true,
       "weekend_days": ["friday", "saturday"],
       "tax_config": {
-        "default_rate_percent": 0.000,
+        "default_rate_percent": 0.0,
         "name": "VAT",
         "inclusive": false,
         "notes": "No VAT in Kuwait as of 2026-07. Implementation repeatedly postponed. Set default_rate_percent: 5.000 when/if it lands."
@@ -132,7 +140,7 @@
       "rtl": true,
       "weekend_days": ["friday", "saturday"],
       "tax_config": {
-        "default_rate_percent": 0.000,
+        "default_rate_percent": 0.0,
         "name": "VAT",
         "inclusive": false,
         "notes": "No VAT in Qatar as of 2026-07. GCC-wide VAT framework signed but not yet implemented locally."
@@ -150,7 +158,7 @@
       "rtl": true,
       "weekend_days": ["friday", "saturday"],
       "tax_config": {
-        "default_rate_percent": 5.000,
+        "default_rate_percent": 5.0,
         "name": "VAT",
         "inclusive": false,
         "notes": "VAT introduced 2021-04-16 at 5%."
@@ -168,7 +176,7 @@
       "rtl": true,
       "weekend_days": ["friday", "saturday"],
       "tax_config": {
-        "default_rate_percent": 10.000,
+        "default_rate_percent": 10.0,
         "name": "VAT",
         "inclusive": false,
         "notes": "VAT introduced at 5% in 2019, raised to 10% in 2022-01."
@@ -186,7 +194,7 @@
       "rtl": true,
       "weekend_days": ["friday", "saturday"],
       "tax_config": {
-        "default_rate_percent": 16.000,
+        "default_rate_percent": 16.0,
         "name": "GST",
         "inclusive": false,
         "notes": "General Sales Tax 16%. Reduced rates (4% + 10%) apply to specific categories — require `region_custom_tax_rules`."
@@ -204,7 +212,7 @@
       "rtl": true,
       "weekend_days": ["friday", "saturday"],
       "tax_config": {
-        "default_rate_percent": 14.000,
+        "default_rate_percent": 14.0,
         "name": "VAT",
         "inclusive": false,
         "notes": "Value Added Tax 14%. Machinery + equipment 5%; some services exempt — require `region_custom_tax_rules`."
@@ -222,7 +230,7 @@
       "rtl": true,
       "weekend_days": ["saturday", "sunday"],
       "tax_config": {
-        "default_rate_percent": 20.000,
+        "default_rate_percent": 20.0,
         "name": "TVA",
         "inclusive": true,
         "notes": "Taxe sur la Valeur Ajoutée 20% standard. Reduced rates 7% / 10% / 14% require `region_custom_tax_rules`. Fiscal year Jan-Dec."
@@ -240,7 +248,7 @@
       "rtl": true,
       "weekend_days": ["saturday", "sunday"],
       "tax_config": {
-        "default_rate_percent": 19.000,
+        "default_rate_percent": 19.0,
         "name": "TVA",
         "inclusive": true,
         "notes": "TVA 19% standard. Reduced rates 7% + 13% require `region_custom_tax_rules`."
@@ -258,7 +266,7 @@
       "rtl": true,
       "weekend_days": ["friday", "saturday"],
       "tax_config": {
-        "default_rate_percent": 19.000,
+        "default_rate_percent": 19.0,
         "name": "TVA",
         "inclusive": true,
         "notes": "TVA 19% standard, reduced rate 9% for essentials."
@@ -276,7 +284,7 @@
       "rtl": true,
       "weekend_days": ["saturday", "sunday"],
       "tax_config": {
-        "default_rate_percent": 11.000,
+        "default_rate_percent": 11.0,
         "name": "VAT",
         "inclusive": false,
         "notes": "VAT 11%. Currency historically pegged to USD; consider dual-currency mode for tenants transacting in both LBP + USD."
@@ -294,7 +302,7 @@
       "rtl": true,
       "weekend_days": ["saturday", "sunday"],
       "tax_config": {
-        "default_rate_percent": 18.000,
+        "default_rate_percent": 18.0,
         "name": "Sales Tax",
         "inclusive": false,
         "notes": "Sales tax on goods 18% (federal, FBR). Services taxed by province (Sindh 15%, Punjab 16%, KP 15%, Balochistan 15%) — require `region_custom_tax_rules`."
@@ -312,7 +320,7 @@
       "rtl": false,
       "weekend_days": ["saturday", "sunday"],
       "tax_config": {
-        "default_rate_percent": 18.000,
+        "default_rate_percent": 18.0,
         "name": "GST",
         "inclusive": true,
         "notes": "GST 18% is the most common slab. Slabs: 0% + 5% + 12% + 18% + 28% — require `region_custom_tax_rules`. Fiscal year Apr-Mar (fiscal_year_start_month=4)."
@@ -330,7 +338,7 @@
       "rtl": false,
       "weekend_days": ["saturday", "sunday"],
       "tax_config": {
-        "default_rate_percent": 6.000,
+        "default_rate_percent": 6.0,
         "name": "SST",
         "inclusive": false,
         "notes": "Sales + Service Tax 6% (service tax) / 5-10% (sales tax). GST abolished 2018-09."
@@ -348,7 +356,7 @@
       "rtl": false,
       "weekend_days": ["saturday", "sunday"],
       "tax_config": {
-        "default_rate_percent": 9.000,
+        "default_rate_percent": 9.0,
         "name": "GST",
         "inclusive": true,
         "notes": "GST raised from 8% to 9% on 2024-01-01."
@@ -366,7 +374,7 @@
       "rtl": false,
       "weekend_days": ["saturday", "sunday"],
       "tax_config": {
-        "default_rate_percent": 11.000,
+        "default_rate_percent": 11.0,
         "name": "PPN",
         "inclusive": true,
         "notes": "PPN (VAT equivalent) 11% since 2022-04. Scheduled to rise to 12% in 2025."
@@ -384,7 +392,7 @@
       "rtl": false,
       "weekend_days": ["saturday", "sunday"],
       "tax_config": {
-        "default_rate_percent": 7.000,
+        "default_rate_percent": 7.0,
         "name": "VAT",
         "inclusive": true,
         "notes": "VAT 7% (temporary rate; statutory 10% but reduced since 1999)."
@@ -402,7 +410,7 @@
       "rtl": false,
       "weekend_days": ["saturday", "sunday"],
       "tax_config": {
-        "default_rate_percent": 12.000,
+        "default_rate_percent": 12.0,
         "name": "VAT",
         "inclusive": true,
         "notes": "VAT 12%. Small businesses (<3M PHP turnover) may register under Percentage Tax (3%) instead — require `region_custom_tax_rules`."
@@ -414,13 +422,21 @@
       "name": "Australia",
       "currency": "AUD",
       "currency_symbol": "A$",
-      "timezone_options": ["Australia/Sydney", "Australia/Melbourne", "Australia/Brisbane", "Australia/Perth", "Australia/Adelaide", "Australia/Hobart", "Australia/Darwin"],
+      "timezone_options": [
+        "Australia/Sydney",
+        "Australia/Melbourne",
+        "Australia/Brisbane",
+        "Australia/Perth",
+        "Australia/Adelaide",
+        "Australia/Hobart",
+        "Australia/Darwin"
+      ],
       "default_timezone": "Australia/Sydney",
       "locale": "en-AU",
       "rtl": false,
       "weekend_days": ["saturday", "sunday"],
       "tax_config": {
-        "default_rate_percent": 10.000,
+        "default_rate_percent": 10.0,
         "name": "GST",
         "inclusive": true,
         "notes": "GST 10% since 2000. Fiscal year Jul-Jun (fiscal_year_start_month=7)."
@@ -438,7 +454,7 @@
       "rtl": false,
       "weekend_days": ["saturday", "sunday"],
       "tax_config": {
-        "default_rate_percent": 15.000,
+        "default_rate_percent": 15.0,
         "name": "GST",
         "inclusive": true,
         "notes": "GST 15% since 2010-10. Fiscal year Apr-Mar (fiscal_year_start_month=4)."
@@ -450,13 +466,20 @@
       "name": "Canada",
       "currency": "CAD",
       "currency_symbol": "C$",
-      "timezone_options": ["America/Toronto", "America/Vancouver", "America/Edmonton", "America/Winnipeg", "America/Halifax", "America/St_Johns"],
+      "timezone_options": [
+        "America/Toronto",
+        "America/Vancouver",
+        "America/Edmonton",
+        "America/Winnipeg",
+        "America/Halifax",
+        "America/St_Johns"
+      ],
       "default_timezone": "America/Toronto",
       "locale": "en-CA",
       "rtl": false,
       "weekend_days": ["saturday", "sunday"],
       "tax_config": {
-        "default_rate_percent": 5.000,
+        "default_rate_percent": 5.0,
         "name": "GST",
         "inclusive": false,
         "notes": "Federal GST 5%. Provinces add PST or run HST: ON 13% HST, QC 14.975% (GST+QST), BC 5% + 7% PST, AB 5% only. Multi-rate configs require `region_custom_tax_rules`."
@@ -468,13 +491,19 @@
       "name": "Mexico",
       "currency": "MXN",
       "currency_symbol": "$",
-      "timezone_options": ["America/Mexico_City", "America/Cancun", "America/Chihuahua", "America/Hermosillo", "America/Tijuana"],
+      "timezone_options": [
+        "America/Mexico_City",
+        "America/Cancun",
+        "America/Chihuahua",
+        "America/Hermosillo",
+        "America/Tijuana"
+      ],
       "default_timezone": "America/Mexico_City",
       "locale": "es-MX",
       "rtl": false,
       "weekend_days": ["saturday", "sunday"],
       "tax_config": {
-        "default_rate_percent": 16.000,
+        "default_rate_percent": 16.0,
         "name": "IVA",
         "inclusive": true,
         "notes": "IVA 16% general. Border-zone reduced rate 8% — requires `region_custom_tax_rules`."
@@ -486,13 +515,21 @@
       "name": "Brazil",
       "currency": "BRL",
       "currency_symbol": "R$",
-      "timezone_options": ["America/Sao_Paulo", "America/Manaus", "America/Belem", "America/Fortaleza", "America/Recife", "America/Cuiaba", "America/Noronha"],
+      "timezone_options": [
+        "America/Sao_Paulo",
+        "America/Manaus",
+        "America/Belem",
+        "America/Fortaleza",
+        "America/Recife",
+        "America/Cuiaba",
+        "America/Noronha"
+      ],
       "default_timezone": "America/Sao_Paulo",
       "locale": "pt-BR",
       "rtl": false,
       "weekend_days": ["saturday", "sunday"],
       "tax_config": {
-        "default_rate_percent": 17.000,
+        "default_rate_percent": 17.0,
         "name": "ICMS",
         "inclusive": true,
         "notes": "State-level ICMS varies 7-25% (default 17% in São Paulo). Also federal PIS/COFINS + ISS — multi-rate configs required. Consult a Brazilian tax advisor."
@@ -510,7 +547,7 @@
       "rtl": false,
       "weekend_days": ["saturday", "sunday"],
       "tax_config": {
-        "default_rate_percent": 19.000,
+        "default_rate_percent": 19.0,
         "name": "MwSt",
         "inclusive": true,
         "notes": "Mehrwertsteuer 19% standard, 7% reduced (books, food, hotels) — requires `region_custom_tax_rules`."
@@ -528,7 +565,7 @@
       "rtl": false,
       "weekend_days": ["saturday", "sunday"],
       "tax_config": {
-        "default_rate_percent": 20.000,
+        "default_rate_percent": 20.0,
         "name": "TVA",
         "inclusive": true,
         "notes": "TVA standard 20%. Reduced 10% / 5.5% / 2.1% — requires `region_custom_tax_rules`."
@@ -546,7 +583,7 @@
       "rtl": false,
       "weekend_days": ["saturday", "sunday"],
       "tax_config": {
-        "default_rate_percent": 21.000,
+        "default_rate_percent": 21.0,
         "name": "IVA",
         "inclusive": true,
         "notes": "IVA 21% general, 10% + 4% reduced. Canary Islands use IGIC (7% general) instead — require `region_custom_tax_rules` + separate Region."
@@ -564,7 +601,7 @@
       "rtl": false,
       "weekend_days": ["saturday", "sunday"],
       "tax_config": {
-        "default_rate_percent": 22.000,
+        "default_rate_percent": 22.0,
         "name": "IVA",
         "inclusive": true,
         "notes": "IVA 22% general, 10% + 5% + 4% reduced — require `region_custom_tax_rules`."
@@ -582,7 +619,7 @@
       "rtl": false,
       "weekend_days": ["saturday", "sunday"],
       "tax_config": {
-        "default_rate_percent": 21.000,
+        "default_rate_percent": 21.0,
         "name": "BTW",
         "inclusive": true,
         "notes": "BTW 21% standard, 9% reduced (food, books, sports) — requires `region_custom_tax_rules`. Note: sports memberships often fall under 9%."
@@ -600,7 +637,7 @@
       "rtl": false,
       "weekend_days": ["saturday", "sunday"],
       "tax_config": {
-        "default_rate_percent": 25.000,
+        "default_rate_percent": 25.0,
         "name": "Moms",
         "inclusive": true,
         "notes": "Moms 25% standard, 12% + 6% reduced. Sports admission often 6% — require `region_custom_tax_rules`."
@@ -618,7 +655,7 @@
       "rtl": false,
       "weekend_days": ["saturday", "sunday"],
       "tax_config": {
-        "default_rate_percent": 25.000,
+        "default_rate_percent": 25.0,
         "name": "MVA",
         "inclusive": true,
         "notes": "MVA 25% standard, 15% (food) + 12% (culture, transport) reduced — require `region_custom_tax_rules`."
@@ -636,7 +673,7 @@
       "rtl": false,
       "weekend_days": ["saturday", "sunday"],
       "tax_config": {
-        "default_rate_percent": 25.000,
+        "default_rate_percent": 25.0,
         "name": "MOMS",
         "inclusive": true,
         "notes": "MOMS 25% flat — no reduced rates in DK VAT."
@@ -654,7 +691,7 @@
       "rtl": false,
       "weekend_days": ["saturday", "sunday"],
       "tax_config": {
-        "default_rate_percent": 25.500,
+        "default_rate_percent": 25.5,
         "name": "ALV",
         "inclusive": true,
         "notes": "ALV 25.5% since 2024-09. Reduced 14% + 10% require `region_custom_tax_rules`."
@@ -672,7 +709,7 @@
       "rtl": false,
       "weekend_days": ["saturday", "sunday"],
       "tax_config": {
-        "default_rate_percent": 20.000,
+        "default_rate_percent": 20.0,
         "name": "KDV",
         "inclusive": true,
         "notes": "KDV 20% since 2023-07 (raised from 18%). Reduced 10% + 1% require `region_custom_tax_rules`."
@@ -690,7 +727,7 @@
       "rtl": false,
       "weekend_days": ["saturday", "sunday"],
       "tax_config": {
-        "default_rate_percent": 15.000,
+        "default_rate_percent": 15.0,
         "name": "VAT",
         "inclusive": true,
         "notes": "VAT 15% since 2018-04 (raised from 14%). Fiscal year Mar-Feb for government, but personal + company tax year Mar-Feb (fiscal_year_start_month=3)."
@@ -708,7 +745,7 @@
       "rtl": false,
       "weekend_days": ["saturday", "sunday"],
       "tax_config": {
-        "default_rate_percent": 16.000,
+        "default_rate_percent": 16.0,
         "name": "VAT",
         "inclusive": true,
         "notes": "VAT 16% standard, 8% reduced (fuel) require `region_custom_tax_rules`."
@@ -726,7 +763,7 @@
       "rtl": false,
       "weekend_days": ["saturday", "sunday"],
       "tax_config": {
-        "default_rate_percent": 7.500,
+        "default_rate_percent": 7.5,
         "name": "VAT",
         "inclusive": true,
         "notes": "VAT 7.5% since 2020-02 (raised from 5%). Small businesses (turnover < NGN 25M/yr) exempt — require `region_custom_tax_rules`."
@@ -744,7 +781,7 @@
       "rtl": false,
       "weekend_days": ["saturday", "sunday"],
       "tax_config": {
-        "default_rate_percent": 10.000,
+        "default_rate_percent": 10.0,
         "name": "Consumption Tax",
         "inclusive": true,
         "notes": "Consumption tax 10% since 2019-10 (8% + 2% local). Reduced 8% for food + newspapers requires `region_custom_tax_rules`. Fiscal year Apr-Mar (fiscal_year_start_month=4)."
@@ -762,7 +799,7 @@
       "rtl": false,
       "weekend_days": ["saturday", "sunday"],
       "tax_config": {
-        "default_rate_percent": 10.000,
+        "default_rate_percent": 10.0,
         "name": "VAT",
         "inclusive": true,
         "notes": "VAT 10% flat since 1977."
@@ -780,7 +817,7 @@
       "rtl": false,
       "weekend_days": ["saturday", "sunday"],
       "tax_config": {
-        "default_rate_percent": 8.100,
+        "default_rate_percent": 8.1,
         "name": "MWST",
         "inclusive": true,
         "notes": "MWST 8.1% since 2024-01 (raised from 7.7%). Reduced 2.6% (food) + 3.8% (accommodation) require `region_custom_tax_rules`."
@@ -798,7 +835,7 @@
       "rtl": false,
       "weekend_days": ["saturday", "sunday"],
       "tax_config": {
-        "default_rate_percent": 21.000,
+        "default_rate_percent": 21.0,
         "name": "BTW",
         "inclusive": true,
         "notes": "BTW/TVA 21% standard, 12% + 6% + 0% reduced require `region_custom_tax_rules`."
@@ -816,7 +853,7 @@
       "rtl": false,
       "weekend_days": ["saturday", "sunday"],
       "tax_config": {
-        "default_rate_percent": 20.000,
+        "default_rate_percent": 20.0,
         "name": "USt",
         "inclusive": true,
         "notes": "Umsatzsteuer 20% standard, 13% + 10% reduced require `region_custom_tax_rules`."
@@ -834,7 +871,7 @@
       "rtl": false,
       "weekend_days": ["saturday", "sunday"],
       "tax_config": {
-        "default_rate_percent": 23.000,
+        "default_rate_percent": 23.0,
         "name": "VAT",
         "inclusive": true,
         "notes": "VAT 23% standard, 8% + 5% reduced require `region_custom_tax_rules`."

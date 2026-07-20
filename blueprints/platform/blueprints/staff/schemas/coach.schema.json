@@ -49,27 +49,129 @@
   "x-database": {
     "engine": "postgres",
     "columns": {
-      "id": { "type": "string", "length": 64, "primary": true, "description": "Prefixed ULID: `coa_<26>`." },
-      "tenant_id": { "type": "string", "length": 64, "nullable": false, "foreign": { "table": "tenants", "column": "id", "onDelete": "cascade" } },
-      "staff_id": { "type": "string", "length": 64, "nullable": false, "foreign": { "table": "staff", "column": "id", "onDelete": "restrict" }, "description": "The underlying Staff row. RESTRICT — coach cannot be created against an offboarded staff; must archive before parent Staff can be soft-deleted. Immutable post-create." },
-      "sport_key": { "type": "string", "length": 32, "nullable": false, "description": "Primary sport (Wave 3+ sports registry key). e.g. basketball / swimming / general_fitness." },
-      "additional_sports": { "type": "jsonb", "nullable": false, "default": "'[]'::jsonb", "description": "Array of sport_keys the coach also teaches. Empty = only primary." },
-      "specialization": { "type": "string", "length": 128, "nullable": true, "description": "Free-text: 'youth development', 'elite competition prep', 'return-to-play rehab'." },
-      "coaching_level": { "type": "string", "length": 16, "nullable": false, "description": "Enum: assistant / head / senior / director / consultant." },
-      "certifications": { "type": "jsonb", "nullable": false, "default": "'[]'::jsonb", "description": "Array of certification entries. Shape validated by valid_certifications_shape rule + schemas/coach-certification.schema.json." },
-      "rating": { "type": "decimal", "precision": 3, "scale": 2, "nullable": true, "description": "0-5 rating from athlete/parent session ratings. Written EXCLUSIVELY by AggregateCoachRatingsJob (Wave 3+; Wave 2b remains null)." },
-      "rating_count": { "type": "integer", "nullable": false, "default": 0, "description": "Number of ratings that produced the average. Written EXCLUSIVELY by the job." },
-      "bio": { "type": "text", "nullable": true, "description": "Public-facing bio. When null, coach hidden from public directories." },
-      "head_shot_url": { "type": "string", "length": 512, "nullable": true, "description": "Public-facing head-shot URL. Distinct from user.profile.avatar_url (that's the user's own avatar; this is coach-specific)." },
-      "availability_pattern": { "type": "jsonb", "nullable": true, "description": "Per-day windows. Overrides staff.weekly_hours for the coaching function specifically. Shape validated by valid_availability_pattern rule." },
-      "session_capacity_per_week": { "type": "integer", "nullable": true, "description": "Max sessions per week this coach will accept." },
-      "languages": { "type": "jsonb", "nullable": false, "default": "'[]'::jsonb", "description": "Array of BCP-47 codes. Languages the coach coaches in." },
-      "public_email": { "type": "string", "length": 255, "nullable": true, "description": "Tenant-facing 'message this coach' address. Distinct from user.email." },
-      "public_phone": { "type": "string", "length": 20, "nullable": true, "description": "E.164 phone. Optional public contact." },
-      "status": { "type": "string", "length": 16, "nullable": false, "default": "'active'", "description": "Enum: active / paused / archived." },
-      "coach_started_at": { "type": "date", "nullable": true, "description": "When this Staff assumed the coaching role. May differ from staff.started_at when a Staff promotes from receptionist to assistant coach." },
-      "coach_ended_at": { "type": "date", "nullable": true, "description": "When the coaching role ended. Set on status → archived." },
-      "notes": { "type": "text", "nullable": true, "description": "Internal coach-development notes. Private-tier." },
+      "id": {
+        "type": "string",
+        "length": 64,
+        "primary": true,
+        "description": "Prefixed ULID: `coa_<26>`."
+      },
+      "tenant_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "foreign": { "table": "tenants", "column": "id", "onDelete": "cascade" }
+      },
+      "staff_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "foreign": { "table": "staff", "column": "id", "onDelete": "restrict" },
+        "description": "The underlying Staff row. RESTRICT — coach cannot be created against an offboarded staff; must archive before parent Staff can be soft-deleted. Immutable post-create."
+      },
+      "sport_key": {
+        "type": "string",
+        "length": 32,
+        "nullable": false,
+        "description": "Primary sport (Wave 3+ sports registry key). e.g. basketball / swimming / general_fitness."
+      },
+      "additional_sports": {
+        "type": "jsonb",
+        "nullable": false,
+        "default": "'[]'::jsonb",
+        "description": "Array of sport_keys the coach also teaches. Empty = only primary."
+      },
+      "specialization": {
+        "type": "string",
+        "length": 128,
+        "nullable": true,
+        "description": "Free-text: 'youth development', 'elite competition prep', 'return-to-play rehab'."
+      },
+      "coaching_level": {
+        "type": "string",
+        "length": 16,
+        "nullable": false,
+        "description": "Enum: assistant / head / senior / director / consultant."
+      },
+      "certifications": {
+        "type": "jsonb",
+        "nullable": false,
+        "default": "'[]'::jsonb",
+        "description": "Array of certification entries. Shape validated by valid_certifications_shape rule + schemas/coach-certification.schema.json."
+      },
+      "rating": {
+        "type": "decimal",
+        "precision": 3,
+        "scale": 2,
+        "nullable": true,
+        "description": "0-5 rating from athlete/parent session ratings. Written EXCLUSIVELY by AggregateCoachRatingsJob (Wave 3+; Wave 2b remains null)."
+      },
+      "rating_count": {
+        "type": "integer",
+        "nullable": false,
+        "default": 0,
+        "description": "Number of ratings that produced the average. Written EXCLUSIVELY by the job."
+      },
+      "bio": {
+        "type": "text",
+        "nullable": true,
+        "description": "Public-facing bio. When null, coach hidden from public directories."
+      },
+      "head_shot_url": {
+        "type": "string",
+        "length": 512,
+        "nullable": true,
+        "description": "Public-facing head-shot URL. Distinct from user.profile.avatar_url (that's the user's own avatar; this is coach-specific)."
+      },
+      "availability_pattern": {
+        "type": "jsonb",
+        "nullable": true,
+        "description": "Per-day windows. Overrides staff.weekly_hours for the coaching function specifically. Shape validated by valid_availability_pattern rule."
+      },
+      "session_capacity_per_week": {
+        "type": "integer",
+        "nullable": true,
+        "description": "Max sessions per week this coach will accept."
+      },
+      "languages": {
+        "type": "jsonb",
+        "nullable": false,
+        "default": "'[]'::jsonb",
+        "description": "Array of BCP-47 codes. Languages the coach coaches in."
+      },
+      "public_email": {
+        "type": "string",
+        "length": 255,
+        "nullable": true,
+        "description": "Tenant-facing 'message this coach' address. Distinct from user.email."
+      },
+      "public_phone": {
+        "type": "string",
+        "length": 20,
+        "nullable": true,
+        "description": "E.164 phone. Optional public contact."
+      },
+      "status": {
+        "type": "string",
+        "length": 16,
+        "nullable": false,
+        "default": "'active'",
+        "description": "Enum: active / paused / archived."
+      },
+      "coach_started_at": {
+        "type": "date",
+        "nullable": true,
+        "description": "When this Staff assumed the coaching role. May differ from staff.started_at when a Staff promotes from receptionist to assistant coach."
+      },
+      "coach_ended_at": {
+        "type": "date",
+        "nullable": true,
+        "description": "When the coaching role ended. Set on status → archived."
+      },
+      "notes": {
+        "type": "text",
+        "nullable": true,
+        "description": "Internal coach-development notes. Private-tier."
+      },
       "metadata": { "type": "jsonb", "nullable": true },
       "created_by": { "type": "string", "length": 64, "nullable": true },
       "updated_by": { "type": "string", "length": 64, "nullable": true },

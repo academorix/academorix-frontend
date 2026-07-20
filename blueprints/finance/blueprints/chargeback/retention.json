@@ -20,8 +20,13 @@
   "retention": [
     {
       "entity": "Chargeback",
-      "hot": { "days": 730, "description": "Active + first 2 years — card network audit + regulator inquiry response window. Note: cards networks (Visa/MC/Amex/Discover) may audit chargeback records for up to 2-5 years for VDMP/MDMP monitoring." },
-      "cold": { "days": "2555 (7 years) post-decision_at (or filed_at if never terminal — rare); 3650 (10 years) with `chargeback_extended_retention` (Enterprise)" },
+      "hot": {
+        "days": 730,
+        "description": "Active + first 2 years — card network audit + regulator inquiry response window. Note: cards networks (Visa/MC/Amex/Discover) may audit chargeback records for up to 2-5 years for VDMP/MDMP monitoring."
+      },
+      "cold": {
+        "days": "2555 (7 years) post-decision_at (or filed_at if never terminal — rare); 3650 (10 years) with `chargeback_extended_retention` (Enterprise)"
+      },
       "purge": {
         "trigger": "> 7 (or 10) years past decision_at",
         "action": "hard delete via PurgeExpiredChargebackDataJob; invoice-linked chargebacks migrate to compliance_archive.chargebacks",
@@ -30,8 +35,13 @@
     },
     {
       "entity": "ChargebackEvidence",
-      "hot": { "days": 730, "description": "Active + first 2 years — card network audit + regulator inquiry." },
-      "cold": { "days": "2555 (7 years) post-parent-chargeback.decision_at; 3650 (10 years) with `chargeback_extended_retention`" },
+      "hot": {
+        "days": 730,
+        "description": "Active + first 2 years — card network audit + regulator inquiry."
+      },
+      "cold": {
+        "days": "2555 (7 years) post-parent-chargeback.decision_at; 3650 (10 years) with `chargeback_extended_retention`"
+      },
       "purge": {
         "trigger": "co-terminous with parent chargeback purge (FK CASCADE)",
         "action": "hard delete when parent chargeback purges; migrate to compliance_archive.chargeback_evidence when parent migrates",

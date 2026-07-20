@@ -5,7 +5,7 @@
  *   the write-endpoints wrapper.
  */
 
-import type { INotificationPreferences } from '@/core/interfaces';
+import type { INotificationPreferences } from "@/core/interfaces";
 
 /**
  * Writer contract callers pass into {@link useNotificationWrites}.

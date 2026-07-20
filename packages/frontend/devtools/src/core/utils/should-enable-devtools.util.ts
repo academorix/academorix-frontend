@@ -12,7 +12,7 @@
  *   `NODE_ENV === 'production'`.
  */
 
-import { Env } from '@stackra/support';
+import { Env } from "@stackra/support";
 
 /**
  * Resolve the effective `enabled` flag.
@@ -36,6 +36,6 @@ export function shouldEnableDevtools(explicit?: boolean): boolean {
   // Explicit override wins — even in production, a caller may
   // choose to enable the shell (e.g. an ability-gated staging
   // build). `undefined` means "no opinion, use the default".
-  if (typeof explicit === 'boolean') return explicit;
+  if (typeof explicit === "boolean") return explicit;
   return !Env.isProduction();
 }

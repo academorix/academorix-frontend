@@ -14,12 +14,12 @@
  *   `@stackra/notifications/react`).
  */
 
-import 'reflect-metadata';
+import "reflect-metadata";
 
 // ════════════════════════════════════════════════════════════════════════════════
 // Module
 // ════════════════════════════════════════════════════════════════════════════════
-export { PwaModule } from './pwa.module';
+export { PwaModule } from "./pwa.module";
 
 // ════════════════════════════════════════════════════════════════════════════════
 // Services
@@ -31,7 +31,7 @@ export {
   type PwaListener,
   type AppUpdateListener,
   type IBeforeInstallPromptEvent,
-} from './services';
+} from "./services";
 
 // ════════════════════════════════════════════════════════════════════════════════
 // Constants / Tokens
@@ -43,12 +43,12 @@ export {
   PWA_SERVICE,
   PWA_EVENTS,
   type PwaEventName,
-} from './constants';
+} from "./constants";
 
 // ════════════════════════════════════════════════════════════════════════════════
 // Errors
 // ════════════════════════════════════════════════════════════════════════════════
-export { PwaError } from './errors';
+export { PwaError } from "./errors";
 
 // ════════════════════════════════════════════════════════════════════════════════
 // Utilities
@@ -63,7 +63,7 @@ export {
   registerPeriodicSync,
   registerBackgroundSync,
   type IRegisterPeriodicSyncOptions,
-} from './utils';
+} from "./utils";
 
 // ════════════════════════════════════════════════════════════════════════════════
 // Interfaces
@@ -82,4 +82,4 @@ export type {
   IAppUpdateEndpoints,
   IAppUpdateManifest,
   IAppUpdateState,
-} from './interfaces';
+} from "./interfaces";

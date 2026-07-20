@@ -7,15 +7,15 @@
  *   with the SchedulerService.
  */
 
-import { Injectable, Inject, Optional } from '@stackra/container';
-import { OnApplicationBootstrap } from '@stackra/contracts';
-import { getMetadata } from '@vivtel/metadata';
+import { Injectable, Inject, Optional } from "@stackra/container";
+import { OnApplicationBootstrap } from "@stackra/contracts";
+import { getMetadata } from "@vivtel/metadata";
 
-import { SCHEDULER_SERVICE, SCHEDULED_METADATA_KEY } from '@stackra/contracts';
-import { SchedulerService } from './scheduler.service';
-import type { IScheduledOptions } from '@/core/interfaces/scheduled-options.interface';
-import type { IDiscoveryService } from '@stackra/contracts';
-import { DISCOVERY_SERVICE } from '@stackra/contracts';
+import { SCHEDULER_SERVICE, SCHEDULED_METADATA_KEY } from "@stackra/contracts";
+import { SchedulerService } from "./scheduler.service";
+import type { IScheduledOptions } from "@/core/interfaces/scheduled-options.interface";
+import type { IDiscoveryService } from "@stackra/contracts";
+import { DISCOVERY_SERVICE } from "@stackra/contracts";
 
 // ════════════════════════════════════════════════════════════════════════════════
 // Discovery Interface
@@ -53,7 +53,7 @@ export class ScheduledTaskLoader implements OnApplicationBootstrap {
    */
   public constructor(
     @Inject(SCHEDULER_SERVICE) private readonly scheduler: SchedulerService,
-    @Optional() @Inject(DISCOVERY_SERVICE) private readonly discoveryService?: IDiscoveryService
+    @Optional() @Inject(DISCOVERY_SERVICE) private readonly discoveryService?: IDiscoveryService,
   ) {}
 
   /**
@@ -88,7 +88,7 @@ export class ScheduledTaskLoader implements OnApplicationBootstrap {
 
       // Validate the class has a run() method
       const task = instance as { run?: () => Promise<void> };
-      if (typeof task.run !== 'function') {
+      if (typeof task.run !== "function") {
         continue;
       }
 

@@ -62,9 +62,21 @@
     "soc2_type2": {
       "applicable": true,
       "controls": [
-        { "criterion": "CC6.1", "principle": "logical access controls", "evidence": "SessionPolicy narrows read/write per role. Coaches see .own; reception .branch; athletes/guardians attendance-derived. Session_notes coach+admin only. Safeguarding read is admin/owner only (coaches can FLAG but cannot READ across sessions — need-to-know)." },
-        { "criterion": "CC6.3", "principle": "authorisation of changes", "evidence": "Post-scheduled + post-confirmed guardrails: session_type / team_id immutable; head_coach reassign <24h requires special permission; cancel <24h requires special permission. Every fire writes to audits." },
-        { "criterion": "CC7.2", "principle": "system monitoring", "evidence": "Health probes cover FK integrity + attendance-count consistency + safeguarding-flag write path + phase-roll heartbeat." }
+        {
+          "criterion": "CC6.1",
+          "principle": "logical access controls",
+          "evidence": "SessionPolicy narrows read/write per role. Coaches see .own; reception .branch; athletes/guardians attendance-derived. Session_notes coach+admin only. Safeguarding read is admin/owner only (coaches can FLAG but cannot READ across sessions — need-to-know)."
+        },
+        {
+          "criterion": "CC6.3",
+          "principle": "authorisation of changes",
+          "evidence": "Post-scheduled + post-confirmed guardrails: session_type / team_id immutable; head_coach reassign <24h requires special permission; cancel <24h requires special permission. Every fire writes to audits."
+        },
+        {
+          "criterion": "CC7.2",
+          "principle": "system monitoring",
+          "evidence": "Health probes cover FK integrity + attendance-count consistency + safeguarding-flag write path + phase-roll heartbeat."
+        }
       ]
     },
     "financial_regulation": {

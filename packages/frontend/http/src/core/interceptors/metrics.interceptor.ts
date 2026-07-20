@@ -9,7 +9,7 @@
  * @module @stackra/http/interceptors/metrics
  */
 
-import { Inject } from '@stackra/container';
+import { Inject } from "@stackra/container";
 
 import {
   HTTP_CONFIG,
@@ -19,10 +19,10 @@ import {
   type IHttpNextFunction,
   type IHttpRequestConfig,
   type IHttpResponse,
-} from '@stackra/contracts';
+} from "@stackra/contracts";
 
-import { HttpInterceptor } from '../decorators/http-interceptor.decorator';
-import { MetricsCollectorService } from '../services/metrics-collector.service';
+import { HttpInterceptor } from "../decorators/http-interceptor.decorator";
+import { MetricsCollectorService } from "../services/metrics-collector.service";
 
 /**
  * Sentry-shape probe — tolerates either a `globalThis.Sentry` global
@@ -40,7 +40,7 @@ interface ISentryLike {
 /**
  * Metrics interceptor.
  */
-@HttpInterceptor({ priority: 90, name: 'metrics' })
+@HttpInterceptor({ priority: 90, name: "metrics" })
 export class MetricsInterceptor implements IHttpInterceptor {
   /**
    * @param config           - Module options.
@@ -48,7 +48,7 @@ export class MetricsInterceptor implements IHttpInterceptor {
    */
   public constructor(
     @Inject(HTTP_CONFIG) private readonly config: IHttpModuleOptions,
-    private readonly metricsCollector: MetricsCollectorService
+    private readonly metricsCollector: MetricsCollectorService,
   ) {}
 
   /** @inheritdoc */
@@ -66,9 +66,9 @@ export class MetricsInterceptor implements IHttpInterceptor {
 
     if (metricsConfig.sentry?.enabled) {
       this.addSentryBreadcrumb({
-        category: 'http',
-        message: `${context.request.method ?? 'GET'} ${context.request.url ?? ''}`,
-        level: 'info',
+        category: "http",
+        message: `${context.request.method ?? "GET"} ${context.request.url ?? ""}`,
+        level: "info",
         data: {
           method: context.request.method,
           url: context.request.url,
@@ -82,7 +82,7 @@ export class MetricsInterceptor implements IHttpInterceptor {
 
       this.metricsCollector.recordRequest({
         endpoint,
-        method: context.request.method ?? 'GET',
+        method: context.request.method ?? "GET",
         status: response.status,
         duration,
         success: response.status >= 200 && response.status < 300,
@@ -91,8 +91,8 @@ export class MetricsInterceptor implements IHttpInterceptor {
       if (metricsConfig.sentry?.enabled) {
         this.recordSentryTransaction({
           name: endpoint,
-          op: 'http.client',
-          status: 'ok',
+          op: "http.client",
+          status: "ok",
         });
       }
 
@@ -103,7 +103,7 @@ export class MetricsInterceptor implements IHttpInterceptor {
 
       this.metricsCollector.recordRequest({
         endpoint,
-        method: context.request.method ?? 'GET',
+        method: context.request.method ?? "GET",
         status,
         duration,
         success: false,
@@ -120,8 +120,8 @@ export class MetricsInterceptor implements IHttpInterceptor {
         });
         this.recordSentryTransaction({
           name: endpoint,
-          op: 'http.client',
-          status: 'error',
+          op: "http.client",
+          status: "error",
         });
       }
 
@@ -131,7 +131,7 @@ export class MetricsInterceptor implements IHttpInterceptor {
 
   /** `"{METHOD}:{URL}"` lookup key. */
   private static endpointKey(request: IHttpRequestConfig): string {
-    return `${request.method ?? 'GET'}:${request.url ?? ''}`;
+    return `${request.method ?? "GET"}:${request.url ?? ""}`;
   }
 
   /** Resolve a Sentry global from the runtime, when present. */

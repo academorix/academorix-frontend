@@ -10,7 +10,17 @@
       "name": "Refund Requested",
       "kind": "track",
       "consent_required": "essential",
-      "properties": ["tenant_id", "refund_id", "refund_type", "reason", "refunded_to", "requires_approval", "days_since_payment_bucket", "amount_bucket", "initiator_role"],
+      "properties": [
+        "tenant_id",
+        "refund_id",
+        "refund_type",
+        "reason",
+        "refunded_to",
+        "requires_approval",
+        "days_since_payment_bucket",
+        "amount_bucket",
+        "initiator_role"
+      ],
       "description": "Every refund request. Essential consent — financial-integrity signals cannot be opted out. days_since_payment_bucket: 0-7 / 8-30 / 31-90 / 91+; amount_bucket: 0-999 / 1000-4999 / 5000-19999 / 20000+."
     },
     {
@@ -24,14 +34,29 @@
       "name": "Refund Approved",
       "kind": "track",
       "consent_required": "essential",
-      "properties": ["tenant_id", "refund_id", "auto_approved", "approver_role", "hours_to_approval_bucket", "amount_bucket", "reason"],
+      "properties": [
+        "tenant_id",
+        "refund_id",
+        "auto_approved",
+        "approver_role",
+        "hours_to_approval_bucket",
+        "amount_bucket",
+        "reason"
+      ],
       "description": "hours_to_approval_bucket: 0-1 / 1-4 / 4-24 / 24-72 / 72+. Powers approval-SLA compliance monitoring."
     },
     {
       "name": "Refund Rejected",
       "kind": "track",
       "consent_required": "essential",
-      "properties": ["tenant_id", "refund_id", "approver_role", "hours_to_rejection_bucket", "amount_bucket", "reason"]
+      "properties": [
+        "tenant_id",
+        "refund_id",
+        "approver_role",
+        "hours_to_rejection_bucket",
+        "amount_bucket",
+        "reason"
+      ]
     },
     {
       "name": "Refund Cancelled",
@@ -51,14 +76,29 @@
       "name": "Refund Succeeded",
       "kind": "track",
       "consent_required": "essential",
-      "properties": ["tenant_id", "refund_id", "provider", "reason", "refund_type", "hours_to_success_bucket", "amount_bucket", "refunded_to"],
+      "properties": [
+        "tenant_id",
+        "refund_id",
+        "provider",
+        "reason",
+        "refund_type",
+        "hours_to_success_bucket",
+        "amount_bucket",
+        "refunded_to"
+      ],
       "description": "P1 event — every fire is a financial reversal. Essential consent. hours_to_success_bucket: 0-1 / 1-24 / 24-72 / 72-168 (1 week) / 168+ (weeks). For card refunds via Stripe/Adyen, typical is 120-240h (5-10 days)."
     },
     {
       "name": "Refund Failed",
       "kind": "track",
       "consent_required": "essential",
-      "properties": ["tenant_id", "refund_id", "provider", "failure_reason_category", "amount_bucket"],
+      "properties": [
+        "tenant_id",
+        "refund_id",
+        "provider",
+        "failure_reason_category",
+        "amount_bucket"
+      ],
       "description": "failure_reason_category IN ('already_refunded', 'source_invalid', 'insufficient_funds', 'provider_account_closed', 'authentication_failed', 'other'). Powers provider-quality dashboards."
     },
     {
@@ -79,7 +119,13 @@
       "name": "Refund Clawback Referral",
       "kind": "track",
       "consent_required": "essential",
-      "properties": ["tenant_id", "refund_id", "referral_reward_id", "reward_type", "reward_amount_bucket"],
+      "properties": [
+        "tenant_id",
+        "refund_id",
+        "referral_reward_id",
+        "reward_type",
+        "reward_amount_bucket"
+      ],
       "description": "P1 event — every fire is a downstream reward reversal impacting referrer credits."
     },
     {
@@ -100,7 +146,13 @@
       "name": "Refund Report Generated",
       "kind": "track",
       "consent_required": "functional",
-      "properties": ["tenant_id", "report_id", "period_days", "refund_count_bucket", "total_refunded_cents_bucket"]
+      "properties": [
+        "tenant_id",
+        "report_id",
+        "period_days",
+        "refund_count_bucket",
+        "total_refunded_cents_bucket"
+      ]
     }
   ],
   "notes": [

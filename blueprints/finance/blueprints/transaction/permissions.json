@@ -6,19 +6,74 @@
   "isSystem": true,
   "description": "Two audiences. Tenant plane (sanctum) — read by owner + admin + finance role; reversal by owner + admin ONLY (finance role does NOT hold reverse — reversal is regulator-critical + admin-only). NO create / update / delete permissions on tenant plane — transactions are recorded via internal service (TransactionRecorder) called by invoice / payment / refund / chargeback modules. Platform plane (platform_admin) — cross-tenant support tooling for ops + support + super_admin.",
   "permissions": [
-    { "name": "transaction.viewAny", "guard": "sanctum", "seededOn": ["admin", "owner", "finance"] },
+    {
+      "name": "transaction.viewAny",
+      "guard": "sanctum",
+      "seededOn": ["admin", "owner", "finance"]
+    },
     { "name": "transaction.view", "guard": "sanctum", "seededOn": ["admin", "owner", "finance"] },
-    { "name": "transaction.reverse", "guard": "sanctum", "description": "Manual ledger correction. Creates a NEW offsetting transaction with reversal_reason='accounting_adjustment'. Requires a written note + writes to audits with 7-year retention. Regulator-critical — admin ONLY (finance role does NOT hold).", "seededOn": ["admin", "owner"] },
-    { "name": "transaction.ledger_entries.viewAny", "guard": "sanctum", "seededOn": ["admin", "owner", "finance"] },
-    { "name": "transaction.ledger_entries.view", "guard": "sanctum", "seededOn": ["admin", "owner", "finance"] },
-    { "name": "transaction.ledger.account_balance.view", "guard": "sanctum", "description": "View running balance for a specific ledger account.", "seededOn": ["admin", "owner", "finance"] },
-    { "name": "transaction.ledger.report.view", "guard": "sanctum", "description": "General Ledger report. Medium+ via transaction_advanced_reporting entitlement.", "seededOn": ["admin", "owner", "finance"] },
-    { "name": "transaction.ledger.reconciliation.view", "guard": "sanctum", "description": "View the nightly reconciliation-run audit trail + any detected imbalances.", "seededOn": ["admin", "owner", "finance"] },
+    {
+      "name": "transaction.reverse",
+      "guard": "sanctum",
+      "description": "Manual ledger correction. Creates a NEW offsetting transaction with reversal_reason='accounting_adjustment'. Requires a written note + writes to audits with 7-year retention. Regulator-critical — admin ONLY (finance role does NOT hold).",
+      "seededOn": ["admin", "owner"]
+    },
+    {
+      "name": "transaction.ledger_entries.viewAny",
+      "guard": "sanctum",
+      "seededOn": ["admin", "owner", "finance"]
+    },
+    {
+      "name": "transaction.ledger_entries.view",
+      "guard": "sanctum",
+      "seededOn": ["admin", "owner", "finance"]
+    },
+    {
+      "name": "transaction.ledger.account_balance.view",
+      "guard": "sanctum",
+      "description": "View running balance for a specific ledger account.",
+      "seededOn": ["admin", "owner", "finance"]
+    },
+    {
+      "name": "transaction.ledger.report.view",
+      "guard": "sanctum",
+      "description": "General Ledger report. Medium+ via transaction_advanced_reporting entitlement.",
+      "seededOn": ["admin", "owner", "finance"]
+    },
+    {
+      "name": "transaction.ledger.reconciliation.view",
+      "guard": "sanctum",
+      "description": "View the nightly reconciliation-run audit trail + any detected imbalances.",
+      "seededOn": ["admin", "owner", "finance"]
+    },
 
-    { "name": "platform.transaction.viewAny", "guard": "platform_admin", "seededOn": ["super_admin", "ops", "support"] },
-    { "name": "platform.transaction.view", "guard": "platform_admin", "seededOn": ["super_admin", "ops", "support"] },
-    { "name": "platform.transaction.ledger_entries.viewAny", "guard": "platform_admin", "description": "Cross-tenant ledger-entry read for support-tool investigations + audit walk-throughs.", "seededOn": ["super_admin", "ops", "support"] },
-    { "name": "platform.transaction.ledger.reconcile", "guard": "platform_admin", "description": "Force a reconciliation run cross-tenant. Used during regulator audits + escalated imbalance investigations. Every fire notifies the tenant + writes an audit row with 7-year retention.", "seededOn": ["super_admin", "ops"] },
-    { "name": "platform.transaction.ledger.imbalances.view", "guard": "platform_admin", "description": "Cross-tenant view of any detected ledger imbalances. Feeds the ops finance-health dashboard.", "seededOn": ["super_admin", "ops", "support"] }
+    {
+      "name": "platform.transaction.viewAny",
+      "guard": "platform_admin",
+      "seededOn": ["super_admin", "ops", "support"]
+    },
+    {
+      "name": "platform.transaction.view",
+      "guard": "platform_admin",
+      "seededOn": ["super_admin", "ops", "support"]
+    },
+    {
+      "name": "platform.transaction.ledger_entries.viewAny",
+      "guard": "platform_admin",
+      "description": "Cross-tenant ledger-entry read for support-tool investigations + audit walk-throughs.",
+      "seededOn": ["super_admin", "ops", "support"]
+    },
+    {
+      "name": "platform.transaction.ledger.reconcile",
+      "guard": "platform_admin",
+      "description": "Force a reconciliation run cross-tenant. Used during regulator audits + escalated imbalance investigations. Every fire notifies the tenant + writes an audit row with 7-year retention.",
+      "seededOn": ["super_admin", "ops"]
+    },
+    {
+      "name": "platform.transaction.ledger.imbalances.view",
+      "guard": "platform_admin",
+      "description": "Cross-tenant view of any detected ledger imbalances. Feeds the ops finance-health dashboard.",
+      "seededOn": ["super_admin", "ops", "support"]
+    }
   ]
 }

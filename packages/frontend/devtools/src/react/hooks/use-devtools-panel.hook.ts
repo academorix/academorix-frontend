@@ -11,10 +11,10 @@
  *   (last-wins per id).
  */
 
-import { useEffect, useRef } from 'react';
-import type { IDevtoolsPanel } from '@stackra/contracts';
+import { useEffect, useRef } from "react";
+import type { IDevtoolsPanel } from "@stackra/contracts";
 
-import { useDevtoolsContext } from './use-devtools-context.hook';
+import { useDevtoolsContext } from "./use-devtools-context.hook";
 
 /**
  * Register an ad-hoc panel while the calling component is mounted.

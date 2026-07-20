@@ -31,13 +31,30 @@
             {
               "kind": "View",
               "children": [
-                { "kind": "Text", "props": { "as": "h1", "className": "text-2xl font-semibold", "children": "Tax jurisdictions" } },
-                { "kind": "Text", "props": { "className": "text-sm text-muted", "children": "Country/state/city rule catalog. 195 platform-reference countries + tenant-custom jurisdictions." } }
+                {
+                  "kind": "Text",
+                  "props": {
+                    "as": "h1",
+                    "className": "text-2xl font-semibold",
+                    "children": "Tax jurisdictions"
+                  }
+                },
+                {
+                  "kind": "Text",
+                  "props": {
+                    "className": "text-sm text-muted",
+                    "children": "Country/state/city rule catalog. 195 platform-reference countries + tenant-custom jurisdictions."
+                  }
+                }
               ]
             },
             {
               "kind": "Button",
-              "props": { "variant": "primary", "leadingIcon": "plus", "children": "Add custom jurisdiction" },
+              "props": {
+                "variant": "primary",
+                "leadingIcon": "plus",
+                "children": "Add custom jurisdiction"
+              },
               "requiresPermission": "tax.jurisdictions.create",
               "requiresEntitlement": "tax_jurisdiction_custom",
               "actions": {
@@ -68,12 +85,19 @@
                 { "id": "digital_services_tax", "label": "Digital services tax" }
               ],
               "actions": {
-                "onSelectionChange": { "kind": "filter.set", "field": "tax_type", "valueExpr": "$selectedKey" }
+                "onSelectionChange": {
+                  "kind": "filter.set",
+                  "field": "tax_type",
+                  "valueExpr": "$selectedKey"
+                }
               }
             },
             {
               "kind": "Switch",
-              "props": { "label": "Custom only", "helpText": "Show tenant-scoped custom jurisdictions only." },
+              "props": {
+                "label": "Custom only",
+                "helpText": "Show tenant-scoped custom jurisdictions only."
+              },
               "actions": {
                 "onChange": { "kind": "filter.set", "field": "custom_only", "valueExpr": "$value" }
               }
@@ -94,7 +118,12 @@
               { "field": "name", "label": "Name", "sortable": true, "width": 260 },
               { "field": "tax_type", "label": "Type", "sortable": true, "width": 120 },
               { "field": "nexus_type", "label": "Nexus", "width": 120 },
-              { "field": "tenant_id", "label": "Source", "width": 120, "formatter": "custom-or-platform" }
+              {
+                "field": "tenant_id",
+                "label": "Source",
+                "width": 120,
+                "formatter": "custom-or-platform"
+              }
             ],
             "onRowPress": {
               "kind": "navigate",

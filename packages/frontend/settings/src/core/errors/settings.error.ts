@@ -20,7 +20,7 @@ export class SettingsError extends Error {
    */
   public constructor(message: string, cause?: unknown) {
     super(message);
-    this.name = 'SettingsError';
+    this.name = "SettingsError";
     if (cause !== undefined) {
       // Preserve the causal chain — Node / modern browsers understand
       // Error.cause via the standard second-argument form.

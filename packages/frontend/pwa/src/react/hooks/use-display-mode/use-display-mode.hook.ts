@@ -4,8 +4,8 @@
  * @description Display-mode categorisation hook.
  */
 
-import { usePwa } from '@/react/hooks/use-pwa/use-pwa.hook';
-import type { PwaDisplayMode } from '@/core/interfaces';
+import { usePwa } from "@/react/hooks/use-pwa/use-pwa.hook";
+import type { PwaDisplayMode } from "@/core/interfaces";
 
 /**
  * The current coarse display-mode categorisation

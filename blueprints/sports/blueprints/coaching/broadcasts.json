@@ -62,10 +62,7 @@
       "class": "Academorix\\Sports\\Coaching\\Broadcasts\\CoachingProfileRatingsChannel",
       "description": "Per-profile skill-rating activity. Coach opt-in receive; admins always see.",
       "authorization": "sanctum::authed AND (permission `coach_skill_ratings.view` OR (coaching_profile.staff.user_id = current_user_id AND coaching_profile.notify_on_rating = true))",
-      "events": [
-        "CoachSkillRatingRecorded",
-        "CoachSkillRatingUpdated"
-      ],
+      "events": ["CoachSkillRatingRecorded", "CoachSkillRatingUpdated"],
       "throttle": "10 events/minute per channel",
       "notes": "Rating events are opt-in for the coach (some coaches prefer not to be notified about their own ratings — the `notify_on_rating` preference lives on CoachingProfile.metadata)."
     },

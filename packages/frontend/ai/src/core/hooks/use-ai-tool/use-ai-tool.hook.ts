@@ -8,7 +8,7 @@
  *   hook is invoked immediately with the definition's own handler.
  */
 
-import { createAiTool, type IAiToolDefinitionWithHandler } from './create-ai-tool.factory';
+import { createAiTool, type IAiToolDefinitionWithHandler } from "./create-ai-tool.factory";
 
 /**
  * Register a client tool while the calling component is mounted.

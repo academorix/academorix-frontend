@@ -17,9 +17,7 @@
     "requestable-resources"
   ],
   "priority": 35,
-  "providers": [
-    "Academorix\\AccessRequest\\Providers\\AccessRequestServiceProvider"
-  ],
+  "providers": ["Academorix\\AccessRequest\\Providers\\AccessRequestServiceProvider"],
   "files": [],
   "dependencies": [
     "foundation",
@@ -43,19 +41,10 @@
     "compliance"
   ],
   "contributes": {
-    "traits": [
-      "IsAccessRequestable"
-    ],
-    "attributes": [
-      "AccessRequestable",
-      "AsAccessRequestListener"
-    ],
-    "blueprints": [
-      "access-requestable"
-    ],
-    "middleware": [
-      "access.request_hint_on_denial"
-    ],
+    "traits": ["IsAccessRequestable"],
+    "attributes": ["AccessRequestable", "AsAccessRequestListener"],
+    "blueprints": ["access-requestable"],
+    "middleware": ["access.request_hint_on_denial"],
     "events": [
       "AccessRequestSubmitted",
       "AccessRequestApproved",
@@ -65,9 +54,7 @@
       "AccessRequestApproverNotified",
       "AccessRequestGrantIssued"
     ],
-    "policies": [
-      "AccessRequestPolicy"
-    ],
+    "policies": ["AccessRequestPolicy"],
     "hooks": [],
     "commands": [
       "access-requests:list",
@@ -79,11 +66,7 @@
       "access-requests:remediate-orphaned-approvals",
       "access-requests:cache-clear"
     ],
-    "jobs": [
-      "NotifyApproversJob",
-      "NotifyRequesterOfDecisionJob",
-      "CleanupOrphanedRequestsJob"
-    ],
+    "jobs": ["NotifyApproversJob", "NotifyRequesterOfDecisionJob", "CleanupOrphanedRequestsJob"],
     "notifications": [
       "AccessRequestSubmittedNotification",
       "AccessRequestApprovedNotification",
@@ -91,10 +74,7 @@
       "AccessRequestExpiredNotification",
       "AccessRequestReminderNotification"
     ],
-    "broadcasts": [
-      "tenant.{id}.access-requests",
-      "user.{id}.access-requests"
-    ],
+    "broadcasts": ["tenant.{id}.access-requests", "user.{id}.access-requests"],
     "observers": [],
     "rules": [
       "valid_requestable_resource",
@@ -102,17 +82,10 @@
       "permission_belongs_to_resource_type",
       "valid_reason_length"
     ],
-    "casts": [
-      "AccessRequestStateCast",
-      "PermissionsWantedCast"
-    ],
+    "casts": ["AccessRequestStateCast", "PermissionsWantedCast"],
     "views": [],
-    "lang": [
-      "access-request"
-    ],
-    "config": [
-      "access.requests"
-    ],
+    "lang": ["access-request"],
+    "config": ["access.requests"],
     "macros": [],
     "bindings": [
       "AccessRequestSubmitter",
@@ -122,9 +95,7 @@
       "AccessRequestGrantMaterializer",
       "AccessRequestPresenter"
     ],
-    "resources": [
-      "access-request"
-    ]
+    "resources": ["access-request"]
   },
   "flow": {
     "description": "This module IS a bridge — documenting the cross-module event chain here rather than in a dedicated flow.json file (§10 of readme.md traces it in detail).",

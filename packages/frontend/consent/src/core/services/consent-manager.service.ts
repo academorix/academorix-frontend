@@ -12,14 +12,14 @@
  *   seeded before this manager consumes it.
  */
 
-import { Injectable, Inject, Optional } from '@stackra/container';
-import type { OnApplicationBootstrap } from '@stackra/contracts';
-import { EVENT_EMITTER, type IEventEmitter } from '@stackra/contracts';
+import { Injectable, Inject, Optional } from "@stackra/container";
+import type { OnApplicationBootstrap } from "@stackra/contracts";
+import { EVENT_EMITTER, type IEventEmitter } from "@stackra/contracts";
 
-import { CONSENT_CONFIG, CONSENT_EVENTS, CONSENT_STORAGE_ADAPTER } from '@stackra/contracts';
-import type { IConsentManager, IConsentStorageAdapter } from '@stackra/contracts';
-import type { IConsentModuleOptions } from '../types';
-import { ConsentRegistry } from './consent-registry.service';
+import { CONSENT_CONFIG, CONSENT_EVENTS, CONSENT_STORAGE_ADAPTER } from "@stackra/contracts";
+import type { IConsentManager, IConsentStorageAdapter } from "@stackra/contracts";
+import type { IConsentModuleOptions } from "../types";
+import { ConsentRegistry } from "./consent-registry.service";
 
 /**
  * Consent manager — the primary service for managing user consent state.
@@ -63,7 +63,7 @@ export class ConsentManager implements IConsentManager, OnApplicationBootstrap {
     @Inject(CONSENT_STORAGE_ADAPTER)
     private readonly storageAdapter?: IConsentStorageAdapter,
     @Optional() @Inject(CONSENT_CONFIG) private readonly options?: IConsentModuleOptions,
-    @Optional() @Inject(EVENT_EMITTER) private readonly events?: IEventEmitter
+    @Optional() @Inject(EVENT_EMITTER) private readonly events?: IEventEmitter,
   ) {}
 
   /**
@@ -90,7 +90,7 @@ export class ConsentManager implements IConsentManager, OnApplicationBootstrap {
       if (category.required) {
         this.preferences.set(category.slug, true);
       } else if (!this.decided) {
-        const defaultValue = this.options?.defaultMode === 'opt-out' ? true : category.default;
+        const defaultValue = this.options?.defaultMode === "opt-out" ? true : category.default;
         this.preferences.set(category.slug, defaultValue);
       } else {
         this.preferences.set(category.slug, category.default);
@@ -299,7 +299,7 @@ export class ConsentManager implements IConsentManager, OnApplicationBootstrap {
       void this.events.emit(event, {
         event,
         data,
-        metadata: { source: '@stackra/consent', timestamp: new Date() },
+        metadata: { source: "@stackra/consent", timestamp: new Date() },
       });
     } catch {
       // Fail-open — event emission must never break consent operations.

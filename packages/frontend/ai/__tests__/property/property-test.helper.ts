@@ -80,7 +80,7 @@ export interface IForAllOptions {
 export function forAll<T>(
   gen: (prng: IPrng) => T,
   check: (value: T) => boolean | void,
-  options: IForAllOptions = {}
+  options: IForAllOptions = {},
 ): void {
   const runs = options.runs ?? 250;
   const seed = options.seed ?? 0xa1b2c3d4;
@@ -98,9 +98,9 @@ export function forAll<T>(
     }
     if (!ok) {
       const dump = safeStringify(value);
-      const hint = thrown instanceof Error ? ` — ${thrown.message}` : '';
+      const hint = thrown instanceof Error ? ` — ${thrown.message}` : "";
       throw new Error(
-        `Property failed at iteration ${i} (seed=0x${seed.toString(16)})${hint}\n  value=${dump}`
+        `Property failed at iteration ${i} (seed=0x${seed.toString(16)})${hint}\n  value=${dump}`,
       );
     }
   }

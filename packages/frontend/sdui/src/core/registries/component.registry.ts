@@ -9,9 +9,9 @@
  *   `forFeature` contributions.
  */
 
-import { Injectable } from '@stackra/container';
-import { BaseRegistry } from '@stackra/support';
-import type { ISduiComponentEntry } from '@stackra/contracts';
+import { Injectable } from "@stackra/container";
+import { BaseRegistry } from "@stackra/support";
+import type { ISduiComponentEntry } from "@stackra/contracts";
 
 /**
  * ComponentRegistry — `BaseRegistry<string, ISduiComponentEntry>`.

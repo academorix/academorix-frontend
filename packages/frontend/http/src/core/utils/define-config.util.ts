@@ -8,7 +8,7 @@
  * @module @stackra/http/utils/define-config
  */
 
-import type { IHttpModuleOptions } from '@stackra/contracts';
+import type { IHttpModuleOptions } from "@stackra/contracts";
 
 /**
  * Build a typed HTTP module configuration.

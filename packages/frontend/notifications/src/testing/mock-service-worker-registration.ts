@@ -11,7 +11,7 @@
  *   `simulateExistingSubscription(...)`.
  */
 
-import type { MockPushSubscription } from './mock-push-subscription';
+import type { MockPushSubscription } from "./mock-push-subscription";
 
 /**
  * Test double implementing the subset of
@@ -48,7 +48,7 @@ export class MockServiceWorkerRegistration {
       // otherwise fail loud so the test author notices the omission.
       if (this.subscription) return this.subscription;
       throw new Error(
-        'MockServiceWorkerRegistration.pushManager.subscribe called without a seeded subscription.'
+        "MockServiceWorkerRegistration.pushManager.subscribe called without a seeded subscription.",
       );
     },
   };

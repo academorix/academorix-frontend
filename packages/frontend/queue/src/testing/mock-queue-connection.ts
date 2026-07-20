@@ -90,7 +90,9 @@ export class MockQueueConnection implements IQueueConnection {
       (j) => j.queue === queue && (j.scheduledFor === undefined || j.scheduledFor <= now),
     );
     if (idx === -1) return null;
+    // `idx !== -1` guarantees `splice(idx, 1)` yields exactly one entry.
     const [recorded] = this.dispatchedJobs.splice(idx, 1);
+    if (!recorded) return null;
     return {
       id: recorded.id,
       name: recorded.name,

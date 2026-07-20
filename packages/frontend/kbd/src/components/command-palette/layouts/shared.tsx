@@ -56,7 +56,7 @@ export function PaletteItem({ command }: { command: CommandItem }): ReactElement
       {command.icon && (
         <span
           className={[
-            "grid size-8 shrink-0 place-items-center rounded-medium",
+            "rounded-medium grid size-8 shrink-0 place-items-center",
             isDanger
               ? "bg-danger/10 text-danger"
               : "bg-default-100 text-default-700 dark:bg-default-50",
@@ -65,7 +65,7 @@ export function PaletteItem({ command }: { command: CommandItem }): ReactElement
           {command.icon}
         </span>
       )}
-      <div className="flex flex-1 flex-col min-w-0">
+      <div className="flex min-w-0 flex-1 flex-col">
         <span className="flex items-center gap-2 text-sm font-medium">
           <span className={["truncate", isDanger ? "text-danger" : "text-foreground"].join(" ")}>
             {command.label}
@@ -77,7 +77,7 @@ export function PaletteItem({ command }: { command: CommandItem }): ReactElement
           ))}
         </span>
         {command.description && (
-          <span className="truncate text-xs text-default-500">{command.description}</span>
+          <span className="text-default-500 truncate text-xs">{command.description}</span>
         )}
       </div>
       {entity && (
@@ -134,12 +134,12 @@ export function Empty({ msg, hint }: { msg: string; hint: string }): ReactElemen
     <div className="flex flex-col items-center gap-2 px-6 py-12 text-center">
       <span
         aria-hidden="true"
-        className="grid size-10 place-items-center rounded-full bg-default-100 text-default-500"
+        className="bg-default-100 text-default-500 grid size-10 place-items-center rounded-full"
       >
         <SearchIcon />
       </span>
-      <p className="text-sm font-medium text-foreground">{msg}</p>
-      <p className="text-xs text-default-500">{hint}</p>
+      <p className="text-foreground text-sm font-medium">{msg}</p>
+      <p className="text-default-500 text-xs">{hint}</p>
     </div>
   );
 }
@@ -153,14 +153,14 @@ export function ResultCount({ count }: { count: number }): ReactElement {
       ? t("kbd.palette.result_count_one", { count })
       : t("kbd.palette.result_count_other", { count });
 
-  return <span className="tabular-nums text-xs text-default-500">{label}</span>;
+  return <span className="text-default-500 text-xs tabular-nums">{label}</span>;
 }
 
 /* ── Spinner ───────────────────────────────────────────────────── */
 
 export function Spinner(): ReactElement {
   return (
-    <span className="size-4 animate-spin rounded-full border-2 border-default-300 border-t-transparent" />
+    <span className="border-default-300 size-4 animate-spin rounded-full border-2 border-t-transparent" />
   );
 }
 

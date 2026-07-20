@@ -10,10 +10,10 @@
  *   promoted to `core/hooks/` in a follow-up without churn.
  */
 
-import type { IDevtoolsInspectorRegistry, IDevtoolsPanelsRegistry } from '@stackra/contracts';
+import type { IDevtoolsInspectorRegistry, IDevtoolsPanelsRegistry } from "@stackra/contracts";
 
-import type { DevtoolsAnalyticsService, DevtoolsFrameStateService } from '@/core/services';
-import type { IDevtoolsModuleOptions } from '@/core/interfaces';
+import type { DevtoolsAnalyticsService, DevtoolsFrameStateService } from "@/core/services";
+import type { IDevtoolsModuleOptions } from "@/core/interfaces";
 
 /** Value carried by the native devtools context. */
 export interface IDevtoolsNativeContextValue {

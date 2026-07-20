@@ -109,7 +109,9 @@
                       "children": [
                         {
                           "kind": "Text",
-                          "bindings": { "children": { "$expr": "formatDateTime(policy.override_starts_at)" } }
+                          "bindings": {
+                            "children": { "$expr": "formatDateTime(policy.override_starts_at)" }
+                          }
                         }
                       ]
                     },
@@ -137,7 +139,11 @@
               "children": [
                 {
                   "kind": "Button",
-                  "props": { "variant": "secondary", "leadingIcon": "pencil-square", "children": "Edit" },
+                  "props": {
+                    "variant": "secondary",
+                    "leadingIcon": "pencil-square",
+                    "children": "Edit"
+                  },
                   "requiresPermission": "audit.retention-policies.update",
                   "actions": {
                     "onPress": {

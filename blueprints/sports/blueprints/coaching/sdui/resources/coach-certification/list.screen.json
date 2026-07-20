@@ -37,14 +37,33 @@
             {
               "kind": "View",
               "children": [
-                { "kind": "Text", "props": { "as": "h1", "className": "text-2xl font-semibold", "children": "Coach certifications" } },
-                { "kind": "Text", "props": { "className": "text-sm text-muted", "children": "Held credentials with expiration tracking." } }
+                {
+                  "kind": "Text",
+                  "props": {
+                    "as": "h1",
+                    "className": "text-2xl font-semibold",
+                    "children": "Coach certifications"
+                  }
+                },
+                {
+                  "kind": "Text",
+                  "props": {
+                    "className": "text-sm text-muted",
+                    "children": "Held credentials with expiration tracking."
+                  }
+                }
               ]
             },
             {
               "kind": "Button",
-              "props": { "variant": "primary", "leadingIcon": "plus", "children": "Capture certification" },
-              "actions": { "onPress": { "kind": "navigate", "toExpr": "'/tenant/coach-certifications/create'" } },
+              "props": {
+                "variant": "primary",
+                "leadingIcon": "plus",
+                "children": "Capture certification"
+              },
+              "actions": {
+                "onPress": { "kind": "navigate", "toExpr": "'/tenant/coach-certifications/create'" }
+              },
               "requiresPermission": "coach_certifications.create"
             }
           ]
@@ -52,13 +71,50 @@
         {
           "kind": "Table",
           "props": { "aria-label": "Certifications table" },
-          "bindings": { "rows": { "$ref": "certifications" }, "isLoading": { "$ref": "certifications.isLoading" } },
+          "bindings": {
+            "rows": { "$ref": "certifications" },
+            "isLoading": { "$ref": "certifications.isLoading" }
+          },
           "columns": [
-            { "key": "coach", "label": "Coach", "renderer": { "kind": "Text", "props": { "className": "font-medium" }, "bindings": { "children": { "$ref": "row.coach_display_name" } } } },
-            { "key": "issuing_body", "label": "Issuing body", "renderer": { "kind": "Chip", "props": { "size": "sm" }, "bindings": { "children": { "$ref": "row.issuing_body" } } } },
-            { "key": "certification_name", "label": "Name", "renderer": { "kind": "Text", "bindings": { "children": { "$ref": "row.certification_name" } } } },
-            { "key": "level", "label": "Level", "renderer": { "kind": "Text", "bindings": { "children": { "$ref": "row.level" } } } },
-            { "key": "issued_at", "label": "Issued", "renderer": { "kind": "Text", "bindings": { "children": { "$expr": "$formatDate(row.issued_at, 'MMM yyyy')" } } } },
+            {
+              "key": "coach",
+              "label": "Coach",
+              "renderer": {
+                "kind": "Text",
+                "props": { "className": "font-medium" },
+                "bindings": { "children": { "$ref": "row.coach_display_name" } }
+              }
+            },
+            {
+              "key": "issuing_body",
+              "label": "Issuing body",
+              "renderer": {
+                "kind": "Chip",
+                "props": { "size": "sm" },
+                "bindings": { "children": { "$ref": "row.issuing_body" } }
+              }
+            },
+            {
+              "key": "certification_name",
+              "label": "Name",
+              "renderer": {
+                "kind": "Text",
+                "bindings": { "children": { "$ref": "row.certification_name" } }
+              }
+            },
+            {
+              "key": "level",
+              "label": "Level",
+              "renderer": { "kind": "Text", "bindings": { "children": { "$ref": "row.level" } } }
+            },
+            {
+              "key": "issued_at",
+              "label": "Issued",
+              "renderer": {
+                "kind": "Text",
+                "bindings": { "children": { "$expr": "$formatDate(row.issued_at, 'MMM yyyy')" } }
+              }
+            },
             {
               "key": "expiration",
               "label": "Expires",
@@ -93,9 +149,23 @@
                 "children": [
                   {
                     "kind": "Button",
-                    "props": { "size": "sm", "variant": "flat", "leadingIcon": "check-circle", "children": "Verify" },
-                    "actions": { "onPress": { "kind": "navigate", "toExpr": "'/tenant/coach-certifications/' + row.id + '/verify'" } },
-                    "bindings": { "hidden": { "$expr": "row.is_verified || !$ref('features.coaching.advanced_certifications')" } },
+                    "props": {
+                      "size": "sm",
+                      "variant": "flat",
+                      "leadingIcon": "check-circle",
+                      "children": "Verify"
+                    },
+                    "actions": {
+                      "onPress": {
+                        "kind": "navigate",
+                        "toExpr": "'/tenant/coach-certifications/' + row.id + '/verify'"
+                      }
+                    },
+                    "bindings": {
+                      "hidden": {
+                        "$expr": "row.is_verified || !$ref('features.coaching.advanced_certifications')"
+                      }
+                    },
                     "requiresPermission": "coach_certifications.verify"
                   }
                 ]

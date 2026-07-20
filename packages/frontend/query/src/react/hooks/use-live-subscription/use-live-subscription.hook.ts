@@ -14,8 +14,8 @@
  *   installed the hook is a no-op and logs a single dev warning.
  */
 
-import { useEffect } from 'react';
-import { useOptionalInject } from '@stackra/container/react';
+import { useEffect } from "react";
+import { useOptionalInject } from "@stackra/container/react";
 import {
   REALTIME_MANAGER,
   type ILiveEvent,
@@ -23,7 +23,7 @@ import {
   type IRealtimeConnection,
   type IRealtimeManager,
   type LiveEventType,
-} from '@stackra/contracts';
+} from "@stackra/contracts";
 
 /**
  * Options accepted by `useLiveSubscription`.
@@ -89,7 +89,7 @@ export function useLiveSubscription(options: UseLiveSubscriptionOptions): void {
   // Freeze the caller's types into a stable dependency key so React
   // doesn't tear down the subscription on every render just because
   // the caller passed a fresh literal array.
-  const typesKey = (types ?? ['*']).join('|');
+  const typesKey = (types ?? ["*"]).join("|");
 
   useEffect(() => {
     if (!enabled) return;
@@ -101,7 +101,7 @@ export function useLiveSubscription(options: UseLiveSubscriptionOptions): void {
 
     // Effective types list — resolved locally so we can also use it
     // in the cleanup path.
-    const effectiveTypes = types ?? (['*'] as readonly LiveEventType[]);
+    const effectiveTypes = types ?? (["*"] as readonly LiveEventType[]);
 
     // The realtime manager returns a Promise for `connection()` (it
     // may need a driver handshake). We open the subscription
@@ -133,7 +133,7 @@ export function useLiveSubscription(options: UseLiveSubscriptionOptions): void {
             channel: channelName,
             type: eventType,
             payload:
-              raw && typeof raw === 'object' ? (raw as Record<string, unknown>) : { data: raw },
+              raw && typeof raw === "object" ? (raw as Record<string, unknown>) : { data: raw },
             date: new Date(),
           };
           try {

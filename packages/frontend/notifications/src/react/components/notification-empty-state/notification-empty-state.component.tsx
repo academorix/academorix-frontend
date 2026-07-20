@@ -11,11 +11,11 @@
  *   preferences" affordance without a wrapper component.
  */
 
-import type { ReactElement } from 'react';
-import { EmptyState } from '@stackra/ui/react';
-import { BellSlashIcon } from '@stackra/ui/icons/heroicon/outline';
+import type { ReactElement } from "react";
+import { EmptyState } from "@stackra/ui/react";
+import { BellSlashIcon } from "@stackra/ui/icons/heroicon/outline";
 
-import type { NotificationEmptyStateProps } from './notification-empty-state.interface';
+import type { NotificationEmptyStateProps } from "./notification-empty-state.interface";
 
 /**
  * The empty state.
@@ -28,13 +28,13 @@ import type { NotificationEmptyStateProps } from './notification-empty-state.int
  */
 export function NotificationEmptyState({
   title = "You're all caught up",
-  description = 'New notifications will appear here.',
-  variant = 'drawer',
+  description = "New notifications will appear here.",
+  variant = "drawer",
   action,
   className,
 }: NotificationEmptyStateProps = {}): ReactElement {
   return (
-    <EmptyState size={variant === 'page' ? 'lg' : 'md'} className={className}>
+    <EmptyState size={variant === "page" ? "lg" : "md"} className={className}>
       <EmptyState.Header>
         <EmptyState.Media variant="icon">
           <BellSlashIcon aria-hidden="true" className="size-5" />

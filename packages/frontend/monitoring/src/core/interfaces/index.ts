@@ -8,4 +8,4 @@ export type {
   IMonitoringInstanceConfig,
   IMonitoringModuleOptions,
   ISentryProviderOptions,
-} from './monitoring-module-options.interface';
+} from "./monitoring-module-options.interface";

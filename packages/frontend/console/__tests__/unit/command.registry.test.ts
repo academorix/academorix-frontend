@@ -5,9 +5,11 @@
  */
 
 import { describe, it, expect, beforeEach } from "vitest";
-import { CommandRegistry } from "@/registries";
-import { DuplicateCommandError } from "@/errors";
+
 import type { IRegisteredCommand } from "@/interfaces";
+
+import { DuplicateCommandError } from "@/errors";
+import { CommandRegistry } from "@/registries";
 
 describe("CommandRegistry", () => {
   let registry: CommandRegistry;

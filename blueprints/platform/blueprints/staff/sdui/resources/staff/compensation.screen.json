@@ -10,8 +10,17 @@
   "requiresPermission": "staff.view.compensation",
   "requiresEntitlement": "staff_compensation_tracking",
   "dataSources": [
-    { "name": "compensation", "kind": "http.get", "urlExpr": "'/api/v1/staff/' + params.staffId + '/compensation'", "unwrap": "data" },
-    { "name": "compensation_samples", "kind": "static", "src": "staff::data/compensation-frequency-samples.json" }
+    {
+      "name": "compensation",
+      "kind": "http.get",
+      "urlExpr": "'/api/v1/staff/' + params.staffId + '/compensation'",
+      "unwrap": "data"
+    },
+    {
+      "name": "compensation_samples",
+      "kind": "static",
+      "src": "staff::data/compensation-frequency-samples.json"
+    }
   ],
   "nodes": [
     {
@@ -34,7 +43,9 @@
             {
               "kind": "Text",
               "props": { "as": "h1", "className": "text-2xl font-semibold" },
-              "bindings": { "children": { "$expr": "'Compensation — ' + compensation.staff.display_name" } }
+              "bindings": {
+                "children": { "$expr": "'Compensation — ' + compensation.staff.display_name" }
+              }
             }
           ]
         },
@@ -44,7 +55,11 @@
           "children": [
             {
               "kind": "Text",
-              "props": { "as": "h2", "className": "text-lg font-semibold mb-4", "children": "Current" }
+              "props": {
+                "as": "h2",
+                "className": "text-lg font-semibold mb-4",
+                "children": "Current"
+              }
             },
             {
               "kind": "Form",
@@ -65,7 +80,11 @@
                   "children": [
                     {
                       "kind": "ComboBox",
-                      "props": { "name": "compensation_type", "label": "Type", "menuTrigger": "focus" },
+                      "props": {
+                        "name": "compensation_type",
+                        "label": "Type",
+                        "menuTrigger": "focus"
+                      },
                       "props_items": [
                         { "id": "hourly", "label": "Hourly" },
                         { "id": "salary", "label": "Salary" },
@@ -76,15 +95,28 @@
                     },
                     {
                       "kind": "TextField",
-                      "props": { "name": "compensation_amount_cents", "type": "number", "label": "Amount (cents)", "min": 0 }
+                      "props": {
+                        "name": "compensation_amount_cents",
+                        "type": "number",
+                        "label": "Amount (cents)",
+                        "min": 0
+                      }
                     },
                     {
                       "kind": "TextField",
-                      "props": { "name": "compensation_currency", "label": "Currency (ISO 4217)", "maxLength": 3 }
+                      "props": {
+                        "name": "compensation_currency",
+                        "label": "Currency (ISO 4217)",
+                        "maxLength": 3
+                      }
                     },
                     {
                       "kind": "ComboBox",
-                      "props": { "name": "pay_frequency", "label": "Frequency", "menuTrigger": "focus" },
+                      "props": {
+                        "name": "pay_frequency",
+                        "label": "Frequency",
+                        "menuTrigger": "focus"
+                      },
                       "props_items": [
                         { "id": "hourly", "label": "Hourly" },
                         { "id": "weekly", "label": "Weekly" },
@@ -97,7 +129,12 @@
                 },
                 {
                   "kind": "DatePicker",
-                  "props": { "name": "effective_at", "label": "Effective date", "helpText": "Defaults to today.", "className": "mt-4" }
+                  "props": {
+                    "name": "effective_at",
+                    "label": "Effective date",
+                    "helpText": "Defaults to today.",
+                    "className": "mt-4"
+                  }
                 },
                 {
                   "kind": "View",
@@ -105,7 +142,11 @@
                   "children": [
                     {
                       "kind": "Button",
-                      "props": { "type": "submit", "variant": "primary", "children": "Save change" },
+                      "props": {
+                        "type": "submit",
+                        "variant": "primary",
+                        "children": "Save change"
+                      },
                       "requiresPermission": "staff.manage.compensation"
                     }
                   ]
@@ -120,7 +161,11 @@
           "children": [
             {
               "kind": "Text",
-              "props": { "as": "h2", "className": "text-lg font-semibold mb-4", "children": "History" }
+              "props": {
+                "as": "h2",
+                "className": "text-lg font-semibold mb-4",
+                "children": "History"
+              }
             },
             {
               "kind": "Table",
@@ -128,7 +173,10 @@
               "bindings": { "rows": { "$ref": "compensation.history" } },
               "emptyState": {
                 "kind": "Text",
-                "props": { "className": "text-sm text-muted py-4 text-center", "children": "No prior changes recorded." }
+                "props": {
+                  "className": "text-sm text-muted py-4 text-center",
+                  "children": "No prior changes recorded."
+                }
               },
               "columns": [
                 { "key": "changed_at", "label": "Changed" },

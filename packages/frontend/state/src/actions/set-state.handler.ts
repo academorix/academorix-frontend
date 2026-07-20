@@ -5,16 +5,16 @@
  *   registered store.
  */
 
-import { Injectable } from '@stackra/container';
+import { Injectable } from "@stackra/container";
 import type {
   IActionContext,
   IActionHandler,
   IActionResponse,
   ISetStateAction,
-} from '@stackra/contracts';
-import { ActionKind } from '@stackra/contracts';
-import { StateRegistry } from '../core/registries/state.registry';
-import { setAtPath } from './utils/dotted-path.util';
+} from "@stackra/contracts";
+import { ActionKind } from "@stackra/contracts";
+import { StateRegistry } from "../core/registries/state.registry";
+import { setAtPath } from "./utils/dotted-path.util";
 
 /**
  * `SetStateHandler` — dispatch handler for `ActionKind.SetState`.
@@ -33,12 +33,12 @@ export class SetStateHandler implements IActionHandler<
 
   public execute(
     descriptor: ISetStateAction,
-    context: IActionContext
+    context: IActionContext,
   ): IActionResponse<{ path: string; value: unknown }> {
-    if (context.signal?.aborted) return { success: false, message: 'Aborted' };
+    if (context.signal?.aborted) return { success: false, message: "Aborted" };
     const token = descriptor.storeToken;
     if (!token) {
-      return { success: false, message: 'SetState requires a storeToken' };
+      return { success: false, message: "SetState requires a storeToken" };
     }
     const entry = this.registry.getAll().find((e) => e.token === token);
     if (!entry) {

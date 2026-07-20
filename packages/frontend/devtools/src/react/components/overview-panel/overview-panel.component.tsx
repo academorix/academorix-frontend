@@ -9,15 +9,15 @@
  *   no external DI.
  */
 
-import { useEffect, useState, type ReactElement } from 'react';
-import { Button, Card, Chip } from '@stackra/ui/react';
-import { Env, Num } from '@stackra/support';
-import { ArrowPathIcon, BookOpenIcon } from '@stackra/ui/icons/heroicon/outline';
+import { useEffect, useState, type ReactElement } from "react";
+import { Button, Card, Chip } from "@stackra/ui/react";
+import { Env, Num } from "@stackra/support";
+import { ArrowPathIcon, BookOpenIcon } from "@stackra/ui/icons/heroicon/outline";
 
-import { useDevtoolsContext } from '../../hooks/use-devtools-context.hook';
-import { useDevtoolsInspector } from '../../hooks/use-devtools-inspector.hook';
-import { useDevtoolsPanels } from '../../hooks/use-devtools-panels.hook';
-import type { OverviewPanelProps } from './overview-panel.interface';
+import { useDevtoolsContext } from "../../hooks/use-devtools-context.hook";
+import { useDevtoolsInspector } from "../../hooks/use-devtools-inspector.hook";
+import { useDevtoolsPanels } from "../../hooks/use-devtools-panels.hook";
+import type { OverviewPanelProps } from "./overview-panel.interface";
 
 /** Session-uptime label helper. */
 function formatUptime(ms: number): string {
@@ -46,7 +46,7 @@ function StatCard({
       </Card.Header>
       {hint ? (
         <Card.Content>
-          <span className="text-xs text-muted">{hint}</span>
+          <span className="text-muted text-xs">{hint}</span>
         </Card.Content>
       ) : null}
     </Card>
@@ -66,22 +66,22 @@ export function OverviewPanel({ className }: OverviewPanelProps): ReactElement {
   // component unmount).
   const [nowTick, setNowTick] = useState<number>(() => Date.now());
   useEffect(() => {
-    if (typeof window === 'undefined') return;
+    if (typeof window === "undefined") return;
     const id = window.setInterval(() => setNowTick(Date.now()), 1000);
     return () => window.clearInterval(id);
   }, []);
 
   const uptime = nowTick - mountedAt;
 
-  const nodeEnv = Env.get('NODE_ENV', 'development');
-  const mode = Env.get('MODE', nodeEnv);
+  const nodeEnv = Env.get("NODE_ENV", "development");
+  const mode = Env.get("MODE", nodeEnv);
 
   return (
-    <div className={className ?? 'flex flex-col gap-4'}>
+    <div className={className ?? "flex flex-col gap-4"}>
       <header className="flex items-center justify-between">
         <div>
-          <h3 className="text-base font-semibold text-foreground">Stackra Devtools</h3>
-          <p className="text-xs text-muted">
+          <h3 className="text-foreground text-base font-semibold">Stackra Devtools</h3>
+          <p className="text-muted text-xs">
             Overview of the panels + inspector sources contributed by every module in this app.
           </p>
         </div>
@@ -101,23 +101,23 @@ export function OverviewPanel({ className }: OverviewPanelProps): ReactElement {
         <StatCard
           label="Panels"
           value={Num.abbreviate(panels.length)}
-          hint={`${byCategory.size} categor${byCategory.size === 1 ? 'y' : 'ies'}`}
+          hint={`${byCategory.size} categor${byCategory.size === 1 ? "y" : "ies"}`}
         />
         <StatCard
           label="Inspector sources"
           value={Num.abbreviate(regions.length)}
-          hint={`${regions.length} region${regions.length === 1 ? '' : 's'}`}
+          hint={`${regions.length} region${regions.length === 1 ? "" : "s"}`}
         />
         <StatCard label="Session uptime" value={formatUptime(uptime)} />
         <StatCard label="Categories" value={Num.abbreviate(byCategory.size)} />
       </div>
 
-      <section className="flex items-center gap-2 border-t border-border pt-3">
+      <section className="border-border flex items-center gap-2 border-t pt-3">
         <Button
           size="sm"
           variant="tertiary"
           onPress={() => {
-            if (typeof window !== 'undefined') window.location.reload();
+            if (typeof window !== "undefined") window.location.reload();
           }}
         >
           <ArrowPathIcon aria-hidden="true" className="size-4" />
@@ -127,8 +127,8 @@ export function OverviewPanel({ className }: OverviewPanelProps): ReactElement {
           size="sm"
           variant="tertiary"
           onPress={() => {
-            if (typeof window !== 'undefined') {
-              window.open('https://github.com/stackra-inc/core', '_blank');
+            if (typeof window !== "undefined") {
+              window.open("https://github.com/stackra-inc/core", "_blank");
             }
           }}
         >

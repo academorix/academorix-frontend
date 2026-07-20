@@ -15,4 +15,4 @@ export {
   MockSettingsManager,
   MockSettingsStore,
   type IMockSettingsManagerOptions,
-} from './mocks';
+} from "./mocks";

@@ -8,19 +8,72 @@
       "model": "AthleteGuardian",
       "class": "Academorix\\Sports\\AthleteGuardian\\Policies\\AthleteGuardianPolicy",
       "abilities": [
-        { "action": "viewAny", "permission": "athlete_guardians.viewAny", "scope": "hr + coach + reception + branch_manager + admin + owner see the full guardian list; guardians see only their own via .own" },
-        { "action": "view", "permission": "athlete_guardians.view", "scope": "same as viewAny + self-view via .own (guardian.user_id = current_user_id)" },
-        { "action": "create", "permission": "athlete_guardians.create", "scope": "hr + reception + branch_manager + admin + owner. Refuses on tier limit exceeded" },
-        { "action": "update", "permission": "athlete_guardians.update", "scope": "hr + branch_manager + admin + owner. Self-update via .own limited to non-legal-custody fields (guardians can toggle their own communications preference but not their has_legal_custody)" },
-        { "action": "delete", "permission": "athlete_guardians.delete", "scope": "hr + admin + owner. Refuses on sole-guardian-of-minor" },
-        { "action": "setPrimary", "permission": "athlete_guardians.set-primary", "scope": "hr + admin + owner. Refuses on non-verified guardian" },
-        { "action": "verify", "permission": "athlete_guardians.verify", "scope": "hr + safeguarding_officer + owner. Enterprise-only when athlete_guardian_verification entitlement is on" },
-        { "action": "dispute", "permission": "athlete_guardians.dispute", "scope": "hr + safeguarding_officer + owner. Requires dispute_reason" },
-        { "action": "revoke", "permission": "athlete_guardians.revoke", "scope": "hr + safeguarding_officer + admin + owner. Terminal transition" },
-        { "action": "auditVerification", "permission": "athlete_guardians.audit.verification", "scope": "hr + safeguarding_officer + owner. Compliance export" },
-        { "action": "platformViewAny", "permission": "platform.athlete_guardians.viewAny", "guard": "platform_admin" },
-        { "action": "platformView", "permission": "platform.athlete_guardians.view", "guard": "platform_admin" },
-        { "action": "platformAuditVerification", "permission": "platform.athlete_guardians.audit-verification", "guard": "platform_admin", "scope": "super_admin only with two-person approval" }
+        {
+          "action": "viewAny",
+          "permission": "athlete_guardians.viewAny",
+          "scope": "hr + coach + reception + branch_manager + admin + owner see the full guardian list; guardians see only their own via .own"
+        },
+        {
+          "action": "view",
+          "permission": "athlete_guardians.view",
+          "scope": "same as viewAny + self-view via .own (guardian.user_id = current_user_id)"
+        },
+        {
+          "action": "create",
+          "permission": "athlete_guardians.create",
+          "scope": "hr + reception + branch_manager + admin + owner. Refuses on tier limit exceeded"
+        },
+        {
+          "action": "update",
+          "permission": "athlete_guardians.update",
+          "scope": "hr + branch_manager + admin + owner. Self-update via .own limited to non-legal-custody fields (guardians can toggle their own communications preference but not their has_legal_custody)"
+        },
+        {
+          "action": "delete",
+          "permission": "athlete_guardians.delete",
+          "scope": "hr + admin + owner. Refuses on sole-guardian-of-minor"
+        },
+        {
+          "action": "setPrimary",
+          "permission": "athlete_guardians.set-primary",
+          "scope": "hr + admin + owner. Refuses on non-verified guardian"
+        },
+        {
+          "action": "verify",
+          "permission": "athlete_guardians.verify",
+          "scope": "hr + safeguarding_officer + owner. Enterprise-only when athlete_guardian_verification entitlement is on"
+        },
+        {
+          "action": "dispute",
+          "permission": "athlete_guardians.dispute",
+          "scope": "hr + safeguarding_officer + owner. Requires dispute_reason"
+        },
+        {
+          "action": "revoke",
+          "permission": "athlete_guardians.revoke",
+          "scope": "hr + safeguarding_officer + admin + owner. Terminal transition"
+        },
+        {
+          "action": "auditVerification",
+          "permission": "athlete_guardians.audit.verification",
+          "scope": "hr + safeguarding_officer + owner. Compliance export"
+        },
+        {
+          "action": "platformViewAny",
+          "permission": "platform.athlete_guardians.viewAny",
+          "guard": "platform_admin"
+        },
+        {
+          "action": "platformView",
+          "permission": "platform.athlete_guardians.view",
+          "guard": "platform_admin"
+        },
+        {
+          "action": "platformAuditVerification",
+          "permission": "platform.athlete_guardians.audit-verification",
+          "guard": "platform_admin",
+          "scope": "super_admin only with two-person approval"
+        }
       ]
     }
   ]

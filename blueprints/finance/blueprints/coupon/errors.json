@@ -4,38 +4,291 @@
   "title": "coupon — error codes",
   "namespace": "coupon",
   "errors": [
-    { "code": "COUPON_NOT_FOUND", "http": 404, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "coupon.errors.not_found" },
-    { "code": "COUPON_CAPTURE_NOT_ENTITLED", "http": 402, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "coupon.errors.capture_not_entitled", "description": "Tenant lacks the `coupon_capture` gate. Response includes upgrade CTA." },
-    { "code": "COUPON_ADVANCED_DISCOUNT_NOT_ENTITLED", "http": 402, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "coupon.errors.advanced_discount_not_entitled", "description": "Advanced discount types (free_period / first_month_free / bogo) require Medium+ tier (`coupon_advanced_discount_types`)." },
-    { "code": "COUPON_STACKING_NOT_ENTITLED", "http": 402, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "coupon.errors.stacking_not_entitled", "description": "is_stackable=true requires Enterprise `coupon_stackable`." },
-    { "code": "COUPON_BULK_ISSUE_NOT_ENTITLED", "http": 402, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "coupon.errors.bulk_issue_not_entitled", "description": "POST /coupons/bulk-issue requires Medium+ tier (`coupon_bulk_issue`)." },
-    { "code": "COUPON_SLOT_QUOTA_EXCEEDED", "http": 402, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "coupon.errors.slot_quota_exceeded", "description": "Reached `coupon_slot` cap. Small: 10, Medium: 100, Enterprise: unlimited." },
-    { "code": "COUPON_INVALID_CODE_FORMAT", "http": 422, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "coupon.errors.invalid_code_format", "description": "Code must be uppercase alphanumeric + dash/underscore, 4..64 chars." },
-    { "code": "COUPON_DUPLICATE_ACTIVE_CODE", "http": 409, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "coupon.errors.duplicate_active_code" },
-    { "code": "COUPON_CODE_IMMUTABLE", "http": 409, "retryable": false, "user_facing": true, "audit_severity": "warn", "i18n_key": "coupon.errors.code_immutable", "description": "Coupon codes are immutable — deactivate + create a fresh code instead." },
-    { "code": "COUPON_INVALID_DISCOUNT_CONFIG", "http": 422, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "coupon.errors.invalid_discount_config", "description": "discount_type + discount_amount + discount_currency combination is invalid (e.g. percent=1.5; fixed_amount without currency; free_period out of 1..365 range)." },
-    { "code": "COUPON_INVALID_APPLICABILITY", "http": 422, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "coupon.errors.invalid_applicability", "description": "applicability + applicable_plan_ids + minimum_order_amount inconsistent." },
-    { "code": "COUPON_INVALID_EFFECTIVE_RANGE", "http": 422, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "coupon.errors.invalid_effective_range" },
-    { "code": "COUPON_INVALID_USAGE_CAP", "http": 422, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "coupon.errors.invalid_usage_cap" },
-    { "code": "COUPON_INVALID_PER_CUSTOMER_LIMIT", "http": 422, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "coupon.errors.invalid_per_customer_limit" },
-    { "code": "COUPON_TERMS_LOCKED", "http": 409, "retryable": false, "user_facing": true, "audit_severity": "warn", "i18n_key": "coupon.errors.terms_locked", "description": "Discount config (discount_type / discount_amount / applicability) cannot be edited once even one redemption commits. Deactivate + create a fresh coupon instead." },
-    { "code": "COUPON_INACTIVE", "http": 410, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "coupon.errors.inactive" },
-    { "code": "COUPON_EXPIRED", "http": 410, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "coupon.errors.expired" },
-    { "code": "COUPON_NOT_YET_VALID", "http": 425, "retryable": true, "user_facing": true, "audit_severity": "info", "i18n_key": "coupon.errors.not_yet_valid", "description": "The coupon's valid_from is in the future. Retry after valid_from." },
-    { "code": "COUPON_USAGE_CAP_REACHED", "http": 429, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "coupon.errors.usage_cap_reached" },
-    { "code": "COUPON_CUSTOMER_LIMIT_REACHED", "http": 429, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "coupon.errors.customer_limit_reached", "description": "The customer has already redeemed this coupon per_customer_limit times." },
-    { "code": "COUPON_APPLICABILITY_MISMATCH", "http": 422, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "coupon.errors.applicability_mismatch", "description": "The target does not match the coupon's applicability rules (wrong plan / not a membership / etc.)." },
-    { "code": "COUPON_MINIMUM_ORDER_NOT_MET", "http": 422, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "coupon.errors.minimum_order_not_met", "description": "The source amount is below the coupon's minimum_order_amount threshold." },
-    { "code": "COUPON_CURRENCY_MISMATCH", "http": 422, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "coupon.errors.currency_mismatch" },
-    { "code": "COUPON_ALREADY_REDEEMED_ON_TARGET", "http": 409, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "coupon.errors.already_redeemed_on_target", "description": "The composite unique index refused the write — this coupon already applies to this target." },
-    { "code": "COUPON_STACKING_REFUSED", "http": 409, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "coupon.errors.stacking_refused", "description": "The target already has a coupon applied AND stacking is not enabled on both coupons OR tenant lacks `coupon_stackable`." },
-    { "code": "COUPON_USAGE_CAP_EXCEEDED", "http": 500, "retryable": false, "user_facing": false, "audit_severity": "critical", "i18n_key": "coupon.errors.usage_cap_exceeded", "description": "P1 signal. The row lock leaked and usage_count went beyond usage_cap. Every fire is a data-integrity incident — the CouponRedeemer's guard is broken." },
-    { "code": "COUPON_REDEMPTION_REQUIRES_TRANSACTION", "http": 500, "retryable": false, "user_facing": false, "audit_severity": "critical", "i18n_key": "coupon.errors.redemption_requires_transaction", "description": "P1 signal. A CouponRedemption row was created outside the CouponRedeemer transaction. Defensive check that should never surface." },
-    { "code": "COUPON_REDEMPTION_IMMUTABLE", "http": 409, "retryable": false, "user_facing": false, "audit_severity": "warn", "i18n_key": "coupon.errors.redemption_immutable", "description": "Redemption fields are immutable except for the reversal path (reversed_at, clawback_reason, reversed_by_user_id)." },
-    { "code": "COUPON_REDEMPTION_NOT_FOUND", "http": 404, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "coupon.errors.redemption_not_found" },
-    { "code": "COUPON_REDEMPTION_ALREADY_REVERSED", "http": 409, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "coupon.errors.redemption_already_reversed" },
-    { "code": "COUPON_RATE_LIMIT", "http": 429, "retryable": true, "user_facing": true, "audit_severity": "info", "i18n_key": "coupon.errors.rate_limit", "description": "10 attempts/IP/hour on preview/validate. Retry after the Retry-After header value." },
-    { "code": "COUPON_ATOMICITY_FAILED", "http": 500, "retryable": false, "user_facing": false, "audit_severity": "critical", "i18n_key": "coupon.errors.atomicity_failed", "description": "P1 signal. The CouponRedeemer transaction failed to commit both the redemption insert AND the usage_count increment atomically." },
-    { "code": "COUPON_CLAWBACK_FAILED", "http": 500, "retryable": true, "user_facing": false, "audit_severity": "critical", "i18n_key": "coupon.errors.clawback_failed", "description": "P1 signal. ProcessCouponClawbackJob failed to complete a clawback. Retried up to 5 times before dead-lettering." }
+    {
+      "code": "COUPON_NOT_FOUND",
+      "http": 404,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "coupon.errors.not_found"
+    },
+    {
+      "code": "COUPON_CAPTURE_NOT_ENTITLED",
+      "http": 402,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "coupon.errors.capture_not_entitled",
+      "description": "Tenant lacks the `coupon_capture` gate. Response includes upgrade CTA."
+    },
+    {
+      "code": "COUPON_ADVANCED_DISCOUNT_NOT_ENTITLED",
+      "http": 402,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "coupon.errors.advanced_discount_not_entitled",
+      "description": "Advanced discount types (free_period / first_month_free / bogo) require Medium+ tier (`coupon_advanced_discount_types`)."
+    },
+    {
+      "code": "COUPON_STACKING_NOT_ENTITLED",
+      "http": 402,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "coupon.errors.stacking_not_entitled",
+      "description": "is_stackable=true requires Enterprise `coupon_stackable`."
+    },
+    {
+      "code": "COUPON_BULK_ISSUE_NOT_ENTITLED",
+      "http": 402,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "coupon.errors.bulk_issue_not_entitled",
+      "description": "POST /coupons/bulk-issue requires Medium+ tier (`coupon_bulk_issue`)."
+    },
+    {
+      "code": "COUPON_SLOT_QUOTA_EXCEEDED",
+      "http": 402,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "coupon.errors.slot_quota_exceeded",
+      "description": "Reached `coupon_slot` cap. Small: 10, Medium: 100, Enterprise: unlimited."
+    },
+    {
+      "code": "COUPON_INVALID_CODE_FORMAT",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "coupon.errors.invalid_code_format",
+      "description": "Code must be uppercase alphanumeric + dash/underscore, 4..64 chars."
+    },
+    {
+      "code": "COUPON_DUPLICATE_ACTIVE_CODE",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "coupon.errors.duplicate_active_code"
+    },
+    {
+      "code": "COUPON_CODE_IMMUTABLE",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "warn",
+      "i18n_key": "coupon.errors.code_immutable",
+      "description": "Coupon codes are immutable — deactivate + create a fresh code instead."
+    },
+    {
+      "code": "COUPON_INVALID_DISCOUNT_CONFIG",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "coupon.errors.invalid_discount_config",
+      "description": "discount_type + discount_amount + discount_currency combination is invalid (e.g. percent=1.5; fixed_amount without currency; free_period out of 1..365 range)."
+    },
+    {
+      "code": "COUPON_INVALID_APPLICABILITY",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "coupon.errors.invalid_applicability",
+      "description": "applicability + applicable_plan_ids + minimum_order_amount inconsistent."
+    },
+    {
+      "code": "COUPON_INVALID_EFFECTIVE_RANGE",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "coupon.errors.invalid_effective_range"
+    },
+    {
+      "code": "COUPON_INVALID_USAGE_CAP",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "coupon.errors.invalid_usage_cap"
+    },
+    {
+      "code": "COUPON_INVALID_PER_CUSTOMER_LIMIT",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "coupon.errors.invalid_per_customer_limit"
+    },
+    {
+      "code": "COUPON_TERMS_LOCKED",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "warn",
+      "i18n_key": "coupon.errors.terms_locked",
+      "description": "Discount config (discount_type / discount_amount / applicability) cannot be edited once even one redemption commits. Deactivate + create a fresh coupon instead."
+    },
+    {
+      "code": "COUPON_INACTIVE",
+      "http": 410,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "coupon.errors.inactive"
+    },
+    {
+      "code": "COUPON_EXPIRED",
+      "http": 410,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "coupon.errors.expired"
+    },
+    {
+      "code": "COUPON_NOT_YET_VALID",
+      "http": 425,
+      "retryable": true,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "coupon.errors.not_yet_valid",
+      "description": "The coupon's valid_from is in the future. Retry after valid_from."
+    },
+    {
+      "code": "COUPON_USAGE_CAP_REACHED",
+      "http": 429,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "coupon.errors.usage_cap_reached"
+    },
+    {
+      "code": "COUPON_CUSTOMER_LIMIT_REACHED",
+      "http": 429,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "coupon.errors.customer_limit_reached",
+      "description": "The customer has already redeemed this coupon per_customer_limit times."
+    },
+    {
+      "code": "COUPON_APPLICABILITY_MISMATCH",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "coupon.errors.applicability_mismatch",
+      "description": "The target does not match the coupon's applicability rules (wrong plan / not a membership / etc.)."
+    },
+    {
+      "code": "COUPON_MINIMUM_ORDER_NOT_MET",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "coupon.errors.minimum_order_not_met",
+      "description": "The source amount is below the coupon's minimum_order_amount threshold."
+    },
+    {
+      "code": "COUPON_CURRENCY_MISMATCH",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "coupon.errors.currency_mismatch"
+    },
+    {
+      "code": "COUPON_ALREADY_REDEEMED_ON_TARGET",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "coupon.errors.already_redeemed_on_target",
+      "description": "The composite unique index refused the write — this coupon already applies to this target."
+    },
+    {
+      "code": "COUPON_STACKING_REFUSED",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "coupon.errors.stacking_refused",
+      "description": "The target already has a coupon applied AND stacking is not enabled on both coupons OR tenant lacks `coupon_stackable`."
+    },
+    {
+      "code": "COUPON_USAGE_CAP_EXCEEDED",
+      "http": 500,
+      "retryable": false,
+      "user_facing": false,
+      "audit_severity": "critical",
+      "i18n_key": "coupon.errors.usage_cap_exceeded",
+      "description": "P1 signal. The row lock leaked and usage_count went beyond usage_cap. Every fire is a data-integrity incident — the CouponRedeemer's guard is broken."
+    },
+    {
+      "code": "COUPON_REDEMPTION_REQUIRES_TRANSACTION",
+      "http": 500,
+      "retryable": false,
+      "user_facing": false,
+      "audit_severity": "critical",
+      "i18n_key": "coupon.errors.redemption_requires_transaction",
+      "description": "P1 signal. A CouponRedemption row was created outside the CouponRedeemer transaction. Defensive check that should never surface."
+    },
+    {
+      "code": "COUPON_REDEMPTION_IMMUTABLE",
+      "http": 409,
+      "retryable": false,
+      "user_facing": false,
+      "audit_severity": "warn",
+      "i18n_key": "coupon.errors.redemption_immutable",
+      "description": "Redemption fields are immutable except for the reversal path (reversed_at, clawback_reason, reversed_by_user_id)."
+    },
+    {
+      "code": "COUPON_REDEMPTION_NOT_FOUND",
+      "http": 404,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "coupon.errors.redemption_not_found"
+    },
+    {
+      "code": "COUPON_REDEMPTION_ALREADY_REVERSED",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "coupon.errors.redemption_already_reversed"
+    },
+    {
+      "code": "COUPON_RATE_LIMIT",
+      "http": 429,
+      "retryable": true,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "coupon.errors.rate_limit",
+      "description": "10 attempts/IP/hour on preview/validate. Retry after the Retry-After header value."
+    },
+    {
+      "code": "COUPON_ATOMICITY_FAILED",
+      "http": 500,
+      "retryable": false,
+      "user_facing": false,
+      "audit_severity": "critical",
+      "i18n_key": "coupon.errors.atomicity_failed",
+      "description": "P1 signal. The CouponRedeemer transaction failed to commit both the redemption insert AND the usage_count increment atomically."
+    },
+    {
+      "code": "COUPON_CLAWBACK_FAILED",
+      "http": 500,
+      "retryable": true,
+      "user_facing": false,
+      "audit_severity": "critical",
+      "i18n_key": "coupon.errors.clawback_failed",
+      "description": "P1 signal. ProcessCouponClawbackJob failed to complete a clawback. Retried up to 5 times before dead-lettering."
+    }
   ]
 }

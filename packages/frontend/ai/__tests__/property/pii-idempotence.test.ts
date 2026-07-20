@@ -10,21 +10,21 @@
  *   ASCII-safe custom tokens.
  */
 
-import { describe, it } from 'vitest';
-import type { IAiConfig, IAiContextFrame, IPiiRule } from '@stackra/contracts';
+import { describe, it } from "vitest";
+import type { IAiConfig, IAiContextFrame, IPiiRule } from "@stackra/contracts";
 
-import { PiiRedactor } from '@/core/services/pii-redactor.service';
-import { deepEqual } from '@/core/utils/deep-equal.util';
-import { forAll, type IPrng } from './property-test.helper';
+import { PiiRedactor } from "@/core/services/pii-redactor.service";
+import { deepEqual } from "@/core/utils/deep-equal.util";
+import { forAll, type IPrng } from "./property-test.helper";
 
-const WORDS = ['name', 'email', 'phone', 'address', 'ssn', 'note'];
+const WORDS = ["name", "email", "phone", "address", "ssn", "note"];
 const VALUES = [
-  'ada@example.com',
-  '555-01-1234',
-  '1600 Pennsylvania Ave',
-  'user_42',
-  '123-45-6789',
-  '(555) 010-1234',
+  "ada@example.com",
+  "555-01-1234",
+  "1600 Pennsylvania Ave",
+  "user_42",
+  "123-45-6789",
+  "(555) 010-1234",
 ];
 
 /** Generate a random JSON-serializable snapshot. */
@@ -62,7 +62,7 @@ function genRules(r: IPrng): IPiiRule[] {
     } else {
       // Regex that doesn't match the default replacement `[REDACTED]`.
       rules.push({
-        pattern: '\\d{3}[- ]\\d{2}[- ]\\d{4}',
+        pattern: "\\d{3}[- ]\\d{2}[- ]\\d{4}",
         replacement: `[X${i}]`,
       });
     }
@@ -72,25 +72,25 @@ function genRules(r: IPrng): IPiiRule[] {
 
 function makeRedactor(rules: IPiiRule[]): PiiRedactor {
   const config: IAiConfig = {
-    baseUrl: 'https://x',
+    baseUrl: "https://x",
     authProvider: { getCredentials: () => Promise.resolve({}), refresh: () => Promise.resolve({}) },
     context: { piiRules: rules },
   };
   return new PiiRedactor(config);
 }
 
-describe('Property 7: PII redactor idempotence (Req 12.6)', () => {
-  it('redact(redact(x)) === redact(x)', () => {
+describe("Property 7: PII redactor idempotence (Req 12.6)", () => {
+  it("redact(redact(x)) === redact(x)", () => {
     forAll(
       (r) => ({ snapshot: genSnapshot(r), rules: genRules(r) }),
       ({ snapshot, rules }) => {
         const redactor = makeRedactor(rules);
-        const input: IAiContextFrame = { key: 'k', snapshot, priority: 0, seq: 0 };
+        const input: IAiContextFrame = { key: "k", snapshot, priority: 0, seq: 0 };
         const once = redactor.redact(input);
         const twice = redactor.redact(once);
         return deepEqual(once.snapshot, twice.snapshot);
       },
-      { runs: 250 }
+      { runs: 250 },
     );
   });
 });

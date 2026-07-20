@@ -6,4 +6,4 @@
  *   from here.
  */
 
-export { DEFAULT_SYNC_CONFIG } from './default-sync-config.constant';
+export { DEFAULT_SYNC_CONFIG } from "./default-sync-config.constant";

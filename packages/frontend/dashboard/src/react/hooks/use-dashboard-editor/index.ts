@@ -5,7 +5,4 @@
  */
 
 export { useDashboardEditor } from "./use-dashboard-editor.hook";
-export type {
-  EditorPersistFn,
-  IUseDashboardEditor,
-} from "./use-dashboard-editor.interface";
+export type { EditorPersistFn, IUseDashboardEditor } from "./use-dashboard-editor.interface";

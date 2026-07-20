@@ -12,11 +12,11 @@
  *   event names stay in sync with the contract.
  */
 
-import { Inject, Injectable, Optional } from '@stackra/container';
-import { DEVTOOLS_EVENTS, EVENT_EMITTER, type IEventEmitter } from '@stackra/contracts';
+import { Inject, Injectable, Optional } from "@stackra/container";
+import { DEVTOOLS_EVENTS, EVENT_EMITTER, type IEventEmitter } from "@stackra/contracts";
 
-import { DEVTOOLS_CONFIG } from '../constants';
-import type { IDevtoolsModuleOptions } from '../interfaces/devtools-module-options.interface';
+import { DEVTOOLS_CONFIG } from "../constants";
+import type { IDevtoolsModuleOptions } from "../interfaces/devtools-module-options.interface";
 
 /**
  * Fire-and-forget wrapper around the shared `IEventEmitter`.
@@ -28,7 +28,7 @@ import type { IDevtoolsModuleOptions } from '../interfaces/devtools-module-optio
 export class DevtoolsAnalyticsService {
   public constructor(
     @Inject(DEVTOOLS_CONFIG) private readonly config: IDevtoolsModuleOptions,
-    @Optional() @Inject(EVENT_EMITTER) private readonly emitter?: IEventEmitter
+    @Optional() @Inject(EVENT_EMITTER) private readonly emitter?: IEventEmitter,
   ) {}
 
   /** Emit `SHELL_OPENED`. */
@@ -73,7 +73,7 @@ export class DevtoolsAnalyticsService {
     if (!this.emitter) return;
     try {
       const p = this.emitter.emit(name, payload);
-      if (p && typeof (p as Promise<void>).catch === 'function') {
+      if (p && typeof (p as Promise<void>).catch === "function") {
         (p as Promise<void>).catch(() => {
           // fail-soft — see the panels registry's `emit` docblock.
         });

@@ -56,10 +56,7 @@
       "class": "Academorix\\Sports\\AthleteGuardian\\Events\\GuardianRoleChanged",
       "trigger": "Guardian.relationship OR notes mutated. Distinct from flag-change events (which have dedicated events).",
       "queue": "notifications",
-      "consumers": [
-        "audit::WriteToAuditLog",
-        "activity::WriteToActivityLog"
-      ],
+      "consumers": ["audit::WriteToAuditLog", "activity::WriteToActivityLog"],
       "payload": {
         "guardian_id": "ULID",
         "tenant_id": "ULID",

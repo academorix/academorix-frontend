@@ -11,10 +11,7 @@
       "description": "Every ActivityRecorded event fires here. Consumed by the tenant dashboard's activity feed widget + admin activity list screen. Filtered on the frontend by log_name / subject_type. Rate-limited server-side: bursts of same-batch activities coalesce to one broadcast per batch (see events.json ActivityBatchCompleted → EmitBatchCollapsedFeedItem consumer).",
       "authorize": "User belongs to the tenant AND has `activity.viewAny`",
       "authCallback": "fn (User $user, string $tenantId) => $user->tenant_id === $tenantId && $user->can('activity.viewAny')",
-      "events": [
-        "ActivityRecorded",
-        "ActivityBatchCompleted"
-      ],
+      "events": ["ActivityRecorded", "ActivityBatchCompleted"],
       "entitlement": "activity_broadcast",
       "fallbackWhenNotEntitled": "polling at 15s intervals (via /api/v1/activities?filter[from]=<last_poll>)"
     },
@@ -24,9 +21,7 @@
       "description": "Per-user channel — every activity where this User is the causer OR the subject broadcasts here. Consumed by the caller's 'My activity' sidebar + the mobile-app notification badge. Two behaviours: (a) activities the user CAUSED get an optimistic pending state; the broadcast confirms persistence. (b) activities where the user is the SUBJECT (someone did something to their booking) get a highlighted 'new' badge.",
       "authorize": "auth_user.id === userId",
       "authCallback": "fn (User $user, string $userId) => $user->id === $userId",
-      "events": [
-        "ActivityRecorded"
-      ],
+      "events": ["ActivityRecorded"],
       "filter": "Only broadcasts when the User (userId) matches activity.causer_id OR activity.subject_id (and subject_type = 'user'). Filtered server-side by the broadcast publisher.",
       "entitlement": "activity_broadcast"
     }

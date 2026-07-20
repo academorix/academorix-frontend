@@ -215,10 +215,7 @@
       "class": "Academorix\\Sports\\Registry\\Events\\TenantCustomDisciplineCreated",
       "trigger": "A tenant created a custom Discipline.",
       "queue": "notifications",
-      "consumers": [
-        "audit::WriteToAuditLog",
-        "activity::WriteToActivityLog"
-      ],
+      "consumers": ["audit::WriteToAuditLog", "activity::WriteToActivityLog"],
       "payload": {
         "discipline_id": "ULID",
         "sport_id": "ULID",
@@ -233,10 +230,7 @@
       "class": "Academorix\\Sports\\Registry\\Events\\TenantCustomPositionCreated",
       "trigger": "A tenant created a custom Position.",
       "queue": "notifications",
-      "consumers": [
-        "audit::WriteToAuditLog",
-        "activity::WriteToActivityLog"
-      ],
+      "consumers": ["audit::WriteToAuditLog", "activity::WriteToActivityLog"],
       "payload": {
         "position_id": "ULID",
         "discipline_id": "ULID",

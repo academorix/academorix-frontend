@@ -4,9 +4,9 @@
  * @description Factories returning assertable collaboration mocks.
  */
 
-import { createAssertableProxy, type AssertableProxy } from '@stackra/testing';
-import { MockRoomManager } from './mock-room-manager';
-import { MockCollaborationTransport } from './mock-collaboration-transport';
+import { createAssertableProxy, type AssertableProxy } from "@stackra/testing";
+import { MockRoomManager } from "./mock-room-manager";
+import { MockCollaborationTransport } from "./mock-collaboration-transport";
 
 /**
  * Create an assertable mock room manager.

@@ -1,8 +1,14 @@
 # @stackra/scope
 
-Client-side hierarchical **scope** runtime for the Stackra framework — the active-scope store, **emulation**, cascading value resolution, and React bindings. Backend-agnostic: it talks to _your_ API through a data source; it never touches a database.
+Client-side hierarchical **scope** runtime for the Stackra framework — the
+active-scope store, **emulation**, cascading value resolution, and React
+bindings. Backend-agnostic: it talks to _your_ API through a data source; it
+never touches a database.
 
-> The authoritative scope platform (hierarchy definitions, materialized-path node graph, cascading value store, authorisation) lives on the **backend**. This client package _consumes_ a resolved scope and drives the UX. The package ships in a 100% client world — React (web) today, React Native next.
+> The authoritative scope platform (hierarchy definitions, materialized-path
+> node graph, cascading value store, authorisation) lives on the **backend**.
+> This client package _consumes_ a resolved scope and drives the UX. The package
+> ships in a 100% client world — React (web) today, React Native next.
 
 ## Install
 
@@ -14,16 +20,25 @@ pnpm add @stackra/ui react
 
 ## Concepts
 
-- **Scope** — "where am I" in the tenant hierarchy (owner → venue → team, configurable per deployment). Resolved by the backend; opaque on the client.
-- **Emulation** — temporarily view/act within a _different_ scope node while keeping **your own identity + permissions** (Magento-style store emulation). Distinct from **impersonation** (acting as a different _user_). The client swaps the active scope, flags `emulated: true`, and surfaces an "Exit" affordance; the backend authorizes and enforces the data scoping.
-- **Node tree vs. definition tree** — the _node tree_ is the tree of concrete instances the current user can switch to ("Downtown Venue", "Team Alpha"); the _definition tree_ is the schema of levels (owner → venue → team). The runtime service tracks the node tree; the definition tree stays a design-time concern via the pure `buildTree()` util.
+- **Scope** — "where am I" in the tenant hierarchy (owner → venue → team,
+  configurable per deployment). Resolved by the backend; opaque on the client.
+- **Emulation** — temporarily view/act within a _different_ scope node while
+  keeping **your own identity + permissions** (Magento-style store emulation).
+  Distinct from **impersonation** (acting as a different _user_). The client
+  swaps the active scope, flags `emulated: true`, and surfaces an "Exit"
+  affordance; the backend authorizes and enforces the data scoping.
+- **Node tree vs. definition tree** — the _node tree_ is the tree of concrete
+  instances the current user can switch to ("Downtown Venue", "Team Alpha"); the
+  _definition tree_ is the schema of levels (owner → venue → team). The runtime
+  service tracks the node tree; the definition tree stays a design-time concern
+  via the pure `buildTree()` util.
 
 ## Data source (the backend bridge)
 
 Implement `IScopeDataSource` to connect the client to your API:
 
 ```typescript
-import type { IScopeDataSource, IScopeNodeTreeNode } from '@stackra/scope';
+import type { IScopeDataSource, IScopeNodeTreeNode } from "@stackra/scope";
 
 export class HttpScopeDataSource implements IScopeDataSource {
   constructor(private api: ApiClient) {}
@@ -33,7 +48,7 @@ export class HttpScopeDataSource implements IScopeDataSource {
   }
 
   loadTree(): Promise<IScopeNodeTreeNode[]> {
-    return this.api.get('/scope/tree');
+    return this.api.get("/scope/tree");
   }
 
   resolveValue(nodeId: string, ns: string, key: string) {
@@ -41,18 +56,19 @@ export class HttpScopeDataSource implements IScopeDataSource {
   }
 
   persist(scope) {
-    localStorage.setItem('scope', scope.nodeId);
+    localStorage.setItem("scope", scope.nodeId);
   }
 }
 ```
 
-`loadTree()` returns the tree of switchable _nodes_ — each carries the `id` the switcher passes back to `setScope`.
+`loadTree()` returns the tree of switchable _nodes_ — each carries the `id` the
+switcher passes back to `setScope`.
 
 ## Wire the module (DI)
 
 ```typescript
-import { Module } from '@stackra/container';
-import { ScopeModule } from '@stackra/scope';
+import { Module } from "@stackra/container";
+import { ScopeModule } from "@stackra/scope";
 
 @Module({
   imports: [
@@ -71,17 +87,17 @@ export class AppModule {}
 ## Hooks
 
 ```tsx
-import { useScope, useScopeValue, useScopeTree } from '@stackra/scope/react';
+import { useScope, useScopeValue, useScopeTree } from "@stackra/scope/react";
 
 function Toolbar() {
   const { scope, isEmulating, setScope, emulate, restore } = useScope();
-  const prefix = useScopeValue<string>('settings', 'invoice.prefix');
+  const prefix = useScopeValue<string>("settings", "invoice.prefix");
   const tree = useScopeTree();
 
   return (
     <>
       <span>
-        {scope?.level}: {scope?.entityId} — invoice prefix {prefix ?? 'INV-'}
+        {scope?.level}: {scope?.entityId} — invoice prefix {prefix ?? "INV-"}
       </span>
       {isEmulating && <button onClick={restore}>Exit emulation</button>}
     </>
@@ -89,11 +105,14 @@ function Toolbar() {
 }
 ```
 
-Hooks resolve the DI `ScopeService` via `useInject` and read from it through `useSyncExternalStore` for tearing-free rendering under concurrent React.
+Hooks resolve the DI `ScopeService` via `useInject` and read from it through
+`useSyncExternalStore` for tearing-free rendering under concurrent React.
 
 ## `<ScopeSwitcher>`
 
-A HeroUI-based (`@stackra/ui`) switcher — built on `ComboBox`, so the scope list is **searchable/filterable** — that lists the switchable nodes and switches (or emulates) the active scope:
+A HeroUI-based (`@stackra/ui`) switcher — built on `ComboBox`, so the scope list
+is **searchable/filterable** — that lists the switchable nodes and switches (or
+emulates) the active scope:
 
 ```tsx
 import { ScopeSwitcher } from '@stackra/scope/react';
@@ -102,7 +121,8 @@ import { ScopeSwitcher } from '@stackra/scope/react';
 <ScopeSwitcher label="View as" emulateOnSelect />   // emulation mode
 ```
 
-Each row's `id` is the value the switcher passes to `setScope` / `emulate`; the backend authorises and returns the resolved context.
+Each row's `id` is the value the switcher passes to `setScope` / `emulate`; the
+backend authorises and returns the resolved context.
 
 ## Service API
 
@@ -124,22 +144,30 @@ scope.subscribe(() => {
 ## Utilities
 
 - `parseMaterializedPath('/a/b/c')` → `['c','b','a']` (self → root).
-- `buildTree(definitions)` → nested `IScopeDefinitionTreeNode[]` (design-time helper).
+- `buildTree(definitions)` → nested `IScopeDefinitionTreeNode[]` (design-time
+  helper).
 - `defineConfig({...})` — typed config helper.
 
 ## Testing
 
 ```ts
-import { createMockScopeService, createMockScopeDataSource } from '@stackra/scope/testing';
+import {
+  createMockScopeService,
+  createMockScopeDataSource,
+} from "@stackra/scope/testing";
 
-const service = createMockScopeService({ scope: fixtureScope, tree: fixtureNodes });
+const service = createMockScopeService({
+  scope: fixtureScope,
+  tree: fixtureNodes,
+});
 const source = createMockScopeDataSource({
-  scopes: { 'node-venue-1': fixtureScope },
+  scopes: { "node-venue-1": fixtureScope },
   tree: fixtureNodes,
 });
 ```
 
-Both factories return an `AssertableProxy` (from `@stackra/testing`) so you can assert on call names + arguments without wiring `vi.spyOn` yourself.
+Both factories return an `AssertableProxy` (from `@stackra/testing`) so you can
+assert on call names + arguments without wiring `vi.spyOn` yourself.
 
 ## Configuration
 
@@ -159,12 +187,12 @@ pnpm add @react-native-async-storage/async-storage
 ```
 
 ```typescript
-import { Module } from '@stackra/container';
+import { Module } from "@stackra/container";
 import {
   NativeScopeModule,
   AsyncStorageScopePersistAdapter,
   NativeScopeSwitcher,
-} from '@stackra/scope/native';
+} from "@stackra/scope/native";
 
 // Optional: read the persisted node id before wiring the module so
 // the first paint reopens on the same scope.
@@ -188,11 +216,14 @@ const initialScope = nodeId ? await dataSource.resolveScope(nodeId) : null;
 export class AppModule {}
 ```
 
-Cross-platform hooks (`useScope`, `useScopeTree`, `useScopeValue`) are re-exported from `@stackra/scope/native` so a native app can import everything scope-related from one subpath.
+Cross-platform hooks (`useScope`, `useScopeTree`, `useScopeValue`) are
+re-exported from `@stackra/scope/native` so a native app can import everything
+scope-related from one subpath.
 
 ### `<NativeScopeSwitcher>`
 
-HeroUI Native's `Select` compound (bottom sheet on phones by default; `presentation="popover" | "dialog"` for tablet / desktop layouts):
+HeroUI Native's `Select` compound (bottom sheet on phones by default;
+`presentation="popover" | "dialog"` for tablet / desktop layouts):
 
 ```tsx
 import { NativeScopeSwitcher } from '@stackra/scope/native';
@@ -202,7 +233,10 @@ import { NativeScopeSwitcher } from '@stackra/scope/native';
 <NativeScopeSwitcher label="Scope" presentation="popover" />
 ```
 
-The switcher iterates the same `useScope().tree` the web `ScopeSwitcher` does and calls the same `setScope(node.id)` / `emulate(node.id)` service actions — mobile parity for scope switching + emulation with a Chip + Exit affordance when emulating.
+The switcher iterates the same `useScope().tree` the web `ScopeSwitcher` does
+and calls the same `setScope(node.id)` / `emulate(node.id)` service actions —
+mobile parity for scope switching + emulation with a Chip + Exit affordance when
+emulating.
 
 ## License
 

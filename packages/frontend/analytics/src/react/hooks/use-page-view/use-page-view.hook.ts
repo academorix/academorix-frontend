@@ -4,9 +4,9 @@
  * @description Fire a page view whenever the given path changes.
  */
 
-import { useEffect } from 'react';
+import { useEffect } from "react";
 
-import { useAnalytics } from '../use-analytics/use-analytics.hook';
+import { useAnalytics } from "../use-analytics/use-analytics.hook";
 
 /**
  * Report a page view each time `path` changes. Drop it into your router
@@ -23,14 +23,14 @@ import { useAnalytics } from '../use-analytics/use-analytics.hook';
  */
 export function usePageView(
   path: string,
-  options?: { title?: string; properties?: Record<string, unknown> }
+  options?: { title?: string; properties?: Record<string, unknown> },
 ): void {
   const analytics = useAnalytics();
 
   useEffect(() => {
     analytics.page({
       path,
-      title: options?.title ?? (typeof document !== 'undefined' ? document.title : undefined),
+      title: options?.title ?? (typeof document !== "undefined" ? document.title : undefined),
       properties: options?.properties,
     });
     // Re-fire only when the path changes.

@@ -1,7 +1,7 @@
 {
   "name": "@stackra/ai",
   "version": "0.1.0",
-  "description": "Client AI toolkit for the Stackra framework — swappable streaming transport (SSE/WebSocket), mount-scoped client tools and UI context frames, personas, draft-then-confirm writes, and HeroUI Pro chat components. Client counterpart to the academorix/ai backend.",
+  "description": "Client AI toolkit for the Stackra framework \u2014 swappable streaming transport (SSE/WebSocket), mount-scoped client tools and UI context frames, personas, draft-then-confirm writes, and HeroUI Pro chat components. Client counterpart to the academorix/ai backend.",
   "license": "MIT",
   "author": {
     "name": "Stackra L.L.C",
@@ -123,6 +123,8 @@
     }
   },
   "devDependencies": {
+    "@academorix/config-tsconfig": "workspace:*",
+    "@academorix/config-tsup": "workspace:*",
     "@stackra/actions": "workspace:*",
     "@stackra/container": "workspace:*",
     "@stackra/contracts": "workspace:*",

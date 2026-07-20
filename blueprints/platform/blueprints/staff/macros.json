@@ -25,10 +25,7 @@
       "name": "Blueprint::staffTimestamps",
       "signature": "Blueprint::staffTimestamps(): void",
       "adds": "Adds the shared column family for staff-lifecycle-adjacent tables: started_at (date) + ended_at (date, nullable). Used by future staff_branches (Wave 3+ multi-branch pivot) + attendance::ShiftAssignment (Wave 4).",
-      "columns": [
-        "started_at: date NOT NULL",
-        "ended_at: date NULL"
-      ]
+      "columns": ["started_at: date NOT NULL", "ended_at: date NULL"]
     },
     {
       "name": "Blueprint::terminationFields",

@@ -1,1 +1,1 @@
-export { useVisibilityState } from './use-visibility-state.hook';
+export { useVisibilityState } from "./use-visibility-state.hook";

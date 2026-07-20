@@ -121,7 +121,14 @@
     },
     "indexes": [
       {
-        "columns": ["tenant_id", "country_code", "state_code", "city", "postal_code_pattern", "tax_type"],
+        "columns": [
+          "tenant_id",
+          "country_code",
+          "state_code",
+          "city",
+          "postal_code_pattern",
+          "tax_type"
+        ],
         "unique": true,
         "name": "tax_jurisdictions_tuple_unique",
         "predicate": "deleted_at IS NULL"
@@ -139,9 +146,15 @@
     "city": { "type": ["string", "null"], "maxLength": 128 },
     "postal_code_pattern": { "type": ["string", "null"], "maxLength": 32 },
     "name": { "type": "string", "minLength": 1, "maxLength": 256 },
-    "tax_type": { "type": "string", "enum": ["vat", "gst", "sales_tax", "consumption_tax", "digital_services_tax"] },
+    "tax_type": {
+      "type": "string",
+      "enum": ["vat", "gst", "sales_tax", "consumption_tax", "digital_services_tax"]
+    },
     "registration_number": { "type": ["string", "null"], "maxLength": 64 },
-    "nexus_type": { "type": ["string", "null"], "enum": ["physical", "economic", "marketplace", null] },
+    "nexus_type": {
+      "type": ["string", "null"],
+      "enum": ["physical", "economic", "marketplace", null]
+    },
     "effective_from": { "type": ["string", "null"], "format": "date" },
     "effective_to": { "type": ["string", "null"], "format": "date" },
     "metadata": { "type": ["object", "null"] },

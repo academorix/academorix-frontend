@@ -13,11 +13,11 @@
  * Storage key holding the persisted `IDevtoolsFrameState` snapshot
  * (`isOpen`, `activePanelId`, `position`, `size`, …).
  */
-export const DEVTOOLS_FRAME_STATE_KEY = 'stackra:devtools:frame-state';
+export const DEVTOOLS_FRAME_STATE_KEY = "stackra:devtools:frame-state";
 
 /**
  * Storage key holding the user's pinned-panel id list — a superset
  * of the `'pinned'` category, promoted to the top of the rail
  * regardless of the panel's declared category.
  */
-export const DEVTOOLS_PINNED_PANELS_KEY = 'stackra:devtools:pinned-panels';
+export const DEVTOOLS_PINNED_PANELS_KEY = "stackra:devtools:pinned-panels";

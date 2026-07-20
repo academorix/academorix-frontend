@@ -48,13 +48,48 @@
           "path": "sports_registry.reconciler.reference_columns",
           "type": "array<object>",
           "default": [
-            { "table": "teams", "sport_key_column": "sport_key", "discipline_key_column": "discipline_key", "position_key_column": null },
-            { "table": "athlete_enrollments", "sport_key_column": "sport_key", "discipline_key_column": "discipline_key", "position_key_column": "position_key" },
-            { "table": "coaches", "sport_key_column": "sport_key", "discipline_key_column": null, "position_key_column": null },
-            { "table": "events", "sport_key_column": "sport_key", "discipline_key_column": "discipline_key", "position_key_column": null },
-            { "table": "sessions", "sport_key_column": "sport_key", "discipline_key_column": null, "position_key_column": null },
-            { "table": "seasons", "sport_key_column": "sport_key", "discipline_key_column": null, "position_key_column": null },
-            { "table": "age_groups", "sport_key_column": "sport_key", "discipline_key_column": null, "position_key_column": null }
+            {
+              "table": "teams",
+              "sport_key_column": "sport_key",
+              "discipline_key_column": "discipline_key",
+              "position_key_column": null
+            },
+            {
+              "table": "athlete_enrollments",
+              "sport_key_column": "sport_key",
+              "discipline_key_column": "discipline_key",
+              "position_key_column": "position_key"
+            },
+            {
+              "table": "coaches",
+              "sport_key_column": "sport_key",
+              "discipline_key_column": null,
+              "position_key_column": null
+            },
+            {
+              "table": "events",
+              "sport_key_column": "sport_key",
+              "discipline_key_column": "discipline_key",
+              "position_key_column": null
+            },
+            {
+              "table": "sessions",
+              "sport_key_column": "sport_key",
+              "discipline_key_column": null,
+              "position_key_column": null
+            },
+            {
+              "table": "seasons",
+              "sport_key_column": "sport_key",
+              "discipline_key_column": null,
+              "position_key_column": null
+            },
+            {
+              "table": "age_groups",
+              "sport_key_column": "sport_key",
+              "discipline_key_column": null,
+              "position_key_column": null
+            }
           ],
           "description": "Per-table column mapping — some tables carry the full triple (athlete_enrollments), others only sport_key. The reconciler iterates the tables in `reference_tables` + reads its columns from this map."
         },

@@ -31,10 +31,18 @@
           "queryParams": [
             { "name": "filter[decision]", "type": "string", "enum": ["allow", "deny"] },
             { "name": "filter[resource_type]", "type": "string" },
-            { "name": "filter[source]", "type": "string", "enum": ["manual", "access_request", "delegation", "bulk_provision"] },
+            {
+              "name": "filter[source]",
+              "type": "string",
+              "enum": ["manual", "access_request", "delegation", "bulk_provision"]
+            },
             { "name": "filter[active_only]", "type": "boolean", "default": true },
             { "name": "filter[granted_by]", "type": "string" },
-            { "name": "filter[subject_id]", "type": "string", "description": "Requires grants.manage permission." },
+            {
+              "name": "filter[subject_id]",
+              "type": "string",
+              "description": "Requires grants.manage permission."
+            },
             { "name": "sort", "type": "string", "example": "-created_at" },
             { "name": "per_page", "type": "integer", "default": 25 }
           ]

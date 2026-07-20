@@ -13,7 +13,7 @@
  *   ```
  */
 
-export { i18nPlugin } from './i18n-plugin';
-export type { I18nPluginOptions } from './interfaces';
-export { generateI18nTypes } from '../core/utils/type-generator.util';
-export type { TypeGeneratorOptions } from '../core/interfaces';
+export { i18nPlugin } from "./i18n-plugin";
+export type { I18nPluginOptions } from "./interfaces";
+export { generateI18nTypes } from "../core/utils/type-generator.util";
+export type { TypeGeneratorOptions } from "../core/interfaces";

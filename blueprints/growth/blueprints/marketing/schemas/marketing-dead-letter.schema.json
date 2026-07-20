@@ -102,23 +102,55 @@
       "updated_at": { "type": "timestamptz", "nullable": false }
     },
     "indexes": [
-      { "columns": ["tenant_id", "provider", "reason", "created_at"], "name": "marketing_dead_letters_status_idx" },
-      { "columns": ["tenant_id", "resolved_at"], "name": "marketing_dead_letters_resolved_idx", "predicate": "resolved_at IS NULL" },
+      {
+        "columns": ["tenant_id", "provider", "reason", "created_at"],
+        "name": "marketing_dead_letters_status_idx"
+      },
+      {
+        "columns": ["tenant_id", "resolved_at"],
+        "name": "marketing_dead_letters_resolved_idx",
+        "predicate": "resolved_at IS NULL"
+      },
       { "columns": ["marketing_event_id"], "name": "marketing_dead_letters_event_idx" }
     ]
   },
-  "required": ["id", "tenant_id", "marketing_event_id", "provider", "reason", "replay_attempts", "created_at", "updated_at"],
+  "required": [
+    "id",
+    "tenant_id",
+    "marketing_event_id",
+    "provider",
+    "reason",
+    "replay_attempts",
+    "created_at",
+    "updated_at"
+  ],
   "properties": {
     "id": { "type": "string", "pattern": "^mdl_[0-9A-HJKMNP-TV-Z]{26}$" },
     "tenant_id": { "type": "string", "pattern": "^ten_[0-9A-HJKMNP-TV-Z]{26}$" },
     "marketing_event_id": { "type": "string", "pattern": "^mev_[0-9A-HJKMNP-TV-Z]{26}$" },
     "provider": {
       "type": "string",
-      "enum": ["meta_capi", "google_ads", "google_analytics_4", "gtm_server", "tiktok_events", "linkedin_insight", "snapchat_capi", "pinterest_capi", "custom_webhook"]
+      "enum": [
+        "meta_capi",
+        "google_ads",
+        "google_analytics_4",
+        "gtm_server",
+        "tiktok_events",
+        "linkedin_insight",
+        "snapchat_capi",
+        "pinterest_capi",
+        "custom_webhook"
+      ]
     },
     "reason": {
       "type": "string",
-      "enum": ["max_attempts_exceeded", "provider_permanent_failure", "circuit_breaker_max_opens", "invalid_payload", "auth_failure"]
+      "enum": [
+        "max_attempts_exceeded",
+        "provider_permanent_failure",
+        "circuit_breaker_max_opens",
+        "invalid_payload",
+        "auth_failure"
+      ]
     },
     "final_error_details": {
       "type": ["object", "null"],
@@ -133,7 +165,10 @@
     "replay_attempts": { "type": "integer", "minimum": 0 },
     "last_replay_at": { "type": ["string", "null"], "format": "date-time" },
     "resolved_at": { "type": ["string", "null"], "format": "date-time" },
-    "resolved_by_user_id": { "type": ["string", "null"], "pattern": "^usr_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "resolved_by_user_id": {
+      "type": ["string", "null"],
+      "pattern": "^usr_[0-9A-HJKMNP-TV-Z]{26}$"
+    },
     "resolution_note": { "type": ["string", "null"] },
     "metadata": { "type": ["object", "null"] },
     "created_at": { "type": "string", "format": "date-time" },

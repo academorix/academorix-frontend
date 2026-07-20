@@ -1,7 +1,7 @@
 {
   "name": "@stackra/testing",
   "version": "1.0.0",
-  "description": "Shared Vitest preset, setup lifecycle, and assertable primitives for the Stackra monorepo — SWC-based transform with full decorator metadata support.",
+  "description": "Shared Vitest preset, setup lifecycle, and assertable primitives for the Stackra monorepo \u2014 SWC-based transform with full decorator metadata support.",
   "license": "MIT",
   "author": {
     "name": "Stackra L.L.C",
@@ -90,6 +90,8 @@
     }
   },
   "devDependencies": {
+    "@academorix/config-tsconfig": "workspace:*",
+    "@academorix/config-tsup": "workspace:*",
     "@types/node": "catalog:",
     "rimraf": "catalog:",
     "tsup": "catalog:",

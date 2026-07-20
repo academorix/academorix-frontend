@@ -48,56 +48,254 @@
       "metadata": "array"
     },
     "observers": ["AthleteObserver"],
-    "appends": [
-      "full_name",
-      "display_name",
-      "age_years",
-      "is_minor",
-      "consent_summary"
-    ]
+    "appends": ["full_name", "display_name", "age_years", "is_minor", "consent_summary"]
   },
   "x-database": {
     "engine": "postgres",
     "columns": {
-      "id": { "type": "string", "length": 30, "primary": true, "description": "Prefixed ULID: `ath_<26>`." },
-      "tenant_id": { "type": "string", "length": 30, "nullable": false, "foreign": { "table": "tenants", "column": "id", "onUpdate": "cascade", "onDelete": "cascade" } },
-      "branch_id": { "type": "string", "length": 30, "nullable": false, "foreign": { "table": "branches", "column": "id", "onUpdate": "cascade", "onDelete": "restrict" }, "description": "Home branch. Immutable in Wave 3a." },
-      "user_id": { "type": "string", "length": 30, "nullable": true, "foreign": { "table": "users", "column": "id", "onUpdate": "cascade", "onDelete": "restrict" }, "description": "OPTIONAL — set only when the athlete has a login. Adults create their own user_id at signup; minors typically remain unlinked until 13-16 depending on jurisdiction. RESTRICT — the User cannot be soft-deleted or archived while an active Athlete row references it." },
-      "external_id": { "type": "string", "length": 64, "nullable": true, "description": "External CRM/CMS integration ID. Unique per (tenant_id, external_id) when non-null." },
-      "first_name": { "type": "string", "length": 128, "nullable": false, "description": "The athlete's first name. Confidential-tier when the athlete is a minor (redacted from cross-tenant support tooling)." },
+      "id": {
+        "type": "string",
+        "length": 30,
+        "primary": true,
+        "description": "Prefixed ULID: `ath_<26>`."
+      },
+      "tenant_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": {
+          "table": "tenants",
+          "column": "id",
+          "onUpdate": "cascade",
+          "onDelete": "cascade"
+        }
+      },
+      "branch_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": {
+          "table": "branches",
+          "column": "id",
+          "onUpdate": "cascade",
+          "onDelete": "restrict"
+        },
+        "description": "Home branch. Immutable in Wave 3a."
+      },
+      "user_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": true,
+        "foreign": {
+          "table": "users",
+          "column": "id",
+          "onUpdate": "cascade",
+          "onDelete": "restrict"
+        },
+        "description": "OPTIONAL — set only when the athlete has a login. Adults create their own user_id at signup; minors typically remain unlinked until 13-16 depending on jurisdiction. RESTRICT — the User cannot be soft-deleted or archived while an active Athlete row references it."
+      },
+      "external_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": true,
+        "description": "External CRM/CMS integration ID. Unique per (tenant_id, external_id) when non-null."
+      },
+      "first_name": {
+        "type": "string",
+        "length": 128,
+        "nullable": false,
+        "description": "The athlete's first name. Confidential-tier when the athlete is a minor (redacted from cross-tenant support tooling)."
+      },
       "middle_name": { "type": "string", "length": 128, "nullable": true },
       "last_name": { "type": "string", "length": 128, "nullable": false },
-      "preferred_name": { "type": "string", "length": 128, "nullable": true, "description": "The 'call me' name. Used in front-of-house UI." },
-      "date_of_birth": { "type": "date", "nullable": false, "description": "CRITICAL for age eligibility + AgeGroup snapshot resolution. Immutable post-create — a DOB edit is a compliance event (typo-fix path requires super_admin override)." },
-      "gender": { "type": "string", "length": 24, "nullable": true, "description": "Enum: male / female / non_binary / prefer_not_to_say / other. Nullable — self-declaration is optional." },
-      "pronouns": { "type": "string", "length": 32, "nullable": true, "description": "Free-text pronouns display string. e.g. 'she/her', 'they/them'." },
-      "height_cm": { "type": "integer", "nullable": true, "description": "30-250. Nullable — physical measurement is optional." },
+      "preferred_name": {
+        "type": "string",
+        "length": 128,
+        "nullable": true,
+        "description": "The 'call me' name. Used in front-of-house UI."
+      },
+      "date_of_birth": {
+        "type": "date",
+        "nullable": false,
+        "description": "CRITICAL for age eligibility + AgeGroup snapshot resolution. Immutable post-create — a DOB edit is a compliance event (typo-fix path requires super_admin override)."
+      },
+      "gender": {
+        "type": "string",
+        "length": 24,
+        "nullable": true,
+        "description": "Enum: male / female / non_binary / prefer_not_to_say / other. Nullable — self-declaration is optional."
+      },
+      "pronouns": {
+        "type": "string",
+        "length": 32,
+        "nullable": true,
+        "description": "Free-text pronouns display string. e.g. 'she/her', 'they/them'."
+      },
+      "height_cm": {
+        "type": "integer",
+        "nullable": true,
+        "description": "30-250. Nullable — physical measurement is optional."
+      },
       "weight_kg": { "type": "integer", "nullable": true, "description": "5-250. Nullable." },
-      "dominant_hand": { "type": "string", "length": 16, "nullable": true, "description": "Enum: left / right / ambidextrous. Relevant for sport-specific coaching (tennis, cricket, boxing)." },
-      "primary_language": { "type": "string", "length": 10, "nullable": true, "description": "BCP-47 code. e.g. 'en-US', 'ar-EG'. Used for notification routing." },
-      "profile_photo_url": { "type": "string", "length": 512, "nullable": true, "description": "Bare URL. Wave 4+ Storage module owns upload workflow." },
-      "current_age_group_id": { "type": "string", "length": 30, "nullable": true, "foreign": { "table": "age_groups", "column": "id", "onUpdate": "cascade", "onDelete": "set null" }, "description": "Snapshot — recomputed nightly by RollAthleteAgeGroupSnapshotJob against the tenant's active AgeGroup catalog. Nullable when the athlete's DOB falls outside every defined group (rare — the platform floor + ceiling covers 3-100 years)." },
-      "current_age_group_snapshot_at": { "type": "timestamptz", "nullable": true, "description": "When the snapshot was last computed. Reads > 48h old trigger an in-band refresh." },
-      "emergency_contact_name": { "type": "string", "length": 128, "nullable": true, "description": "CONFIDENTIAL-tier. Redacted unless caller carries athlete.view.emergency_contact. Hard-redacted 90 days post-archive." },
-      "emergency_contact_phone": { "type": "string", "length": 20, "nullable": true, "description": "E.164 phone. CONFIDENTIAL-tier." },
-      "emergency_contact_relationship": { "type": "string", "length": 32, "nullable": true, "description": "Free-text: 'father', 'mother', 'grandmother'. CONFIDENTIAL-tier." },
-      "medical_conditions": { "type": "text", "nullable": true, "description": "REGULATED_HEALTH-tier (safeguarding-critical). Free-text description of chronic conditions (asthma, diabetes, epilepsy). Requires athlete.view.medical permission for read." },
-      "medical_allergies": { "type": "text", "nullable": true, "description": "REGULATED_HEALTH-tier. Free-text. Life-critical when the athlete attends sessions with catering." },
-      "medical_medications": { "type": "text", "nullable": true, "description": "REGULATED_HEALTH-tier. Current medications the coaches need to know about (inhalers, epipens, insulin)." },
-      "medical_notes": { "type": "text", "nullable": true, "description": "REGULATED_HEALTH-tier. Free-form additional notes (previous injuries, dietary restrictions, mental-health considerations)." },
-      "consent_photo_release": { "type": "boolean", "nullable": false, "default": "false", "description": "Permission to use in tenant marketing." },
-      "consent_medical_disclosure": { "type": "boolean", "nullable": false, "default": "false", "description": "Permission to share medical fields with coaches (not just HR)." },
-      "consent_third_party": { "type": "boolean", "nullable": false, "default": "false", "description": "Permission to share with insurance / subprocessors." },
-      "consent_recorded_at": { "type": "timestamptz", "nullable": true, "description": "When consents were last confirmed. Null = never explicitly recorded (implicit signup consent only)." },
-      "consent_recorded_by_user_id": { "type": "string", "length": 30, "nullable": true, "foreign": { "table": "users", "column": "id", "onUpdate": "cascade", "onDelete": "set null" }, "description": "The User who recorded consents (typically the primary AthleteGuardian for minors, or the athlete themselves post-adulthood). SET NULL on User archive so the audit trail survives while the reference is nulled." },
-      "status": { "type": "string", "length": 16, "nullable": false, "default": "'active'", "description": "Enum: active / paused / graduated / withdrawn / archived." },
-      "registration_notes": { "type": "text", "nullable": true, "description": "HR/admin visible only — never surfaced to the athlete/guardian on read." },
-      "withdrawal_reason": { "type": "string", "length": 32, "nullable": true, "description": "Enum: relocated / graduated_out / lost_interest / financial / injury / disciplinary / conflict / other. Required when status transitions to withdrawn." },
-      "withdrawn_at": { "type": "date", "nullable": true, "description": "Date the withdrawal was recorded." },
-      "withdrawn_by_user_id": { "type": "string", "length": 30, "nullable": true, "foreign": { "table": "users", "column": "id", "onUpdate": "cascade", "onDelete": "set null" }, "description": "The User who filed the withdrawal (parent or admin)." },
-      "graduated_at": { "type": "date", "nullable": true, "description": "Date the athlete graduated (aged out of program, completed final season, etc.)." },
-      "paused_at": { "type": "timestamptz", "nullable": true, "description": "Timestamp of current pause. Null when status != 'paused'." },
-      "paused_reason": { "type": "string", "length": 64, "nullable": true, "description": "Free-text reason. Confidential — never surfaced to non-HR." },
+      "dominant_hand": {
+        "type": "string",
+        "length": 16,
+        "nullable": true,
+        "description": "Enum: left / right / ambidextrous. Relevant for sport-specific coaching (tennis, cricket, boxing)."
+      },
+      "primary_language": {
+        "type": "string",
+        "length": 10,
+        "nullable": true,
+        "description": "BCP-47 code. e.g. 'en-US', 'ar-EG'. Used for notification routing."
+      },
+      "profile_photo_url": {
+        "type": "string",
+        "length": 512,
+        "nullable": true,
+        "description": "Bare URL. Wave 4+ Storage module owns upload workflow."
+      },
+      "current_age_group_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": true,
+        "foreign": {
+          "table": "age_groups",
+          "column": "id",
+          "onUpdate": "cascade",
+          "onDelete": "set null"
+        },
+        "description": "Snapshot — recomputed nightly by RollAthleteAgeGroupSnapshotJob against the tenant's active AgeGroup catalog. Nullable when the athlete's DOB falls outside every defined group (rare — the platform floor + ceiling covers 3-100 years)."
+      },
+      "current_age_group_snapshot_at": {
+        "type": "timestamptz",
+        "nullable": true,
+        "description": "When the snapshot was last computed. Reads > 48h old trigger an in-band refresh."
+      },
+      "emergency_contact_name": {
+        "type": "string",
+        "length": 128,
+        "nullable": true,
+        "description": "CONFIDENTIAL-tier. Redacted unless caller carries athlete.view.emergency_contact. Hard-redacted 90 days post-archive."
+      },
+      "emergency_contact_phone": {
+        "type": "string",
+        "length": 20,
+        "nullable": true,
+        "description": "E.164 phone. CONFIDENTIAL-tier."
+      },
+      "emergency_contact_relationship": {
+        "type": "string",
+        "length": 32,
+        "nullable": true,
+        "description": "Free-text: 'father', 'mother', 'grandmother'. CONFIDENTIAL-tier."
+      },
+      "medical_conditions": {
+        "type": "text",
+        "nullable": true,
+        "description": "REGULATED_HEALTH-tier (safeguarding-critical). Free-text description of chronic conditions (asthma, diabetes, epilepsy). Requires athlete.view.medical permission for read."
+      },
+      "medical_allergies": {
+        "type": "text",
+        "nullable": true,
+        "description": "REGULATED_HEALTH-tier. Free-text. Life-critical when the athlete attends sessions with catering."
+      },
+      "medical_medications": {
+        "type": "text",
+        "nullable": true,
+        "description": "REGULATED_HEALTH-tier. Current medications the coaches need to know about (inhalers, epipens, insulin)."
+      },
+      "medical_notes": {
+        "type": "text",
+        "nullable": true,
+        "description": "REGULATED_HEALTH-tier. Free-form additional notes (previous injuries, dietary restrictions, mental-health considerations)."
+      },
+      "consent_photo_release": {
+        "type": "boolean",
+        "nullable": false,
+        "default": "false",
+        "description": "Permission to use in tenant marketing."
+      },
+      "consent_medical_disclosure": {
+        "type": "boolean",
+        "nullable": false,
+        "default": "false",
+        "description": "Permission to share medical fields with coaches (not just HR)."
+      },
+      "consent_third_party": {
+        "type": "boolean",
+        "nullable": false,
+        "default": "false",
+        "description": "Permission to share with insurance / subprocessors."
+      },
+      "consent_recorded_at": {
+        "type": "timestamptz",
+        "nullable": true,
+        "description": "When consents were last confirmed. Null = never explicitly recorded (implicit signup consent only)."
+      },
+      "consent_recorded_by_user_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": true,
+        "foreign": {
+          "table": "users",
+          "column": "id",
+          "onUpdate": "cascade",
+          "onDelete": "set null"
+        },
+        "description": "The User who recorded consents (typically the primary AthleteGuardian for minors, or the athlete themselves post-adulthood). SET NULL on User archive so the audit trail survives while the reference is nulled."
+      },
+      "status": {
+        "type": "string",
+        "length": 16,
+        "nullable": false,
+        "default": "'active'",
+        "description": "Enum: active / paused / graduated / withdrawn / archived."
+      },
+      "registration_notes": {
+        "type": "text",
+        "nullable": true,
+        "description": "HR/admin visible only — never surfaced to the athlete/guardian on read."
+      },
+      "withdrawal_reason": {
+        "type": "string",
+        "length": 32,
+        "nullable": true,
+        "description": "Enum: relocated / graduated_out / lost_interest / financial / injury / disciplinary / conflict / other. Required when status transitions to withdrawn."
+      },
+      "withdrawn_at": {
+        "type": "date",
+        "nullable": true,
+        "description": "Date the withdrawal was recorded."
+      },
+      "withdrawn_by_user_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": true,
+        "foreign": {
+          "table": "users",
+          "column": "id",
+          "onUpdate": "cascade",
+          "onDelete": "set null"
+        },
+        "description": "The User who filed the withdrawal (parent or admin)."
+      },
+      "graduated_at": {
+        "type": "date",
+        "nullable": true,
+        "description": "Date the athlete graduated (aged out of program, completed final season, etc.)."
+      },
+      "paused_at": {
+        "type": "timestamptz",
+        "nullable": true,
+        "description": "Timestamp of current pause. Null when status != 'paused'."
+      },
+      "paused_reason": {
+        "type": "string",
+        "length": 64,
+        "nullable": true,
+        "description": "Free-text reason. Confidential — never surfaced to non-HR."
+      },
       "metadata": { "type": "jsonb", "nullable": true },
       "created_by": { "type": "string", "length": 30, "nullable": true },
       "updated_by": { "type": "string", "length": 30, "nullable": true },
@@ -123,8 +321,16 @@
       { "columns": ["tenant_id", "branch_id", "status"], "name": "athletes_status_idx" },
       { "columns": ["tenant_id", "current_age_group_id"], "name": "athletes_age_group_idx" },
       { "columns": ["tenant_id", "last_name", "first_name"], "name": "athletes_name_idx" },
-      { "columns": ["tenant_id", "date_of_birth"], "name": "athletes_dob_idx", "description": "Feeds CheckAthleteMinorTurnedAdultJob + age-group snapshot recomputation." },
-      { "columns": ["tenant_id", "consent_recorded_at"], "name": "athletes_consent_idx", "description": "Feeds ReconcileAthleteConsentsJob — sweeps consents past the 12-month re-consent cadence." }
+      {
+        "columns": ["tenant_id", "date_of_birth"],
+        "name": "athletes_dob_idx",
+        "description": "Feeds CheckAthleteMinorTurnedAdultJob + age-group snapshot recomputation."
+      },
+      {
+        "columns": ["tenant_id", "consent_recorded_at"],
+        "name": "athletes_consent_idx",
+        "description": "Feeds ReconcileAthleteConsentsJob — sweeps consents past the 12-month re-consent cadence."
+      }
     ]
   },
   "required": [
@@ -165,7 +371,10 @@
     },
     "primary_language": { "type": ["string", "null"], "pattern": "^[a-z]{2,3}(-[A-Z]{2})?$" },
     "profile_photo_url": { "type": ["string", "null"], "format": "uri", "maxLength": 512 },
-    "current_age_group_id": { "type": ["string", "null"], "pattern": "^age_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "current_age_group_id": {
+      "type": ["string", "null"],
+      "pattern": "^age_[0-9A-HJKMNP-TV-Z]{26}$"
+    },
     "current_age_group_snapshot_at": { "type": ["string", "null"], "format": "date-time" },
     "emergency_contact_name": { "type": ["string", "null"], "maxLength": 128 },
     "emergency_contact_phone": { "type": ["string", "null"], "pattern": "^\\+[1-9]\\d{1,14}$" },
@@ -178,7 +387,10 @@
     "consent_medical_disclosure": { "type": "boolean" },
     "consent_third_party": { "type": "boolean" },
     "consent_recorded_at": { "type": ["string", "null"], "format": "date-time" },
-    "consent_recorded_by_user_id": { "type": ["string", "null"], "pattern": "^usr_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "consent_recorded_by_user_id": {
+      "type": ["string", "null"],
+      "pattern": "^usr_[0-9A-HJKMNP-TV-Z]{26}$"
+    },
     "status": {
       "type": "string",
       "enum": ["active", "paused", "graduated", "withdrawn", "archived"]
@@ -186,19 +398,47 @@
     "registration_notes": { "type": ["string", "null"], "maxLength": 4096 },
     "withdrawal_reason": {
       "type": ["string", "null"],
-      "enum": ["relocated", "graduated_out", "lost_interest", "financial", "injury", "disciplinary", "conflict", "other", null]
+      "enum": [
+        "relocated",
+        "graduated_out",
+        "lost_interest",
+        "financial",
+        "injury",
+        "disciplinary",
+        "conflict",
+        "other",
+        null
+      ]
     },
     "withdrawn_at": { "type": ["string", "null"], "format": "date" },
-    "withdrawn_by_user_id": { "type": ["string", "null"], "pattern": "^usr_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "withdrawn_by_user_id": {
+      "type": ["string", "null"],
+      "pattern": "^usr_[0-9A-HJKMNP-TV-Z]{26}$"
+    },
     "graduated_at": { "type": ["string", "null"], "format": "date" },
     "paused_at": { "type": ["string", "null"], "format": "date-time" },
     "paused_reason": { "type": ["string", "null"], "maxLength": 64 },
     "metadata": { "type": ["object", "null"] },
-    "full_name": { "type": "string", "description": "Computed. `first_name` + ` ` + `last_name` (middle name omitted from the display shortcut)." },
-    "display_name": { "type": "string", "description": "Computed. `preferred_name ?? first_name`." },
-    "age_years": { "type": ["integer", "null"], "description": "Computed. Whole-years age based on date_of_birth + today." },
-    "is_minor": { "type": "boolean", "description": "Computed. True when age_years < config.athlete.minor_min_age (default 16)." },
-    "consent_summary": { "type": "object", "description": "Computed. { photo_release, medical_disclosure, third_party, recorded_at, recorded_by_user_id, expires_at }." },
+    "full_name": {
+      "type": "string",
+      "description": "Computed. `first_name` + ` ` + `last_name` (middle name omitted from the display shortcut)."
+    },
+    "display_name": {
+      "type": "string",
+      "description": "Computed. `preferred_name ?? first_name`."
+    },
+    "age_years": {
+      "type": ["integer", "null"],
+      "description": "Computed. Whole-years age based on date_of_birth + today."
+    },
+    "is_minor": {
+      "type": "boolean",
+      "description": "Computed. True when age_years < config.athlete.minor_min_age (default 16)."
+    },
+    "consent_summary": {
+      "type": "object",
+      "description": "Computed. { photo_release, medical_disclosure, third_party, recorded_at, recorded_by_user_id, expires_at }."
+    },
     "created_at": { "type": "string", "format": "date-time" },
     "updated_at": { "type": "string", "format": "date-time" }
   },

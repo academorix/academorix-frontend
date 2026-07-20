@@ -2,7 +2,8 @@
 
 All notable changes to `uri-template` will be documented in this file.
 
-Updates should follow the [Keep a CHANGELOG](http://keepachangelog.com/) principles.
+Updates should follow the [Keep a CHANGELOG](http://keepachangelog.com/)
+principles.
 
 ## v1.0.9 - 2026-07-08
 
@@ -20,7 +21,8 @@ Updates should follow the [Keep a CHANGELOG](http://keepachangelog.com/) princip
 
 ### Fixed
 
-- Fixed the operator's leading character being omitted when defined variables expand to empty strings
+- Fixed the operator's leading character being omitted when defined variables
+  expand to empty strings
 - Fixed non-finite float values emitting coercion warnings on PHP 8.5
 
 ## v1.0.6 - 2026-05-23
@@ -28,8 +30,10 @@ Updates should follow the [Keep a CHANGELOG](http://keepachangelog.com/) princip
 ### Fixed
 
 - Fixed empty nested arrays adding empty components to exploded query expansions
-- Fixed nested query array keys being double-encoded during exploded query expansion
-- Fixed reserved and fragment expansion preserving existing pct-encoded triplets in variable values
+- Fixed nested query array keys being double-encoded during exploded query
+  expansion
+- Fixed reserved and fragment expansion preserving existing pct-encoded triplets
+  in variable values
 
 ## v1.0.5 - 2025-08-22
 
@@ -90,9 +94,11 @@ Updates should follow the [Keep a CHANGELOG](http://keepachangelog.com/) princip
 
 ### Fixed
 
-- Fixed an error due to strict_types [d47d1b0a8e78a3fac1cd0f69d675fc9e06771ac8](https://github.com/guzzle/uri-template/commit/d47d1b0a8e78a3fac1cd0f69d675fc9e06771ac8)
+- Fixed an error due to strict_types
+  [d47d1b0a8e78a3fac1cd0f69d675fc9e06771ac8](https://github.com/guzzle/uri-template/commit/d47d1b0a8e78a3fac1cd0f69d675fc9e06771ac8)
 
 ## v0.1.0 - 2020-06-30
 
 ### Added
+
 - Moved the `UriTemplate` class in this package

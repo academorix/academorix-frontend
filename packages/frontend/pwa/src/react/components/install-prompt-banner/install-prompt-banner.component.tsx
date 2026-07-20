@@ -10,11 +10,11 @@
  *   inline SVG glyphs (no new icon peer dep).
  */
 
-import type { ReactElement } from 'react';
-import { Button, Card } from '@stackra/ui/react';
+import type { ReactElement } from "react";
+import { Button, Card } from "@stackra/ui/react";
 
-import { useInstallPrompt } from '@/react/hooks/use-install-prompt/use-install-prompt.hook';
-import type { InstallPromptBannerProps } from './install-prompt-banner.interface';
+import { useInstallPrompt } from "@/react/hooks/use-install-prompt/use-install-prompt.hook";
+import type { InstallPromptBannerProps } from "./install-prompt-banner.interface";
 
 /** Inline share icon — iOS Safari share sheet glyph. */
 function ShareGlyph(): ReactElement {
@@ -80,10 +80,10 @@ function AddToHomeGlyph(): ReactElement {
  * ```
  */
 export function InstallPromptBanner({
-  title = 'Install this app',
-  description = 'Add to your home screen for offline access and a native feel.',
-  installLabel = 'Install',
-  dismissLabel = 'Not now',
+  title = "Install this app",
+  description = "Add to your home screen for offline access and a native feel.",
+  installLabel = "Install",
+  dismissLabel = "Not now",
   className,
   onInstall,
   onDismiss,
@@ -123,7 +123,7 @@ export function InstallPromptBanner({
         <Card.Content>
           <ol className="flex flex-col gap-3 text-sm">
             <li className="flex items-start gap-3">
-              <span className="mt-0.5 shrink-0 text-primary">
+              <span className="text-primary mt-0.5 shrink-0">
                 <ShareGlyph />
               </span>
               <span>
@@ -131,7 +131,7 @@ export function InstallPromptBanner({
               </span>
             </li>
             <li className="flex items-start gap-3">
-              <span className="mt-0.5 shrink-0 text-primary">
+              <span className="text-primary mt-0.5 shrink-0">
                 <AddToHomeGlyph />
               </span>
               <span>

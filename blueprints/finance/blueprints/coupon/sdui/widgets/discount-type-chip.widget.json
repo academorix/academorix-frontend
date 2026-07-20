@@ -7,7 +7,14 @@
   "props": {
     "discountType": {
       "type": "string",
-      "enum": ["percent", "fixed_amount", "free_period", "first_month_free", "bogo", "free_shipping"],
+      "enum": [
+        "percent",
+        "fixed_amount",
+        "free_period",
+        "first_month_free",
+        "bogo",
+        "free_shipping"
+      ],
       "required": true
     },
     "discountAmount": {
@@ -19,7 +26,11 @@
       "description": "ISO 4217. Required for discountType='fixed_amount'."
     },
     "size": { "type": "string", "default": "sm", "enum": ["xs", "sm", "md", "lg"] },
-    "showAmount": { "type": "boolean", "default": true, "description": "When false, renders only the type name without the amount." }
+    "showAmount": {
+      "type": "boolean",
+      "default": true,
+      "description": "When false, renders only the type name without the amount."
+    }
   },
   "nodes": [
     {

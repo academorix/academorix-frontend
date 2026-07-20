@@ -8,9 +8,9 @@
  *   pass a factory to build fresh instances.
  */
 
-import type { ISettingsDriverCreator, ISettingsManager, ISettingsStore } from '@stackra/contracts';
+import type { ISettingsDriverCreator, ISettingsManager, ISettingsStore } from "@stackra/contracts";
 
-import { MemorySettingsStore } from '@/core/stores/memory-settings.store';
+import { MemorySettingsStore } from "@/core/stores/memory-settings.store";
 
 /** Options accepted by `MockSettingsManager`. */
 export interface IMockSettingsManagerOptions {
@@ -45,7 +45,7 @@ export class MockSettingsManager implements ISettingsManager {
   private defaultInstance: string;
 
   public constructor(options: IMockSettingsManagerOptions = {}) {
-    this.defaultInstance = options.defaultInstance ?? 'memory';
+    this.defaultInstance = options.defaultInstance ?? "memory";
     this.instances = new Map(Object.entries(options.instances ?? {}));
     this.groupOverrides = options.groupOverrides ?? {};
   }

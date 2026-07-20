@@ -5,7 +5,7 @@
  *   Import this pattern in your app's config/ folder.
  */
 
-import { defineConfig } from '@stackra/theming';
+import { defineConfig } from "@stackra/theming";
 
 export default defineConfig({
   /*
@@ -17,7 +17,7 @@ export default defineConfig({
   | Must be a theme ID registered in the built-in set or via forFeature().
   |
   */
-  defaultTheme: 'default',
+  defaultTheme: "default",
 
   /*
   |--------------------------------------------------------------------------
@@ -28,7 +28,7 @@ export default defineConfig({
   | 'system' follows the OS preference.
   |
   */
-  defaultMode: 'system',
+  defaultMode: "system",
 
   /*
   |--------------------------------------------------------------------------
@@ -39,7 +39,7 @@ export default defineConfig({
   | Apps copy assets/themes/*.png to public/ and point this here.
   |
   */
-  avatarBaseUrl: '/themes',
+  avatarBaseUrl: "/themes",
 
   /*
   |--------------------------------------------------------------------------
@@ -52,7 +52,7 @@ export default defineConfig({
   */
   api: {
     enabled: false,
-    baseUrl: '/api/themes',
+    baseUrl: "/api/themes",
   },
 
   /*
@@ -65,8 +65,8 @@ export default defineConfig({
   |
   */
   persistence: {
-    modeKey: 'stackra-color-mode',
-    themeKey: 'stackra-theme',
+    modeKey: "stackra-color-mode",
+    themeKey: "stackra-theme",
   },
 
   /*

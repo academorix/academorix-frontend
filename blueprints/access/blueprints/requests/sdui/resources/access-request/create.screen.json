@@ -34,9 +34,33 @@
           "kind": "View",
           "props": { "className": "flex flex-col gap-1" },
           "children": [
-            { "id": "back", "kind": "Link", "props": { "to": "/tenant/access-requests", "className": "text-muted flex items-center gap-1 text-sm", "children": "\u2190 Back to access requests" } },
-            { "id": "title", "kind": "Text", "props": { "as": "h1", "className": "text-2xl font-semibold", "children": "Request access" } },
-            { "id": "subtitle", "kind": "Text", "props": { "as": "p", "className": "text-muted text-sm", "children": "Tell your approvers why you need this. They'll receive a notification and can approve, reject, or ask for more detail." } }
+            {
+              "id": "back",
+              "kind": "Link",
+              "props": {
+                "to": "/tenant/access-requests",
+                "className": "text-muted flex items-center gap-1 text-sm",
+                "children": "\u2190 Back to access requests"
+              }
+            },
+            {
+              "id": "title",
+              "kind": "Text",
+              "props": {
+                "as": "h1",
+                "className": "text-2xl font-semibold",
+                "children": "Request access"
+              }
+            },
+            {
+              "id": "subtitle",
+              "kind": "Text",
+              "props": {
+                "as": "p",
+                "className": "text-muted text-sm",
+                "children": "Tell your approvers why you need this. They'll receive a notification and can approve, reject, or ask for more detail."
+              }
+            }
           ]
         },
         {
@@ -61,7 +85,11 @@
                   "label": "Resource type",
                   "isRequired": true,
                   "optionsSource": { "$ref": "requestableResources" },
-                  "bindings": { "isReadOnly": { "$expr": "prefilledPayload && prefilledPayload.resource_type != null" } },
+                  "bindings": {
+                    "isReadOnly": {
+                      "$expr": "prefilledPayload && prefilledPayload.resource_type != null"
+                    }
+                  },
                   "description": "The type of resource you're requesting access to. Pre-filled when you got here from a 'You don't have permission' page."
                 },
                 {
@@ -69,7 +97,11 @@
                   "kind": "TextField",
                   "label": "Resource ID",
                   "isRequired": true,
-                  "bindings": { "isReadOnly": { "$expr": "prefilledPayload && prefilledPayload.resource_id != null" } },
+                  "bindings": {
+                    "isReadOnly": {
+                      "$expr": "prefilledPayload && prefilledPayload.resource_id != null"
+                    }
+                  },
                   "description": "The specific resource. Pre-filled from the 403 that sent you here."
                 },
                 {
@@ -111,22 +143,53 @@
               "onSuccess": {
                 "kind": "sequence",
                 "steps": [
-                  { "kind": "toast.success", "message": "Access request submitted. Approvers have been notified." },
+                  {
+                    "kind": "toast.success",
+                    "message": "Access request submitted. Approvers have been notified."
+                  },
                   { "kind": "navigate", "toExpr": "'/tenant/access-requests/' + response.data.id" }
                 ]
               },
               "onError": {
                 "byCode": {
-                  "INVALID_REQUESTABLE_RESOURCE": { "kind": "toast.warning", "message": "That resource type isn't available for access requests." },
-                  "RESOURCE_NOT_IN_CALLER_TENANT": { "kind": "toast.warning", "message": "That resource isn't in your current tenant." },
-                  "RESOURCE_NOT_FOUND": { "kind": "toast.warning", "message": "That resource no longer exists." },
-                  "PERMISSION_NOT_ON_RESOURCE_TYPE": { "kind": "toast.warning", "message": "One of the requested permissions doesn't apply to this resource type." },
-                  "DUPLICATE_PENDING_REQUEST": { "kind": "toast.warning", "message": "You already have a pending request for this resource. Wait for the approvers to decide, or withdraw it first." },
-                  "ACCESS_REQUESTS_ENTITLEMENT_EXCEEDED": { "kind": "modal.upsell", "feature": "access_requests.max_per_month", "message": "Your tenant has reached its monthly access-request limit." },
-                  "ACCESS_REQUESTS_RATE_LIMIT_EXCEEDED": { "kind": "toast.error", "message": "You're submitting requests too quickly. Please try again later." },
-                  "INVALID_APPROVER_CONFIGURATION": { "kind": "toast.error", "message": "No approvers could be resolved for this request. Please contact your admin." }
+                  "INVALID_REQUESTABLE_RESOURCE": {
+                    "kind": "toast.warning",
+                    "message": "That resource type isn't available for access requests."
+                  },
+                  "RESOURCE_NOT_IN_CALLER_TENANT": {
+                    "kind": "toast.warning",
+                    "message": "That resource isn't in your current tenant."
+                  },
+                  "RESOURCE_NOT_FOUND": {
+                    "kind": "toast.warning",
+                    "message": "That resource no longer exists."
+                  },
+                  "PERMISSION_NOT_ON_RESOURCE_TYPE": {
+                    "kind": "toast.warning",
+                    "message": "One of the requested permissions doesn't apply to this resource type."
+                  },
+                  "DUPLICATE_PENDING_REQUEST": {
+                    "kind": "toast.warning",
+                    "message": "You already have a pending request for this resource. Wait for the approvers to decide, or withdraw it first."
+                  },
+                  "ACCESS_REQUESTS_ENTITLEMENT_EXCEEDED": {
+                    "kind": "modal.upsell",
+                    "feature": "access_requests.max_per_month",
+                    "message": "Your tenant has reached its monthly access-request limit."
+                  },
+                  "ACCESS_REQUESTS_RATE_LIMIT_EXCEEDED": {
+                    "kind": "toast.error",
+                    "message": "You're submitting requests too quickly. Please try again later."
+                  },
+                  "INVALID_APPROVER_CONFIGURATION": {
+                    "kind": "toast.error",
+                    "message": "No approvers could be resolved for this request. Please contact your admin."
+                  }
                 },
-                "default": { "kind": "toast.error", "messageExpr": "error.message || 'Failed to submit access request.'" }
+                "default": {
+                  "kind": "toast.error",
+                  "messageExpr": "error.message || 'Failed to submit access request.'"
+                }
               }
             },
             "secondaryAction": { "label": "Cancel", "kind": "navigate.back" }

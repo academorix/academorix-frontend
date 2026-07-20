@@ -9,38 +9,38 @@
  *   an actual set change (measured by deep-equality on `IAiClientToolDefinition[]`).
  */
 
-import { describe, it } from 'vitest';
+import { describe, it } from "vitest";
 
-import { ToolRegistry } from '@/core/registries/tool.registry';
-import { ToolConverter } from '@/core/services/tool-converter.service';
-import { deepEqual } from '@/core/utils/deep-equal.util';
-import { forAll, type IPrng } from './property-test.helper';
+import { ToolRegistry } from "@/core/registries/tool.registry";
+import { ToolConverter } from "@/core/services/tool-converter.service";
+import { deepEqual } from "@/core/utils/deep-equal.util";
+import { forAll, type IPrng } from "./property-test.helper";
 
 const noop = async (): Promise<void> => undefined;
 const entry = (
-  name: string
+  name: string,
 ): {
   definition: { name: string; description: string; parameters: unknown };
   handler: () => Promise<unknown>;
 } => ({
-  definition: { name, description: '', parameters: {} },
+  definition: { name, description: "", parameters: {} },
   handler: noop,
 });
 
-type Op = { kind: 'reg' | 'unreg'; name: string };
+type Op = { kind: "reg" | "unreg"; name: string };
 
 function genOps(r: IPrng): Op[] {
   const n = r.int(2, 25);
-  const names = ['a', 'b', 'c', 'd'];
+  const names = ["a", "b", "c", "d"];
   const ops: Op[] = [];
   for (let i = 0; i < n; i++) {
-    ops.push({ kind: r.bool() ? 'reg' : 'unreg', name: r.pick(names) });
+    ops.push({ kind: r.bool() ? "reg" : "unreg", name: r.pick(names) });
   }
   return ops;
 }
 
-describe('Property 5: advertisement diff-suppression (Req 7.5)', () => {
-  it('re-advertising an unchanged toolset emits nothing', () => {
+describe("Property 5: advertisement diff-suppression (Req 7.5)", () => {
+  it("re-advertising an unchanged toolset emits nothing", () => {
     forAll(
       (r) => genOps(r),
       (ops) => {
@@ -54,14 +54,14 @@ describe('Property 5: advertisement diff-suppression (Req 7.5)', () => {
         });
 
         // First establish some baseline.
-        registry.register(entry('a'));
+        registry.register(entry("a"));
         converter.flush();
         const baseline = emissions[emissions.length - 1] ?? [];
 
         // Now apply ops, flushing after each so the diff sees every step.
         let lastEmitted: unknown = baseline;
         for (const op of ops) {
-          if (op.kind === 'reg') registry.register(entry(op.name));
+          if (op.kind === "reg") registry.register(entry(op.name));
           else registry.unregister(op.name);
           converter.flush();
           const latest = emissions[emissions.length - 1] ?? baseline;
@@ -80,7 +80,7 @@ describe('Property 5: advertisement diff-suppression (Req 7.5)', () => {
         converter.flush();
         return emissions.length === before;
       },
-      { runs: 200 }
+      { runs: 200 },
     );
   });
 });

@@ -4,7 +4,7 @@
  * @description IUseHttpResult interface.
  */
 
-import type { IHttpClient } from '@stackra/contracts';
+import type { IHttpClient } from "@stackra/contracts";
 
 /**
  * Result of {@link useHttp}.

@@ -11,7 +11,7 @@
  *   `WebStorageModule.forRoot({ stores: { indexedDB: {...} } })`.
  */
 
-import { Inject, Injectable, Optional } from '@stackra/container';
+import { Inject, Injectable, Optional } from "@stackra/container";
 import {
   STORAGE_MANAGER,
   SYNC_CONFIG,
@@ -19,17 +19,17 @@ import {
   type ISyncModuleOptions,
   type IStorage,
   type IStorageManager,
-} from '@stackra/contracts';
-import { Logger } from '@stackra/logger';
+} from "@stackra/contracts";
+import { Logger } from "@stackra/logger";
 
 /** Key prefix for checkpoint entries inside the resolved `IStorage`. */
-const KEY_PREFIX = 'sync:checkpoint:';
+const KEY_PREFIX = "sync:checkpoint:";
 
 /**
  * Default named `IStorage` instance to resolve when the caller
  * doesn't override via `ISyncModuleOptions.storage`.
  */
-const DEFAULT_STORAGE_INSTANCE = 'indexedDB';
+const DEFAULT_STORAGE_INSTANCE = "indexedDB";
 
 /**
  * CheckpointService — `IStorage`-backed sync checkpoint persistence.
@@ -60,7 +60,7 @@ export class CheckpointService {
    */
   public constructor(
     @Optional() @Inject(STORAGE_MANAGER) private readonly manager?: IStorageManager,
-    @Optional() @Inject(SYNC_CONFIG) options?: ISyncModuleOptions
+    @Optional() @Inject(SYNC_CONFIG) options?: ISyncModuleOptions,
   ) {
     this.instanceName = options?.storage ?? DEFAULT_STORAGE_INSTANCE;
   }
@@ -118,9 +118,9 @@ export class CheckpointService {
     if (this.cached) return this.cached;
     if (!this.manager) {
       this.logger.warn(
-        '[CheckpointService] STORAGE_MANAGER not provided — checkpoints disabled. ' +
-          'Import WebStorageModule / NativeStorageModule upstream with an ' +
-          `'${this.instanceName}' store to enable persistence.`
+        "[CheckpointService] STORAGE_MANAGER not provided — checkpoints disabled. " +
+          "Import WebStorageModule / NativeStorageModule upstream with an " +
+          `'${this.instanceName}' store to enable persistence.`,
       );
       return null;
     }
@@ -130,7 +130,7 @@ export class CheckpointService {
     } catch (error: unknown) {
       this.logger.warn(
         `[CheckpointService] IStorage instance '${this.instanceName}' not resolved — checkpoints disabled`,
-        { error: String(error) }
+        { error: String(error) },
       );
       return null;
     }

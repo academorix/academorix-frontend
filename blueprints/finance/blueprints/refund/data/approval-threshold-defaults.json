@@ -69,9 +69,7 @@
     "description": "These reasons force requires_approval=true regardless of amount / staleness thresholds. Sensitive-reason set — requires human-in-the-loop for the audit trail (SOX §404 + regulatory review)."
   },
   "auto_approve_reasons": {
-    "reasons": [
-      "duplicate_charge"
-    ],
+    "reasons": ["duplicate_charge"],
     "description": "These reasons force requires_approval=false regardless of thresholds. System-initiated path (finance ops caught the duplicate; refund is 100% automated)."
   },
   "customer_allowed_reasons": {

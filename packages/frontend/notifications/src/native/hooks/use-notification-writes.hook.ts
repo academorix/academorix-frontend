@@ -9,12 +9,12 @@
  *   `native/hooks/`.
  */
 
-import { useCallback, useState } from 'react';
-import { useInject } from '@stackra/container/react';
+import { useCallback, useState } from "react";
+import { useInject } from "@stackra/container/react";
 
-import { IN_APP_NOTIFICATION_CENTRE, NOTIFICATION_PREFERENCES_SERVICE } from '@/core/constants';
-import type { InAppNotificationCentre, NotificationPreferencesService } from '@/core';
-import type { INotificationPreferences } from '@/core/interfaces';
+import { IN_APP_NOTIFICATION_CENTRE, NOTIFICATION_PREFERENCES_SERVICE } from "@/core/constants";
+import type { InAppNotificationCentre, NotificationPreferencesService } from "@/core";
+import type { INotificationPreferences } from "@/core/interfaces";
 
 /**
  * Writer contract callers pass into {@link useNotificationWrites}.
@@ -60,7 +60,7 @@ export interface IUseNotificationWritesResult {
  * ```
  */
 export function useNotificationWrites(
-  writer?: Partial<NotificationWriter>
+  writer?: Partial<NotificationWriter>,
 ): IUseNotificationWritesResult {
   const centre = useInject<InAppNotificationCentre>(IN_APP_NOTIFICATION_CENTRE);
   const preferences = useInject<NotificationPreferencesService>(NOTIFICATION_PREFERENCES_SERVICE);
@@ -87,7 +87,7 @@ export function useNotificationWrites(
         await centre.markSeen(id);
         if (writer?.markSeen) await writer.markSeen(id);
       }),
-    [centre, writer, runWithFlag]
+    [centre, writer, runWithFlag],
   );
 
   const markAllSeen = useCallback(
@@ -100,7 +100,7 @@ export function useNotificationWrites(
         }
         if (writer?.markAllSeen) await writer.markAllSeen();
       }),
-    [centre, writer, runWithFlag]
+    [centre, writer, runWithFlag],
   );
 
   const remove = useCallback(
@@ -109,7 +109,7 @@ export function useNotificationWrites(
         await centre.dismiss(id);
         if (writer?.remove) await writer.remove(id);
       }),
-    [centre, writer, runWithFlag]
+    [centre, writer, runWithFlag],
   );
 
   const updatePreferences = useCallback(
@@ -118,7 +118,7 @@ export function useNotificationWrites(
         preferences.set(next);
         if (writer?.updatePreferences) await writer.updatePreferences(next);
       }),
-    [preferences, writer, runWithFlag]
+    [preferences, writer, runWithFlag],
   );
 
   return { markSeen, markAllSeen, remove, updatePreferences, isPending, error };

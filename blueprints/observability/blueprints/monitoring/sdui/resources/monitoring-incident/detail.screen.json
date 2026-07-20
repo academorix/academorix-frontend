@@ -10,8 +10,18 @@
   "requiresPermission": "monitoring.incidents.view",
   "requiresEntitlement": "monitoring_capture",
   "dataSources": [
-    { "name": "incident", "kind": "http.get", "url": "/api/v1/monitoring/incidents/{incident}", "unwrap": "data" },
-    { "name": "alerts", "kind": "http.get", "url": "/api/v1/monitoring/alerts?filter[incident_id]={incident}", "unwrap": "data" }
+    {
+      "name": "incident",
+      "kind": "http.get",
+      "url": "/api/v1/monitoring/incidents/{incident}",
+      "unwrap": "data"
+    },
+    {
+      "name": "alerts",
+      "kind": "http.get",
+      "url": "/api/v1/monitoring/alerts?filter[incident_id]={incident}",
+      "unwrap": "data"
+    }
   ],
   "nodes": [
     {
@@ -26,14 +36,30 @@
             {
               "kind": "View",
               "children": [
-                { "kind": "Text", "props": { "as": "h1", "className": "text-2xl font-semibold" }, "bindings": { "children": { "$ref": "incident.title" } } },
+                {
+                  "kind": "Text",
+                  "props": { "as": "h1", "className": "text-2xl font-semibold" },
+                  "bindings": { "children": { "$ref": "incident.title" } }
+                },
                 {
                   "kind": "View",
                   "props": { "className": "flex items-center gap-2 mt-1" },
                   "children": [
-                    { "kind": "Widget", "widget": "monitoring.severity-chip", "bindings": { "severity": { "$ref": "incident.severity" } } },
-                    { "kind": "Widget", "widget": "monitoring.status-badge", "bindings": { "status": { "$ref": "incident.status" } } },
-                    { "kind": "Text", "props": { "className": "text-sm text-muted" }, "bindings": { "children": { "$expr": "'Opened ' + incident.opened_at" } } }
+                    {
+                      "kind": "Widget",
+                      "widget": "monitoring.severity-chip",
+                      "bindings": { "severity": { "$ref": "incident.severity" } }
+                    },
+                    {
+                      "kind": "Widget",
+                      "widget": "monitoring.status-badge",
+                      "bindings": { "status": { "$ref": "incident.status" } }
+                    },
+                    {
+                      "kind": "Text",
+                      "props": { "className": "text-sm text-muted" },
+                      "bindings": { "children": { "$expr": "'Opened ' + incident.opened_at" } }
+                    }
                   ]
                 }
               ]
@@ -58,8 +84,17 @@
                   "kind": "Button",
                   "props": { "variant": "primary", "children": "Resolve" },
                   "requiresPermission": "monitoring.incidents.resolve",
-                  "bindings": { "hidden": { "$expr": "incident.status === 'resolved' || incident.status === 'postmortem'" } },
-                  "actions": { "onPress": { "kind": "navigate", "toExpr": "'/tenant/monitoring/incidents/' + $routeParams.incident + '/resolve'" } }
+                  "bindings": {
+                    "hidden": {
+                      "$expr": "incident.status === 'resolved' || incident.status === 'postmortem'"
+                    }
+                  },
+                  "actions": {
+                    "onPress": {
+                      "kind": "navigate",
+                      "toExpr": "'/tenant/monitoring/incidents/' + $routeParams.incident + '/resolve'"
+                    }
+                  }
                 }
               ]
             }
@@ -69,15 +104,33 @@
           "kind": "Card",
           "props": { "className": "p-4" },
           "children": [
-            { "kind": "Text", "props": { "as": "h2", "className": "text-lg font-semibold mb-2", "children": "Description" } },
-            { "kind": "Text", "props": { "className": "text-sm" }, "bindings": { "children": { "$ref": "incident.description" } } }
+            {
+              "kind": "Text",
+              "props": {
+                "as": "h2",
+                "className": "text-lg font-semibold mb-2",
+                "children": "Description"
+              }
+            },
+            {
+              "kind": "Text",
+              "props": { "className": "text-sm" },
+              "bindings": { "children": { "$ref": "incident.description" } }
+            }
           ]
         },
         {
           "kind": "Card",
           "props": { "className": "p-4" },
           "children": [
-            { "kind": "Text", "props": { "as": "h2", "className": "text-lg font-semibold mb-3", "children": "Attached alerts" } },
+            {
+              "kind": "Text",
+              "props": {
+                "as": "h2",
+                "className": "text-lg font-semibold mb-3",
+                "children": "Attached alerts"
+              }
+            },
             {
               "kind": "DataGrid",
               "bindings": { "items": { "$ref": "alerts" } },
@@ -89,7 +142,11 @@
                   {
                     "field": "status",
                     "header": "Status",
-                    "cellRenderer": { "kind": "Widget", "widget": "monitoring.status-badge", "bindings": { "status": { "$ref": "row.status" } } }
+                    "cellRenderer": {
+                      "kind": "Widget",
+                      "widget": "monitoring.status-badge",
+                      "bindings": { "status": { "$ref": "row.status" } }
+                    }
                   }
                 ]
               }
@@ -101,8 +158,22 @@
           "props": { "className": "p-4" },
           "bindings": { "hidden": { "$expr": "!incident.postmortem_url" } },
           "children": [
-            { "kind": "Text", "props": { "as": "h2", "className": "text-lg font-semibold mb-2", "children": "Postmortem" } },
-            { "kind": "Link", "props": { "target": "_blank" }, "bindings": { "href": { "$ref": "incident.postmortem_url" }, "children": { "$ref": "incident.postmortem_url" } } }
+            {
+              "kind": "Text",
+              "props": {
+                "as": "h2",
+                "className": "text-lg font-semibold mb-2",
+                "children": "Postmortem"
+              }
+            },
+            {
+              "kind": "Link",
+              "props": { "target": "_blank" },
+              "bindings": {
+                "href": { "$ref": "incident.postmortem_url" },
+                "children": { "$ref": "incident.postmortem_url" }
+              }
+            }
           ]
         }
       ]

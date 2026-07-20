@@ -12,7 +12,7 @@
  *   metadata, so authors can pick whichever is more ergonomic.
  */
 
-import type { DevtoolsCategory, IDevtoolsAuthGate } from '@stackra/contracts';
+import type { DevtoolsCategory, IDevtoolsAuthGate } from "@stackra/contracts";
 
 /**
  * Options for the `@DevtoolsPanel(options)` class decorator.

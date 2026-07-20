@@ -2,9 +2,11 @@
 
 ## Always Eager Load Relationships
 
-Lazy loading causes N+1 query problems — one query per loop iteration. Always use `with()` to load relationships upfront.
+Lazy loading causes N+1 query problems — one query per loop iteration. Always
+use `with()` to load relationships upfront.
 
 Incorrect (N+1 — executes 1 + N queries):
+
 ```php
 $posts = Post::all();
 foreach ($posts as $post) {
@@ -13,6 +15,7 @@ foreach ($posts as $post) {
 ```
 
 Correct (2 queries total):
+
 ```php
 $posts = Post::with('author')->get();
 foreach ($posts as $post) {
@@ -20,7 +23,8 @@ foreach ($posts as $post) {
 }
 ```
 
-Constrain eager loads to select only needed columns (always include the foreign key):
+Constrain eager loads to select only needed columns (always include the foreign
+key):
 
 ```php
 $users = User::with(['posts' => function ($query) {
@@ -33,7 +37,8 @@ $users = User::with(['posts' => function ($query) {
 
 ## Prevent Lazy Loading in Development
 
-Enable this in `AppServiceProvider::boot()` to catch N+1 issues during development.
+Enable this in `AppServiceProvider::boot()` to catch N+1 issues during
+development.
 
 ```php
 public function boot(): void
@@ -42,31 +47,36 @@ public function boot(): void
 }
 ```
 
-Throws `LazyLoadingViolationException` when a relationship is accessed without being eager-loaded.
+Throws `LazyLoadingViolationException` when a relationship is accessed without
+being eager-loaded.
 
 ## Select Only Needed Columns
 
 Avoid `SELECT *` — especially when tables have large text or JSON columns.
 
 Incorrect:
+
 ```php
 $posts = Post::with('author')->get();
 ```
 
 Correct:
+
 ```php
 $posts = Post::select('id', 'title', 'user_id', 'created_at')
     ->with(['author:id,name,avatar'])
     ->get();
 ```
 
-When selecting columns on eager-loaded relationships, always include the foreign key column or the relationship won't match.
+When selecting columns on eager-loaded relationships, always include the foreign
+key column or the relationship won't match.
 
 ## Chunk Large Datasets
 
 Never load thousands of records at once. Use chunking for batch processing.
 
 Incorrect:
+
 ```php
 $users = User::all();
 foreach ($users as $user) {
@@ -75,6 +85,7 @@ foreach ($users as $user) {
 ```
 
 Correct:
+
 ```php
 User::where('subscribed', true)->chunk(200, function ($users) {
     foreach ($users as $user) {
@@ -83,7 +94,8 @@ User::where('subscribed', true)->chunk(200, function ($users) {
 });
 ```
 
-Use `chunkById()` when modifying records during iteration — standard `chunk()` uses OFFSET which shifts when rows change:
+Use `chunkById()` when modifying records during iteration — standard `chunk()`
+uses OFFSET which shifts when rows change:
 
 ```php
 User::where('active', false)->chunkById(200, function ($users) {
@@ -93,9 +105,11 @@ User::where('active', false)->chunkById(200, function ($users) {
 
 ## Add Database Indexes
 
-Index columns that appear in `WHERE`, `ORDER BY`, `JOIN`, and `GROUP BY` clauses.
+Index columns that appear in `WHERE`, `ORDER BY`, `JOIN`, and `GROUP BY`
+clauses.
 
 Incorrect:
+
 ```php
 Schema::create('orders', function (Blueprint $table) {
     $table->id();
@@ -106,6 +120,7 @@ Schema::create('orders', function (Blueprint $table) {
 ```
 
 Correct:
+
 ```php
 Schema::create('orders', function (Blueprint $table) {
     $table->id();
@@ -116,13 +131,15 @@ Schema::create('orders', function (Blueprint $table) {
 });
 ```
 
-Add composite indexes for common query patterns (e.g., `WHERE status = ? ORDER BY created_at`).
+Add composite indexes for common query patterns (e.g.,
+`WHERE status = ? ORDER BY created_at`).
 
 ## Use `withCount()` for Counting Relations
 
 Never load entire collections just to count them.
 
 Incorrect:
+
 ```php
 $posts = Post::all();
 foreach ($posts as $post) {
@@ -131,6 +148,7 @@ foreach ($posts as $post) {
 ```
 
 Correct:
+
 ```php
 $posts = Post::withCount('comments')->get();
 foreach ($posts as $post) {
@@ -151,27 +169,32 @@ $posts = Post::withCount([
 
 ## Use `cursor()` for Memory-Efficient Iteration
 
-For read-only iteration over large result sets, `cursor()` loads one record at a time via a PHP generator.
+For read-only iteration over large result sets, `cursor()` loads one record at a
+time via a PHP generator.
 
 Incorrect:
+
 ```php
 $users = User::where('active', true)->get();
 ```
 
 Correct:
+
 ```php
 foreach (User::where('active', true)->cursor() as $user) {
     ProcessUser::dispatch($user->id);
 }
 ```
 
-Use `cursor()` for read-only iteration. Use `chunk()` / `chunkById()` when modifying records.
+Use `cursor()` for read-only iteration. Use `chunk()` / `chunkById()` when
+modifying records.
 
 ## No Queries in Blade Templates
 
 Never execute queries in Blade templates. Pass data from controllers.
 
 Incorrect:
+
 ```blade
 @foreach (User::all() as $user)
     {{ $user->profile->name }}
@@ -179,6 +202,7 @@ Incorrect:
 ```
 
 Correct:
+
 ```php
 // Controller
 $users = User::with('profile')->get();

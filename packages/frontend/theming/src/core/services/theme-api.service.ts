@@ -5,11 +5,11 @@
  *   Fail-soft: logs a warning and continues with local themes on failure.
  */
 
-import { Injectable, Inject } from '@stackra/container';
-import type { ITheme, OnApplicationBootstrap } from '@stackra/contracts';
-import { THEMING_CONFIG, THEME_REGISTRY } from '@stackra/contracts';
-import type { IThemingModuleOptions } from '../interfaces';
-import { ThemeRegistry } from '../registries';
+import { Injectable, Inject } from "@stackra/container";
+import type { ITheme, OnApplicationBootstrap } from "@stackra/contracts";
+import { THEMING_CONFIG, THEME_REGISTRY } from "@stackra/contracts";
+import type { IThemingModuleOptions } from "../interfaces";
+import { ThemeRegistry } from "../registries";
 
 // ============================================================================
 // Service
@@ -33,7 +33,7 @@ export class ThemeApiService implements OnApplicationBootstrap {
    */
   public constructor(
     @Inject(THEMING_CONFIG) private readonly config: IThemingModuleOptions,
-    @Inject(THEME_REGISTRY) private readonly registry: ThemeRegistry
+    @Inject(THEME_REGISTRY) private readonly registry: ThemeRegistry,
   ) {}
 
   // ── Public API ────────────────────────────────────────────────────────────
@@ -61,7 +61,7 @@ export class ThemeApiService implements OnApplicationBootstrap {
     } catch (error: unknown) {
       // Fail-soft: warn and continue with local themes
       console.warn(
-        `[ThemeApi] Bootstrap fetch failed: ${error instanceof Error ? error.message : String(error)}`
+        `[ThemeApi] Bootstrap fetch failed: ${error instanceof Error ? error.message : String(error)}`,
       );
     }
   }
@@ -85,7 +85,7 @@ export class ThemeApiService implements OnApplicationBootstrap {
    */
   private async fetchAndRegister(): Promise<ITheme[]> {
     const api = this.config.api!;
-    const url = api.staticJson ?? `${api.baseUrl ?? '/api/themes'}`;
+    const url = api.staticJson ?? `${api.baseUrl ?? "/api/themes"}`;
     const response = await fetch(url);
     const data = await response.json();
 

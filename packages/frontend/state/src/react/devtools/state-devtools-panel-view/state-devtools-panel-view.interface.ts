@@ -5,7 +5,7 @@
  *   the React body of the `@stackra/devtools` state panel.
  */
 
-import type { StateRegistry } from '@/core/registries/state.registry';
+import type { StateRegistry } from "@/core/registries/state.registry";
 
 /**
  * Props accepted by {@link StateDevtoolsPanelView}.

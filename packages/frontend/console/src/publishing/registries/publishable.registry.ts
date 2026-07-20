@@ -21,7 +21,7 @@ import { BaseRegistry } from "@stackra/support";
 import { DuplicatePublishableTagError } from "../errors/duplicate-tag.error";
 import { InvalidPublishableEntryError } from "../errors/invalid-publishable-entry.error";
 
-import type { IPublishableRegistryEntry, Type } from "@stackra/contracts";
+import type { IPublishableFile, IPublishableRegistryEntry, Type } from "@stackra/contracts";
 
 /**
  * The workspace-wide publishable registry.
@@ -164,7 +164,10 @@ export class PublishableRegistry extends BaseRegistry<string, IPublishableRegist
         sourceName,
       );
     }
-    for (const file of entry.files) {
+    // Loop var typed as IPublishableFile — TS overload-tuple narrowing
+    // widens `args[0]` via `entry`, so we annotate to keep `.from` and
+    // `.to` typed instead of falling to `any`.
+    for (const file of entry.files as readonly IPublishableFile[]) {
       if (typeof file.from !== "string" || file.from.length === 0) {
         throw new InvalidPublishableEntryError(
           "files[].from",

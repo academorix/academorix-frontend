@@ -8,7 +8,14 @@
   "labelConventions": {
     "always": [],
     "commonlyAvailable": ["tenant_id_bucket", "log_name", "subject_type", "event", "outcome"],
-    "forbiddenAsLabels": ["tenant_id", "user_id", "subject_id", "causer_id", "activity_id", "batch_uuid"]
+    "forbiddenAsLabels": [
+      "tenant_id",
+      "user_id",
+      "subject_id",
+      "causer_id",
+      "activity_id",
+      "batch_uuid"
+    ]
   },
   "metrics": [
     {

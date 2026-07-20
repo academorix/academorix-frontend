@@ -8,7 +8,7 @@
  *   at runtime.
  */
 
-import type { CspSource } from '../types/csp-source.type';
+import type { CspSource } from "../types/csp-source.type";
 
 /**
  * Configuration options for `CspModule.forRoot()`.

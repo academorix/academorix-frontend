@@ -4,4 +4,4 @@
  * @description React utility barrel.
  */
 
-export { readDocumentNonce } from './read-document-nonce.util';
+export { readDocumentNonce } from "./read-document-nonce.util";

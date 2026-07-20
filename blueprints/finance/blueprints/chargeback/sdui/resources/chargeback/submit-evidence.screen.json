@@ -53,7 +53,10 @@
           "kind": "Alert",
           "props": { "variant": "info" },
           "children": [
-            { "kind": "Text", "props": { "className": "font-medium", "children": "Evidence pre-populated" } },
+            {
+              "kind": "Text",
+              "props": { "className": "font-medium", "children": "Evidence pre-populated" }
+            },
             {
               "kind": "Text",
               "props": { "className": "text-sm" },
@@ -79,7 +82,10 @@
             "onSubmit": {
               "kind": "http.post",
               "url": "/api/v1/chargebacks/{route.chargeback}/evidence",
-              "onSuccess": { "kind": "navigate", "toExpr": "'/tenant/chargebacks/' + chargeback.id" },
+              "onSuccess": {
+                "kind": "navigate",
+                "toExpr": "'/tenant/chargebacks/' + chargeback.id"
+              },
               "onError": { "kind": "toast", "variant": "danger", "messageFromError": true }
             }
           },
@@ -90,7 +96,10 @@
               "children": [
                 {
                   "kind": "Text",
-                  "props": { "className": "text-xs text-muted mb-2", "children": "The parent invoice PDF + line-item detail." }
+                  "props": {
+                    "className": "text-xs text-muted mb-2",
+                    "children": "The parent invoice PDF + line-item detail."
+                  }
                 }
               ]
             },
@@ -100,7 +109,10 @@
               "children": [
                 {
                   "kind": "Text",
-                  "props": { "className": "text-xs text-muted mb-2", "children": "The receipt from the original payment." }
+                  "props": {
+                    "className": "text-xs text-muted mb-2",
+                    "children": "The receipt from the original payment."
+                  }
                 }
               ]
             },
@@ -110,7 +122,10 @@
               "children": [
                 {
                   "kind": "Text",
-                  "props": { "className": "text-xs text-muted mb-2", "children": "Records that the service was actually delivered — attendance logs, coach signatures, class rosters." }
+                  "props": {
+                    "className": "text-xs text-muted mb-2",
+                    "children": "Records that the service was actually delivered — attendance logs, coach signatures, class rosters."
+                  }
                 }
               ]
             },
@@ -120,7 +135,10 @@
               "children": [
                 {
                   "kind": "Text",
-                  "props": { "className": "text-xs text-muted mb-2", "children": "Your refund policy at the time of purchase (frozen snapshot)." }
+                  "props": {
+                    "className": "text-xs text-muted mb-2",
+                    "children": "Your refund policy at the time of purchase (frozen snapshot)."
+                  }
                 }
               ]
             },
@@ -130,7 +148,10 @@
               "children": [
                 {
                   "kind": "Text",
-                  "props": { "className": "text-xs text-muted mb-2", "children": "Every communication with the customer around the disputed purchase — support tickets, messages, call recordings." }
+                  "props": {
+                    "className": "text-xs text-muted mb-2",
+                    "children": "Every communication with the customer around the disputed purchase — support tickets, messages, call recordings."
+                  }
                 }
               ]
             },
@@ -140,18 +161,26 @@
               "children": [
                 {
                   "kind": "Text",
-                  "props": { "className": "text-xs text-muted mb-2", "children": "Terms-of-service acceptance signature + SCA compliance proof (IP + device fingerprint hash)." }
+                  "props": {
+                    "className": "text-xs text-muted mb-2",
+                    "children": "Terms-of-service acceptance signature + SCA compliance proof (IP + device fingerprint hash)."
+                  }
                 }
               ]
             },
             {
               "kind": "Fieldset",
               "props": { "legend": "Shipping docs (optional)" },
-              "bindings": { "hidden": { "$expr": "!(evidence_draft && evidence_draft.shipping_docs)" } },
+              "bindings": {
+                "hidden": { "$expr": "!(evidence_draft && evidence_draft.shipping_docs)" }
+              },
               "children": [
                 {
                   "kind": "Text",
-                  "props": { "className": "text-xs text-muted mb-2", "children": "Tracking number + delivery confirmation (physical goods only)." }
+                  "props": {
+                    "className": "text-xs text-muted mb-2",
+                    "children": "Tracking number + delivery confirmation (physical goods only)."
+                  }
                 }
               ]
             },
@@ -162,20 +191,36 @@
               "children": [
                 {
                   "kind": "Text",
-                  "props": { "className": "text-xs text-muted mb-2", "children": "Compelling Evidence 3.0 — two prior legitimate purchases with matching IP + device fingerprint. Dramatically improves win rate for eligible Visa fraud disputes." }
+                  "props": {
+                    "className": "text-xs text-muted mb-2",
+                    "children": "Compelling Evidence 3.0 — two prior legitimate purchases with matching IP + device fingerprint. Dramatically improves win rate for eligible Visa fraud disputes."
+                  }
                 }
               ]
             },
             {
               "kind": "TextArea",
-              "props": { "label": "Additional context (optional)", "name": "uncategorized_text", "placeholder": "Anything else the bank should know about this dispute..." }
+              "props": {
+                "label": "Additional context (optional)",
+                "name": "uncategorized_text",
+                "placeholder": "Anything else the bank should know about this dispute..."
+              }
             },
             {
               "kind": "Alert",
               "props": { "variant": "warning" },
               "children": [
-                { "kind": "Text", "props": { "className": "font-medium", "children": "PCI-DSS reminder" } },
-                { "kind": "Text", "props": { "className": "text-sm", "children": "Never include card numbers, CVVs, or magnetic stripe data. Only tokens, last-4 digits, and BINs are permitted. Evidence containing PAN patterns will be refused." } }
+                {
+                  "kind": "Text",
+                  "props": { "className": "font-medium", "children": "PCI-DSS reminder" }
+                },
+                {
+                  "kind": "Text",
+                  "props": {
+                    "className": "text-sm",
+                    "children": "Never include card numbers, CVVs, or magnetic stripe data. Only tokens, last-4 digits, and BINs are permitted. Evidence containing PAN patterns will be refused."
+                  }
+                }
               ]
             },
             {
@@ -185,7 +230,12 @@
                 {
                   "kind": "Button",
                   "props": { "variant": "outline", "children": "Cancel" },
-                  "actions": { "onPress": { "kind": "navigate", "toExpr": "'/tenant/chargebacks/' + chargeback.id" } }
+                  "actions": {
+                    "onPress": {
+                      "kind": "navigate",
+                      "toExpr": "'/tenant/chargebacks/' + chargeback.id"
+                    }
+                  }
                 },
                 {
                   "kind": "Button",

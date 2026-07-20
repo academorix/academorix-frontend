@@ -8,10 +8,29 @@
   "params": {
     "name": { "type": "string", "required": true },
     "label": { "type": "string", "required": false, "default": "Guardian" },
-    "athlete_id": { "type": "string", "required": true, "description": "The athlete whose guardians to show." },
-    "requires_custody": { "type": "boolean", "required": false, "default": false, "description": "When true, filters to guardians with has_legal_custody=true." },
-    "requires_medical_authorisation": { "type": "boolean", "required": false, "default": false, "description": "When true, filters to guardians with can_authorise_medical_care=true." },
-    "requires_pickup": { "type": "boolean", "required": false, "default": false, "description": "When true, filters to guardians with can_pickup=true." }
+    "athlete_id": {
+      "type": "string",
+      "required": true,
+      "description": "The athlete whose guardians to show."
+    },
+    "requires_custody": {
+      "type": "boolean",
+      "required": false,
+      "default": false,
+      "description": "When true, filters to guardians with has_legal_custody=true."
+    },
+    "requires_medical_authorisation": {
+      "type": "boolean",
+      "required": false,
+      "default": false,
+      "description": "When true, filters to guardians with can_authorise_medical_care=true."
+    },
+    "requires_pickup": {
+      "type": "boolean",
+      "required": false,
+      "default": false,
+      "description": "When true, filters to guardians with can_pickup=true."
+    }
   },
   "dataSources": [
     {
@@ -72,7 +91,9 @@
                                 {
                                   "kind": "Text",
                                   "props": { "className": "text-sm font-medium" },
-                                  "bindings": { "children": { "$ref": "$item.guardian_display_name" } }
+                                  "bindings": {
+                                    "children": { "$ref": "$item.guardian_display_name" }
+                                  }
                                 },
                                 {
                                   "kind": "Chip",
@@ -90,8 +111,12 @@
                               "bindings": {
                                 "has_legal_custody": { "$ref": "$item.has_legal_custody" },
                                 "can_pickup": { "$ref": "$item.can_pickup" },
-                                "can_receive_communications": { "$ref": "$item.can_receive_communications" },
-                                "can_authorise_medical_care": { "$ref": "$item.can_authorise_medical_care" }
+                                "can_receive_communications": {
+                                  "$ref": "$item.can_receive_communications"
+                                },
+                                "can_authorise_medical_care": {
+                                  "$ref": "$item.can_authorise_medical_care"
+                                }
                               }
                             }
                           ]

@@ -27,11 +27,11 @@
 
 import { describe, expect, it, beforeEach, vi } from "vitest";
 
-import { PublishableConsumer } from "@/publishing/publishable.consumer";
-import { PublishableLoader } from "@/publishing/services/publishable-loader.service";
-import { PublishableRegistry } from "@/publishing/registries/publishable.registry";
-
 import type { IDiscoveryProvider, IDiscoveryService, Type } from "@stackra/contracts";
+
+import { PublishableConsumer } from "@/publishing/publishable.consumer";
+import { PublishableRegistry } from "@/publishing/registries/publishable.registry";
+import { PublishableLoader } from "@/publishing/services/publishable-loader.service";
 
 // ────────────────────────────────────────────────────────────────
 // Discovery-service stub
@@ -68,9 +68,7 @@ class ModuleWithPublishables {
   public static readonly PACKAGE_ROOT = "/abs/module-a";
   public static readonly publishSpy = vi.fn();
 
-  public static configurePublishables(consumer: {
-    publish: (entry: unknown) => unknown;
-  }): void {
+  public static configurePublishables(consumer: { publish: (entry: unknown) => unknown }): void {
     // Track the invocation for the assertions below.
     ModuleWithPublishables.publishSpy(consumer);
     consumer.publish({
@@ -127,9 +125,12 @@ class ModuleThatInspectsThis {
   public static readonly PACKAGE_ROOT = "/abs/this-check";
   public static readonly seenThis: { value: unknown } = { value: null };
 
-  public static configurePublishables(this: unknown, consumer: {
-    publish: (entry: unknown) => unknown;
-  }): void {
+  public static configurePublishables(
+    this: unknown,
+    consumer: {
+      publish: (entry: unknown) => unknown;
+    },
+  ): void {
     // Capture the `this` binding so the test can verify it's the class.
     ModuleThatInspectsThis.seenThis.value = this;
     consumer.publish({
@@ -154,9 +155,7 @@ describe("PublishableLoader", () => {
 
   describe("iteration + duck-typing", () => {
     it("invokes `configurePublishables` on every module that has one", () => {
-      const discovery = new DiscoveryStub([
-        ModuleWithPublishables as unknown as Type<unknown>,
-      ]);
+      const discovery = new DiscoveryStub([ModuleWithPublishables as unknown as Type<unknown>]);
       const loader = new PublishableLoader(discovery, registry);
       loader.onApplicationBootstrap();
 
@@ -165,9 +164,7 @@ describe("PublishableLoader", () => {
     });
 
     it("silently skips modules WITHOUT a `configurePublishables` static", () => {
-      const discovery = new DiscoveryStub([
-        ModuleWithoutPublishables as unknown as Type<unknown>,
-      ]);
+      const discovery = new DiscoveryStub([ModuleWithoutPublishables as unknown as Type<unknown>]);
       const loader = new PublishableLoader(discovery, registry);
       // No error, no log — the loader simply moves on.
       expect(() => loader.onApplicationBootstrap()).not.toThrow();
@@ -253,9 +250,7 @@ describe("PublishableLoader", () => {
 
   describe("this-binding", () => {
     it("preserves `this` inside `configurePublishables` so sibling statics still resolve", () => {
-      const discovery = new DiscoveryStub([
-        ModuleThatInspectsThis as unknown as Type<unknown>,
-      ]);
+      const discovery = new DiscoveryStub([ModuleThatInspectsThis as unknown as Type<unknown>]);
       const loader = new PublishableLoader(discovery, registry);
       loader.onApplicationBootstrap();
 
@@ -270,9 +265,7 @@ describe("PublishableLoader", () => {
       // `ModuleThatThrowsInside` publishes an entry with a bad tag
       // (`not_kebab_case`). The registry throws inside the module's
       // `configurePublishables` — the loader must NOT swallow it.
-      const discovery = new DiscoveryStub([
-        ModuleThatThrowsInside as unknown as Type<unknown>,
-      ]);
+      const discovery = new DiscoveryStub([ModuleThatThrowsInside as unknown as Type<unknown>]);
       const loader = new PublishableLoader(discovery, registry);
       expect(() => loader.onApplicationBootstrap()).toThrow(/kebab-case/);
     });

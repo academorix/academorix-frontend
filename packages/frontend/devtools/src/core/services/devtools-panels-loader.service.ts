@@ -14,7 +14,7 @@
  *   we never walk the entire provider list by hand.
  */
 
-import { Inject, Injectable, Optional, type OnApplicationBootstrap } from '@stackra/container';
+import { Inject, Injectable, Optional, type OnApplicationBootstrap } from "@stackra/container";
 import {
   DEVTOOLS_PANEL_METADATA_KEY,
   DEVTOOLS_REGISTRY,
@@ -22,7 +22,7 @@ import {
   type IDevtoolsPanel,
   type IDevtoolsPanelsRegistry,
   type IDiscoveryService,
-} from '@stackra/contracts';
+} from "@stackra/contracts";
 
 /**
  * Structural type-guard for the `IDevtoolsPanel` shape. Runs on the
@@ -33,14 +33,14 @@ import {
  * state on the instance.
  */
 function isPanel(value: unknown): value is IDevtoolsPanel {
-  if (!value || typeof value !== 'object') return false;
+  if (!value || typeof value !== "object") return false;
   const cast = value as Partial<IDevtoolsPanel>;
   return (
-    typeof cast.id === 'string' &&
-    typeof cast.title === 'string' &&
-    typeof cast.view === 'object' &&
+    typeof cast.id === "string" &&
+    typeof cast.title === "string" &&
+    typeof cast.view === "object" &&
     cast.view !== null &&
-    'type' in cast.view
+    "type" in cast.view
   );
 }
 
@@ -61,7 +61,7 @@ export class DevtoolsPanelsLoaderService implements OnApplicationBootstrap {
    */
   public constructor(
     @Inject(DEVTOOLS_REGISTRY) private readonly registry: IDevtoolsPanelsRegistry,
-    @Optional() @Inject(DISCOVERY_SERVICE) private readonly discovery?: IDiscoveryService
+    @Optional() @Inject(DISCOVERY_SERVICE) private readonly discovery?: IDiscoveryService,
   ) {}
 
   /**

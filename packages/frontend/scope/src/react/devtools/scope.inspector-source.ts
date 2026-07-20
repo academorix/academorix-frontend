@@ -15,30 +15,30 @@
  *   `DevtoolsModule.forInspectorSource([ScopeInspectorSource])`.
  */
 
-import { Injectable } from '@stackra/container';
-import { collect } from '@stackra/support';
-import { DevtoolsInspectorSource } from '@stackra/devtools';
-import type { IDevtoolsInspectorRegion, IDevtoolsInspectorRegionSource } from '@stackra/contracts';
+import { Injectable } from "@stackra/container";
+import { collect } from "@stackra/support";
+import { DevtoolsInspectorSource } from "@stackra/devtools";
+import type { IDevtoolsInspectorRegion, IDevtoolsInspectorRegionSource } from "@stackra/contracts";
 
 /** CSS selector that catches every scope region marker. */
-const SCOPE_REGION_SELECTOR = '[data-scope]';
+const SCOPE_REGION_SELECTOR = "[data-scope]";
 
 /**
  * The scope inspector source — one region per `[data-scope]` element.
  */
 @Injectable()
 @DevtoolsInspectorSource({
-  id: 'scope',
-  panelId: 'scope',
-  label: 'Scope regions',
+  id: "scope",
+  panelId: "scope",
+  label: "Scope regions",
 })
 export class ScopeInspectorSource implements IDevtoolsInspectorRegionSource {
   /** @inheritdoc */
-  public readonly id = 'scope';
+  public readonly id = "scope";
   /** @inheritdoc */
-  public readonly label = 'Scope regions';
+  public readonly label = "Scope regions";
   /** @inheritdoc */
-  public readonly panelId = 'scope';
+  public readonly panelId = "scope";
 
   /**
    * Enumerate every scope region currently in the DOM.
@@ -48,7 +48,7 @@ export class ScopeInspectorSource implements IDevtoolsInspectorRegionSource {
    * client-only flow.
    */
   public collect(): readonly IDevtoolsInspectorRegion[] {
-    if (typeof document === 'undefined') return [];
+    if (typeof document === "undefined") return [];
     // `collect(...)` from @stackra/support wraps the NodeList in a
     // collection with a fluent map API. We keep it single-hop here —
     // one map to build the region shape — but the same pipeline
@@ -73,7 +73,7 @@ export class ScopeInspectorSource implements IDevtoolsInspectorRegionSource {
     return {
       id: `scope-${index}`,
       label: `${rawLabel} scope`,
-      panelId: 'scope',
+      panelId: "scope",
       // Lazy accessor — measurement only pays its cost when the
       // overlay actually renders the region.
       bounds: (): DOMRect | null => {

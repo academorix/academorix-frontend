@@ -7,17 +7,17 @@
  *   via `meta.skipTenant: true`.
  */
 
-import { Inject, Optional } from '@stackra/container';
+import { Inject, Optional } from "@stackra/container";
 
 import type {
   IHttpContext,
   IHttpMiddleware,
   IHttpNextFunction,
   IHttpResponse,
-} from '@stackra/contracts';
+} from "@stackra/contracts";
 
-import { HttpMiddleware } from '../decorators/http-middleware.decorator';
-import { SCOPE_CONTEXT_STORE, type IScopeContextStore } from '../integrations';
+import { HttpMiddleware } from "../decorators/http-middleware.decorator";
+import { SCOPE_CONTEXT_STORE, type IScopeContextStore } from "../integrations";
 
 /**
  * Tenant header middleware.
@@ -35,13 +35,13 @@ import { SCOPE_CONTEXT_STORE, type IScopeContextStore } from '../integrations';
  * http.get('/public/health', { meta: { skipTenant: true } });
  * ```
  */
-@HttpMiddleware({ priority: 15, name: 'tenant-header' })
+@HttpMiddleware({ priority: 15, name: "tenant-header" })
 export class TenantHeaderMiddleware implements IHttpMiddleware {
   /**
    * @param scopeStore - Optional scope context store for reading current tenant.
    */
   public constructor(
-    @Optional() @Inject(SCOPE_CONTEXT_STORE) private readonly scopeStore?: IScopeContextStore
+    @Optional() @Inject(SCOPE_CONTEXT_STORE) private readonly scopeStore?: IScopeContextStore,
   ) {}
 
   /**
@@ -56,7 +56,7 @@ export class TenantHeaderMiddleware implements IHttpMiddleware {
       return next(context);
     }
 
-    if (context.request.meta?.['skipTenant'] === true) {
+    if (context.request.meta?.["skipTenant"] === true) {
       return next(context);
     }
 
@@ -64,7 +64,7 @@ export class TenantHeaderMiddleware implements IHttpMiddleware {
     if (scopeContext?.ownerId) {
       context.request.headers = {
         ...context.request.headers,
-        'X-Tenant-Id': scopeContext.ownerId,
+        "X-Tenant-Id": scopeContext.ownerId,
       };
     }
 

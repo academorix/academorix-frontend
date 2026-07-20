@@ -103,7 +103,9 @@
                     "name": "filter[active_only]",
                     "defaultValue": true
                   },
-                  "actions": { "onChange": { "kind": "data.applyFilter", "source": "resourceGrants" } }
+                  "actions": {
+                    "onChange": { "kind": "data.applyFilter", "source": "resourceGrants" }
+                  }
                 },
                 {
                   "kind": "Select",
@@ -117,7 +119,9 @@
                     { "key": "allow", "label": "Allow only" },
                     { "key": "deny", "label": "Deny only" }
                   ],
-                  "actions": { "onChange": { "kind": "data.applyFilter", "source": "resourceGrants" } }
+                  "actions": {
+                    "onChange": { "kind": "data.applyFilter", "source": "resourceGrants" }
+                  }
                 }
               ]
             },

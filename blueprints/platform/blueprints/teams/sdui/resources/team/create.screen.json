@@ -53,11 +53,21 @@
               "children": [
                 {
                   "kind": "TextField",
-                  "props": { "name": "name", "label": "Team name", "required": true, "maxLength": 128 }
+                  "props": {
+                    "name": "name",
+                    "label": "Team name",
+                    "required": true,
+                    "maxLength": 128
+                  }
                 },
                 {
                   "kind": "TextField",
-                  "props": { "name": "slug", "label": "Slug", "helpText": "URL-friendly identifier. Auto-generated if omitted.", "maxLength": 128 }
+                  "props": {
+                    "name": "slug",
+                    "label": "Slug",
+                    "helpText": "URL-friendly identifier. Auto-generated if omitted.",
+                    "maxLength": 128
+                  }
                 },
                 {
                   "kind": "TextArea",
@@ -65,7 +75,12 @@
                 },
                 {
                   "kind": "ComboBox",
-                  "props": { "name": "team_type", "label": "Team type", "required": true, "menuTrigger": "focus" },
+                  "props": {
+                    "name": "team_type",
+                    "label": "Team type",
+                    "required": true,
+                    "menuTrigger": "focus"
+                  },
                   "props_items": [
                     { "id": "squad", "label": "Squad" },
                     { "id": "class", "label": "Class" },
@@ -77,7 +92,12 @@
                 },
                 {
                   "kind": "TextField",
-                  "props": { "name": "sport_key", "label": "Sport", "helpText": "e.g. football, basketball, swimming. Free-text pre-Wave-3.", "maxLength": 32 }
+                  "props": {
+                    "name": "sport_key",
+                    "label": "Sport",
+                    "helpText": "e.g. football, basketball, swimming. Free-text pre-Wave-3.",
+                    "maxLength": 32
+                  }
                 }
               ]
             },
@@ -87,12 +107,23 @@
               "children": [
                 {
                   "kind": "ComboBox",
-                  "props": { "name": "organization_id", "label": "Organization", "required": true, "menuTrigger": "focus" },
+                  "props": {
+                    "name": "organization_id",
+                    "label": "Organization",
+                    "required": true,
+                    "menuTrigger": "focus"
+                  },
                   "bindings": { "items": { "$ref": "organizations" } }
                 },
                 {
                   "kind": "ComboBox",
-                  "props": { "name": "branch_id", "label": "Branch", "required": true, "menuTrigger": "focus", "helpText": "Immutable after create." },
+                  "props": {
+                    "name": "branch_id",
+                    "label": "Branch",
+                    "required": true,
+                    "menuTrigger": "focus",
+                    "helpText": "Immutable after create."
+                  },
                   "bindings": { "items": { "$ref": "branches" } }
                 }
               ]
@@ -103,7 +134,11 @@
               "children": [
                 {
                   "kind": "ComboBox",
-                  "props": { "name": "gender_category", "label": "Gender category", "menuTrigger": "focus" },
+                  "props": {
+                    "name": "gender_category",
+                    "label": "Gender category",
+                    "menuTrigger": "focus"
+                  },
                   "props_items": [
                     { "id": "any", "label": "Any (open enrollment)" },
                     { "id": "male", "label": "Male" },
@@ -127,7 +162,11 @@
                 },
                 {
                   "kind": "ComboBox",
-                  "props": { "name": "competitive_level", "label": "Competitive level", "menuTrigger": "focus" },
+                  "props": {
+                    "name": "competitive_level",
+                    "label": "Competitive level",
+                    "menuTrigger": "focus"
+                  },
                   "props_items": [
                     { "id": "recreational", "label": "Recreational" },
                     { "id": "beginner", "label": "Beginner" },
@@ -149,11 +188,22 @@
                   "children": [
                     {
                       "kind": "NumberField",
-                      "props": { "name": "capacity", "label": "Roster capacity", "min": 1, "max": 500, "helpText": "Leave blank for no cap." }
+                      "props": {
+                        "name": "capacity",
+                        "label": "Roster capacity",
+                        "min": 1,
+                        "max": 500,
+                        "helpText": "Leave blank for no cap."
+                      }
                     },
                     {
                       "kind": "NumberField",
-                      "props": { "name": "capacity_waitlist", "label": "Waitlist size", "min": 0, "max": 100 }
+                      "props": {
+                        "name": "capacity_waitlist",
+                        "label": "Waitlist size",
+                        "min": 0,
+                        "max": 100
+                      }
                     }
                   ]
                 }
@@ -169,11 +219,20 @@
                   "children": [
                     {
                       "kind": "TextField",
-                      "props": { "name": "primary_color", "label": "Primary colour", "helpText": "Hex, e.g. #1a2b3c", "pattern": "^#[0-9A-Fa-f]{6}$" }
+                      "props": {
+                        "name": "primary_color",
+                        "label": "Primary colour",
+                        "helpText": "Hex, e.g. #1a2b3c",
+                        "pattern": "^#[0-9A-Fa-f]{6}$"
+                      }
                     },
                     {
                       "kind": "TextField",
-                      "props": { "name": "secondary_color", "label": "Secondary colour", "pattern": "^#[0-9A-Fa-f]{6}$" }
+                      "props": {
+                        "name": "secondary_color",
+                        "label": "Secondary colour",
+                        "pattern": "^#[0-9A-Fa-f]{6}$"
+                      }
                     }
                   ]
                 },

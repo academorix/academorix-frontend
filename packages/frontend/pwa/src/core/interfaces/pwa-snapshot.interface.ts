@@ -9,9 +9,9 @@
  *   at least one field changes.
  */
 
-import type { IPwaAttribution, PwaDisplayMode } from './pwa-attribution.interface';
-import type { IPwaInstallState } from './pwa-install-state.interface';
-import type { IPwaUpdateState } from './pwa-update-state.interface';
+import type { IPwaAttribution, PwaDisplayMode } from "./pwa-attribution.interface";
+import type { IPwaInstallState } from "./pwa-install-state.interface";
+import type { IPwaUpdateState } from "./pwa-update-state.interface";
 
 /**
  * Referentially stable snapshot of the PWA service's observable state.

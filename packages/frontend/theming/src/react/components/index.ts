@@ -4,4 +4,4 @@
  * @description Barrel export for theming React components.
  */
 
-export { ThemeScript, type ThemeScriptProps } from './theme-script';
+export { ThemeScript, type ThemeScriptProps } from "./theme-script";

@@ -11,19 +11,19 @@
  *   `ISettingField` shape.
  */
 
-import { defineMetadata, getMetadata } from '@vivtel/metadata';
+import { defineMetadata, getMetadata } from "@vivtel/metadata";
 import {
   FIELD_METADATA_KEY,
   GROUP_METADATA_KEY,
   type ISettingField,
   type ISettingVisualGroup,
   type Type,
-} from '@stackra/contracts';
+} from "@stackra/contracts";
 
 /**
  * Options accepted by the `@Group()` property decorator.
  */
-export type IGroupOptions = Omit<ISettingVisualGroup, 'fieldKeys'>;
+export type IGroupOptions = Omit<ISettingVisualGroup, "fieldKeys">;
 
 /**
  * Internal representation of the visual group as it accumulates on

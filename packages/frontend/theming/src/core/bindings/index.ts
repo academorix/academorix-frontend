@@ -4,4 +4,4 @@
  * @description Barrel export for theming bindings.
  */
 
-export { NullThemeBindings } from './null-theme.bindings';
+export { NullThemeBindings } from "./null-theme.bindings";

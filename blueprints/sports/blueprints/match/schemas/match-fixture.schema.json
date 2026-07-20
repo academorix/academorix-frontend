@@ -155,13 +155,34 @@
       "updated_at": { "type": "timestamptz", "nullable": false }
     },
     "indexes": [
-      { "columns": ["tenant_id", "season_id", "kickoff_at"], "name": "match_fixtures_season_kickoff_idx" },
-      { "columns": ["tenant_id", "team_id", "status"], "name": "match_fixtures_team_status_idx", "predicate": "team_id IS NOT NULL" },
-      { "columns": ["tenant_id", "competition_id"], "name": "match_fixtures_competition_idx", "predicate": "competition_id IS NOT NULL" },
-      { "columns": ["tenant_id", "branch_id", "kickoff_at"], "name": "match_fixtures_branch_kickoff_idx" },
+      {
+        "columns": ["tenant_id", "season_id", "kickoff_at"],
+        "name": "match_fixtures_season_kickoff_idx"
+      },
+      {
+        "columns": ["tenant_id", "team_id", "status"],
+        "name": "match_fixtures_team_status_idx",
+        "predicate": "team_id IS NOT NULL"
+      },
+      {
+        "columns": ["tenant_id", "competition_id"],
+        "name": "match_fixtures_competition_idx",
+        "predicate": "competition_id IS NOT NULL"
+      },
+      {
+        "columns": ["tenant_id", "branch_id", "kickoff_at"],
+        "name": "match_fixtures_branch_kickoff_idx"
+      },
       { "columns": ["tenant_id", "status"], "name": "match_fixtures_status_idx" },
-      { "columns": ["tenant_id", "sport_key", "kickoff_at"], "name": "match_fixtures_sport_kickoff_idx" },
-      { "columns": ["tenant_id", "opponent_logo_id"], "name": "match_fixtures_opponent_logo_idx", "predicate": "opponent_logo_id IS NOT NULL" }
+      {
+        "columns": ["tenant_id", "sport_key", "kickoff_at"],
+        "name": "match_fixtures_sport_kickoff_idx"
+      },
+      {
+        "columns": ["tenant_id", "opponent_logo_id"],
+        "name": "match_fixtures_opponent_logo_idx",
+        "predicate": "opponent_logo_id IS NOT NULL"
+      }
     ]
   },
   "required": [
@@ -193,7 +214,15 @@
     "kickoff_at": { "type": "string", "format": "date-time" },
     "status": {
       "type": "string",
-      "enum": ["SCHEDULED", "LINEUP_SET", "IN_PROGRESS", "COMPLETED", "POSTPONED", "CANCELLED", "ABANDONED"]
+      "enum": [
+        "SCHEDULED",
+        "LINEUP_SET",
+        "IN_PROGRESS",
+        "COMPLETED",
+        "POSTPONED",
+        "CANCELLED",
+        "ABANDONED"
+      ]
     },
     "lineup_published_at": { "type": ["string", "null"], "format": "date-time" },
     "result_summary_json": { "type": ["object", "null"] },

@@ -46,8 +46,12 @@
           "kind": "Text",
           "props": { "className": "text-xs text-muted" },
           "bindings": {
-            "hidden": { "$expr": "!props.provider_config.circuit_breaker_open_until || props.provider_config.circuit_breaker_open_until <= $now" },
-            "children": { "$expr": "'Reopens ' + $relativeTime(props.provider_config.circuit_breaker_open_until)" }
+            "hidden": {
+              "$expr": "!props.provider_config.circuit_breaker_open_until || props.provider_config.circuit_breaker_open_until <= $now"
+            },
+            "children": {
+              "$expr": "'Reopens ' + $relativeTime(props.provider_config.circuit_breaker_open_until)"
+            }
           }
         },
         {
@@ -55,7 +59,9 @@
           "props": { "className": "text-xs text-muted" },
           "bindings": {
             "hidden": { "$expr": "props.provider_config.consecutive_failure_count === 0" },
-            "children": { "$expr": "props.provider_config.consecutive_failure_count + '/' + props.provider_config.circuit_breaker_config.failure_threshold + ' failures'" }
+            "children": {
+              "$expr": "props.provider_config.consecutive_failure_count + '/' + props.provider_config.circuit_breaker_config.failure_threshold + ' failures'"
+            }
           }
         }
       ]

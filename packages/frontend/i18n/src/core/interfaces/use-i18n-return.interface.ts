@@ -4,7 +4,7 @@
  * @description Return type of `useI18n()`.
  */
 
-import type { Path, TranslateOptions } from '@stackra/contracts';
+import type { Path, TranslateOptions } from "@stackra/contracts";
 
 /**
  * Return type of `useI18n()`.
@@ -15,7 +15,7 @@ export interface UseI18nReturn<K = Record<string, unknown>> {
   /** Currently active locale code. */
   locale: string;
   /** Text direction for the current locale. */
-  dir: 'ltr' | 'rtl';
+  dir: "ltr" | "rtl";
   /** Whether the current locale is right-to-left. */
   isRTL: boolean;
   /** List of supported locale codes. */

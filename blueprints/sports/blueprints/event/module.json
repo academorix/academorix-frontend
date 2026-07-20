@@ -40,9 +40,7 @@
     "wave-3b"
   ],
   "priority": 62,
-  "providers": [
-    "Academorix\\Sports\\Event\\Providers\\EventServiceProvider"
-  ],
+  "providers": ["Academorix\\Sports\\Event\\Providers\\EventServiceProvider"],
   "files": [],
   "dependencies": [
     "foundation",
@@ -67,21 +65,10 @@
     "marketing"
   ],
   "contributes": {
-    "traits": [
-      "BelongsToEvent",
-      "HasEventFacilities"
-    ],
-    "attributes": [
-      "AsEventListener"
-    ],
-    "blueprints": [
-      "events",
-      "event_facilities"
-    ],
-    "middleware": [
-      "event.resolve_active",
-      "event.enforce_registration_open"
-    ],
+    "traits": ["BelongsToEvent", "HasEventFacilities"],
+    "attributes": ["AsEventListener"],
+    "blueprints": ["events", "event_facilities"],
+    "middleware": ["event.resolve_active", "event.enforce_registration_open"],
     "events": [
       "EventCreated",
       "EventUpdated",
@@ -108,14 +95,8 @@
       "EventReminderScheduled",
       "EventLivestreamActivated"
     ],
-    "policies": [
-      "EventPolicy",
-      "EventFacilityPolicy"
-    ],
-    "hooks": [
-      "PreventEventOrphansOnTenantErased",
-      "CascadeEventFacilitiesOnFacilityRetired"
-    ],
+    "policies": ["EventPolicy", "EventFacilityPolicy"],
+    "hooks": ["PreventEventOrphansOnTenantErased", "CascadeEventFacilitiesOnFacilityRetired"],
     "commands": [
       "event:list",
       "event:describe",
@@ -162,10 +143,7 @@
       "event.{eventId}.registration",
       "event.{eventId}.livestream"
     ],
-    "observers": [
-      "EventObserver",
-      "EventFacilityObserver"
-    ],
+    "observers": ["EventObserver", "EventFacilityObserver"],
     "rules": [
       "valid_event_type",
       "valid_event_format",
@@ -191,16 +169,9 @@
       "EventFacilityPurpose"
     ],
     "views": [],
-    "lang": [
-      "event"
-    ],
-    "config": [
-      "event"
-    ],
-    "macros": [
-      "Request::activeEvent",
-      "Request::activeEventId"
-    ],
+    "lang": ["event"],
+    "config": ["event"],
+    "macros": ["Request::activeEvent", "Request::activeEventId"],
     "bindings": [
       "EventRepository",
       "EventFacilityRepository",
@@ -212,10 +183,7 @@
       "EventCancellationBroadcaster",
       "EventPricingChangeGate"
     ],
-    "resources": [
-      "event",
-      "event-facility"
-    ]
+    "resources": ["event", "event-facility"]
   },
   "hosts": {
     "tenant": {

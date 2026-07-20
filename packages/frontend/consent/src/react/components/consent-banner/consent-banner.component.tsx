@@ -10,20 +10,20 @@
  *   DI `ConsentRegistry`.
  */
 
-import { useState } from 'react';
-import { Button, Card, Switch } from '@stackra/ui/react';
-import { useInject } from '@stackra/container/react';
+import { useState } from "react";
+import { Button, Card, Switch } from "@stackra/ui/react";
+import { useInject } from "@stackra/container/react";
 
-import { CONSENT_REGISTRY } from '@/core/constants';
-import { useConsent, useConsentBanner } from '@/react/hooks';
-import type { ITranslatableLabel } from '@stackra/contracts';
-import type { ConsentRegistry } from '@/core/services';
-import type { ConsentBannerProps } from '@/react/interfaces';
+import { CONSENT_REGISTRY } from "@/core/constants";
+import { useConsent, useConsentBanner } from "@/react/hooks";
+import type { ITranslatableLabel } from "@stackra/contracts";
+import type { ConsentRegistry } from "@/core/services";
+import type { ConsentBannerProps } from "@/react/interfaces";
 
 /** Resolve a plain or locale-keyed label to a single string. */
 function resolveLabel(label: ITranslatableLabel, locale: string): string {
-  if (typeof label === 'string') return label;
-  return label[locale] ?? label.en ?? Object.values(label)[0] ?? '';
+  if (typeof label === "string") return label;
+  return label[locale] ?? label.en ?? Object.values(label)[0] ?? "";
 }
 
 /**
@@ -39,10 +39,10 @@ function resolveLabel(label: ITranslatableLabel, locale: string): string {
  * ```
  */
 export function ConsentBanner({
-  locale = 'en',
+  locale = "en",
   className,
-  title = 'We value your privacy',
-  description = 'We use cookies to enhance your experience, analyze traffic, and personalize content. Choose which categories you allow.',
+  title = "We value your privacy",
+  description = "We use cookies to enhance your experience, analyze traffic, and personalize content. Choose which categories you allow.",
 }: ConsentBannerProps = {}) {
   const { isVisible, accept, reject } = useConsentBanner();
   const { hasConsent, grantConsent, revokeConsent } = useConsent();
@@ -88,7 +88,7 @@ export function ConsentBanner({
 
         <Card.Footer className="flex flex-wrap items-center justify-end gap-2">
           <Button variant="ghost" onPress={() => setShowDetails((prev) => !prev)}>
-            {showDetails ? 'Hide details' : 'Customize'}
+            {showDetails ? "Hide details" : "Customize"}
           </Button>
           <Button variant="outline" onPress={reject}>
             Reject all

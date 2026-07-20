@@ -16,8 +16,14 @@
   "retention": [
     {
       "entity": "MarketingEvent",
-      "hot": { "days": 365, "description": "Active + first year for ROAS reporting, support queries, dispute resolution" },
-      "cold": { "days": "2555 (7 years)", "description": "Financial-audit retention. Enterprise tenants with marketing_extended_retention entitlement: 3650 (10 years)." },
+      "hot": {
+        "days": 365,
+        "description": "Active + first year for ROAS reporting, support queries, dispute resolution"
+      },
+      "cold": {
+        "days": "2555 (7 years)",
+        "description": "Financial-audit retention. Enterprise tenants with marketing_extended_retention entitlement: 3650 (10 years)."
+      },
       "purge": {
         "trigger": "> 7 years past created_at (10 years for Enterprise) AND status IS terminal (delivered / partially_delivered / failed / suppressed_by_consent / superseded)",
         "action": "hard delete via PurgeExpiredMarketingDataJob",
@@ -27,7 +33,10 @@
     {
       "entity": "MarketingDelivery",
       "hot": { "days": 90, "description": "Recent-attempt debugging window" },
-      "cold": { "days": "730 (2 years)", "description": "Support-debugging retention. Enterprise does NOT extend delivery retention — the audit trail lives on marketing_events." },
+      "cold": {
+        "days": "730 (2 years)",
+        "description": "Support-debugging retention. Enterprise does NOT extend delivery retention — the audit trail lives on marketing_events."
+      },
       "purge": {
         "trigger": "> 2 years past created_at",
         "action": "hard delete",
@@ -47,7 +56,10 @@
     {
       "entity": "MarketingDeadLetter",
       "hot": { "days": "indefinite while unresolved" },
-      "cold": { "days": "indefinite", "description": "Dead-letter rows are NEVER auto-purged. Every unresolved P1 preserved for the tenant's lifetime + beyond." },
+      "cold": {
+        "days": "indefinite",
+        "description": "Dead-letter rows are NEVER auto-purged. Every unresolved P1 preserved for the tenant's lifetime + beyond."
+      },
       "purge": {
         "trigger": "TenantErased cascade (via FK CASCADE) — never scheduled/timed",
         "action": "hard delete (only on tenant erasure)",

@@ -1,7 +1,7 @@
 {
   "name": "@stackra/storage",
   "version": "0.1.0",
-  "description": "Unified KV storage layer for the Stackra framework — one IStorage contract with pluggable drivers (memory, null, localStorage, sessionStorage, IndexedDB via Dexie, AsyncStorage) and a MultipleInstanceManager for named instances.",
+  "description": "Unified KV storage layer for the Stackra framework \u2014 one IStorage contract with pluggable drivers (memory, null, localStorage, sessionStorage, IndexedDB via Dexie, AsyncStorage) and a MultipleInstanceManager for named instances.",
   "license": "MIT",
   "author": {
     "name": "Stackra L.L.C",
@@ -117,6 +117,8 @@
     }
   },
   "devDependencies": {
+    "@academorix/config-tsconfig": "workspace:*",
+    "@academorix/config-tsup": "workspace:*",
     "@react-native-async-storage/async-storage": "catalog:",
     "@stackra/container": "workspace:*",
     "@stackra/contracts": "workspace:*",

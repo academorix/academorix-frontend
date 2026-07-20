@@ -24,7 +24,10 @@
         },
         {
           "kind": "Text",
-          "props": { "className": "text-sm text-muted", "children": "Reporting hierarchy across your active staff." }
+          "props": {
+            "className": "text-sm text-muted",
+            "children": "Reporting hierarchy across your active staff."
+          }
         },
         {
           "kind": "Card",
@@ -41,7 +44,10 @@
                   {
                     "kind": "Avatar",
                     "props": { "size": "sm" },
-                    "bindings": { "src": { "$ref": "node.avatar_url" }, "name": { "$ref": "node.display_name" } }
+                    "bindings": {
+                      "src": { "$ref": "node.avatar_url" },
+                      "name": { "$ref": "node.display_name" }
+                    }
                   },
                   {
                     "kind": "View",

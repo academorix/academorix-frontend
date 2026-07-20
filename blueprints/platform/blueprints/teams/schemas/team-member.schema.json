@@ -200,7 +200,17 @@
     "left_at": { "type": ["string", "null"], "format": "date-time" },
     "left_reason": {
       "type": ["string", "null"],
-      "enum": ["transferred", "graduated", "withdrew", "dropped", "injury", "disciplinary", "team_archived", "other", null]
+      "enum": [
+        "transferred",
+        "graduated",
+        "withdrew",
+        "dropped",
+        "injury",
+        "disciplinary",
+        "team_archived",
+        "other",
+        null
+      ]
     },
     "notes": { "type": ["string", "null"] },
     "metadata": { "type": ["object", "null"] },

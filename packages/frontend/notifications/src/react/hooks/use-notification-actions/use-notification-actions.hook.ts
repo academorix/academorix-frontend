@@ -10,17 +10,17 @@
  *   invokes from onClick handlers.
  */
 
-import { useCallback } from 'react';
-import { useInject } from '@stackra/container/react';
+import { useCallback } from "react";
+import { useInject } from "@stackra/container/react";
 
-import { IN_APP_NOTIFICATION_CENTRE, NOTIFICATION_MANAGER } from '@/core/constants';
+import { IN_APP_NOTIFICATION_CENTRE, NOTIFICATION_MANAGER } from "@/core/constants";
 import type {
   IDeliveryReport,
   INotificationManager,
   INotificationPayload,
-} from '@/core/interfaces';
-import type { InAppNotificationCentre } from '@/core/services';
-import type { IUseNotificationActionsResult } from './use-notification-actions.interface';
+} from "@/core/interfaces";
+import type { InAppNotificationCentre } from "@/core/services";
+import type { IUseNotificationActionsResult } from "./use-notification-actions.interface";
 
 /**
  * The notification action bundle — `dispatch`, `markSeen`,
@@ -45,9 +45,9 @@ export function useNotificationActions(): IUseNotificationActionsResult {
   const dispatch = useCallback(
     (
       payload: INotificationPayload,
-      options?: { readonly channels?: readonly string[] }
+      options?: { readonly channels?: readonly string[] },
     ): Promise<readonly IDeliveryReport[]> => manager.dispatch(payload, options),
-    [manager]
+    [manager],
   );
   const markSeen = useCallback((id: string): Promise<boolean> => centre.markSeen(id), [centre]);
   const dismiss = useCallback((id: string): Promise<boolean> => centre.dismiss(id), [centre]);

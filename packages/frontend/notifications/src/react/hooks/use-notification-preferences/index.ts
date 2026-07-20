@@ -5,5 +5,5 @@
  *   hook.
  */
 
-export { useNotificationPreferences } from './use-notification-preferences.hook';
-export type { IUseNotificationPreferencesResult } from './use-notification-preferences.interface';
+export { useNotificationPreferences } from "./use-notification-preferences.hook";
+export type { IUseNotificationPreferencesResult } from "./use-notification-preferences.interface";

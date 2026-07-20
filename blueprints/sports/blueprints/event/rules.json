@@ -31,8 +31,18 @@
       "signature": "valid_event_date_range:min_minutes,max_days",
       "description": "Ensures ends_at >= starts_at with optional minimum duration in minutes and maximum span in days. Field-level (class-level) rule.",
       "params": [
-        { "name": "min_minutes", "type": "int", "default": 0, "description": "Minimum event duration in minutes (0 = single-instant events allowed)." },
-        { "name": "max_days", "type": "int", "default": 60, "description": "Maximum event span in days (default 60 = long camp/festival upper bound)." }
+        {
+          "name": "min_minutes",
+          "type": "int",
+          "default": 0,
+          "description": "Minimum event duration in minutes (0 = single-instant events allowed)."
+        },
+        {
+          "name": "max_days",
+          "type": "int",
+          "default": 60,
+          "description": "Maximum event span in days (default 60 = long camp/festival upper bound)."
+        }
       ],
       "example_field_rule": "rule('valid_event_date_range:0,60')",
       "error_message_key": "event::validation.valid_event_date_range",

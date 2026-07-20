@@ -1,7 +1,7 @@
 {
   "name": "@stackra/consent",
   "version": "0.1.0",
-  "description": "Client-side GDPR/CCPA consent management for the Stackra framework — categories, reactive preferences, pluggable storage adapters, React hooks, and a HeroUI consent banner. Backend-agnostic.",
+  "description": "Client-side GDPR/CCPA consent management for the Stackra framework \u2014 categories, reactive preferences, pluggable storage adapters, React hooks, and a HeroUI consent banner. Backend-agnostic.",
   "license": "MIT",
   "author": {
     "name": "Stackra L.L.C",
@@ -91,6 +91,8 @@
     }
   },
   "devDependencies": {
+    "@academorix/config-tsconfig": "workspace:*",
+    "@academorix/config-tsup": "workspace:*",
     "@stackra/container": "workspace:*",
     "@stackra/contracts": "workspace:*",
     "@stackra/storage": "workspace:*",

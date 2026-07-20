@@ -4,9 +4,9 @@
  * @description Full module configuration interface for I18nModule.forRoot().
  */
 
-import type { II18nLoader } from '@stackra/contracts';
+import type { II18nLoader } from "@stackra/contracts";
 
-import type { I18nResolverConfig } from './i18n-resolver.interface';
+import type { I18nResolverConfig } from "./i18n-resolver.interface";
 
 /**
  * Language fallback mapping.
@@ -101,7 +101,7 @@ export interface II18nConfig {
    * Requires `WebStorageModule` / `NativeStorageModule` imported
    * upstream with a matching `stores` entry.
    */
-  storage?: 'localStorage' | 'sessionStorage' | 'asyncStorage' | (string & {});
+  storage?: "localStorage" | "sessionStorage" | "asyncStorage" | (string & {});
 
   /** Storage key for locale persistence. Default: `"stackra_locale"` */
   storageKey?: string;
@@ -116,5 +116,5 @@ export interface II18nConfig {
   rtlLocales?: string[];
 
   /** Missing key behavior: 'key' | 'empty' | 'throw'. Default: 'key' */
-  missingKeyBehavior?: 'key' | 'empty' | 'throw';
+  missingKeyBehavior?: "key" | "empty" | "throw";
 }

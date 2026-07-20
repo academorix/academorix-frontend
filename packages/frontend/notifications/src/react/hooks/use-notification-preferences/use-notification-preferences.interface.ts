@@ -8,7 +8,7 @@ import type {
   INotificationPreferences,
   IQuietHoursWindow,
   NotificationCategory,
-} from '@/core/interfaces';
+} from "@/core/interfaces";
 
 /**
  * Value returned by {@link useNotificationPreferences}.
@@ -24,7 +24,7 @@ export interface IUseNotificationPreferencesResult {
   readonly setChannelEnabled: (
     category: NotificationCategory,
     channel: string,
-    enabled: boolean
+    enabled: boolean,
   ) => void;
   /** Replace the quiet-hours window. */
   readonly setQuietHours: (window: IQuietHoursWindow) => void;

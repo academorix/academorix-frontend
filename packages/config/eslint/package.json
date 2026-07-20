@@ -9,11 +9,13 @@
     ".": "./base.mjs",
     "./base": "./base.mjs",
     "./react": "./react.mjs",
+    "./native": "./native.mjs",
     "./vite-app": "./vite-app.mjs"
   },
   "files": [
     "base.mjs",
     "react.mjs",
+    "native.mjs",
     "vite-app.mjs",
     "README.md"
   ],

@@ -323,11 +323,7 @@
           "error": {
             "code": "ORGANIZATION_PARENT_CYCLE",
             "message": "This reparent would create a cycle.",
-            "cycle_path": [
-              "org_01H_ROOT",
-              "org_01H_OLD_PARENT",
-              "org_01H_CHILD"
-            ]
+            "cycle_path": ["org_01H_ROOT", "org_01H_OLD_PARENT", "org_01H_CHILD"]
           }
         }
       }

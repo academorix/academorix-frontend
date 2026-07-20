@@ -4,13 +4,13 @@
  * @category Hooks
  */
 
-import { useState, useEffect, useCallback } from 'react';
-import { useInject } from '@stackra/container/react';
-import { Str } from '@stackra/support';
+import { useState, useEffect, useCallback } from "react";
+import { useInject } from "@stackra/container/react";
+import { Str } from "@stackra/support";
 
-import type { Thread, ThreadMessage } from '@/interfaces/thread.interface';
-import { RoomManager } from '@/services/room-manager.service';
-import { COLLABORATION_EVENTS } from '@stackra/contracts';
+import type { Thread, ThreadMessage } from "@/interfaces/thread.interface";
+import { RoomManager } from "@/services/room-manager.service";
+import { COLLABORATION_EVENTS } from "@stackra/contracts";
 
 /** Return type for the useThreads hook. */
 interface UseThreadsReturn {
@@ -69,7 +69,7 @@ interface UseThreadsReturn {
 export function useThreads(
   roomId: string,
   selfUserId: string,
-  selfUserName: string
+  selfUserName: string,
 ): UseThreadsReturn {
   const roomManager = useInject<RoomManager>(RoomManager);
 
@@ -86,7 +86,7 @@ export function useThreads(
       (data: unknown) => {
         const thread = data as Thread;
         setThreads((prev) => [...prev, thread]);
-      }
+      },
     );
 
     const unsubReply = transport.onBroadcast(
@@ -95,9 +95,9 @@ export function useThreads(
       (data: unknown) => {
         const { threadId, message } = data as { threadId: string; message: ThreadMessage };
         setThreads((prev) =>
-          prev.map((t) => (t.id === threadId ? { ...t, messages: [...t.messages, message] } : t))
+          prev.map((t) => (t.id === threadId ? { ...t, messages: [...t.messages, message] } : t)),
         );
-      }
+      },
     );
 
     const unsubResolve = transport.onBroadcast(
@@ -106,7 +106,7 @@ export function useThreads(
       (data: unknown) => {
         const { threadId } = data as { threadId: string };
         setThreads((prev) => prev.map((t) => (t.id === threadId ? { ...t, resolved: true } : t)));
-      }
+      },
     );
 
     const unsubDelete = transport.onBroadcast(
@@ -115,7 +115,7 @@ export function useThreads(
       (data: unknown) => {
         const { threadId } = data as { threadId: string };
         setThreads((prev) => prev.filter((t) => t.id !== threadId));
-      }
+      },
     );
 
     return () => {
@@ -155,7 +155,7 @@ export function useThreads(
       setThreads((prev) => [...prev, thread]);
       roomManager.getTransport().broadcast(roomId, COLLABORATION_EVENTS.THREAD_CREATE, thread);
     },
-    [roomId, roomManager, selfUserId, selfUserName]
+    [roomId, roomManager, selfUserId, selfUserName],
   );
 
   const reply = useCallback(
@@ -171,14 +171,14 @@ export function useThreads(
       };
 
       setThreads((prev) =>
-        prev.map((t) => (t.id === threadId ? { ...t, messages: [...t.messages, message] } : t))
+        prev.map((t) => (t.id === threadId ? { ...t, messages: [...t.messages, message] } : t)),
       );
 
       roomManager
         .getTransport()
         .broadcast(roomId, COLLABORATION_EVENTS.THREAD_REPLY, { threadId, message });
     },
-    [roomId, roomManager, selfUserId, selfUserName]
+    [roomId, roomManager, selfUserId, selfUserName],
   );
 
   const resolve = useCallback(
@@ -191,7 +191,7 @@ export function useThreads(
         .getTransport()
         .broadcast(roomId, COLLABORATION_EVENTS.THREAD_RESOLVE, { threadId });
     },
-    [roomId, roomManager]
+    [roomId, roomManager],
   );
 
   const deleteThread = useCallback(
@@ -204,7 +204,7 @@ export function useThreads(
         .getTransport()
         .broadcast(roomId, COLLABORATION_EVENTS.THREAD_DELETE, { threadId });
     },
-    [roomId, roomManager]
+    [roomId, roomManager],
   );
 
   return { threads, createThread, reply, resolve, deleteThread };

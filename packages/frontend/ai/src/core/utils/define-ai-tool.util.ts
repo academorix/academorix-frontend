@@ -50,9 +50,9 @@
  * ```
  */
 
-import type { IAiClientToolDefinition } from '@stackra/contracts';
+import type { IAiClientToolDefinition } from "@stackra/contracts";
 
-import type { ToolHandler } from '@/core/registries/tool.registry';
+import type { ToolHandler } from "@/core/registries/tool.registry";
 
 /**
  * A client-tool definition — the shape passed to `useAiTool`.

@@ -4,7 +4,7 @@
  * @description Thrown when push APIs are unavailable in the current environment.
  */
 
-import { NotificationError } from './notification.error';
+import { NotificationError } from "./notification.error";
 
 /**
  * Thrown by `PushSubscriptionManager` when the browser lacks
@@ -15,5 +15,5 @@ import { NotificationError } from './notification.error';
  * (SMS, email) or to hide push-related UI entirely.
  */
 export class PushNotSupportedError extends NotificationError {
-  public readonly code = 'PUSH_NOT_SUPPORTED' as const;
+  public readonly code = "PUSH_NOT_SUPPORTED" as const;
 }

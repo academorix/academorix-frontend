@@ -4,5 +4,5 @@
  * @description Barrel for the native `OverviewPanel` entity.
  */
 
-export { OverviewPanel } from './overview-panel.component';
-export type { OverviewPanelProps } from './overview-panel.interface';
+export { OverviewPanel } from "./overview-panel.component";
+export type { OverviewPanelProps } from "./overview-panel.interface";

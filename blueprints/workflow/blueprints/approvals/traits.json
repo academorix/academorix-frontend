@@ -8,9 +8,7 @@
       "trait": "Academorix\\Approval\\Concerns\\HasApprovalHistory",
       "description": "Mixed into the `User` model (via user module composition) to expose three convenience relations without materialising the ApprovalPresenter. Read-only accessors — never writes. Every method scopes by tenant + application via the composing model's `BelongsToTenant` global scope so cross-tenant leakage is impossible.",
       "public": true,
-      "usedBy": [
-        "user::User (exposes approval-history relations on the caller model)"
-      ],
+      "usedBy": ["user::User (exposes approval-history relations on the caller model)"],
       "provides_methods": [
         {
           "signature": "approvalsRequested(): HasMany<ApprovalInstance>",
@@ -123,23 +121,11 @@
       "notes": "Tenant-scoped. Auditable + HasActivityLog BOTH — compliance signal (field-level diffs via Auditable) + product feed (human-readable events via HasActivityLog). SoftDeletes retains rejected/expired/cancelled instances for the 90-day compliance hold; hard delete via `approvals:purge-expired`."
     },
     "approval_requirement": {
-      "traits": [
-        "HasFactory",
-        "HasUlids",
-        "BelongsToTenant",
-        "HasMetadata",
-        "Filterable"
-      ],
+      "traits": ["HasFactory", "HasUlids", "BelongsToTenant", "HasMetadata", "Filterable"],
       "notes": "Tenant-scoped. NO SoftDeletes / HasUserstamps / HasActivityLog / Auditable — requirements are internal engine state (materialised at instance-create time; frozen after decision). Cascade deletes with the parent instance. High-volume table (N requirements per instance × N instances per tenant) — traits kept minimal to hold row writes at ~1KB."
     },
     "approval_decision": {
-      "traits": [
-        "HasFactory",
-        "HasUlids",
-        "BelongsToTenant",
-        "HasMetadata",
-        "Filterable"
-      ],
+      "traits": ["HasFactory", "HasUlids", "BelongsToTenant", "HasMetadata", "Filterable"],
       "notes": "Tenant-scoped. Decisions are effectively write-once (no updates, no soft-delete — a bad decision is retracted via a NEW approve/reject flow, not by editing the row). NO Auditable because the row IS the audit event (the decision is the record). Retained forever per compliance."
     },
     "approval_reminder": {

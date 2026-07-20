@@ -1,7 +1,7 @@
 {
   "name": "@stackra/support",
   "version": "0.1.0",
-  "description": "Foundation utility layer for the Stackra framework — Str, Arr, Num, Env, Pipeline, Fluent, Uri, BaseRegistry, Manager, and 20+ helpers.",
+  "description": "Foundation utility layer for the Stackra framework \u2014 Str, Arr, Num, Env, Pipeline, Fluent, Uri, BaseRegistry, Manager, and 20+ helpers.",
   "license": "MIT",
   "author": {
     "name": "Stackra L.L.C",
@@ -89,6 +89,8 @@
     }
   },
   "devDependencies": {
+    "@academorix/config-tsconfig": "workspace:*",
+    "@academorix/config-tsup": "workspace:*",
     "@stackra/testing": "workspace:*",
     "@types/node": "catalog:",
     "@types/path-browserify": "catalog:",

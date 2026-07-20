@@ -1,1 +1,1 @@
-export { usePageVisibility, type PageVisibilityCallback } from './use-page-visibility.hook';
+export { usePageVisibility, type PageVisibilityCallback } from "./use-page-visibility.hook";

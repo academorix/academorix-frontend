@@ -47,7 +47,10 @@
       "kind": "http.post",
       "url": "/api/v1/coaching-profiles",
       "body": "$form",
-      "onSuccess": { "kind": "navigate", "toExpr": "'/tenant/coaching-profiles/' + $response.data.id" },
+      "onSuccess": {
+        "kind": "navigate",
+        "toExpr": "'/tenant/coaching-profiles/' + $response.data.id"
+      },
       "onError": { "kind": "toast.error", "message": "Could not create coaching profile." }
     }
   },
@@ -57,11 +60,30 @@
       "kind": "View",
       "props": { "className": "flex flex-col gap-4 p-6 max-w-3xl mx-auto" },
       "children": [
-        { "kind": "Text", "props": { "as": "h1", "className": "text-2xl font-semibold", "children": "Elevate staff to coach" } },
+        {
+          "kind": "Text",
+          "props": {
+            "as": "h1",
+            "className": "text-2xl font-semibold",
+            "children": "Elevate staff to coach"
+          }
+        },
         {
           "kind": "Card",
           "children": [
-            { "kind": "Card.Header", "children": [{ "kind": "Text", "props": { "as": "h2", "className": "font-semibold", "children": "Staff selection" } }] },
+            {
+              "kind": "Card.Header",
+              "children": [
+                {
+                  "kind": "Text",
+                  "props": {
+                    "as": "h2",
+                    "className": "font-semibold",
+                    "children": "Staff selection"
+                  }
+                }
+              ]
+            },
             {
               "kind": "Card.Content",
               "children": [
@@ -73,7 +95,10 @@
                     {
                       "kind": "ComboBox.InputGroup",
                       "children": [
-                        { "kind": "Input", "props": { "placeholder": "Search staff by name or position..." } },
+                        {
+                          "kind": "Input",
+                          "props": { "placeholder": "Search staff by name or position..." }
+                        },
                         { "kind": "ComboBox.Trigger" }
                       ]
                     },
@@ -88,8 +113,16 @@
                               "kind": "ListBox.Item",
                               "propsExpr": "{ id: $item.id, textValue: $item.display_name + ' — ' + $item.position }",
                               "children": [
-                                { "kind": "Text", "props": { "className": "text-sm font-medium" }, "bindings": { "children": { "$ref": "$item.display_name" } } },
-                                { "kind": "Text", "props": { "className": "text-xs text-muted" }, "bindings": { "children": { "$ref": "$item.position" } } },
+                                {
+                                  "kind": "Text",
+                                  "props": { "className": "text-sm font-medium" },
+                                  "bindings": { "children": { "$ref": "$item.display_name" } }
+                                },
+                                {
+                                  "kind": "Text",
+                                  "props": { "className": "text-xs text-muted" },
+                                  "bindings": { "children": { "$ref": "$item.position" } }
+                                },
                                 { "kind": "ListBox.ItemIndicator" }
                               ]
                             }
@@ -104,11 +137,33 @@
                   "props": { "name": "branch_id", "menuTrigger": "focus" },
                   "children": [
                     { "kind": "Label", "propsExpr": "{ children: 'Primary branch' }" },
-                    { "kind": "ComboBox.InputGroup", "children": [{ "kind": "Input", "props": { "placeholder": "Search branch..." } }, { "kind": "ComboBox.Trigger" }] },
+                    {
+                      "kind": "ComboBox.InputGroup",
+                      "children": [
+                        { "kind": "Input", "props": { "placeholder": "Search branch..." } },
+                        { "kind": "ComboBox.Trigger" }
+                      ]
+                    },
                     {
                       "kind": "ComboBox.Popover",
                       "children": [
-                        { "kind": "ListBox", "bindings": { "items": { "$ref": "branches" } }, "children": [{ "kind": "ListBox.Item", "propsExpr": "{ id: $item.id, textValue: $item.name }", "children": [{ "kind": "Text", "bindings": { "children": { "$ref": "$item.name" } } }, { "kind": "ListBox.ItemIndicator" }] }] }
+                        {
+                          "kind": "ListBox",
+                          "bindings": { "items": { "$ref": "branches" } },
+                          "children": [
+                            {
+                              "kind": "ListBox.Item",
+                              "propsExpr": "{ id: $item.id, textValue: $item.name }",
+                              "children": [
+                                {
+                                  "kind": "Text",
+                                  "bindings": { "children": { "$ref": "$item.name" } }
+                                },
+                                { "kind": "ListBox.ItemIndicator" }
+                              ]
+                            }
+                          ]
+                        }
                       ]
                     }
                   ]
@@ -120,7 +175,19 @@
         {
           "kind": "Card",
           "children": [
-            { "kind": "Card.Header", "children": [{ "kind": "Text", "props": { "as": "h2", "className": "font-semibold", "children": "Sport & specialization" } }] },
+            {
+              "kind": "Card.Header",
+              "children": [
+                {
+                  "kind": "Text",
+                  "props": {
+                    "as": "h2",
+                    "className": "font-semibold",
+                    "children": "Sport & specialization"
+                  }
+                }
+              ]
+            },
             {
               "kind": "Card.Content",
               "children": [
@@ -129,11 +196,33 @@
                   "props": { "name": "primary_sport_id", "menuTrigger": "focus" },
                   "children": [
                     { "kind": "Label", "propsExpr": "{ children: 'Primary sport (optional)' }" },
-                    { "kind": "ComboBox.InputGroup", "children": [{ "kind": "Input", "props": { "placeholder": "Search sports..." } }, { "kind": "ComboBox.Trigger" }] },
+                    {
+                      "kind": "ComboBox.InputGroup",
+                      "children": [
+                        { "kind": "Input", "props": { "placeholder": "Search sports..." } },
+                        { "kind": "ComboBox.Trigger" }
+                      ]
+                    },
                     {
                       "kind": "ComboBox.Popover",
                       "children": [
-                        { "kind": "ListBox", "bindings": { "items": { "$ref": "sports" } }, "children": [{ "kind": "ListBox.Item", "propsExpr": "{ id: $item.id, textValue: $item.name }", "children": [{ "kind": "Text", "bindings": { "children": { "$ref": "$item.name" } } }, { "kind": "ListBox.ItemIndicator" }] }] }
+                        {
+                          "kind": "ListBox",
+                          "bindings": { "items": { "$ref": "sports" } },
+                          "children": [
+                            {
+                              "kind": "ListBox.Item",
+                              "propsExpr": "{ id: $item.id, textValue: $item.name }",
+                              "children": [
+                                {
+                                  "kind": "Text",
+                                  "bindings": { "children": { "$ref": "$item.name" } }
+                                },
+                                { "kind": "ListBox.ItemIndicator" }
+                              ]
+                            }
+                          ]
+                        }
                       ]
                     }
                   ]
@@ -164,16 +253,70 @@
         {
           "kind": "Card",
           "children": [
-            { "kind": "Card.Header", "children": [{ "kind": "Text", "props": { "as": "h2", "className": "font-semibold", "children": "Bio & availability" } }] },
+            {
+              "kind": "Card.Header",
+              "children": [
+                {
+                  "kind": "Text",
+                  "props": {
+                    "as": "h2",
+                    "className": "font-semibold",
+                    "children": "Bio & availability"
+                  }
+                }
+              ]
+            },
             {
               "kind": "Card.Content",
               "children": [
-                { "kind": "TextArea", "props": { "name": "bio", "label": "Biography", "rows": 4, "placeholder": "Short professional bio..." } },
-                { "kind": "TextField", "props": { "name": "photo_url_signed", "label": "Photo URL (S3 signed)", "placeholder": "https://..." } },
-                { "kind": "Widget", "widget": "coaching.availability-calendar", "props": { "name": "availability", "editable": true } },
-                { "kind": "Switch", "props": { "name": "is_accepting_new_athletes", "label": "Accepting new athletes", "defaultSelected": true } },
-                { "kind": "NumberField", "props": { "name": "max_athletes_per_session", "label": "Max athletes per session (optional)", "min": 1, "max": 999 } },
-                { "kind": "TagGroup", "props": { "name": "languages_spoken", "label": "Languages spoken (ISO 639-1)", "allowsCustomValue": true, "placeholder": "en, es, ar..." } }
+                {
+                  "kind": "TextArea",
+                  "props": {
+                    "name": "bio",
+                    "label": "Biography",
+                    "rows": 4,
+                    "placeholder": "Short professional bio..."
+                  }
+                },
+                {
+                  "kind": "TextField",
+                  "props": {
+                    "name": "photo_url_signed",
+                    "label": "Photo URL (S3 signed)",
+                    "placeholder": "https://..."
+                  }
+                },
+                {
+                  "kind": "Widget",
+                  "widget": "coaching.availability-calendar",
+                  "props": { "name": "availability", "editable": true }
+                },
+                {
+                  "kind": "Switch",
+                  "props": {
+                    "name": "is_accepting_new_athletes",
+                    "label": "Accepting new athletes",
+                    "defaultSelected": true
+                  }
+                },
+                {
+                  "kind": "NumberField",
+                  "props": {
+                    "name": "max_athletes_per_session",
+                    "label": "Max athletes per session (optional)",
+                    "min": 1,
+                    "max": 999
+                  }
+                },
+                {
+                  "kind": "TagGroup",
+                  "props": {
+                    "name": "languages_spoken",
+                    "label": "Languages spoken (ISO 639-1)",
+                    "allowsCustomValue": true,
+                    "placeholder": "en, es, ar..."
+                  }
+                }
               ]
             }
           ]
@@ -182,13 +325,42 @@
           "kind": "Card",
           "requiresPermission": "coaching_profiles.update.rate",
           "children": [
-            { "kind": "Card.Header", "children": [{ "kind": "Text", "props": { "as": "h2", "className": "font-semibold", "children": "Reference hourly rate (private)" } }] },
+            {
+              "kind": "Card.Header",
+              "children": [
+                {
+                  "kind": "Text",
+                  "props": {
+                    "as": "h2",
+                    "className": "font-semibold",
+                    "children": "Reference hourly rate (private)"
+                  }
+                }
+              ]
+            },
             {
               "kind": "Card.Content",
               "children": [
-                { "kind": "Alert", "props": { "variant": "info", "children": "Reference only. Payroll is out-of-scope." } },
-                { "kind": "NumberField", "props": { "name": "hourly_rate_cents", "label": "Hourly rate (cents)", "min": 0 } },
-                { "kind": "TextField", "props": { "name": "rate_currency", "label": "Currency (ISO 4217)", "maxLength": 3, "placeholder": "USD" } }
+                {
+                  "kind": "Alert",
+                  "props": {
+                    "variant": "info",
+                    "children": "Reference only. Payroll is out-of-scope."
+                  }
+                },
+                {
+                  "kind": "NumberField",
+                  "props": { "name": "hourly_rate_cents", "label": "Hourly rate (cents)", "min": 0 }
+                },
+                {
+                  "kind": "TextField",
+                  "props": {
+                    "name": "rate_currency",
+                    "label": "Currency (ISO 4217)",
+                    "maxLength": 3,
+                    "placeholder": "USD"
+                  }
+                }
               ]
             }
           ]
@@ -197,8 +369,17 @@
           "kind": "View",
           "props": { "className": "flex justify-end gap-2" },
           "children": [
-            { "kind": "Button", "props": { "variant": "flat", "children": "Cancel" }, "actions": { "onPress": { "kind": "navigate", "toExpr": "'/tenant/coaching-profiles'" } } },
-            { "kind": "Button", "props": { "variant": "primary", "type": "submit", "children": "Create profile" } }
+            {
+              "kind": "Button",
+              "props": { "variant": "flat", "children": "Cancel" },
+              "actions": {
+                "onPress": { "kind": "navigate", "toExpr": "'/tenant/coaching-profiles'" }
+              }
+            },
+            {
+              "kind": "Button",
+              "props": { "variant": "primary", "type": "submit", "children": "Create profile" }
+            }
           ]
         }
       ]

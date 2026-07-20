@@ -4,5 +4,5 @@
  * @description Barrel for the native `ActionsPanel` entity.
  */
 
-export { ActionsPanel } from './actions-panel.component';
-export type { ActionsPanelProps } from './actions-panel.interface';
+export { ActionsPanel } from "./actions-panel.component";
+export type { ActionsPanelProps } from "./actions-panel.interface";

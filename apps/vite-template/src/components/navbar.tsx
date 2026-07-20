@@ -22,7 +22,7 @@ export const Navbar = () => {
     <TextField aria-label="Search" type="search">
       <InputGroup>
         <InputGroup.Prefix>
-          <SearchIcon className="text-base text-muted pointer-events-none flex-shrink-0" />
+          <SearchIcon className="text-muted pointer-events-none flex-shrink-0 text-base" />
         </InputGroup.Prefix>
         <InputGroup.Input className="text-sm" placeholder="Search..." />
         <InputGroup.Suffix>
@@ -36,14 +36,14 @@ export const Navbar = () => {
   );
 
   return (
-    <nav className="sticky top-0 z-40 w-full border-b border-separator bg-background/70 backdrop-blur-lg">
+    <nav className="border-separator bg-background/70 sticky top-0 z-40 w-full border-b backdrop-blur-lg">
       <header className="mx-auto flex h-16 max-w-[1280px] items-center justify-between gap-4 px-6">
         <div className="flex items-center gap-4">
           <a className="flex items-center gap-1" href="/">
             <Logo />
             <p className="font-bold text-inherit">ACME</p>
           </a>
-          <ul className="hidden lg:flex gap-4 ml-2">
+          <ul className="ml-2 hidden gap-4 lg:flex">
             {siteConfig.navItems.map((item) => (
               <li key={item.href}>
                 <a
@@ -60,7 +60,7 @@ export const Navbar = () => {
           </ul>
         </div>
 
-        <div className="hidden sm:flex items-center gap-2">
+        <div className="hidden items-center gap-2 sm:flex">
           <Link
             aria-label="Twitter"
             href={siteConfig.links.twitter}
@@ -99,7 +99,7 @@ export const Navbar = () => {
           </div>
         </div>
 
-        <div className="flex sm:hidden items-center gap-2">
+        <div className="flex items-center gap-2 sm:hidden">
           <Link
             aria-label="Github"
             href={siteConfig.links.github}
@@ -115,12 +115,7 @@ export const Navbar = () => {
             className="p-2"
             onClick={() => setIsMenuOpen(!isMenuOpen)}
           >
-            <svg
-              className="h-6 w-6"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
+            <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               {isMenuOpen ? (
                 <path
                   d="M6 18L18 6M6 6l12 12"
@@ -142,7 +137,7 @@ export const Navbar = () => {
       </header>
 
       {isMenuOpen && (
-        <div className="border-t border-separator sm:hidden">
+        <div className="border-separator border-t sm:hidden">
           <div className="p-4">{searchInput}</div>
           <ul className="flex flex-col gap-2 px-4 pb-4">
             {siteConfig.navMenuItems.map((item, index) => (

@@ -27,7 +27,7 @@ export interface CollaborationNotification {
   id: string;
 
   /** Type of notification event. */
-  type: 'mention' | 'reply' | 'state_change' | 'thread_resolved';
+  type: "mention" | "reply" | "state_change" | "thread_resolved";
 
   /** Room where the event occurred. */
   roomId: string;

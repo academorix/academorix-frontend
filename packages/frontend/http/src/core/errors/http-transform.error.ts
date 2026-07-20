@@ -8,15 +8,15 @@
  * @module @stackra/http/errors/http-transform
  */
 
-import { HttpError } from './http.error';
+import { HttpError } from "./http.error";
 
 /**
  * Transform operation error. Carries the offending data for
  * observability.
  */
 export class HttpTransformError extends HttpError {
-  public override readonly name: string = 'HttpTransformError';
-  public override readonly code: string = 'HTTP_TRANSFORM_ERROR';
+  public override readonly name: string = "HttpTransformError";
+  public override readonly code: string = "HTTP_TRANSFORM_ERROR";
 
   /** Data that failed to transform. */
   public readonly data: unknown;

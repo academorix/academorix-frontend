@@ -13,6 +13,6 @@ export {
   DEFAULT_MODE,
   DEFAULT_CATEGORIES,
   DEFAULT_CONSENT_CONFIG,
-} from './defaults.constant';
+} from "./defaults.constant";
 
-export { CONSENT_REGISTRY } from './tokens.constant';
+export { CONSENT_REGISTRY } from "./tokens.constant";

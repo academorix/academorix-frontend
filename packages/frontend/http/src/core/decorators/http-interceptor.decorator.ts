@@ -7,12 +7,12 @@
  * @module @stackra/http/decorators/http-interceptor
  */
 
-import { Injectable } from '@stackra/container';
-import { defineMetadata, getMetadata } from '@vivtel/metadata';
+import { Injectable } from "@stackra/container";
+import { defineMetadata, getMetadata } from "@vivtel/metadata";
 
-import type { IHttpInterceptorOptions } from '@stackra/contracts';
+import type { IHttpInterceptorOptions } from "@stackra/contracts";
 
-import { HTTP_INTERCEPTOR_METADATA } from '../constants';
+import { HTTP_INTERCEPTOR_METADATA } from "../constants";
 
 /**
  * Mark a class as an HTTP interceptor.
@@ -38,7 +38,7 @@ export function HttpInterceptor(options: IHttpInterceptorOptions = {}): ClassDec
         priority: options.priority ?? 50,
         name: options.name ?? target.name,
       },
-      target as object
+      target as object,
     );
   };
 }

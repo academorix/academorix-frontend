@@ -4,7 +4,7 @@
  * @description Callback type for role change notifications.
  */
 
-import type { TabRole } from './tab-role.type';
+import type { TabRole } from "./tab-role.type";
 
 /**
  * Listener callback invoked when the tab's role changes.

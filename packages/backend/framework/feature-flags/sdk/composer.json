@@ -1,22 +1,31 @@
 {
-    "name": "academorix/feature-flags-sdk",
-    "description": "Saloon SDK sibling for academorix/feature-flags. Ships wire-visible DTOs plus Saloon requests for cross-service consumers (ai-service, admin console, third-party integrations). Depends only on saloonphp/saloon + spatie/laravel-data — never on the parent package's Eloquent models.",
-    "type": "library",
-    "keywords": ["academorix", "feature-flags", "sdk", "saloon"],
-    "license": "proprietary",
-    "authors": [
-        { "name": "Academorix Team", "email": "dev@academorix.com", "homepage": "https://academorix.com" }
-    ],
-    "require": {
-        "php": "^8.3|^8.4|^8.5",
-        "saloonphp/saloon": "^3.0",
-        "spatie/laravel-data": "^4.11"
-    },
-    "autoload": {
-        "psr-4": {
-            "Academorix\\FeatureFlagsSdk\\": "src/"
-        }
-    },
-    "minimum-stability": "dev",
-    "prefer-stable": true
+  "name": "academorix/feature-flags-sdk",
+  "description": "Saloon SDK sibling for academorix/feature-flags. Ships wire-visible DTOs plus Saloon requests for cross-service consumers (ai-service, admin console, third-party integrations). Depends only on saloonphp/saloon + spatie/laravel-data — never on the parent package's Eloquent models.",
+  "type": "library",
+  "keywords": [
+    "academorix",
+    "feature-flags",
+    "sdk",
+    "saloon"
+  ],
+  "license": "proprietary",
+  "authors": [
+    {
+      "name": "Academorix Team",
+      "email": "dev@academorix.com",
+      "homepage": "https://academorix.com"
+    }
+  ],
+  "require": {
+    "php": "^8.3|^8.4|^8.5",
+    "saloonphp/saloon": "^3.0",
+    "spatie/laravel-data": "^4.11"
+  },
+  "autoload": {
+    "psr-4": {
+      "Academorix\\FeatureFlagsSdk\\": "src/"
+    }
+  },
+  "minimum-stability": "dev",
+  "prefer-stable": true
 }

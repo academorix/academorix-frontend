@@ -5,11 +5,11 @@
  *   active one (Req 17.3, 17.4).
  */
 
-import { useCallback, useEffect, useState } from 'react';
-import { useInject } from '@stackra/container/react';
-import { AI_CONVERSATION_STORE, type IAiThreadSummary } from '@stackra/contracts';
+import { useCallback, useEffect, useState } from "react";
+import { useInject } from "@stackra/container/react";
+import { AI_CONVERSATION_STORE, type IAiThreadSummary } from "@stackra/contracts";
 
-import { ConversationStore } from '@/core/services/conversation-store.service';
+import { ConversationStore } from "@/core/services/conversation-store.service";
 
 /** The value returned by {@link useAiThreads}. */
 export interface IUseAiThreadsResult {

@@ -58,11 +58,26 @@
       "description": "Common in Spain / Italy / parts of the Middle East: two service periods separated by an afternoon closure. Requires branch_multi_period_hours entitlement.",
       "tier_available": ["medium", "enterprise"],
       "schedule": {
-        "monday": [{ "open": "08:00", "close": "13:00" }, { "open": "17:00", "close": "22:00" }],
-        "tuesday": [{ "open": "08:00", "close": "13:00" }, { "open": "17:00", "close": "22:00" }],
-        "wednesday": [{ "open": "08:00", "close": "13:00" }, { "open": "17:00", "close": "22:00" }],
-        "thursday": [{ "open": "08:00", "close": "13:00" }, { "open": "17:00", "close": "22:00" }],
-        "friday": [{ "open": "08:00", "close": "13:00" }, { "open": "17:00", "close": "22:00" }],
+        "monday": [
+          { "open": "08:00", "close": "13:00" },
+          { "open": "17:00", "close": "22:00" }
+        ],
+        "tuesday": [
+          { "open": "08:00", "close": "13:00" },
+          { "open": "17:00", "close": "22:00" }
+        ],
+        "wednesday": [
+          { "open": "08:00", "close": "13:00" },
+          { "open": "17:00", "close": "22:00" }
+        ],
+        "thursday": [
+          { "open": "08:00", "close": "13:00" },
+          { "open": "17:00", "close": "22:00" }
+        ],
+        "friday": [
+          { "open": "08:00", "close": "13:00" },
+          { "open": "17:00", "close": "22:00" }
+        ],
         "saturday": [{ "open": "09:00", "close": "13:00" }],
         "sunday": [],
         "exceptions": []

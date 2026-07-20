@@ -47,7 +47,7 @@ export function OverlayProvider(props: PropsWithChildren): ReactElement {
   const value = useMemo<IOverlayContext>(
     () => ({
       stack,
-      activeId: stack.length > 0 ? stack[stack.length - 1].id : null,
+      activeId: stack.length > 0 ? (stack[stack.length - 1]?.id ?? null) : null,
       openOverlay,
       closeOverlay,
     }),

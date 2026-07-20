@@ -5,12 +5,12 @@
  *   `frame-state.searchQuery` field.
  */
 
-import { type ChangeEvent, type ReactElement } from 'react';
-import { InputGroup } from '@stackra/ui/react';
-import { MagnifyingGlassIcon } from '@stackra/ui/icons/heroicon/outline';
+import { type ChangeEvent, type ReactElement } from "react";
+import { InputGroup } from "@stackra/ui/react";
+import { MagnifyingGlassIcon } from "@stackra/ui/icons/heroicon/outline";
 
-import { useDevtoolsSearch } from '../../hooks/use-devtools-search.hook';
-import type { DevtoolsSearchProps } from './devtools-search.interface';
+import { useDevtoolsSearch } from "../../hooks/use-devtools-search.hook";
+import type { DevtoolsSearchProps } from "./devtools-search.interface";
 
 /**
  * Top-of-drawer panel-filter input.
@@ -25,7 +25,7 @@ export function DevtoolsSearch({ className }: DevtoolsSearchProps): ReactElement
   return (
     <InputGroup className={className} variant="secondary">
       <InputGroup.Prefix>
-        <MagnifyingGlassIcon aria-hidden="true" className="size-4 text-muted" />
+        <MagnifyingGlassIcon aria-hidden="true" className="text-muted size-4" />
       </InputGroup.Prefix>
       <InputGroup.Input
         aria-label="Search panels"

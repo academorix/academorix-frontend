@@ -43,9 +43,26 @@
     ],
     "policies": ["WalletPolicy", "WalletTransactionPolicy", "WalletHoldPolicy"],
     "hooks": ["PurgeWalletsForErasedTenant", "CloseWalletsOnOwnerErased"],
-    "commands": ["wallet:list", "wallet:show", "wallet:reconcile", "wallet:reconcile-all", "wallet:expire-points", "wallet:issue-credit", "wallet:release-stale-holds"],
-    "jobs": ["ReconcileWalletJob", "SettleWalletHoldsJob", "ReleaseStaleWalletHoldsJob", "ExpirePointsJob"],
-    "notifications": ["WalletCreditedNotification", "WalletReconciliationDriftNotification", "PointsExpiredNotification"],
+    "commands": [
+      "wallet:list",
+      "wallet:show",
+      "wallet:reconcile",
+      "wallet:reconcile-all",
+      "wallet:expire-points",
+      "wallet:issue-credit",
+      "wallet:release-stale-holds"
+    ],
+    "jobs": [
+      "ReconcileWalletJob",
+      "SettleWalletHoldsJob",
+      "ReleaseStaleWalletHoldsJob",
+      "ExpirePointsJob"
+    ],
+    "notifications": [
+      "WalletCreditedNotification",
+      "WalletReconciliationDriftNotification",
+      "PointsExpiredNotification"
+    ],
     "broadcasts": ["tenant.{tenantId}.wallets", "guardian.{guardianId}.wallets"],
     "observers": ["WalletObserver", "WalletTransactionObserver", "WalletHoldObserver"],
     "rules": ["valid_wallet_kind", "valid_currency", "positive_amount", "non_negative_balance"],

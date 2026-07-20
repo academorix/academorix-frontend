@@ -37,9 +37,7 @@
       "trait": "Academorix\\Staff\\Concerns\\WrapsUser",
       "description": "Composed onto the Staff model itself. Adds `user()` belongsTo relation + a family of delegated accessors that pull from User + Profile (full_name / display_name / email / phone_e164 / avatar_url / locale / timezone) with fallbacks to Branch → Region defaults for locale + timezone. Callers rarely reach through to Staff->user->profile directly; the accessors keep the PII cluster behind one redactor boundary. Also exposes a `withDelegatedProfile()` eager-load scope that joins User + Profile in a single query — used by the /api/v1/staff read paths.",
       "public": true,
-      "usedBy": [
-        "staff::Staff (composed on the model)"
-      ],
+      "usedBy": ["staff::Staff (composed on the model)"],
       "conflicts_with": [
         "The `HasProfile` trait from the user module — Staff would end up with two `profile()` methods. Composers pick one: Staff uses `WrapsUser` (indirect access via User.profile), the User model uses `HasProfile` (direct hasOne)."
       ]
@@ -59,7 +57,10 @@
         "trait": "Illuminate\\Database\\Eloquent\\SoftDeletes",
         "reason": "Both Staff and Coach. Offboarded staff soft-delete for the retention window (see retention.json) before hard-purge."
       },
-      { "trait": "Illuminate\\Notifications\\Notifiable", "reason": "Staff receives lifecycle notifications (welcome / suspended / offboarded / compensation-changed) — the notification is addressed to the underlying User but this trait exposes the Notifiable interface for direct-to-staff addressing when the caller wants to skip the User redirect." }
+      {
+        "trait": "Illuminate\\Notifications\\Notifiable",
+        "reason": "Staff receives lifecycle notifications (welcome / suspended / offboarded / compensation-changed) — the notification is addressed to the underlying User but this trait exposes the Notifiable interface for direct-to-staff addressing when the caller wants to skip the User redirect."
+      }
     ],
     "foundation": [
       { "trait": "Academorix\\Foundation\\Concerns\\HasUlids" },
@@ -69,19 +70,34 @@
       { "trait": "Academorix\\Foundation\\Concerns\\Searchable" }
     ],
     "tenants": [
-      { "trait": "Academorix\\Tenancy\\Concerns\\BelongsToTenant", "reason": "Every owned row carries tenant_id per tenancy-columns.md §3." }
+      {
+        "trait": "Academorix\\Tenancy\\Concerns\\BelongsToTenant",
+        "reason": "Every owned row carries tenant_id per tenancy-columns.md §3."
+      }
     ],
     "branch": [
-      { "trait": "Academorix\\Branch\\Concerns\\BelongsToBranch", "reason": "Staff carries branch_id directly. Coach does NOT — it cascades through staff.branch_id." }
+      {
+        "trait": "Academorix\\Branch\\Concerns\\BelongsToBranch",
+        "reason": "Staff carries branch_id directly. Coach does NOT — it cascades through staff.branch_id."
+      }
     ],
     "user": [
-      { "trait": "Academorix\\User\\Concerns\\BelongsToUser", "reason": "Staff carries user_id + composes BelongsToUser for the .own scope suffix. `staff.view.own` narrows to `WHERE user_id = current_user_id`." }
+      {
+        "trait": "Academorix\\User\\Concerns\\BelongsToUser",
+        "reason": "Staff carries user_id + composes BelongsToUser for the .own scope suffix. `staff.view.own` narrows to `WHERE user_id = current_user_id`."
+      }
     ],
     "audit": [
-      { "trait": "Academorix\\Audit\\Concerns\\Auditable", "reason": "Every mutation to staff / coaches is compliance-relevant. Compensation columns write to a SEPARATE audit table (`staff_compensation_history`) with 7-year retention gated at row-level by the CompensationGate binding." }
+      {
+        "trait": "Academorix\\Audit\\Concerns\\Auditable",
+        "reason": "Every mutation to staff / coaches is compliance-relevant. Compensation columns write to a SEPARATE audit table (`staff_compensation_history`) with 7-year retention gated at row-level by the CompensationGate binding."
+      }
     ],
     "activity": [
-      { "trait": "Academorix\\Activity\\Concerns\\HasActivityLog", "reason": "Staff lifecycle transitions + coach-status + certification adds feed the tenant activity feed. Compensation changes DO NOT feed activity (private-tier)." }
+      {
+        "trait": "Academorix\\Activity\\Concerns\\HasActivityLog",
+        "reason": "Staff lifecycle transitions + coach-status + certification adds feed the tenant activity feed. Compensation changes DO NOT feed activity (private-tier)."
+      }
     ]
   },
   "composition": {

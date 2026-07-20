@@ -6,8 +6,25 @@
   "namespace": "academorix.approvals",
   "labelConventions": {
     "always": [],
-    "commonlyAvailable": ["action_key", "namespace", "template_version", "status", "outcome", "on_timeout", "quorum_type", "violation_type"],
-    "forbiddenAsLabels": ["tenant_id", "instance_id", "requester_id", "approver_id", "resolved_approvers", "context_json", "when_expression"]
+    "commonlyAvailable": [
+      "action_key",
+      "namespace",
+      "template_version",
+      "status",
+      "outcome",
+      "on_timeout",
+      "quorum_type",
+      "violation_type"
+    ],
+    "forbiddenAsLabels": [
+      "tenant_id",
+      "instance_id",
+      "requester_id",
+      "approver_id",
+      "resolved_approvers",
+      "context_json",
+      "when_expression"
+    ]
   },
   "metrics": [
     {

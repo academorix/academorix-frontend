@@ -4,17 +4,20 @@
 [![CI Status](https://github.com/sebastianbergmann/php-code-coverage/workflows/CI/badge.svg)](https://github.com/sebastianbergmann/php-code-coverage/actions)
 [![codecov](https://codecov.io/gh/sebastianbergmann/php-code-coverage/branch/main/graph/badge.svg)](https://codecov.io/gh/sebastianbergmann/php-code-coverage)
 
-Provides collection, processing, and rendering functionality for PHP code coverage information.
+Provides collection, processing, and rendering functionality for PHP code
+coverage information.
 
 ## Installation
 
-You can add this library as a local, per-project dependency to your project using [Composer](https://getcomposer.org/):
+You can add this library as a local, per-project dependency to your project
+using [Composer](https://getcomposer.org/):
 
 ```
 composer require phpunit/php-code-coverage
 ```
 
-If you only need this library during development, for instance to run your project's test suite, then you should add it as a development-time dependency:
+If you only need this library during development, for instance to run your
+project's test suite, then you should add it as a development-time dependency:
 
 ```
 composer require --dev phpunit/php-code-coverage

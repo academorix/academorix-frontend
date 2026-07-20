@@ -4,5 +4,5 @@
  * @description Public API barrel for cross-tab transport implementations.
  */
 
-export { BroadcastChannelTabTransport } from './broadcast-channel-tab.transport';
-export { NoopTabTransport } from './noop-tab.transport';
+export { BroadcastChannelTabTransport } from "./broadcast-channel-tab.transport";
+export { NoopTabTransport } from "./noop-tab.transport";

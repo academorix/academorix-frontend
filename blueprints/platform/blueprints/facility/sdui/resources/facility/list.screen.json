@@ -117,7 +117,11 @@
             },
             {
               "kind": "ComboBox",
-              "props": { "label": "Facility type", "menuTrigger": "focus", "className": "min-w-48" },
+              "props": {
+                "label": "Facility type",
+                "menuTrigger": "focus",
+                "className": "min-w-48"
+              },
               "props_items": [
                 { "id": "court", "label": "Court" },
                 { "id": "field", "label": "Field" },
@@ -166,9 +170,24 @@
             "kind": "View",
             "props": { "className": "col-span-full text-center py-12" },
             "children": [
-              { "kind": "Icon", "props": { "name": "building-office-2", "className": "size-12 mx-auto text-muted" } },
-              { "kind": "Text", "props": { "className": "mt-4 text-lg font-medium", "children": "No facilities yet" } },
-              { "kind": "Text", "props": { "className": "text-sm text-muted", "children": "Create your first facility to start accepting bookings." } }
+              {
+                "kind": "Icon",
+                "props": { "name": "building-office-2", "className": "size-12 mx-auto text-muted" }
+              },
+              {
+                "kind": "Text",
+                "props": {
+                  "className": "mt-4 text-lg font-medium",
+                  "children": "No facilities yet"
+                }
+              },
+              {
+                "kind": "Text",
+                "props": {
+                  "className": "text-sm text-muted",
+                  "children": "Create your first facility to start accepting bookings."
+                }
+              }
             ]
           },
           "itemRenderer": {

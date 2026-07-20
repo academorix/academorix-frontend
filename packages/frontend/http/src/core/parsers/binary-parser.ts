@@ -8,7 +8,7 @@
  * @module @stackra/http/parsers/binary-parser
  */
 
-import type { IStreamParser } from './stream-parser.interface';
+import type { IStreamParser } from "./stream-parser.interface";
 
 /**
  * Binary passthrough parser.

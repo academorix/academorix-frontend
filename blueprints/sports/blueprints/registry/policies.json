@@ -79,7 +79,11 @@
       "model": "Discipline",
       "class": "Academorix\\Sports\\Registry\\Policies\\DisciplinePolicy",
       "abilities": [
-        { "action": "viewAny", "permission": "disciplines.viewAny", "scope": "every tenant role — merged catalog." },
+        {
+          "action": "viewAny",
+          "permission": "disciplines.viewAny",
+          "scope": "every tenant role — merged catalog."
+        },
         { "action": "view", "permission": "disciplines.view" },
         {
           "action": "create",
@@ -91,18 +95,42 @@
           "permission": "disciplines.update",
           "scope": "admin or owner. Refused for platform-seeded rows."
         },
-        { "action": "deactivate", "permission": "disciplines.deactivate", "scope": "admin or owner. Refused for platform-seeded + when active Positions or downstream references exist." },
-        { "action": "reactivate", "permission": "disciplines.reactivate", "scope": "admin or owner. Refused if parent Sport is inactive." },
-        { "action": "delete", "permission": "disciplines.delete", "scope": "owner only. Hard-delete on tenant customs only." },
-        { "action": "platformViewAny", "permission": "platform.disciplines.viewAny", "scope": "platform_admin only." },
-        { "action": "platformCreate", "permission": "platform.disciplines.create", "scope": "platform_admin, product or super_admin. Creates a platform Discipline. Parent Sport must be platform-seeded too." }
+        {
+          "action": "deactivate",
+          "permission": "disciplines.deactivate",
+          "scope": "admin or owner. Refused for platform-seeded + when active Positions or downstream references exist."
+        },
+        {
+          "action": "reactivate",
+          "permission": "disciplines.reactivate",
+          "scope": "admin or owner. Refused if parent Sport is inactive."
+        },
+        {
+          "action": "delete",
+          "permission": "disciplines.delete",
+          "scope": "owner only. Hard-delete on tenant customs only."
+        },
+        {
+          "action": "platformViewAny",
+          "permission": "platform.disciplines.viewAny",
+          "scope": "platform_admin only."
+        },
+        {
+          "action": "platformCreate",
+          "permission": "platform.disciplines.create",
+          "scope": "platform_admin, product or super_admin. Creates a platform Discipline. Parent Sport must be platform-seeded too."
+        }
       ]
     },
     {
       "model": "Position",
       "class": "Academorix\\Sports\\Registry\\Policies\\PositionPolicy",
       "abilities": [
-        { "action": "viewAny", "permission": "positions.viewAny", "scope": "every tenant role — merged catalog." },
+        {
+          "action": "viewAny",
+          "permission": "positions.viewAny",
+          "scope": "every tenant role — merged catalog."
+        },
         { "action": "view", "permission": "positions.view" },
         {
           "action": "create",
@@ -114,11 +142,31 @@
           "permission": "positions.update",
           "scope": "admin or owner. Refused for platform-seeded rows."
         },
-        { "action": "deactivate", "permission": "positions.deactivate", "scope": "admin or owner. Refused for platform-seeded + when active downstream references exist." },
-        { "action": "reactivate", "permission": "positions.reactivate", "scope": "admin or owner. Refused if parent Discipline is inactive." },
-        { "action": "delete", "permission": "positions.delete", "scope": "owner only. Hard-delete on tenant customs only." },
-        { "action": "platformViewAny", "permission": "platform.positions.viewAny", "scope": "platform_admin only." },
-        { "action": "platformCreate", "permission": "platform.positions.create", "scope": "platform_admin, product or super_admin. Creates a platform Position." }
+        {
+          "action": "deactivate",
+          "permission": "positions.deactivate",
+          "scope": "admin or owner. Refused for platform-seeded + when active downstream references exist."
+        },
+        {
+          "action": "reactivate",
+          "permission": "positions.reactivate",
+          "scope": "admin or owner. Refused if parent Discipline is inactive."
+        },
+        {
+          "action": "delete",
+          "permission": "positions.delete",
+          "scope": "owner only. Hard-delete on tenant customs only."
+        },
+        {
+          "action": "platformViewAny",
+          "permission": "platform.positions.viewAny",
+          "scope": "platform_admin only."
+        },
+        {
+          "action": "platformCreate",
+          "permission": "platform.positions.create",
+          "scope": "platform_admin, product or super_admin. Creates a platform Position."
+        }
       ]
     }
   ]

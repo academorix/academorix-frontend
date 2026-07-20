@@ -21,6 +21,6 @@
  * ```
  */
 
-export { MockStorage } from './mock-storage';
-export { MockStorageManager } from './mock-storage-manager';
-export { createMockStorage, createMockStorageManager } from './create-mock-storage';
+export { MockStorage } from "./mock-storage";
+export { MockStorageManager } from "./mock-storage-manager";
+export { createMockStorage, createMockStorageManager } from "./create-mock-storage";

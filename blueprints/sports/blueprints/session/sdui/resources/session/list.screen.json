@@ -23,7 +23,18 @@
         {
           "kind": "PageHeader.Actions",
           "children": [
-            { "kind": "Button", "props": { "variant": "solid", "leadingIcon": "plus-outline", "children": "New session" }, "bindings": { "onPress": { "$action": "route.push", "url": "/sessions/new" }, "hidden": { "$expr": "!caller.can('sessions.create')" } } }
+            {
+              "kind": "Button",
+              "props": {
+                "variant": "solid",
+                "leadingIcon": "plus-outline",
+                "children": "New session"
+              },
+              "bindings": {
+                "onPress": { "$action": "route.push", "url": "/sessions/new" },
+                "hidden": { "$expr": "!caller.can('sessions.create')" }
+              }
+            }
           ]
         }
       ]
@@ -31,24 +42,103 @@
     {
       "kind": "FilterBar",
       "children": [
-        { "kind": "Widget", "props": { "id": "shared.status-filter" }, "bindings": { "props": { "options": ["scheduled", "confirmed", "in_progress", "completed", "cancelled", "rescheduled"] } } },
+        {
+          "kind": "Widget",
+          "props": { "id": "shared.status-filter" },
+          "bindings": {
+            "props": {
+              "options": [
+                "scheduled",
+                "confirmed",
+                "in_progress",
+                "completed",
+                "cancelled",
+                "rescheduled"
+              ]
+            }
+          }
+        },
         { "kind": "Widget", "props": { "id": "shared.session-type-filter" } },
-        { "kind": "Widget", "props": { "id": "teams.team-picker", "props": { "name": "team_id", "clearable": true } } },
-        { "kind": "Widget", "props": { "id": "season.season-picker", "props": { "name": "season_id", "clearable": true } } },
-        { "kind": "Widget", "props": { "id": "event.event-picker", "props": { "name": "event_id", "clearable": true } } }
+        {
+          "kind": "Widget",
+          "props": { "id": "teams.team-picker", "props": { "name": "team_id", "clearable": true } }
+        },
+        {
+          "kind": "Widget",
+          "props": {
+            "id": "season.season-picker",
+            "props": { "name": "season_id", "clearable": true }
+          }
+        },
+        {
+          "kind": "Widget",
+          "props": {
+            "id": "event.event-picker",
+            "props": { "name": "event_id", "clearable": true }
+          }
+        }
       ]
     },
     {
       "kind": "Table",
       "bindings": { "items": { "$ref": "sessions" } },
       "columns": [
-        { "kind": "TableColumn", "id": "name", "header": "Name", "cellExpr": "row.name", "sortable": true },
-        { "kind": "TableColumn", "id": "session_type", "header": "Type", "cellExpr": "row.session_type" },
-        { "kind": "TableColumn", "id": "starts_at", "header": "Starts", "cellExpr": "formatDateTime(row.resource_booking.starts_at)", "sortable": true },
-        { "kind": "TableColumn", "id": "status", "header": "Status", "cell": { "kind": "Widget", "props": { "id": "session.session-status-chip" }, "bindings": { "props": { "status": { "$ref": "row.status" } } } } },
-        { "kind": "TableColumn", "id": "coach", "header": "Coach", "cellExpr": "row.head_coach?.display_name || '—'" },
-        { "kind": "TableColumn", "id": "attendance", "header": "Attendance", "cell": { "kind": "Widget", "props": { "id": "session.session-attendance-summary" }, "bindings": { "props": { "session": { "$ref": "row" } } } } },
-        { "kind": "TableColumn", "id": "safeguarding", "header": "", "cell": { "kind": "Widget", "props": { "id": "session.session-safeguarding-flag" }, "bindings": { "props": { "session": { "$ref": "row" } } } } },
+        {
+          "kind": "TableColumn",
+          "id": "name",
+          "header": "Name",
+          "cellExpr": "row.name",
+          "sortable": true
+        },
+        {
+          "kind": "TableColumn",
+          "id": "session_type",
+          "header": "Type",
+          "cellExpr": "row.session_type"
+        },
+        {
+          "kind": "TableColumn",
+          "id": "starts_at",
+          "header": "Starts",
+          "cellExpr": "formatDateTime(row.resource_booking.starts_at)",
+          "sortable": true
+        },
+        {
+          "kind": "TableColumn",
+          "id": "status",
+          "header": "Status",
+          "cell": {
+            "kind": "Widget",
+            "props": { "id": "session.session-status-chip" },
+            "bindings": { "props": { "status": { "$ref": "row.status" } } }
+          }
+        },
+        {
+          "kind": "TableColumn",
+          "id": "coach",
+          "header": "Coach",
+          "cellExpr": "row.head_coach?.display_name || '—'"
+        },
+        {
+          "kind": "TableColumn",
+          "id": "attendance",
+          "header": "Attendance",
+          "cell": {
+            "kind": "Widget",
+            "props": { "id": "session.session-attendance-summary" },
+            "bindings": { "props": { "session": { "$ref": "row" } } }
+          }
+        },
+        {
+          "kind": "TableColumn",
+          "id": "safeguarding",
+          "header": "",
+          "cell": {
+            "kind": "Widget",
+            "props": { "id": "session.session-safeguarding-flag" },
+            "bindings": { "props": { "session": { "$ref": "row" } } }
+          }
+        },
         {
           "kind": "TableColumn",
           "id": "actions",
@@ -56,19 +146,57 @@
           "cell": {
             "kind": "Dropdown",
             "children": [
-              { "kind": "Dropdown.Trigger", "children": [{ "kind": "Button", "props": { "variant": "ghost", "size": "sm", "isIconOnly": true, "leadingIcon": "dots-vertical-outline", "aria-label": "Actions" } }] },
+              {
+                "kind": "Dropdown.Trigger",
+                "children": [
+                  {
+                    "kind": "Button",
+                    "props": {
+                      "variant": "ghost",
+                      "size": "sm",
+                      "isIconOnly": true,
+                      "leadingIcon": "dots-vertical-outline",
+                      "aria-label": "Actions"
+                    }
+                  }
+                ]
+              },
               {
                 "kind": "Dropdown.Menu",
                 "children": [
-                  { "kind": "Dropdown.Item", "propsExpr": "{ children: 'View', onPress: () => route.push('/sessions/' + row.id) }" },
-                  { "kind": "Dropdown.Item", "propsExpr": "{ children: 'Attendance', onPress: () => route.push('/sessions/' + row.id + '/attendance') }" },
-                  { "kind": "Dropdown.Item", "propsExpr": "{ children: 'Edit', onPress: () => route.push('/sessions/' + row.id + '/edit'), hidden: !caller.can('sessions.update') }" },
+                  {
+                    "kind": "Dropdown.Item",
+                    "propsExpr": "{ children: 'View', onPress: () => route.push('/sessions/' + row.id) }"
+                  },
+                  {
+                    "kind": "Dropdown.Item",
+                    "propsExpr": "{ children: 'Attendance', onPress: () => route.push('/sessions/' + row.id + '/attendance') }"
+                  },
+                  {
+                    "kind": "Dropdown.Item",
+                    "propsExpr": "{ children: 'Edit', onPress: () => route.push('/sessions/' + row.id + '/edit'), hidden: !caller.can('sessions.update') }"
+                  },
                   { "kind": "Dropdown.Separator" },
-                  { "kind": "Dropdown.Item", "propsExpr": "{ children: 'Confirm', onPress: () => actions.post('/api/v1/sessions/' + row.id + '/confirm'), hidden: row.status !== 'scheduled' || !caller.can('sessions.confirm') }" },
-                  { "kind": "Dropdown.Item", "propsExpr": "{ children: 'Reschedule', onPress: () => modal.open('session.reschedule', { session: row }), hidden: !['scheduled', 'confirmed'].includes(row.status) || !caller.can('sessions.reschedule') }" },
-                  { "kind": "Dropdown.Item", "propsExpr": "{ children: 'Cancel', danger: true, onPress: () => modal.open('session.cancel-confirm', { session: row }), hidden: ['completed', 'cancelled', 'rescheduled'].includes(row.status) || !caller.can('sessions.cancel') }" },
-                  { "kind": "Dropdown.Item", "propsExpr": "{ children: 'Start', onPress: () => actions.post('/api/v1/sessions/' + row.id + '/start'), hidden: row.status !== 'confirmed' || !caller.can('sessions.start') }" },
-                  { "kind": "Dropdown.Item", "propsExpr": "{ children: 'Complete', onPress: () => actions.post('/api/v1/sessions/' + row.id + '/complete'), hidden: row.status !== 'in_progress' || !caller.can('sessions.complete') }" }
+                  {
+                    "kind": "Dropdown.Item",
+                    "propsExpr": "{ children: 'Confirm', onPress: () => actions.post('/api/v1/sessions/' + row.id + '/confirm'), hidden: row.status !== 'scheduled' || !caller.can('sessions.confirm') }"
+                  },
+                  {
+                    "kind": "Dropdown.Item",
+                    "propsExpr": "{ children: 'Reschedule', onPress: () => modal.open('session.reschedule', { session: row }), hidden: !['scheduled', 'confirmed'].includes(row.status) || !caller.can('sessions.reschedule') }"
+                  },
+                  {
+                    "kind": "Dropdown.Item",
+                    "propsExpr": "{ children: 'Cancel', danger: true, onPress: () => modal.open('session.cancel-confirm', { session: row }), hidden: ['completed', 'cancelled', 'rescheduled'].includes(row.status) || !caller.can('sessions.cancel') }"
+                  },
+                  {
+                    "kind": "Dropdown.Item",
+                    "propsExpr": "{ children: 'Start', onPress: () => actions.post('/api/v1/sessions/' + row.id + '/start'), hidden: row.status !== 'confirmed' || !caller.can('sessions.start') }"
+                  },
+                  {
+                    "kind": "Dropdown.Item",
+                    "propsExpr": "{ children: 'Complete', onPress: () => actions.post('/api/v1/sessions/' + row.id + '/complete'), hidden: row.status !== 'in_progress' || !caller.can('sessions.complete') }"
+                  }
                 ]
               }
             ]

@@ -5,9 +5,9 @@
  */
 export class RealtimeError extends Error {
   public readonly code: string;
-  public constructor(message: string, code: string = 'REALTIME_ERROR') {
+  public constructor(message: string, code: string = "REALTIME_ERROR") {
     super(message);
-    this.name = 'RealtimeError';
+    this.name = "RealtimeError";
     this.code = code;
     Object.setPrototypeOf(this, RealtimeError.prototype);
   }

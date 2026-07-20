@@ -9,9 +9,27 @@
   "resource": { "module": "attendance", "entity": "attendance-record", "action": "list" },
   "requiresPermission": "attendance.viewAny",
   "dataSources": [
-    { "name": "records", "kind": "http.get", "url": "/api/v1/attendance-records", "unwrap": "data", "queryFromFilters": true },
-    { "name": "sessions", "kind": "http.get", "url": "/api/v1/sessions?filter[status]=scheduled,confirmed,in_progress,completed", "unwrap": "data", "cache": { "ttlSeconds": 300 } },
-    { "name": "teams", "kind": "http.get", "url": "/api/v1/teams?filter[status]=active", "unwrap": "data", "cache": { "ttlSeconds": 300 } }
+    {
+      "name": "records",
+      "kind": "http.get",
+      "url": "/api/v1/attendance-records",
+      "unwrap": "data",
+      "queryFromFilters": true
+    },
+    {
+      "name": "sessions",
+      "kind": "http.get",
+      "url": "/api/v1/sessions?filter[status]=scheduled,confirmed,in_progress,completed",
+      "unwrap": "data",
+      "cache": { "ttlSeconds": 300 }
+    },
+    {
+      "name": "teams",
+      "kind": "http.get",
+      "url": "/api/v1/teams?filter[status]=active",
+      "unwrap": "data",
+      "cache": { "ttlSeconds": 300 }
+    }
   ],
   "nodes": [
     {
@@ -26,13 +44,30 @@
             {
               "kind": "View",
               "children": [
-                { "kind": "Text", "props": { "as": "h1", "className": "text-2xl font-semibold", "children": "Attendance" } },
-                { "kind": "Text", "props": { "className": "text-sm text-muted", "children": "Who showed up at which session — check-ins, late arrivals, and no-shows." } }
+                {
+                  "kind": "Text",
+                  "props": {
+                    "as": "h1",
+                    "className": "text-2xl font-semibold",
+                    "children": "Attendance"
+                  }
+                },
+                {
+                  "kind": "Text",
+                  "props": {
+                    "className": "text-sm text-muted",
+                    "children": "Who showed up at which session — check-ins, late arrivals, and no-shows."
+                  }
+                }
               ]
             },
             {
               "kind": "Button",
-              "props": { "variant": "primary", "leadingIcon": "plus", "children": "Record check-in" },
+              "props": {
+                "variant": "primary",
+                "leadingIcon": "plus",
+                "children": "Record check-in"
+              },
               "actions": { "onPress": { "kind": "navigate", "to": "/tenant/attendance/check-in" } },
               "requiresPermission": "attendance.create"
             }
@@ -46,13 +81,25 @@
               "kind": "ComboBox",
               "props": { "label": "Team", "menuTrigger": "focus", "className": "min-w-56" },
               "bindings": { "items": { "$ref": "teams" } },
-              "actions": { "onSelectionChange": { "kind": "filter.set", "field": "team_id", "valueExpr": "$selectedKey" } }
+              "actions": {
+                "onSelectionChange": {
+                  "kind": "filter.set",
+                  "field": "team_id",
+                  "valueExpr": "$selectedKey"
+                }
+              }
             },
             {
               "kind": "ComboBox",
               "props": { "label": "Session", "menuTrigger": "focus", "className": "min-w-56" },
               "bindings": { "items": { "$ref": "sessions" } },
-              "actions": { "onSelectionChange": { "kind": "filter.set", "field": "session_id", "valueExpr": "$selectedKey" } }
+              "actions": {
+                "onSelectionChange": {
+                  "kind": "filter.set",
+                  "field": "session_id",
+                  "valueExpr": "$selectedKey"
+                }
+              }
             },
             {
               "kind": "ComboBox",
@@ -64,7 +111,13 @@
                 { "id": "left_early", "label": "Left early" },
                 { "id": "present_with_note", "label": "Present with note" }
               ],
-              "actions": { "onSelectionChange": { "kind": "filter.set", "field": "status", "valueExpr": "$selectedKey" } }
+              "actions": {
+                "onSelectionChange": {
+                  "kind": "filter.set",
+                  "field": "status",
+                  "valueExpr": "$selectedKey"
+                }
+              }
             },
             {
               "kind": "ComboBox",
@@ -76,20 +129,41 @@
                 { "id": "geofence", "label": "Geofence" },
                 { "id": "qr_scan", "label": "QR scan" }
               ],
-              "actions": { "onSelectionChange": { "kind": "filter.set", "field": "checked_in_via", "valueExpr": "$selectedKey" } }
+              "actions": {
+                "onSelectionChange": {
+                  "kind": "filter.set",
+                  "field": "checked_in_via",
+                  "valueExpr": "$selectedKey"
+                }
+              }
             }
           ]
         },
         {
           "kind": "Table",
           "props": { "aria-label": "Attendance records" },
-          "bindings": { "rows": { "$ref": "records" }, "isLoading": { "$ref": "records.isLoading" } },
+          "bindings": {
+            "rows": { "$ref": "records" },
+            "isLoading": { "$ref": "records.isLoading" }
+          },
           "emptyState": {
             "kind": "View",
             "props": { "className": "text-center py-12" },
             "children": [
-              { "kind": "Icon", "props": { "name": "clipboard-document-check", "className": "size-12 mx-auto text-muted" } },
-              { "kind": "Text", "props": { "className": "mt-4 text-lg font-medium", "children": "No attendance recorded yet" } }
+              {
+                "kind": "Icon",
+                "props": {
+                  "name": "clipboard-document-check",
+                  "className": "size-12 mx-auto text-muted"
+                }
+              },
+              {
+                "kind": "Text",
+                "props": {
+                  "className": "mt-4 text-lg font-medium",
+                  "children": "No attendance recorded yet"
+                }
+              }
             ]
           },
           "columns": [
@@ -100,13 +174,36 @@
                 "kind": "View",
                 "props": { "className": "flex items-center gap-2" },
                 "children": [
-                  { "kind": "Text", "props": { "className": "font-medium" }, "bindings": { "children": { "$ref": "row.athlete_display_name" } } },
-                  { "kind": "Widget", "widget": "athlete.minor-badge", "bindings": { "hidden": { "$expr": "!row.athlete.is_minor" } } }
+                  {
+                    "kind": "Text",
+                    "props": { "className": "font-medium" },
+                    "bindings": { "children": { "$ref": "row.athlete_display_name" } }
+                  },
+                  {
+                    "kind": "Widget",
+                    "widget": "athlete.minor-badge",
+                    "bindings": { "hidden": { "$expr": "!row.athlete.is_minor" } }
+                  }
                 ]
               }
             },
-            { "key": "session_id", "label": "Session", "renderer": { "kind": "Text", "bindings": { "children": { "$ref": "row.session_display_name" } } } },
-            { "key": "checked_in_at", "label": "Checked in", "renderer": { "kind": "Text", "bindings": { "children": { "$ref": "row.checked_in_at" } }, "formatter": "datetime-short" } },
+            {
+              "key": "session_id",
+              "label": "Session",
+              "renderer": {
+                "kind": "Text",
+                "bindings": { "children": { "$ref": "row.session_display_name" } }
+              }
+            },
+            {
+              "key": "checked_in_at",
+              "label": "Checked in",
+              "renderer": {
+                "kind": "Text",
+                "bindings": { "children": { "$ref": "row.checked_in_at" } },
+                "formatter": "datetime-short"
+              }
+            },
             {
               "key": "status",
               "label": "Status",

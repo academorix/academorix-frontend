@@ -4,5 +4,5 @@
  * @description Barrel for the sandboxed expression evaluator.
  */
 
-export { isExpression, evaluateExpression, resolveBindable, evaluateBoolean } from './evaluator';
-export { OPERATORS } from './operators';
+export { isExpression, evaluateExpression, resolveBindable, evaluateBoolean } from "./evaluator";
+export { OPERATORS } from "./operators";

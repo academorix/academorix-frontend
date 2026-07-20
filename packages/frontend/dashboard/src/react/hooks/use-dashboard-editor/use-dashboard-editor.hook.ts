@@ -36,10 +36,7 @@ import type { DashboardDensity } from "@/core/types/dashboard-density.type";
 import type { DashboardLayoutMode } from "@/core/types/dashboard-layout-mode.type";
 import type { DashboardVisibility } from "@/core/types/dashboard-visibility.type";
 
-import type {
-  EditorPersistFn,
-  IUseDashboardEditor,
-} from "./use-dashboard-editor.interface";
+import type { EditorPersistFn, IUseDashboardEditor } from "./use-dashboard-editor.interface";
 
 /** Bounded undo/redo depth. */
 const UNDO_STACK_MAX = 25;
@@ -286,19 +283,13 @@ export function useDashboardEditor(
     (layoutMode: DashboardLayoutMode) => patch({ layoutMode }),
     [patch],
   );
-  const setDensity = useCallback(
-    (density: DashboardDensity) => patch({ density }),
-    [patch],
-  );
+  const setDensity = useCallback((density: DashboardDensity) => patch({ density }), [patch]);
   const setFilters = useCallback(
     (filters: IDashboardFilters | undefined) => patch({ filters }),
     [patch],
   );
   const setPinned = useCallback((isPinned: boolean) => patch({ isPinned }), [patch]);
-  const setIsDefault = useCallback(
-    (isDefault: boolean) => patch({ isDefault }),
-    [patch],
-  );
+  const setIsDefault = useCallback((isDefault: boolean) => patch({ isDefault }), [patch]);
   const setWidgets = useCallback(
     (widgets: readonly IWidgetInstance[]) => patch({ widgets }),
     [patch],

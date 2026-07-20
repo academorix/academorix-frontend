@@ -62,10 +62,7 @@
       "name": "access-requests.manage_any",
       "guard": "platform_admin",
       "description": "Cross-tenant read for Academorix ops (abuse investigation, compliance reporting, support tickets). Scoped to a small platform-admin role tier.",
-      "grantsPolicies": [
-        "AccessRequestPolicy@viewAnyPlatform",
-        "AccessRequestPolicy@viewPlatform"
-      ],
+      "grantsPolicies": ["AccessRequestPolicy@viewAnyPlatform", "AccessRequestPolicy@viewPlatform"],
       "seededOn": ["super_admin", "compliance_officer"]
     }
   ],

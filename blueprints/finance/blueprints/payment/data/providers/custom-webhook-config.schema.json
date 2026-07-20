@@ -41,7 +41,16 @@
       "minItems": 1,
       "items": {
         "type": "string",
-        "enum": ["card", "bank_debit", "bank_transfer", "wallet", "installment", "crypto", "cash", "check"]
+        "enum": [
+          "card",
+          "bank_debit",
+          "bank_transfer",
+          "wallet",
+          "installment",
+          "crypto",
+          "cash",
+          "check"
+        ]
       },
       "description": "Payment method types this caller's endpoint accepts. Non-empty."
     },

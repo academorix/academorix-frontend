@@ -17,8 +17,8 @@
  *     an optional `fallback` in the meantime.
  */
 
-import { useEffect, useMemo, useRef, useState, type JSX } from 'react';
-import { useInject, useOptionalInject } from '@stackra/container/react';
+import { useEffect, useMemo, useRef, useState, type JSX } from "react";
+import { useInject, useOptionalInject } from "@stackra/container/react";
 import {
   EVENT_EMITTER,
   SETTINGS_EVENTS,
@@ -27,11 +27,11 @@ import {
   type IEventEmitter,
   type ISettingsRegistry,
   type ISettingsService,
-} from '@stackra/contracts';
+} from "@stackra/contracts";
 
-import { SettingsContext } from '@/react/contexts/settings';
-import type { ISettingsContextValue } from '@/react/contexts/settings';
-import type { ISettingsProviderProps } from './settings-provider.interface';
+import { SettingsContext } from "@/react/contexts/settings";
+import type { ISettingsContextValue } from "@/react/contexts/settings";
+import type { ISettingsProviderProps } from "./settings-provider.interface";
 
 /**
  * Provider that hydrates SSR settings state + optionally defers
@@ -62,7 +62,7 @@ import type { ISettingsProviderProps } from './settings-provider.interface';
  * ```
  */
 export function SettingsProvider(props: ISettingsProviderProps): JSX.Element {
-  const { children, initialSchema, initialValues, ready = 'immediate', fallback = null } = props;
+  const { children, initialSchema, initialValues, ready = "immediate", fallback = null } = props;
 
   const registry = useInject<ISettingsRegistry>(SETTINGS_REGISTRY);
   const service = useInject<ISettingsService>(SETTINGS_SERVICE);
@@ -72,8 +72,8 @@ export function SettingsProvider(props: ISettingsProviderProps): JSX.Element {
   // pending and flips once the schema event fires or hydration
   // applies. Track a ref alongside so the flip is idempotent — flipping
   // state twice would trigger a redundant render.
-  const [isReady, setIsReady] = useState(ready === 'immediate');
-  const hasFlippedRef = useRef(ready === 'immediate');
+  const [isReady, setIsReady] = useState(ready === "immediate");
+  const hasFlippedRef = useRef(ready === "immediate");
 
   // Apply hydration exactly once on mount. Registration failures on
   // individual groups are logged by the registry itself; we still flip
@@ -92,7 +92,7 @@ export function SettingsProvider(props: ISettingsProviderProps): JSX.Element {
 
     // If the caller hydrated a schema, honour their intent — the
     // registry is warm even without a network fetch, so flip ready.
-    if (ready === 'waitSchema' && initialSchema && initialSchema.length > 0) {
+    if (ready === "waitSchema" && initialSchema && initialSchema.length > 0) {
       if (!hasFlippedRef.current) {
         hasFlippedRef.current = true;
         setIsReady(true);
@@ -105,7 +105,7 @@ export function SettingsProvider(props: ISettingsProviderProps): JSX.Element {
   // Listen for the schema-loaded event. Fires once when the schema
   // loader completes its initial fetch — after that we're ready.
   useEffect(() => {
-    if (ready !== 'waitSchema') return;
+    if (ready !== "waitSchema") return;
     if (!events) {
       // Without an event bus we can't observe the schema fetch;
       // fall back to "ready by default" so the UI doesn't stall.

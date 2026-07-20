@@ -6,11 +6,11 @@
  *   configured resolver.
  */
 
-import { Inject, Injectable } from '@stackra/container';
-import type { ILocalStorageAdapter } from '@stackra/contracts';
-import { CONFLICT_RESOLVER, LOCAL_STORAGE_ADAPTER } from '@stackra/contracts';
-import { Logger } from '@stackra/logger';
-import type { ConflictResolver } from '../resolvers/conflict.resolver';
+import { Inject, Injectable } from "@stackra/container";
+import type { ILocalStorageAdapter } from "@stackra/contracts";
+import { CONFLICT_RESOLVER, LOCAL_STORAGE_ADAPTER } from "@stackra/contracts";
+import { Logger } from "@stackra/logger";
+import type { ConflictResolver } from "../resolvers/conflict.resolver";
 
 /**
  * MergeService — applies remote documents to the local store with
@@ -22,7 +22,7 @@ export class MergeService {
 
   public constructor(
     @Inject(LOCAL_STORAGE_ADAPTER) private readonly storage: ILocalStorageAdapter,
-    @Inject(CONFLICT_RESOLVER) private readonly conflictResolver: ConflictResolver
+    @Inject(CONFLICT_RESOLVER) private readonly conflictResolver: ConflictResolver,
   ) {}
 
   /**
@@ -32,7 +32,7 @@ export class MergeService {
    */
   public async merge<T extends Record<string, unknown> & { id: string }>(
     collection: string,
-    remoteDocuments: T[]
+    remoteDocuments: T[],
   ): Promise<number> {
     let conflictsResolved = 0;
 
@@ -54,16 +54,16 @@ export class MergeService {
             String(
               (localDoc as Record<string, unknown>).updatedAt ??
                 (localDoc as Record<string, unknown>).createdAt ??
-                0
-            )
+                0,
+            ),
           ),
           new Date(
             String(
               (remoteDoc as Record<string, unknown>).updatedAt ??
                 (remoteDoc as Record<string, unknown>).createdAt ??
-                0
-            )
-          )
+                0,
+            ),
+          ),
         );
 
         if (conflict) {

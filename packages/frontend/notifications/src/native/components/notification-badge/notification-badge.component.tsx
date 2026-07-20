@@ -9,11 +9,11 @@
  *   primitive.
  */
 
-import type { ReactElement } from 'react';
-import { Badge } from '@stackra/ui/native';
+import type { ReactElement } from "react";
+import { Badge } from "@stackra/ui/native";
 
-import { useInAppNotifications } from '../../hooks';
-import type { NotificationBadgeProps } from './notification-badge.interface';
+import { useInAppNotifications } from "../../hooks";
+import type { NotificationBadgeProps } from "./notification-badge.interface";
 
 /**
  * Cap the numeric badge label to the given ceiling. `max = 99`

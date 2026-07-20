@@ -99,6 +99,8 @@
     }
   },
   "devDependencies": {
+    "@academorix/config-tsconfig": "workspace:*",
+    "@academorix/config-tsup": "workspace:*",
     "@heroui-pro/react": "catalog:",
     "@heroui/react": "catalog:",
     "@stackra/container": "workspace:*",

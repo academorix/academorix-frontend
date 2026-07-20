@@ -4,11 +4,11 @@
  * @description React hook for consent banner visibility and actions.
  */
 
-import { useCallback, useSyncExternalStore } from 'react';
-import { useInject } from '@stackra/container/react';
+import { useCallback, useSyncExternalStore } from "react";
+import { useInject } from "@stackra/container/react";
 
-import { CONSENT_MANAGER } from '@stackra/contracts';
-import type { ConsentManager } from '@/core/services/consent-manager.service';
+import { CONSENT_MANAGER } from "@stackra/contracts";
+import type { ConsentManager } from "@/core/services/consent-manager.service";
 
 /** Value returned by {@link useConsentBanner}. */
 export interface UseConsentBannerResult {
@@ -48,7 +48,7 @@ export function useConsentBanner(): UseConsentBannerResult {
 
   const subscribe = useCallback(
     (onStoreChange: () => void) => manager.subscribe(onStoreChange),
-    [manager]
+    [manager],
   );
   const getSnapshot = useCallback(() => manager.getSnapshot(), [manager]);
 

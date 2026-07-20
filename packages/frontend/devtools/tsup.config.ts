@@ -13,22 +13,22 @@
  *   web bundle never resolves them statically.
  */
 
-import { defineBaseConfig } from '../../tsup.config.base';
+import { defineBaseConfig } from "@academorix/config-tsup";
 
 export default defineBaseConfig(
   {
     // Core DI runtime — module, registries, decorators, config trio.
-    index: 'src/core/index.ts',
+    index: "src/core/index.ts",
     // React (web) shell — launcher, drawer, panels, hooks, provider.
-    react: 'src/react/index.ts',
+    react: "src/react/index.ts",
     // React Native shell — BottomSheet + native panel mirrors.
-    native: 'src/native/index.ts',
+    native: "src/native/index.ts",
     // In-memory mocks + createMock* factories for consumer tests.
-    testing: 'src/testing/index.ts',
+    testing: "src/testing/index.ts",
   },
   {
     // Optional peers imported lazily on the native subpath — must be
     // externalised so the web bundle doesn't resolve them statically.
-    external: ['react-native', 'heroui-native-pro'],
-  }
+    external: ["react-native", "heroui-native-pro"],
+  },
 );

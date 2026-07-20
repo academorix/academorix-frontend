@@ -15,19 +15,21 @@
 
 ## About
 
-ramsey/collection is a PHP library for representing and manipulating collections.
+ramsey/collection is a PHP library for representing and manipulating
+collections.
 
-Much inspiration for this library came from the [Java Collections Framework][java].
+Much inspiration for this library came from the [Java Collections
+Framework][java].
 
-This project adheres to a [code of conduct](CODE_OF_CONDUCT.md).
-By participating in this project and its community, you are expected to
-uphold this code.
+This project adheres to a [code of conduct](CODE_OF_CONDUCT.md). By
+participating in this project and its community, you are expected to uphold this
+code.
 
 ## Installation
 
 Install this package as a dependency using [Composer](https://getcomposer.org).
 
-``` bash
+```bash
 composer require ramsey/collection
 ```
 
@@ -51,9 +53,9 @@ security issue in software that is maintained in this repository, please read
 ## Copyright and License
 
 The ramsey/collection library is copyright © [Ben Ramsey](https://benramsey.com)
-and licensed for use under the terms of the
-MIT License (MIT). Please see [LICENSE](LICENSE) for more information.
+and licensed for use under the terms of the MIT License (MIT). Please see
+[LICENSE](LICENSE) for more information.
 
-
-[java]: http://docs.oracle.com/javase/8/docs/technotes/guides/collections/index.html
+[java]:
+  http://docs.oracle.com/javase/8/docs/technotes/guides/collections/index.html
 [security.md]: https://github.com/ramsey/collection/blob/main/SECURITY.md

@@ -1,7 +1,7 @@
 {
   "name": "@stackra/events",
   "version": "0.1.0",
-  "description": "Cross-platform event bus for the Stackra framework — typed emitters, discovery-based @OnEvent handlers, and React bindings.",
+  "description": "Cross-platform event bus for the Stackra framework \u2014 typed emitters, discovery-based @OnEvent handlers, and React bindings.",
   "license": "MIT",
   "author": {
     "name": "Stackra L.L.C",
@@ -95,6 +95,8 @@
     }
   },
   "devDependencies": {
+    "@academorix/config-tsconfig": "workspace:*",
+    "@academorix/config-tsup": "workspace:*",
     "@stackra/config": "workspace:*",
     "@stackra/container": "workspace:*",
     "@stackra/contracts": "workspace:*",

@@ -37,7 +37,11 @@
         {
           "id": "heading",
           "kind": "Text",
-          "props": { "as": "h1", "className": "text-2xl font-semibold text-center", "children": "You don't have permission" }
+          "props": {
+            "as": "h1",
+            "className": "text-2xl font-semibold text-center",
+            "children": "You don't have permission"
+          }
         },
         {
           "id": "subheading",
@@ -57,13 +61,23 @@
             {
               "id": "back",
               "kind": "Button",
-              "props": { "variant": "secondary", "size": "md", "children": "Go back", "leadingIcon": "arrow-left" },
+              "props": {
+                "variant": "secondary",
+                "size": "md",
+                "children": "Go back",
+                "leadingIcon": "arrow-left"
+              },
               "actions": { "onPress": { "kind": "navigate.back" } }
             },
             {
               "id": "request",
               "kind": "Button",
-              "props": { "variant": "primary", "size": "md", "children": "Request access", "leadingIcon": "paper-airplane" },
+              "props": {
+                "variant": "primary",
+                "size": "md",
+                "children": "Request access",
+                "leadingIcon": "paper-airplane"
+              },
               "bindings": { "isHidden": { "$expr": "!denial || !denial.request_url" } },
               "actions": {
                 "onPress": {
@@ -80,7 +94,9 @@
           "kind": "Alert",
           "props": { "variant": "info", "className": "mt-4" },
           "bindings": {
-            "hidden": { "$expr": "!denial || !denial.permissions_wanted.every(p => myPermissions.includes(p))" }
+            "hidden": {
+              "$expr": "!denial || !denial.permissions_wanted.every(p => myPermissions.includes(p))"
+            }
           },
           "children": [
             {

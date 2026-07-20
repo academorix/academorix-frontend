@@ -42,7 +42,14 @@
             {
               "kind": "View",
               "children": [
-                { "kind": "Text", "props": { "as": "h1", "className": "text-2xl font-semibold", "children": "Refund lines" } },
+                {
+                  "kind": "Text",
+                  "props": {
+                    "as": "h1",
+                    "className": "text-2xl font-semibold",
+                    "children": "Refund lines"
+                  }
+                },
                 {
                   "kind": "Text",
                   "props": { "className": "text-sm text-muted" },
@@ -60,10 +67,17 @@
           "kind": "Alert",
           "props": { "variant": "warning" },
           "bindings": {
-            "hidden": { "$expr": "['pending', 'awaiting_approval', 'approved'].includes(refund.status)" }
+            "hidden": {
+              "$expr": "['pending', 'awaiting_approval', 'approved'].includes(refund.status)"
+            }
           },
           "children": [
-            { "kind": "Text", "props": { "children": "Refund lines can only be edited while the parent refund is pending, awaiting approval, or approved. This refund has progressed past that state." } }
+            {
+              "kind": "Text",
+              "props": {
+                "children": "Refund lines can only be edited while the parent refund is pending, awaiting approval, or approved. This refund has progressed past that state."
+              }
+            }
           ]
         },
         {
@@ -73,8 +87,21 @@
             "hidden": { "$expr": "refund.refund_type !== 'partial'" }
           },
           "children": [
-            { "kind": "Text", "props": { "as": "h2", "className": "text-lg font-medium", "children": "Line-by-line partial refund" } },
-            { "kind": "Text", "props": { "className": "text-sm text-muted mb-2", "children": "Select which invoice lines to refund and how much of each." } },
+            {
+              "kind": "Text",
+              "props": {
+                "as": "h2",
+                "className": "text-lg font-medium",
+                "children": "Line-by-line partial refund"
+              }
+            },
+            {
+              "kind": "Text",
+              "props": {
+                "className": "text-sm text-muted mb-2",
+                "children": "Select which invoice lines to refund and how much of each."
+              }
+            },
             {
               "kind": "Table",
               "bindings": {
@@ -82,8 +109,18 @@
               },
               "columns": [
                 { "key": "description", "label": "Description" },
-                { "key": "total_cents", "label": "Line total", "renderer": "currency", "params": { "currency": "row.currency" } },
-                { "key": "amount_refunded_cents", "label": "Already refunded", "renderer": "currency", "params": { "currency": "row.currency" } },
+                {
+                  "key": "total_cents",
+                  "label": "Line total",
+                  "renderer": "currency",
+                  "params": { "currency": "row.currency" }
+                },
+                {
+                  "key": "amount_refunded_cents",
+                  "label": "Already refunded",
+                  "renderer": "currency",
+                  "params": { "currency": "row.currency" }
+                },
                 {
                   "key": "refund_amount",
                   "label": "Refund amount",
@@ -109,7 +146,10 @@
               "kind": "View",
               "props": { "className": "flex items-center justify-between p-3 bg-muted/20 rounded" },
               "children": [
-                { "kind": "Text", "props": { "className": "font-medium", "children": "Sum of line amounts" } },
+                {
+                  "kind": "Text",
+                  "props": { "className": "font-medium", "children": "Sum of line amounts" }
+                },
                 {
                   "kind": "Text",
                   "props": { "className": "font-mono" },
@@ -142,8 +182,21 @@
             "hidden": { "$expr": "refund.refund_type !== 'prorated'" }
           },
           "children": [
-            { "kind": "Text", "props": { "as": "h2", "className": "text-lg font-medium", "children": "Prorated refund" } },
-            { "kind": "Text", "props": { "className": "text-sm text-muted mb-2", "children": "The refund amount is computed from the unused period. Pass credits + penalties are applied to the base amount." } },
+            {
+              "kind": "Text",
+              "props": {
+                "as": "h2",
+                "className": "text-lg font-medium",
+                "children": "Prorated refund"
+              }
+            },
+            {
+              "kind": "Text",
+              "props": {
+                "className": "text-sm text-muted mb-2",
+                "children": "The refund amount is computed from the unused period. Pass credits + penalties are applied to the base amount."
+              }
+            },
             {
               "kind": "Widget",
               "widget": "refund.proration-preview",

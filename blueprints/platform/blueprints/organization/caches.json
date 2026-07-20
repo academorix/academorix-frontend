@@ -40,10 +40,7 @@
       "description": "Every descendant id of the given Organization (for `is-ancestor-of?` / `is-descendant-of?` checks on the hot path). Backed by a LIKE-prefix query on tree_path + cached because per-request scoped-access decisions can hit this dozens of times.",
       "ttlSeconds": 300,
       "tags": ["organization", "organization-tree", "tenant"],
-      "invalidatedBy": [
-        "RebuildTreePathsJob.completed",
-        "OrganizationObserver.deleted"
-      ]
+      "invalidatedBy": ["RebuildTreePathsJob.completed", "OrganizationObserver.deleted"]
     },
     {
       "pattern": "org:ancestors:{tenant_id}:{organization_id}",

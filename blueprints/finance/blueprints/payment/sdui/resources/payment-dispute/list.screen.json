@@ -16,7 +16,9 @@
       "url": "/api/v1/payment-disputes",
       "unwrap": "data",
       "queryFromFilters": true,
-      "defaultFilters": { "status": "needs_response,under_review,warning_needs_response,warning_under_review" }
+      "defaultFilters": {
+        "status": "needs_response,under_review,warning_needs_response,warning_under_review"
+      }
     }
   ],
   "nodes": [
@@ -28,8 +30,21 @@
         {
           "kind": "View",
           "children": [
-            { "kind": "Text", "props": { "as": "h1", "className": "text-2xl font-semibold", "children": "Payment disputes" } },
-            { "kind": "Text", "props": { "className": "text-sm text-muted", "children": "Chargebacks + inquiries requiring your response." } }
+            {
+              "kind": "Text",
+              "props": {
+                "as": "h1",
+                "className": "text-2xl font-semibold",
+                "children": "Payment disputes"
+              }
+            },
+            {
+              "kind": "Text",
+              "props": {
+                "className": "text-sm text-muted",
+                "children": "Chargebacks + inquiries requiring your response."
+              }
+            }
           ]
         },
         {
@@ -50,7 +65,11 @@
                 { "id": "lost", "label": "Lost" }
               ],
               "actions": {
-                "onSelectionChange": { "kind": "filter.set", "field": "status", "valueExpr": "$selectedKey" }
+                "onSelectionChange": {
+                  "kind": "filter.set",
+                  "field": "status",
+                  "valueExpr": "$selectedKey"
+                }
               }
             },
             {
@@ -58,7 +77,11 @@
               "props": { "label": "Reason", "menuTrigger": "focus", "className": "min-w-56" },
               "props_items_source": "payment.dispute-reason-catalog",
               "actions": {
-                "onSelectionChange": { "kind": "filter.set", "field": "reason", "valueExpr": "$selectedKey" }
+                "onSelectionChange": {
+                  "kind": "filter.set",
+                  "field": "reason",
+                  "valueExpr": "$selectedKey"
+                }
               }
             }
           ]
@@ -72,12 +95,47 @@
           "props": {
             "className": "w-full",
             "columns": [
-              { "field": "opened_at", "label": "Opened", "sortable": true, "defaultSort": "desc", "width": 140, "formatter": "datetime-relative" },
-              { "field": "provider", "label": "Provider", "width": 100, "renderer": { "kind": "Text", "formatter": "titlecase" } },
-              { "field": "reason", "label": "Reason", "width": 200, "renderer": { "kind": "Text", "formatter": "titlecase-space" } },
-              { "field": "amount_cents", "label": "Amount", "sortable": true, "width": 120, "renderer": { "kind": "Text", "formatter": "currency" } },
-              { "field": "status", "label": "Status", "sortable": true, "width": 160, "renderer": { "widget": "payment.dispute-status-chip" } },
-              { "field": "evidence_due_by", "label": "Evidence due", "sortable": true, "width": 140, "formatter": "datetime-relative-days" }
+              {
+                "field": "opened_at",
+                "label": "Opened",
+                "sortable": true,
+                "defaultSort": "desc",
+                "width": 140,
+                "formatter": "datetime-relative"
+              },
+              {
+                "field": "provider",
+                "label": "Provider",
+                "width": 100,
+                "renderer": { "kind": "Text", "formatter": "titlecase" }
+              },
+              {
+                "field": "reason",
+                "label": "Reason",
+                "width": 200,
+                "renderer": { "kind": "Text", "formatter": "titlecase-space" }
+              },
+              {
+                "field": "amount_cents",
+                "label": "Amount",
+                "sortable": true,
+                "width": 120,
+                "renderer": { "kind": "Text", "formatter": "currency" }
+              },
+              {
+                "field": "status",
+                "label": "Status",
+                "sortable": true,
+                "width": 160,
+                "renderer": { "widget": "payment.dispute-status-chip" }
+              },
+              {
+                "field": "evidence_due_by",
+                "label": "Evidence due",
+                "sortable": true,
+                "width": 140,
+                "formatter": "datetime-relative-days"
+              }
             ],
             "onRowPress": {
               "kind": "navigate",
@@ -88,9 +146,24 @@
             "kind": "View",
             "props": { "className": "text-center py-12" },
             "children": [
-              { "kind": "Icon", "props": { "name": "scale", "className": "size-12 mx-auto text-muted" } },
-              { "kind": "Text", "props": { "className": "mt-4 text-lg font-medium", "children": "No disputes to respond to" } },
-              { "kind": "Text", "props": { "className": "text-sm text-muted", "children": "Disputes appear here when customers challenge a payment via their bank." } }
+              {
+                "kind": "Icon",
+                "props": { "name": "scale", "className": "size-12 mx-auto text-muted" }
+              },
+              {
+                "kind": "Text",
+                "props": {
+                  "className": "mt-4 text-lg font-medium",
+                  "children": "No disputes to respond to"
+                }
+              },
+              {
+                "kind": "Text",
+                "props": {
+                  "className": "text-sm text-muted",
+                  "children": "Disputes appear here when customers challenge a payment via their bank."
+                }
+              }
             ]
           }
         }

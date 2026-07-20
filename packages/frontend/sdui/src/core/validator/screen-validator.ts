@@ -9,17 +9,17 @@
  *   `assertValidScreen` for tests.
  */
 
-import type { ISduiAction, ISduiNode, ISduiScreen } from '@stackra/contracts';
+import type { ISduiAction, ISduiNode, ISduiScreen } from "@stackra/contracts";
 
-const SDUI_ACTION_KINDS: ReadonlySet<string> = new Set<ISduiAction['kind']>([
-  'navigate',
-  'openOverlay',
-  'closeOverlay',
-  'setState',
-  'toggleState',
-  'submitForm',
-  'callApi',
-  'toast',
+const SDUI_ACTION_KINDS: ReadonlySet<string> = new Set<ISduiAction["kind"]>([
+  "navigate",
+  "openOverlay",
+  "closeOverlay",
+  "setState",
+  "toggleState",
+  "submitForm",
+  "callApi",
+  "toast",
 ]);
 
 /**
@@ -59,19 +59,19 @@ export interface IComponentRegistryLike {
  */
 export function validateScreen(
   screen: ISduiScreen,
-  registry: IComponentRegistryLike | null = null
+  registry: IComponentRegistryLike | null = null,
 ): ISduiValidationResult {
   const issues: ISduiValidationIssue[] = [];
 
-  if (typeof screen.schemaVersion !== 'number') {
-    issues.push({ path: 'screen', message: '`schemaVersion` is required and must be a number' });
+  if (typeof screen.schemaVersion !== "number") {
+    issues.push({ path: "screen", message: "`schemaVersion` is required and must be a number" });
   }
   if (!screen.root) {
-    issues.push({ path: 'screen', message: '`root` node is required' });
+    issues.push({ path: "screen", message: "`root` node is required" });
     return { valid: false, issues };
   }
 
-  walk(screen.root, 'root', issues, registry);
+  walk(screen.root, "root", issues, registry);
   return { valid: issues.length === 0, issues };
 }
 
@@ -79,17 +79,17 @@ function walk(
   node: ISduiNode,
   path: string,
   issues: ISduiValidationIssue[],
-  registry: IComponentRegistryLike | null
+  registry: IComponentRegistryLike | null,
 ): void {
-  if (!node || typeof node !== 'object') {
-    issues.push({ path, message: 'Node must be an object' });
+  if (!node || typeof node !== "object") {
+    issues.push({ path, message: "Node must be an object" });
     return;
   }
-  if (typeof node.id !== 'string' || node.id.length === 0) {
-    issues.push({ path, message: '`id` must be a non-empty string' });
+  if (typeof node.id !== "string" || node.id.length === 0) {
+    issues.push({ path, message: "`id` must be a non-empty string" });
   }
-  if (typeof node.type !== 'string' || node.type.length === 0) {
-    issues.push({ path, message: '`type` must be a non-empty string' });
+  if (typeof node.type !== "string" || node.type.length === 0) {
+    issues.push({ path, message: "`type` must be a non-empty string" });
   } else if (registry && !registry.has(node.type)) {
     issues.push({ path, message: `Unknown component type "${node.type}"` });
   }
@@ -105,10 +105,10 @@ function walk(
         continue;
       }
       for (const [index, action] of actions.entries()) {
-        if (!action || typeof action !== 'object' || typeof action.kind !== 'string') {
+        if (!action || typeof action !== "object" || typeof action.kind !== "string") {
           issues.push({
             path: `${path}.actions.${eventName}[${index}]`,
-            message: 'Action must be an object with a string `kind` field',
+            message: "Action must be an object with a string `kind` field",
           });
           continue;
         }
@@ -126,11 +126,11 @@ function walk(
   if (node.slots) {
     for (const [slotName, children] of Object.entries(node.slots)) {
       if (!Array.isArray(children)) {
-        issues.push({ path: `${path}.slots.${slotName}`, message: 'Slot must be an array' });
+        issues.push({ path: `${path}.slots.${slotName}`, message: "Slot must be an array" });
         continue;
       }
       for (const child of children) {
-        walk(child, `${path}.${slotName}[${child?.id ?? '?'}]`, issues, registry);
+        walk(child, `${path}.${slotName}[${child?.id ?? "?"}]`, issues, registry);
       }
     }
   }
@@ -142,10 +142,10 @@ function walk(
  */
 export function assertValidScreen(
   screen: ISduiScreen,
-  registry: IComponentRegistryLike | null = null
+  registry: IComponentRegistryLike | null = null,
 ): void {
   const result = validateScreen(screen, registry);
   if (result.valid) return;
-  const summary = result.issues.map((i) => `  • ${i.path}: ${i.message}`).join('\n');
+  const summary = result.issues.map((i) => `  • ${i.path}: ${i.message}`).join("\n");
   throw new Error(`Invalid SDUI screen:\n${summary}`);
 }

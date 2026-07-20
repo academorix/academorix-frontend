@@ -17,4 +17,4 @@
  * - `marketing` — announcements, tenant campaigns.
  * - `system` — auth, security, maintenance windows.
  */
-export type NotificationCategory = 'operational' | 'billing' | 'safety' | 'marketing' | 'system';
+export type NotificationCategory = "operational" | "billing" | "safety" | "marketing" | "system";

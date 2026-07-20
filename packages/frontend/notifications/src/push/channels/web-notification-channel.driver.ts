@@ -14,9 +14,9 @@
  *   feeder wired inside `PushModule.forRoot`.
  */
 
-import { Injectable } from '@stackra/container';
+import { Injectable } from "@stackra/container";
 
-import type { INotificationChannelDriver, INotificationPayload } from '@/core/interfaces';
+import type { INotificationChannelDriver, INotificationPayload } from "@/core/interfaces";
 
 /**
  * OS-notification channel driver (web).
@@ -32,7 +32,7 @@ import type { INotificationChannelDriver, INotificationPayload } from '@/core/in
 export class WebNotificationChannelDriver implements INotificationChannelDriver {
   /** Channel id — `NotificationManager` routes payloads whose */
   /** channel list contains `'os-notification'` to this driver. */
-  public readonly id = 'os-notification';
+  public readonly id = "os-notification";
 
   /**
    * Fire the OS-level notification. Fail-soft — every downstream
@@ -46,14 +46,14 @@ export class WebNotificationChannelDriver implements INotificationChannelDriver 
     // the notification API isn't available or the user hasn't
     // granted permission. The centre still records the payload for
     // in-app display.
-    if (typeof globalThis === 'undefined') return;
+    if (typeof globalThis === "undefined") return;
     const g = globalThis as {
       readonly Notification?: {
         readonly permission: NotificationPermission;
       } & (new (title: string, options?: NotificationOptions) => Notification);
     };
-    if (typeof g.Notification === 'undefined') return;
-    if (g.Notification.permission !== 'granted') return;
+    if (typeof g.Notification === "undefined") return;
+    if (g.Notification.permission !== "granted") return;
 
     try {
       // A minimal, spec-compliant options object — every field is
@@ -75,13 +75,13 @@ export class WebNotificationChannelDriver implements INotificationChannelDriver 
       // `new Notification(...)` against the union above.
       const NotificationCtor = g.Notification as unknown as new (
         title: string,
-        options?: NotificationOptions
+        options?: NotificationOptions,
       ) => Notification;
       // Keep the reference alive briefly so the browser can render
       // it; we don't need to react to `onclick` here — the
       // `NotificationManager` fires the corresponding in-app entry
       // through the `in-app` driver in the same dispatch.
-      void new NotificationCtor(payload.title ?? '', options);
+      void new NotificationCtor(payload.title ?? "", options);
     } catch {
       // fail-soft — permission race, invalid options, etc.
     }

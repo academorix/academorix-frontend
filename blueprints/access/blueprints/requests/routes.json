@@ -50,7 +50,11 @@
           "returns": "PaginatedResource<AccessRequestData>",
           "description": "Lists the caller's own access requests. Default filter: `requester_id=caller.id`. Scoped by tenant + application via middleware.",
           "queryParams": [
-            { "name": "filter[status]", "type": "string|string[]", "enum": ["pending", "approved", "rejected", "expired", "cancelled"] },
+            {
+              "name": "filter[status]",
+              "type": "string|string[]",
+              "enum": ["pending", "approved", "rejected", "expired", "cancelled"]
+            },
             { "name": "filter[resource_type]", "type": "string" },
             { "name": "filter[submitted_since]", "type": "date-time" },
             { "name": "sort", "type": "string", "example": "-requested_at" },
@@ -86,7 +90,13 @@
           "returns": "PaginatedResource<AccessRequestData>",
           "description": "Lists access requests where the caller is in the resolved approvers set for at least one pending requirement. Backed by a JSONB containment query on `approval_requirements.resolved_approvers`.",
           "queryParams": [
-            { "name": "filter[urgency]", "type": "string", "enum": ["all", "expiring_soon"], "default": "all", "description": "'expiring_soon' filters to instances with expires_at within 24 hours." },
+            {
+              "name": "filter[urgency]",
+              "type": "string",
+              "enum": ["all", "expiring_soon"],
+              "default": "all",
+              "description": "'expiring_soon' filters to instances with expires_at within 24 hours."
+            },
             { "name": "sort", "type": "string", "example": "expires_at" },
             { "name": "per_page", "type": "integer", "default": 25 }
           ]
@@ -100,11 +110,7 @@
           "accepts": "ApproveAccessRequestData",
           "returns": "AccessRequestData",
           "description": "Approver decision. Body: `comment` (optional, max 1000). Delegates to `workflow/approvals::approve` which records the approval_decision and evaluates quorum. If final approval fires ApprovalExecuted \u2192 AccessRequestGrantMaterializer kicks in.",
-          "errors": [
-            "CALLER_NOT_APPROVER (403)",
-            "ALREADY_DECIDED (409)",
-            "REQUEST_TERMINAL (410)"
-          ]
+          "errors": ["CALLER_NOT_APPROVER (403)", "ALREADY_DECIDED (409)", "REQUEST_TERMINAL (410)"]
         },
         {
           "method": "POST",
@@ -126,12 +132,7 @@
     {
       "id": "platform-admin",
       "host": "platform-admin",
-      "middleware": [
-        "api",
-        "auth:sanctum",
-        "platform.user",
-        "api.version"
-      ],
+      "middleware": ["api", "auth:sanctum", "platform.user", "api.version"],
       "description": "Cross-tenant read-only compliance surface for Academorix ops. No decision endpoints \u2014 approve/reject stay on the tenant plane.",
       "routes": [
         {
@@ -147,7 +148,11 @@
             { "name": "filter[requester_id]", "type": "string" },
             { "name": "filter[status]", "type": "string|string[]" },
             { "name": "filter[resource_type]", "type": "string" },
-            { "name": "filter[submitted_between]", "type": "string", "example": "2026-06-01,2026-07-01" }
+            {
+              "name": "filter[submitted_between]",
+              "type": "string",
+              "example": "2026-06-01,2026-07-01"
+            }
           ]
         },
         {
@@ -157,7 +162,15 @@
           "action": "Academorix\\AccessRequest\\Http\\Controllers\\Platform\\AccessRequestController@show",
           "policy": "AccessRequestPolicy@viewPlatform",
           "returns": "AccessRequestData",
-          "includes": ["decisions", "resource", "materialised_grant", "requester", "approvers", "tenant", "application"]
+          "includes": [
+            "decisions",
+            "resource",
+            "materialised_grant",
+            "requester",
+            "approvers",
+            "tenant",
+            "application"
+          ]
         },
         {
           "method": "GET",
@@ -167,8 +180,18 @@
           "policy": "AccessRequestPolicy@viewAnyPlatform",
           "returns": "AccessRequestAuditReportData",
           "queryParams": [
-            { "name": "period", "type": "string", "enum": ["7d", "30d", "90d", "1y"], "default": "30d" },
-            { "name": "group_by", "type": "string", "enum": ["tenant", "application", "resource_type"], "default": "tenant" },
+            {
+              "name": "period",
+              "type": "string",
+              "enum": ["7d", "30d", "90d", "1y"],
+              "default": "30d"
+            },
+            {
+              "name": "group_by",
+              "type": "string",
+              "enum": ["tenant", "application", "resource_type"],
+              "default": "tenant"
+            },
             { "name": "format", "type": "string", "enum": ["json", "csv"], "default": "json" }
           ],
           "description": "SOC 2 CC6.1 compliance report. Emits per-tenant metrics: total_requests, approved_count, rejected_count, expired_count, approval_rate, average_time_to_decision_hours, median_time_to_decision_hours."

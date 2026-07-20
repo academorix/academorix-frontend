@@ -7,23 +7,22 @@ tenant user into an attributable acquisition channel. Sits alongside
 answers the specific question **"how did this signup / conversion come from an
 existing user's invitation, and what reward does the referrer get?"**.
 
-Data plane: 5 owned tables — `referral_programs`, `referral_codes`,
-`referrals`, `referral_rewards`, `referral_fraud_flags`. Feeds
-`growth::marketing` on completed referrals and `finance` (Wave 4) on vested
-rewards.
+Data plane: 5 owned tables — `referral_programs`, `referral_codes`, `referrals`,
+`referral_rewards`, `referral_fraud_flags`. Feeds `growth::marketing` on
+completed referrals and `finance` (Wave 4) on vested rewards.
 
 ## 1. What this module owns
 
-| Concern                          | Owned artefact                                                                                                                                                       |
-| -------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Program configuration            | `ReferralProgram` — per-tenant program: reward type, amount, trigger event, vesting rule, fraud thresholds, eligibility rules, budget caps, program window.          |
-| Distributed codes                | `ReferralCode` — user-scoped codes (`alice-a1b2c3`), campaign codes (`SUMMER25`), or opaque UUIDs. Per-code usage cap + expiry.                                       |
-| Tracked referral instances       | `Referral` — the referrer x referred x program x code row. Carries frozen `attribution_snapshot` (from `growth::attribution`) + `device_snapshot` + `fraud_score`.    |
-| Reward records                   | `ReferralReward` — one per side per program (referrer + optional referred). Vesting timeline (starts_at, completes_at, materialized_at, paid_at, clawback_at).       |
-| Fraud detection                  | `ReferralFraudFlag` — findings per referral. Types: self-IP-match, device-fingerprint-match, disposable-email, self-email-variant, velocity, click-storm, blacklist. |
-| Attribution integration          | Every referral snapshots the `growth::attribution` context at claim time. Every referral conversion writes a `growth::marketing` event.                              |
-| Atomic vesting                   | Status -> vested atomically creates ReferralReward rows in the same DB transaction. Rollback on either side aborts both.                                             |
-| Clawback semantics               | Refund / chargeback / fraud reversals cascade to reward status = clawback (materialized rewards reverse the Finance credit).                                         |
+| Concern                    | Owned artefact                                                                                                                                                       |
+| -------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Program configuration      | `ReferralProgram` — per-tenant program: reward type, amount, trigger event, vesting rule, fraud thresholds, eligibility rules, budget caps, program window.          |
+| Distributed codes          | `ReferralCode` — user-scoped codes (`alice-a1b2c3`), campaign codes (`SUMMER25`), or opaque UUIDs. Per-code usage cap + expiry.                                      |
+| Tracked referral instances | `Referral` — the referrer x referred x program x code row. Carries frozen `attribution_snapshot` (from `growth::attribution`) + `device_snapshot` + `fraud_score`.   |
+| Reward records             | `ReferralReward` — one per side per program (referrer + optional referred). Vesting timeline (starts_at, completes_at, materialized_at, paid_at, clawback_at).       |
+| Fraud detection            | `ReferralFraudFlag` — findings per referral. Types: self-IP-match, device-fingerprint-match, disposable-email, self-email-variant, velocity, click-storm, blacklist. |
+| Attribution integration    | Every referral snapshots the `growth::attribution` context at claim time. Every referral conversion writes a `growth::marketing` event.                              |
+| Atomic vesting             | Status -> vested atomically creates ReferralReward rows in the same DB transaction. Rollback on either side aborts both.                                             |
+| Clawback semantics         | Refund / chargeback / fraud reversals cascade to reward status = clawback (materialized rewards reverse the Finance credit).                                         |
 
 ### 1.1 The five owned tables
 
@@ -32,16 +31,16 @@ rewards.
 - `referral_codes` — the codes tenants distribute. Belongs to `Tenant` +
   `ReferralProgram`. Owner is polymorphic (user_scoped / campaign / opaque).
   UNIQUE (tenant_id, code) partial WHERE deleted_at IS NULL.
-- `referrals` — the tracked instance. Belongs to `Tenant` +
-  `ReferralProgram` + optional `ReferralCode`. Referrer + referred are
-  polymorphic (user / anonymous_lead / lead). UNIQUE (tenant_id,
-  referral_program_id, referrer_id, referred_id) partial WHERE deleted_at IS
-  NULL — one referral per program per referrer-referred pair.
+- `referrals` — the tracked instance. Belongs to `Tenant` + `ReferralProgram` +
+  optional `ReferralCode`. Referrer + referred are polymorphic (user /
+  anonymous_lead / lead). UNIQUE (tenant_id, referral_program_id, referrer_id,
+  referred_id) partial WHERE deleted_at IS NULL — one referral per program per
+  referrer-referred pair.
 - `referral_rewards` — per-referral reward rows. Belongs to `Tenant` +
-  `Referral`. Recipient polymorphic (user / lead). One row per role
-  (referrer / referred) per referral.
-- `referral_fraud_flags` — detection findings. Belongs to `Tenant` +
-  `Referral`. Multiple flags per referral permitted.
+  `Referral`. Recipient polymorphic (user / lead). One row per role (referrer /
+  referred) per referral.
+- `referral_fraud_flags` — detection findings. Belongs to `Tenant` + `Referral`.
+  Multiple flags per referral permitted.
 
 None carry `application_id`, `region_id`, `organization_id`, `branch_id`, or
 `scope_node_id` — all cascade through `tenant_id` per `tenancy-columns.md` §5.
@@ -54,13 +53,13 @@ Referrals capture is on every tier — the module unlocks progressively.
 - **Small** — `referrals_capture` on. One program slot, single-sided rewards
   only, reward types limited to `percent_discount` + `fixed_amount`, NO fraud
   detection (rules are permissive), NO program budget cap, NO manual override.
-- **Medium** — Adds 5 program slots, unlimited campaign codes,
-  advanced reward types (`free_months`, `free_sessions`, `credits`,
-  `point_award`), double-sided programs (reward both referrer + referred),
-  rule-based fraud detection, program budget cap.
+- **Medium** — Adds 5 program slots, unlimited campaign codes, advanced reward
+  types (`free_months`, `free_sessions`, `credits`, `point_award`), double-sided
+  programs (reward both referrer + referred), rule-based fraud detection,
+  program budget cap.
 - **Enterprise** — Unlimited program slots, manual override (admin force-vest
-  and admin fraud override), extended retention (7y -> 10y for financial
-  audit alignment).
+  and admin fraud override), extended retention (7y -> 10y for financial audit
+  alignment).
 
 Entitlement keys:
 
@@ -130,9 +129,9 @@ transitions leave them.
 
 ## 4. Atomic vesting -> reward creation
 
-The load-bearing invariant of this module. When `Referral.status` transitions
-to `vested`, the observer creates the appropriate `ReferralReward` rows in the
-SAME DB TRANSACTION. Program config determines shape:
+The load-bearing invariant of this module. When `Referral.status` transitions to
+`vested`, the observer creates the appropriate `ReferralReward` rows in the SAME
+DB TRANSACTION. Program config determines shape:
 
 - Single-sided: one ReferralReward for `recipient_role='referrer'`.
 - Double-sided: two ReferralReward rows — one for each of `referrer` and
@@ -140,14 +139,14 @@ SAME DB TRANSACTION. Program config determines shape:
 
 Rollback on either side aborts both. Enforced by:
 
-1. `ReferralObserver.updating (status=vested)` opens a transaction, resolves
-   the program, and creates rewards atomically.
+1. `ReferralObserver.updating (status=vested)` opens a transaction, resolves the
+   program, and creates rewards atomically.
 2. The unique index `referral_rewards_referral_role_unique` on
    `(referral_id, recipient_role)` partial WHERE deleted_at IS NULL prevents
    double-materialization on retry.
-3. `MaterializeVestedRewardsJob` picks up `status=vested` rewards and
-   dispatches to the Finance module. Every double-materialization attempt
-   fires `REFERRAL_REWARD_DOUBLE_MATERIALIZATION` (P1 signal).
+3. `MaterializeVestedRewardsJob` picks up `status=vested` rewards and dispatches
+   to the Finance module. Every double-materialization attempt fires
+   `REFERRAL_REWARD_DOUBLE_MATERIALIZATION` (P1 signal).
 
 The metric `academorix.referrals.atomicity.failures_total` should stay at 0.
 
@@ -203,8 +202,8 @@ Fraud rules (all rule-based, no ML in v1):
 
 Every fraud rule is TENANT-CONFIGURABLE via `program.fraud_config` — a strict
 tenant can raise `max_referrals_per_hour` for its VIP referrers, a permissive
-one can lower it. Admin-reviewed flags with disposition = `false_positive`
-lower the confidence for future flags on the same (referrer, referred) pair.
+one can lower it. Admin-reviewed flags with disposition = `false_positive` lower
+the confidence for future flags on the same (referrer, referred) pair.
 
 ## 7. Reward vesting workflow
 
@@ -213,12 +212,13 @@ Program config determines the vesting timeline:
 - `immediate` — `vested_at` = `trigger_event_at`. No hold window. Used for
   low-friction rewards like point_award.
 - `trigger_plus_hold_days` — `vested_at` = `trigger_event_at + N days`. Common
-  for cash-adjacent rewards where the tenant wants to observe the referred
-  user for potential refund / churn before crediting.
-- `after_refund_window_closes` — `vested_at` = `trigger_event_at +
-  refund_window_days`. Aligns vesting with the Finance module's refund window.
-- `n_events_completed` — vests after the referred user completes N of some
-  event (e.g. 3 successful team practice attendances). Custom tracking via a
+  for cash-adjacent rewards where the tenant wants to observe the referred user
+  for potential refund / churn before crediting.
+- `after_refund_window_closes` — `vested_at` =
+  `trigger_event_at + refund_window_days`. Aligns vesting with the Finance
+  module's refund window.
+- `n_events_completed` — vests after the referred user completes N of some event
+  (e.g. 3 successful team practice attendances). Custom tracking via a
   domain-event listener.
 - `manual_approval` — vests only when admin explicitly force-vests via
   `POST /referrals/{id}/force-vest`. Enterprise-only.
@@ -236,9 +236,9 @@ Rewards are reversible when specific downstream events fire:
 - `finance::ChargebackFiled` on the referred user's first payment -> clawback.
 - `ReferralFraudFlagObserver` sets disposition to `confirmed_fraud` -> parent
   Referral becomes `fraudulent` -> every reward on it clawbacks.
-- `ReferralProgramArchived` cascades to unpaid rewards (materialized but not
-  yet paid): clawback + reverse the Finance credit. Already-paid rewards are
-  NOT clawed back (paid = terminal).
+- `ReferralProgramArchived` cascades to unpaid rewards (materialized but not yet
+  paid): clawback + reverse the Finance credit. Already-paid rewards are NOT
+  clawed back (paid = terminal).
 
 Clawback status transitions the reward row from `paid` / `materialized` to
 `clawback` with `clawback_reason` recorded. The Finance module (Wave 4) is
@@ -256,23 +256,23 @@ review sets `reviewed_at`, `reviewed_by_user_id`, and one of:
   reward flow. Future flags on the same (referrer, referred) pair use lower
   confidence.
 - `manual_override_approved` — allows the referral to proceed even though the
-  flag exists. Admin explicitly accepts the risk. Audit-critical (recorded
-  with reason).
+  flag exists. Admin explicitly accepts the risk. Audit-critical (recorded with
+  reason).
 
 Fraud reviews are compliance-relevant (7-year retention for the fraud audit
 trail).
 
 ## 10. Retention
 
-- `referral_programs` — while active + 7 years post-archive (every issued
-  reward traces back).
+- `referral_programs` — while active + 7 years post-archive (every issued reward
+  traces back).
 - `referral_codes` — 7 years post-deactivation.
 - `referrals` — 7 years (financial audit + tax audit alignment).
 - `referral_rewards` — 7 years (tax audit).
 - `referral_fraud_flags` — 7 years (fraud audit trail).
 - `TenantErased` — cascade delete via FK EXCEPT paid rewards which migrate to
-  the compliance archive (materialised financial records survive tenant
-  deletion for legal-obligation retention).
+  the compliance archive (materialised financial records survive tenant deletion
+  for legal-obligation retention).
 
 Enterprise tier extends the 7y windows to 10y via
 `referrals_extended_retention`.
@@ -283,9 +283,9 @@ Enterprise tier extends the 7y windows to 10y via
   reward tied to the refunded payment.
 - `finance::ChargebackFiled` -> `ClawbackRewardsOnFinanceChargeback` -> same,
   higher severity.
-- `user::UserErased` -> `RedactReferralDataOnUserErasure` -> if referrer:
-  cancel their pending referrals + retain paid rewards with subject redacted.
-  If referred: redact `referred_email` on referrals and touchpoints.
+- `user::UserErased` -> `RedactReferralDataOnUserErasure` -> if referrer: cancel
+  their pending referrals + retain paid rewards with subject redacted. If
+  referred: redact `referred_email` on referrals and touchpoints.
 - `tenancy::TenantErased` -> `PurgeReferralDataForErasedTenant` -> FK CASCADE
   hard-deletes every row (audit rows survive).
 - `ReferralProgramArchived` -> `ArchiveReferralsOnProgramArchived` -> pending
@@ -298,13 +298,13 @@ Enterprise tier extends the 7y windows to 10y via
 - **No third-party affiliate networks.** No Impact / ShareASale / Rakuten
   integration. That's a Wave 6+ commercial affiliate module.
 - **No commission-only structures.** Rewards are flat + program-configured.
-  Cascading commissions ("your referral's referral gives you 5%") is
-  explicitly out — this is a flat referral model.
+  Cascading commissions ("your referral's referral gives you 5%") is explicitly
+  out — this is a flat referral model.
 - **No sub-affiliates.** Referral graph is one hop deep. A referred user's
   future referrals are their own — the original referrer does not stack.
 - **No paid-in-cash rewards.** All rewards flow through the Finance module's
-  credit substrate. Direct fiat payouts (bank transfer, PayPal) are out of
-  scope — always route through Finance.
+  credit substrate. Direct fiat payouts (bank transfer, PayPal) are out of scope
+  — always route through Finance.
 - **No manual event insertion via API.** Referrals are captured via the
   attribution middleware + claim endpoint. Admins cannot POST "create a
   referral" arbitrarily (only campaign / user codes are admin-creatable).
@@ -316,8 +316,8 @@ Enterprise tier extends the 7y windows to 10y via
 
 ## 13. Cross-references
 
-- `growth-and-observability.md` — the growth-tier vocabulary. Referrals is
-  the viral-loop tracker; feeds marketing + finance.
+- `growth-and-observability.md` — the growth-tier vocabulary. Referrals is the
+  viral-loop tracker; feeds marketing + finance.
 - `hierarchy.md` §2 — where growth sits in the platform tree.
 - `hierarchy.md` §7 — tier matrix (referrals unlock progressively).
 - `tenancy-columns.md` §3 — every owned row carries `tenant_id`.
@@ -326,8 +326,8 @@ Enterprise tier extends the 7y windows to 10y via
   reads `AttributionSnapshot` at claim time.
 - `modules/growth/blueprints/marketing/` — the sibling downstream. Referral
   conversions fire marketing events for ad-network optimization.
-- `modules/compliance/blueprints/consent/` — the consent registry the
-  invitation flow gates through.
+- `modules/compliance/blueprints/consent/` — the consent registry the invitation
+  flow gates through.
 
 ## 14. ULID prefixes owned
 

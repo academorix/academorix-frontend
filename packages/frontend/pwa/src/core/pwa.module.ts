@@ -17,14 +17,14 @@
  *   resolve `PWA_SERVICE` without importing PwaModule themselves.
  */
 
-import { Module, type DynamicModule } from '@stackra/container';
+import { Module, type DynamicModule } from "@stackra/container";
 
-import { APP_UPDATE_SERVICE, PWA_CONFIG, PWA_SERVICE } from './constants';
-import { mergeConfig } from './utils/merge-config.util';
-import { AnalyticsBridgeService } from './services/analytics-bridge.service';
-import { AppUpdateService } from './services/app-update.service';
-import { PwaService } from './services/pwa.service';
-import type { IPwaModuleOptions } from './interfaces';
+import { APP_UPDATE_SERVICE, PWA_CONFIG, PWA_SERVICE } from "./constants";
+import { mergeConfig } from "./utils/merge-config.util";
+import { AnalyticsBridgeService } from "./services/analytics-bridge.service";
+import { AppUpdateService } from "./services/app-update.service";
+import { PwaService } from "./services/pwa.service";
+import type { IPwaModuleOptions } from "./interfaces";
 
 /**
  * PWA root module.

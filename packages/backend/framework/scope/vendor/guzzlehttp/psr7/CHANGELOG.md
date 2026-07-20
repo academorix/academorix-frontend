@@ -3,7 +3,8 @@
 All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
-and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+and this project adheres to
+[Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## 2.12.4 - 2026-07-08
 
@@ -14,15 +15,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - Anchor server port and response start-line patterns to the true end of input
-- Treat host-less origin-form request targets starting with `//` as paths in `Message::parseRequest()`
-- Reject raw DEL bytes in bracketed IP-literal hosts instead of parsing a mutated host
-- Reject invalid bytes after a bracketed IP-literal host instead of reparsing a different host
+- Treat host-less origin-form request targets starting with `//` as paths in
+  `Message::parseRequest()`
+- Reject raw DEL bytes in bracketed IP-literal hosts instead of parsing a
+  mutated host
+- Reject invalid bytes after a bracketed IP-literal host instead of reparsing a
+  different host
 
 ## 2.12.3 - 2026-06-23
 
 ### Security
 
-- Validate the URI host so `getHost()` matches the URI authority (GHSA-c2w2-prh8-qm98)
+- Validate the URI host so `getHost()` matches the URI authority
+  (GHSA-c2w2-prh8-qm98)
 
 ## 2.12.2 - 2026-06-23
 
@@ -36,16 +41,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security
 
-- Reject CR/LF in HTTP method, protocol version, and reason phrase (GHSA-vm85-hxw5-5432)
+- Reject CR/LF in HTTP method, protocol version, and reason phrase
+  (GHSA-vm85-hxw5-5432)
 
 ## 2.12.0 - 2026-06-16
 
 ### Deprecated
 
-- Deprecated non-finite float values in `Query::build()` that guzzlehttp/psr7 3.0 rejects
-- Deprecated non-finite float multipart contents that guzzlehttp/psr7 3.0 rejects
-- Deprecated non-string scalar bodies in `Utils::streamFor()`; cast them to a string for 3.0
-- Deprecated non-string `Uri::withQueryValues()` values; cast them to a string for 3.0
+- Deprecated non-finite float values in `Query::build()` that guzzlehttp/psr7
+  3.0 rejects
+- Deprecated non-finite float multipart contents that guzzlehttp/psr7 3.0
+  rejects
+- Deprecated non-string scalar bodies in `Utils::streamFor()`; cast them to a
+  string for 3.0
+- Deprecated non-string `Uri::withQueryValues()` values; cast them to a string
+  for 3.0
 
 ## 2.11.1 - 2026-06-12
 
@@ -57,34 +67,48 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- Changed `Utils::modifyRequest()` to reject conflicting URI and `Host` header changes in the same call
-- Changed `Header::parse()` to split semicolon-separated parameters without repeated regular expression lookaheads
-- Changed `UriComparator::isCrossOrigin()` so only HTTP and HTTPS missing ports receive implicit default ports
+- Changed `Utils::modifyRequest()` to reject conflicting URI and `Host` header
+  changes in the same call
+- Changed `Header::parse()` to split semicolon-separated parameters without
+  repeated regular expression lookaheads
+- Changed `UriComparator::isCrossOrigin()` so only HTTP and HTTPS missing ports
+  receive implicit default ports
 
 ### Deprecated
 
-- Deprecated invalid PSR-7 arguments that guzzlehttp/psr7 3.0 will require native types for
+- Deprecated invalid PSR-7 arguments that guzzlehttp/psr7 3.0 will require
+  native types for
 - Deprecated non-string header values that guzzlehttp/psr7 3.0 will reject
 - Deprecated empty header value arrays that guzzlehttp/psr7 3.0 will reject
-- Deprecated URI schemes that do not match guzzlehttp/psr7 3.0 syntax requirements
-- Deprecated multipart boundary and custom part header metadata that guzzlehttp/psr7 3.0 will reject
-- Deprecated reliance on automatic uppercasing of request methods; guzzlehttp/psr7 3.0 preserves method casing
-- Deprecated invalid `Utils::modifyRequest()` change values that guzzlehttp/psr7 3.0 will reject
+- Deprecated URI schemes that do not match guzzlehttp/psr7 3.0 syntax
+  requirements
+- Deprecated multipart boundary and custom part header metadata that
+  guzzlehttp/psr7 3.0 will reject
+- Deprecated reliance on automatic uppercasing of request methods;
+  guzzlehttp/psr7 3.0 preserves method casing
+- Deprecated invalid `Utils::modifyRequest()` change values that guzzlehttp/psr7
+  3.0 will reject
 
 ### Fixed
 
-- Fixed `Utils::copyToStream()` to retry short destination writes instead of dropping the unwritten remainder
-- Fixed `Header::parse()` splitting of semicolon-separated parameters with escaped quotes
+- Fixed `Utils::copyToStream()` to retry short destination writes instead of
+  dropping the unwritten remainder
+- Fixed `Header::parse()` splitting of semicolon-separated parameters with
+  escaped quotes
 
 ## 2.10.4 - 2026-05-29
 
 ### Fixed
 
 - Apply `UriNormalizer` percent-encoding normalizations to URI fragments
-- Make `LimitStream::getSize()` return `0` for slices past the underlying stream end
-- Make `AppendStream::read()` return an empty string when no streams are attached
-- Make `CachingStream::read()` throw on an incomplete cache-target write instead of silently corrupting replays
-- Prevent `CachingStream::seek()` from looping indefinitely when the remote stream makes no progress
+- Make `LimitStream::getSize()` return `0` for slices past the underlying stream
+  end
+- Make `AppendStream::read()` return an empty string when no streams are
+  attached
+- Make `CachingStream::read()` throw on an incomplete cache-target write instead
+  of silently corrupting replays
+- Prevent `CachingStream::seek()` from looping indefinitely when the remote
+  stream makes no progress
 
 ## 2.10.3 - 2026-05-27
 
@@ -97,12 +121,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security
 
-- Reject control and whitespace characters in URI host components (GHSA-hq7v-mx3g-29hw)
-- Reject malformed Host values when constructing request URIs (GHSA-34xg-wgjx-8xph)
+- Reject control and whitespace characters in URI host components
+  (GHSA-hq7v-mx3g-29hw)
+- Reject malformed Host values when constructing request URIs
+  (GHSA-34xg-wgjx-8xph)
 
 ### Fixed
 
-- Make `ServerRequest::fromGlobals()` robust against unexpected HTTP header value types in `$_SERVER`
+- Make `ServerRequest::fromGlobals()` robust against unexpected HTTP header
+  value types in `$_SERVER`
 
 ## 2.10.1 - 2026-05-20
 
@@ -125,9 +152,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-- Fix parsing of relative path references containing a colon in a non-initial path segment
-- Fix `CachingStream::detach()` returning an incomplete resource before the decorated stream has been fully read
-- Fix `Message::bodySummary()` returning `null` when truncating printable UTF-8 bodies inside a multibyte character
+- Fix parsing of relative path references containing a colon in a non-initial
+  path segment
+- Fix `CachingStream::detach()` returning an incomplete resource before the
+  decorated stream has been fully read
+- Fix `Message::bodySummary()` returning `null` when truncating printable UTF-8
+  bodies inside a multibyte character
 
 ## 2.9.0 - 2026-03-10
 
@@ -144,7 +174,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-- Encode `+` signs in `Uri::withQueryValue()` and `Uri::withQueryValues()` to prevent them being interpreted as spaces
+- Encode `+` signs in `Uri::withQueryValue()` and `Uri::withQueryValues()` to
+  prevent them being interpreted as spaces
 
 ## 2.8.0 - 2025-08-23
 
@@ -177,7 +208,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-- Make `StreamWrapper::stream_stat()` return `false` if inner stream's size is `null` 
+- Make `StreamWrapper::stream_stat()` return `false` if inner stream's size is
+  `null`
 
 ### Changed
 
@@ -187,7 +219,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-- Fixed another issue with the fact that PHP transforms numeric strings in array keys to ints
+- Fixed another issue with the fact that PHP transforms numeric strings in array
+  keys to ints
 
 ### Changed
 
@@ -198,14 +231,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-- Properly handle the fact that PHP transforms numeric strings in array keys to ints
+- Properly handle the fact that PHP transforms numeric strings in array keys to
+  ints
 
 ## 2.6.0 - 2023-08-03
 
 ### Changed
 
-- Updated the mime type map to add some new entries, fix a couple of invalid entries, and remove an invalid entry
-- Fallback to `application/octet-stream` if we are unable to guess the content type for a multipart file upload
+- Updated the mime type map to add some new entries, fix a couple of invalid
+  entries, and remove an invalid entry
+- Fallback to `application/octet-stream` if we are unable to guess the content
+  type for a multipart file upload
 
 ## 2.5.1 - 2023-08-03
 
@@ -227,7 +263,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-- Prevent possible warnings on unset variables in `ServerRequest::normalizeNestedFileSpec`
+- Prevent possible warnings on unset variables in
+  `ServerRequest::normalizeNestedFileSpec`
 - Fixed `Message::bodySummary` when `preg_match` fails
 - Fixed header validation issue
 
@@ -311,10 +348,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- Attempting to create a `Uri` object from a malformed URI will no longer throw a generic
-  `InvalidArgumentException`, but rather a `MalformedUriException`, which inherits from the former
-  for backwards compatibility. Callers relying on the exception being thrown to detect invalid
-  URIs should catch the new exception.
+- Attempting to create a `Uri` object from a malformed URI will no longer throw
+  a generic `InvalidArgumentException`, but rather a `MalformedUriException`,
+  which inherits from the former for backwards compatibility. Callers relying on
+  the exception being thrown to detect invalid URIs should catch the new
+  exception.
 
 ### Fixed
 
@@ -383,13 +421,11 @@ Identical to the RC release.
 
 - Restored partial HHVM 3 support
 
-
 ## [1.6.1] - 2019-07-02
 
 ### Fixed
 
 - Accept null and bool header values again
-
 
 ## [1.6.0] - 2019-06-30
 
@@ -397,19 +433,21 @@ Identical to the RC release.
 
 - Allowed version `^3.0` of `ralouphie/getallheaders` dependency (#244)
 - Added MIME type for WEBP image format (#246)
-- Added more validation of values according to PSR-7 and RFC standards, e.g. status code range (#250, #272)
+- Added more validation of values according to PSR-7 and RFC standards, e.g.
+  status code range (#250, #272)
 
 ### Changed
 
-- Tests don't pass with HHVM 4.0, so HHVM support got dropped. Other libraries like composer have done the same. (#262)
+- Tests don't pass with HHVM 4.0, so HHVM support got dropped. Other libraries
+  like composer have done the same. (#262)
 - Accept port number 0 to be valid (#270)
 
 ### Fixed
 
 - Fixed subsequent reads from `php://input` in ServerRequest (#247)
 - Fixed readable/writable detection for certain stream modes (#248)
-- Fixed encoding of special characters in the `userInfo` component of an URI (#253)
-
+- Fixed encoding of special characters in the `userInfo` component of an URI
+  (#253)
 
 ## [1.5.2] - 2018-12-04
 
@@ -417,13 +455,11 @@ Identical to the RC release.
 
 - Check body size when getting the message summary
 
-
 ## [1.5.1] - 2018-12-04
 
 ### Fixed
 
 - Get the summary of a body only if it is readable
-
 
 ## [1.5.0] - 2018-12-03
 
@@ -448,9 +484,7 @@ Identical to the RC release.
 - `InflateStream` preserves `isSeekable` attribute of the underlying stream
 - `ServerRequest::getUriFromGlobals` to support URLs in query parameters
 
-
 Several other fixes and improvements.
-
 
 ## [1.4.2] - 2017-03-20
 
@@ -458,7 +492,6 @@ Several other fixes and improvements.
 
 - Reverted BC break to `Uri::resolve` and `Uri::removeDotSegments` by removing
   calls to `trigger_error` when deprecated methods are invoked.
-
 
 ## [1.4.1] - 2017-02-27
 
@@ -469,15 +502,15 @@ Several other fixes and improvements.
 ### Fixed
 
 - Reverted BC break by reintroducing behavior to automagically fix a URI with a
-  relative path and an authority by adding a leading slash to the path. It's only
-  deprecated now.
-
+  relative path and an authority by adding a leading slash to the path. It's
+  only deprecated now.
 
 ## [1.4.0] - 2017-02-21
 
 ### Added
 
-- Added common URI utility methods based on RFC 3986 (see documentation in the readme):
+- Added common URI utility methods based on RFC 3986 (see documentation in the
+  readme):
   - `Uri::isDefaultPort`
   - `Uri::isAbsolute`
   - `Uri::isNetworkPathReference`
@@ -492,12 +525,14 @@ Several other fixes and improvements.
 ### Changed
 
 - Ensure `ServerRequest::getUriFromGlobals` returns a URI in absolute form.
-- Allow `parse_response` to parse a response without delimiting space and reason.
-- Ensure each URI modification results in a valid URI according to PSR-7 discussions.
-  Invalid modifications will throw an exception instead of returning a wrong URI or
-  doing some magic.
-  - `(new Uri)->withPath('foo')->withHost('example.com')` will throw an exception
-    because the path of a URI with an authority must start with a slash "/" or be empty
+- Allow `parse_response` to parse a response without delimiting space and
+  reason.
+- Ensure each URI modification results in a valid URI according to PSR-7
+  discussions. Invalid modifications will throw an exception instead of
+  returning a wrong URI or doing some magic.
+  - `(new Uri)->withPath('foo')->withHost('example.com')` will throw an
+    exception because the path of a URI with an authority must start with a
+    slash "/" or be empty
   - `(new Uri())->withScheme('http')` will return `'http://localhost'`
 
 ### Deprecated
@@ -512,26 +547,24 @@ Several other fixes and improvements.
 - `ServerRequest::getUriFromGlobals` when `Host` header contains port.
 - Compatibility of URIs with `file` scheme and empty host.
 
-
 ## [1.3.1] - 2016-06-25
 
 ### Fixed
 
 - `Uri::__toString` for network path references, e.g. `//example.org`.
 - Missing lowercase normalization for host.
-- Handling of URI components in case they are `'0'` in a lot of places,
-  e.g. as a user info password.
+- Handling of URI components in case they are `'0'` in a lot of places, e.g. as
+  a user info password.
 - `Uri::withAddedHeader` to correctly merge headers with different case.
-- Trimming of header values in `Uri::withAddedHeader`. Header values may
-  be surrounded by whitespace which should be ignored according to RFC 7230
-  Section 3.2.4. This does not apply to header names.
+- Trimming of header values in `Uri::withAddedHeader`. Header values may be
+  surrounded by whitespace which should be ignored according to RFC 7230 Section
+  3.2.4. This does not apply to header names.
 - `Uri::withAddedHeader` with an array of header values.
 - `Uri::resolve` when base path has no slash and handling of fragment.
 - Handling of encoding in `Uri::with(out)QueryValue` so one can pass the
   key/value both in encoded as well as decoded form to those methods. This is
   consistent with withPath, withQuery etc.
 - `ServerRequest::withoutAttribute` when attribute value is null.
-
 
 ## [1.3.0] - 2016-04-13
 
@@ -546,8 +579,8 @@ Several other fixes and improvements.
 - Can now extend Uri.
 
 ### Fixed
-- A bug in validating request methods by making it more permissive.
 
+- A bug in validating request methods by making it more permissive.
 
 ## [1.2.3] - 2016-02-18
 
@@ -556,7 +589,6 @@ Several other fixes and improvements.
 - Support in `GuzzleHttp\Psr7\CachingStream` for seeking forward on remote
   streams, which can sometimes return fewer bytes than requested with `fread`.
 - Handling of gzipped responses with FNAME headers.
-
 
 ## [1.2.2] - 2016-01-22
 
@@ -567,13 +599,11 @@ Several other fixes and improvements.
 - Support for using '0' as a filename.
 - Support for including non-standard ports in Host headers.
 
-
 ## [1.2.1] - 2015-11-02
 
 ### Changes
 
 - Now supporting negative offsets when seeking to SEEK_END.
-
 
 ## [1.2.0] - 2015-08-15
 
@@ -586,7 +616,6 @@ Several other fixes and improvements.
 - functions.php is now conditionally required.
 - user-info is no longer dropped when resolving URIs.
 
-
 ## [1.1.0] - 2015-06-24
 
 ### Changed
@@ -598,7 +627,6 @@ Several other fixes and improvements.
 - A port is no longer added to a URI when the scheme is missing and no port is
   present.
 
-
 ## 1.0.0 - 2015-05-19
 
 Initial release.
@@ -607,8 +635,6 @@ Currently unsupported:
 
 - `Psr\Http\Message\ServerRequestInterface`
 - `Psr\Http\Message\UploadedFileInterface`
-
-
 
 [1.6.0]: https://github.com/guzzle/psr7/compare/1.5.2...1.6.0
 [1.5.2]: https://github.com/guzzle/psr7/compare/1.5.1...1.5.2

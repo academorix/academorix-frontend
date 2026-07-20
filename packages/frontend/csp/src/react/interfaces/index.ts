@@ -4,5 +4,5 @@
  * @description Interfaces barrel export.
  */
 
-export type { NonceProviderProps } from './nonce-provider-props.interface';
-export type { ScriptProps } from './script-props.interface';
+export type { NonceProviderProps } from "./nonce-provider-props.interface";
+export type { ScriptProps } from "./script-props.interface";

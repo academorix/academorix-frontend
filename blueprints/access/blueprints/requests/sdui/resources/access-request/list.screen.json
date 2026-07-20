@@ -15,7 +15,13 @@
       "url": "/api/v1/access-requests",
       "unwrap": "data",
       "paginated": true,
-      "queryParamsFromState": ["filter[status]", "filter[resource_type]", "sort", "page", "per_page"],
+      "queryParamsFromState": [
+        "filter[status]",
+        "filter[resource_type]",
+        "sort",
+        "page",
+        "per_page"
+      ],
       "cache": { "ttlSeconds": 60, "staleWhileRevalidate": true },
       "fallback": {
         "kind": "mock.static",
@@ -36,12 +42,22 @@
     {
       "channel": "tenant.{tenantId}.access-requests",
       "kind": "private",
-      "onEvent": { "kind": "data.mutateItem", "source": "myRequests", "keyBy": "id", "expr": "event.data" }
+      "onEvent": {
+        "kind": "data.mutateItem",
+        "source": "myRequests",
+        "keyBy": "id",
+        "expr": "event.data"
+      }
     },
     {
       "channel": "user.{userId}.access-requests",
       "kind": "private",
-      "onEvent": { "kind": "data.mutateItem", "source": "pendingMyReview", "keyBy": "id", "expr": "event.data" }
+      "onEvent": {
+        "kind": "data.mutateItem",
+        "source": "pendingMyReview",
+        "keyBy": "id",
+        "expr": "event.data"
+      }
     }
   ],
   "nodes": [
@@ -58,7 +74,11 @@
             {
               "id": "title",
               "kind": "Text",
-              "props": { "as": "h1", "className": "text-2xl font-semibold", "children": "Access requests" }
+              "props": {
+                "as": "h1",
+                "className": "text-2xl font-semibold",
+                "children": "Access requests"
+              }
             },
             {
               "id": "actions",
@@ -68,15 +88,36 @@
                 {
                   "id": "refresh",
                   "kind": "Button",
-                  "props": { "variant": "ghost", "size": "sm", "children": "Refresh", "leadingIcon": "arrow-path" },
-                  "actions": { "onPress": { "kind": "data.refresh", "sources": ["myRequests", "pendingMyReview"] } }
+                  "props": {
+                    "variant": "ghost",
+                    "size": "sm",
+                    "children": "Refresh",
+                    "leadingIcon": "arrow-path"
+                  },
+                  "actions": {
+                    "onPress": {
+                      "kind": "data.refresh",
+                      "sources": ["myRequests", "pendingMyReview"]
+                    }
+                  }
                 },
                 {
                   "id": "create",
                   "kind": "Button",
-                  "props": { "variant": "primary", "size": "sm", "children": "New request", "leadingIcon": "plus" },
-                  "bindings": { "isDisabled": { "$expr": "!identity.permissions.includes('access-requests.create')" } },
-                  "actions": { "onPress": { "kind": "navigate", "to": "/tenant/access-requests/new" } }
+                  "props": {
+                    "variant": "primary",
+                    "size": "sm",
+                    "children": "New request",
+                    "leadingIcon": "plus"
+                  },
+                  "bindings": {
+                    "isDisabled": {
+                      "$expr": "!identity.permissions.includes('access-requests.create')"
+                    }
+                  },
+                  "actions": {
+                    "onPress": { "kind": "navigate", "to": "/tenant/access-requests/new" }
+                  }
                 }
               ]
             }
@@ -99,7 +140,12 @@
                     {
                       "id": "filter-status",
                       "kind": "MultiSelect",
-                      "props": { "label": "Status", "name": "filter[status]", "placeholder": "All statuses", "className": "min-w-48" },
+                      "props": {
+                        "label": "Status",
+                        "name": "filter[status]",
+                        "placeholder": "All statuses",
+                        "className": "min-w-48"
+                      },
                       "options": [
                         { "key": "pending", "label": "Pending" },
                         { "key": "approved", "label": "Approved" },
@@ -107,13 +153,21 @@
                         { "key": "expired", "label": "Expired" },
                         { "key": "cancelled", "label": "Cancelled" }
                       ],
-                      "actions": { "onChange": { "kind": "data.applyFilter", "source": "myRequests" } }
+                      "actions": {
+                        "onChange": { "kind": "data.applyFilter", "source": "myRequests" }
+                      }
                     },
                     {
                       "id": "filter-resource-type",
                       "kind": "Select",
-                      "props": { "label": "Resource type", "name": "filter[resource_type]", "placeholder": "Any type" },
-                      "actions": { "onChange": { "kind": "data.applyFilter", "source": "myRequests" } }
+                      "props": {
+                        "label": "Resource type",
+                        "name": "filter[resource_type]",
+                        "placeholder": "Any type"
+                      },
+                      "actions": {
+                        "onChange": { "kind": "data.applyFilter", "source": "myRequests" }
+                      }
                     }
                   ]
                 },
@@ -125,10 +179,17 @@
                     "emptyState": {
                       "title": "No access requests yet",
                       "description": "When you request access to a resource you don't have permission for, it will show up here.",
-                      "action": { "label": "Learn more", "route": "/docs/access-requests", "variant": "secondary" }
+                      "action": {
+                        "label": "Learn more",
+                        "route": "/docs/access-requests",
+                        "variant": "secondary"
+                      }
                     }
                   },
-                  "bindings": { "items": { "$ref": "myRequests" }, "isLoading": { "$ref": "myRequests.isLoading" } },
+                  "bindings": {
+                    "items": { "$ref": "myRequests" },
+                    "isLoading": { "$ref": "myRequests.isLoading" }
+                  },
                   "columns": [
                     {
                       "id": "resource",
@@ -137,8 +198,18 @@
                         "kind": "View",
                         "props": { "className": "flex flex-col" },
                         "children": [
-                          { "kind": "Text", "props": { "className": "font-medium" }, "bindings": { "children": { "$ref": "row.resource.display_name" } } },
-                          { "kind": "Text", "props": { "className": "text-muted text-xs" }, "bindings": { "children": { "$expr": "row.resource.type + ' · ' + row.resource.id" } } }
+                          {
+                            "kind": "Text",
+                            "props": { "className": "font-medium" },
+                            "bindings": { "children": { "$ref": "row.resource.display_name" } }
+                          },
+                          {
+                            "kind": "Text",
+                            "props": { "className": "text-muted text-xs" },
+                            "bindings": {
+                              "children": { "$expr": "row.resource.type + ' · ' + row.resource.id" }
+                            }
+                          }
                         ]
                       }
                     },
@@ -154,7 +225,11 @@
                     {
                       "id": "status",
                       "header": "Status",
-                      "cell": { "kind": "Widget", "widget": "access-requests.status-chip", "props": { "status": { "$ref": "row.status" }, "size": "sm" } }
+                      "cell": {
+                        "kind": "Widget",
+                        "widget": "access-requests.status-chip",
+                        "props": { "status": { "$ref": "row.status" }, "size": "sm" }
+                      }
                     },
                     {
                       "id": "requested_at",
@@ -172,10 +247,26 @@
                       "cell": {
                         "kind": "Menu",
                         "props": {
-                          "trigger": { "kind": "Button", "props": { "variant": "ghost", "isIconOnly": true, "leadingIcon": "ellipsis-horizontal", "ariaLabel": "Row actions" } }
+                          "trigger": {
+                            "kind": "Button",
+                            "props": {
+                              "variant": "ghost",
+                              "isIconOnly": true,
+                              "leadingIcon": "ellipsis-horizontal",
+                              "ariaLabel": "Row actions"
+                            }
+                          }
                         },
                         "items": [
-                          { "id": "view", "label": "View details", "leadingIcon": "eye", "action": { "kind": "navigate", "toExpr": "'/tenant/access-requests/' + row.id" } },
+                          {
+                            "id": "view",
+                            "label": "View details",
+                            "leadingIcon": "eye",
+                            "action": {
+                              "kind": "navigate",
+                              "toExpr": "'/tenant/access-requests/' + row.id"
+                            }
+                          },
                           {
                             "id": "withdraw",
                             "label": "Withdraw",
@@ -185,8 +276,14 @@
                             "action": {
                               "kind": "http.post",
                               "urlExpr": "'/api/v1/access-requests/' + row.id + '/withdraw'",
-                              "confirm": { "title": "Withdraw request?", "description": "The approvers will no longer see this in their queue. You can submit a new request later if needed." },
-                              "onSuccess": { "kind": "toast.success", "message": "Request withdrawn" }
+                              "confirm": {
+                                "title": "Withdraw request?",
+                                "description": "The approvers will no longer see this in their queue. You can submit a new request later if needed."
+                              },
+                              "onSuccess": {
+                                "kind": "toast.success",
+                                "message": "Request withdrawn"
+                              }
                             }
                           }
                         ]
@@ -212,7 +309,10 @@
                       "description": "When someone requests access to a resource you can approve, it will show up here."
                     }
                   },
-                  "bindings": { "items": { "$ref": "pendingMyReview" }, "isLoading": { "$ref": "pendingMyReview.isLoading" } },
+                  "bindings": {
+                    "items": { "$ref": "pendingMyReview" },
+                    "isLoading": { "$ref": "pendingMyReview.isLoading" }
+                  },
                   "columns": [
                     {
                       "id": "requester",
@@ -221,8 +321,16 @@
                         "kind": "View",
                         "props": { "className": "flex flex-col" },
                         "children": [
-                          { "kind": "Text", "props": { "className": "font-medium" }, "bindings": { "children": { "$ref": "row.requester.display_name" } } },
-                          { "kind": "Text", "props": { "className": "text-muted text-xs" }, "bindings": { "children": { "$ref": "row.requester.email" } } }
+                          {
+                            "kind": "Text",
+                            "props": { "className": "font-medium" },
+                            "bindings": { "children": { "$ref": "row.requester.display_name" } }
+                          },
+                          {
+                            "kind": "Text",
+                            "props": { "className": "text-muted text-xs" },
+                            "bindings": { "children": { "$ref": "row.requester.email" } }
+                          }
                         ]
                       }
                     },
@@ -268,30 +376,57 @@
                         "children": [
                           {
                             "kind": "Button",
-                            "props": { "variant": "secondary", "size": "sm", "children": "Reject", "leadingIcon": "x-mark" },
+                            "props": {
+                              "variant": "secondary",
+                              "size": "sm",
+                              "children": "Reject",
+                              "leadingIcon": "x-mark"
+                            },
                             "action": {
                               "kind": "http.post",
                               "urlExpr": "'/api/v1/access-requests/' + row.id + '/reject'",
                               "confirm": {
                                 "title": "Reject request?",
                                 "description": "The requester will be notified. A comment is required for audit.",
-                                "reasonField": { "label": "Reason", "name": "comment", "kind": "TextArea", "required": true, "minLength": 10 }
+                                "reasonField": {
+                                  "label": "Reason",
+                                  "name": "comment",
+                                  "kind": "TextArea",
+                                  "required": true,
+                                  "minLength": 10
+                                }
                               },
-                              "onSuccess": { "kind": "toast.success", "message": "Request rejected" }
+                              "onSuccess": {
+                                "kind": "toast.success",
+                                "message": "Request rejected"
+                              }
                             }
                           },
                           {
                             "kind": "Button",
-                            "props": { "variant": "primary", "size": "sm", "children": "Approve", "leadingIcon": "check" },
+                            "props": {
+                              "variant": "primary",
+                              "size": "sm",
+                              "children": "Approve",
+                              "leadingIcon": "check"
+                            },
                             "action": {
                               "kind": "http.post",
                               "urlExpr": "'/api/v1/access-requests/' + row.id + '/approve'",
                               "confirm": {
                                 "title": "Approve request?",
                                 "description": "A grant will be created with a 7-day TTL by default.",
-                                "reasonField": { "label": "Comment (optional)", "name": "comment", "kind": "TextArea", "required": false }
+                                "reasonField": {
+                                  "label": "Comment (optional)",
+                                  "name": "comment",
+                                  "kind": "TextArea",
+                                  "required": false
+                                }
                               },
-                              "onSuccess": { "kind": "toast.success", "message": "Request approved \u2014 grant will be materialised shortly" }
+                              "onSuccess": {
+                                "kind": "toast.success",
+                                "message": "Request approved \u2014 grant will be materialised shortly"
+                              }
                             }
                           }
                         ]

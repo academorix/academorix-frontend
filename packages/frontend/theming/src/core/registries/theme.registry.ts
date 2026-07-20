@@ -6,10 +6,10 @@
  *   the store's registryRevision on every mutation to trigger React re-renders.
  */
 
-import { Injectable } from '@stackra/container';
-import { BaseRegistry } from '@stackra/support';
-import type { ITheme } from '@stackra/contracts';
-import { BUILT_IN_THEMES } from '../constants';
+import { Injectable } from "@stackra/container";
+import { BaseRegistry } from "@stackra/support";
+import type { ITheme } from "@stackra/contracts";
+import { BUILT_IN_THEMES } from "../constants";
 
 // ============================================================================
 // Registry

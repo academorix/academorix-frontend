@@ -11,16 +11,16 @@
  *   doesn't ship `@stackra/auth`) never denies access.
  */
 
-import { useEffect, useMemo, type ReactElement } from 'react';
-import { Text, View } from 'react-native';
-import { Card, Chip } from '@stackra/ui/native';
-import { useOptionalInject } from '@stackra/container/react';
-import { AUTH_SERVICE, type IDevtoolsAuthGate } from '@stackra/contracts';
+import { useEffect, useMemo, type ReactElement } from "react";
+import { Text, View } from "react-native";
+import { Card, Chip } from "@stackra/ui/native";
+import { useOptionalInject } from "@stackra/container/react";
+import { AUTH_SERVICE, type IDevtoolsAuthGate } from "@stackra/contracts";
 
-import { useNativeDevtoolsContext } from '../../hooks/use-native-devtools-context.hook';
-import { DevtoolsPanelLocked } from '../devtools-panel-locked';
-import { DevtoolsPanelView } from '../devtools-panel-view';
-import type { DevtoolsPanelFrameProps } from './devtools-panel-frame.interface';
+import { useNativeDevtoolsContext } from "../../hooks/use-native-devtools-context.hook";
+import { DevtoolsPanelLocked } from "../devtools-panel-locked";
+import { DevtoolsPanelView } from "../devtools-panel-view";
+import type { DevtoolsPanelFrameProps } from "./devtools-panel-frame.interface";
 
 /** Minimal shape we consume from the optional auth service. */
 interface IAuthServiceLike {
@@ -32,7 +32,7 @@ interface IAuthServiceLike {
 /** Resolved gate state for the frame. */
 type GateState =
   | { readonly allowed: true }
-  | { readonly allowed: false; readonly reason: 'unauthenticated' | 'forbidden' };
+  | { readonly allowed: false; readonly reason: "unauthenticated" | "forbidden" };
 
 /**
  * Resolve a panel's optional gate against the optional auth
@@ -40,17 +40,17 @@ type GateState =
  */
 function resolveGate(
   gate: IDevtoolsAuthGate | undefined,
-  authService: IAuthServiceLike | undefined
+  authService: IAuthServiceLike | undefined,
 ): GateState {
   if (!gate) return { allowed: true };
   if (!authService) return { allowed: true };
   const isAuthed =
-    typeof authService.isAuthenticated === 'function'
+    typeof authService.isAuthenticated === "function"
       ? authService.isAuthenticated()
       : Boolean(authService.isAuthenticated ?? authService.currentUser);
-  if (!isAuthed) return { allowed: false, reason: 'unauthenticated' };
+  if (!isAuthed) return { allowed: false, reason: "unauthenticated" };
   const can = authService.can?.(gate.ability, gate.resource) ?? false;
-  return can ? { allowed: true } : { allowed: false, reason: 'forbidden' };
+  return can ? { allowed: true } : { allowed: false, reason: "forbidden" };
 }
 
 /**
@@ -89,7 +89,7 @@ export function DevtoolsPanelFrame({ panel }: DevtoolsPanelFrameProps): ReactEle
       // `badge()` returns `string | number | null`; anything falsy
       // hides the chip so 0-count badges don't visually clutter
       // the header.
-      if (value === null || value === undefined || value === 0 || value === '') {
+      if (value === null || value === undefined || value === 0 || value === "") {
         return null;
       }
       return String(value);
@@ -101,7 +101,7 @@ export function DevtoolsPanelFrame({ panel }: DevtoolsPanelFrameProps): ReactEle
 
   const gate = useMemo(
     () => resolveGate(panel.requireAuth, authService),
-    [panel.requireAuth, authService]
+    [panel.requireAuth, authService],
   );
 
   return (
@@ -125,7 +125,7 @@ export function DevtoolsPanelFrame({ panel }: DevtoolsPanelFrameProps): ReactEle
           <DevtoolsPanelLocked gate={panel.requireAuth} reason={gate.reason} />
         ) : (
           <View className="p-4">
-            <Text className="text-sm text-muted">Panel unavailable.</Text>
+            <Text className="text-muted text-sm">Panel unavailable.</Text>
           </View>
         )}
       </View>

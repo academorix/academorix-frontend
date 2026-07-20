@@ -111,5 +111,5 @@ export interface IAppUpdateConfig {
    * Which platform this build targets. The service picks the
    * matching download URL from the manifest. Defaults to `'web'`.
    */
-  readonly platform?: 'web' | 'desktop' | 'mobile';
+  readonly platform?: "web" | "desktop" | "mobile";
 }

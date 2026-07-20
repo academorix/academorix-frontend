@@ -18,4 +18,4 @@
  * - `normal` — routine app activity; short-lived toast.
  * - `low` — passive info; inbox-only, no toast by default.
  */
-export type NotificationPriority = 'urgent' | 'high' | 'normal' | 'low';
+export type NotificationPriority = "urgent" | "high" | "normal" | "low";

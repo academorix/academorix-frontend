@@ -34,7 +34,7 @@ export interface IPwaUtmParams {
  * we detect it via `navigator.userAgent` containing the "wv" (WebView)
  * hint alongside standalone mode.
  */
-export type PwaDisplayMode = 'browser' | 'standalone' | 'minimal-ui' | 'fullscreen' | 'twa';
+export type PwaDisplayMode = "browser" | "standalone" | "minimal-ui" | "fullscreen" | "twa";
 
 /**
  * Composite PWA install-source attribution.

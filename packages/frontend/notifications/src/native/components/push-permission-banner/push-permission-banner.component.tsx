@@ -14,12 +14,12 @@
  *   permission request on a real user gesture.
  */
 
-import { useState, type ReactElement } from 'react';
-import { View } from 'react-native';
-import { Alert, Button } from '@stackra/ui/native';
+import { useState, type ReactElement } from "react";
+import { View } from "react-native";
+import { Alert, Button } from "@stackra/ui/native";
 
-import { useNotificationPermission } from '../../hooks';
-import type { PushPermissionBannerProps } from './push-permission-banner.interface';
+import { useNotificationPermission } from "../../hooks";
+import type { PushPermissionBannerProps } from "./push-permission-banner.interface";
 
 /**
  * Native push-permission banner.
@@ -31,9 +31,9 @@ import type { PushPermissionBannerProps } from './push-permission-banner.interfa
  * ```
  */
 export function PushPermissionBanner({
-  title = 'Get instant updates',
-  description = 'Enable notifications so we can reach you when the app is in the background.',
-  enableLabel = 'Enable',
+  title = "Get instant updates",
+  description = "Enable notifications so we can reach you when the app is in the background.",
+  enableLabel = "Enable",
   onGranted,
   onDismissed,
   className,
@@ -45,14 +45,14 @@ export function PushPermissionBanner({
   // Hide unless the runtime supports notifications AND the user
   // hasn't yet decided AND they haven't dismissed this session.
   if (!isSupported) return null;
-  if (permission !== 'default') return null;
+  if (permission !== "default") return null;
   if (dismissed) return null;
 
   const handleEnable = async (): Promise<void> => {
     setPending(true);
     try {
       const result = await request();
-      if (result === 'granted') {
+      if (result === "granted") {
         onGranted?.();
       }
     } finally {

@@ -48,7 +48,10 @@
       "properties": {
         "type": { "type": "string", "description": "e.g. 'invoice', 'athlete'" },
         "id": { "type": "string", "description": "prefixed ULID of the target row" },
-        "display_name": { "type": ["string", "null"], "description": "Resolved via the resource type's `displayNameSource` accessor at projection time. Falls back to the resource's `id` when the accessor returns null." }
+        "display_name": {
+          "type": ["string", "null"],
+          "description": "Resolved via the resource type's `displayNameSource` accessor at projection time. Falls back to the resource's `id` when the accessor returns null."
+        }
       },
       "additionalProperties": false
     },
@@ -105,7 +108,10 @@
           "decision": { "type": "string", "enum": ["approve", "reject"] },
           "comment": { "type": ["string", "null"], "maxLength": 1000 },
           "decided_at": { "type": "string", "format": "date-time" },
-          "delegated_from_id": { "type": ["string", "null"], "description": "When the approver was a delegate, this is the delegator's user_id." }
+          "delegated_from_id": {
+            "type": ["string", "null"],
+            "description": "When the approver was a delegate, this is the delegator's user_id."
+          }
         },
         "additionalProperties": false
       }
@@ -164,7 +170,20 @@
         "type": "object",
         "required": ["event", "occurred_at"],
         "properties": {
-          "event": { "type": "string", "enum": ["submitted", "approver_notified", "reminded", "approved", "rejected", "expired", "cancelled", "grant_materialised", "grant_revoked"] },
+          "event": {
+            "type": "string",
+            "enum": [
+              "submitted",
+              "approver_notified",
+              "reminded",
+              "approved",
+              "rejected",
+              "expired",
+              "cancelled",
+              "grant_materialised",
+              "grant_revoked"
+            ]
+          },
           "occurred_at": { "type": "string", "format": "date-time" },
           "actor_id": { "type": ["string", "null"] },
           "note": { "type": ["string", "null"], "maxLength": 500 }
@@ -178,7 +197,10 @@
     "envelope": "spatie-data",
     "wrap": "data",
     "mapper": "SnakeCaseMapper",
-    "hidden": ["audit_trail (list only; included on show)", "decisions (list only; included on show)"],
+    "hidden": [
+      "audit_trail (list only; included on show)",
+      "decisions (list only; included on show)"
+    ],
     "computed": ["approver_summary", "resource.display_name"]
   }
 }

@@ -25,11 +25,11 @@
  * ```
  */
 
-export { MockScopeService } from './mock-scope-service';
-export { MockScopeDataSource, type RecordedDataSourceCall } from './mock-scope-data-source';
+export { MockScopeService } from "./mock-scope-service";
+export { MockScopeDataSource, type RecordedDataSourceCall } from "./mock-scope-data-source";
 export {
   createMockScopeService,
   createMockScopeDataSource,
   type CreateMockScopeServiceOptions,
   type CreateMockScopeDataSourceOptions,
-} from './create-mock-scope';
+} from "./create-mock-scope";

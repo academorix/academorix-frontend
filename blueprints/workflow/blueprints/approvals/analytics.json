@@ -9,14 +9,26 @@
       "name": "Approval Requested",
       "kind": "track",
       "consent_required": "functional",
-      "properties": ["tenant_id", "requester_role", "action_key", "action_namespace", "template_version"],
+      "properties": [
+        "tenant_id",
+        "requester_role",
+        "action_key",
+        "action_namespace",
+        "template_version"
+      ],
       "description": "Requester triggered an approvable action + engine created an instance. Feeds approval-flow funnel + tenant governance-adoption dashboards."
     },
     {
       "name": "Approval Decided",
       "kind": "track",
       "consent_required": "functional",
-      "properties": ["tenant_id", "action_key", "decision", "was_delegated", "time_to_decision_hours"],
+      "properties": [
+        "tenant_id",
+        "action_key",
+        "decision",
+        "was_delegated",
+        "time_to_decision_hours"
+      ],
       "description": "An approver decided (approve or reject). was_delegated=true when the approver is acting under an active RoleDelegation."
     },
     {

@@ -8,8 +8,8 @@
  *   the services folder still get the type without a second import.
  */
 
-export { TabCoordinator } from './tab-coordinator.service';
-export { LockManager } from './lock-manager.service';
-export { CoordinatorTransport } from './coordinator-transport.service';
-export { TabTransportManager } from './tab-transport-manager.service';
-export type { ILockOptions } from '@/core/interfaces';
+export { TabCoordinator } from "./tab-coordinator.service";
+export { LockManager } from "./lock-manager.service";
+export { CoordinatorTransport } from "./coordinator-transport.service";
+export { TabTransportManager } from "./tab-transport-manager.service";
+export type { ILockOptions } from "@/core/interfaces";

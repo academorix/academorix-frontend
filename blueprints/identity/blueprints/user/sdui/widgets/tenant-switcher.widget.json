@@ -6,7 +6,11 @@
   "description": "Dropdown in the app shell. Lists every TenantMember row for the current User inside the current Application. Selecting a tenant POSTs to /me/tenants/{tenant}/switch and hard-reloads. The current default is starred; the currently-active tenant carries a check indicator.",
   "props": {
     "size": { "type": "string", "default": "md", "enum": ["sm", "md", "lg"] },
-    "showTenantSlug": { "type": "boolean", "default": false, "description": "Show the tenant slug alongside the name for support-agent operators." }
+    "showTenantSlug": {
+      "type": "boolean",
+      "default": false,
+      "description": "Show the tenant slug alongside the name for support-agent operators."
+    }
   },
   "dataSources": [
     {
@@ -40,7 +44,9 @@
             {
               "kind": "Text",
               "bindings": {
-                "children": { "$expr": "(memberships.find(m => m.tenant_id === me.active_tenant_id)?.tenant_name) || 'Choose tenant'" }
+                "children": {
+                  "$expr": "(memberships.find(m => m.tenant_id === me.active_tenant_id)?.tenant_name) || 'Choose tenant'"
+                }
               }
             },
             {

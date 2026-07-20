@@ -13,10 +13,10 @@
  *   `DevtoolsModule.forFeature([...])`.
  */
 
-import { createElement, type ReactNode } from 'react';
-import { CpuChipIcon } from '@stackra/ui/icons/heroicon/outline';
-import { Inject, Injectable, Optional } from '@stackra/container';
-import { DevtoolsPanel } from '@stackra/devtools';
+import { createElement, type ReactNode } from "react";
+import { CpuChipIcon } from "@stackra/ui/icons/heroicon/outline";
+import { Inject, Injectable, Optional } from "@stackra/container";
+import { DevtoolsPanel } from "@stackra/devtools";
 import {
   AI_CLIENT,
   AI_ORCHESTRATOR,
@@ -24,10 +24,10 @@ import {
   type IAiClient,
   type IDevtoolsPanel,
   type IDevtoolsView,
-} from '@stackra/contracts';
+} from "@stackra/contracts";
 
-import type { ChatOrchestrator } from '@/core/services/chat-orchestrator.service';
-import { AiDevtoolsPanelView } from './ai-devtools-panel-view';
+import type { ChatOrchestrator } from "@/core/services/chat-orchestrator.service";
+import { AiDevtoolsPanelView } from "./ai-devtools-panel-view";
 
 /**
  * The devtools AI panel.
@@ -43,23 +43,23 @@ import { AiDevtoolsPanelView } from './ai-devtools-panel-view';
  */
 @Injectable()
 @DevtoolsPanel({
-  id: 'ai',
-  title: 'AI',
-  category: 'framework',
+  id: "ai",
+  title: "AI",
+  category: "framework",
   order: 50,
 })
 export class AiDevtoolsPanel implements IDevtoolsPanel {
   /** @inheritdoc */
-  public readonly id = 'ai';
+  public readonly id = "ai";
   /** @inheritdoc */
-  public readonly title = 'AI';
+  public readonly title = "AI";
   /** @inheritdoc */
-  public readonly category: DevtoolsCategory = 'framework';
+  public readonly category: DevtoolsCategory = "framework";
   /** @inheritdoc */
   public readonly order = 50;
   /** @inheritdoc */
   public readonly icon: ReactNode = createElement(CpuChipIcon, {
-    className: 'size-4',
+    className: "size-4",
   });
   /** @inheritdoc */
   public readonly view: IDevtoolsView;
@@ -75,10 +75,10 @@ export class AiDevtoolsPanel implements IDevtoolsPanel {
    */
   public constructor(
     @Optional() @Inject(AI_ORCHESTRATOR) private readonly orchestrator?: ChatOrchestrator,
-    @Optional() @Inject(AI_CLIENT) private readonly client?: IAiClient
+    @Optional() @Inject(AI_CLIENT) private readonly client?: IAiClient,
   ) {
     this.view = {
-      type: 'component',
+      type: "component",
       render: (): ReactNode =>
         createElement(AiDevtoolsPanelView, {
           orchestrator: this.orchestrator,
@@ -96,7 +96,7 @@ export class AiDevtoolsPanel implements IDevtoolsPanel {
     // fail-soft — a broken orchestrator must not throw here.
     try {
       const status = this.orchestrator?.status;
-      return status === 'streaming' ? 1 : null;
+      return status === "streaming" ? 1 : null;
     } catch {
       return null;
     }

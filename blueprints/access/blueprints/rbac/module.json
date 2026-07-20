@@ -27,9 +27,7 @@
     "iso27001-a9.2"
   ],
   "priority": 30,
-  "providers": [
-    "Academorix\\Rbac\\Providers\\RbacServiceProvider"
-  ],
+  "providers": ["Academorix\\Rbac\\Providers\\RbacServiceProvider"],
   "files": [],
   "dependencies": [
     "foundation",
@@ -40,12 +38,7 @@
     "tenancy",
     "entitlements"
   ],
-  "extendedBy": [
-    "grants",
-    "delegation",
-    "requests",
-    "approvals"
-  ],
+  "extendedBy": ["grants", "delegation", "requests", "approvals"],
   "consumedIndirectlyBy": {
     "description": "Every downstream tenant-plane + platform-plane module reaches this module through the framework attributes `#[RequirePermission]` / `#[RequireRole]` (which resolve through `PermissionResolver::resolve()`) OR the composed `Gate::allows()` bridge. Domain modules NEVER query `role_has_permissions` / `model_has_roles` directly — they authorise via the resolver. The resolver is Sanctum-abilities-cached at PAT issue-time (auth module owns the caching write; RBAC owns the read-path resolution).",
     "modules": [
@@ -55,16 +48,8 @@
     ]
   },
   "contributes": {
-    "traits": [
-      "HasRoles",
-      "HasPermissions",
-      "HasResolvedPermissions",
-      "IsPermissionable"
-    ],
-    "attributes": [
-      "AsRbacListener",
-      "ProvidesPermissions"
-    ],
+    "traits": ["HasRoles", "HasPermissions", "HasResolvedPermissions", "IsPermissionable"],
+    "attributes": ["AsRbacListener", "ProvidesPermissions"],
     "blueprints": [
       "roles",
       "permissions",
@@ -73,11 +58,7 @@
       "model_has_permissions",
       "role_definitions"
     ],
-    "middleware": [
-      "rbac.enforce_permission",
-      "rbac.enforce_role",
-      "rbac.warm_permission_cache"
-    ],
+    "middleware": ["rbac.enforce_permission", "rbac.enforce_role", "rbac.warm_permission_cache"],
     "events": [
       "RoleCreated",
       "RoleUpdated",
@@ -100,12 +81,7 @@
       "GuardMismatchRefused",
       "ApplicationMismatchRefused"
     ],
-    "policies": [
-      "RolePolicy",
-      "PermissionPolicy",
-      "RoleAssignmentPolicy",
-      "RoleDefinitionPolicy"
-    ],
+    "policies": ["RolePolicy", "PermissionPolicy", "RoleAssignmentPolicy", "RoleDefinitionPolicy"],
     "hooks": [],
     "commands": [
       "rbac:list-roles",
@@ -154,22 +130,11 @@
       "role_not_system",
       "principal_belongs_to_current_application"
     ],
-    "casts": [
-      "GuardName",
-      "PermissionName",
-      "ResolvedPermissionSet"
-    ],
+    "casts": ["GuardName", "PermissionName", "ResolvedPermissionSet"],
     "views": [],
-    "lang": [
-      "rbac"
-    ],
-    "config": [
-      "rbac"
-    ],
-    "macros": [
-      "Blueprint::guardable_columns",
-      "Blueprint::rbac_scoped_columns"
-    ],
+    "lang": ["rbac"],
+    "config": ["rbac"],
+    "macros": ["Blueprint::guardable_columns", "Blueprint::rbac_scoped_columns"],
     "bindings": [
       "RoleRepository",
       "PermissionRepository",
@@ -182,18 +147,10 @@
       "RoleDefinitionRegistry",
       "GuardBoundaryEnforcer"
     ],
-    "resources": [
-      "role",
-      "permission",
-      "role-definition",
-      "principal-role",
-      "principal-permission"
-    ]
+    "resources": ["role", "permission", "role-definition", "principal-role", "principal-permission"]
   },
   "wraps": {
-    "packages": [
-      "spatie/laravel-permission (roles + permissions + spatie pivots)"
-    ],
+    "packages": ["spatie/laravel-permission (roles + permissions + spatie pivots)"],
     "rationale": "spatie/laravel-permission's `roles` + `permissions` + `role_has_permissions` + `model_has_roles` + `model_has_permissions` tables are used as-shipped — we DO NOT reimplement the pivot semantics. Migrations in this module ADD columns (`application_id`, `tenant_id`, `is_system`, `description`, `sort_order`, denormalised `application_id` + `tenant_id` on the pivots) without altering the vendor-owned columns. Our `HasRoles` trait EXTENDS Spatie\\Permission\\Traits\\HasRoles and overrides `hasPermissionTo(...)` to route through `PermissionResolver::resolve()` so RBAC + grants + delegation compose at query-time. Overriding at the trait level (not the model level) lets every model composing the trait inherit the resolver without touching call sites."
   },
   "hosts": {
@@ -236,7 +193,5 @@
       ]
     }
   },
-  "planned_consumers": [
-    "every downstream domain module"
-  ]
+  "planned_consumers": ["every downstream domain module"]
 }

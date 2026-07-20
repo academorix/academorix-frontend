@@ -45,7 +45,7 @@ export function SplitPaletteLayout({
         <Command.Container size={size}>
           <Command.Dialog inputValue={query} onInputChange={(v) => service.setQuery(v)}>
             <InputBar placeholder={placeholder} isLoading={isLoading} />
-            <div className="flex min-h-[300px] divide-x divide-default-200">
+            <div className="divide-default-200 flex min-h-[300px] divide-x">
               {/* Left panel — command list */}
               <div className="w-[40%] overflow-y-auto">
                 <Command.List
@@ -66,16 +66,16 @@ export function SplitPaletteLayout({
                           isDisabled={cmd.disabled}
                         >
                           {cmd.icon && (
-                            <span className="grid size-8 shrink-0 place-items-center rounded-md bg-accent/10 text-accent">
+                            <span className="bg-accent/10 text-accent grid size-8 shrink-0 place-items-center rounded-md">
                               {cmd.icon}
                             </span>
                           )}
-                          <div className="flex flex-1 flex-col min-w-0">
-                            <span className="truncate text-sm font-medium text-foreground">
+                          <div className="flex min-w-0 flex-1 flex-col">
+                            <span className="text-foreground truncate text-sm font-medium">
                               {cmd.label}
                             </span>
                             {cmd.description && (
-                              <span className="truncate text-xs text-default-500">
+                              <span className="text-default-500 truncate text-xs">
                                 {cmd.description}
                               </span>
                             )}
@@ -87,17 +87,17 @@ export function SplitPaletteLayout({
                 </Command.List>
               </div>
               {/* Right panel — preview */}
-              <div className="w-[60%] flex flex-col items-center justify-center p-6 text-center">
+              <div className="flex w-[60%] flex-col items-center justify-center p-6 text-center">
                 {focused ? (
                   <div className="flex flex-col items-center gap-3">
                     {focused.icon && (
-                      <span className="grid size-12 place-items-center rounded-lg bg-accent/10 text-accent">
+                      <span className="bg-accent/10 text-accent grid size-12 place-items-center rounded-lg">
                         {focused.icon}
                       </span>
                     )}
-                    <p className="text-base font-semibold text-foreground">{focused.label}</p>
+                    <p className="text-foreground text-base font-semibold">{focused.label}</p>
                     {focused.description && (
-                      <p className="text-sm text-default-500">{focused.description}</p>
+                      <p className="text-default-500 text-sm">{focused.description}</p>
                     )}
                     {focused.shortcut && (
                       <Kbd className="text-xs">
@@ -111,7 +111,7 @@ export function SplitPaletteLayout({
                     )}
                   </div>
                 ) : (
-                  <p className="text-sm text-default-400">
+                  <p className="text-default-400 text-sm">
                     {t("kbd.components.command_palette.select_a_command")}
                   </p>
                 )}

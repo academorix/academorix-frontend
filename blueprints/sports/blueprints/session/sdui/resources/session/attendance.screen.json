@@ -7,30 +7,60 @@
   "route": "/sessions/{session}/attendance",
   "description": "Touch-optimised attendance surface. Coaches use this on a tablet during check-in. Big buttons per athlete row. Progress ticker (X/Y checked in).",
   "dataSources": [
-    { "name": "session", "kind": "http.get", "urlExpr": "'/api/v1/sessions/' + route.params.session + '?include=resource_booking,head_coach'", "unwrap": "data" },
-    { "name": "attendance", "kind": "http.get", "urlExpr": "'/api/v1/sessions/' + route.params.session + '/attendance?include=athlete'", "unwrap": "data", "cache": { "ttlSeconds": 10 } }
+    {
+      "name": "session",
+      "kind": "http.get",
+      "urlExpr": "'/api/v1/sessions/' + route.params.session + '?include=resource_booking,head_coach'",
+      "unwrap": "data"
+    },
+    {
+      "name": "attendance",
+      "kind": "http.get",
+      "urlExpr": "'/api/v1/sessions/' + route.params.session + '/attendance?include=athlete'",
+      "unwrap": "data",
+      "cache": { "ttlSeconds": 10 }
+    }
   ],
   "nodes": [
     {
       "kind": "PageHeader",
       "children": [
-        { "kind": "PageHeader.Title", "bindings": { "children": { "$expr": "'Attendance: ' + session.name" } } },
+        {
+          "kind": "PageHeader.Title",
+          "bindings": { "children": { "$expr": "'Attendance: ' + session.name" } }
+        },
         {
           "kind": "PageHeader.Actions",
           "children": [
-            { "kind": "Widget", "props": { "id": "session.session-status-chip" }, "bindings": { "props": { "status": { "$ref": "session.status" }, "size": "sm" } } },
-            { "kind": "Widget", "props": { "id": "session.session-attendance-summary" }, "bindings": { "props": { "session": { "$ref": "session" }, "size": "sm" } } }
+            {
+              "kind": "Widget",
+              "props": { "id": "session.session-status-chip" },
+              "bindings": { "props": { "status": { "$ref": "session.status" }, "size": "sm" } }
+            },
+            {
+              "kind": "Widget",
+              "props": { "id": "session.session-attendance-summary" },
+              "bindings": { "props": { "session": { "$ref": "session" }, "size": "sm" } }
+            }
           ]
         }
       ]
     },
     {
       "kind": "View",
-      "bindings": { "hidden": { "$expr": "session.status !== 'scheduled' && session.status !== 'confirmed' && session.status !== 'in_progress'" } },
+      "bindings": {
+        "hidden": {
+          "$expr": "session.status !== 'scheduled' && session.status !== 'confirmed' && session.status !== 'in_progress'"
+        }
+      },
       "children": [
         {
           "kind": "Alert",
-          "props": { "variant": "info", "leadingIcon": "information-circle-outline", "title": "Check-in period" },
+          "props": {
+            "variant": "info",
+            "leadingIcon": "information-circle-outline",
+            "title": "Check-in period"
+          },
           "bindings": {
             "props": {
               "description": {
@@ -52,21 +82,58 @@
             "kind": "Card.Content",
             "props": { "className": "flex items-center gap-3 py-2" },
             "children": [
-              { "kind": "Avatar", "bindings": { "props": { "name": { "$ref": "item.athlete.full_name" }, "size": "md" } } },
+              {
+                "kind": "Avatar",
+                "bindings": {
+                  "props": { "name": { "$ref": "item.athlete.full_name" }, "size": "md" }
+                }
+              },
               {
                 "kind": "View",
                 "props": { "className": "flex flex-col flex-1 min-w-0" },
                 "children": [
-                  { "kind": "Text", "props": { "className": "font-medium" }, "bindings": { "children": { "$ref": "item.athlete.full_name" } } },
-                  { "kind": "Text", "props": { "className": "text-xs text-muted" }, "bindings": { "children": { "$expr": "item.status + (item.late_minutes ? ' (' + item.late_minutes + 'm late)' : '')" } } }
+                  {
+                    "kind": "Text",
+                    "props": { "className": "font-medium" },
+                    "bindings": { "children": { "$ref": "item.athlete.full_name" } }
+                  },
+                  {
+                    "kind": "Text",
+                    "props": { "className": "text-xs text-muted" },
+                    "bindings": {
+                      "children": {
+                        "$expr": "item.status + (item.late_minutes ? ' (' + item.late_minutes + 'm late)' : '')"
+                      }
+                    }
+                  }
                 ]
               },
               {
                 "kind": "View",
                 "props": { "className": "flex flex-col gap-1" },
                 "children": [
-                  { "kind": "Button", "props": { "variant": "solid", "size": "sm", "children": "Check in" }, "bindings": { "hidden": { "$expr": "['checked_in', 'late'].includes(item.status)" }, "onPress": { "$action": "http.post", "urlExpr": "'/api/v1/sessions/' + route.params.session + '/attendance/' + item.id + '/check-in'" } } },
-                  { "kind": "Button", "props": { "variant": "outline", "size": "sm", "children": "Absent" }, "bindings": { "hidden": { "$expr": "item.status === 'absent'" }, "onPress": { "$action": "http.post", "urlExpr": "'/api/v1/sessions/' + route.params.session + '/attendance/' + item.id + '/mark-absent'" } } }
+                  {
+                    "kind": "Button",
+                    "props": { "variant": "solid", "size": "sm", "children": "Check in" },
+                    "bindings": {
+                      "hidden": { "$expr": "['checked_in', 'late'].includes(item.status)" },
+                      "onPress": {
+                        "$action": "http.post",
+                        "urlExpr": "'/api/v1/sessions/' + route.params.session + '/attendance/' + item.id + '/check-in'"
+                      }
+                    }
+                  },
+                  {
+                    "kind": "Button",
+                    "props": { "variant": "outline", "size": "sm", "children": "Absent" },
+                    "bindings": {
+                      "hidden": { "$expr": "item.status === 'absent'" },
+                      "onPress": {
+                        "$action": "http.post",
+                        "urlExpr": "'/api/v1/sessions/' + route.params.session + '/attendance/' + item.id + '/mark-absent'"
+                      }
+                    }
+                  }
                 ]
               }
             ]
@@ -78,7 +145,14 @@
       "kind": "View",
       "bindings": { "hidden": { "$expr": "attendance.length !== 0" } },
       "children": [
-        { "kind": "Alert", "props": { "variant": "info", "title": "No athletes registered", "description": "Add athletes to this session first." } }
+        {
+          "kind": "Alert",
+          "props": {
+            "variant": "info",
+            "title": "No athletes registered",
+            "description": "Add athletes to this session first."
+          }
+        }
       ]
     }
   ]

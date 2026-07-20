@@ -6,16 +6,38 @@
  *   Replaces nest-commander entirely.
  */
 
-import type { ApplicationContext, Type } from "@stackra/container";
-
-import type { ICliOptions } from "../interfaces";
 import { CommandRegistry } from "../registries/command.registry";
 import { ConsoleOutput } from "../services/console-output.service";
 import { parseArgv } from "../utils/argv-parser.util";
 
+import type { ICliOptions } from "../interfaces";
+import type { ApplicationContext, Type } from "@stackra/container";
+
 // ============================================================================
 // Types
 // ============================================================================
+
+/**
+ * Runtime shape of a `@Command`-decorated class instance. `setOutput` is
+ * optional because the base command declares it as such — some subclasses
+ * choose not to override.
+ */
+interface ICommandInstance {
+  run(args: unknown, options: Record<string, unknown>): Promise<number | void> | number | void;
+  setOutput?(output: ConsoleOutput): void;
+}
+
+/**
+ * Narrow an unknown thrown value to something that exposes `.message`
+ * and (optionally) `.stack`. Errors thrown across async boundaries
+ * arrive as `unknown` — this helper preserves the useful fields.
+ */
+function toErrorLike(err: unknown): { message: string; stack?: string } {
+  if (err instanceof Error) {
+    return { message: err.message, stack: err.stack ?? undefined };
+  }
+  return { message: String(err) };
+}
 
 // ============================================================================
 // Kernel
@@ -48,7 +70,7 @@ export class ConsoleKernel {
    * @param module - The root @stackra/container module class
    * @param options - CLI options (log levels, hooks)
    */
-  public static async run(module: Type<any>, options: ICliOptions = {}): Promise<never> {
+  public static async run(module: Type<unknown>, options: ICliOptions = {}): Promise<never> {
     // Lazy import ApplicationFactory to avoid pulling @stackra/container into non-CLI contexts
     const { ApplicationFactory } = await import("@stackra/container");
 
@@ -61,8 +83,9 @@ export class ConsoleKernel {
 
     try {
       app = await ApplicationFactory.create(module);
-    } catch (error: any) {
-      process.stderr.write(`\n  Bootstrap failed: ${error.message}\n\n`);
+    } catch (error: unknown) {
+      const { message } = toErrorLike(error);
+      process.stderr.write(`\n  Bootstrap failed: ${message}\n\n`);
       process.exit(1);
     }
 
@@ -73,7 +96,10 @@ export class ConsoleKernel {
 
     const exitCode = await ConsoleKernel.boot(app);
 
-    await app.close().catch(() => {});
+    // Fail-soft close — swallow shutdown errors so the process exits cleanly.
+    await app.close().catch((closeErr: unknown) => {
+      void closeErr;
+    });
     process.exit(exitCode);
   }
 
@@ -99,7 +125,7 @@ export class ConsoleKernel {
     const parsed = parseArgv(process.argv.slice(2));
 
     // Handle --version globally
-    if (parsed.options["version"] || parsed.options["V"]) {
+    if (parsed.options.version || parsed.options.V) {
       process.stdout.write("stackra v0.1.0\n");
 
       return 0;
@@ -110,13 +136,14 @@ export class ConsoleKernel {
       const listEntry = registry.get("list");
 
       if (listEntry) {
-        const listCommand = app.get(listEntry.classRef);
+        const listCommand = app.get(listEntry.classRef) as ICommandInstance;
 
         if (typeof listCommand.setOutput === "function") {
           listCommand.setOutput(output);
         }
 
-        return (await listCommand.run({}, parsed.options)) ?? 0;
+        const result = await listCommand.run({}, parsed.options);
+        return typeof result === "number" ? result : 0;
       }
       // Fallback: print available commands
       const all = registry.getAll();
@@ -141,14 +168,13 @@ export class ConsoleKernel {
     }
 
     // Get the command instance from DI
-    let command: any;
+    let command: ICommandInstance;
 
     try {
-      command = app.get(entry.classRef);
-    } catch (error: any) {
-      process.stderr.write(
-        `\n  Failed to resolve command "${parsed.commandName}": ${error.message}\n\n`,
-      );
+      command = app.get(entry.classRef) as ICommandInstance;
+    } catch (error: unknown) {
+      const { message } = toErrorLike(error);
+      process.stderr.write(`\n  Failed to resolve command "${parsed.commandName}": ${message}\n\n`);
 
       return 1;
     }
@@ -163,12 +189,13 @@ export class ConsoleKernel {
       const result = await command.run(parsed.args, parsed.options);
 
       return typeof result === "number" ? result : 0;
-    } catch (error: any) {
-      const verbose = parsed.options["verbose"] || parsed.options["v"];
+    } catch (error: unknown) {
+      const { message, stack } = toErrorLike(error);
+      const verbose = parsed.options.verbose ?? parsed.options.v;
 
-      process.stderr.write(`\n  Error: ${error.message}\n`);
-      if (verbose && error.stack) {
-        process.stderr.write(`\n  ${error.stack}\n`);
+      process.stderr.write(`\n  Error: ${message}\n`);
+      if (verbose && stack) {
+        process.stderr.write(`\n  ${stack}\n`);
       }
       process.stderr.write("\n");
 

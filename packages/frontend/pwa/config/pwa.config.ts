@@ -5,7 +5,7 @@
  *   Copy into your app's `src/config/` and import into your AppModule.
  */
 
-import { defineConfig } from '@stackra/pwa';
+import { defineConfig } from "@stackra/pwa";
 
 export const pwaConfig = defineConfig({
   /*
@@ -19,7 +19,7 @@ export const pwaConfig = defineConfig({
   */
   install: {
     delayMs: 30_000,
-    dismissKey: 'stackra:pwa:install-dismissed',
+    dismissKey: "stackra:pwa:install-dismissed",
     maxDismissals: 3,
   },
 

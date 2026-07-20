@@ -21,7 +21,11 @@
       "description": "Optional ISO-8601 timestamp of the next open/close transition. Rendered as a subtitle when present (e.g. 'Closes at 22:00')."
     },
     "size": { "type": "string", "default": "xs", "enum": ["xs", "sm", "md"] },
-    "showLabel": { "type": "boolean", "default": true, "description": "When false, renders only the coloured indicator dot without text." }
+    "showLabel": {
+      "type": "boolean",
+      "default": true,
+      "description": "When false, renders only the coloured indicator dot without text."
+    }
   },
   "nodes": [
     {

@@ -10,21 +10,44 @@
       "name": "Chargeback Filed",
       "kind": "track",
       "consent_required": "essential",
-      "properties": ["tenant_id", "chargeback_id", "network", "reason_category", "reason_code", "amount_bucket", "days_since_payment_bucket", "provider", "rdr_eligible", "ce3_eligible"],
+      "properties": [
+        "tenant_id",
+        "chargeback_id",
+        "network",
+        "reason_category",
+        "reason_code",
+        "amount_bucket",
+        "days_since_payment_bucket",
+        "provider",
+        "rdr_eligible",
+        "ce3_eligible"
+      ],
       "description": "Every chargeback filed. P0 event. Essential consent — financial-integrity signals cannot be opted out. days_since_payment_bucket: 0-30 / 31-60 / 61-90 / 91-120 / 120+; amount_bucket: 0-999 / 1000-4999 / 5000-19999 / 20000+."
     },
     {
       "name": "Chargeback Evidence Requested",
       "kind": "track",
       "consent_required": "essential",
-      "properties": ["tenant_id", "chargeback_id", "submission_attempt_number", "additional_evidence_requested"],
+      "properties": [
+        "tenant_id",
+        "chargeback_id",
+        "submission_attempt_number",
+        "additional_evidence_requested"
+      ],
       "description": "Fires when the bank requests evidence (initial or CE3.0 second pass)."
     },
     {
       "name": "Chargeback Evidence Submitted",
       "kind": "track",
       "consent_required": "essential",
-      "properties": ["tenant_id", "chargeback_id", "submission_attempt_number", "evidence_completeness_percent", "hours_before_deadline_bucket", "submitter_role"],
+      "properties": [
+        "tenant_id",
+        "chargeback_id",
+        "submission_attempt_number",
+        "evidence_completeness_percent",
+        "hours_before_deadline_bucket",
+        "submitter_role"
+      ],
       "description": "hours_before_deadline_bucket: 0-24 / 24-72 / 72-168 (1 week) / 168+. Powers evidence-submission SLA monitoring. Late-submitters (< 24h before deadline) surface as ops risk."
     },
     {
@@ -37,14 +60,34 @@
       "name": "Chargeback Won",
       "kind": "track",
       "consent_required": "essential",
-      "properties": ["tenant_id", "chargeback_id", "network", "reason_category", "reason_code", "days_to_decision_bucket", "amount_bucket", "had_ce3_evidence"],
+      "properties": [
+        "tenant_id",
+        "chargeback_id",
+        "network",
+        "reason_category",
+        "reason_code",
+        "days_to_decision_bucket",
+        "amount_bucket",
+        "had_ce3_evidence"
+      ],
       "description": "P1 event. days_to_decision_bucket: 0-7 / 8-30 / 31-60 / 61-90 / 91+. Powers win-rate + evidence-effectiveness analysis. had_ce3_evidence=true correlates with high win rate for Visa fraud disputes."
     },
     {
       "name": "Chargeback Lost",
       "kind": "track",
       "consent_required": "essential",
-      "properties": ["tenant_id", "chargeback_id", "network", "reason_category", "reason_code", "days_to_decision_bucket", "amount_bucket", "fee_bucket", "had_evidence_submitted", "was_expired"],
+      "properties": [
+        "tenant_id",
+        "chargeback_id",
+        "network",
+        "reason_category",
+        "reason_code",
+        "days_to_decision_bucket",
+        "amount_bucket",
+        "fee_bucket",
+        "had_evidence_submitted",
+        "was_expired"
+      ],
       "description": "P1 event — every fire is a financial loss. fee_bucket: 0-999 / 1000-1999 / 2000-2999 / 3000+. was_expired=true means auto-loss via missed evidence deadline (distinct signal from bank-decided loss)."
     },
     {
@@ -65,14 +108,25 @@
       "name": "Chargeback Evidence Overdue",
       "kind": "track",
       "consent_required": "essential",
-      "properties": ["tenant_id", "chargeback_id", "days_remaining", "current_completeness_percent"],
+      "properties": [
+        "tenant_id",
+        "chargeback_id",
+        "days_remaining",
+        "current_completeness_percent"
+      ],
       "description": "days_remaining IN (7, 3, 1). Powers escalation-cadence monitoring."
     },
     {
       "name": "Chargeback Clawback Referral",
       "kind": "track",
       "consent_required": "essential",
-      "properties": ["tenant_id", "chargeback_id", "referral_reward_id", "reward_type", "reward_amount_bucket"],
+      "properties": [
+        "tenant_id",
+        "chargeback_id",
+        "referral_reward_id",
+        "reward_type",
+        "reward_amount_bucket"
+      ],
       "description": "P1 event — every fire is a downstream reward reversal impacting referrer credits."
     },
     {
@@ -93,7 +147,15 @@
       "name": "Chargeback Rate Threshold Exceeded",
       "kind": "track",
       "consent_required": "essential",
-      "properties": ["tenant_id", "network", "current_rate_percent", "threshold_percent", "chargebacks_count", "transactions_count", "days_over_threshold"],
+      "properties": [
+        "tenant_id",
+        "network",
+        "current_rate_percent",
+        "threshold_percent",
+        "chargebacks_count",
+        "transactions_count",
+        "days_over_threshold"
+      ],
       "description": "P1 event — merchant-account termination risk. Powers merchant-account risk monitoring dashboards for Academorix platform ops."
     },
     {
@@ -107,7 +169,13 @@
       "name": "Chargeback Rate Report Generated",
       "kind": "track",
       "consent_required": "functional",
-      "properties": ["tenant_id", "report_id", "period_days", "chargeback_count_bucket", "highest_network_rate_percent"]
+      "properties": [
+        "tenant_id",
+        "report_id",
+        "period_days",
+        "chargeback_count_bucket",
+        "highest_network_rate_percent"
+      ]
     }
   ],
   "notes": [

@@ -10,15 +10,15 @@
  *   keeps the auth-gate handling in one place.
  */
 
-import { useEffect, useMemo, type ReactElement } from 'react';
-import { Chip } from '@stackra/ui/react';
+import { useEffect, useMemo, type ReactElement } from "react";
+import { Chip } from "@stackra/ui/react";
 
-import { useDevtoolsAuthGuard } from '../../hooks/use-devtools-auth-guard.hook';
-import { useDevtoolsContext } from '../../hooks/use-devtools-context.hook';
-import { formatPanelBadge } from '../../utils/format-panel-badge.util';
-import { DevtoolsPanelLocked } from '../devtools-panel-locked';
-import { DevtoolsPanelView } from '../devtools-panel-view';
-import type { DevtoolsPanelFrameProps } from './devtools-panel-frame.interface';
+import { useDevtoolsAuthGuard } from "../../hooks/use-devtools-auth-guard.hook";
+import { useDevtoolsContext } from "../../hooks/use-devtools-context.hook";
+import { formatPanelBadge } from "../../utils/format-panel-badge.util";
+import { DevtoolsPanelLocked } from "../devtools-panel-locked";
+import { DevtoolsPanelView } from "../devtools-panel-view";
+import type { DevtoolsPanelFrameProps } from "./devtools-panel-frame.interface";
 
 /**
  * Renders the current panel — header, optional badge, gate, view.
@@ -68,9 +68,9 @@ export function DevtoolsPanelFrame({ panel }: DevtoolsPanelFrameProps): ReactEle
 
   return (
     <div className="flex h-full w-full flex-col" data-devtools-panel-frame={panel.id}>
-      <header className="flex items-center justify-between gap-3 border-b border-border px-4 py-3">
+      <header className="border-border flex items-center justify-between gap-3 border-b px-4 py-3">
         <div className="flex min-w-0 items-center gap-2">
-          <h2 className="truncate text-sm font-semibold text-foreground">{panel.title}</h2>
+          <h2 className="text-foreground truncate text-sm font-semibold">{panel.title}</h2>
           {badge ? (
             <Chip size="sm" variant="secondary">
               <Chip.Label>{badge}</Chip.Label>
@@ -82,7 +82,7 @@ export function DevtoolsPanelFrame({ panel }: DevtoolsPanelFrameProps): ReactEle
         {guard.allowed || !panel.requireAuth ? (
           <DevtoolsPanelView panel={panel} />
         ) : (
-          <DevtoolsPanelLocked gate={panel.requireAuth} reason={guard.reason ?? 'forbidden'} />
+          <DevtoolsPanelLocked gate={panel.requireAuth} reason={guard.reason ?? "forbidden"} />
         )}
       </div>
     </div>

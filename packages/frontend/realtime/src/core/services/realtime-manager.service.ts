@@ -5,9 +5,9 @@
  *   Transport-agnostic. Drivers registered via `forFeature()`.
  */
 
-import { Injectable, Inject, Optional } from '@stackra/container';
-import { Logger } from '@stackra/logger';
-import { Manager } from '@stackra/support';
+import { Injectable, Inject, Optional } from "@stackra/container";
+import { Logger } from "@stackra/logger";
+import { Manager } from "@stackra/support";
 import {
   EVENT_EMITTER,
   REALTIME_CONFIG,
@@ -15,9 +15,9 @@ import {
   type IEventEmitter,
   type IRealtimeConnection,
   type IRealtimeManager,
-} from '@stackra/contracts';
-import { RealtimeConnectionError } from '@/core/errors';
-import type { IRealtimeModuleOptions } from '@/core/interfaces';
+} from "@stackra/contracts";
+import { RealtimeConnectionError } from "@/core/errors";
+import type { IRealtimeModuleOptions } from "@/core/interfaces";
 
 /**
  * Realtime manager — resolves named WebSocket connections.
@@ -48,7 +48,7 @@ export class RealtimeManager extends Manager<IRealtimeConnection> implements IRe
    */
   public constructor(
     @Inject(REALTIME_CONFIG) private readonly config: IRealtimeModuleOptions,
-    @Optional() @Inject(EVENT_EMITTER) private readonly eventEmitter?: IEventEmitter
+    @Optional() @Inject(EVENT_EMITTER) private readonly eventEmitter?: IEventEmitter,
   ) {
     super();
   }
@@ -75,7 +75,7 @@ export class RealtimeManager extends Manager<IRealtimeConnection> implements IRe
 
     throw new RealtimeConnectionError(
       `Realtime driver for "${connectionName}" is not registered. ` +
-        `Use RealtimeModule.forFeature(driver, ConnectorClass) to register.`
+        `Use RealtimeModule.forFeature(driver, ConnectorClass) to register.`,
     );
   }
 
@@ -103,7 +103,7 @@ export class RealtimeManager extends Manager<IRealtimeConnection> implements IRe
       this.asyncConnections.delete(connectionName);
       this.emit(REALTIME_EVENTS.DISCONNECTED, {
         connection: connectionName,
-        reason: 'manual',
+        reason: "manual",
       });
     }
   }
@@ -185,7 +185,7 @@ export class RealtimeManager extends Manager<IRealtimeConnection> implements IRe
     try {
       void this.eventEmitter.emit(event, payload);
     } catch (error: unknown) {
-      this.logger.warn('[RealtimeManager] failed to emit event', { event, error });
+      this.logger.warn("[RealtimeManager] failed to emit event", { event, error });
     }
   }
 

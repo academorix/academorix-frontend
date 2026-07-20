@@ -1,11 +1,19 @@
 {
-  "name":        "egulias/email-validator",
+  "name": "egulias/email-validator",
   "description": "A library for validating emails against several RFCs",
-  "homepage":    "https://github.com/egulias/EmailValidator",
-  "keywords":    ["email", "validation", "validator", "emailvalidation", "emailvalidator"],
-  "license":     "MIT",
+  "homepage": "https://github.com/egulias/EmailValidator",
+  "keywords": [
+    "email",
+    "validation",
+    "validator",
+    "emailvalidation",
+    "emailvalidator"
+  ],
+  "license": "MIT",
   "authors": [
-    {"name": "Eduardo Gulias Davis"}
+    {
+      "name": "Eduardo Gulias Davis"
+    }
   ],
   "extra": {
     "branch-alias": {

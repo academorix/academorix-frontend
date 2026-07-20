@@ -4,9 +4,9 @@
  * @description `<SduiTree>` — the entry point of the recursive renderer.
  */
 
-import type { ISduiNode } from '@stackra/contracts';
-import { SduiNodeView } from './sdui-node-view';
-import type { ComponentRegistry } from '@/core/registries/component.registry';
+import type { ISduiNode } from "@stackra/contracts";
+import { SduiNodeView } from "./sdui-node-view";
+import type { ComponentRegistry } from "@/core/registries/component.registry";
 
 export interface ISduiTreeProps {
   readonly root: ISduiNode;

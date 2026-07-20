@@ -5,4 +5,4 @@
  *   in `../interfaces` and are re-exported by the native interfaces barrel.
  */
 
-export { NativeLanguageSelector } from './language-selector';
+export { NativeLanguageSelector } from "./language-selector";

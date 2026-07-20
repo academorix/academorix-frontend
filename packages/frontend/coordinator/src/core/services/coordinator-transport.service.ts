@@ -11,24 +11,24 @@
  *   `EventTransportRegistry`.
  */
 
-import { Inject, Injectable, Optional } from '@stackra/container';
+import { Inject, Injectable, Optional } from "@stackra/container";
 import {
   COORDINATOR_CONFIG,
   TAB_TRANSPORT_MANAGER,
   type IEventEmitterSync,
   type ITabTransport,
   type ITabTransportManager,
-} from '@stackra/contracts';
-import { Str } from '@stackra/support';
-import type { ICoordinatorModuleOptions } from '@/core/interfaces';
-import type { IRelayMessage } from '@/core/interfaces/relay-message.interface';
+} from "@stackra/contracts";
+import { Str } from "@stackra/support";
+import type { ICoordinatorModuleOptions } from "@/core/interfaces";
+import type { IRelayMessage } from "@/core/interfaces/relay-message.interface";
 
 // ════════════════════════════════════════════════════════════════════════════════
 // Constants
 // ════════════════════════════════════════════════════════════════════════════════
 
 /** Channel name shared by every tab for event relay. */
-const RELAY_CHANNEL = 'stackra-event-relay';
+const RELAY_CHANNEL = "stackra-event-relay";
 
 // ════════════════════════════════════════════════════════════════════════════════
 // Implementation
@@ -66,7 +66,7 @@ export class CoordinatorTransport {
   private readonly patterns: string[];
 
   /** Delimiter for pattern matching. */
-  private readonly delimiter = '.';
+  private readonly delimiter = ".";
 
   /** Whether broadcasting is enabled. */
   private readonly enabled: boolean;
@@ -78,10 +78,10 @@ export class CoordinatorTransport {
    */
   public constructor(
     @Optional() @Inject(TAB_TRANSPORT_MANAGER) private readonly manager?: ITabTransportManager,
-    @Optional() @Inject(COORDINATOR_CONFIG) config?: ICoordinatorModuleOptions
+    @Optional() @Inject(COORDINATOR_CONFIG) config?: ICoordinatorModuleOptions,
   ) {
     this.tabId = Str.uuid();
-    this.patterns = config?.broadcastPatterns ?? ['sync:**', 'auth:**', 'state:**'];
+    this.patterns = config?.broadcastPatterns ?? ["sync:**", "auth:**", "state:**"];
     this.enabled = config?.broadcastEvents ?? true;
   }
 
@@ -103,7 +103,7 @@ export class CoordinatorTransport {
     // Listen for incoming relayed events from other tabs
     this.unsubscribe = this.transport.subscribe((data) => {
       const msg = data as IRelayMessage;
-      if (!msg || msg.kind !== 'event-relay') return;
+      if (!msg || msg.kind !== "event-relay") return;
       if (msg.sourceTabId === this.tabId) return; // Don't echo own events
       // Re-emit on the local emitter
       this.emitter?.emit(msg.event, ...msg.args);
@@ -135,7 +135,7 @@ export class CoordinatorTransport {
     if (!this.matchesPatterns(event)) return;
 
     const msg: IRelayMessage = {
-      kind: 'event-relay',
+      kind: "event-relay",
       event,
       args,
       sourceTabId: this.tabId,
@@ -164,14 +164,14 @@ export class CoordinatorTransport {
     if (pi === pattern.length && ei === event.length) return true;
     if (pi === pattern.length) return false;
     const seg = pattern[pi];
-    if (seg === '**') {
+    if (seg === "**") {
       for (let skip = 1; skip <= event.length - ei; skip++) {
         if (this.matchParts(pattern, pi + 1, event, ei + skip)) return true;
       }
       return false;
     }
     if (ei === event.length) return false;
-    if (seg === '*') return this.matchParts(pattern, pi + 1, event, ei + 1);
+    if (seg === "*") return this.matchParts(pattern, pi + 1, event, ei + 1);
     if (seg === event[ei]) return this.matchParts(pattern, pi + 1, event, ei + 1);
     return false;
   }

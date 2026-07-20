@@ -9,7 +9,13 @@
       "name": "Coaching Profile Created",
       "kind": "track",
       "consent_required": "functional",
-      "properties": ["tenant_id", "primary_sport_key", "coaching_since_year_bucket", "specialization_count_bucket", "is_accepting_new_athletes"]
+      "properties": [
+        "tenant_id",
+        "primary_sport_key",
+        "coaching_since_year_bucket",
+        "specialization_count_bucket",
+        "is_accepting_new_athletes"
+      ]
     },
     {
       "name": "Coaching Profile Verified",
@@ -21,7 +27,12 @@
       "name": "Coaching Profile Deactivated",
       "kind": "track",
       "consent_required": "functional",
-      "properties": ["tenant_id", "trigger", "days_active_bucket", "active_assignments_at_deactivate"]
+      "properties": [
+        "tenant_id",
+        "trigger",
+        "days_active_bucket",
+        "active_assignments_at_deactivate"
+      ]
     },
     {
       "name": "Coach Assignment Created",
@@ -33,7 +44,13 @@
       "name": "Coach Assignment Ended",
       "kind": "track",
       "consent_required": "functional",
-      "properties": ["tenant_id", "role", "assignable_type", "duration_days_bucket", "reached_scheduled_end"]
+      "properties": [
+        "tenant_id",
+        "role",
+        "assignable_type",
+        "duration_days_bucket",
+        "reached_scheduled_end"
+      ]
     },
     {
       "name": "Coach Assignment Cancelled",
@@ -45,13 +62,24 @@
       "name": "Coach Certification Added",
       "kind": "track",
       "consent_required": "functional",
-      "properties": ["tenant_id", "issuing_body_bucket", "certification_level", "has_expiry", "days_to_expiry_bucket"]
+      "properties": [
+        "tenant_id",
+        "issuing_body_bucket",
+        "certification_level",
+        "has_expiry",
+        "days_to_expiry_bucket"
+      ]
     },
     {
       "name": "Coach Certification Verified",
       "kind": "track",
       "consent_required": "functional",
-      "properties": ["tenant_id", "issuing_body_bucket", "days_since_added_bucket", "manual_or_webhook"]
+      "properties": [
+        "tenant_id",
+        "issuing_body_bucket",
+        "days_since_added_bucket",
+        "manual_or_webhook"
+      ]
     },
     {
       "name": "Coach Certification Expiring Soon",
@@ -71,13 +99,25 @@
       "name": "Coach Skill Rating Recorded",
       "kind": "track",
       "consent_required": "functional",
-      "properties": ["tenant_id", "rating_scale", "rating_value_bucket", "ratable_type", "rated_by_role"]
+      "properties": [
+        "tenant_id",
+        "rating_scale",
+        "rating_value_bucket",
+        "ratable_type",
+        "rated_by_role"
+      ]
     },
     {
       "name": "Coach Skill Rating Updated",
       "kind": "track",
       "consent_required": "functional",
-      "properties": ["tenant_id", "rating_scale", "from_value_bucket", "to_value_bucket", "ratable_type"]
+      "properties": [
+        "tenant_id",
+        "rating_scale",
+        "from_value_bucket",
+        "to_value_bucket",
+        "ratable_type"
+      ]
     },
     {
       "name": "Coach Assignment Conflict Detected",

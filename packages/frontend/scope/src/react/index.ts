@@ -8,14 +8,14 @@
 // ════════════════════════════════════════════════════════════════════════════════
 // Hooks
 // ════════════════════════════════════════════════════════════════════════════════
-export { useScope, useScopeTree, useScopeValue } from './hooks';
-export type { UseScopeResult } from './hooks';
+export { useScope, useScopeTree, useScopeValue } from "./hooks";
+export type { UseScopeResult } from "./hooks";
 
 // ════════════════════════════════════════════════════════════════════════════════
 // Components
 // ════════════════════════════════════════════════════════════════════════════════
-export { ScopeSwitcher } from './components';
-export type { ScopeSwitcherProps } from './components';
+export { ScopeSwitcher } from "./components";
+export type { ScopeSwitcherProps } from "./components";
 
 // ════════════════════════════════════════════════════════════════════════════════
 // Devtools contributions — wired into `DevtoolsModule` by `ScopeModule.forRoot`.
@@ -25,4 +25,4 @@ export {
   ScopeInspectorSource,
   ScopeDevtoolsPanelView,
   type ScopeDevtoolsPanelViewProps,
-} from './devtools';
+} from "./devtools";

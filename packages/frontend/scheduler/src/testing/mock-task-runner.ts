@@ -9,7 +9,7 @@
  *   code that observes them works correctly.
  */
 
-import type { ITaskRunner, IScheduledTask, ITaskOptions } from '@/core/interfaces';
+import type { ITaskRunner, IScheduledTask, ITaskOptions } from "@/core/interfaces";
 
 /** Internal entry — bundles the task function with its options and state. */
 interface RunnerEntry {

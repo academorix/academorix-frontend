@@ -107,7 +107,9 @@
           "props": {
             "resourceType": { "$ref": "form.resource_type" },
             "resourceId": { "$ref": "form.resource_id" },
-            "resourceLabel": { "$expr": "form.resource_type && form.resource_id ? form.resource_type + '#' + form.resource_id : ''" },
+            "resourceLabel": {
+              "$expr": "form.resource_type && form.resource_id ? form.resource_type + '#' + form.resource_id : ''"
+            },
             "allowDeny": { "$expr": "true" }
           },
           "bindings": {

@@ -177,9 +177,7 @@ export function renderWithRouting(
   // 4. Preserve a caller-supplied wrapper by composing it INSIDE
   //    the routing frame — the caller's wrapper wraps the UI; our
   //    routing frame wraps the caller's wrapper.
-  const CallerWrapper = renderOptions.wrapper as
-    | ComponentType<{ children: ReactNode }>
-    | undefined;
+  const CallerWrapper = renderOptions.wrapper as ComponentType<{ children: ReactNode }> | undefined;
 
   const Wrapper = ({ children }: { children: ReactNode }): ReactElement => {
     // Memoise the context value so re-renders of the wrapper don't

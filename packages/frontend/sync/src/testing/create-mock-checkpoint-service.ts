@@ -5,9 +5,9 @@
  *   service.
  */
 
-import { createAssertableProxy, type AssertableProxy } from '@stackra/testing';
+import { createAssertableProxy, type AssertableProxy } from "@stackra/testing";
 
-import { MockCheckpointService } from './mock-checkpoint-service';
+import { MockCheckpointService } from "./mock-checkpoint-service";
 
 /**
  * Create an assertable mock `CheckpointService`.

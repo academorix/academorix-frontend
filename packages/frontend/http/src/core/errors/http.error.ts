@@ -13,10 +13,10 @@
  */
 export class HttpError extends Error {
   /** Error name visible in stack traces. */
-  public override readonly name: string = 'HttpError';
+  public override readonly name: string = "HttpError";
 
   /** Machine-readable error code. */
-  public readonly code: string = 'HTTP_ERROR';
+  public readonly code: string = "HTTP_ERROR";
 
   /** Optional underlying cause. */
   public override readonly cause?: Error;
@@ -30,11 +30,11 @@ export class HttpError extends Error {
     this.cause = cause;
 
     if (
-      typeof (Error as unknown as { captureStackTrace?: Function }).captureStackTrace === 'function'
+      typeof (Error as unknown as { captureStackTrace?: Function }).captureStackTrace === "function"
     ) {
       (Error as unknown as { captureStackTrace: Function }).captureStackTrace(
         this,
-        this.constructor
+        this.constructor,
       );
     }
   }

@@ -4,4 +4,4 @@
  * @description Barrel export for TWA (Bubblewrap) utilities.
  */
 
-export { getBubblewrapConfig } from './get-bubblewrap-config.util';
+export { getBubblewrapConfig } from "./get-bubblewrap-config.util";

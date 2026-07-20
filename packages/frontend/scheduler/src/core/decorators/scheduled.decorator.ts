@@ -5,9 +5,9 @@
  *   The class must implement a `run()` method returning `Promise<void>`.
  */
 
-import { defineMetadata } from '@vivtel/metadata';
-import { SCHEDULED_METADATA_KEY } from '@stackra/contracts';
-import type { IScheduledOptions } from '@/core/interfaces/scheduled-options.interface';
+import { defineMetadata } from "@vivtel/metadata";
+import { SCHEDULED_METADATA_KEY } from "@stackra/contracts";
+import type { IScheduledOptions } from "@/core/interfaces/scheduled-options.interface";
 
 /**
  * Mark a class for automatic registration with the scheduler.

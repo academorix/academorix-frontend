@@ -5,11 +5,11 @@
  *   Returns whether a category is allowed and whether consent is pending.
  */
 
-import { useCallback, useSyncExternalStore } from 'react';
-import { useInject } from '@stackra/container/react';
+import { useCallback, useSyncExternalStore } from "react";
+import { useInject } from "@stackra/container/react";
 
-import { CONSENT_MANAGER } from '@stackra/contracts';
-import type { ConsentManager } from '@/core/services/consent-manager.service';
+import { CONSENT_MANAGER } from "@stackra/contracts";
+import type { ConsentManager } from "@/core/services/consent-manager.service";
 
 /** Value returned by {@link useConsentGate}. */
 export interface UseConsentGateResult {
@@ -43,7 +43,7 @@ export function useConsentGate(category: string): UseConsentGateResult {
 
   const subscribe = useCallback(
     (onStoreChange: () => void) => manager.subscribe(onStoreChange),
-    [manager]
+    [manager],
   );
   const getSnapshot = useCallback(() => manager.getSnapshot(), [manager]);
 

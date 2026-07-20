@@ -43,21 +43,128 @@
   "x-database": {
     "engine": "postgres",
     "columns": {
-      "id": { "type": "string", "length": 30, "primary": true, "description": "Prefixed ULID: `abs_<26>`." },
-      "tenant_id": { "type": "string", "length": 30, "nullable": false, "foreign": { "table": "tenants", "column": "id", "onUpdate": "cascade", "onDelete": "cascade" } },
-      "session_id": { "type": "string", "length": 30, "nullable": false, "foreign": { "table": "sessions", "column": "id", "onUpdate": "cascade", "onDelete": "restrict" }, "description": "The session the athlete missed. IMMUTABLE post-create." },
-      "athlete_id": { "type": "string", "length": 30, "nullable": false, "foreign": { "table": "athletes", "column": "id", "onUpdate": "cascade", "onDelete": "restrict" }, "description": "The absent athlete. IMMUTABLE post-create." },
-      "athlete_enrollment_id": { "type": "string", "length": 30, "nullable": false, "foreign": { "table": "athlete_enrollments", "column": "id", "onUpdate": "cascade", "onDelete": "restrict" }, "description": "The roster row the athlete was on when they missed. IMMUTABLE post-create." },
-      "status": { "type": "string", "length": 32, "nullable": false, "default": "'unexcused'", "description": "Enum: unexcused / excused / no_show_advance_notice_given / vacation / medical / bereavement." },
-      "absence_reason": { "type": "string", "length": 256, "nullable": true, "description": "Reason string. Advisory catalog in data/absence-reason-catalog.json." },
-      "explanation": { "type": "text", "nullable": true, "description": "Guardian's free-text explanation. Admin + HR visible only." },
-      "reported_at": { "type": "timestamptz", "nullable": false, "description": "When the absence was recorded. Distinct from session.starts_at — pre-notification records reported_at BEFORE session; auto-detection records reported_at AT reconciliation time." },
-      "reported_by_user_id": { "type": "string", "length": 30, "nullable": true, "foreign": { "table": "users", "column": "id", "onUpdate": "cascade", "onDelete": "restrict" }, "description": "Guardian / athlete who self-reported. NULL for system-detected absences (ReconcileAttendanceJob)." },
-      "documented_url_signed": { "type": "string", "length": 512, "nullable": true, "description": "S3 signed URL for supporting documentation (medical note). Safeguarding_officer + hr visible only." },
-      "excused_by_user_id": { "type": "string", "length": 30, "nullable": true, "foreign": { "table": "users", "column": "id", "onUpdate": "cascade", "onDelete": "restrict" }, "description": "Admin who flipped the absence to excused. NULL until excusal." },
-      "excused_at": { "type": "timestamptz", "nullable": true, "description": "When the absence was excused. NULL until excusal." },
-      "counted_toward_freeze": { "type": "boolean", "nullable": false, "default": true, "description": "Whether this absence counts toward the rolling-window freeze threshold. Auto-set based on status: unexcused=true; excused/no_show_advance_notice_given/vacation/medical/bereavement=false." },
-      "metadata": { "type": "jsonb", "nullable": true, "description": "Free-form metadata. May contain no_show_fee_invoice_id when ChargeNoShowFeeJob dispatched." },
+      "id": {
+        "type": "string",
+        "length": 30,
+        "primary": true,
+        "description": "Prefixed ULID: `abs_<26>`."
+      },
+      "tenant_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": {
+          "table": "tenants",
+          "column": "id",
+          "onUpdate": "cascade",
+          "onDelete": "cascade"
+        }
+      },
+      "session_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": {
+          "table": "sessions",
+          "column": "id",
+          "onUpdate": "cascade",
+          "onDelete": "restrict"
+        },
+        "description": "The session the athlete missed. IMMUTABLE post-create."
+      },
+      "athlete_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": {
+          "table": "athletes",
+          "column": "id",
+          "onUpdate": "cascade",
+          "onDelete": "restrict"
+        },
+        "description": "The absent athlete. IMMUTABLE post-create."
+      },
+      "athlete_enrollment_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": {
+          "table": "athlete_enrollments",
+          "column": "id",
+          "onUpdate": "cascade",
+          "onDelete": "restrict"
+        },
+        "description": "The roster row the athlete was on when they missed. IMMUTABLE post-create."
+      },
+      "status": {
+        "type": "string",
+        "length": 32,
+        "nullable": false,
+        "default": "'unexcused'",
+        "description": "Enum: unexcused / excused / no_show_advance_notice_given / vacation / medical / bereavement."
+      },
+      "absence_reason": {
+        "type": "string",
+        "length": 256,
+        "nullable": true,
+        "description": "Reason string. Advisory catalog in data/absence-reason-catalog.json."
+      },
+      "explanation": {
+        "type": "text",
+        "nullable": true,
+        "description": "Guardian's free-text explanation. Admin + HR visible only."
+      },
+      "reported_at": {
+        "type": "timestamptz",
+        "nullable": false,
+        "description": "When the absence was recorded. Distinct from session.starts_at — pre-notification records reported_at BEFORE session; auto-detection records reported_at AT reconciliation time."
+      },
+      "reported_by_user_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": true,
+        "foreign": {
+          "table": "users",
+          "column": "id",
+          "onUpdate": "cascade",
+          "onDelete": "restrict"
+        },
+        "description": "Guardian / athlete who self-reported. NULL for system-detected absences (ReconcileAttendanceJob)."
+      },
+      "documented_url_signed": {
+        "type": "string",
+        "length": 512,
+        "nullable": true,
+        "description": "S3 signed URL for supporting documentation (medical note). Safeguarding_officer + hr visible only."
+      },
+      "excused_by_user_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": true,
+        "foreign": {
+          "table": "users",
+          "column": "id",
+          "onUpdate": "cascade",
+          "onDelete": "restrict"
+        },
+        "description": "Admin who flipped the absence to excused. NULL until excusal."
+      },
+      "excused_at": {
+        "type": "timestamptz",
+        "nullable": true,
+        "description": "When the absence was excused. NULL until excusal."
+      },
+      "counted_toward_freeze": {
+        "type": "boolean",
+        "nullable": false,
+        "default": true,
+        "description": "Whether this absence counts toward the rolling-window freeze threshold. Auto-set based on status: unexcused=true; excused/no_show_advance_notice_given/vacation/medical/bereavement=false."
+      },
+      "metadata": {
+        "type": "jsonb",
+        "nullable": true,
+        "description": "Free-form metadata. May contain no_show_fee_invoice_id when ChargeNoShowFeeJob dispatched."
+      },
       "created_by": { "type": "string", "length": 30, "nullable": true },
       "updated_by": { "type": "string", "length": 30, "nullable": true },
       "deleted_by": { "type": "string", "length": 30, "nullable": true },
@@ -73,9 +180,17 @@
         "predicate": "deleted_at IS NULL",
         "description": "One AbsenceRecord per (session, athlete)."
       },
-      { "columns": ["tenant_id", "athlete_id", "reported_at"], "name": "absence_records_by_athlete_time_idx" },
+      {
+        "columns": ["tenant_id", "athlete_id", "reported_at"],
+        "name": "absence_records_by_athlete_time_idx"
+      },
       { "columns": ["tenant_id", "session_id"], "name": "absence_records_by_session_idx" },
-      { "columns": ["tenant_id", "athlete_id", "counted_toward_freeze", "reported_at"], "name": "absence_records_freeze_window_idx", "predicate": "status = 'unexcused' AND deleted_at IS NULL", "description": "Feeds CheckAbsenceFreezeThresholdJob rolling-window count queries." }
+      {
+        "columns": ["tenant_id", "athlete_id", "counted_toward_freeze", "reported_at"],
+        "name": "absence_records_freeze_window_idx",
+        "predicate": "status = 'unexcused' AND deleted_at IS NULL",
+        "description": "Feeds CheckAbsenceFreezeThresholdJob rolling-window count queries."
+      }
     ]
   },
   "required": [
@@ -98,13 +213,27 @@
     "athlete_enrollment_id": { "type": "string", "pattern": "^aen_[0-9A-HJKMNP-TV-Z]{26}$" },
     "status": {
       "type": "string",
-      "enum": ["unexcused", "excused", "no_show_advance_notice_given", "vacation", "medical", "bereavement"]
+      "enum": [
+        "unexcused",
+        "excused",
+        "no_show_advance_notice_given",
+        "vacation",
+        "medical",
+        "bereavement"
+      ]
     },
     "absence_reason": { "type": ["string", "null"], "maxLength": 256 },
     "explanation": { "type": ["string", "null"], "maxLength": 4096 },
     "reported_at": { "type": "string", "format": "date-time" },
-    "reported_by_user_id": { "type": ["string", "null"], "pattern": "^usr_[0-9A-HJKMNP-TV-Z]{26}$" },
-    "documented_url_signed": { "type": ["string", "null"], "maxLength": 512, "pattern": "^https://" },
+    "reported_by_user_id": {
+      "type": ["string", "null"],
+      "pattern": "^usr_[0-9A-HJKMNP-TV-Z]{26}$"
+    },
+    "documented_url_signed": {
+      "type": ["string", "null"],
+      "maxLength": 512,
+      "pattern": "^https://"
+    },
     "excused_by_user_id": { "type": ["string", "null"], "pattern": "^usr_[0-9A-HJKMNP-TV-Z]{26}$" },
     "excused_at": { "type": ["string", "null"], "format": "date-time" },
     "counted_toward_freeze": { "type": "boolean" },

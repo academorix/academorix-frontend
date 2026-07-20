@@ -42,7 +42,12 @@
   "x-database": {
     "engine": "postgres",
     "columns": {
-      "id": { "type": "string", "length": 64, "primary": true, "description": "Prefixed ULID: `let_<26>`." },
+      "id": {
+        "type": "string",
+        "length": 64,
+        "primary": true,
+        "description": "Prefixed ULID: `let_<26>`."
+      },
       "tenant_id": {
         "type": "string",
         "length": 64,
@@ -84,8 +89,16 @@
         "default": "'open'",
         "description": "Enum: open / in_progress / completed / cancelled."
       },
-      "due_at": { "type": "timestamptz", "nullable": true, "description": "Optional deadline. When NULL the task has no urgency." },
-      "completed_at": { "type": "timestamptz", "nullable": true, "description": "Set when status transitions to completed. IMMUTABLE thereafter." },
+      "due_at": {
+        "type": "timestamptz",
+        "nullable": true,
+        "description": "Optional deadline. When NULL the task has no urgency."
+      },
+      "completed_at": {
+        "type": "timestamptz",
+        "nullable": true,
+        "description": "Set when status transitions to completed. IMMUTABLE thereafter."
+      },
       "completed_by": {
         "type": "string",
         "length": 64,
@@ -102,9 +115,16 @@
       "updated_at": { "type": "timestamptz", "nullable": false }
     },
     "indexes": [
-      { "columns": ["tenant_id", "assigned_to_id", "status", "due_at"], "name": "lead_tasks_assignee_status_due_idx" },
+      {
+        "columns": ["tenant_id", "assigned_to_id", "status", "due_at"],
+        "name": "lead_tasks_assignee_status_due_idx"
+      },
       { "columns": ["tenant_id", "lead_id", "status"], "name": "lead_tasks_lead_status_idx" },
-      { "columns": ["tenant_id", "status", "due_at"], "name": "lead_tasks_open_due_idx", "predicate": "status IN ('open', 'in_progress')" },
+      {
+        "columns": ["tenant_id", "status", "due_at"],
+        "name": "lead_tasks_open_due_idx",
+        "predicate": "status IN ('open', 'in_progress')"
+      },
       { "columns": ["tenant_id", "priority", "due_at"], "name": "lead_tasks_priority_idx" }
     ]
   },

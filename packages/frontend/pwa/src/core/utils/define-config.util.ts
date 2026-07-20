@@ -4,7 +4,7 @@
  * @description Typed identity helper for authoring `pwa.config.ts`.
  */
 
-import type { IPwaModuleOptions } from '../interfaces';
+import type { IPwaModuleOptions } from "../interfaces";
 
 /**
  * Type-safe PWA configuration helper — identity pass-through for

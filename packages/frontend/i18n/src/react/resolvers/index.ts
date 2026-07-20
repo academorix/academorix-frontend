@@ -6,8 +6,8 @@
  *   barrel.
  */
 
-export { LocalStorageResolver } from './local-storage.resolver';
-export { NavigatorResolver } from './navigator.resolver';
-export { UrlParamResolver } from './url-param.resolver';
-export { CookieResolver } from './cookie.resolver';
-export { SubdomainResolver } from './subdomain.resolver';
+export { LocalStorageResolver } from "./local-storage.resolver";
+export { NavigatorResolver } from "./navigator.resolver";
+export { UrlParamResolver } from "./url-param.resolver";
+export { CookieResolver } from "./cookie.resolver";
+export { SubdomainResolver } from "./subdomain.resolver";

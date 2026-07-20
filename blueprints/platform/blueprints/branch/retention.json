@@ -17,7 +17,9 @@
     },
     {
       "entity": "Branch (status=closed)",
-      "hot": { "days": "indefinite (compliance material — referenced by historic invoices + fire-safety records + audit rows for the venue's full lifetime)" },
+      "hot": {
+        "days": "indefinite (compliance material — referenced by historic invoices + fire-safety records + audit rows for the venue's full lifetime)"
+      },
       "purge": {
         "trigger": "platform-support two-person approval via `branch:hard-delete --platform-support --ticket=<url>` CLI (never public API)",
         "action": "hard delete — CASCADE removes tenant_id-linked rows; RESTRICT on downstream domain FKs means the operator must clean up dependents first (documented in the CLI's runbook)",
@@ -35,7 +37,9 @@
     {
       "entity": "audits (from Auditable trait on Branch)",
       "hot": { "days": "365 (default retention)" },
-      "cold": { "days": "up to 7 years per compliance tier — Small=90d / Medium=1yr / Enterprise=configurable up to 7yr per hierarchy.md §7" },
+      "cold": {
+        "days": "up to 7 years per compliance tier — Small=90d / Medium=1yr / Enterprise=configurable up to 7yr per hierarchy.md §7"
+      },
       "purge": {
         "trigger": "audit-module retention policy",
         "action": "hard purge",

@@ -26,7 +26,7 @@
  */
 export interface IPushSubscriptionResult {
   /** Discriminator — which adapter produced the value. */
-  readonly kind: 'web' | 'native';
+  readonly kind: "web" | "native";
   /**
    * The adapter-specific subscription payload — narrowed by
    * `kind`. Consumers cast to `IWebPushSubscription` on web and
@@ -46,7 +46,7 @@ export interface IPushSubscriptionResult {
  */
 export interface IPushSubscriptionAdapter {
   /** Which platform the adapter targets. */
-  readonly platform: 'web' | 'native';
+  readonly platform: "web" | "native";
 
   /**
    * Whether the current environment supports the push APIs the

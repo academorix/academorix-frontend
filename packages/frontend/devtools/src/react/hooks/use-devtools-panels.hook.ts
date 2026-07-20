@@ -9,10 +9,10 @@
  *   by-category grouping the nav rail consumes.
  */
 
-import { useCallback, useMemo, useSyncExternalStore } from 'react';
-import type { DevtoolsCategory, IDevtoolsPanel } from '@stackra/contracts';
+import { useCallback, useMemo, useSyncExternalStore } from "react";
+import type { DevtoolsCategory, IDevtoolsPanel } from "@stackra/contracts";
 
-import { useDevtoolsContext } from './use-devtools-context.hook';
+import { useDevtoolsContext } from "./use-devtools-context.hook";
 
 /** Result returned by {@link useDevtoolsPanels}. */
 export interface IUseDevtoolsPanelsResult {

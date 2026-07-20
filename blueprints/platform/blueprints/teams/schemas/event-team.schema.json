@@ -104,7 +104,11 @@
         "description": "(team, event) uniqueness — a team registers once per event. Skipped for pre-Wave-3 placeholder rows with event_id IS NULL."
       },
       { "columns": ["tenant_id", "team_id"], "name": "event_teams_team_idx" },
-      { "columns": ["tenant_id", "event_id"], "name": "event_teams_event_idx", "predicate": "event_id IS NOT NULL" },
+      {
+        "columns": ["tenant_id", "event_id"],
+        "name": "event_teams_event_idx",
+        "predicate": "event_id IS NOT NULL"
+      },
       { "columns": ["tenant_id", "registered_at"], "name": "event_teams_registered_idx" }
     ]
   },
@@ -134,10 +138,7 @@
     "withdrawal_reason": { "type": ["string", "null"] },
     "checked_in_at": { "type": ["string", "null"], "format": "date-time" },
     "result": {
-      "oneOf": [
-        { "type": "null" },
-        { "$ref": "#/$defs/resultShape" }
-      ]
+      "oneOf": [{ "type": "null" }, { "$ref": "#/$defs/resultShape" }]
     },
     "attendance_count": { "type": ["integer", "null"], "minimum": 0 },
     "metadata": { "type": ["object", "null"] },

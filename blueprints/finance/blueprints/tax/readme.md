@@ -1,27 +1,26 @@
 # tax
 
 Tax rate + jurisdiction + exemption + calculation engine. Wave 4 finance
-infrastructure. The load-bearing tax lane per
-`.kiro/steering/hierarchy.md` §1b — answers "what tax is owed on this invoice
-line in this jurisdiction for this customer?" for every invoice + membership
-renewal + coupon-adjusted line item.
+infrastructure. The load-bearing tax lane per `.kiro/steering/hierarchy.md` §1b
+— answers "what tax is owed on this invoice line in this jurisdiction for this
+customer?" for every invoice + membership renewal + coupon-adjusted line item.
 
 ## 1. What this module owns
 
-| Concern                                  | Owned artefact                                                                                             |
-| ---------------------------------------- | ---------------------------------------------------------------------------------------------------------- |
-| Per-jurisdiction rate rows               | `TaxRate` — one row per (jurisdiction × rate_type × effective_from). Effective-range time bounds.          |
-| Country/state/city rule catalog          | `TaxJurisdiction` — VAT / GST / Sales Tax / Consumption Tax / Digital Services Tax rules per geography.    |
-| Per-tenant exemption certificates        | `TaxExemption` — reseller / non-profit / diplomatic / rural / religious with certificate + expiry + scope. |
-| Per-invoice-line calculation record      | `TaxCalculation` — immutable audit trail of which rate applied when + which provider computed it.          |
-| Provider driver family                   | `TaxProviderManager` (MultipleInstanceManager) — 5 drivers day-1.                                          |
-| Rate resolution                          | `TaxRateResolver` — (jurisdiction, rate_type, applies_to, date) → rate.                                    |
-| Address → jurisdiction resolution        | `TaxAddressResolver` — customer profile address → tax_jurisdictions row.                                   |
-| Exemption certificate validation         | `ExemptionValidator` — validates certificate against issuing jurisdiction's public registry when available.|
-| Certificate document storage             | `CertificateStorage` — S3 signed URL manager with time-limited access + tenant-scoped prefixes.            |
-| Retry + circuit-breaker                  | Per (tenant, provider) — Meta AvaTax outage for tenant A does not affect tenant B or Stripe Tax dispatch.  |
-| Calculation freeze                       | Once `tax_calculations.tax_rate_snapshot` is committed, IMMUTABLE — rate changes never retroactively re-tax.|
-| Annual tax summary                       | Aggregated per-jurisdiction rollup over `tax_calculations` for regulator filing.                           |
+| Concern                             | Owned artefact                                                                                               |
+| ----------------------------------- | ------------------------------------------------------------------------------------------------------------ |
+| Per-jurisdiction rate rows          | `TaxRate` — one row per (jurisdiction × rate_type × effective_from). Effective-range time bounds.            |
+| Country/state/city rule catalog     | `TaxJurisdiction` — VAT / GST / Sales Tax / Consumption Tax / Digital Services Tax rules per geography.      |
+| Per-tenant exemption certificates   | `TaxExemption` — reseller / non-profit / diplomatic / rural / religious with certificate + expiry + scope.   |
+| Per-invoice-line calculation record | `TaxCalculation` — immutable audit trail of which rate applied when + which provider computed it.            |
+| Provider driver family              | `TaxProviderManager` (MultipleInstanceManager) — 5 drivers day-1.                                            |
+| Rate resolution                     | `TaxRateResolver` — (jurisdiction, rate_type, applies_to, date) → rate.                                      |
+| Address → jurisdiction resolution   | `TaxAddressResolver` — customer profile address → tax_jurisdictions row.                                     |
+| Exemption certificate validation    | `ExemptionValidator` — validates certificate against issuing jurisdiction's public registry when available.  |
+| Certificate document storage        | `CertificateStorage` — S3 signed URL manager with time-limited access + tenant-scoped prefixes.              |
+| Retry + circuit-breaker             | Per (tenant, provider) — Meta AvaTax outage for tenant A does not affect tenant B or Stripe Tax dispatch.    |
+| Calculation freeze                  | Once `tax_calculations.tax_rate_snapshot` is committed, IMMUTABLE — rate changes never retroactively re-tax. |
+| Annual tax summary                  | Aggregated per-jurisdiction rollup over `tax_calculations` for regulator filing.                             |
 
 ### 1.1 The four owned tables
 
@@ -34,8 +33,8 @@ renewal + coupon-adjusted line item.
   polymorphic customer (User / Athlete / Organization). Retention: 7 years
   post-expiry.
 - `tax_calculations` — per-invoice-line calculation record. Belongs to `Tenant`
-  + `invoice_lines.id` (RESTRICT). Retention: 7 years (10 for Enterprise via
-  `tax_extended_retention`).
+  - `invoice_lines.id` (RESTRICT). Retention: 7 years (10 for Enterprise via
+    `tax_extended_retention`).
 
 None of these carry `application_id`, `region_id`, `organization_id`, or
 `scope_node_id` — every row is tenant-scoped per tenancy-columns.md §3 with the
@@ -64,9 +63,9 @@ Distinct from:
 - **`marketing`** (Wave 5 growth) — server-side conversion tracking. Marketing
   events may carry a `value_amount_cents` (revenue signal); the tax module
   computes the ACTUAL tax owed on that revenue.
-- **`entitlements`** (Wave 3 platform) — tax entitlements
-  (`tax_capture`, `tax_provider_slot`, ...) live in entitlements; tax owns the
-  ENGINE that consumes those entitlements at write time.
+- **`entitlements`** (Wave 3 platform) — tax entitlements (`tax_capture`,
+  `tax_provider_slot`, ...) live in entitlements; tax owns the ENGINE that
+  consumes those entitlements at write time.
 
 ## 3. The MultipleInstanceManager pattern
 
@@ -122,13 +121,13 @@ Each provider ships:
 
 ### 5.1 The 5 providers
 
-| Provider          | Endpoint                                                       | Auth                              | Scope                                    |
-| ----------------- | -------------------------------------------------------------- | --------------------------------- | ---------------------------------------- |
-| TaxJar            | `https://api.taxjar.com/v2/taxes`                              | `Authorization: Bearer <token>`   | US sales tax + international VAT         |
-| Avalara AvaTax    | `https://rest.avatax.com/api/v2/transactions/create`           | Basic (`account_id:license_key`)  | Enterprise-grade global tax + per-SKU    |
-| Stripe Tax        | `stripe.tax.calculations.create` (Stripe SDK)                  | Stripe API key                    | Automatic on Stripe-processed txns       |
-| NativeCalculator  | None (local — reads `tax_rates` directly)                      | N/A                               | Simple jurisdictions / single-country    |
-| CustomWebhook     | Caller-configured URL                                          | HMAC-SHA256 signature             | Tenant-hosted tax engine escape hatch    |
+| Provider         | Endpoint                                             | Auth                             | Scope                                 |
+| ---------------- | ---------------------------------------------------- | -------------------------------- | ------------------------------------- |
+| TaxJar           | `https://api.taxjar.com/v2/taxes`                    | `Authorization: Bearer <token>`  | US sales tax + international VAT      |
+| Avalara AvaTax   | `https://rest.avatax.com/api/v2/transactions/create` | Basic (`account_id:license_key`) | Enterprise-grade global tax + per-SKU |
+| Stripe Tax       | `stripe.tax.calculations.create` (Stripe SDK)        | Stripe API key                   | Automatic on Stripe-processed txns    |
+| NativeCalculator | None (local — reads `tax_rates` directly)            | N/A                              | Simple jurisdictions / single-country |
+| CustomWebhook    | Caller-configured URL                                | HMAC-SHA256 signature            | Tenant-hosted tax engine escape hatch |
 
 ### 5.2 Native calculator
 
@@ -148,8 +147,8 @@ tax + NativeCalculator for their home-country VAT.
 
 ## 6. Address → jurisdiction resolution
 
-`TaxAddressResolver` maps a customer's profile address to a
-`TaxJurisdiction` row:
+`TaxAddressResolver` maps a customer's profile address to a `TaxJurisdiction`
+row:
 
 - Reads customer profile (via polymorphic `customer_type` + `customer_id`).
 - Prefers shipping address over billing address (correct for physical goods).
@@ -164,13 +163,15 @@ tax + NativeCalculator for their home-country VAT.
 Two-phase verification:
 
 1. **At exemption create** — `TaxExemptionObserver.creating` validates
-   certificate_document_url is HTTPS S3 signed + validates valid_from < valid_until
-   + refuses without `tax_exemption_management` entitlement. Dispatches
-   `VerifyTaxExemptionJob` when the issuing jurisdiction has a public registry.
-2. **At calculation time** — `TaxCalculator` reads exemptions for
-   (tenant, customer, jurisdiction, exemption_type) with
-   verification_status='verified' AND valid_from <= today < valid_until. Applies
-   the exemption + snapshots it into `tax_calculations.exemption_applied`.
+   certificate_document_url is HTTPS S3 signed + validates valid_from <
+   valid_until
+   - refuses without `tax_exemption_management` entitlement. Dispatches
+     `VerifyTaxExemptionJob` when the issuing jurisdiction has a public
+     registry.
+2. **At calculation time** — `TaxCalculator` reads exemptions for (tenant,
+   customer, jurisdiction, exemption_type) with verification_status='verified'
+   AND valid_from <= today < valid_until. Applies the exemption + snapshots it
+   into `tax_calculations.exemption_applied`.
 
 Certificate revocation is honored going forward but does NOT re-tax historical
 invoices (calculation-freeze pattern §4).
@@ -180,8 +181,8 @@ invoices (calculation-freeze pattern §4).
 Provider calls fail — the module handles it fail-safe:
 
 - **Retry** — Exponential backoff on transient failures (5xx, timeout, network
-  reset). Max 3 attempts before circuit-breaker opens. NO fallback chaining —
-  if TaxJar fails, we do NOT silently proceed to NativeCalculator. Reason:
+  reset). Max 3 attempts before circuit-breaker opens. NO fallback chaining — if
+  TaxJar fails, we do NOT silently proceed to NativeCalculator. Reason:
   under-charging tax is a compliance violation; a failed provider call must
   block the invoice line until manually resolved.
 - **Circuit-breaker** — Per (tenant, provider). Opens after 5 consecutive
@@ -210,13 +211,13 @@ Enforced by `tax_capture` (master) + `tax_provider_slot` (config cap) +
 - **Historical rate re-computation.** Calculations frozen at snapshot per §4.
 - **Provider fallback chaining.** ONE provider per calculation; failure blocks
   the invoice line (fail-safe against under-charging).
-- **Client-side tax calculation.** Server-side only. Frontend never computes
-  tax — it displays server-computed snapshots.
-- **Cross-tenant tax rate sharing.** Every row is tenant-scoped (except
-  platform reference jurisdictions with `tenant_id IS NULL`).
+- **Client-side tax calculation.** Server-side only. Frontend never computes tax
+  — it displays server-computed snapshots.
+- **Cross-tenant tax rate sharing.** Every row is tenant-scoped (except platform
+  reference jurisdictions with `tenant_id IS NULL`).
 - **`application_id` on any row.** Tax is a domain-plane concern; cascades
-  through `tenant_id → tenants.application_id`. Per tenancy-columns.md §2,
-  only 8 rows carry `application_id` directly; `tax_*` is not among them.
+  through `tenant_id → tenants.application_id`. Per tenancy-columns.md §2, only
+  8 rows carry `application_id` directly; `tax_*` is not among them.
 - **`region_id` on any row.** Region cascades through the tenant hierarchy —
   tenants have a default_region + branches carry region_id; tax rows read the
   region indirectly through their jurisdiction's country_code.
@@ -232,8 +233,8 @@ Enforced by `tax_capture` (master) + `tax_provider_slot` (config cap) +
 - `tenancy-columns.md` §3 — every tax table carries `tenant_id`.
 - `tenancy-columns.md` §5 — forbidden columns absent from every tax row.
 - `.kiro/steering/package-conventions.md` — MultipleInstanceManager shape.
-- `.kiro/steering/hierarchy.md` §11 — the two-signal observability model —
-  every tax calculation writes an audit row.
+- `.kiro/steering/hierarchy.md` §11 — the two-signal observability model — every
+  tax calculation writes an audit row.
 - `modules/growth/blueprints/marketing/` — canonical multi-provider fan-out
   reference (marketing is a peer; tax is more conservative — ONE provider per
   calculation vs marketing's fan-out).

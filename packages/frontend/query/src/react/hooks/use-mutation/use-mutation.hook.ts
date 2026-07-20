@@ -27,11 +27,11 @@
  *   wrapped around it.
  */
 
-import { useCallback, useMemo, useRef } from 'react';
-import { useOptionalInject } from '@stackra/container/react';
-import { useMutation as useTanstackMutation, useQueryClient } from '@tanstack/react-query';
-import type { Store } from '@tanstack/store';
-import type { QueryClient } from '@tanstack/query-core';
+import { useCallback, useMemo, useRef } from "react";
+import { useOptionalInject } from "@stackra/container/react";
+import { useMutation as useTanstackMutation, useQueryClient } from "@tanstack/react-query";
+import type { Store } from "@tanstack/store";
+import type { QueryClient } from "@tanstack/query-core";
 import {
   EVENT_EMITTER,
   STATE_EVENTS,
@@ -39,10 +39,10 @@ import {
   type IEventEmitter,
   type IUndoableQueue,
   type MutationMode,
-} from '@stackra/contracts';
-import { StateRegistry } from '@stackra/state';
-import { QUERY_CONFIG } from '@/core/tokens/query.tokens';
-import type { QueryModuleOptions } from '@/core/interfaces/query-module-options.interface';
+} from "@stackra/contracts";
+import { StateRegistry } from "@stackra/state";
+import { QUERY_CONFIG } from "@/core/tokens/query.tokens";
+import type { QueryModuleOptions } from "@/core/interfaces/query-module-options.interface";
 
 /**
  * Optimistic store-update configuration for `useMutation`.
@@ -187,7 +187,7 @@ function genMutationId(): string {
  * ```
  */
 export function useMutation<TData = unknown, TVariables = void, TState = unknown>(
-  options: UseMutationOptions<TData, TVariables, TState>
+  options: UseMutationOptions<TData, TVariables, TState>,
 ): UseMutationResult<TData, TVariables> {
   const events = useOptionalInject<IEventEmitter>(EVENT_EMITTER);
   const registry = useOptionalInject<StateRegistry>(StateRegistry);
@@ -196,7 +196,7 @@ export function useMutation<TData = unknown, TVariables = void, TState = unknown
   const queryClient: QueryClient = useQueryClient();
 
   const effectiveMode: MutationMode =
-    options.mutationMode ?? defaults?.defaultMutationMode ?? 'pessimistic';
+    options.mutationMode ?? defaults?.defaultMutationMode ?? "pessimistic";
   const effectiveTimeout: number = options.undoableTimeout ?? defaults?.undoableTimeout ?? 5000;
 
   // Snapshot the last-successful rollback state so a delayed
@@ -209,17 +209,17 @@ export function useMutation<TData = unknown, TVariables = void, TState = unknown
 
   const applyOptimistic = useCallback(
     (
-      variables: TVariables
+      variables: TVariables,
     ): { store: Store<TState>; previous: TState; storeName: string } | null => {
       const opt = options.optimistic;
       if (!opt) return null;
       const previous = opt.store.state;
-      const storeName = registry?.getNameByToken(Symbol()) ?? 'unknown';
+      const storeName = registry?.getNameByToken(Symbol()) ?? "unknown";
       const next = opt.apply(previous, variables);
       opt.store.setState(() => next);
       return { store: opt.store, previous, storeName };
     },
-    [options.optimistic, registry]
+    [options.optimistic, registry],
   );
 
   const rollback = useCallback((snapshot: { store: Store<TState>; previous: TState }): void => {
@@ -235,12 +235,12 @@ export function useMutation<TData = unknown, TVariables = void, TState = unknown
         const mutId = genMutationId();
 
         // ── Pessimistic — no local write ─────────────────
-        if (effectiveMode === 'pessimistic') {
+        if (effectiveMode === "pessimistic") {
           return options.mutationFn(variables);
         }
 
         // ── Optimistic — write locally, roll back on throw ──
-        if (effectiveMode === 'optimistic') {
+        if (effectiveMode === "optimistic") {
           const snapshot = applyOptimistic(variables);
           optimisticRef.current = snapshot;
           if (snapshot) {
@@ -289,7 +289,7 @@ export function useMutation<TData = unknown, TVariables = void, TState = unknown
 
         options.onCancel?.(() => undoableQueue.cancel(mutId));
 
-        let resolution: 'commit' | 'cancel';
+        let resolution: "commit" | "cancel";
         try {
           resolution = await undoableQueue.add({
             id: mutId,
@@ -304,10 +304,10 @@ export function useMutation<TData = unknown, TVariables = void, TState = unknown
           throw error;
         }
 
-        if (resolution === 'cancel') {
+        if (resolution === "cancel") {
           if (snapshot) rollback(snapshot);
           optimisticRef.current = null;
-          throw new Error('mutationCancelled');
+          throw new Error("mutationCancelled");
         }
 
         try {
@@ -320,7 +320,7 @@ export function useMutation<TData = unknown, TVariables = void, TState = unknown
           throw error;
         }
       },
-    [effectiveMode, effectiveTimeout, applyOptimistic, rollback, events, undoableQueue, options]
+    [effectiveMode, effectiveTimeout, applyOptimistic, rollback, events, undoableQueue, options],
   );
 
   // TanStack Query does the heavy lifting from here — state, retry,

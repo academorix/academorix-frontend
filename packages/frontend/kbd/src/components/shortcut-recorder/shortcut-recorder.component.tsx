@@ -90,13 +90,13 @@ export function ShortcutRecorder({
   return (
     <div className={["flex items-center gap-2", className].filter(Boolean).join(" ")}>
       {/* Recorded keys display */}
-      <div className="flex items-center gap-1 rounded-medium border border-default-200 bg-default-50 px-2 py-1 min-w-[80px]">
+      <div className="rounded-medium border-default-200 bg-default-50 flex min-w-[80px] items-center gap-1 border px-2 py-1">
         {recordedDisplay ? (
           <Kbd className="text-xs">
             <Kbd.Content>{recordedDisplay}</Kbd.Content>
           </Kbd>
         ) : (
-          <span className="text-xs text-default-400 animate-pulse">
+          <span className="text-default-400 animate-pulse text-xs">
             {t("kbd.components.shortcut_recorder.press_keys")}
           </span>
         )}
@@ -112,7 +112,7 @@ export function ShortcutRecorder({
 
       {/* Conflict warning */}
       {conflict && (
-        <span className="text-xs text-danger">
+        <span className="text-danger text-xs">
           {t("kbd.components.shortcut_recorder.conflicts_with")}: {conflict.shortcut.description}
         </span>
       )}

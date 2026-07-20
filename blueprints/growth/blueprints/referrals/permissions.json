@@ -6,22 +6,81 @@
   "isSystem": true,
   "description": "Two audiences. Tenant plane (sanctum) — admin + marketing manage programs / codes / referrals / rewards / fraud-flags; users have no explicit permissions (own-referral routes are scoped to auth()->id() by policy). Platform plane (platform_admin) — cross-tenant read + support intervention. All tenant permissions carry the appropriate resource prefix (`referral_programs.`, `referral_codes.`, `referrals.`, `referral_rewards.`, `referral_fraud_flags.`).",
   "permissions": [
-    { "name": "referral_programs.viewAny", "guard": "sanctum", "seededOn": ["marketing", "admin", "owner"] },
-    { "name": "referral_programs.view", "guard": "sanctum", "seededOn": ["marketing", "admin", "owner"] },
-    { "name": "referral_programs.create", "guard": "sanctum", "seededOn": ["marketing", "admin", "owner"] },
-    { "name": "referral_programs.update", "guard": "sanctum", "seededOn": ["marketing", "admin", "owner"] },
+    {
+      "name": "referral_programs.viewAny",
+      "guard": "sanctum",
+      "seededOn": ["marketing", "admin", "owner"]
+    },
+    {
+      "name": "referral_programs.view",
+      "guard": "sanctum",
+      "seededOn": ["marketing", "admin", "owner"]
+    },
+    {
+      "name": "referral_programs.create",
+      "guard": "sanctum",
+      "seededOn": ["marketing", "admin", "owner"]
+    },
+    {
+      "name": "referral_programs.update",
+      "guard": "sanctum",
+      "seededOn": ["marketing", "admin", "owner"]
+    },
     { "name": "referral_programs.delete", "guard": "sanctum", "seededOn": ["admin", "owner"] },
-    { "name": "referral_programs.activate", "guard": "sanctum", "seededOn": ["admin", "owner"], "description": "Transition draft/paused -> active. Owner-approval reserved for launch." },
-    { "name": "referral_programs.pause", "guard": "sanctum", "seededOn": ["marketing", "admin", "owner"] },
-    { "name": "referral_programs.archive", "guard": "sanctum", "seededOn": ["admin", "owner"], "description": "Terminal transition. Audit-critical. Cascades pending referrals + rewards." },
-    { "name": "referral_programs.view-analytics", "guard": "sanctum", "seededOn": ["marketing", "admin", "owner"] },
-    { "name": "referral_codes.viewAny", "guard": "sanctum", "seededOn": ["marketing", "admin", "owner"] },
-    { "name": "referral_codes.view", "guard": "sanctum", "seededOn": ["marketing", "admin", "owner"] },
-    { "name": "referral_codes.create", "guard": "sanctum", "seededOn": ["marketing", "admin", "owner"], "description": "Admin-generated campaign / opaque codes. User codes auto-issued (no permission needed)." },
-    { "name": "referral_codes.deactivate", "guard": "sanctum", "seededOn": ["marketing", "admin", "owner"] },
+    {
+      "name": "referral_programs.activate",
+      "guard": "sanctum",
+      "seededOn": ["admin", "owner"],
+      "description": "Transition draft/paused -> active. Owner-approval reserved for launch."
+    },
+    {
+      "name": "referral_programs.pause",
+      "guard": "sanctum",
+      "seededOn": ["marketing", "admin", "owner"]
+    },
+    {
+      "name": "referral_programs.archive",
+      "guard": "sanctum",
+      "seededOn": ["admin", "owner"],
+      "description": "Terminal transition. Audit-critical. Cascades pending referrals + rewards."
+    },
+    {
+      "name": "referral_programs.view-analytics",
+      "guard": "sanctum",
+      "seededOn": ["marketing", "admin", "owner"]
+    },
+    {
+      "name": "referral_codes.viewAny",
+      "guard": "sanctum",
+      "seededOn": ["marketing", "admin", "owner"]
+    },
+    {
+      "name": "referral_codes.view",
+      "guard": "sanctum",
+      "seededOn": ["marketing", "admin", "owner"]
+    },
+    {
+      "name": "referral_codes.create",
+      "guard": "sanctum",
+      "seededOn": ["marketing", "admin", "owner"],
+      "description": "Admin-generated campaign / opaque codes. User codes auto-issued (no permission needed)."
+    },
+    {
+      "name": "referral_codes.deactivate",
+      "guard": "sanctum",
+      "seededOn": ["marketing", "admin", "owner"]
+    },
     { "name": "referral_codes.delete", "guard": "sanctum", "seededOn": ["admin", "owner"] },
-    { "name": "referrals.viewAny", "guard": "sanctum", "seededOn": ["marketing", "admin", "owner", "support"] },
-    { "name": "referrals.view", "guard": "sanctum", "seededOn": ["marketing", "admin", "owner", "support"] },
+    {
+      "name": "referrals.viewAny",
+      "guard": "sanctum",
+      "seededOn": ["marketing", "admin", "owner", "support"]
+    },
+    {
+      "name": "referrals.view",
+      "guard": "sanctum",
+      "seededOn": ["marketing", "admin", "owner", "support"]
+    },
     { "name": "referrals.cancel", "guard": "sanctum", "seededOn": ["marketing", "admin", "owner"] },
     {
       "name": "referrals.force-vest",
@@ -29,8 +88,16 @@
       "seededOn": ["admin", "owner"],
       "description": "Enterprise-only admin override — additionally gated on `referrals_manual_override` entitlement at route middleware."
     },
-    { "name": "referral_rewards.viewAny", "guard": "sanctum", "seededOn": ["marketing", "admin", "owner", "support"] },
-    { "name": "referral_rewards.view", "guard": "sanctum", "seededOn": ["marketing", "admin", "owner", "support"] },
+    {
+      "name": "referral_rewards.viewAny",
+      "guard": "sanctum",
+      "seededOn": ["marketing", "admin", "owner", "support"]
+    },
+    {
+      "name": "referral_rewards.view",
+      "guard": "sanctum",
+      "seededOn": ["marketing", "admin", "owner", "support"]
+    },
     {
       "name": "referral_rewards.clawback",
       "guard": "sanctum",
@@ -43,7 +110,11 @@
       "seededOn": ["admin", "owner", "support"],
       "description": "Fraud data is sensitive — admin + support only."
     },
-    { "name": "referral_fraud_flags.view", "guard": "sanctum", "seededOn": ["admin", "owner", "support"] },
+    {
+      "name": "referral_fraud_flags.view",
+      "guard": "sanctum",
+      "seededOn": ["admin", "owner", "support"]
+    },
     {
       "name": "referral_fraud_flags.review",
       "guard": "sanctum",
@@ -56,8 +127,16 @@
       "seededOn": ["admin", "owner"],
       "description": "Enterprise-only. Manual override that permits a flagged referral to proceed. Requires `referrals_manual_override` entitlement."
     },
-    { "name": "platform.referrals.viewAny", "guard": "platform_admin", "seededOn": ["super_admin", "ops", "support"] },
-    { "name": "platform.referrals.view", "guard": "platform_admin", "seededOn": ["super_admin", "ops", "support"] },
+    {
+      "name": "platform.referrals.viewAny",
+      "guard": "platform_admin",
+      "seededOn": ["super_admin", "ops", "support"]
+    },
+    {
+      "name": "platform.referrals.view",
+      "guard": "platform_admin",
+      "seededOn": ["super_admin", "ops", "support"]
+    },
     {
       "name": "platform.referrals.force-vest",
       "guard": "platform_admin",
@@ -70,7 +149,15 @@
       "seededOn": ["super_admin", "ops"],
       "description": "Platform financial reversal. Escape hatch for regulator-issued clawbacks."
     },
-    { "name": "platform.referral_fraud_flags.viewAny", "guard": "platform_admin", "seededOn": ["super_admin", "ops", "support"] },
-    { "name": "platform.referral_fraud_flags.review", "guard": "platform_admin", "seededOn": ["super_admin", "ops"] }
+    {
+      "name": "platform.referral_fraud_flags.viewAny",
+      "guard": "platform_admin",
+      "seededOn": ["super_admin", "ops", "support"]
+    },
+    {
+      "name": "platform.referral_fraud_flags.review",
+      "guard": "platform_admin",
+      "seededOn": ["super_admin", "ops"]
+    }
   ]
 }

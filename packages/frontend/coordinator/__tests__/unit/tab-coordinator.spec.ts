@@ -11,12 +11,12 @@
  *   deterministic.
  */
 
-import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
 
-import { CoordinatorMessageKind } from '@/core/enums';
-import { TabCoordinator } from '@/core/services/tab-coordinator.service';
-import { MockTabTransportManager } from '@/testing/mock-tab-transport-manager';
-import type { CoordinatorMessage } from '@/core/types';
+import { CoordinatorMessageKind } from "@/core/enums";
+import { TabCoordinator } from "@/core/services/tab-coordinator.service";
+import { MockTabTransportManager } from "@/testing/mock-tab-transport-manager";
+import type { CoordinatorMessage } from "@/core/types";
 
 // ════════════════════════════════════════════════════════════════════════════════
 // Helpers
@@ -34,7 +34,7 @@ function tickElection(heartbeatMs: number): void {
   vi.advanceTimersByTime(heartbeatMs);
 }
 
-describe('TabCoordinator', () => {
+describe("TabCoordinator", () => {
   beforeEach(() => {
     vi.useFakeTimers();
   });
@@ -44,16 +44,16 @@ describe('TabCoordinator', () => {
     vi.restoreAllMocks();
   });
 
-  describe('SSR / no manager fallback', () => {
-    it('becomes an immediate leader when no transport manager is injected', () => {
+  describe("SSR / no manager fallback", () => {
+    it("becomes an immediate leader when no transport manager is injected", () => {
       const coordinator = new TabCoordinator(undefined);
       expect(coordinator.isLeader()).toBe(true);
-      expect(coordinator.getRole()).toBe('leader');
+      expect(coordinator.getRole()).toBe("leader");
       expect(coordinator.getLeaderId()).toBe(coordinator.getTabId());
       coordinator.destroy();
     });
 
-    it('becomes an immediate leader when the manager reports unsupported', () => {
+    it("becomes an immediate leader when the manager reports unsupported", () => {
       const manager = new MockTabTransportManager();
       manager.simulateUnsupported();
       const coordinator = new TabCoordinator(manager);
@@ -62,8 +62,8 @@ describe('TabCoordinator', () => {
     });
   });
 
-  describe('election', () => {
-    it('promotes itself to leader when nobody else responds', () => {
+  describe("election", () => {
+    it("promotes itself to leader when nobody else responds", () => {
       const manager = new MockTabTransportManager();
       const coordinator = new TabCoordinator(manager, { heartbeatMs: 50 });
 
@@ -77,7 +77,7 @@ describe('TabCoordinator', () => {
       coordinator.destroy();
     });
 
-    it('fires onRoleChange when the role flips', () => {
+    it("fires onRoleChange when the role flips", () => {
       const manager = new MockTabTransportManager();
       const coordinator = new TabCoordinator(manager, { heartbeatMs: 20 });
       const roles: string[] = [];
@@ -85,30 +85,30 @@ describe('TabCoordinator', () => {
 
       tickElection(20);
 
-      expect(roles).toEqual(['leader']);
+      expect(roles).toEqual(["leader"]);
       coordinator.destroy();
     });
   });
 
-  describe('message handling', () => {
-    it('adopts the sender of a HEARTBEAT as leader', () => {
+  describe("message handling", () => {
+    it("adopts the sender of a HEARTBEAT as leader", () => {
       const manager = new MockTabTransportManager();
       const coordinator = new TabCoordinator(manager, { heartbeatMs: 20 });
 
       const peer = manager.createPeer();
-      const peerChan = peer.channel('stackra-coordinator:leader');
+      const peerChan = peer.channel("stackra-coordinator:leader");
       const msg: CoordinatorMessage = {
         kind: CoordinatorMessageKind.HEARTBEAT,
-        tabId: 'peer-tab',
+        tabId: "peer-tab",
         at: Date.now(),
       };
       peerChan.broadcast(msg);
 
-      expect(coordinator.getLeaderId()).toBe('peer-tab');
+      expect(coordinator.getLeaderId()).toBe("peer-tab");
       coordinator.destroy();
     });
 
-    it('demotes itself when a peer HEARTBEAT arrives while it is leader', () => {
+    it("demotes itself when a peer HEARTBEAT arrives while it is leader", () => {
       const manager = new MockTabTransportManager();
       const coordinator = new TabCoordinator(manager, { heartbeatMs: 20 });
       tickElection(20); // become leader
@@ -116,36 +116,36 @@ describe('TabCoordinator', () => {
       expect(coordinator.isLeader()).toBe(true);
 
       const peer = manager.createPeer();
-      const peerChan = peer.channel('stackra-coordinator:leader');
+      const peerChan = peer.channel("stackra-coordinator:leader");
       peerChan.broadcast({
         kind: CoordinatorMessageKind.HEARTBEAT,
-        tabId: 'other-leader',
+        tabId: "other-leader",
         at: Date.now(),
       } satisfies CoordinatorMessage);
 
       expect(coordinator.isLeader()).toBe(false);
-      expect(coordinator.getLeaderId()).toBe('other-leader');
+      expect(coordinator.getLeaderId()).toBe("other-leader");
       coordinator.destroy();
     });
 
-    it('reclaims leadership after a RESIGNED message from the current leader', () => {
+    it("reclaims leadership after a RESIGNED message from the current leader", () => {
       const manager = new MockTabTransportManager();
       const coordinator = new TabCoordinator(manager, { heartbeatMs: 20 });
 
       const peer = manager.createPeer();
-      const peerChan = peer.channel('stackra-coordinator:leader');
+      const peerChan = peer.channel("stackra-coordinator:leader");
       // Establish `other-leader` first.
       peerChan.broadcast({
         kind: CoordinatorMessageKind.HEARTBEAT,
-        tabId: 'other-leader',
+        tabId: "other-leader",
         at: Date.now(),
       } satisfies CoordinatorMessage);
-      expect(coordinator.getLeaderId()).toBe('other-leader');
+      expect(coordinator.getLeaderId()).toBe("other-leader");
 
       // Now the peer resigns — coordinator should attempt to claim.
       peerChan.broadcast({
         kind: CoordinatorMessageKind.RESIGNED,
-        tabId: 'other-leader',
+        tabId: "other-leader",
       } satisfies CoordinatorMessage);
 
       // Post-RESIGNED, leaderId is null and a CLAIM was scheduled.
@@ -156,19 +156,19 @@ describe('TabCoordinator', () => {
       coordinator.destroy();
     });
 
-    it('leader responds to an ANNOUNCE with an immediate HEARTBEAT', () => {
+    it("leader responds to an ANNOUNCE with an immediate HEARTBEAT", () => {
       const manager = new MockTabTransportManager();
       const coordinator = new TabCoordinator(manager, { heartbeatMs: 20 });
       tickElection(20); // become leader
 
       const peer = manager.createPeer();
-      const peerChan = peer.channel('stackra-coordinator:leader');
+      const peerChan = peer.channel("stackra-coordinator:leader");
       const seen: CoordinatorMessage[] = [];
       peerChan.subscribe((data) => seen.push(data as CoordinatorMessage));
 
       peerChan.broadcast({
         kind: CoordinatorMessageKind.ANNOUNCE,
-        tabId: 'new-tab',
+        tabId: "new-tab",
         at: Date.now(),
       } satisfies CoordinatorMessage);
 
@@ -178,8 +178,8 @@ describe('TabCoordinator', () => {
     });
   });
 
-  describe('resign', () => {
-    it('demotes leader → follower and clears the leaderId', () => {
+  describe("resign", () => {
+    it("demotes leader → follower and clears the leaderId", () => {
       const manager = new MockTabTransportManager();
       const coordinator = new TabCoordinator(manager, { heartbeatMs: 20 });
       tickElection(20);
@@ -191,13 +191,13 @@ describe('TabCoordinator', () => {
       coordinator.resign();
 
       expect(coordinator.isLeader()).toBe(false);
-      expect(coordinator.getRole()).toBe('follower');
+      expect(coordinator.getRole()).toBe("follower");
       expect(coordinator.getLeaderId()).toBeNull();
-      expect(roles).toEqual(['follower']);
+      expect(roles).toEqual(["follower"]);
       coordinator.destroy();
     });
 
-    it('is a no-op when not currently leader', () => {
+    it("is a no-op when not currently leader", () => {
       const manager = new MockTabTransportManager();
       const coordinator = new TabCoordinator(manager, { heartbeatMs: 20 });
       // Do not tick — still a follower.
@@ -210,32 +210,32 @@ describe('TabCoordinator', () => {
     });
   });
 
-  describe('destroy', () => {
-    it('unsubscribes from the transport but leaves the shared channel cached', () => {
+  describe("destroy", () => {
+    it("unsubscribes from the transport but leaves the shared channel cached", () => {
       const manager = new MockTabTransportManager();
       const coordinator = new TabCoordinator(manager, { heartbeatMs: 20 });
       tickElection(20);
-      expect(manager.hasChannel('stackra-coordinator:leader')).toBe(true);
+      expect(manager.hasChannel("stackra-coordinator:leader")).toBe(true);
 
       coordinator.destroy();
 
       // The manager keeps the channel — its lifecycle is not the
       // coordinator's to manage. Other consumers can still use it.
-      expect(manager.hasChannel('stackra-coordinator:leader')).toBe(true);
+      expect(manager.hasChannel("stackra-coordinator:leader")).toBe(true);
 
       // Post-destroy, incoming messages must not flip state.
       const priorLeader = coordinator.getLeaderId();
       const peer = manager.createPeer();
-      const peerChan = peer.channel('stackra-coordinator:leader');
+      const peerChan = peer.channel("stackra-coordinator:leader");
       peerChan.broadcast({
         kind: CoordinatorMessageKind.HEARTBEAT,
-        tabId: 'someone-else',
+        tabId: "someone-else",
         at: Date.now(),
       } satisfies CoordinatorMessage);
       expect(coordinator.getLeaderId()).toBe(priorLeader);
     });
 
-    it('is idempotent — a second destroy() does not throw', () => {
+    it("is idempotent — a second destroy() does not throw", () => {
       const manager = new MockTabTransportManager();
       const coordinator = new TabCoordinator(manager, { heartbeatMs: 20 });
       coordinator.destroy();

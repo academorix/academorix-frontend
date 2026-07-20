@@ -8,11 +8,7 @@
       "trait": "Academorix\\Rbac\\Concerns\\HasRoles",
       "description": "Composable trait for principal-type models. EXTENDS `Spatie\\Permission\\Traits\\HasRoles` and overrides `hasPermissionTo(...)` to route through `PermissionResolver::resolve()` \u2014 so RBAC \u222a grants \u2212 denies + delegation compose at query-time. Composed by User, PlatformUser, ServiceAccount.",
       "public": true,
-      "usedBy": [
-        "identity::User",
-        "identity::PlatformUser",
-        "identity::ServiceAccount"
-      ],
+      "usedBy": ["identity::User", "identity::PlatformUser", "identity::ServiceAccount"],
       "underlying_package": "spatie/laravel-permission",
       "wraps": "Extends spatie's HasRoles. Every method spatie ships continues to work; the ONE override is hasPermissionTo() which now goes through PermissionResolver. Compatible with `->assignRole()`, `->syncRoles()`, `->hasRole()`, `->hasAllRoles()`.",
       "conflicts_with": []
@@ -21,11 +17,7 @@
       "trait": "Academorix\\Rbac\\Concerns\\HasPermissions",
       "description": "Companion trait for direct permission grants (via model_has_permissions). Rare \u2014 usually roles carry perms. Composed alongside HasRoles on the same principal models.",
       "public": true,
-      "usedBy": [
-        "identity::User",
-        "identity::PlatformUser",
-        "identity::ServiceAccount"
-      ],
+      "usedBy": ["identity::User", "identity::PlatformUser", "identity::ServiceAccount"],
       "underlying_package": "spatie/laravel-permission",
       "wraps": "Same wrap pattern as HasRoles \u2014 extends spatie's HasPermissions with the resolver override.",
       "conflicts_with": []
@@ -34,9 +26,7 @@
       "trait": "Academorix\\Rbac\\Concerns\\HasResolvedPermissions",
       "description": "Exposes a computed accessor `->resolvedPermissions` returning the caller's full compact permission array (RBAC \u222a grants \u2212 denies). Cached per-request. Optional to compose \u2014 only for models that need programmatic access to the resolved set (e.g. custom controllers rendering permission-aware UI).",
       "public": true,
-      "usedBy": [
-        "identity::User (composed by default so /api/v1/auth/me can return the array)"
-      ],
+      "usedBy": ["identity::User (composed by default so /api/v1/auth/me can return the array)"],
       "underlying_package": null,
       "wraps": null,
       "conflicts_with": []

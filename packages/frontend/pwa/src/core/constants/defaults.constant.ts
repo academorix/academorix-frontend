@@ -9,7 +9,7 @@
  *   a fully-typed working configuration.
  */
 
-import type { IPwaModuleOptions } from '../interfaces';
+import type { IPwaModuleOptions } from "../interfaces";
 
 /**
  * The single source of default options for `PwaModule.forRoot`.
@@ -30,7 +30,7 @@ import type { IPwaModuleOptions } from '../interfaces';
 export const DEFAULT_PWA_CONFIG: IPwaModuleOptions = {
   install: {
     delayMs: 30_000,
-    dismissKey: 'stackra:pwa:install-dismissed',
+    dismissKey: "stackra:pwa:install-dismissed",
     maxDismissals: 3,
   },
   update: {

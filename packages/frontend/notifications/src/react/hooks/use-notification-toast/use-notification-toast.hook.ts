@@ -14,13 +14,13 @@
  *   so replaying weeks of history is prevented.
  */
 
-import { useEffect, useRef } from 'react';
-import { toast } from '@stackra/ui/react';
+import { useEffect, useRef } from "react";
+import { toast } from "@stackra/ui/react";
 
-import type { NotificationPriority } from '@/core/interfaces';
-import { deriveNotificationPriority, mapPriorityToToastVariant } from '@/core/utils';
-import { useInAppNotifications } from '../use-in-app-notifications';
-import type { IUseNotificationToastOptions } from './use-notification-toast.interface';
+import type { NotificationPriority } from "@/core/interfaces";
+import { deriveNotificationPriority, mapPriorityToToastVariant } from "@/core/utils";
+import { useInAppNotifications } from "../use-in-app-notifications";
+import type { IUseNotificationToastOptions } from "./use-notification-toast.interface";
 
 /**
  * Priority tier → numeric rank for the `>= threshold` comparison.
@@ -47,7 +47,7 @@ const PRIORITY_RANK: Readonly<Record<NotificationPriority, number>> = {
  * ```
  */
 export function useNotificationToast(options: IUseNotificationToastOptions = {}): void {
-  const { minimumPriority = 'normal', toastExistingOnMount = false } = options;
+  const { minimumPriority = "normal", toastExistingOnMount = false } = options;
   const { items } = useInAppNotifications();
 
   // Ids we have already toasted for. A Set has O(1) membership so
@@ -81,16 +81,16 @@ export function useNotificationToast(options: IUseNotificationToastOptions = {})
       // matching the derived priority. The `default` variant maps
       // to `toast(message)`; every other variant to its method.
       switch (variant) {
-        case 'danger':
+        case "danger":
           toast.danger(message, opts);
           break;
-        case 'warning':
+        case "warning":
           toast.warning(message, opts);
           break;
-        case 'info':
+        case "info":
           toast.info(message, opts);
           break;
-        case 'success':
+        case "success":
           toast.success(message, opts);
           break;
         default:

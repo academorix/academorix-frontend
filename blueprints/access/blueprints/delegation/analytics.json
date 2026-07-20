@@ -9,7 +9,14 @@
       "name": "Delegation Created",
       "kind": "track",
       "consent_required": "functional",
-      "properties": ["tenant_id", "delegator_id", "delegate_id", "delegation_type", "duration_hours", "is_all_roles"],
+      "properties": [
+        "tenant_id",
+        "delegator_id",
+        "delegate_id",
+        "delegation_type",
+        "duration_hours",
+        "is_all_roles"
+      ],
       "description": "Tenant member created an OOF / handover / emergency delegation. Feeds product-team analysis of OOF adoption + delegate-selection patterns."
     },
     {
@@ -22,7 +29,13 @@
       "name": "Delegation Revoked Early",
       "kind": "track",
       "consent_required": "functional",
-      "properties": ["tenant_id", "delegation_id", "delegation_type", "duration_actual_hours", "duration_planned_hours"],
+      "properties": [
+        "tenant_id",
+        "delegation_id",
+        "delegation_type",
+        "duration_actual_hours",
+        "duration_planned_hours"
+      ],
       "description": "Delegator revoked before ends_at. duration_actual vs duration_planned reveals whether tenants tend to over-allot or under-allot OOF windows."
     },
     {
@@ -36,7 +49,12 @@
       "name": "Impersonation Started",
       "kind": "track",
       "consent_required": "functional",
-      "properties": ["department", "target_application_id", "is_read_only", "has_support_ticket_reference"],
+      "properties": [
+        "department",
+        "target_application_id",
+        "is_read_only",
+        "has_support_ticket_reference"
+      ],
       "description": "Note: NEVER include tenant_id or impersonated_user_id in analytics payload — those are PII / regulated. Only aggregate labels."
     },
     {

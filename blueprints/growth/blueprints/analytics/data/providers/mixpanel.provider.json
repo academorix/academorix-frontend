@@ -14,7 +14,12 @@
   },
   "config_schema": {
     "type": "object",
-    "required": ["project_token", "service_account_username", "service_account_secret", "project_id"],
+    "required": [
+      "project_token",
+      "service_account_username",
+      "service_account_secret",
+      "project_id"
+    ],
     "properties": {
       "project_token": {
         "type": "string",
@@ -51,6 +56,10 @@
   "test_event": {
     "event_kind": "track",
     "event_name": "test_event_from_academorix",
-    "properties": { "__test": true, "$insert_id": "test-{ULID}", "source": "academorix_provider_test" }
+    "properties": {
+      "__test": true,
+      "$insert_id": "test-{ULID}",
+      "source": "academorix_provider_test"
+    }
   }
 }

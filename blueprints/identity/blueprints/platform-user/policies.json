@@ -93,13 +93,39 @@
           "action": "viewSelf",
           "permission": "platform.platform_profiles.view.self",
           "scope": "Every active PlatformUser \u2014 seeded on every platform_admin role by default. Reads own PlatformProfile row via /platform-profiles/me.",
-          "seededOn": ["super_admin", "ops", "product", "security", "hr", "compliance", "dpo", "engineering", "support", "sales", "finance", "legal"]
+          "seededOn": [
+            "super_admin",
+            "ops",
+            "product",
+            "security",
+            "hr",
+            "compliance",
+            "dpo",
+            "engineering",
+            "support",
+            "sales",
+            "finance",
+            "legal"
+          ]
         },
         {
           "action": "updateSelf",
           "permission": "platform.platform_profiles.update.self",
           "scope": "Every active PlatformUser writes own profile fields (display_name, avatar_url, phone_e164, slack_handle, github_handle, timezone). first_name / last_name are HR-controlled and NOT editable via self-service.",
-          "seededOn": ["super_admin", "ops", "product", "security", "hr", "compliance", "dpo", "engineering", "support", "sales", "finance", "legal"]
+          "seededOn": [
+            "super_admin",
+            "ops",
+            "product",
+            "security",
+            "hr",
+            "compliance",
+            "dpo",
+            "engineering",
+            "support",
+            "sales",
+            "finance",
+            "legal"
+          ]
         },
         {
           "action": "viewPii",

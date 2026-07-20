@@ -4,12 +4,12 @@
  * @category Hooks
  */
 
-import { useState, useEffect, useCallback, useRef } from 'react';
-import { useInject } from '@stackra/container/react';
+import { useState, useEffect, useCallback, useRef } from "react";
+import { useInject } from "@stackra/container/react";
 
-import type { RoomMember } from '@/interfaces/room-member.interface';
-import { RoomManager } from '@/services/room-manager.service';
-import { COLLABORATION_EVENTS } from '@stackra/contracts';
+import type { RoomMember } from "@/interfaces/room-member.interface";
+import { RoomManager } from "@/services/room-manager.service";
+import { COLLABORATION_EVENTS } from "@stackra/contracts";
 
 /** Return type for the useTypingIndicator hook. */
 interface UseTypingIndicatorReturn {
@@ -86,9 +86,9 @@ export function useTypingIndicator(roomId: string): UseTypingIndicatorReturn {
           setTimeout(() => {
             setTypingUsers((prev) => prev.filter((name) => name !== sender.name));
             timeoutsRef.current.delete(sender.userId);
-          }, TYPING_TIMEOUT_MS)
+          }, TYPING_TIMEOUT_MS),
         );
-      }
+      },
     );
 
     const unsubStop = transport.onBroadcast(
@@ -101,7 +101,7 @@ export function useTypingIndicator(roomId: string): UseTypingIndicatorReturn {
           clearTimeout(existing);
           timeoutsRef.current.delete(sender.userId);
         }
-      }
+      },
     );
 
     const unsubLeave = transport.onMemberLeave(roomId, (member: RoomMember) => {

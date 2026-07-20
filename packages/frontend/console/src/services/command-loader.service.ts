@@ -12,14 +12,15 @@
  */
 
 import { Inject, Injectable, type OnApplicationBootstrap } from "@stackra/container";
-import { DISCOVERY_SERVICE } from "@stackra/contracts";
-import type { IDiscoveryService } from "@stackra/contracts";
+import { DISCOVERY_SERVICE, type Type } from "@stackra/contracts";
 import { getMetadata } from "@vivtel/metadata";
 
 import { BaseCommand } from "../base";
 import { COMMAND_METADATA_KEY } from "../constants";
-import type { ICommandMetadata, IRegisteredCommand } from "../interfaces";
 import { CommandRegistry } from "../registries";
+
+import type { ICommandMetadata, IRegisteredCommand } from "../interfaces";
+import type { IDiscoveryService } from "@stackra/contracts";
 
 /**
  * Auto-discovery loader for console commands.
@@ -73,7 +74,7 @@ export class CommandLoader implements OnApplicationBootstrap {
         namespace: CommandRegistry.extractNamespace(metadata.name),
         arguments: metadata.arguments ?? [],
         options: metadata.options ?? [],
-        classRef: metatype,
+        classRef: metatype as unknown as Type<unknown>,
         parent: metadata.parent,
         subcommands: [],
       };

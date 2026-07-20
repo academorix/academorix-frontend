@@ -66,63 +66,32 @@
       ]
     },
     "auth_password_resets": {
-      "traits": [
-        "HasFactory",
-        "HasUlids",
-        "HasUserstamps",
-        "HasActivityLog",
-        "Filterable"
-      ],
+      "traits": ["HasFactory", "HasUlids", "HasUserstamps", "HasActivityLog", "Filterable"],
       "notes": [
         "NO SoftDeletes \u2014 password reset tokens are HARD-deleted 24h after consume/expiry (no audit value).",
         "NO BelongsToTenant \u2014 references identity_id directly."
       ]
     },
     "auth_email_verifications": {
-      "traits": [
-        "HasFactory",
-        "HasUlids",
-        "HasUserstamps",
-        "HasActivityLog",
-        "Filterable"
-      ],
-      "notes": [
-        "Same shape as password resets \u2014 hard-deleted 30 days after consume/expiry."
-      ]
+      "traits": ["HasFactory", "HasUlids", "HasUserstamps", "HasActivityLog", "Filterable"],
+      "notes": ["Same shape as password resets \u2014 hard-deleted 30 days after consume/expiry."]
     },
     "auth_mfa_challenges": {
-      "traits": [
-        "HasFactory",
-        "HasUlids",
-        "HasUserstamps",
-        "HasMetadata",
-        "Filterable"
-      ],
+      "traits": ["HasFactory", "HasUlids", "HasUserstamps", "HasMetadata", "Filterable"],
       "notes": [
         "NO SoftDeletes \u2014 challenges are ephemeral (5-min TTL); hard-deleted 1h after consume/expiry.",
         "HasMetadata carries the pending-login context (application_id, tenant_id, requested_scope) so the login flow can resume after verification."
       ]
     },
     "auth_cross_app_grants": {
-      "traits": [
-        "HasFactory",
-        "HasUlids",
-        "HasUserstamps",
-        "HasActivityLog",
-        "Filterable"
-      ],
+      "traits": ["HasFactory", "HasUlids", "HasUserstamps", "HasActivityLog", "Filterable"],
       "notes": [
         "300-second TTL. Hard-deleted 24h after consume/expiry. HasActivityLog because grant issuance + exchange are audit-critical (they bridge Applications).",
         "NO BelongsToTenant \u2014 references identity_id + source/target application_ids directly."
       ]
     },
     "auth_jwt_deny_list": {
-      "traits": [
-        "HasFactory",
-        "HasUlids",
-        "HasActivityLog",
-        "Filterable"
-      ],
+      "traits": ["HasFactory", "HasUlids", "HasActivityLog", "Filterable"],
       "notes": [
         "Deny-list entries live until the underlying JWT's natural `exp` passes \u2014 no need to keep them longer (verifiers reject expired JWTs on their own).",
         "HasActivityLog because manual denies are compliance-audited."

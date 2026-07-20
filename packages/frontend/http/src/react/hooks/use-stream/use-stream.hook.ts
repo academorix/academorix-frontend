@@ -8,12 +8,12 @@
  * @module @stackra/http/react/hooks/use-stream
  */
 
-import { useEffect, useState } from 'react';
-import { useInject } from '@stackra/container/react';
+import { useEffect, useState } from "react";
+import { useInject } from "@stackra/container/react";
 
-import { HTTP_MANAGER, type IHttpManager, type IStreamConfig } from '@stackra/contracts';
+import { HTTP_MANAGER, type IHttpManager, type IStreamConfig } from "@stackra/contracts";
 
-import type { IUseStreamResult } from '@/react/interfaces';
+import type { IUseStreamResult } from "@/react/interfaces";
 
 /**
  * Subscribe to a streaming endpoint.
@@ -27,7 +27,7 @@ import type { IUseStreamResult } from '@/react/interfaces';
 export function useStream<T = unknown>(
   url: string,
   config?: IStreamConfig,
-  connection?: string
+  connection?: string,
 ): IUseStreamResult<T> {
   const manager = useInject<IHttpManager>(HTTP_MANAGER);
   const [state, setState] = useState<IUseStreamResult<T>>({

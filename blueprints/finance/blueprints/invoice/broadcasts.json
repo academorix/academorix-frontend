@@ -49,11 +49,7 @@
       "class": "Academorix\\Finance\\Invoice\\Broadcasts\\InvoiceLinesChannel",
       "description": "Per-invoice line activity. Powers collaborative draft-invoice editing (two admins adding lines at the same time see each other's updates in real time). Only active while parent invoice.status='draft'.",
       "authorization": "sanctum::authed AND tenant_matches AND (finance role OR admin OR owner) AND invoice.status='draft'",
-      "events": [
-        "InvoiceLineAdded",
-        "InvoiceLineUpdated",
-        "InvoiceLineRemoved"
-      ],
+      "events": ["InvoiceLineAdded", "InvoiceLineUpdated", "InvoiceLineRemoved"],
       "throttle": "60 events/minute per channel",
       "notes": "Channel unsubscribes automatically when invoice transitions to 'open' (via a broadcast unsubscribe hook fired in InvoiceObserver.updating). No events fire on finalized invoices."
     },
@@ -62,12 +58,7 @@
       "class": "Academorix\\Finance\\Invoice\\Broadcasts\\InvoiceCreditNotesChannel",
       "description": "Per-invoice credit-note activity. Powers the credit-note list within an invoice detail view.",
       "authorization": "sanctum::authed AND tenant_matches AND (finance role OR admin OR owner OR support OR (customer AND invoice.customer_id == auth.user.id))",
-      "events": [
-        "CreditNoteCreated",
-        "CreditNoteIssued",
-        "CreditNoteApplied",
-        "CreditNoteVoided"
-      ],
+      "events": ["CreditNoteCreated", "CreditNoteIssued", "CreditNoteApplied", "CreditNoteVoided"],
       "throttle": "20 events/minute per channel",
       "notes": "Customers subscribed to this channel see credit notes issued against their own invoices in real time — useful for refund flows where the customer expects the credit to appear immediately."
     }

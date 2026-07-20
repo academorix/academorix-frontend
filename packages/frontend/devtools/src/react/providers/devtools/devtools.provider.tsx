@@ -17,26 +17,26 @@ import {
   useState,
   type ReactElement,
   type ReactNode,
-} from 'react';
-import { useInject, useOptionalInject } from '@stackra/container/react';
+} from "react";
+import { useInject, useOptionalInject } from "@stackra/container/react";
 import {
   DEVTOOLS_INSPECTOR_REGISTRY,
   DEVTOOLS_REGISTRY,
   type IDevtoolsInspectorRegistry,
   type IDevtoolsPanelsRegistry,
-} from '@stackra/contracts';
+} from "@stackra/contracts";
 
-import { DEFAULT_DEVTOOLS_CONFIG, DEVTOOLS_CONFIG } from '@/core/constants';
-import type { IDevtoolsModuleOptions } from '@/core/interfaces';
-import { DevtoolsAnalyticsService, DevtoolsFrameStateService } from '@/core/services';
-import { mergeConfig } from '@/core/utils';
-import { DevtoolsContext } from '../../contexts/devtools.context';
-import { DevtoolsInspectorContext } from '../../contexts/devtools-inspector.context';
-import type { IDevtoolsContextValue } from '../../contexts/devtools-context-value.interface';
-import type { IDevtoolsInspectorContextValue } from '../../contexts/devtools-inspector-context-value.interface';
-import { useDevtoolsShortcut } from '../../hooks/use-devtools-shortcut.hook';
-import { ActionsDevtoolsPanel } from '../../panels/actions.devtools-panel';
-import { OverviewDevtoolsPanel } from '../../panels/overview.devtools-panel';
+import { DEFAULT_DEVTOOLS_CONFIG, DEVTOOLS_CONFIG } from "@/core/constants";
+import type { IDevtoolsModuleOptions } from "@/core/interfaces";
+import { DevtoolsAnalyticsService, DevtoolsFrameStateService } from "@/core/services";
+import { mergeConfig } from "@/core/utils";
+import { DevtoolsContext } from "../../contexts/devtools.context";
+import { DevtoolsInspectorContext } from "../../contexts/devtools-inspector.context";
+import type { IDevtoolsContextValue } from "../../contexts/devtools-context-value.interface";
+import type { IDevtoolsInspectorContextValue } from "../../contexts/devtools-inspector-context-value.interface";
+import { useDevtoolsShortcut } from "../../hooks/use-devtools-shortcut.hook";
+import { ActionsDevtoolsPanel } from "../../panels/actions.devtools-panel";
+import { OverviewDevtoolsPanel } from "../../panels/overview.devtools-panel";
 
 /** Props accepted by {@link DevtoolsProvider}. */
 export interface DevtoolsProviderProps {
@@ -85,7 +85,7 @@ export function DevtoolsProvider({ children }: DevtoolsProviderProps): ReactElem
 
   const contextValue = useMemo<IDevtoolsContextValue>(
     () => ({ config, panels, inspector, frameState, analytics, mountedAt }),
-    [config, panels, inspector, frameState, analytics, mountedAt]
+    [config, panels, inspector, frameState, analytics, mountedAt],
   );
 
   const inspectorContextValue = useMemo<IDevtoolsInspectorContextValue>(
@@ -94,7 +94,7 @@ export function DevtoolsProvider({ children }: DevtoolsProviderProps): ReactElem
       setEnabled: setInspectorEnabled,
       toggle: toggleInspector,
     }),
-    [inspectorEnabled, toggleInspector]
+    [inspectorEnabled, toggleInspector],
   );
 
   // Register the built-in Overview + Actions panels while the

@@ -5,8 +5,8 @@
  *   resolution for an {@link IConflict}.
  */
 
-import type { IConflict } from '@stackra/contracts';
-import { SyncError } from './sync.error';
+import type { IConflict } from "@stackra/contracts";
+import { SyncError } from "./sync.error";
 
 /**
  * Error raised when a conflict cannot be resolved by the configured
@@ -17,12 +17,12 @@ export class ConflictError extends SyncError {
   public readonly conflict: IConflict;
 
   public constructor(message: string, conflict: IConflict, context?: Record<string, unknown>) {
-    super(message, 'CONFLICT_ERROR', { ...context, conflict });
-    this.name = 'ConflictError';
+    super(message, "CONFLICT_ERROR", { ...context, conflict });
+    this.name = "ConflictError";
     this.conflict = conflict;
 
     if (
-      typeof (Error as unknown as { captureStackTrace?: unknown }).captureStackTrace === 'function'
+      typeof (Error as unknown as { captureStackTrace?: unknown }).captureStackTrace === "function"
     ) {
       (
         Error as unknown as { captureStackTrace: (target: object, ctor: Function) => void }

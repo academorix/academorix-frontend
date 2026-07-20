@@ -13,7 +13,10 @@
   "retention": [
     {
       "entity": "HealthCheck",
-      "hot": { "days": "while active", "description": "Active health check configs retained indefinitely" },
+      "hot": {
+        "days": "while active",
+        "description": "Active health check configs retained indefinitely"
+      },
       "cold": { "days": 90, "description": "Grace period after soft-delete for audit / rollback" },
       "purge": {
         "trigger": "soft-deleted > 90 days ago",
@@ -23,8 +26,14 @@
     },
     {
       "entity": "HealthCheckRun",
-      "hot": { "days": 7, "description": "Support-debugging window. 30 days for Enterprise with monitoring_extended_retention." },
-      "cold": { "days": 30, "description": "Trend analysis + retrospective. 90 days for Enterprise." },
+      "hot": {
+        "days": 7,
+        "description": "Support-debugging window. 30 days for Enterprise with monitoring_extended_retention."
+      },
+      "cold": {
+        "days": 30,
+        "description": "Trend analysis + retrospective. 90 days for Enterprise."
+      },
       "purge": {
         "trigger": "> 30 days past created_at (90 days for Enterprise)",
         "action": "hard delete via PurgeExpiredHealthCheckRunsJob",
@@ -43,8 +52,14 @@
     },
     {
       "entity": "MonitoringAlert",
-      "hot": { "days": 30, "description": "Recent-alert dashboard visibility. 90 days for Enterprise." },
-      "cold": { "days": 90, "description": "Retrospective + trend analysis. 365 days for Enterprise." },
+      "hot": {
+        "days": 30,
+        "description": "Recent-alert dashboard visibility. 90 days for Enterprise."
+      },
+      "cold": {
+        "days": 90,
+        "description": "Retrospective + trend analysis. 365 days for Enterprise."
+      },
       "purge": {
         "trigger": "> 90 days past created_at AND status IN ('resolved', 'expired', 'suppressed')",
         "action": "hard delete via PurgeResolvedIncidentsJob",
@@ -54,7 +69,10 @@
     {
       "entity": "MonitoringIncident",
       "hot": { "days": 90, "description": "Active + recent incident visibility." },
-      "cold": { "days": 365, "description": "Retrospective + trend analysis. Indefinite for Enterprise with monitoring_extended_retention (P1 postmortem archive)." },
+      "cold": {
+        "days": 365,
+        "description": "Retrospective + trend analysis. Indefinite for Enterprise with monitoring_extended_retention (P1 postmortem archive)."
+      },
       "purge": {
         "trigger": "> 365 days past resolved_at AND status='resolved' AND (severity != 'p1' OR tenant does NOT hold monitoring_extended_retention)",
         "action": "hard delete via PurgeResolvedIncidentsJob",

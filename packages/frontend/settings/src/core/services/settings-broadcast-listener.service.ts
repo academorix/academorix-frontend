@@ -12,7 +12,7 @@
  *   subscribing to channels per registered group.
  */
 
-import { Injectable, Inject, Optional, OnApplicationBootstrap } from '@stackra/container';
+import { Injectable, Inject, Optional, OnApplicationBootstrap } from "@stackra/container";
 import {
   LOGGER_MANAGER,
   REALTIME_MANAGER,
@@ -26,7 +26,7 @@ import {
   type ISettingsConfig,
   type ISettingsRegistry,
   type ISettingsService,
-} from '@stackra/contracts';
+} from "@stackra/contracts";
 
 /**
  * Shape of the payload the Laravel backend broadcasts under the
@@ -49,7 +49,7 @@ export class SettingsBroadcastListener implements OnApplicationBootstrap {
     @Inject(SETTINGS_REGISTRY) private readonly registry: ISettingsRegistry,
     @Inject(SETTINGS_SERVICE) private readonly service: ISettingsService,
     @Optional() @Inject(REALTIME_MANAGER) private readonly realtime?: IRealtimeManager,
-    @Optional() @Inject(LOGGER_MANAGER) private readonly logger?: ILoggerManager
+    @Optional() @Inject(LOGGER_MANAGER) private readonly logger?: ILoggerManager,
   ) {}
 
   /**
@@ -61,7 +61,7 @@ export class SettingsBroadcastListener implements OnApplicationBootstrap {
     if (!this.config.broadcasting.enabled) return;
 
     if (!this.realtime) {
-      this.warn('broadcasting.enabled is true but @stackra/realtime is not installed.');
+      this.warn("broadcasting.enabled is true but @stackra/realtime is not installed.");
       return;
     }
 
@@ -71,7 +71,7 @@ export class SettingsBroadcastListener implements OnApplicationBootstrap {
         this.subscribeToGroup(connection, definition);
       }
     } catch (error) {
-      this.warn('Failed to open realtime connection for settings.', error);
+      this.warn("Failed to open realtime connection for settings.", error);
     }
   }
 
@@ -89,7 +89,7 @@ export class SettingsBroadcastListener implements OnApplicationBootstrap {
         ? connection.channel(name)
         : connection.privateChannel(name);
 
-      channel.on('settings.changed', (data) => this.handleBroadcast(data));
+      channel.on("settings.changed", (data) => this.handleBroadcast(data));
     } catch (error) {
       this.warn(`Failed to subscribe to broadcast for group "${definition.key}".`, error);
     }
@@ -110,8 +110,8 @@ export class SettingsBroadcastListener implements OnApplicationBootstrap {
   private warn(message: string, cause?: unknown): void {
     if (!this.logger) return;
     try {
-      const suffix = cause ? `: ${String(cause)}` : '';
-      this.logger.create('settings').warn(`${message}${suffix}`);
+      const suffix = cause ? `: ${String(cause)}` : "";
+      this.logger.create("settings").warn(`${message}${suffix}`);
     } catch {
       /* fail-soft */
     }
@@ -121,9 +121,9 @@ export class SettingsBroadcastListener implements OnApplicationBootstrap {
 /** Runtime shape guard for the incoming realtime payload. */
 function isBroadcastPayload(value: unknown): value is IBroadcastPayload {
   return (
-    typeof value === 'object' &&
+    typeof value === "object" &&
     value !== null &&
-    'group' in value &&
-    typeof (value as { group?: unknown }).group === 'string'
+    "group" in value &&
+    typeof (value as { group?: unknown }).group === "string"
   );
 }

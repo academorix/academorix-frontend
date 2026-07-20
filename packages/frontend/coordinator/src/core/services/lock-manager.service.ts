@@ -7,11 +7,11 @@
  *   run in one tab at a time (token refresh, IndexedDB migration, sync).
  */
 
-import { Injectable, Inject, Optional } from '@stackra/container';
-import { COORDINATOR_CONFIG } from '@stackra/contracts';
-import { sleep, Str } from '@stackra/support';
-import { CoordinatorError } from '@/core/errors';
-import type { ICoordinatorModuleOptions, ILockOptions } from '@/core/interfaces';
+import { Injectable, Inject, Optional } from "@stackra/container";
+import { COORDINATOR_CONFIG } from "@stackra/contracts";
+import { sleep, Str } from "@stackra/support";
+import { CoordinatorError } from "@/core/errors";
+import type { ICoordinatorModuleOptions, ILockOptions } from "@/core/interfaces";
 
 // ════════════════════════════════════════════════════════════════════════════════
 // Types
@@ -55,7 +55,7 @@ export class LockManager {
    */
   public constructor(@Optional() @Inject(COORDINATOR_CONFIG) config?: ICoordinatorModuleOptions) {
     this.preferWebLocks = config?.preferWebLocks ?? true;
-    this.channelName = config?.channelName ?? 'stackra-coordinator';
+    this.channelName = config?.channelName ?? "stackra-coordinator";
   }
 
   // ══════════════════════════════════════════════════════════════════════════════
@@ -78,7 +78,7 @@ export class LockManager {
   public async run<T>(
     name: string,
     callback: () => Promise<T> | T,
-    options: ILockOptions = {}
+    options: ILockOptions = {},
   ): Promise<T> {
     const lockName = `${this.channelName}:lock:${name}`;
 
@@ -110,10 +110,10 @@ export class LockManager {
   private async runWithWebLocks<T>(
     lockName: string,
     callback: () => Promise<T> | T,
-    options: ILockOptions
+    options: ILockOptions,
   ): Promise<T> {
     const { timeoutMs } = options;
-    const lockOpts: { mode: 'exclusive'; signal?: AbortSignal } = { mode: 'exclusive' };
+    const lockOpts: { mode: "exclusive"; signal?: AbortSignal } = { mode: "exclusive" };
 
     if (timeoutMs && timeoutMs > 0) {
       const controller = new AbortController();
@@ -127,11 +127,11 @@ export class LockManager {
         });
       } catch (error: unknown) {
         clearTimeout(timer);
-        if (error instanceof Error && error.name === 'AbortError') {
+        if (error instanceof Error && error.name === "AbortError") {
           throw new CoordinatorError(
             `Lock "${lockName}" acquisition timed out after ${timeoutMs}ms`,
-            'LOCK_TIMEOUT',
-            { lockName, timeoutMs }
+            "LOCK_TIMEOUT",
+            { lockName, timeoutMs },
           );
         }
         throw error;
@@ -168,7 +168,7 @@ export class LockManager {
   private async runWithLocalStorage<T>(
     lockName: string,
     callback: () => Promise<T> | T,
-    options: ILockOptions
+    options: ILockOptions,
   ): Promise<T> {
     const timeoutMs = options.timeoutMs ?? 30000;
     const lockKey = `__lock__${lockName}`;
@@ -201,8 +201,8 @@ export class LockManager {
       if (Date.now() - startTime > timeoutMs) {
         throw new CoordinatorError(
           `Lock "${lockName}" acquisition timed out after ${timeoutMs}ms (fallback)`,
-          'LOCK_TIMEOUT',
-          { lockName, timeoutMs }
+          "LOCK_TIMEOUT",
+          { lockName, timeoutMs },
         );
       }
 
@@ -216,11 +216,11 @@ export class LockManager {
   // ══════════════════════════════════════════════════════════════════════════════
 
   private isWebLocksAvailable(): boolean {
-    return typeof navigator !== 'undefined' && 'locks' in navigator;
+    return typeof navigator !== "undefined" && "locks" in navigator;
   }
 
   private getStorageLock(key: string): { value: string; at: number } | null {
-    if (typeof localStorage === 'undefined') return null;
+    if (typeof localStorage === "undefined") return null;
     try {
       const raw = localStorage.getItem(key);
       return raw ? JSON.parse(raw) : null;
@@ -230,7 +230,7 @@ export class LockManager {
   }
 
   private setStorageLock(key: string, value: string): void {
-    if (typeof localStorage === 'undefined') return;
+    if (typeof localStorage === "undefined") return;
     try {
       localStorage.setItem(key, JSON.stringify({ value, at: Date.now() }));
     } catch {
@@ -239,7 +239,7 @@ export class LockManager {
   }
 
   private clearStorageLock(key: string, expectedValue: string): void {
-    if (typeof localStorage === 'undefined') return;
+    if (typeof localStorage === "undefined") return;
     try {
       const existing = this.getStorageLock(key);
       if (existing && existing.value === expectedValue) localStorage.removeItem(key);

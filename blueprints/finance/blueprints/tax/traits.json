@@ -45,16 +45,28 @@
       { "trait": "Academorix\\Foundation\\Concerns\\HasUserstamps" },
       { "trait": "Academorix\\Foundation\\Concerns\\HasMetadata" },
       { "trait": "Academorix\\Foundation\\Concerns\\Filterable" },
-      { "trait": "Academorix\\Foundation\\Concerns\\Searchable", "reason": "TaxJurisdiction (searchable by name, country_code, state_code) + TaxExemption (searchable by certificate_number - redacted, customer_id, exemption_type). NOT TaxRate + TaxCalculation (accessed via jurisdiction / invoice_line relations)." }
+      {
+        "trait": "Academorix\\Foundation\\Concerns\\Searchable",
+        "reason": "TaxJurisdiction (searchable by name, country_code, state_code) + TaxExemption (searchable by certificate_number - redacted, customer_id, exemption_type). NOT TaxRate + TaxCalculation (accessed via jurisdiction / invoice_line relations)."
+      }
     ],
     "tenants": [
-      { "trait": "Academorix\\Tenancy\\Concerns\\BelongsToTenant", "reason": "Every owned row carries tenant_id per tenancy-columns.md §3. NOTE: TaxJurisdiction uses a modified variant that allows tenant_id IS NULL for platform-reference rows." }
+      {
+        "trait": "Academorix\\Tenancy\\Concerns\\BelongsToTenant",
+        "reason": "Every owned row carries tenant_id per tenancy-columns.md §3. NOTE: TaxJurisdiction uses a modified variant that allows tenant_id IS NULL for platform-reference rows."
+      }
     ],
     "audit": [
-      { "trait": "Academorix\\Audit\\Concerns\\Auditable", "reason": "Every write to tax_rates / tax_jurisdictions / tax_exemptions / tax_calculations is compliance-relevant (financial retention 7 years, 10 for Enterprise)." }
+      {
+        "trait": "Academorix\\Audit\\Concerns\\Auditable",
+        "reason": "Every write to tax_rates / tax_jurisdictions / tax_exemptions / tax_calculations is compliance-relevant (financial retention 7 years, 10 for Enterprise)."
+      }
     ],
     "activity": [
-      { "trait": "Academorix\\Activity\\Concerns\\HasActivityLog", "reason": "TaxExemption + tax_provider_configs — verification workflow decisions feed the staff-visible activity feed. NOT TaxRate + TaxJurisdiction + TaxCalculation — either high-volume or already covered by the audit trail." }
+      {
+        "trait": "Academorix\\Activity\\Concerns\\HasActivityLog",
+        "reason": "TaxExemption + tax_provider_configs — verification workflow decisions feed the staff-visible activity feed. NOT TaxRate + TaxJurisdiction + TaxCalculation — either high-volume or already covered by the audit trail."
+      }
     ]
   },
   "composition": {

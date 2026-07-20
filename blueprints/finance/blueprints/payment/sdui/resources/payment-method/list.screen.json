@@ -30,8 +30,21 @@
             {
               "kind": "View",
               "children": [
-                { "kind": "Text", "props": { "as": "h1", "className": "text-2xl font-semibold", "children": "Payment methods" } },
-                { "kind": "Text", "props": { "className": "text-sm text-muted", "children": "Your saved cards + bank accounts for future payments." } }
+                {
+                  "kind": "Text",
+                  "props": {
+                    "as": "h1",
+                    "className": "text-2xl font-semibold",
+                    "children": "Payment methods"
+                  }
+                },
+                {
+                  "kind": "Text",
+                  "props": {
+                    "className": "text-sm text-muted",
+                    "children": "Your saved cards + bank accounts for future payments."
+                  }
+                }
               ]
             },
             {
@@ -66,12 +79,33 @@
                           "kind": "View",
                           "props": { "className": "flex items-center gap-3" },
                           "children": [
-                            { "kind": "Widget", "widget": "payment.method-brand-badge", "bindings": { "props.brand": { "$ref": "item.brand" }, "props.last4": { "$ref": "item.last4" } } },
+                            {
+                              "kind": "Widget",
+                              "widget": "payment.method-brand-badge",
+                              "bindings": {
+                                "props.brand": { "$ref": "item.brand" },
+                                "props.last4": { "$ref": "item.last4" }
+                              }
+                            },
                             {
                               "kind": "View",
                               "children": [
-                                { "kind": "Text", "props": { "className": "text-sm font-medium" }, "bindings": { "children": { "$expr": "item.brand + ' •••• ' + item.last4" } } },
-                                { "kind": "Text", "props": { "className": "text-xs text-muted" }, "bindings": { "children": { "$expr": "'Expires ' + item.exp_month + '/' + item.exp_year" } } }
+                                {
+                                  "kind": "Text",
+                                  "props": { "className": "text-sm font-medium" },
+                                  "bindings": {
+                                    "children": { "$expr": "item.brand + ' •••• ' + item.last4" }
+                                  }
+                                },
+                                {
+                                  "kind": "Text",
+                                  "props": { "className": "text-xs text-muted" },
+                                  "bindings": {
+                                    "children": {
+                                      "$expr": "'Expires ' + item.exp_month + '/' + item.exp_year"
+                                    }
+                                  }
+                                }
                               ]
                             }
                           ]
@@ -82,7 +116,11 @@
                           "children": [
                             {
                               "kind": "Chip",
-                              "props": { "variant": "success", "size": "sm", "children": "Default" },
+                              "props": {
+                                "variant": "success",
+                                "size": "sm",
+                                "children": "Default"
+                              },
                               "bindings": { "hidden": { "$expr": "!item.is_default" } }
                             },
                             {
@@ -110,9 +148,21 @@
           "props": { "className": "text-center py-12" },
           "bindings": { "hidden": { "$expr": "methods.length > 0" } },
           "children": [
-            { "kind": "Icon", "props": { "name": "credit-card", "className": "size-12 mx-auto text-muted" } },
-            { "kind": "Text", "props": { "className": "mt-4 text-lg font-medium", "children": "No saved methods" } },
-            { "kind": "Text", "props": { "className": "text-sm text-muted", "children": "Save a payment method to speed up future payments." } }
+            {
+              "kind": "Icon",
+              "props": { "name": "credit-card", "className": "size-12 mx-auto text-muted" }
+            },
+            {
+              "kind": "Text",
+              "props": { "className": "mt-4 text-lg font-medium", "children": "No saved methods" }
+            },
+            {
+              "kind": "Text",
+              "props": {
+                "className": "text-sm text-muted",
+                "children": "Save a payment method to speed up future payments."
+              }
+            }
           ]
         }
       ]

@@ -6,7 +6,7 @@
  *   of the tree keeps rendering.
  */
 
-import { Component, type ErrorInfo, type ReactNode } from 'react';
+import { Component, type ErrorInfo, type ReactNode } from "react";
 
 /**
  * Props for {@link NodeErrorBoundary}.
@@ -28,22 +28,22 @@ interface INodeErrorBoundaryState {
  * components, so this file intentionally uses one.
  */
 export class NodeErrorBoundary extends Component<INodeErrorBoundaryProps, INodeErrorBoundaryState> {
-  public state: INodeErrorBoundaryState = { error: null };
+  public override state: INodeErrorBoundaryState = { error: null };
 
   public static getDerivedStateFromError(error: Error): INodeErrorBoundaryState {
     return { error };
   }
 
-  public componentDidCatch(error: Error, info: ErrorInfo): void {
+  public override componentDidCatch(error: Error, info: ErrorInfo): void {
     this.props.onError?.(this.props.nodeId, this.props.nodeType, error, info);
   }
 
-  public render(): ReactNode {
+  public override render(): ReactNode {
     if (this.state.error) {
       return (
         <div
           role="alert"
-          className="rounded-md border border-danger/40 bg-danger-50 p-3 text-sm text-danger-700"
+          className="border-danger/40 bg-danger-50 text-danger-700 rounded-md border p-3 text-sm"
         >
           <div className="font-medium">Node failed to render</div>
           <div className="opacity-80">

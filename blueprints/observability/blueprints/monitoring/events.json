@@ -50,10 +50,7 @@
       "class": "Academorix\\Observability\\Monitoring\\Events\\HealthCheckEnabled",
       "trigger": "HealthCheckObserver.updated detected is_enabled transition false → true.",
       "queue": "monitoring",
-      "consumers": [
-        "audit::WriteToAuditLog",
-        "monitoring::ScheduleFirstRun"
-      ],
+      "consumers": ["audit::WriteToAuditLog", "monitoring::ScheduleFirstRun"],
       "payload": {
         "health_check_id": "ULID",
         "tenant_id": "ULID",
@@ -145,10 +142,7 @@
       "class": "Academorix\\Observability\\Monitoring\\Events\\MonitoringAlertPolicyUpdated",
       "trigger": "MonitoringAlertPolicyObserver.updated committed changes to a monitoring_alert_policies row.",
       "queue": "monitoring",
-      "consumers": [
-        "audit::WriteToAuditLog",
-        "monitoring::InvalidateEvaluatorCache"
-      ],
+      "consumers": ["audit::WriteToAuditLog", "monitoring::InvalidateEvaluatorCache"],
       "payload": {
         "monitoring_alert_policy_id": "ULID",
         "tenant_id": "ULID",
@@ -299,10 +293,7 @@
       "class": "Academorix\\Observability\\Monitoring\\Events\\MonitoringIncidentStatusUpdated",
       "trigger": "MonitoringIncidentObserver.updated detected status transition to investigating / mitigating / postmortem. Not fired for open / acknowledged / resolved — those have dedicated events.",
       "queue": "monitoring",
-      "consumers": [
-        "audit::WriteToAuditLog",
-        "monitoring::MetricsCollector"
-      ],
+      "consumers": ["audit::WriteToAuditLog", "monitoring::MetricsCollector"],
       "payload": {
         "monitoring_incident_id": "ULID",
         "tenant_id": "ULID",
@@ -356,10 +347,7 @@
       "class": "Academorix\\Observability\\Monitoring\\Events\\MonitoringProviderDeactivated",
       "trigger": "MonitoringProviderConfigObserver.updated detected is_active → false OR row soft-deleted.",
       "queue": "monitoring",
-      "consumers": [
-        "audit::WriteToAuditLog",
-        "monitoring::MetricsCollector"
-      ],
+      "consumers": ["audit::WriteToAuditLog", "monitoring::MetricsCollector"],
       "payload": {
         "provider_config_id": "ULID",
         "tenant_id": "ULID",
@@ -396,10 +384,7 @@
       "class": "Academorix\\Observability\\Monitoring\\Events\\MonitoringProviderCircuitBreakerClosed",
       "trigger": "Provider recovered — half-open probe succeeded OR ops manually reset via monitoring:reset-circuit-breaker command / POST endpoint.",
       "queue": "monitoring",
-      "consumers": [
-        "audit::WriteToAuditLog",
-        "monitoring::MetricsCollector"
-      ],
+      "consumers": ["audit::WriteToAuditLog", "monitoring::MetricsCollector"],
       "payload": {
         "tenant_id": "ULID",
         "provider": "string",

@@ -5,7 +5,7 @@
  *   hook.
  */
 
-import type { INotificationManagerSnapshot } from '@/core/interfaces';
+import type { INotificationManagerSnapshot } from "@/core/interfaces";
 
 /**
  * Value returned by {@link useNotificationCentre} — the

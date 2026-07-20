@@ -11,8 +11,8 @@
  *   implementation.
  */
 
-import type { IScopeDataSource } from '../interfaces/scope-data-source.interface';
-import type { IScopePersistAdapter } from '../interfaces/scope-persist-adapter.interface';
+import type { IScopeDataSource } from "../interfaces/scope-data-source.interface";
+import type { IScopePersistAdapter } from "../interfaces/scope-persist-adapter.interface";
 
 /**
  * Wrap a data source so its `persist(scope)` also invokes the persist
@@ -37,7 +37,7 @@ import type { IScopePersistAdapter } from '../interfaces/scope-persist-adapter.i
  */
 export function withPersistAdapter(
   dataSource: IScopeDataSource,
-  adapter: IScopePersistAdapter
+  adapter: IScopePersistAdapter,
 ): IScopeDataSource {
   return {
     resolveScope: dataSource.resolveScope.bind(dataSource),

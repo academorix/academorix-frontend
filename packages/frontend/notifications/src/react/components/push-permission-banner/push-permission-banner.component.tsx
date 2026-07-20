@@ -15,13 +15,13 @@
  *   HeroUI OSS release).
  */
 
-import { useState, type ReactElement } from 'react';
-import { Alert, Button } from '@stackra/ui/react';
-import { BellIcon } from '@stackra/ui/icons/heroicon/outline';
+import { useState, type ReactElement } from "react";
+import { Alert, Button } from "@stackra/ui/react";
+import { BellIcon } from "@stackra/ui/icons/heroicon/outline";
 
-import { useNotificationPermission } from '../../hooks/use-notification-permission';
-import { usePushSubscription } from '../../hooks/use-push-subscription';
-import type { PushPermissionBannerProps } from './push-permission-banner.interface';
+import { useNotificationPermission } from "../../hooks/use-notification-permission";
+import { usePushSubscription } from "../../hooks/use-push-subscription";
+import type { PushPermissionBannerProps } from "./push-permission-banner.interface";
 
 /**
  * Renders the "Enable notifications" affordance when the browser is
@@ -34,9 +34,9 @@ import type { PushPermissionBannerProps } from './push-permission-banner.interfa
  * ```
  */
 export function PushPermissionBanner({
-  title = 'Get instant updates',
-  description = 'Enable browser notifications so we can reach you when the app is in the background.',
-  enableLabel = 'Enable',
+  title = "Get instant updates",
+  description = "Enable browser notifications so we can reach you when the app is in the background.",
+  enableLabel = "Enable",
   vapidPublicKey,
   onSubscribed,
   onDismissed,
@@ -44,7 +44,7 @@ export function PushPermissionBanner({
 }: PushPermissionBannerProps = {}): ReactElement | null {
   const { permission, isSupported, request } = useNotificationPermission();
   const { subscribe, isPending } = usePushSubscription(
-    vapidPublicKey ? { vapidPublicKey } : undefined
+    vapidPublicKey ? { vapidPublicKey } : undefined,
   );
   const [dismissed, setDismissed] = useState(false);
 
@@ -52,12 +52,12 @@ export function PushPermissionBanner({
   // hasn't yet made a decision AND they haven't dismissed us this
   // session.
   if (!isSupported) return null;
-  if (permission !== 'default') return null;
+  if (permission !== "default") return null;
   if (dismissed) return null;
 
   const handleEnable = async (): Promise<void> => {
     const result = await request();
-    if (result === 'granted') {
+    if (result === "granted") {
       // Best-effort subscribe — a failure lands in `usePushSubscription`'s
       // `error`; the banner just closes when the permission is granted.
       await subscribe();

@@ -9,21 +9,21 @@
  *   - `forbidden` → "Contact your admin" message.
  */
 
-import { type ReactElement } from 'react';
-import { Button, Card } from '@stackra/ui/react';
-import { LockClosedIcon } from '@stackra/ui/icons/heroicon/outline';
+import { type ReactElement } from "react";
+import { Button, Card } from "@stackra/ui/react";
+import { LockClosedIcon } from "@stackra/ui/icons/heroicon/outline";
 
-import type { DevtoolsPanelLockedProps } from './devtools-panel-locked.interface';
+import type { DevtoolsPanelLockedProps } from "./devtools-panel-locked.interface";
 
 /** Fallback copy for each deny reason. */
 const DEFAULT_MESSAGES: Record<
-  DevtoolsPanelLockedProps['reason'],
+  DevtoolsPanelLockedProps["reason"],
   { title: string; description: string }
 > = {
   unauthenticated: {
-    title: 'Sign in required',
+    title: "Sign in required",
     description:
-      'This panel is gated. Sign in with an account that has access to view its contents.',
+      "This panel is gated. Sign in with an account that has access to view its contents.",
   },
   forbidden: {
     title: "You don't have permission",
@@ -46,24 +46,24 @@ export function DevtoolsPanelLocked({ gate, reason }: DevtoolsPanelLockedProps):
     >
       <Card className="w-full max-w-md">
         <Card.Header className="flex items-center gap-3">
-          <LockClosedIcon aria-hidden="true" className="size-6 text-warning" />
+          <LockClosedIcon aria-hidden="true" className="text-warning size-6" />
           <Card.Title>{defaults.title}</Card.Title>
         </Card.Header>
         <Card.Content>
-          <p className="text-sm text-muted">{description}</p>
-          <div className="mt-3 rounded-md bg-surface-secondary p-3">
-            <p className="text-xs text-muted">
-              Required ability: <span className="font-mono text-foreground">{gate.ability}</span>
+          <p className="text-muted text-sm">{description}</p>
+          <div className="bg-surface-secondary mt-3 rounded-md p-3">
+            <p className="text-muted text-xs">
+              Required ability: <span className="text-foreground font-mono">{gate.ability}</span>
               {gate.resource ? (
                 <>
-                  {' · resource '}
-                  <span className="font-mono text-foreground">{String(gate.resource)}</span>
+                  {" · resource "}
+                  <span className="text-foreground font-mono">{String(gate.resource)}</span>
                 </>
               ) : null}
             </p>
           </div>
         </Card.Content>
-        {reason === 'unauthenticated' ? (
+        {reason === "unauthenticated" ? (
           <Card.Footer>
             <Button size="sm" variant="primary" isDisabled>
               Sign in

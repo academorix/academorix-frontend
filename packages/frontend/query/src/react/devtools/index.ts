@@ -5,8 +5,8 @@
  *   contribution.
  */
 
-export { QueryDevtoolsPanel } from './query.devtools-panel';
+export { QueryDevtoolsPanel } from "./query.devtools-panel";
 export {
   QueryDevtoolsPanelView,
   type QueryDevtoolsPanelViewProps,
-} from './query-devtools-panel-view';
+} from "./query-devtools-panel-view";

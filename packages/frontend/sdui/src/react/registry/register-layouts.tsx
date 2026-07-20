@@ -6,9 +6,9 @@
  *   richer HeroUI Pro compositions land alongside the manifest extractor.
  */
 
-import type { ReactNode } from 'react';
-import { SduiViewKind } from '@stackra/contracts';
-import type { LayoutRegistry } from '@/core/registries/layout.registry';
+import type { ReactNode } from "react";
+import { SduiViewKind } from "@stackra/contracts";
+import type { LayoutRegistry } from "@/core/registries/layout.registry";
 
 interface ISceneShellProps {
   readonly children: ReactNode;

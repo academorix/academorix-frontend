@@ -3,45 +3,122 @@
   "title": "Coaching specializations catalog",
   "description": "Reference catalog of the specialization slugs allowed on CoachingProfile.specializations. Grouped by bucket for analytics + UI facet filtering. Additions require a shared migration + platform-catalog seeder update.",
   "specializations": [
-    { "value": "youth_development", "label": "Youth development", "bucket": "development", "note": "Coaching athletes under 18. Common on academies + youth clubs." },
-    { "value": "adult_recreation", "label": "Adult recreation", "bucket": "development", "note": "Weekend warriors + hobbyists." },
-    { "value": "elite_performance", "label": "Elite / competitive performance", "bucket": "development", "note": "Coaches training athletes for national + international competition." },
-    { "value": "beginner_onboarding", "label": "Beginner onboarding", "bucket": "development", "note": "First-timer / intro-class specialist." },
-    { "value": "return_to_sport", "label": "Return-to-sport rehabilitation", "bucket": "development", "note": "Post-injury programming; overlaps sports_medicine referrals." },
+    {
+      "value": "youth_development",
+      "label": "Youth development",
+      "bucket": "development",
+      "note": "Coaching athletes under 18. Common on academies + youth clubs."
+    },
+    {
+      "value": "adult_recreation",
+      "label": "Adult recreation",
+      "bucket": "development",
+      "note": "Weekend warriors + hobbyists."
+    },
+    {
+      "value": "elite_performance",
+      "label": "Elite / competitive performance",
+      "bucket": "development",
+      "note": "Coaches training athletes for national + international competition."
+    },
+    {
+      "value": "beginner_onboarding",
+      "label": "Beginner onboarding",
+      "bucket": "development",
+      "note": "First-timer / intro-class specialist."
+    },
+    {
+      "value": "return_to_sport",
+      "label": "Return-to-sport rehabilitation",
+      "bucket": "development",
+      "note": "Post-injury programming; overlaps sports_medicine referrals."
+    },
 
-    { "value": "goalkeeper_training", "label": "Goalkeeper training", "bucket": "position_specialist" },
-    { "value": "quarterback_training", "label": "Quarterback training", "bucket": "position_specialist" },
+    {
+      "value": "goalkeeper_training",
+      "label": "Goalkeeper training",
+      "bucket": "position_specialist"
+    },
+    {
+      "value": "quarterback_training",
+      "label": "Quarterback training",
+      "bucket": "position_specialist"
+    },
     { "value": "pitcher_training", "label": "Pitcher training", "bucket": "position_specialist" },
     { "value": "catcher_training", "label": "Catcher training", "bucket": "position_specialist" },
-    { "value": "libero_training", "label": "Libero training (volleyball)", "bucket": "position_specialist" },
-    { "value": "point_guard_training", "label": "Point-guard training (basketball)", "bucket": "position_specialist" },
+    {
+      "value": "libero_training",
+      "label": "Libero training (volleyball)",
+      "bucket": "position_specialist"
+    },
+    {
+      "value": "point_guard_training",
+      "label": "Point-guard training (basketball)",
+      "bucket": "position_specialist"
+    },
 
     { "value": "strength_conditioning", "label": "Strength & conditioning", "bucket": "physical" },
     { "value": "speed_agility", "label": "Speed & agility", "bucket": "physical" },
     { "value": "endurance_training", "label": "Endurance training", "bucket": "physical" },
     { "value": "flexibility_mobility", "label": "Flexibility & mobility", "bucket": "physical" },
     { "value": "injury_prevention", "label": "Injury prevention", "bucket": "physical" },
-    { "value": "post_rehabilitation_conditioning", "label": "Post-rehab conditioning", "bucket": "physical" },
+    {
+      "value": "post_rehabilitation_conditioning",
+      "label": "Post-rehab conditioning",
+      "bucket": "physical"
+    },
 
-    { "value": "tactical_analysis", "label": "Tactical analysis + video review", "bucket": "cognitive" },
-    { "value": "mental_performance", "label": "Mental performance coaching", "bucket": "cognitive" },
-    { "value": "team_leadership", "label": "Team leadership + captaincy development", "bucket": "cognitive" },
+    {
+      "value": "tactical_analysis",
+      "label": "Tactical analysis + video review",
+      "bucket": "cognitive"
+    },
+    {
+      "value": "mental_performance",
+      "label": "Mental performance coaching",
+      "bucket": "cognitive"
+    },
+    {
+      "value": "team_leadership",
+      "label": "Team leadership + captaincy development",
+      "bucket": "cognitive"
+    },
     { "value": "sport_psychology", "label": "Sport psychology support", "bucket": "cognitive" },
 
     { "value": "skill_technique", "label": "Skill + technique refinement", "bucket": "technical" },
-    { "value": "individual_drills", "label": "Individual drills programming", "bucket": "technical" },
+    {
+      "value": "individual_drills",
+      "label": "Individual drills programming",
+      "bucket": "technical"
+    },
     { "value": "small_group_training", "label": "Small-group training", "bucket": "technical" },
     { "value": "video_analysis", "label": "Video analysis", "bucket": "technical" },
     { "value": "biomechanics", "label": "Biomechanics analysis", "bucket": "technical" },
 
     { "value": "adaptive_sports", "label": "Adaptive / para-sports", "bucket": "specialty" },
     { "value": "senior_athletes", "label": "Senior athlete programming", "bucket": "specialty" },
-    { "value": "prenatal_postnatal", "label": "Prenatal + postnatal fitness", "bucket": "specialty" },
-    { "value": "concussion_return_to_play", "label": "Concussion return-to-play", "bucket": "specialty" },
+    {
+      "value": "prenatal_postnatal",
+      "label": "Prenatal + postnatal fitness",
+      "bucket": "specialty"
+    },
+    {
+      "value": "concussion_return_to_play",
+      "label": "Concussion return-to-play",
+      "bucket": "specialty"
+    },
 
     { "value": "team_building", "label": "Team building + culture", "bucket": "administrative" },
-    { "value": "parent_communication", "label": "Parent + family communication", "bucket": "administrative" },
-    { "value": "curriculum_design", "label": "Curriculum design + lesson planning", "bucket": "administrative" }
+    {
+      "value": "parent_communication",
+      "label": "Parent + family communication",
+      "bucket": "administrative"
+    },
+    {
+      "value": "curriculum_design",
+      "label": "Curriculum design + lesson planning",
+      "bucket": "administrative"
+    }
   ],
   "notes": [
     "The `bucket` column feeds analytics — analytics events use bucket instead of raw specialization to keep label cardinality bounded.",

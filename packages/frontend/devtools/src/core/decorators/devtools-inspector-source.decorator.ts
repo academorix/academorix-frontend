@@ -5,11 +5,11 @@
  *   marks a class as a discoverable inspector-region source.
  */
 
-import { defineMetadata } from '@vivtel/metadata';
-import { Injectable } from '@stackra/container';
-import { DEVTOOLS_INSPECTOR_SOURCE_METADATA_KEY } from '@stackra/contracts';
+import { defineMetadata } from "@vivtel/metadata";
+import { Injectable } from "@stackra/container";
+import { DEVTOOLS_INSPECTOR_SOURCE_METADATA_KEY } from "@stackra/contracts";
 
-import type { IDevtoolsInspectorSourceOptions } from '../interfaces/devtools-inspector-source-options.interface';
+import type { IDevtoolsInspectorSourceOptions } from "../interfaces/devtools-inspector-source-options.interface";
 
 /**
  * Mark a class as a discoverable inspector-region source.
@@ -30,7 +30,7 @@ import type { IDevtoolsInspectorSourceOptions } from '../interfaces/devtools-ins
  * ```
  */
 export function DevtoolsInspectorSource(
-  options: IDevtoolsInspectorSourceOptions = {}
+  options: IDevtoolsInspectorSourceOptions = {},
 ): ClassDecorator {
   return (target: Function) => {
     // Stamp `@Injectable()` first — see `devtools-panel.decorator.ts`

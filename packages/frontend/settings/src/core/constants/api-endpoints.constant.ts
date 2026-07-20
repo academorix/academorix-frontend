@@ -11,16 +11,16 @@
  *   group key by `build-endpoint-uri.util.ts`.
  */
 
-import type { ISettingsApiEndpoints } from '@stackra/contracts';
+import type { ISettingsApiEndpoints } from "@stackra/contracts";
 
 /** Default REST endpoint paths for the settings API. */
 export const DEFAULT_API_ENDPOINTS: Required<ISettingsApiEndpoints> = {
   /** Full schema for every group. */
-  schema: '/api/v1/settings/schema',
+  schema: "/api/v1/settings/schema",
   /** Every group with resolved values. */
-  listGroups: '/api/v1/settings',
+  listGroups: "/api/v1/settings",
   /** A single group's resolved values. */
-  getGroup: '/api/v1/settings/{group}',
+  getGroup: "/api/v1/settings/{group}",
   /** Update a single group's values (partial merge). */
-  updateGroup: '/api/v1/settings/{group}',
+  updateGroup: "/api/v1/settings/{group}",
 };

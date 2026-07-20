@@ -5,7 +5,7 @@
  *   {@link usePushSubscription} hook.
  */
 
-import type { IPushSubscriptionResult } from '@/core/interfaces';
+import type { IPushSubscriptionResult } from "@/core/interfaces";
 
 /**
  * Options accepted by {@link usePushSubscription}.

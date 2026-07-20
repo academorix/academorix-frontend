@@ -34,27 +34,27 @@ import {
   useRef,
   useState,
   type ReactNode,
-} from 'react';
-import { useOptionalInject } from '@stackra/container/react';
-import type { Store } from '@tanstack/store';
-import { useStore as useTanStackStore } from '@tanstack/react-store';
-import { createReactiveStore } from '@stackra/state';
-import type { StateRegistry } from '@stackra/state';
+} from "react";
+import { useOptionalInject } from "@stackra/container/react";
+import type { Store } from "@tanstack/store";
+import { useStore as useTanStackStore } from "@tanstack/react-store";
+import { createReactiveStore } from "@stackra/state";
+import type { StateRegistry } from "@stackra/state";
 import type {
   IEventEmitter,
   IOverlayRegistry,
   ISduiEvalScope,
   ISduiNotification,
   ISduiRuntime,
-} from '@stackra/contracts';
+} from "@stackra/contracts";
 import {
   EVENT_EMITTER,
   OVERLAY_REGISTRY,
   SDUI_RUNTIME_STORE,
   STATE_REGISTRY,
-} from '@stackra/contracts';
+} from "@stackra/contracts";
 
-import { getAtPath, setAtPath } from '@/core/utils/dotted-path.util';
+import { getAtPath, setAtPath } from "@/core/utils/dotted-path.util";
 
 /**
  * Props for {@link SduiRuntimeProvider}. The runtime interface itself
@@ -111,7 +111,7 @@ export function SduiRuntimeProvider({
   // itself auto-emits `sdui.changed` on every mutation via
   // `createReactiveStore`; no manual `emit()` calls needed.
   const [store] = useState<Store<Record<string, unknown>>>(() =>
-    createReactiveStore('sdui', {}, events)
+    createReactiveStore("sdui", {}, events),
   );
 
   // Subscribe to store changes so React re-renders `scope.state` when a
@@ -125,11 +125,11 @@ export function SduiRuntimeProvider({
   // isn't wired (local-only mode).
   useEffect(() => {
     if (!stateRegistry) return;
-    stateRegistry.registerStore('sdui', SDUI_RUNTIME_STORE, store as Store<unknown>, {});
+    stateRegistry.registerStore("sdui", SDUI_RUNTIME_STORE, store as Store<unknown>, {});
     return () => {
       // Registry entries key on `name`; `remove()` is a no-op when
       // absent, so double-cleanup under StrictMode is safe.
-      stateRegistry.remove('sdui');
+      stateRegistry.remove("sdui");
     };
   }, [stateRegistry, store]);
 
@@ -165,19 +165,19 @@ export function SduiRuntimeProvider({
       // writes to — one code path per mutation, no divergence.
       store.setState((prev) => setAtPath(prev, path, value));
     },
-    [store]
+    [store],
   );
 
   const toggleState = useCallback(
     (path: string) => {
       store.setState((prev) => setAtPath(prev, path, !Boolean(getAtPath(prev, path))));
     },
-    [store]
+    [store],
   );
 
   const isOverlayOpen = useCallback(
     (overlayId: string) => overlays.includes(overlayId),
-    [overlays]
+    [overlays],
   );
 
   const openOverlay = useCallback(
@@ -192,7 +192,7 @@ export function SduiRuntimeProvider({
       }
       setOverlays((prev) => (prev.includes(overlayId) ? prev : [...prev, overlayId]));
     },
-    [overlayRegistry]
+    [overlayRegistry],
   );
 
   const closeOverlay = useCallback(
@@ -210,7 +210,7 @@ export function SduiRuntimeProvider({
         return prev.filter((id) => id !== overlayId);
       });
     },
-    [overlayRegistry]
+    [overlayRegistry],
   );
 
   const setFormField = useCallback((formId: string, field: string, value: unknown) => {
@@ -238,10 +238,10 @@ export function SduiRuntimeProvider({
         // isn't silently lost, but don't throw (the schema is doing
         // exactly what it should).
         // eslint-disable-next-line no-console
-        console.info('[sdui] notify', notification);
+        console.info("[sdui] notify", notification);
       }
     },
-    [onNotify]
+    [onNotify],
   );
 
   const value = useMemo<ISduiRuntime>(
@@ -266,7 +266,7 @@ export function SduiRuntimeProvider({
       setFormField,
       getFormValues,
       notify,
-    ]
+    ],
   );
 
   return <SduiRuntimeContext.Provider value={value}>{children}</SduiRuntimeContext.Provider>;
@@ -290,7 +290,7 @@ export function SduiRuntimeProvider({
 export function useSduiRuntime(): ISduiRuntime {
   const runtime = useContext(SduiRuntimeContext);
   if (!runtime) {
-    throw new Error('useSduiRuntime() must be called inside a <SduiRuntimeProvider>.');
+    throw new Error("useSduiRuntime() must be called inside a <SduiRuntimeProvider>.");
   }
   return runtime;
 }

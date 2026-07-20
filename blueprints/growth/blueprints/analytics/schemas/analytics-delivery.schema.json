@@ -56,7 +56,11 @@
         "type": "string",
         "length": 30,
         "nullable": true,
-        "foreign": { "table": "analytics_provider_configs", "column": "id", "onDelete": "set null" },
+        "foreign": {
+          "table": "analytics_provider_configs",
+          "column": "id",
+          "onDelete": "set null"
+        },
         "description": "The provider config used at dispatch time. Nulled when the config is deleted so historical deliveries survive."
       },
       "provider": {

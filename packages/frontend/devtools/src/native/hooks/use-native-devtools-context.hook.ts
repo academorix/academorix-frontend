@@ -8,10 +8,10 @@
  *   provider — this is a developer bug, not a runtime state.
  */
 
-import { useContext } from 'react';
+import { useContext } from "react";
 
-import { DevtoolsContext } from '../contexts/devtools.context';
-import type { IDevtoolsNativeContextValue } from '../interfaces/devtools-context-value.interface';
+import { DevtoolsContext } from "../contexts/devtools.context";
+import type { IDevtoolsNativeContextValue } from "../interfaces/devtools-context-value.interface";
 
 /**
  * Read the current native devtools context.
@@ -23,7 +23,7 @@ export function useNativeDevtoolsContext(): IDevtoolsNativeContextValue {
   const value = useContext(DevtoolsContext);
   if (!value) {
     throw new Error(
-      '[@stackra/devtools] useNativeDevtoolsContext must be used inside <DevtoolsProvider> from @stackra/devtools/native.'
+      "[@stackra/devtools] useNativeDevtoolsContext must be used inside <DevtoolsProvider> from @stackra/devtools/native.",
     );
   }
   return value;

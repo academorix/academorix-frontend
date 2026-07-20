@@ -5,8 +5,8 @@
  *   contribution.
  */
 
-export { StateDevtoolsPanel } from './state.devtools-panel';
+export { StateDevtoolsPanel } from "./state.devtools-panel";
 export {
   StateDevtoolsPanelView,
   type StateDevtoolsPanelViewProps,
-} from './state-devtools-panel-view';
+} from "./state-devtools-panel-view";

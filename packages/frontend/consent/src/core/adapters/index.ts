@@ -7,5 +7,5 @@
  *   IndexedDB) and native (AsyncStorage) via `@stackra/storage`.
  */
 
-export { MemoryConsentAdapter } from './memory-consent.adapter';
-export { StorageBackedConsentAdapter } from './storage-backed-consent.adapter';
+export { MemoryConsentAdapter } from "./memory-consent.adapter";
+export { StorageBackedConsentAdapter } from "./storage-backed-consent.adapter";

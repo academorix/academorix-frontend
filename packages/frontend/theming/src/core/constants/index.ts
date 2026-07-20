@@ -10,7 +10,7 @@ export {
   DEFAULT_COLOR_MODE,
   DEFAULT_THEME_ID,
   THEME_DATA_ATTRIBUTE,
-} from './defaults.constant';
+} from "./defaults.constant";
 
 export {
   THEME_DEFAULT,
@@ -25,4 +25,4 @@ export {
   THEME_DISCORD,
   THEME_RABBIT,
   BUILT_IN_THEMES,
-} from './themes.constant';
+} from "./themes.constant";

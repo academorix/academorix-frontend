@@ -9,7 +9,10 @@
       "vendor_name": "Open Exchange Rates, Inc.",
       "vendor_url": "https://openexchangerates.org",
       "purpose": "Exchange rate lookup for cross-currency transactions. Rate is captured at commit + frozen on the transaction row (exchange_rate_to_base + base_amount_cents). Provides 200+ currency pairs updated hourly.",
-      "data_categories": ["currency_pair_codes (e.g. 'USD-EUR' — public data)", "no PII / no account data"],
+      "data_categories": [
+        "currency_pair_codes (e.g. 'USD-EUR' — public data)",
+        "no PII / no account data"
+      ],
       "data_hashing": "N/A — no PII flows through this provider",
       "endpoint": "openexchangerates.org/api/latest.json",
       "sub_processing_locations": ["USA"],

@@ -19,7 +19,7 @@ import {
   type IAiToolResult,
   type IPersona,
   type IUiContextSnapshot,
-} from '@stackra/contracts';
+} from "@stackra/contracts";
 
 /** Options accepted by {@link createMockAiClient}. */
 export interface IMockAiClientOptions {
@@ -81,7 +81,7 @@ export function createMockAiClient(options: IMockAiClientOptions = {}): IMockAiC
       if (!episode) {
         // Empty episode — yield a benign Finish event.
         async function* empty(): AsyncIterable<IAiStreamEvent> {
-          yield { type: AiStreamEventType.Finish, runId: 'mock', reason: 'stop' };
+          yield { type: AiStreamEventType.Finish, runId: "mock", reason: "stop" };
         }
         return empty();
       }
@@ -115,7 +115,7 @@ export function createMockAiClient(options: IMockAiClientOptions = {}): IMockAiC
       contextSyncs.push(snapshot);
     },
     async transcribe(audio: Uint8Array | ArrayBuffer): Promise<{ text: string }> {
-      return options.transcribe ? options.transcribe(audio) : { text: '' };
+      return options.transcribe ? options.transcribe(audio) : { text: "" };
     },
     async synthesize(text: string): Promise<ArrayBuffer> {
       return options.synthesize ? options.synthesize(text) : new ArrayBuffer(0);

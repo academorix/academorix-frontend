@@ -4,7 +4,7 @@
  * @description Props for the `<LanguageSelector />` component.
  */
 
-import type { LocaleItem } from './locale-item.interface';
+import type { LocaleItem } from "./locale-item.interface";
 
 /**
  * Props for the `LanguageSelector` component.

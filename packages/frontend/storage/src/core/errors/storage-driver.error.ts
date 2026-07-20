@@ -6,7 +6,7 @@
  *   creator that isn't registered on the manager.
  */
 
-import { StorageError } from './storage.error';
+import { StorageError } from "./storage.error";
 
 /**
  * Raised when a store's configured driver is unknown to the manager.
@@ -31,8 +31,8 @@ export class StorageDriverError extends StorageError {
         `"${driver}", but no creator is registered. Import the matching platform ` +
         `module (WebStorageModule / NativeStorageModule) or register a custom ` +
         `driver via storageManager.extend("${driver}", creator).`,
-      options
+      options,
     );
-    this.name = 'StorageDriverError';
+    this.name = "StorageDriverError";
   }
 }

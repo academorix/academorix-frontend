@@ -6,11 +6,11 @@
  *   Re-resolves whenever the active scope changes.
  */
 
-import { useEffect, useState } from 'react';
-import { useInject } from '@stackra/container/react';
-import { SCOPE_SERVICE } from '@/core/constants';
-import type { ScopeService } from '@/core/services';
-import { useScope } from './use-scope.hook';
+import { useEffect, useState } from "react";
+import { useInject } from "@stackra/container/react";
+import { SCOPE_SERVICE } from "@/core/constants";
+import type { ScopeService } from "@/core/services";
+import { useScope } from "./use-scope.hook";
 
 /**
  * Resolve a cascading value for the active scope + consumer namespace.

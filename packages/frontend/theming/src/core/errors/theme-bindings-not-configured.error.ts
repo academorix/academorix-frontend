@@ -22,8 +22,8 @@ export class ThemeBindingsNotConfiguredError extends Error {
     super(
       `[Theming] "${method}" called but no platform adapter is configured. ` +
         `Import WebThemingModule.forRoot() (web) or NativeThemingModule.forRoot() (native) ` +
-        `in your root module to register the theme bindings.`
+        `in your root module to register the theme bindings.`,
     );
-    this.name = 'ThemeBindingsNotConfiguredError';
+    this.name = "ThemeBindingsNotConfiguredError";
   }
 }

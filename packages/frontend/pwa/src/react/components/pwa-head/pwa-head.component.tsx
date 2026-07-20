@@ -11,9 +11,9 @@
  *   render its output at build time via renderToStaticMarkup.
  */
 
-import type { ReactElement } from 'react';
+import type { ReactElement } from "react";
 
-import type { PwaHeadProps } from './pwa-head.interface';
+import type { PwaHeadProps } from "./pwa-head.interface";
 
 /**
  * PWA meta emitter.
@@ -37,11 +37,11 @@ import type { PwaHeadProps } from './pwa-head.interface';
  * ```
  */
 export function PwaHead({
-  manifestHref = '/manifest.webmanifest',
+  manifestHref = "/manifest.webmanifest",
   themeColor,
   appleIcons,
   appleStartupImages,
-  appleStatusBarStyle = 'default',
+  appleStatusBarStyle = "default",
   appleWebAppCapable = true,
   appleWebAppTitle,
 }: PwaHeadProps = {}): ReactElement {
@@ -55,8 +55,8 @@ export function PwaHead({
       {themeColor ? <meta name="theme-color" content={themeColor} /> : null}
       {/* Apple-specific meta tags — iOS reads them when the app is
           installed to the home screen. */}
-      <meta name="mobile-web-app-capable" content={appleWebAppCapable ? 'yes' : 'no'} />
-      <meta name="apple-mobile-web-app-capable" content={appleWebAppCapable ? 'yes' : 'no'} />
+      <meta name="mobile-web-app-capable" content={appleWebAppCapable ? "yes" : "no"} />
+      <meta name="apple-mobile-web-app-capable" content={appleWebAppCapable ? "yes" : "no"} />
       <meta name="apple-mobile-web-app-status-bar-style" content={appleStatusBarStyle} />
       {appleWebAppTitle ? (
         <meta name="apple-mobile-web-app-title" content={appleWebAppTitle} />

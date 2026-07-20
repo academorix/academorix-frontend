@@ -8,10 +8,10 @@
  *      set of keys, no duplicates, no drops.
  */
 
-import { describe, it } from 'vitest';
+import { describe, it } from "vitest";
 
-import { ContextRegistry } from '@/core/registries/context.registry';
-import { forAll, type IPrng } from './property-test.helper';
+import { ContextRegistry } from "@/core/registries/context.registry";
+import { forAll, type IPrng } from "./property-test.helper";
 
 /** Generate an ops program that registers N random frames. */
 function genFrames(r: IPrng): Array<{ key: string; priority: number }> {
@@ -23,8 +23,8 @@ function genFrames(r: IPrng): Array<{ key: string; priority: number }> {
   return frames;
 }
 
-describe('Property 6: focus-stack ordering (Req 11.2, 11.3)', () => {
-  it('orderedStack is sorted by (priority desc, seq desc) AND a permutation of inputs', () => {
+describe("Property 6: focus-stack ordering (Req 11.2, 11.3)", () => {
+  it("orderedStack is sorted by (priority desc, seq desc) AND a permutation of inputs", () => {
     forAll(
       (r) => genFrames(r),
       (frames) => {
@@ -50,7 +50,7 @@ describe('Property 6: focus-stack ordering (Req 11.2, 11.3)', () => {
         }
         return true;
       },
-      { runs: 250 }
+      { runs: 250 },
     );
   });
 });

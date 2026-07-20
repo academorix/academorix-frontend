@@ -12,19 +12,19 @@
 // ════════════════════════════════════════════════════════════════════════════════
 // Context
 // ════════════════════════════════════════════════════════════════════════════════
-export { SettingsContext, type ISettingsContextValue } from './contexts/settings';
+export { SettingsContext, type ISettingsContextValue } from "./contexts/settings";
 
 // ════════════════════════════════════════════════════════════════════════════════
 // Provider
 // ════════════════════════════════════════════════════════════════════════════════
-export { SettingsProvider, type ISettingsProviderProps } from './providers/settings-provider';
+export { SettingsProvider, type ISettingsProviderProps } from "./providers/settings-provider";
 
 // ════════════════════════════════════════════════════════════════════════════════
 // Cross-platform hooks (source lives in `core/hooks`)
 // ════════════════════════════════════════════════════════════════════════════════
-export { useSettings, type IUseSettingsResult } from '@/core/hooks/use-settings';
-export { useSettingValue, type IUseSettingValueResult } from '@/core/hooks/use-setting-value';
-export { useSettingsSchema } from '@/core/hooks/use-settings-schema';
+export { useSettings, type IUseSettingsResult } from "@/core/hooks/use-settings";
+export { useSettingValue, type IUseSettingValueResult } from "@/core/hooks/use-setting-value";
+export { useSettingsSchema } from "@/core/hooks/use-settings-schema";
 
 // ════════════════════════════════════════════════════════════════════════════════
 // React-only hooks
@@ -33,10 +33,10 @@ export {
   useUpdateSettings,
   type IUseUpdateSettingsResult,
   type UpdateSettingsMutate,
-} from './hooks';
+} from "./hooks";
 
 // ════════════════════════════════════════════════════════════════════════════════
 // Components
 // ════════════════════════════════════════════════════════════════════════════════
-export { SettingField, type ISettingFieldProps } from './components/setting-field';
-export { SettingsForm, type ISettingsFormProps } from './components/settings-form';
+export { SettingField, type ISettingFieldProps } from "./components/setting-field";
+export { SettingsForm, type ISettingsFormProps } from "./components/settings-form";

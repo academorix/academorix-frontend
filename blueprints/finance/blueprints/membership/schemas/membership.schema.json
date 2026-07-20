@@ -15,9 +15,7 @@
     "incrementing": false,
     "model": "Academorix\\Finance\\Membership\\Models\\Membership",
     "interface": "Academorix\\Finance\\Membership\\Contracts\\Data\\MembershipInterface",
-    "implements": [
-      "Academorix\\Finance\\Membership\\Contracts\\Data\\MembershipInterface"
-    ],
+    "implements": ["Academorix\\Finance\\Membership\\Contracts\\Data\\MembershipInterface"],
     "traits": [
       "HasFactory",
       "HasPrefixedUlid",
@@ -51,9 +49,7 @@
       "lifetime_value_cents": "integer",
       "metadata": "array"
     },
-    "observers": [
-      "MembershipObserver"
-    ],
+    "observers": ["MembershipObserver"],
     "appends": [
       "is_currently_active",
       "requires_renewal_soon",

@@ -8,4 +8,4 @@
  *   there directly.
  */
 
-export type { ExportFormat } from './export-format.type';
+export type { ExportFormat } from "./export-format.type";

@@ -100,10 +100,13 @@ export function useDraggable(options: UseDraggableOptions = {}): UseDraggableRes
   // local. Fire-and-forget with a fail-soft catch.
   useEffect(() => {
     if (!storageKey || !storage) return;
-    void storage.instance(STORAGE_INSTANCE).set(storageKey, position).catch(() => {
-      // fail-soft — storage may be full or unavailable. In-memory
-      // state is authoritative; the user just loses persistence.
-    });
+    void storage
+      .instance(STORAGE_INSTANCE)
+      .set(storageKey, position)
+      .catch(() => {
+        // fail-soft — storage may be full or unavailable. In-memory
+        // state is authoritative; the user just loses persistence.
+      });
   }, [storage, storageKey, position]);
 
   const handlePointerDown = useCallback(

@@ -4,13 +4,13 @@
  * @category Hooks
  */
 
-import { useState, useEffect, useCallback, useRef } from 'react';
-import { useInject } from '@stackra/container/react';
+import { useState, useEffect, useCallback, useRef } from "react";
+import { useInject } from "@stackra/container/react";
 
-import type { CursorPosition } from '@/interfaces/cursor-position.interface';
-import type { RoomMember } from '@/interfaces/room-member.interface';
-import { RoomManager } from '@/services/room-manager.service';
-import { COLLABORATION_EVENTS } from '@stackra/contracts';
+import type { CursorPosition } from "@/interfaces/cursor-position.interface";
+import type { RoomMember } from "@/interfaces/room-member.interface";
+import { RoomManager } from "@/services/room-manager.service";
+import { COLLABORATION_EVENTS } from "@stackra/contracts";
 
 /** Return type for the useCursors hook. */
 interface UseCursorsReturn {
@@ -79,7 +79,7 @@ export function useCursors(roomId: string): UseCursorsReturn {
           });
           return next;
         });
-      }
+      },
     );
 
     const unsubRemove = transport.onBroadcast(
@@ -92,7 +92,7 @@ export function useCursors(roomId: string): UseCursorsReturn {
           next.delete(userId);
           return next;
         });
-      }
+      },
     );
 
     const unsubLeave = transport.onMemberLeave(roomId, (member: RoomMember) => {
@@ -121,7 +121,7 @@ export function useCursors(roomId: string): UseCursorsReturn {
 
       roomManager.getTransport().broadcast(roomId, COLLABORATION_EVENTS.CURSOR_MOVE, position);
     },
-    [roomId, roomManager]
+    [roomId, roomManager],
   );
 
   return { cursors, updateCursor };

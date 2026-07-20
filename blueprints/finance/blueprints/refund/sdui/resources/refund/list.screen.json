@@ -24,9 +24,7 @@
       "unwrap": "data"
     }
   ],
-  "broadcasts": [
-    { "channel": "tenant.{tenantId}.refunds", "onEvent": ["*"], "action": "refresh" }
-  ],
+  "broadcasts": [{ "channel": "tenant.{tenantId}.refunds", "onEvent": ["*"], "action": "refresh" }],
   "nodes": [
     {
       "id": "root",
@@ -40,8 +38,21 @@
             {
               "kind": "View",
               "children": [
-                { "kind": "Text", "props": { "as": "h1", "className": "text-2xl font-semibold", "children": "Refunds" } },
-                { "kind": "Text", "props": { "className": "text-sm text-muted", "children": "Payment reversals for customer requests, cancelled memberships, and admin corrections." } }
+                {
+                  "kind": "Text",
+                  "props": {
+                    "as": "h1",
+                    "className": "text-2xl font-semibold",
+                    "children": "Refunds"
+                  }
+                },
+                {
+                  "kind": "Text",
+                  "props": {
+                    "className": "text-sm text-muted",
+                    "children": "Payment reversals for customer requests, cancelled memberships, and admin corrections."
+                  }
+                }
               ]
             },
             {
@@ -50,8 +61,14 @@
               "children": [
                 {
                   "kind": "Button",
-                  "props": { "variant": "outline", "leadingIcon": "queue-list", "children": "Pending approvals" },
-                  "actions": { "onPress": { "kind": "navigate", "to": "/tenant/refunds/pending-approvals" } },
+                  "props": {
+                    "variant": "outline",
+                    "leadingIcon": "queue-list",
+                    "children": "Pending approvals"
+                  },
+                  "actions": {
+                    "onPress": { "kind": "navigate", "to": "/tenant/refunds/pending-approvals" }
+                  },
                   "bindings": {
                     "badge": { "$ref": "pending_approvals_count.count" },
                     "hidden": { "$expr": "!hasPermission('refunds.approve')" }
@@ -59,7 +76,11 @@
                 },
                 {
                   "kind": "Button",
-                  "props": { "variant": "primary", "leadingIcon": "plus", "children": "New refund" },
+                  "props": {
+                    "variant": "primary",
+                    "leadingIcon": "plus",
+                    "children": "New refund"
+                  },
                   "actions": { "onPress": { "kind": "navigate", "to": "/tenant/refunds/new" } },
                   "requiresPermission": "refunds.create"
                 }
@@ -109,7 +130,11 @@
                 { "id": "accounting_correction", "label": "Accounting correction" }
               ],
               "actions": {
-                "onSelectionChange": { "kind": "filter.set", "field": "reason", "valueExpr": "$selectedKey" }
+                "onSelectionChange": {
+                  "kind": "filter.set",
+                  "field": "reason",
+                  "valueExpr": "$selectedKey"
+                }
               }
             },
             {
@@ -121,7 +146,11 @@
                 { "id": "prorated", "label": "Prorated" }
               ],
               "actions": {
-                "onSelectionChange": { "kind": "filter.set", "field": "refund_type", "valueExpr": "$selectedKey" }
+                "onSelectionChange": {
+                  "kind": "filter.set",
+                  "field": "refund_type",
+                  "valueExpr": "$selectedKey"
+                }
               }
             },
             {
@@ -136,7 +165,11 @@
                 { "id": "custom_webhook", "label": "Custom" }
               ],
               "actions": {
-                "onSelectionChange": { "kind": "filter.set", "field": "provider", "valueExpr": "$selectedKey" }
+                "onSelectionChange": {
+                  "kind": "filter.set",
+                  "field": "provider",
+                  "valueExpr": "$selectedKey"
+                }
               }
             }
           ]
@@ -152,9 +185,21 @@
             "kind": "View",
             "props": { "className": "col-span-full text-center py-12" },
             "children": [
-              { "kind": "Icon", "props": { "name": "arrow-uturn-left", "className": "size-12 mx-auto text-muted" } },
-              { "kind": "Text", "props": { "className": "mt-4 text-lg font-medium", "children": "No refunds yet" } },
-              { "kind": "Text", "props": { "className": "text-sm text-muted", "children": "Refunds appear here once customers request them or you initiate one." } }
+              {
+                "kind": "Icon",
+                "props": { "name": "arrow-uturn-left", "className": "size-12 mx-auto text-muted" }
+              },
+              {
+                "kind": "Text",
+                "props": { "className": "mt-4 text-lg font-medium", "children": "No refunds yet" }
+              },
+              {
+                "kind": "Text",
+                "props": {
+                  "className": "text-sm text-muted",
+                  "children": "Refunds appear here once customers request them or you initiate one."
+                }
+              }
             ]
           },
           "itemRenderer": {

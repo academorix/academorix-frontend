@@ -206,7 +206,7 @@ describe("MakeModuleCommand", () => {
   });
 
   it("derives PascalCase class names via `Str.studly`", async () => {
-    const cases: Array<[string, string]> = [
+    const cases: [string, string][] = [
       ["notifications", "NotificationsModule"],
       ["user-profile", "UserProfileModule"],
       ["multi-word-thing", "MultiWordThingModule"],

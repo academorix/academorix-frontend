@@ -11,17 +11,17 @@
  *     providers can be added per feature module.
  */
 
-import { Module, type DynamicModule } from '@stackra/container';
-import type { IAsyncModuleOptions } from '@stackra/contracts';
-import { ANALYTICS_CONFIG, ANALYTICS_MANAGER } from '@stackra/contracts';
-import type { IAnalyticsManager, IAnalyticsProvider, Type } from '@stackra/contracts';
+import { Module, type DynamicModule } from "@stackra/container";
+import type { IAsyncModuleOptions } from "@stackra/contracts";
+import { ANALYTICS_CONFIG, ANALYTICS_MANAGER } from "@stackra/contracts";
+import type { IAnalyticsManager, IAnalyticsProvider, Type } from "@stackra/contracts";
 
-import type { IAnalyticsModuleOptions } from './interfaces';
-import { createSeedLoader, seedLoaderToken } from '@stackra/support';
+import type { IAnalyticsModuleOptions } from "./interfaces";
+import { createSeedLoader, seedLoaderToken } from "@stackra/support";
 
-import { mergeConfig } from './utils/merge-config.util';
-import { AnalyticsManager } from './services/analytics-manager.service';
-import { AnalyticsProviderLoader } from './services/analytics-provider-loader.service';
+import { mergeConfig } from "./utils/merge-config.util";
+import { AnalyticsManager } from "./services/analytics-manager.service";
+import { AnalyticsProviderLoader } from "./services/analytics-provider-loader.service";
 
 /**
  * Analytics DI module.
@@ -68,7 +68,7 @@ export class AnalyticsModule {
    * @returns Dynamic module definition.
    */
   public static forRootAsync(
-    options: IAsyncModuleOptions<Partial<IAnalyticsModuleOptions>>
+    options: IAsyncModuleOptions<Partial<IAnalyticsModuleOptions>>,
   ): DynamicModule {
     return {
       module: AnalyticsModule,
@@ -100,7 +100,7 @@ export class AnalyticsModule {
    * @returns Dynamic module definition.
    */
   public static forFeature(
-    provider: Type<IAnalyticsProvider> | Type<IAnalyticsProvider>[]
+    provider: Type<IAnalyticsProvider> | Type<IAnalyticsProvider>[],
   ): DynamicModule {
     const classes = Array.isArray(provider) ? provider : [provider];
     return {

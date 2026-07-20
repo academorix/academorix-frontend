@@ -4,7 +4,7 @@
  * @description Subscribe to `document.visibilityState`.
  */
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState } from "react";
 
 /**
  * Read the current page visibility state.
@@ -27,15 +27,15 @@ import { useEffect, useState } from 'react';
  */
 export function useVisibilityState(): DocumentVisibilityState {
   const [state, setState] = useState<DocumentVisibilityState>(() =>
-    typeof document !== 'undefined' ? document.visibilityState : 'visible'
+    typeof document !== "undefined" ? document.visibilityState : "visible",
   );
 
   useEffect(() => {
     // SSR guard — no document, no listener.
-    if (typeof document === 'undefined') return;
+    if (typeof document === "undefined") return;
     const onChange = (): void => setState(document.visibilityState);
-    document.addEventListener('visibilitychange', onChange);
-    return () => document.removeEventListener('visibilitychange', onChange);
+    document.addEventListener("visibilitychange", onChange);
+    return () => document.removeEventListener("visibilitychange", onChange);
   }, []);
 
   return state;

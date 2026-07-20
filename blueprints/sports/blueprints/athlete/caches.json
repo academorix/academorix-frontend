@@ -3,14 +3,24 @@
   "$version": 1,
   "title": "athlete — cache keys + tags",
   "driver": "redis",
-  "ownedTags": ["athlete", "athlete.medical", "athlete.age_group", "athlete.consent", "athlete.by_user"],
+  "ownedTags": [
+    "athlete",
+    "athlete.medical",
+    "athlete.age_group",
+    "athlete.consent",
+    "athlete.by_user"
+  ],
   "keys": [
     {
       "pattern": "ath:roster:{tenant_id}:{branch_id}",
       "description": "Per-branch active athlete roster. Read by SDUI list screens + the branch manager's dashboard.",
       "ttlSeconds": 300,
       "tags": ["athlete", "tenant"],
-      "invalidatedBy": ["AthleteObserver.created", "AthleteObserver.updated (status changes)", "AthleteObserver.deleted"]
+      "invalidatedBy": [
+        "AthleteObserver.created",
+        "AthleteObserver.updated (status changes)",
+        "AthleteObserver.deleted"
+      ]
     },
     {
       "pattern": "ath:roster:{tenant_id}",
@@ -31,14 +41,24 @@
       "description": "The Athletes for a User across every tenant. Used by the `/me/athletes` endpoint to render the caller's 'my kids' + self-view surface. Feeds guardian dashboards.",
       "ttlSeconds": 300,
       "tags": ["athlete", "athlete.by_user"],
-      "invalidatedBy": ["AthleteObserver.created", "AthleteLinkedToUser", "AthleteObserver.deleted", "athlete-guardian::GuardianAdded (Wave 3a sibling)", "athlete-guardian::GuardianRemoved"]
+      "invalidatedBy": [
+        "AthleteObserver.created",
+        "AthleteLinkedToUser",
+        "AthleteObserver.deleted",
+        "athlete-guardian::GuardianAdded (Wave 3a sibling)",
+        "athlete-guardian::GuardianRemoved"
+      ]
     },
     {
       "pattern": "ath:consent_expiring:{tenant_id}",
       "description": "Athletes whose consent_recorded_at is within 30 days of expiry (only when athlete_consent_workflow entitlement on). Feeds the tenant admin's compliance dashboard.",
       "ttlSeconds": 3600,
       "tags": ["athlete", "athlete.consent"],
-      "invalidatedBy": ["AthleteConsentRecorded", "AthleteConsentRevoked", "ReconcileAthleteConsentsJob"]
+      "invalidatedBy": [
+        "AthleteConsentRecorded",
+        "AthleteConsentRevoked",
+        "ReconcileAthleteConsentsJob"
+      ]
     },
     {
       "pattern": "ath:paused:{tenant_id}",

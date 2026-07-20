@@ -28,7 +28,10 @@
         {
           "kind": "Breadcrumb",
           "children": [
-            { "kind": "BreadcrumbItem", "props": { "to": "/platform/service-accounts", "children": "Service accounts" } },
+            {
+              "kind": "BreadcrumbItem",
+              "props": { "to": "/platform/service-accounts", "children": "Service accounts" }
+            },
             {
               "kind": "BreadcrumbItem",
               "propsExpr": "{ to: '/platform/service-accounts/' + serviceAccount.id, children: serviceAccount.name }"
@@ -60,13 +63,35 @@
               "kind": "CardContent",
               "props": { "className": "grid grid-cols-2 gap-3 text-sm" },
               "children": [
-                { "kind": "Text", "props": { "className": "text-xs text-muted", "children": "Name" } },
+                {
+                  "kind": "Text",
+                  "props": { "className": "text-xs text-muted", "children": "Name" }
+                },
                 { "kind": "Text", "bindings": { "children": { "$ref": "serviceAccount.name" } } },
-                { "kind": "Text", "props": { "className": "text-xs text-muted", "children": "Kid" } },
-                { "kind": "Text", "props": { "className": "font-mono text-xs" }, "bindings": { "children": { "$ref": "serviceAccount.signer_kid" } } },
-                { "kind": "Text", "props": { "className": "text-xs text-muted", "children": "Current expiry" } },
-                { "kind": "Text", "bindings": { "children": { "$ref": "serviceAccount.expires_at" } } },
-                { "kind": "Text", "props": { "className": "text-xs text-muted", "children": "Days since last rotation" } },
+                {
+                  "kind": "Text",
+                  "props": { "className": "text-xs text-muted", "children": "Kid" }
+                },
+                {
+                  "kind": "Text",
+                  "props": { "className": "font-mono text-xs" },
+                  "bindings": { "children": { "$ref": "serviceAccount.signer_kid" } }
+                },
+                {
+                  "kind": "Text",
+                  "props": { "className": "text-xs text-muted", "children": "Current expiry" }
+                },
+                {
+                  "kind": "Text",
+                  "bindings": { "children": { "$ref": "serviceAccount.expires_at" } }
+                },
+                {
+                  "kind": "Text",
+                  "props": {
+                    "className": "text-xs text-muted",
+                    "children": "Days since last rotation"
+                  }
+                },
                 {
                   "kind": "Text",
                   "bindings": {
@@ -122,7 +147,12 @@
                 {
                   "kind": "Button",
                   "props": { "variant": "ghost", "children": "Cancel" },
-                  "actions": { "onPress": { "kind": "navigate", "toExpr": "'/platform/service-accounts/' + serviceAccount.id" } }
+                  "actions": {
+                    "onPress": {
+                      "kind": "navigate",
+                      "toExpr": "'/platform/service-accounts/' + serviceAccount.id"
+                    }
+                  }
                 },
                 {
                   "kind": "Button",

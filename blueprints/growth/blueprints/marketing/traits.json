@@ -45,16 +45,28 @@
       { "trait": "Academorix\\Foundation\\Concerns\\HasUserstamps" },
       { "trait": "Academorix\\Foundation\\Concerns\\HasMetadata" },
       { "trait": "Academorix\\Foundation\\Concerns\\Filterable" },
-      { "trait": "Academorix\\Foundation\\Concerns\\Searchable", "reason": "MarketingEvent (searchable by deduplication_key, subject_id, utm_campaign). NOT the other three (they're accessed via relations from MarketingEvent)." }
+      {
+        "trait": "Academorix\\Foundation\\Concerns\\Searchable",
+        "reason": "MarketingEvent (searchable by deduplication_key, subject_id, utm_campaign). NOT the other three (they're accessed via relations from MarketingEvent)."
+      }
     ],
     "tenants": [
-      { "trait": "Academorix\\Tenancy\\Concerns\\BelongsToTenant", "reason": "Every owned row carries tenant_id per tenancy-columns.md §3." }
+      {
+        "trait": "Academorix\\Tenancy\\Concerns\\BelongsToTenant",
+        "reason": "Every owned row carries tenant_id per tenancy-columns.md §3."
+      }
     ],
     "audit": [
-      { "trait": "Academorix\\Audit\\Concerns\\Auditable", "reason": "Every write to marketing_events / marketing_deliveries / marketing_provider_configs / marketing_dead_letters is compliance-relevant (financial retention 7 years)." }
+      {
+        "trait": "Academorix\\Audit\\Concerns\\Auditable",
+        "reason": "Every write to marketing_events / marketing_deliveries / marketing_provider_configs / marketing_dead_letters is compliance-relevant (financial retention 7 years)."
+      }
     ],
     "activity": [
-      { "trait": "Academorix\\Activity\\Concerns\\HasActivityLog", "reason": "MarketingProviderConfig + MarketingDeadLetter — admin actions feed the staff-visible activity feed. NOT MarketingEvent + MarketingDelivery — high-volume; already covered by the audit trail." }
+      {
+        "trait": "Academorix\\Activity\\Concerns\\HasActivityLog",
+        "reason": "MarketingProviderConfig + MarketingDeadLetter — admin actions feed the staff-visible activity feed. NOT MarketingEvent + MarketingDelivery — high-volume; already covered by the audit trail."
+      }
     ]
   },
   "composition": {

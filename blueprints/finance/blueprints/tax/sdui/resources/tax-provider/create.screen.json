@@ -26,7 +26,10 @@
       "children": [
         {
           "kind": "Step",
-          "props": { "title": "Choose provider", "description": "Pick the tax computation provider." },
+          "props": {
+            "title": "Choose provider",
+            "description": "Pick the tax computation provider."
+          },
           "children": [
             {
               "kind": "RadioGroup",
@@ -37,14 +40,21 @@
                 }
               },
               "actions": {
-                "onSelectionChange": { "kind": "form.set", "field": "provider", "valueExpr": "$selectedKey" }
+                "onSelectionChange": {
+                  "kind": "form.set",
+                  "field": "provider",
+                  "valueExpr": "$selectedKey"
+                }
               }
             }
           ]
         },
         {
           "kind": "Step",
-          "props": { "title": "Credentials", "description": "Enter your provider credentials. Encrypted at rest." },
+          "props": {
+            "title": "Credentials",
+            "description": "Enter your provider credentials. Encrypted at rest."
+          },
           "children": [
             {
               "kind": "DynamicForm",
@@ -56,7 +66,10 @@
         },
         {
           "kind": "Step",
-          "props": { "title": "Jurisdictions", "description": "Which jurisdictions should this provider handle?" },
+          "props": {
+            "title": "Jurisdictions",
+            "description": "Which jurisdictions should this provider handle?"
+          },
           "children": [
             {
               "kind": "Widget",

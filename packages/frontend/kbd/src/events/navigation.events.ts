@@ -42,5 +42,4 @@ export const NavigationCommands = {
 } as const;
 
 /** Union of every navigation command name owned by kbd. */
-export type NavigationCommandName =
-  (typeof NavigationCommands)[keyof typeof NavigationCommands];
+export type NavigationCommandName = (typeof NavigationCommands)[keyof typeof NavigationCommands];

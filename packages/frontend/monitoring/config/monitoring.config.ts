@@ -5,7 +5,7 @@
  *   Consumed by `MonitoringModule.forRoot()` at bootstrap.
  */
 
-import { defineConfig } from '@stackra/monitoring';
+import { defineConfig } from "@stackra/monitoring";
 
 export const monitoringConfig = defineConfig({
   /*
@@ -17,7 +17,7 @@ export const monitoringConfig = defineConfig({
   | no argument. Must be a key of `providers` below.
   |
   */
-  default: 'console',
+  default: "console",
 
   /*
   |--------------------------------------------------------------------------
@@ -29,7 +29,7 @@ export const monitoringConfig = defineConfig({
   | the deployment environment.
   |
   */
-  environment: 'development',
+  environment: "development",
 
   /*
   |--------------------------------------------------------------------------
@@ -44,7 +44,7 @@ export const monitoringConfig = defineConfig({
   |
   */
   providers: {
-    console: { driver: 'console' },
+    console: { driver: "console" },
     // sentry: {
     //   driver: 'sentry',
     //   dsn: import.meta.env.VITE_SENTRY_DSN,
@@ -62,5 +62,5 @@ export const monitoringConfig = defineConfig({
   | send prod-only signal to specific destinations.
   |
   */
-  stack: ['console'],
+  stack: ["console"],
 });

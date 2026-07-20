@@ -8,7 +8,7 @@
  *   to `'normal'`.
  */
 
-import type { INotificationPayload, NotificationPriority } from '../interfaces';
+import type { INotificationPayload, NotificationPriority } from "../interfaces";
 
 /**
  * Derive a {@link NotificationPriority} from a payload.
@@ -29,16 +29,16 @@ import type { INotificationPayload, NotificationPriority } from '../interfaces';
 export function deriveNotificationPriority(payload: INotificationPayload): NotificationPriority {
   if (payload.priority) return payload.priority;
   switch (payload.category) {
-    case 'safety':
-      return 'urgent';
-    case 'system':
-      return 'high';
-    case 'operational':
-    case 'billing':
-      return 'normal';
-    case 'marketing':
-      return 'low';
+    case "safety":
+      return "urgent";
+    case "system":
+      return "high";
+    case "operational":
+    case "billing":
+      return "normal";
+    case "marketing":
+      return "low";
     default:
-      return 'normal';
+      return "normal";
   }
 }

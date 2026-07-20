@@ -7,7 +7,7 @@
  *   for a video call UI, a recipe screen, or a fitness timer.
  */
 
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 /**
  * Value returned by {@link useWakeLock}.
@@ -50,11 +50,11 @@ export interface IUseWakeLockResult {
 export function useWakeLock(): IUseWakeLockResult {
   const isSupported = useMemo(
     () =>
-      typeof navigator !== 'undefined' &&
+      typeof navigator !== "undefined" &&
       // `wakeLock` isn't in the standard lib.dom types yet — check
       // via a structural cast.
-      typeof (navigator as unknown as { wakeLock?: unknown }).wakeLock === 'object',
-    []
+      typeof (navigator as unknown as { wakeLock?: unknown }).wakeLock === "object",
+    [],
   );
 
   const [isActive, setIsActive] = useState(false);
@@ -66,9 +66,9 @@ export function useWakeLock(): IUseWakeLockResult {
       // Cast to any-shaped wakeLock — the standard lib types lag.
       const sentinel = await (
         navigator as unknown as {
-          wakeLock: { request(type: 'screen'): Promise<{ release: () => Promise<void> }> };
+          wakeLock: { request(type: "screen"): Promise<{ release: () => Promise<void> }> };
         }
-      ).wakeLock.request('screen');
+      ).wakeLock.request("screen");
       sentinelRef.current = sentinel;
       setIsActive(true);
       return true;

@@ -111,13 +111,17 @@
                 {
                   "kind": "NumberField",
                   "props": { "label": "Min duration (min)" },
-                  "bindings": { "defaultValue": { "$ref": "facility.min_booking_duration_minutes" } },
+                  "bindings": {
+                    "defaultValue": { "$ref": "facility.min_booking_duration_minutes" }
+                  },
                   "form": { "field": "min_booking_duration_minutes" }
                 },
                 {
                   "kind": "NumberField",
                   "props": { "label": "Max duration (min)" },
-                  "bindings": { "defaultValue": { "$ref": "facility.max_booking_duration_minutes" } },
+                  "bindings": {
+                    "defaultValue": { "$ref": "facility.max_booking_duration_minutes" }
+                  },
                   "form": { "field": "max_booking_duration_minutes" }
                 },
                 {
@@ -129,13 +133,17 @@
                     { "id": 60, "label": "1 hour" },
                     { "id": 120, "label": "2 hours" }
                   ],
-                  "bindings": { "defaultSelectedKey": { "$ref": "facility.booking_slot_step_minutes" } },
+                  "bindings": {
+                    "defaultSelectedKey": { "$ref": "facility.booking_slot_step_minutes" }
+                  },
                   "form": { "field": "booking_slot_step_minutes" }
                 },
                 {
                   "kind": "NumberField",
                   "props": { "label": "Advance window (days)" },
-                  "bindings": { "defaultValue": { "$ref": "facility.advance_booking_window_days" } },
+                  "bindings": {
+                    "defaultValue": { "$ref": "facility.advance_booking_window_days" }
+                  },
                   "form": { "field": "advance_booking_window_days" }
                 },
                 {

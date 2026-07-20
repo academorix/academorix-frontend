@@ -8,18 +8,18 @@
  *   `manager.extend(name, creator)`.
  */
 
-import { Injectable, Inject } from '@stackra/container';
-import { MultipleInstanceManager } from '@stackra/support';
+import { Injectable, Inject } from "@stackra/container";
+import { MultipleInstanceManager } from "@stackra/support";
 import {
   STORAGE_CONFIG,
   type IStorage,
   type IStorageConfig,
   type IStorageManager,
-} from '@stackra/contracts';
+} from "@stackra/contracts";
 
-import { StorageDriverError } from '@/core/errors/storage-driver.error';
-import { MemoryStore } from '@/core/stores/memory.store';
-import { NullStore } from '@/core/stores/null.store';
+import { StorageDriverError } from "@/core/errors/storage-driver.error";
+import { MemoryStore } from "@/core/stores/memory.store";
+import { NullStore } from "@/core/stores/null.store";
 
 /**
  * Storage manager — resolves named `IStorage` instances lazily.
@@ -71,7 +71,7 @@ export class StorageManager extends MultipleInstanceManager<IStorage> implements
   /** @inheritdoc */
   public override setDefaultInstance(name: string): void {
     if (!(name in this.config.stores)) {
-      throw new StorageDriverError(name, '<unknown>');
+      throw new StorageDriverError(name, "<unknown>");
     }
     (this.config as { default: string }).default = name;
   }

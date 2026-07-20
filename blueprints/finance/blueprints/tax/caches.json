@@ -3,7 +3,14 @@
   "$version": 1,
   "title": "tax — cache keys + tags",
   "driver": "redis",
-  "ownedTags": ["tax", "tax.rates", "tax.jurisdictions", "tax.exemptions", "tax.providers", "tax.reports"],
+  "ownedTags": [
+    "tax",
+    "tax.rates",
+    "tax.jurisdictions",
+    "tax.exemptions",
+    "tax.providers",
+    "tax.reports"
+  ],
   "keys": [
     {
       "pattern": "tax:rate:{tenant_id}:{jurisdiction_id}:{rate_type}:{effective_date}",
@@ -35,9 +42,7 @@
       "description": "Tenant-scoped custom jurisdictions (Enterprise via `tax_jurisdiction_custom` entitlement). Merged with the platform reference set at resolution time.",
       "ttlSeconds": 3600,
       "tags": ["tax", "tax.jurisdictions", "tenant"],
-      "invalidatedBy": [
-        "TaxJurisdictionObserver.* (tenant_id IS NOT NULL only)"
-      ]
+      "invalidatedBy": ["TaxJurisdictionObserver.* (tenant_id IS NOT NULL only)"]
     },
     {
       "pattern": "tax:exemptions:{tenant_id}:{customer_type}:{customer_id}:{jurisdiction_id}",
@@ -70,9 +75,7 @@
       "description": "Per-year calculation count per tenant. Feeds the SDUI annual-report readiness indicator + entitlement consumption.",
       "ttlSeconds": 300,
       "tags": ["tax", "tax.reports", "tenant"],
-      "invalidatedBy": [
-        "TaxCalculationCompleted"
-      ]
+      "invalidatedBy": ["TaxCalculationCompleted"]
     },
     {
       "pattern": "tax:annual-report:{tenant_id}:{year}",

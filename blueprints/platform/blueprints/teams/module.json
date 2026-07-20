@@ -149,11 +149,7 @@
       "TrialDecisionNotification",
       "TeamCoachChangedNotification"
     ],
-    "broadcasts": [
-      "tenant.{tenantId}.teams",
-      "team.{teamId}.members",
-      "team.{teamId}.trials"
-    ],
+    "broadcasts": ["tenant.{tenantId}.teams", "team.{teamId}.members", "team.{teamId}.trials"],
     "observers": ["TeamObserver", "TeamMemberObserver", "TrialObserver", "EventTeamObserver"],
     "rules": [
       "valid_hex_color",

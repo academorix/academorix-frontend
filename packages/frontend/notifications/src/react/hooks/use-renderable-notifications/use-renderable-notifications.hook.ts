@@ -10,13 +10,13 @@
  *   works against a normalised shape.
  */
 
-import { useMemo } from 'react';
+import { useMemo } from "react";
 
-import type { IRenderableNotification } from '@/core/interfaces';
-import { deriveNotificationPriority } from '@/core/utils';
-import { useInAppNotifications } from '../use-in-app-notifications';
-import { useSnoozeStore } from '../use-snooze-store';
-import type { IUseRenderableNotificationsResult } from './use-renderable-notifications.interface';
+import type { IRenderableNotification } from "@/core/interfaces";
+import { deriveNotificationPriority } from "@/core/utils";
+import { useInAppNotifications } from "../use-in-app-notifications";
+import { useSnoozeStore } from "../use-snooze-store";
+import type { IUseRenderableNotificationsResult } from "./use-renderable-notifications.interface";
 
 /**
  * Renderable notifications projection.

@@ -10,8 +10,8 @@
  *   `SduiModule.forRoot({ client: myHttpBackedClient })`.
  */
 
-import { Injectable } from '@stackra/container';
-import type { ISduiClient, ISduiScreen } from '@stackra/contracts';
+import { Injectable } from "@stackra/container";
+import type { ISduiClient, ISduiScreen } from "@stackra/contracts";
 
 /**
  * A no-op SDUI client that fails loudly. Placeholder bound when the
@@ -21,13 +21,13 @@ import type { ISduiClient, ISduiScreen } from '@stackra/contracts';
 export class NullSduiClient implements ISduiClient {
   public async loadScreen(_path: string): Promise<ISduiScreen> {
     throw new Error(
-      '[sdui] No ISduiClient configured. Provide one via SduiModule.forRoot({ client: ... }).'
+      "[sdui] No ISduiClient configured. Provide one via SduiModule.forRoot({ client: ... }).",
     );
   }
 
   public async resolveScreen(_input: { resource: string; view: string }): Promise<ISduiScreen> {
     throw new Error(
-      '[sdui] No ISduiClient configured. Provide one via SduiModule.forRoot({ client: ... }).'
+      "[sdui] No ISduiClient configured. Provide one via SduiModule.forRoot({ client: ... }).",
     );
   }
 
@@ -38,7 +38,7 @@ export class NullSduiClient implements ISduiClient {
     signal?: AbortSignal;
   }): Promise<T> {
     throw new Error(
-      '[sdui] No ISduiClient configured. Provide one via SduiModule.forRoot({ client: ... }).'
+      "[sdui] No ISduiClient configured. Provide one via SduiModule.forRoot({ client: ... }).",
     );
   }
 }

@@ -52,10 +52,7 @@
       "class": "Academorix\\Growth\\Referrals\\Events\\ReferralProgramPaused",
       "trigger": "ReferralProgram.status transitioned active -> paused. New claims refused; existing referrals in-flight complete.",
       "queue": "referrals",
-      "consumers": [
-        "audit::WriteToAuditLog",
-        "activity::WriteToActivityLog"
-      ],
+      "consumers": ["audit::WriteToAuditLog", "activity::WriteToActivityLog"],
       "payload": {
         "program_id": "ULID",
         "tenant_id": "ULID",
@@ -130,10 +127,7 @@
       "class": "Academorix\\Growth\\Referrals\\Events\\ReferralCodeExpired",
       "trigger": "ReferralCode.expires_at passed. Detected by claim-path (ReferralClaimer refuses expired code + fires this event) or by ExpireStaleReferralsJob scanning codes.",
       "queue": "referrals",
-      "consumers": [
-        "audit::WriteToAuditLog",
-        "activity::WriteToActivityLog"
-      ],
+      "consumers": ["audit::WriteToAuditLog", "activity::WriteToActivityLog"],
       "payload": {
         "code_id": "ULID",
         "tenant_id": "ULID",
@@ -230,10 +224,7 @@
       "class": "Academorix\\Growth\\Referrals\\Events\\ReferralEnteredVesting",
       "trigger": "Referral.status transitioned trigger_pending -> vesting. VestingScheduler computed vesting_completes_at based on program config. For immediate-vesting programs, this fires in the same transaction as ReferralVested.",
       "queue": "referrals",
-      "consumers": [
-        "audit::WriteToAuditLog",
-        "activity::WriteToActivityLog"
-      ],
+      "consumers": ["audit::WriteToAuditLog", "activity::WriteToActivityLog"],
       "payload": {
         "referral_id": "ULID",
         "tenant_id": "ULID",
@@ -327,10 +318,7 @@
       "class": "Academorix\\Growth\\Referrals\\Events\\ReferralExpired",
       "trigger": "ExpireStaleReferralsJob transitioned a claimed-but-not-signed-up referral past 30-day TTL to expired.",
       "queue": "referrals",
-      "consumers": [
-        "audit::WriteToAuditLog",
-        "activity::WriteToActivityLog"
-      ],
+      "consumers": ["audit::WriteToAuditLog", "activity::WriteToActivityLog"],
       "payload": {
         "referral_id": "ULID",
         "tenant_id": "ULID",
@@ -383,10 +371,7 @@
       "class": "Academorix\\Growth\\Referrals\\Events\\ReferralFraudDismissed",
       "trigger": "Admin reviewed a flag with disposition = false_positive. Fires alongside ReferralFraudFlagReviewed for consumer convenience (a listener may want only dismissals).",
       "queue": "referrals",
-      "consumers": [
-        "audit::WriteToAuditLog",
-        "activity::WriteToActivityLog"
-      ],
+      "consumers": ["audit::WriteToAuditLog", "activity::WriteToActivityLog"],
       "payload": {
         "flag_id": "ULID",
         "tenant_id": "ULID",

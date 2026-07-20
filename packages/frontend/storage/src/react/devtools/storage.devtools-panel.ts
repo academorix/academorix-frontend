@@ -15,9 +15,9 @@
  *   base module transitively covers every platform.
  */
 
-import { createElement, type ReactNode } from 'react';
-import { ArchiveBoxIcon } from '@stackra/ui/icons/heroicon/outline';
-import { Inject, Injectable, Optional } from '@stackra/container';
+import { createElement, type ReactNode } from "react";
+import { ArchiveBoxIcon } from "@stackra/ui/icons/heroicon/outline";
+import { Inject, Injectable, Optional } from "@stackra/container";
 import {
   STORAGE_CONFIG,
   STORAGE_MANAGER,
@@ -26,11 +26,11 @@ import {
   type IDevtoolsView,
   type IStorageConfig,
   type IStorageManager,
-} from '@stackra/contracts';
+} from "@stackra/contracts";
 
-import { DevtoolsPanel } from '@stackra/devtools';
+import { DevtoolsPanel } from "@stackra/devtools";
 
-import { StorageDevtoolsPanelView } from './storage-devtools-panel-view';
+import { StorageDevtoolsPanelView } from "./storage-devtools-panel-view";
 
 /**
  * The devtools storage panel.
@@ -51,23 +51,23 @@ import { StorageDevtoolsPanelView } from './storage-devtools-panel-view';
  */
 @Injectable()
 @DevtoolsPanel({
-  id: 'storage',
-  title: 'Storage',
-  category: 'data',
+  id: "storage",
+  title: "Storage",
+  category: "data",
   order: 30,
 })
 export class StorageDevtoolsPanel implements IDevtoolsPanel {
   /** @inheritdoc */
-  public readonly id = 'storage';
+  public readonly id = "storage";
   /** @inheritdoc */
-  public readonly title = 'Storage';
+  public readonly title = "Storage";
   /** @inheritdoc */
-  public readonly category: DevtoolsCategory = 'data';
+  public readonly category: DevtoolsCategory = "data";
   /** @inheritdoc */
   public readonly order = 30;
   /** @inheritdoc */
   public readonly icon: ReactNode = createElement(ArchiveBoxIcon, {
-    className: 'size-4',
+    className: "size-4",
   });
   /** @inheritdoc */
   public readonly view: IDevtoolsView;
@@ -83,10 +83,10 @@ export class StorageDevtoolsPanel implements IDevtoolsPanel {
    */
   public constructor(
     @Optional() @Inject(STORAGE_CONFIG) private readonly config?: IStorageConfig,
-    @Optional() @Inject(STORAGE_MANAGER) private readonly manager?: IStorageManager
+    @Optional() @Inject(STORAGE_MANAGER) private readonly manager?: IStorageManager,
   ) {
     this.view = {
-      type: 'component',
+      type: "component",
       // The view reads a snapshot of the config directly for the
       // static shape (per-instance name + driver), then reads
       // per-instance `keys()` lazily via the manager.

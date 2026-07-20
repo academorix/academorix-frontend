@@ -38,7 +38,12 @@
           "kind": "Alert",
           "props": { "variant": "warning", "className": "text-sm" },
           "children": [
-            { "kind": "Text", "props": { "children": "Result values are competitively sensitive — never shared cross-tenant. Pick the shape that fits your sport: score for match sports, position for ranked events, points for league standings." } }
+            {
+              "kind": "Text",
+              "props": {
+                "children": "Result values are competitively sensitive — never shared cross-tenant. Pick the shape that fits your sport: score for match sports, position for ranked events, points for league standings."
+              }
+            }
           ]
         },
         {
@@ -51,7 +56,10 @@
               "onSuccess": {
                 "kind": "toast.success",
                 "message": "Result recorded.",
-                "then": { "kind": "navigate", "toExpr": "'/tenant/teams/' + team.id + '/event-teams'" }
+                "then": {
+                  "kind": "navigate",
+                  "toExpr": "'/tenant/teams/' + team.id + '/event-teams'"
+                }
               },
               "onError": { "kind": "toast.error" }
             }
@@ -68,13 +76,23 @@
                       "kind": "View",
                       "props": { "className": "grid grid-cols-2 gap-3" },
                       "children": [
-                        { "kind": "NumberField", "props": { "name": "result.score.home", "label": "Home score", "min": 0 } },
-                        { "kind": "NumberField", "props": { "name": "result.score.away", "label": "Away score", "min": 0 } }
+                        {
+                          "kind": "NumberField",
+                          "props": { "name": "result.score.home", "label": "Home score", "min": 0 }
+                        },
+                        {
+                          "kind": "NumberField",
+                          "props": { "name": "result.score.away", "label": "Away score", "min": 0 }
+                        }
                       ]
                     },
                     {
                       "kind": "ComboBox",
-                      "props": { "name": "result.outcome", "label": "Outcome", "menuTrigger": "focus" },
+                      "props": {
+                        "name": "result.outcome",
+                        "label": "Outcome",
+                        "menuTrigger": "focus"
+                      },
                       "props_items": [
                         { "id": "win", "label": "Win" },
                         { "id": "loss", "label": "Loss" },
@@ -87,8 +105,19 @@
                   "kind": "Tabs.Tab",
                   "props": { "id": "position", "title": "Position (ranked)" },
                   "children": [
-                    { "kind": "NumberField", "props": { "name": "result.position", "label": "Final position", "min": 1, "helpText": "1 = first place." } },
-                    { "kind": "NumberField", "props": { "name": "result.points", "label": "Points scored", "min": 0 } }
+                    {
+                      "kind": "NumberField",
+                      "props": {
+                        "name": "result.position",
+                        "label": "Final position",
+                        "min": 1,
+                        "helpText": "1 = first place."
+                      }
+                    },
+                    {
+                      "kind": "NumberField",
+                      "props": { "name": "result.points", "label": "Points scored", "min": 0 }
+                    }
                   ]
                 },
                 {
@@ -97,7 +126,12 @@
                   "children": [
                     {
                       "kind": "ComboBox",
-                      "props": { "name": "result.outcome", "label": "Outcome", "menuTrigger": "focus", "required": true },
+                      "props": {
+                        "name": "result.outcome",
+                        "label": "Outcome",
+                        "menuTrigger": "focus",
+                        "required": true
+                      },
                       "props_items": [
                         { "id": "win", "label": "Win" },
                         { "id": "loss", "label": "Loss" },
@@ -110,13 +144,33 @@
                 }
               ]
             },
-            { "kind": "TextArea", "props": { "name": "result.notes", "label": "Notes (optional)", "rows": 3, "maxLength": 500 } },
+            {
+              "kind": "TextArea",
+              "props": {
+                "name": "result.notes",
+                "label": "Notes (optional)",
+                "rows": 3,
+                "maxLength": 500
+              }
+            },
             {
               "kind": "View",
               "props": { "className": "flex justify-end gap-2 pt-2" },
               "children": [
-                { "kind": "Button", "props": { "variant": "ghost", "children": "Cancel" }, "actions": { "onPress": { "kind": "navigate", "toExpr": "'/tenant/teams/' + team.id + '/event-teams'" } } },
-                { "kind": "Button", "props": { "type": "submit", "variant": "primary", "children": "Record result" } }
+                {
+                  "kind": "Button",
+                  "props": { "variant": "ghost", "children": "Cancel" },
+                  "actions": {
+                    "onPress": {
+                      "kind": "navigate",
+                      "toExpr": "'/tenant/teams/' + team.id + '/event-teams'"
+                    }
+                  }
+                },
+                {
+                  "kind": "Button",
+                  "props": { "type": "submit", "variant": "primary", "children": "Record result" }
+                }
               ]
             }
           ]

@@ -13,11 +13,11 @@
  *   and registers every discovered instance on the panels registry.
  */
 
-import { defineMetadata } from '@vivtel/metadata';
-import { Injectable } from '@stackra/container';
-import { DEVTOOLS_PANEL_METADATA_KEY } from '@stackra/contracts';
+import { defineMetadata } from "@vivtel/metadata";
+import { Injectable } from "@stackra/container";
+import { DEVTOOLS_PANEL_METADATA_KEY } from "@stackra/contracts";
 
-import type { IDevtoolsPanelOptions } from '../interfaces/devtools-panel-options.interface';
+import type { IDevtoolsPanelOptions } from "../interfaces/devtools-panel-options.interface";
 
 /**
  * Mark a class as a discoverable devtools panel contribution.

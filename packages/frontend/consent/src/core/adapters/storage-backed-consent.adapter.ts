@@ -12,17 +12,17 @@
  *   platform-agnostic.
  */
 
-import { Inject, Injectable, Optional } from '@stackra/container';
+import { Inject, Injectable, Optional } from "@stackra/container";
 import {
   CONSENT_CONFIG,
   STORAGE_MANAGER,
   type IConsentStorageAdapter,
   type IStorage,
   type IStorageManager,
-} from '@stackra/contracts';
+} from "@stackra/contracts";
 
-import { DEFAULT_COOKIE_NAME } from '@/core/constants';
-import type { IConsentModuleOptions } from '@/core/types';
+import { DEFAULT_COOKIE_NAME } from "@/core/constants";
+import type { IConsentModuleOptions } from "@/core/types";
 
 /**
  * Storage-backed consent persistence adapter.
@@ -74,13 +74,13 @@ export class StorageBackedConsentAdapter implements IConsentStorageAdapter {
    */
   public constructor(
     @Inject(STORAGE_MANAGER) private readonly manager: IStorageManager,
-    @Optional() @Inject(CONSENT_CONFIG) options?: IConsentModuleOptions
+    @Optional() @Inject(CONSENT_CONFIG) options?: IConsentModuleOptions,
   ) {
     this.key = options?.cookieName ?? DEFAULT_COOKIE_NAME;
     // The `storage` field IS the instance name. When omitted, the
     // manager's default instance is used (via manager.instance() with
     // no argument).
-    this.instanceName = options?.storage ?? '';
+    this.instanceName = options?.storage ?? "";
   }
 
   /** @inheritdoc */

@@ -22,12 +22,12 @@ pnpm add @stackra/sync @stackra/container @stackra/contracts @stackra/http @stac
 ## Quick start
 
 ```ts
-import { Module } from '@stackra/container';
-import { HttpModule } from '@stackra/http';
-import { NetworkModule } from '@stackra/network';
-import { CoordinatorModule } from '@stackra/coordinator';
-import { SyncModule } from '@stackra/sync';
-import { ConflictStrategy } from '@stackra/contracts';
+import { Module } from "@stackra/container";
+import { HttpModule } from "@stackra/http";
+import { NetworkModule } from "@stackra/network";
+import { CoordinatorModule } from "@stackra/coordinator";
+import { SyncModule } from "@stackra/sync";
+import { ConflictStrategy } from "@stackra/contracts";
 
 @Module({
   imports: [
@@ -35,7 +35,7 @@ import { ConflictStrategy } from '@stackra/contracts';
     NetworkModule.forRoot({/* ... */}),
     CoordinatorModule.forRoot({/* ... */}),
     SyncModule.forRoot({
-      baseUrl: 'https://api.example.com',
+      baseUrl: "https://api.example.com",
       defaultStrategy: ConflictStrategy.LastWriteWins,
       autoSyncInterval: 60_000,
       autoSyncOnReconnect: true,

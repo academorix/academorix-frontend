@@ -4,16 +4,16 @@
  * @description Behavioural tests for {@link InAppNotificationCentre}.
  */
 
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it } from "vitest";
 
-import { InAppNotificationCentre } from '@/core';
-import type { IStorage, IStorageManager } from '@stackra/contracts';
-import { mockNotificationPayload } from '@/testing';
+import { InAppNotificationCentre } from "@/core";
+import type { IStorage, IStorageManager } from "@stackra/contracts";
+import { mockNotificationPayload } from "@/testing";
 
 /** Build a tiny in-memory `IStorage`. */
 function makeStorage(seedValue: unknown = undefined): IStorage {
   const map = new Map<string, unknown>();
-  if (seedValue !== undefined) map.set('stackra:notifications:centre', seedValue);
+  if (seedValue !== undefined) map.set("stackra:notifications:centre", seedValue);
   return {
     async get<T>(key: string): Promise<T | null> {
       return (map.get(key) as T | undefined) ?? null;
@@ -44,48 +44,48 @@ function makeManager(storage: IStorage = makeStorage()): IStorageManager {
     extend: function (this: IStorageManager) {
       return this;
     },
-    getDefaultInstance: () => 'memory',
+    getDefaultInstance: () => "memory",
   };
 }
 
-describe('InAppNotificationCentre — memory-only', () => {
-  it('runs without a storage manager (memory fallback)', async () => {
+describe("InAppNotificationCentre — memory-only", () => {
+  it("runs without a storage manager (memory fallback)", async () => {
     const centre = new InAppNotificationCentre({});
-    await centre.dispatch(mockNotificationPayload({ title: 'Hello' }));
+    await centre.dispatch(mockNotificationPayload({ title: "Hello" }));
     expect(centre.getSnapshot().items).toHaveLength(1);
-    expect(centre.getSnapshot().items[0]?.payload.title).toBe('Hello');
+    expect(centre.getSnapshot().items[0]?.payload.title).toBe("Hello");
   });
 });
 
-describe('InAppNotificationCentre.dispatch', () => {
-  it('persists new entries through the storage manager', async () => {
+describe("InAppNotificationCentre.dispatch", () => {
+  it("persists new entries through the storage manager", async () => {
     const storage = makeStorage();
     const centre = new InAppNotificationCentre({}, makeManager(storage));
-    await centre.dispatch(mockNotificationPayload({ title: 'One' }));
+    await centre.dispatch(mockNotificationPayload({ title: "One" }));
     const persisted = (await storage.get<{ payload: { title: string } }[]>(
-      'stackra:notifications:centre'
+      "stackra:notifications:centre",
     )) as { payload: { title: string } }[] | null;
     expect(persisted).toHaveLength(1);
-    expect(persisted?.[0]?.payload.title).toBe('One');
+    expect(persisted?.[0]?.payload.title).toBe("One");
   });
 
-  it('generates unique ids per dispatch', async () => {
+  it("generates unique ids per dispatch", async () => {
     const centre = new InAppNotificationCentre({}, makeManager());
     const a = await centre.dispatch(mockNotificationPayload());
     const b = await centre.dispatch(mockNotificationPayload());
     expect(a.id).not.toBe(b.id);
   });
 
-  it('enforces the maxItems ceiling', async () => {
+  it("enforces the maxItems ceiling", async () => {
     const centre = new InAppNotificationCentre({ centre: { maxItems: 2 } }, makeManager());
-    await centre.dispatch(mockNotificationPayload({ title: 'A' }));
-    await centre.dispatch(mockNotificationPayload({ title: 'B' }));
-    await centre.dispatch(mockNotificationPayload({ title: 'C' }));
+    await centre.dispatch(mockNotificationPayload({ title: "A" }));
+    await centre.dispatch(mockNotificationPayload({ title: "B" }));
+    await centre.dispatch(mockNotificationPayload({ title: "C" }));
     // Newest-first order: C, B (A evicted).
-    expect(centre.getSnapshot().items.map((e) => e.payload.title)).toEqual(['C', 'B']);
+    expect(centre.getSnapshot().items.map((e) => e.payload.title)).toEqual(["C", "B"]);
   });
 
-  it('notifies subscribers on every dispatch', async () => {
+  it("notifies subscribers on every dispatch", async () => {
     const centre = new InAppNotificationCentre({}, makeManager());
     let fires = 0;
     centre.subscribe(() => {
@@ -96,7 +96,7 @@ describe('InAppNotificationCentre.dispatch', () => {
     expect(fires).toBe(2);
   });
 
-  it('emits a referentially stable snapshot until state changes', async () => {
+  it("emits a referentially stable snapshot until state changes", async () => {
     const centre = new InAppNotificationCentre({}, makeManager());
     const s1 = centre.getSnapshot();
     expect(centre.getSnapshot()).toBe(s1);
@@ -106,8 +106,8 @@ describe('InAppNotificationCentre.dispatch', () => {
   });
 });
 
-describe('InAppNotificationCentre.markSeen', () => {
-  it('drops the unread count when an entry is marked seen', async () => {
+describe("InAppNotificationCentre.markSeen", () => {
+  it("drops the unread count when an entry is marked seen", async () => {
     const centre = new InAppNotificationCentre({}, makeManager());
     const entry = await centre.dispatch(mockNotificationPayload());
     expect(centre.getSnapshot().unreadCount).toBe(1);
@@ -117,30 +117,30 @@ describe('InAppNotificationCentre.markSeen', () => {
     expect(centre.getSnapshot().items[0]?.seenAt).not.toBeNull();
   });
 
-  it('returns false for a missing / already-seen id', async () => {
+  it("returns false for a missing / already-seen id", async () => {
     const centre = new InAppNotificationCentre({}, makeManager());
     const entry = await centre.dispatch(mockNotificationPayload());
-    expect(await centre.markSeen('does-not-exist')).toBe(false);
+    expect(await centre.markSeen("does-not-exist")).toBe(false);
     await centre.markSeen(entry.id);
     // Second call returns false because it's already seen.
     expect(await centre.markSeen(entry.id)).toBe(false);
   });
 });
 
-describe('InAppNotificationCentre.dismiss / clear', () => {
-  it('removes a dismissed entry from the visible queue', async () => {
+describe("InAppNotificationCentre.dismiss / clear", () => {
+  it("removes a dismissed entry from the visible queue", async () => {
     const centre = new InAppNotificationCentre({}, makeManager());
     const entry = await centre.dispatch(mockNotificationPayload());
     expect(await centre.dismiss(entry.id)).toBe(true);
     expect(centre.getSnapshot().items).toHaveLength(0);
   });
 
-  it('returns false for a missing id', async () => {
+  it("returns false for a missing id", async () => {
     const centre = new InAppNotificationCentre({}, makeManager());
-    expect(await centre.dismiss('missing')).toBe(false);
+    expect(await centre.dismiss("missing")).toBe(false);
   });
 
-  it('clear() drops every entry', async () => {
+  it("clear() drops every entry", async () => {
     const centre = new InAppNotificationCentre({}, makeManager());
     await centre.dispatch(mockNotificationPayload());
     await centre.dispatch(mockNotificationPayload());
@@ -149,28 +149,28 @@ describe('InAppNotificationCentre.dismiss / clear', () => {
   });
 });
 
-describe('InAppNotificationCentre — hydration', () => {
-  it('rehydrates from storage on onModuleInit', async () => {
+describe("InAppNotificationCentre — hydration", () => {
+  it("rehydrates from storage on onModuleInit", async () => {
     const seed = [
       {
-        id: 'seeded',
+        id: "seeded",
         createdAt: 1,
         seenAt: null,
         dismissedAt: null,
-        payload: { title: 'Seeded' },
+        payload: { title: "Seeded" },
       },
     ];
     const storage = makeStorage(seed);
     const centre = new InAppNotificationCentre({}, makeManager(storage));
     await centre.onModuleInit();
     expect(centre.getSnapshot().items).toHaveLength(1);
-    expect(centre.getSnapshot().items[0]?.payload.title).toBe('Seeded');
+    expect(centre.getSnapshot().items[0]?.payload.title).toBe("Seeded");
   });
 
-  it('fail-soft when storage.get throws', async () => {
+  it("fail-soft when storage.get throws", async () => {
     const brokenStorage: IStorage = {
       async get(): Promise<null> {
-        throw new Error('corrupt');
+        throw new Error("corrupt");
       },
       async set(): Promise<void> {},
       async delete(): Promise<void> {},

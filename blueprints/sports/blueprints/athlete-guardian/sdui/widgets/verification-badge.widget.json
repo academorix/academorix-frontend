@@ -6,7 +6,11 @@
   "widget": "athlete_guardian.verification-badge",
   "description": "Chip showing verification_status. Green (verified), yellow (pending), red (disputed), grey-strikethrough (revoked). Tooltip on hover shows verification_method + verified_at + verified_by_user_id when applicable.",
   "params": {
-    "verification_status": { "type": "string", "required": true, "enum": ["pending", "verified", "disputed", "revoked"] },
+    "verification_status": {
+      "type": "string",
+      "required": true,
+      "enum": ["pending", "verified", "disputed", "revoked"]
+    },
     "verification_method": { "type": "string", "required": false },
     "verified_at": { "type": "string", "required": false },
     "verified_by_user_id": { "type": "string", "required": false },

@@ -1,7 +1,7 @@
 {
   "name": "@stackra/sdui",
   "version": "0.1.0",
-  "description": "Server-Driven UI runtime for the Stackra framework — sandboxed expression evaluator, per-node error boundary, action adapter, and HeroUI-powered renderer.",
+  "description": "Server-Driven UI runtime for the Stackra framework \u2014 sandboxed expression evaluator, per-node error boundary, action adapter, and HeroUI-powered renderer.",
   "license": "MIT",
   "author": {
     "name": "Stackra L.L.C",
@@ -92,6 +92,8 @@
     }
   },
   "devDependencies": {
+    "@academorix/config-tsconfig": "workspace:*",
+    "@academorix/config-tsup": "workspace:*",
     "@stackra/actions": "workspace:*",
     "@stackra/container": "workspace:*",
     "@stackra/contracts": "workspace:*",

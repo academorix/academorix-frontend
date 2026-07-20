@@ -33,13 +33,33 @@
         {
           "kind": "View",
           "children": [
-            { "kind": "Text", "props": { "as": "h1", "className": "text-2xl font-semibold", "children": "Submit dispute evidence" } },
+            {
+              "kind": "Text",
+              "props": {
+                "as": "h1",
+                "className": "text-2xl font-semibold",
+                "children": "Submit dispute evidence"
+              }
+            },
             {
               "kind": "View",
               "props": { "className": "flex items-center gap-2 mt-1" },
               "children": [
-                { "kind": "Widget", "widget": "payment.dispute-status-chip", "bindings": { "props.status": { "$ref": "dispute.status" }, "props.evidenceDueBy": { "$ref": "dispute.evidence_due_by" } } },
-                { "kind": "Text", "props": { "className": "text-sm text-muted" }, "bindings": { "children": { "$expr": "'Reason: ' + dispute.reason.replace('_', ' ')" } } }
+                {
+                  "kind": "Widget",
+                  "widget": "payment.dispute-status-chip",
+                  "bindings": {
+                    "props.status": { "$ref": "dispute.status" },
+                    "props.evidenceDueBy": { "$ref": "dispute.evidence_due_by" }
+                  }
+                },
+                {
+                  "kind": "Text",
+                  "props": { "className": "text-sm text-muted" },
+                  "bindings": {
+                    "children": { "$expr": "'Reason: ' + dispute.reason.replace('_', ' ')" }
+                  }
+                }
               ]
             }
           ]
@@ -58,7 +78,19 @@
         {
           "kind": "Card",
           "children": [
-            { "kind": "CardHeader", "children": [{ "kind": "Text", "props": { "as": "h2", "className": "text-lg font-medium", "children": "Auto-collected evidence" } }] },
+            {
+              "kind": "CardHeader",
+              "children": [
+                {
+                  "kind": "Text",
+                  "props": {
+                    "as": "h2",
+                    "className": "text-lg font-medium",
+                    "children": "Auto-collected evidence"
+                  }
+                }
+              ]
+            },
             {
               "kind": "CardContent",
               "props": { "className": "flex flex-col gap-4" },
@@ -66,17 +98,29 @@
                 {
                   "kind": "TextArea",
                   "props": { "label": "Service documentation", "rows": 4 },
-                  "bindings": { "defaultValue": { "$ref": "dispute.evidence.service_documentation" } },
+                  "bindings": {
+                    "defaultValue": { "$ref": "dispute.evidence.service_documentation" }
+                  },
                   "actions": {
-                    "onChange": { "kind": "form.set", "field": "override_evidence.service_documentation", "valueExpr": "$value" }
+                    "onChange": {
+                      "kind": "form.set",
+                      "field": "override_evidence.service_documentation",
+                      "valueExpr": "$value"
+                    }
                   }
                 },
                 {
                   "kind": "TextArea",
                   "props": { "label": "Product description", "rows": 3 },
-                  "bindings": { "defaultValue": { "$ref": "dispute.evidence.product_description" } },
+                  "bindings": {
+                    "defaultValue": { "$ref": "dispute.evidence.product_description" }
+                  },
                   "actions": {
-                    "onChange": { "kind": "form.set", "field": "override_evidence.product_description", "valueExpr": "$value" }
+                    "onChange": {
+                      "kind": "form.set",
+                      "field": "override_evidence.product_description",
+                      "valueExpr": "$value"
+                    }
                   }
                 },
                 {
@@ -84,7 +128,11 @@
                   "props": { "label": "Refund policy", "rows": 3 },
                   "bindings": { "defaultValue": { "$ref": "dispute.evidence.refund_policy" } },
                   "actions": {
-                    "onChange": { "kind": "form.set", "field": "override_evidence.refund_policy", "valueExpr": "$value" }
+                    "onChange": {
+                      "kind": "form.set",
+                      "field": "override_evidence.refund_policy",
+                      "valueExpr": "$value"
+                    }
                   }
                 },
                 {
@@ -92,7 +140,11 @@
                   "props": { "label": "Additional context (uncategorized)", "rows": 4 },
                   "bindings": { "defaultValue": { "$ref": "dispute.evidence.uncategorized_text" } },
                   "actions": {
-                    "onChange": { "kind": "form.set", "field": "override_evidence.uncategorized_text", "valueExpr": "$value" }
+                    "onChange": {
+                      "kind": "form.set",
+                      "field": "override_evidence.uncategorized_text",
+                      "valueExpr": "$value"
+                    }
                   }
                 }
               ]
@@ -106,7 +158,9 @@
             {
               "kind": "Button",
               "props": { "variant": "ghost", "children": "Cancel" },
-              "actions": { "onPress": { "kind": "navigate", "toExpr": "'/tenant/payment-disputes'" } }
+              "actions": {
+                "onPress": { "kind": "navigate", "toExpr": "'/tenant/payment-disputes'" }
+              }
             },
             {
               "kind": "Button",

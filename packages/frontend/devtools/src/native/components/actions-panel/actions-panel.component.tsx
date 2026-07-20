@@ -11,20 +11,20 @@
  *   web panel's contract without special-casing native.
  */
 
-import { useCallback, useState, type ReactElement } from 'react';
-import { ScrollView, Text, View } from 'react-native';
-import { Button, Card, Dialog } from '@stackra/ui/native';
-import { useOptionalInject } from '@stackra/container/react';
+import { useCallback, useState, type ReactElement } from "react";
+import { ScrollView, Text, View } from "react-native";
+import { Button, Card, Dialog } from "@stackra/ui/native";
+import { useOptionalInject } from "@stackra/container/react";
 import {
   CACHE_MANAGER,
   DISCOVERY_SERVICE,
   QUEUE_MANAGER,
   SCOPE_SERVICE,
   STATE_REGISTRY,
-} from '@stackra/contracts';
+} from "@stackra/contracts";
 
-import { useNativeDevtoolsContext } from '../../hooks/use-native-devtools-context.hook';
-import type { ActionsPanelProps } from './actions-panel.interface';
+import { useNativeDevtoolsContext } from "../../hooks/use-native-devtools-context.hook";
+import type { ActionsPanelProps } from "./actions-panel.interface";
 
 /** Shape of a single row in the actions stack. */
 interface Row {
@@ -33,7 +33,7 @@ interface Row {
   readonly description: string;
   readonly available: boolean;
   readonly requireConfirmation: boolean;
-  readonly variant: 'primary' | 'secondary' | 'tertiary' | 'danger' | 'danger-soft';
+  readonly variant: "primary" | "secondary" | "tertiary" | "danger" | "danger-soft";
   readonly handle: () => void | Promise<void>;
 }
 
@@ -66,26 +66,26 @@ export function ActionsPanel({ className }: ActionsPanelProps): ReactElement {
     async (row: Row): Promise<void> => {
       // Emit analytics before firing — matches the web panel's
       // ordering (event fires even if the handler throws).
-      analytics.actionTriggered('actions', row.id);
+      analytics.actionTriggered("actions", row.id);
       try {
         await row.handle();
       } catch {
         // fail-soft — the panel author surfaces their own errors.
       }
     },
-    [analytics]
+    [analytics],
   );
 
   const rows: readonly Row[] = [
     {
-      id: 'clear-caches',
-      label: 'Clear all caches',
+      id: "clear-caches",
+      label: "Clear all caches",
       description: cache
-        ? 'Empty every registered @stackra/cache instance.'
-        : 'Requires @stackra/cache to be installed.',
+        ? "Empty every registered @stackra/cache instance."
+        : "Requires @stackra/cache to be installed.",
       available: Boolean(cache),
       requireConfirmation: true,
-      variant: 'danger-soft',
+      variant: "danger-soft",
       handle: async (): Promise<void> => {
         if (!cache) return;
         // Iterate every configured instance via `getInstanceNames`
@@ -99,19 +99,19 @@ export function ActionsPanel({ className }: ActionsPanelProps): ReactElement {
         await Promise.all(
           names.map(async (name) => {
             await cache.instance?.(name)?.clear();
-          })
+          }),
         );
       },
     },
     {
-      id: 'drain-queues',
-      label: 'Drain queues',
+      id: "drain-queues",
+      label: "Drain queues",
       description: queue
-        ? 'Clear pending jobs in every registered queue.'
-        : 'Requires @stackra/queue to be installed.',
+        ? "Clear pending jobs in every registered queue."
+        : "Requires @stackra/queue to be installed.",
       available: Boolean(queue),
       requireConfirmation: true,
-      variant: 'danger-soft',
+      variant: "danger-soft",
       handle: async (): Promise<void> => {
         if (!queue) return;
         const names = queue.getInstanceNames?.() ?? [];
@@ -122,50 +122,50 @@ export function ActionsPanel({ className }: ActionsPanelProps): ReactElement {
         await Promise.all(
           names.map(async (name) => {
             await queue.instance?.(name)?.clear();
-          })
+          }),
         );
       },
     },
     {
-      id: 'reset-scopes',
-      label: 'Reset scopes',
+      id: "reset-scopes",
+      label: "Reset scopes",
       description: scope
-        ? 'Purge every active scope in the scope tree.'
-        : 'Requires @stackra/scope to be installed.',
+        ? "Purge every active scope in the scope tree."
+        : "Requires @stackra/scope to be installed.",
       available: Boolean(scope?.resetAll),
       requireConfirmation: true,
-      variant: 'danger-soft',
+      variant: "danger-soft",
       handle: (): void => {
         scope?.resetAll?.();
       },
     },
     {
-      id: 'dump-state',
-      label: 'Dump state to console',
+      id: "dump-state",
+      label: "Dump state to console",
       description: state
-        ? 'Serialise every registered state store and log it.'
-        : 'Requires @stackra/state to be installed.',
+        ? "Serialise every registered state store and log it."
+        : "Requires @stackra/state to be installed.",
       available: Boolean(state?.getSnapshot),
       requireConfirmation: false,
-      variant: 'secondary',
+      variant: "secondary",
       handle: (): void => {
         try {
           // eslint-disable-next-line no-console
-          console.info('[@stackra/devtools] state snapshot →', state?.getSnapshot?.());
+          console.info("[@stackra/devtools] state snapshot →", state?.getSnapshot?.());
         } catch {
           // fail-soft
         }
       },
     },
     {
-      id: 'log-di-graph',
-      label: 'Log DI graph',
+      id: "log-di-graph",
+      label: "Log DI graph",
       description: discovery
-        ? 'Log a JSON graph of every registered provider.'
-        : 'Requires @stackra/container discovery to be enabled.',
+        ? "Log a JSON graph of every registered provider."
+        : "Requires @stackra/container discovery to be enabled.",
       available: Boolean(discovery),
       requireConfirmation: false,
-      variant: 'secondary',
+      variant: "secondary",
       handle: (): void => {
         if (!discovery) return;
         const graph = discovery.getProviders().map((p) => ({
@@ -173,7 +173,7 @@ export function ActionsPanel({ className }: ActionsPanelProps): ReactElement {
           hasInstance: p.instance !== undefined,
         }));
         // eslint-disable-next-line no-console
-        console.info('[@stackra/devtools] DI graph →', graph);
+        console.info("[@stackra/devtools] DI graph →", graph);
       },
     },
   ];
@@ -187,7 +187,7 @@ export function ActionsPanel({ className }: ActionsPanelProps): ReactElement {
         void runRow(row);
       }
     },
-    [runRow]
+    [runRow],
   );
 
   const handleConfirm = useCallback(() => {
@@ -201,8 +201,8 @@ export function ActionsPanel({ className }: ActionsPanelProps): ReactElement {
     <>
       <ScrollView className={className} contentContainerStyle={{ padding: 16, gap: 12 }}>
         <View className="gap-1">
-          <Text className="text-base font-semibold text-foreground">Maintenance</Text>
-          <Text className="text-xs text-muted">
+          <Text className="text-foreground text-base font-semibold">Maintenance</Text>
+          <Text className="text-muted text-xs">
             One-shot maintenance actions. Optional dependencies are disabled when the corresponding
             package isn't installed.
           </Text>
@@ -235,9 +235,9 @@ export function ActionsPanel({ className }: ActionsPanelProps): ReactElement {
         <Dialog.Portal>
           <Dialog.Overlay />
           <Dialog.Content>
-            <Dialog.Title>{pending?.label ?? ''}</Dialog.Title>
+            <Dialog.Title>{pending?.label ?? ""}</Dialog.Title>
             <Dialog.Description>
-              {pending?.description ?? 'This action is irreversible.'}
+              {pending?.description ?? "This action is irreversible."}
             </Dialog.Description>
             <View className="mt-4 flex-row justify-end gap-2">
               <Button size="sm" variant="ghost" onPress={() => setPending(null)}>

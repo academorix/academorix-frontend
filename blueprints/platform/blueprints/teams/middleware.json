@@ -9,7 +9,12 @@
       "priority": 42,
       "description": "Reads team_id from the route parameter ({team}), the request body (create-child-resource flows), or the X-Team-Id header. Loads the Team model, checks tenant scoping (refuses when team.tenant_id != request tenant), and stores it on RequestContext::team() so downstream services can call `Request::activeTeam()` without re-fetching. Publishes the `activeTeam` + `activeTeamId` macros on the Request class. Auto-applied on every /api/v1/teams/{team}/** route.",
       "auto_applied": true,
-      "auto_applied_to": ["tenant-teams-detail", "tenant-team-members", "tenant-team-trials", "tenant-team-event-teams"]
+      "auto_applied_to": [
+        "tenant-teams-detail",
+        "tenant-team-members",
+        "tenant-team-trials",
+        "tenant-team-event-teams"
+      ]
     }
   ],
   "consumed": [

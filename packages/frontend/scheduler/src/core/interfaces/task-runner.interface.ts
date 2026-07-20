@@ -7,8 +7,8 @@
  *   the high-level orchestration.
  */
 
-import type { IScheduledTask } from './scheduled-task.interface';
-import type { ITaskOptions } from './task-options.interface';
+import type { IScheduledTask } from "./scheduled-task.interface";
+import type { ITaskOptions } from "./task-options.interface";
 
 /**
  * Contract that all task runners must implement.

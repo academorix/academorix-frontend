@@ -9,15 +9,15 @@
  *   staleness.
  */
 
-import { Inject, Injectable } from '@stackra/container';
+import { Inject, Injectable } from "@stackra/container";
 import type {
   IActionContext,
   IActionHandler,
   IActionResponse,
   IQueryAction,
   IQueryClient,
-} from '@stackra/contracts';
-import { ActionKind, QUERY_CLIENT } from '@stackra/contracts';
+} from "@stackra/contracts";
+import { ActionKind, QUERY_CLIENT } from "@stackra/contracts";
 
 /**
  * `QueryHandler` — dispatch handler for `ActionKind.Query`.
@@ -30,9 +30,9 @@ export class QueryHandler implements IActionHandler<IQueryAction> {
 
   public async execute(
     descriptor: IQueryAction,
-    context: IActionContext
+    context: IActionContext,
   ): Promise<IActionResponse> {
-    if (context.signal?.aborted) return { success: false, message: 'Aborted' };
+    if (context.signal?.aborted) return { success: false, message: "Aborted" };
 
     if (descriptor.invalidate) {
       await this.client.invalidate(descriptor.queryKey);

@@ -4,4 +4,4 @@
  * @description Types barrel export.
  */
 
-export type { StateSelector } from './state-selector.type';
+export type { StateSelector } from "./state-selector.type";

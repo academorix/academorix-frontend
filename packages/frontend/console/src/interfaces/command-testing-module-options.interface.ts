@@ -6,9 +6,8 @@
  *   optional; callers supply only what their test needs.
  */
 
-import type { Type, Provider } from "@stackra/container";
-
 import type { TestConsoleOutput } from "../testing/test-console-output";
+import type { Type, Provider } from "@stackra/container";
 
 /**
  * Options bag for `createCommandTestingModule(...)`.

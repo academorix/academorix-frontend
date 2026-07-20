@@ -1,7 +1,7 @@
 {
   "name": "@stackra/analytics",
   "version": "0.1.0",
-  "description": "Analytics & tracking for the Stackra framework — a consent-gated, fan-out manager over pluggable destinations (GA4, console) and marketing pixels (Meta, TikTok, Snapchat), with auto-registration and React bindings.",
+  "description": "Analytics & tracking for the Stackra framework \u2014 a consent-gated, fan-out manager over pluggable destinations (GA4, console) and marketing pixels (Meta, TikTok, Snapchat), with auto-registration and React bindings.",
   "license": "MIT",
   "author": {
     "name": "Stackra L.L.C",
@@ -91,6 +91,8 @@
     }
   },
   "devDependencies": {
+    "@academorix/config-tsconfig": "workspace:*",
+    "@academorix/config-tsup": "workspace:*",
     "@stackra/container": "workspace:*",
     "@stackra/contracts": "workspace:*",
     "@stackra/logger": "workspace:*",

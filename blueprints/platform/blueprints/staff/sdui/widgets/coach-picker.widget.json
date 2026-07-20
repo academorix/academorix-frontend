@@ -9,7 +9,10 @@
     "label": { "type": "string", "default": "Coach" },
     "required": { "type": "boolean", "default": false },
     "helpText": { "type": "string" },
-    "filter": { "type": "object", "description": "Extra filter object. Common: {sport_key: 'basketball', status: 'active', branch_id: '...'}." },
+    "filter": {
+      "type": "object",
+      "description": "Extra filter object. Common: {sport_key: 'basketball', status: 'active', branch_id: '...'}."
+    },
     "excludeIds": { "type": "array" }
   },
   "dataSources": [
@@ -49,7 +52,10 @@
               "kind": "ListBox",
               "itemRenderer": {
                 "kind": "ListBox.Item",
-                "bindings": { "id": { "$ref": "item.id" }, "textValue": { "$ref": "item.display_name" } },
+                "bindings": {
+                  "id": { "$ref": "item.id" },
+                  "textValue": { "$ref": "item.display_name" }
+                },
                 "children": [
                   {
                     "kind": "View",
@@ -58,16 +64,26 @@
                       {
                         "kind": "Avatar",
                         "props": { "size": "xs" },
-                        "bindings": { "src": { "$ref": "item.avatar_url" }, "name": { "$ref": "item.display_name" } }
+                        "bindings": {
+                          "src": { "$ref": "item.avatar_url" },
+                          "name": { "$ref": "item.display_name" }
+                        }
                       },
                       {
                         "kind": "View",
                         "children": [
-                          { "kind": "Text", "bindings": { "children": { "$ref": "item.display_name" } } },
+                          {
+                            "kind": "Text",
+                            "bindings": { "children": { "$ref": "item.display_name" } }
+                          },
                           {
                             "kind": "Text",
                             "props": { "className": "text-xs text-muted" },
-                            "bindings": { "children": { "$expr": "item.sport_key + ' — ' + item.coaching_level" } }
+                            "bindings": {
+                              "children": {
+                                "$expr": "item.sport_key + ' — ' + item.coaching_level"
+                              }
+                            }
                           }
                         ]
                       }

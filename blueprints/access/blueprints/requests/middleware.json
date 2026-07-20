@@ -24,8 +24,18 @@
       "priority": 50,
       "description": "Framework throttle applied to the submit endpoint. Rate: 30 submissions per (caller_id, day) on POST /access-requests; 60 decisions per (caller_id, hour) on approve/reject. Distinct from tenant-level throttles managed by workflow/approvals. A 429 response carries `X-RateLimit-Trigger: submissions_per_day` or `X-RateLimit-Trigger: decisions_per_hour`.",
       "config": {
-        "submissions": { "limit": 30, "window_seconds": 86400, "key": "user_id", "route_names": ["tenant.access-requests.store"] },
-        "decisions": { "limit": 60, "window_seconds": 3600, "key": "user_id", "route_names": ["tenant.access-requests.approve", "tenant.access-requests.reject"] }
+        "submissions": {
+          "limit": 30,
+          "window_seconds": 86400,
+          "key": "user_id",
+          "route_names": ["tenant.access-requests.store"]
+        },
+        "decisions": {
+          "limit": 60,
+          "window_seconds": 3600,
+          "key": "user_id",
+          "route_names": ["tenant.access-requests.approve", "tenant.access-requests.reject"]
+        }
       }
     }
   ],

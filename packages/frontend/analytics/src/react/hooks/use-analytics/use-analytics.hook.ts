@@ -4,9 +4,9 @@
  * @description Resolve the AnalyticsManager from the DI container.
  */
 
-import { useInject } from '@stackra/container/react';
-import { ANALYTICS_MANAGER } from '@stackra/contracts';
-import type { IAnalyticsManager } from '@stackra/contracts';
+import { useInject } from "@stackra/container/react";
+import { ANALYTICS_MANAGER } from "@stackra/contracts";
+import type { IAnalyticsManager } from "@stackra/contracts";
 
 /**
  * Resolve the {@link IAnalyticsManager} from the surrounding

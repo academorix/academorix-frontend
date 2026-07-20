@@ -6,10 +6,23 @@
   "widget": "coaching.certification-expiration-badge",
   "description": "Traffic-light HeroUI Chip showing days_until_expiry for a certification. Renders in four states: green (> 90d), yellow (30-90d), red (< 30d), grey-strikethrough (expired). When expires_at is null, renders 'Does not expire'.",
   "params": {
-    "expires_at": { "type": ["string", "null"], "required": false, "description": "ISO 8601 date." },
-    "days_until_expiry": { "type": ["integer", "null"], "required": false, "description": "Precomputed for efficiency." },
+    "expires_at": {
+      "type": ["string", "null"],
+      "required": false,
+      "description": "ISO 8601 date."
+    },
+    "days_until_expiry": {
+      "type": ["integer", "null"],
+      "required": false,
+      "description": "Precomputed for efficiency."
+    },
     "is_expired": { "type": "boolean", "required": false, "default": false },
-    "compact": { "type": "boolean", "required": false, "default": false, "description": "When true, renders icon-only (uses tooltip for label)." }
+    "compact": {
+      "type": "boolean",
+      "required": false,
+      "default": false,
+      "description": "When true, renders icon-only (uses tooltip for label)."
+    }
   },
   "nodes": [
     {

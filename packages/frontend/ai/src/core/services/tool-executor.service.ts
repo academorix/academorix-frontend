@@ -25,8 +25,8 @@
  *   ```
  */
 
-import { Inject, Injectable, Optional } from '@stackra/container';
-import { Logger } from '@stackra/logger';
+import { Inject, Injectable, Optional } from "@stackra/container";
+import { Logger } from "@stackra/logger";
 import {
   ACTION_DISPATCHER,
   AI_CLIENT,
@@ -36,10 +36,10 @@ import {
   type IAiClient,
   type IAiToolAction,
   type IAiToolResult,
-} from '@stackra/contracts';
+} from "@stackra/contracts";
 
-import type { IToolEntry } from '../registries/tool.registry';
-import { ToolRegistry } from '../registries/tool.registry';
+import type { IToolEntry } from "../registries/tool.registry";
+import { ToolRegistry } from "../registries/tool.registry";
 
 /** Outcome of `execute()` — mirrors the shape of the posted result. */
 export interface IExecutionOutcome {
@@ -97,7 +97,7 @@ export class ToolExecutor {
      */
     @Optional()
     @Inject(ACTION_DISPATCHER)
-    private readonly actionDispatcher?: IActionDispatcher
+    private readonly actionDispatcher?: IActionDispatcher,
   ) {}
 
   /**
@@ -122,7 +122,7 @@ export class ToolExecutor {
     toolCallId: string,
     toolName: string,
     args: unknown,
-    options: IExecuteOptions = {}
+    options: IExecuteOptions = {},
   ): Promise<IExecutionOutcome> {
     const entry = this.registry.findByName(toolName);
 
@@ -153,7 +153,7 @@ export class ToolExecutor {
     const external = options.signal;
     if (external) {
       if (external.aborted) controller.abort();
-      else external.addEventListener('abort', () => controller.abort(), { once: true });
+      else external.addEventListener("abort", () => controller.abort(), { once: true });
     }
 
     // ── 5. Invoke handler — through the action pipeline when wired ───
@@ -172,7 +172,7 @@ export class ToolExecutor {
     toolCallId: string,
     entry: IToolEntry,
     parsedArgs: unknown,
-    signal: AbortSignal
+    signal: AbortSignal,
   ): Promise<IExecutionOutcome> {
     try {
       const result = await entry.handler(parsedArgs, { signal });
@@ -205,7 +205,7 @@ export class ToolExecutor {
     toolName: string,
     entry: IToolEntry,
     parsedArgs: unknown,
-    signal: AbortSignal
+    signal: AbortSignal,
   ): Promise<IExecutionOutcome> {
     // Build the descriptor. `permission` is forwarded from the tool
     // definition so `AuthorizeMiddleware` gates the dispatch through
@@ -236,7 +236,7 @@ export class ToolExecutor {
       await this.safePostResult({ toolCallId, result: response.data });
       return { result: response.data };
     }
-    const message = response.message ?? 'AI tool failed';
+    const message = response.message ?? "AI tool failed";
     await this.safePostResult({ toolCallId, error: message });
     return { error: message };
   }
@@ -256,8 +256,8 @@ export class ToolExecutor {
     const schema = entry.definition.parameters;
     if (
       schema !== null &&
-      typeof schema === 'object' &&
-      typeof (schema as { safeParse?: unknown }).safeParse === 'function'
+      typeof schema === "object" &&
+      typeof (schema as { safeParse?: unknown }).safeParse === "function"
     ) {
       const parse = (
         schema as {
@@ -270,7 +270,7 @@ export class ToolExecutor {
       ).safeParse;
       const result = parse.call(schema, args);
       if (result.success) return { parsed: result.data };
-      const message = result.error?.message ?? 'schema validation failed';
+      const message = result.error?.message ?? "schema validation failed";
       return { error: `Invalid arguments for "${entry.definition.name}": ${message}` };
     }
     return { parsed: args };
@@ -281,7 +281,7 @@ export class ToolExecutor {
     try {
       await this.client.postToolResult(result);
     } catch (err) {
-      this.logger.warn('[ToolExecutor] failed to post tool result', {
+      this.logger.warn("[ToolExecutor] failed to post tool result", {
         toolCallId: result.toolCallId,
         error: err instanceof Error ? err.message : String(err),
       });

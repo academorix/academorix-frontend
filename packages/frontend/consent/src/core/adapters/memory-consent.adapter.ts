@@ -5,8 +5,8 @@
  *   Stores preferences in a plain object — no persistence across reloads.
  */
 
-import { Injectable } from '@stackra/container';
-import type { IConsentStorageAdapter } from '@stackra/contracts';
+import { Injectable } from "@stackra/container";
+import type { IConsentStorageAdapter } from "@stackra/contracts";
 
 /**
  * In-memory consent storage adapter.

@@ -24,9 +24,9 @@
  *   ```
  */
 
-import { Injectable } from '@stackra/container';
-import { I18nManager } from 'react-native';
-import type { IDirectionAdapter } from '@stackra/contracts';
+import { Injectable } from "@stackra/container";
+import { I18nManager } from "react-native";
+import type { IDirectionAdapter } from "@stackra/contracts";
 
 /**
  * React Native platform direction adapter.
@@ -43,8 +43,8 @@ export class NativeDirectionAdapter implements IDirectionAdapter {
    * @param _locale - The locale code (unused on native — direction is binary)
    * @returns `true` if the direction changed and a restart is needed
    */
-  public apply(direction: 'ltr' | 'rtl', _locale: string): boolean {
-    const shouldBeRtl = direction === 'rtl';
+  public apply(direction: "ltr" | "rtl", _locale: string): boolean {
+    const shouldBeRtl = direction === "rtl";
     const currentlyRtl = I18nManager.isRTL;
 
     if (shouldBeRtl !== currentlyRtl) {
@@ -61,7 +61,7 @@ export class NativeDirectionAdapter implements IDirectionAdapter {
    *
    * @returns The current RTL state from React Native
    */
-  public getCurrentDirection(): 'ltr' | 'rtl' {
-    return I18nManager.isRTL ? 'rtl' : 'ltr';
+  public getCurrentDirection(): "ltr" | "rtl" {
+    return I18nManager.isRTL ? "rtl" : "ltr";
   }
 }

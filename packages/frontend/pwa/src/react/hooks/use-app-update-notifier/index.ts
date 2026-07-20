@@ -4,5 +4,5 @@
  * @description Barrel export for the `useAppUpdateNotifier` hook.
  */
 
-export { useAppUpdateNotifier } from './use-app-update-notifier.hook';
-export type { IUseAppUpdateNotifierOptions } from './use-app-update-notifier.interface';
+export { useAppUpdateNotifier } from "./use-app-update-notifier.hook";
+export type { IUseAppUpdateNotifierOptions } from "./use-app-update-notifier.interface";

@@ -151,7 +151,16 @@
     },
     "token_type": {
       "type": "string",
-      "enum": ["color", "dimension", "typography", "radius", "shadow", "motion", "opacity", "z_index"]
+      "enum": [
+        "color",
+        "dimension",
+        "typography",
+        "radius",
+        "shadow",
+        "motion",
+        "opacity",
+        "z_index"
+      ]
     },
     "reason": {
       "type": ["string", "null"],

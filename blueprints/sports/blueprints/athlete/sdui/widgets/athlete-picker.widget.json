@@ -7,11 +7,29 @@
   "description": "Searchable single-select for picking an Athlete. Uses HeroUI ComboBox per ui-components.md rule (never Select). Options grouped by branch. Filters to `filter[status]=active` by default. Consumed by AthleteEnrollment create form + Team roster form + Event registration form. Renders the minor-badge subscript when the athlete is a minor.",
   "params": {
     "name": { "type": "string", "required": true, "description": "Form field name." },
-    "label": { "type": "string", "required": false, "default": "Athlete", "description": "Label above the picker." },
+    "label": {
+      "type": "string",
+      "required": false,
+      "default": "Athlete",
+      "description": "Label above the picker."
+    },
     "isRequired": { "type": "boolean", "required": false, "default": false },
-    "branch_id_filter": { "type": "string", "required": false, "description": "Narrow to a single branch — passed as filter[branch_id]." },
-    "age_group_filter": { "type": "string", "required": false, "description": "Narrow to a single age group — passed as filter[current_age_group_id]. Useful in enrollment flow where the team's age group constrains eligible athletes." },
-    "include_paused": { "type": "boolean", "required": false, "default": false, "description": "Include paused athletes. Default false — most forms want active only." }
+    "branch_id_filter": {
+      "type": "string",
+      "required": false,
+      "description": "Narrow to a single branch — passed as filter[branch_id]."
+    },
+    "age_group_filter": {
+      "type": "string",
+      "required": false,
+      "description": "Narrow to a single age group — passed as filter[current_age_group_id]. Useful in enrollment flow where the team's age group constrains eligible athletes."
+    },
+    "include_paused": {
+      "type": "boolean",
+      "required": false,
+      "default": false,
+      "description": "Include paused athletes. Default false — most forms want active only."
+    }
   },
   "dataSources": [
     {
@@ -62,7 +80,9 @@
                           "kind": "Avatar",
                           "props": { "size": "xs" },
                           "bindings": {
-                            "src": { "$expr": "$item.consent_photo_release ? $item.profile_photo_url : null" },
+                            "src": {
+                              "$expr": "$item.consent_photo_release ? $item.profile_photo_url : null"
+                            },
                             "name": { "$ref": "$item.display_name" }
                           }
                         },

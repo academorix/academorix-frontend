@@ -169,7 +169,9 @@ export class WidgetCatalogueService implements OnModuleInit {
    * @returns Read-only widget list.
    */
   public listWidgets(): readonly IWidgetEntry[] {
-    return this.widgets.values().map((entry) => WidgetCatalogueService.toWidgetEntry(entry.metadata));
+    return this.widgets
+      .values()
+      .map((entry) => WidgetCatalogueService.toWidgetEntry(entry.metadata));
   }
 
   /**
@@ -292,9 +294,7 @@ export class WidgetCatalogueService implements OnModuleInit {
       description: metadata.description,
       icon: metadata.icon,
       span: metadata.span,
-      ...(metadata.defaultEnabled !== undefined
-        ? { defaultEnabled: metadata.defaultEnabled }
-        : {}),
+      ...(metadata.defaultEnabled !== undefined ? { defaultEnabled: metadata.defaultEnabled } : {}),
     };
   }
 }
@@ -305,9 +305,7 @@ export class WidgetCatalogueService implements OnModuleInit {
  * property + `classRef` is diagnostic; both are absent on the flat
  * config shape.
  */
-function isRegisteredWidget(
-  entry: IWidgetEntry | IRegisteredWidget,
-): entry is IRegisteredWidget {
+function isRegisteredWidget(entry: IWidgetEntry | IRegisteredWidget): entry is IRegisteredWidget {
   return (
     typeof (entry as IRegisteredWidget).metadata === "object" &&
     (entry as IRegisteredWidget).metadata !== null &&

@@ -379,11 +379,7 @@
     {
       "name": "public-jwks",
       "prefix": "/.well-known",
-      "middleware": [
-        "request.id",
-        "auth.cors_strict",
-        "throttle:foundation-public"
-      ],
+      "middleware": ["request.id", "auth.cors_strict", "throttle:foundation-public"],
       "hosts": ["tenant", "platform-admin", "public"],
       "description": "Public JWKS endpoint. No auth. Aggressive Cache-Control for downstream verifier caches.",
       "routes": [

@@ -7,7 +7,18 @@
   "props": {
     "status": {
       "type": "string",
-      "enum": ["pending_claim", "claimed", "signed_up", "trigger_pending", "vesting", "vested", "rewarded", "cancelled", "expired", "fraudulent"],
+      "enum": [
+        "pending_claim",
+        "claimed",
+        "signed_up",
+        "trigger_pending",
+        "vesting",
+        "vested",
+        "rewarded",
+        "cancelled",
+        "expired",
+        "fraudulent"
+      ],
       "required": true
     },
     "size": { "type": "string", "default": "sm", "enum": ["xs", "sm", "md", "lg"] },

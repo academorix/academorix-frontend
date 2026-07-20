@@ -4,7 +4,7 @@
  * @description Thrown when a scoped operation executes without an active scope context.
  */
 
-import { ScopeError } from './scope.error';
+import { ScopeError } from "./scope.error";
 
 /**
  * Thrown when a @Scoped() entity query executes without an active scope context.
@@ -16,5 +16,5 @@ import { ScopeError } from './scope.error';
  * Maps to HTTP 500 Internal Server Error in NestJS exception filters.
  */
 export class ScopeContextRequiredError extends ScopeError {
-  public readonly code = 'SCOPE_CONTEXT_REQUIRED' as const;
+  public readonly code = "SCOPE_CONTEXT_REQUIRED" as const;
 }

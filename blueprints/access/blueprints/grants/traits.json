@@ -66,12 +66,7 @@
           }
         ]
       },
-      "appliedBy": [
-        "finance::Invoice",
-        "sports::Athlete",
-        "teams::Team",
-        "documents::Document"
-      ],
+      "appliedBy": ["finance::Invoice", "sports::Athlete", "teams::Team", "documents::Document"],
       "notAppliedBy": [
         "tenancy::Tenant — tenants aren't grant targets; use RBAC roles instead",
         "application::Application — applications don't accept grants; grants exist strictly inside a tenant",

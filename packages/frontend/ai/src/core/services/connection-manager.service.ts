@@ -34,8 +34,8 @@ import {
   Optional,
   type OnModuleInit,
   type OnModuleDestroy,
-} from '@stackra/container';
-import { Logger } from '@stackra/logger';
+} from "@stackra/container";
+import { Logger } from "@stackra/logger";
 import {
   AI_CONFIG,
   AI_EVENTS,
@@ -49,9 +49,9 @@ import {
   type IEventEmitter,
   type INetworkDetector,
   type INetworkStatus,
-} from '@stackra/contracts';
+} from "@stackra/contracts";
 
-import { computeBackoff } from '../utils/backoff.util';
+import { computeBackoff } from "../utils/backoff.util";
 
 /** Reason surfaced to hooks/components while the manager is not `Connected`. */
 export interface IConnectionReason {
@@ -80,7 +80,7 @@ export interface IReconnectSchedule {
 /** Listener invoked when the observed state changes. */
 export type ConnectionStateListener = (
   state: AiConnectionState,
-  reason?: IConnectionReason
+  reason?: IConnectionReason,
 ) => void;
 
 /** Fallback retry policy applied if the config omits one (unreachable when
@@ -133,7 +133,7 @@ export class ConnectionManager implements OnModuleInit, OnModuleDestroy {
     @Inject(AI_CONFIG) private readonly config: IAiConfig,
     @Optional() @Inject(AI_TRANSPORT) private readonly transport?: IAiTransport,
     @Optional() @Inject(NETWORK_DETECTOR) private readonly detector?: INetworkDetector,
-    @Optional() @Inject(EVENT_EMITTER) private readonly events?: IEventEmitter
+    @Optional() @Inject(EVENT_EMITTER) private readonly events?: IEventEmitter,
   ) {}
 
   // ────────────────────────────────────────────────────────────────────
@@ -278,8 +278,8 @@ export class ConnectionManager implements OnModuleInit, OnModuleDestroy {
     }
     // Fallback: `navigator.onLine` + `online`/`offline` DOM events (web only).
     if (
-      typeof globalThis !== 'undefined' &&
-      typeof (globalThis as { navigator?: { onLine?: boolean } }).navigator !== 'undefined'
+      typeof globalThis !== "undefined" &&
+      typeof (globalThis as { navigator?: { onLine?: boolean } }).navigator !== "undefined"
     ) {
       const nav = (globalThis as { navigator: { onLine?: boolean } }).navigator;
       this.online = nav.onLine ?? true;
@@ -292,7 +292,7 @@ export class ConnectionManager implements OnModuleInit, OnModuleDestroy {
           };
         }
       ).window;
-      if (win && typeof win.addEventListener === 'function') {
+      if (win && typeof win.addEventListener === "function") {
         const goOnline = (): void => {
           this.online = true;
           this.recompute();
@@ -301,11 +301,11 @@ export class ConnectionManager implements OnModuleInit, OnModuleDestroy {
           this.online = false;
           this.recompute();
         };
-        win.addEventListener('online', goOnline);
-        win.addEventListener('offline', goOffline);
+        win.addEventListener("online", goOnline);
+        win.addEventListener("offline", goOffline);
         this.networkUnsub = (): void => {
-          win.removeEventListener?.('online', goOnline);
-          win.removeEventListener?.('offline', goOffline);
+          win.removeEventListener?.("online", goOnline);
+          win.removeEventListener?.("offline", goOffline);
         };
       }
     }
@@ -331,7 +331,7 @@ export class ConnectionManager implements OnModuleInit, OnModuleDestroy {
       try {
         listener(next, reason);
       } catch (err) {
-        this.logger.warn('[ConnectionManager] state listener threw', {
+        this.logger.warn("[ConnectionManager] state listener threw", {
           error: err instanceof Error ? err.message : String(err),
         });
       }
@@ -347,13 +347,13 @@ export class ConnectionManager implements OnModuleInit, OnModuleDestroy {
       case AiConnectionState.Connected:
         return undefined;
       case AiConnectionState.Connecting:
-        return { state, message: 'Connecting to the AI backend…' };
+        return { state, message: "Connecting to the AI backend…" };
       case AiConnectionState.Disconnected:
-        return { state, message: 'Not connected to the AI backend.' };
+        return { state, message: "Not connected to the AI backend." };
       case AiConnectionState.Error:
-        return { state, message: 'The AI connection is in an error state.' };
+        return { state, message: "The AI connection is in an error state." };
       case AiConnectionState.Offline:
-        return { state, message: 'The device is offline.' };
+        return { state, message: "The device is offline." };
     }
   }
 }

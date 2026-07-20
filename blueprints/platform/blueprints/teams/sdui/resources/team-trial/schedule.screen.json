@@ -48,7 +48,12 @@
               "children": [
                 {
                   "kind": "ComboBox",
-                  "props": { "name": "trialist_type", "label": "Trialist type", "required": true, "menuTrigger": "focus" },
+                  "props": {
+                    "name": "trialist_type",
+                    "label": "Trialist type",
+                    "required": true,
+                    "menuTrigger": "focus"
+                  },
                   "props_items": [
                     { "id": "athlete", "label": "Athlete (registered)" },
                     { "id": "user", "label": "User (registered adult)" },
@@ -66,25 +71,62 @@
                 },
                 {
                   "kind": "View",
-                  "props": { "hidden": { "$expr": "form.trialist_type !== 'anonymous'" }, "className": "space-y-3" },
+                  "props": {
+                    "hidden": { "$expr": "form.trialist_type !== 'anonymous'" },
+                    "className": "space-y-3"
+                  },
                   "children": [
                     {
                       "kind": "View",
                       "props": { "className": "grid grid-cols-2 gap-3" },
                       "children": [
-                        { "kind": "TextField", "props": { "name": "trialist_first_name", "label": "First name", "required": true, "maxLength": 128 } },
-                        { "kind": "TextField", "props": { "name": "trialist_last_name", "label": "Last name", "maxLength": 128 } }
+                        {
+                          "kind": "TextField",
+                          "props": {
+                            "name": "trialist_first_name",
+                            "label": "First name",
+                            "required": true,
+                            "maxLength": 128
+                          }
+                        },
+                        {
+                          "kind": "TextField",
+                          "props": {
+                            "name": "trialist_last_name",
+                            "label": "Last name",
+                            "maxLength": 128
+                          }
+                        }
                       ]
                     },
                     {
                       "kind": "View",
                       "props": { "className": "grid grid-cols-2 gap-3" },
                       "children": [
-                        { "kind": "TextField", "props": { "name": "trialist_phone", "label": "Phone", "required": true, "helpText": "E.164 format, e.g. +14155551234", "pattern": "^\\+[1-9]\\d{1,14}$" } },
-                        { "kind": "TextField", "props": { "name": "trialist_email", "label": "Email", "type": "email" } }
+                        {
+                          "kind": "TextField",
+                          "props": {
+                            "name": "trialist_phone",
+                            "label": "Phone",
+                            "required": true,
+                            "helpText": "E.164 format, e.g. +14155551234",
+                            "pattern": "^\\+[1-9]\\d{1,14}$"
+                          }
+                        },
+                        {
+                          "kind": "TextField",
+                          "props": { "name": "trialist_email", "label": "Email", "type": "email" }
+                        }
                       ]
                     },
-                    { "kind": "DateField", "props": { "name": "trialist_dob", "label": "Date of birth", "helpText": "Used for age-eligibility check + child-safety flags. Redacted 90 days post-decision for rejected/no-show/cancelled trials." } }
+                    {
+                      "kind": "DateField",
+                      "props": {
+                        "name": "trialist_dob",
+                        "label": "Date of birth",
+                        "helpText": "Used for age-eligibility check + child-safety flags. Redacted 90 days post-decision for rejected/no-show/cancelled trials."
+                      }
+                    }
                   ]
                 }
               ]
@@ -95,7 +137,13 @@
               "children": [
                 {
                   "kind": "ComboBox",
-                  "props": { "name": "trial_type", "label": "Trial type", "required": true, "menuTrigger": "focus", "defaultValue": "individual" },
+                  "props": {
+                    "name": "trial_type",
+                    "label": "Trial type",
+                    "required": true,
+                    "menuTrigger": "focus",
+                    "defaultValue": "individual"
+                  },
                   "props_items": [
                     { "id": "individual", "label": "Individual (1:1)" },
                     { "id": "group", "label": "Group" },
@@ -103,13 +151,28 @@
                     { "id": "multi_session", "label": "Multi-session (2-4 sessions)" }
                   ]
                 },
-                { "kind": "NumberField", "props": { "name": "session_count", "label": "Session count", "min": 1, "max": 4, "defaultValue": 1 } },
+                {
+                  "kind": "NumberField",
+                  "props": {
+                    "name": "session_count",
+                    "label": "Session count",
+                    "min": 1,
+                    "max": 4,
+                    "defaultValue": 1
+                  }
+                },
                 {
                   "kind": "View",
                   "props": { "className": "grid grid-cols-2 gap-3" },
                   "children": [
-                    { "kind": "DateTimeField", "props": { "name": "starts_at", "label": "Starts at", "required": true } },
-                    { "kind": "DateTimeField", "props": { "name": "ends_at", "label": "Ends at", "required": true } }
+                    {
+                      "kind": "DateTimeField",
+                      "props": { "name": "starts_at", "label": "Starts at", "required": true }
+                    },
+                    {
+                      "kind": "DateTimeField",
+                      "props": { "name": "ends_at", "label": "Ends at", "required": true }
+                    }
                   ]
                 }
               ]
@@ -118,15 +181,36 @@
               "kind": "Fieldset",
               "props": { "legend": "Fee (optional)", "className": "space-y-3" },
               "children": [
-                { "kind": "NumberField", "props": { "name": "price_amount_cents", "label": "Trial fee (cents)", "min": 0, "defaultValue": 0, "helpText": "Wave 4 Finance integrates payment collection." } }
+                {
+                  "kind": "NumberField",
+                  "props": {
+                    "name": "price_amount_cents",
+                    "label": "Trial fee (cents)",
+                    "min": 0,
+                    "defaultValue": 0,
+                    "helpText": "Wave 4 Finance integrates payment collection."
+                  }
+                }
               ]
             },
             {
               "kind": "View",
               "props": { "className": "flex justify-end gap-2 pt-2" },
               "children": [
-                { "kind": "Button", "props": { "variant": "ghost", "children": "Cancel" }, "actions": { "onPress": { "kind": "navigate", "toExpr": "'/tenant/teams/' + team.id + '/trials'" } } },
-                { "kind": "Button", "props": { "type": "submit", "variant": "primary", "children": "Schedule trial" } }
+                {
+                  "kind": "Button",
+                  "props": { "variant": "ghost", "children": "Cancel" },
+                  "actions": {
+                    "onPress": {
+                      "kind": "navigate",
+                      "toExpr": "'/tenant/teams/' + team.id + '/trials'"
+                    }
+                  }
+                },
+                {
+                  "kind": "Button",
+                  "props": { "type": "submit", "variant": "primary", "children": "Schedule trial" }
+                }
               ]
             }
           ]

@@ -4,7 +4,7 @@
  * @description Defines the IRelayMessage interface.
  */
 export interface IRelayMessage {
-  kind: 'event-relay';
+  kind: "event-relay";
   event: string;
   args: unknown[];
   sourceTabId: string;

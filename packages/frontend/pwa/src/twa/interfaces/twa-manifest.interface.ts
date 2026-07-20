@@ -22,8 +22,8 @@ export interface ITwaManifest {
   readonly host: string;
   readonly name: string;
   readonly launcherName: string;
-  readonly display: 'standalone' | 'fullscreen' | 'minimal-ui';
-  readonly orientation: 'any' | 'portrait' | 'landscape';
+  readonly display: "standalone" | "fullscreen" | "minimal-ui";
+  readonly orientation: "any" | "portrait" | "landscape";
   readonly themeColor: string;
   readonly navigationColor: string;
   readonly navigationColorDark: string;
@@ -48,7 +48,7 @@ export interface ITwaManifest {
   }[];
   readonly generatorApp: string;
   readonly webManifestUrl: string;
-  readonly fallbackType: 'customtabs' | 'webview';
+  readonly fallbackType: "customtabs" | "webview";
   readonly features: {
     readonly appsFlyer?: { readonly enabled: boolean };
     readonly locationDelegation?: { readonly enabled: boolean };

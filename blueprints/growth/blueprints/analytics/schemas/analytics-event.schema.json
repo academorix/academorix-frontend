@@ -225,11 +225,27 @@
   "properties": {
     "id": { "type": "string", "pattern": "^ane_[0-9A-HJKMNP-TV-Z]{26}$" },
     "tenant_id": { "type": "string", "pattern": "^ten_[0-9A-HJKMNP-TV-Z]{26}$" },
-    "event_name": { "type": "string", "pattern": "^[a-z][a-z0-9_]*(:[a-z][a-z0-9_]*)*$", "maxLength": 128 },
-    "event_kind": { "type": "string", "enum": ["track", "identify", "page", "screen", "alias", "group"] },
+    "event_name": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9_]*(:[a-z][a-z0-9_]*)*$",
+      "maxLength": 128
+    },
+    "event_kind": {
+      "type": "string",
+      "enum": ["track", "identify", "page", "screen", "alias", "group"]
+    },
     "category": {
       "type": "string",
-      "enum": ["feature_use", "funnel_step", "cta", "error", "performance", "experiment", "lifecycle", "session"]
+      "enum": [
+        "feature_use",
+        "funnel_step",
+        "cta",
+        "error",
+        "performance",
+        "experiment",
+        "lifecycle",
+        "session"
+      ]
     },
     "subject_type": { "type": "string" },
     "subject_id": { "type": "string" },

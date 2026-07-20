@@ -9,10 +9,19 @@
   "resource": { "module": "staff", "entity": "staff", "action": "create" },
   "requiresPermission": "staff.hire",
   "dataSources": [
-    { "name": "branches", "kind": "http.get", "url": "/api/v1/branches?filter[status]=active", "unwrap": "data" },
+    {
+      "name": "branches",
+      "kind": "http.get",
+      "url": "/api/v1/branches?filter[status]=active",
+      "unwrap": "data"
+    },
     { "name": "features", "kind": "http.get", "url": "/api/v1/features", "unwrap": "data" },
     { "name": "positions_catalog", "kind": "static", "src": "staff::data/position-catalog.json" },
-    { "name": "compensation_samples", "kind": "static", "src": "staff::data/compensation-frequency-samples.json" }
+    {
+      "name": "compensation_samples",
+      "kind": "static",
+      "src": "staff::data/compensation-frequency-samples.json"
+    }
   ],
   "nodes": [
     {
@@ -31,7 +40,11 @@
       "children": [
         {
           "kind": "Text",
-          "props": { "as": "h1", "className": "text-2xl font-semibold mb-6", "children": "Hire staff" }
+          "props": {
+            "as": "h1",
+            "className": "text-2xl font-semibold mb-6",
+            "children": "Hire staff"
+          }
         },
         {
           "kind": "Stepper",
@@ -47,11 +60,21 @@
                   {
                     "kind": "Widget",
                     "widget": "user.user-picker",
-                    "props": { "name": "user_id", "label": "User", "required": true, "helpText": "The user who will become staff. If they don't have a user account yet, create one first via the users module." }
+                    "props": {
+                      "name": "user_id",
+                      "label": "User",
+                      "required": true,
+                      "helpText": "The user who will become staff. If they don't have a user account yet, create one first via the users module."
+                    }
                   },
                   {
                     "kind": "ComboBox",
-                    "props": { "name": "branch_id", "label": "Home branch", "required": true, "menuTrigger": "focus" },
+                    "props": {
+                      "name": "branch_id",
+                      "label": "Home branch",
+                      "required": true,
+                      "menuTrigger": "focus"
+                    },
                     "bindings": { "items": { "$ref": "branches" } }
                   }
                 ]
@@ -66,16 +89,31 @@
                 "children": [
                   {
                     "kind": "ComboBox",
-                    "props": { "name": "position", "label": "Position", "required": true, "menuTrigger": "input", "allowCustomValue": true, "helpText": "Pick a common position or type your own." },
+                    "props": {
+                      "name": "position",
+                      "label": "Position",
+                      "required": true,
+                      "menuTrigger": "input",
+                      "allowCustomValue": true,
+                      "helpText": "Pick a common position or type your own."
+                    },
                     "bindings": { "items": { "$ref": "positions_catalog.positions" } }
                   },
                   {
                     "kind": "TextField",
-                    "props": { "name": "department", "label": "Department", "placeholder": "Sports, Front Desk, Admin, ..." }
+                    "props": {
+                      "name": "department",
+                      "label": "Department",
+                      "placeholder": "Sports, Front Desk, Admin, ..."
+                    }
                   },
                   {
                     "kind": "Switch",
-                    "props": { "name": "is_branch_manager", "label": "This person is the branch manager", "helpText": "Refused if another manager already exists on the selected branch." }
+                    "props": {
+                      "name": "is_branch_manager",
+                      "label": "This person is the branch manager",
+                      "helpText": "Refused if another manager already exists on the selected branch."
+                    }
                   }
                 ]
               }
@@ -89,7 +127,12 @@
                 "children": [
                   {
                     "kind": "ComboBox",
-                    "props": { "name": "employment_type", "label": "Employment type", "required": true, "menuTrigger": "focus" },
+                    "props": {
+                      "name": "employment_type",
+                      "label": "Employment type",
+                      "required": true,
+                      "menuTrigger": "focus"
+                    },
                     "props_items": [
                       { "id": "full_time", "label": "Full-time" },
                       { "id": "part_time", "label": "Part-time" },
@@ -105,15 +148,29 @@
                   },
                   {
                     "kind": "DatePicker",
-                    "props": { "name": "probation_ends_at", "label": "Probation ends", "helpText": "Optional. Max 365 days from start date." }
+                    "props": {
+                      "name": "probation_ends_at",
+                      "label": "Probation ends",
+                      "helpText": "Optional. Max 365 days from start date."
+                    }
                   },
                   {
                     "kind": "TextField",
-                    "props": { "name": "weekly_hours", "type": "number", "label": "Weekly hours", "min": 0, "max": 168 }
+                    "props": {
+                      "name": "weekly_hours",
+                      "type": "number",
+                      "label": "Weekly hours",
+                      "min": 0,
+                      "max": 168
+                    }
                   },
                   {
                     "kind": "TextField",
-                    "props": { "name": "employee_number", "label": "Employee number", "helpText": "Optional external HR-system ID. Unique per tenant." }
+                    "props": {
+                      "name": "employee_number",
+                      "label": "Employee number",
+                      "helpText": "Optional external HR-system ID. Unique per tenant."
+                    }
                   }
                 ]
               }
@@ -136,7 +193,11 @@
                   },
                   {
                     "kind": "ComboBox",
-                    "props": { "name": "compensation_type", "label": "Compensation type", "menuTrigger": "focus" },
+                    "props": {
+                      "name": "compensation_type",
+                      "label": "Compensation type",
+                      "menuTrigger": "focus"
+                    },
                     "props_items": [
                       { "id": "hourly", "label": "Hourly" },
                       { "id": "salary", "label": "Salary" },
@@ -147,15 +208,29 @@
                   },
                   {
                     "kind": "TextField",
-                    "props": { "name": "compensation_amount_cents", "type": "number", "label": "Amount (cents)", "min": 0 }
+                    "props": {
+                      "name": "compensation_amount_cents",
+                      "type": "number",
+                      "label": "Amount (cents)",
+                      "min": 0
+                    }
                   },
                   {
                     "kind": "TextField",
-                    "props": { "name": "compensation_currency", "label": "Currency", "helpText": "ISO 4217 (USD, EUR, GBP, AED, ...)", "maxLength": 3 }
+                    "props": {
+                      "name": "compensation_currency",
+                      "label": "Currency",
+                      "helpText": "ISO 4217 (USD, EUR, GBP, AED, ...)",
+                      "maxLength": 3
+                    }
                   },
                   {
                     "kind": "ComboBox",
-                    "props": { "name": "pay_frequency", "label": "Pay frequency", "menuTrigger": "focus" },
+                    "props": {
+                      "name": "pay_frequency",
+                      "label": "Pay frequency",
+                      "menuTrigger": "focus"
+                    },
                     "props_items": [
                       { "id": "hourly", "label": "Hourly" },
                       { "id": "weekly", "label": "Weekly" },

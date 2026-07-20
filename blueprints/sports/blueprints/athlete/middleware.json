@@ -20,9 +20,7 @@
       "priority": 42,
       "description": "Field-level permission enforcer for the medical sub-resource. Refuses the whole `/athletes/{athlete}/medical` endpoint (GET + PATCH) when: (a) the tenant lacks the `athlete_medical_tracking` entitlement, OR (b) the caller lacks `athletes.view.medical` (for GET) / `athletes.manage.medical` (for PATCH). This is separate from the field-level redaction that applies on the parent `/athletes/{athlete}` GET — the sub-resource is entirely permission-gated so the middleware can 402 / 403 the request before any DB fetch.",
       "auto_applied": false,
-      "auto_applied_to": [
-        "/athletes/{athlete}/medical (GET, PATCH)"
-      ]
+      "auto_applied_to": ["/athletes/{athlete}/medical (GET, PATCH)"]
     },
     {
       "alias": "athlete.enforce_emergency_contact_permission",
@@ -30,9 +28,7 @@
       "priority": 42,
       "description": "Same shape as athlete.enforce_medical_permission but for the emergency-contact sub-resource. Refuses when caller lacks `athletes.view.emergency_contact` (GET) / `athletes.manage.emergency_contact` (PATCH). Adult athletes can view/manage their own via `.own`.",
       "auto_applied": false,
-      "auto_applied_to": [
-        "/athletes/{athlete}/emergency-contact (GET, PATCH)"
-      ]
+      "auto_applied_to": ["/athletes/{athlete}/emergency-contact (GET, PATCH)"]
     }
   ],
   "consumed": [

@@ -33,19 +33,14 @@
       "description": "One Region row (unredacted, including tax_config.registration_number). Read by the tax + currency resolvers on hot paths (every invoice + every price display).",
       "ttlSeconds": 300,
       "tags": ["region"],
-      "invalidatedBy": [
-        "RegionObserver.updated",
-        "RegionObserver.deleted"
-      ]
+      "invalidatedBy": ["RegionObserver.updated", "RegionObserver.deleted"]
     },
     {
       "pattern": "rgn:tax_config:{region_id}",
       "description": "The tax_config sub-object for one Region, isolated so tax-only consumers don't fetch the full row. TaxConfigResolver reads this.",
       "ttlSeconds": 300,
       "tags": ["region"],
-      "invalidatedBy": [
-        "RegionTaxConfigUpdated"
-      ]
+      "invalidatedBy": ["RegionTaxConfigUpdated"]
     },
     {
       "pattern": "rgn:country_defaults",

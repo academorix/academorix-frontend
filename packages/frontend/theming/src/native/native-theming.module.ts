@@ -5,11 +5,11 @@
  *   Imports ThemingModule.forRoot() and overrides THEME_BINDINGS with NativeThemeBindings.
  */
 
-import { Module, type DynamicModule } from '@stackra/container';
-import { THEME_BINDINGS } from '@stackra/contracts';
-import type { IThemingModuleOptions } from '../core/interfaces';
-import { ThemingModule } from '../core/theming.module';
-import { NativeThemeBindings } from './bindings';
+import { Module, type DynamicModule } from "@stackra/container";
+import { THEME_BINDINGS } from "@stackra/contracts";
+import type { IThemingModuleOptions } from "../core/interfaces";
+import { ThemingModule } from "../core/theming.module";
+import { NativeThemeBindings } from "./bindings";
 
 // ============================================================================
 // Module

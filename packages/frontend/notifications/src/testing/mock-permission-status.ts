@@ -19,22 +19,22 @@ type Listener = () => void;
 export class MockPermissionStatus {
   private readonly listeners = new Set<Listener>();
 
-  public constructor(public state: 'granted' | 'denied' | 'prompt' = 'prompt') {}
+  public constructor(public state: "granted" | "denied" | "prompt" = "prompt") {}
 
   /** Add a listener — mirrors the real API. */
-  public addEventListener(type: 'change', listener: Listener): void {
-    if (type !== 'change') return;
+  public addEventListener(type: "change", listener: Listener): void {
+    if (type !== "change") return;
     this.listeners.add(listener);
   }
 
   /** Remove a listener. */
-  public removeEventListener(type: 'change', listener: Listener): void {
-    if (type !== 'change') return;
+  public removeEventListener(type: "change", listener: Listener): void {
+    if (type !== "change") return;
     this.listeners.delete(listener);
   }
 
   /** Change the state and fire the `change` listeners. */
-  public simulateStateChange(next: 'granted' | 'denied' | 'prompt'): void {
+  public simulateStateChange(next: "granted" | "denied" | "prompt"): void {
     this.state = next;
     for (const listener of this.listeners) {
       try {

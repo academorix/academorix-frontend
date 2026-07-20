@@ -46,7 +46,12 @@
   "x-database": {
     "engine": "postgres",
     "columns": {
-      "id": { "type": "string", "length": 64, "primary": true, "description": "Prefixed ULID: `apt_<26>`." },
+      "id": {
+        "type": "string",
+        "length": 64,
+        "primary": true,
+        "description": "Prefixed ULID: `apt_<26>`."
+      },
       "tenant_id": {
         "type": "string",
         "length": 64,
@@ -63,7 +68,11 @@
         "type": "string",
         "length": 200,
         "nullable": false,
-        "foreign": { "table": "approvable_actions", "column": "action_key", "onDelete": "restrict" },
+        "foreign": {
+          "table": "approvable_actions",
+          "column": "action_key",
+          "onDelete": "restrict"
+        },
         "description": "FK by natural key."
       },
       "name": { "type": "string", "length": 200, "nullable": false },
@@ -147,7 +156,23 @@
       }
     ]
   },
-  "required": ["id", "tenant_id", "application_id", "action_key", "name", "when_expression", "priority", "expires_after_hours", "on_timeout", "reminder_config", "allows_recall", "version", "is_active", "created_at", "updated_at"],
+  "required": [
+    "id",
+    "tenant_id",
+    "application_id",
+    "action_key",
+    "name",
+    "when_expression",
+    "priority",
+    "expires_after_hours",
+    "on_timeout",
+    "reminder_config",
+    "allows_recall",
+    "version",
+    "is_active",
+    "created_at",
+    "updated_at"
+  ],
   "properties": {
     "id": { "type": "string", "pattern": "^apt_[0-9A-HJKMNP-TV-Z]{26}$" },
     "tenant_id": { "type": "string", "pattern": "^ten_[0-9A-HJKMNP-TV-Z]{26}$" },

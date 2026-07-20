@@ -4,5 +4,5 @@
  * @description Barrel for the `DevtoolsInspectorToolbar` entity.
  */
 
-export { DevtoolsInspectorToolbar } from './devtools-inspector-toolbar.component';
-export type { DevtoolsInspectorToolbarProps } from './devtools-inspector-toolbar.interface';
+export { DevtoolsInspectorToolbar } from "./devtools-inspector-toolbar.component";
+export type { DevtoolsInspectorToolbarProps } from "./devtools-inspector-toolbar.interface";

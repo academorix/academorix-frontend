@@ -1,6 +1,5 @@
 {
-    "rules": {
-        "declare_strict_types": true
-    }
+  "rules": {
+    "declare_strict_types": true
+  }
 }
-

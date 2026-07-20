@@ -7,31 +7,76 @@
   "sections": {
     "expiry": {
       "keys": [
-        { "path": "athlete_enrollment.expiry_ttl_days", "type": "int", "default": 30, "description": "Days past season.registration_closes_at at which pending enrollments auto-expire." },
-        { "path": "athlete_enrollment.provisional_ttl_days", "type": "int", "default": 14, "description": "Enterprise-only. Days past provisional creation at which the enrollment auto-expires without guardian consent." }
+        {
+          "path": "athlete_enrollment.expiry_ttl_days",
+          "type": "int",
+          "default": 30,
+          "description": "Days past season.registration_closes_at at which pending enrollments auto-expire."
+        },
+        {
+          "path": "athlete_enrollment.provisional_ttl_days",
+          "type": "int",
+          "default": 14,
+          "description": "Enterprise-only. Days past provisional creation at which the enrollment auto-expires without guardian consent."
+        }
       ]
     },
     "activation": {
       "keys": [
-        { "path": "athlete_enrollment.activation.job_interval_minutes", "type": "int", "default": 15, "description": "How often ActivateConfirmedEnrollmentsJob runs." },
-        { "path": "athlete_enrollment.activation.batch_size", "type": "int", "default": 100, "description": "Enrollments per activation-job batch." },
-        { "path": "athlete_enrollment.activation.max_retries_before_p1", "type": "int", "default": 3, "description": "Number of activation retries before firing EnrollmentAtomicityFailed as P1." }
+        {
+          "path": "athlete_enrollment.activation.job_interval_minutes",
+          "type": "int",
+          "default": 15,
+          "description": "How often ActivateConfirmedEnrollmentsJob runs."
+        },
+        {
+          "path": "athlete_enrollment.activation.batch_size",
+          "type": "int",
+          "default": 100,
+          "description": "Enrollments per activation-job batch."
+        },
+        {
+          "path": "athlete_enrollment.activation.max_retries_before_p1",
+          "type": "int",
+          "default": 3,
+          "description": "Number of activation retries before firing EnrollmentAtomicityFailed as P1."
+        }
       ]
     },
     "waitlist": {
       "keys": [
-        { "path": "athlete_enrollment.waitlist.promotion_job_interval_minutes", "type": "int", "default": 15, "description": "How often PromoteWaitlistedEnrollmentsJob runs." },
-        { "path": "athlete_enrollment.waitlist.notification_priority", "type": "string", "default": "notifications-critical", "description": "Queue for the promotion notification." }
+        {
+          "path": "athlete_enrollment.waitlist.promotion_job_interval_minutes",
+          "type": "int",
+          "default": 15,
+          "description": "How often PromoteWaitlistedEnrollmentsJob runs."
+        },
+        {
+          "path": "athlete_enrollment.waitlist.notification_priority",
+          "type": "string",
+          "default": "notifications-critical",
+          "description": "Queue for the promotion notification."
+        }
       ]
     },
     "notifications": {
       "keys": [
-        { "path": "athlete_enrollment.notifications.deadline_thresholds_days", "type": "array", "default": [14, 7, 1], "description": "Pre-deadline reminder thresholds." }
+        {
+          "path": "athlete_enrollment.notifications.deadline_thresholds_days",
+          "type": "array",
+          "default": [14, 7, 1],
+          "description": "Pre-deadline reminder thresholds."
+        }
       ]
     },
     "retention": {
       "keys": [
-        { "path": "athlete_enrollment.retention.years", "type": "int", "default": 7, "description": "Years past terminal transition at which the enrollment becomes eligible for hard-purge." }
+        {
+          "path": "athlete_enrollment.retention.years",
+          "type": "int",
+          "default": 7,
+          "description": "Years past terminal transition at which the enrollment becomes eligible for hard-purge."
+        }
       ]
     }
   }

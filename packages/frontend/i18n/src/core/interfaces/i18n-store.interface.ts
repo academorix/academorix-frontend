@@ -8,7 +8,7 @@
  * Minimal store interface matching @stackra/react-state's Store API.
  * Allows the service to update state without depending on the full package.
  */
-import type { II18nState } from './i18n-state.interface';
+import type { II18nState } from "./i18n-state.interface";
 
 export interface II18nStore {
   /** Get the current state snapshot. */

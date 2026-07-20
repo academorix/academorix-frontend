@@ -44,12 +44,7 @@
       "color": "Academorix\\Sports\\AgeGroup\\Casts\\HexColor",
       "metadata": "array"
     },
-    "appends": [
-      "display_label",
-      "bounds_summary",
-      "is_in_use",
-      "inbound_reference_count"
-    ],
+    "appends": ["display_label", "bounds_summary", "is_in_use", "inbound_reference_count"],
     "observers": ["AgeGroupObserver"],
     "relations_note": "`tenant()` belongsTo tenancy::Tenant via tenant_id (CASCADE). `organization()` belongsTo organization::Organization via organization_id (RESTRICT, nullable). Downstream: hasMany teams::Team via team.age_group_id (Wave 2b, RESTRICT), hasMany event::EventDivision via event_division.age_group_id (Wave 3+, RESTRICT); AthleteEnrollment references via age_group_snapshot_id (snapshotted; does NOT create a live FK).",
     "hidden": [],

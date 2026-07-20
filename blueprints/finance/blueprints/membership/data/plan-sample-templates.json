@@ -20,7 +20,11 @@
         "passes_carry_over": false,
         "refund_policy": "no_refund",
         "refund_grace_days": 0,
-        "prerequisites": { "requires_athlete_medical_clearance": true, "requires_guardian_verified": true, "requires_minimum_athlete_age": 6 }
+        "prerequisites": {
+          "requires_athlete_medical_clearance": true,
+          "requires_guardian_verified": true,
+          "requires_minimum_athlete_age": 6
+        }
       }
     },
     {
@@ -236,7 +240,11 @@
         "passes_carry_over": false,
         "refund_policy": "no_refund",
         "refund_grace_days": 0,
-        "addon_config": { "equipment_rental": true, "kit_included": true, "tournament_entry_credit": 4 },
+        "addon_config": {
+          "equipment_rental": true,
+          "kit_included": true,
+          "tournament_entry_credit": 4
+        },
         "max_active_members": 30
       }
     },
@@ -257,7 +265,11 @@
         "passes_carry_over": true,
         "refund_policy": "prorated",
         "refund_grace_days": 14,
-        "addon_config": { "equipment_rental": false, "kit_included": true, "tournament_entry_credit": 1 }
+        "addon_config": {
+          "equipment_rental": false,
+          "kit_included": true,
+          "tournament_entry_credit": 1
+        }
       }
     },
     {
@@ -278,7 +290,11 @@
         "refund_policy": "full_within_grace",
         "refund_grace_days": 14,
         "age_group_id": "REPLACE_WITH_TENANT_U12_AGE_GROUP_ID",
-        "prerequisites": { "requires_athlete_medical_clearance": true, "requires_guardian_verified": true, "requires_minimum_athlete_age": 6 }
+        "prerequisites": {
+          "requires_athlete_medical_clearance": true,
+          "requires_guardian_verified": true,
+          "requires_minimum_athlete_age": 6
+        }
       }
     },
     {

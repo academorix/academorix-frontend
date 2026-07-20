@@ -12,10 +12,10 @@
  *   every emit is a silent no-op.
  */
 
-import { Inject, Injectable, Optional } from '@stackra/container';
-import { ANALYTICS_MANAGER, type IAnalyticsManager } from '@stackra/contracts';
+import { Inject, Injectable, Optional } from "@stackra/container";
+import { ANALYTICS_MANAGER, type IAnalyticsManager } from "@stackra/contracts";
 
-import type { NotificationEventName } from '../constants';
+import type { NotificationEventName } from "../constants";
 
 /**
  * Fan-out bridge that dispatches notifications lifecycle events
@@ -35,7 +35,7 @@ export class AnalyticsBridgeService {
   public constructor(
     @Optional()
     @Inject(ANALYTICS_MANAGER)
-    private readonly manager?: IAnalyticsManager | null
+    private readonly manager?: IAnalyticsManager | null,
   ) {}
 
   /**
@@ -60,7 +60,7 @@ export class AnalyticsBridgeService {
       // return a promise. Fire-and-forget semantics match the rest
       // of the analytics stack.
       const result = this.manager.track(event, payload) as unknown as void | Promise<unknown>;
-      if (result && typeof (result as Promise<unknown>).catch === 'function') {
+      if (result && typeof (result as Promise<unknown>).catch === "function") {
         (result as Promise<unknown>).catch(() => {
           // fail-soft — the bridge is best-effort.
         });

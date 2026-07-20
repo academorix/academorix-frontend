@@ -6,21 +6,187 @@
   "dispatchMode": "afterCommit",
   "description": "Task lifecycle + assignment + comment events. Automation engine fires TaskCreated based on domain triggers via #[AsTaskAutomation] handlers.",
   "events": [
-    { "name": "TaskCreated", "class": "Academorix\\Workflow\\Tasks\\Events\\TaskCreated", "trigger": "New Task row committed.", "queue": "tasks", "consumers": ["audit::WriteToAuditLog", "activity::LogActivity"], "payload": { "task_id": "ULID (tsk_*)", "tenant_id": "ULID", "title": "string", "created_by": "ULID | null", "at": "ISO 8601" } },
-    { "name": "TaskUpdated", "class": "Academorix\\Workflow\\Tasks\\Events\\TaskUpdated", "trigger": "Task fields updated (title/description/priority/due_at).", "queue": "tasks", "consumers": ["audit::WriteToAuditLog"], "payload": { "task_id": "ULID", "tenant_id": "ULID", "changed_fields": "string[]", "at": "ISO 8601" } },
-    { "name": "TaskDeleted", "class": "Academorix\\Workflow\\Tasks\\Events\\TaskDeleted", "trigger": "Task soft-deleted.", "queue": "tasks", "consumers": ["audit::WriteToAuditLog"], "payload": { "task_id": "ULID", "tenant_id": "ULID", "at": "ISO 8601" } },
-    { "name": "TaskStatusChanged", "class": "Academorix\\Workflow\\Tasks\\Events\\TaskStatusChanged", "trigger": "Task.status transition.", "queue": "tasks", "consumers": ["audit::WriteToAuditLog"], "payload": { "task_id": "ULID", "from_status": "string", "to_status": "string", "at": "ISO 8601" } },
-    { "name": "TaskAssigned", "class": "Academorix\\Workflow\\Tasks\\Events\\TaskAssigned", "trigger": "New TaskAssignment row committed.", "queue": "tasks", "consumers": ["notifications::DispatchTaskAssignedNotificationListener"], "payload": { "task_id": "ULID", "assignment_id": "ULID (tas_*)", "user_id": "ULID", "role": "string", "assigned_by": "ULID | null", "at": "ISO 8601" } },
-    { "name": "TaskUnassigned", "class": "Academorix\\Workflow\\Tasks\\Events\\TaskUnassigned", "trigger": "TaskAssignment.unassigned_at set.", "queue": "tasks", "consumers": ["audit::WriteToAuditLog"], "payload": { "task_id": "ULID", "assignment_id": "ULID", "user_id": "ULID", "at": "ISO 8601" } },
-    { "name": "TaskAssignmentAccepted", "class": "Academorix\\Workflow\\Tasks\\Events\\TaskAssignmentAccepted", "trigger": "Assignee accepted their assignment.", "queue": "tasks", "consumers": ["audit::WriteToAuditLog"], "payload": { "assignment_id": "ULID", "task_id": "ULID", "user_id": "ULID", "at": "ISO 8601" } },
-    { "name": "TaskAssignmentDeclined", "class": "Academorix\\Workflow\\Tasks\\Events\\TaskAssignmentDeclined", "trigger": "Assignee declined their assignment.", "queue": "tasks", "consumers": ["audit::WriteToAuditLog", "notifications::DispatchTaskAssignmentDeclinedNotificationListener"], "payload": { "assignment_id": "ULID", "task_id": "ULID", "user_id": "ULID", "reason": "string | null", "at": "ISO 8601" } },
-    { "name": "TaskCommentAdded", "class": "Academorix\\Workflow\\Tasks\\Events\\TaskCommentAdded", "trigger": "New TaskComment row committed.", "queue": "tasks", "consumers": ["notifications::DispatchTaskCommentAddedNotificationListener", "notifications::DispatchTaskCommentMentionedNotificationListener"], "payload": { "task_id": "ULID", "comment_id": "ULID (tcm_*)", "user_id": "ULID", "mentioned_user_ids": "ULID[]", "at": "ISO 8601" } },
-    { "name": "TaskCommentEdited", "class": "Academorix\\Workflow\\Tasks\\Events\\TaskCommentEdited", "trigger": "TaskComment edited within 15-minute window.", "queue": "tasks", "consumers": ["audit::WriteToAuditLog"], "payload": { "comment_id": "ULID", "task_id": "ULID", "at": "ISO 8601" } },
-    { "name": "TaskCommentDeleted", "class": "Academorix\\Workflow\\Tasks\\Events\\TaskCommentDeleted", "trigger": "TaskComment soft-deleted.", "queue": "tasks", "consumers": ["audit::WriteToAuditLog"], "payload": { "comment_id": "ULID", "task_id": "ULID", "at": "ISO 8601" } },
-    { "name": "TaskCommentMentioned", "class": "Academorix\\Workflow\\Tasks\\Events\\TaskCommentMentioned", "trigger": "TaskComment created with non-empty mentioned_user_ids.", "queue": "tasks", "consumers": ["notifications::DispatchTaskCommentMentionedNotificationListener"], "payload": { "comment_id": "ULID", "task_id": "ULID", "mentioned_user_ids": "ULID[]", "at": "ISO 8601" } },
-    { "name": "TaskDueSoon", "class": "Academorix\\Workflow\\Tasks\\Events\\TaskDueSoon", "trigger": "FireDueSoonRemindersJob detected task due within reminder window.", "queue": "tasks", "consumers": ["notifications::DispatchTaskDueSoonNotificationListener"], "payload": { "task_id": "ULID", "tenant_id": "ULID", "due_at": "ISO 8601", "at": "ISO 8601" } },
-    { "name": "TaskOverdue", "class": "Academorix\\Workflow\\Tasks\\Events\\TaskOverdue", "trigger": "MarkOverdueTasksJob detected due_at < NOW() with status='open' or 'in_progress'.", "queue": "tasks", "consumers": ["notifications::DispatchTaskOverdueNotificationListener"], "payload": { "task_id": "ULID", "tenant_id": "ULID", "due_at": "ISO 8601", "at": "ISO 8601" } },
-    { "name": "TaskCompleted", "class": "Academorix\\Workflow\\Tasks\\Events\\TaskCompleted", "trigger": "Task.status -> completed.", "queue": "tasks", "consumers": ["audit::WriteToAuditLog", "notifications::DispatchTaskCompletedNotificationListener"], "payload": { "task_id": "ULID", "tenant_id": "ULID", "completed_by": "ULID | null", "at": "ISO 8601" } },
-    { "name": "TaskCancelled", "class": "Academorix\\Workflow\\Tasks\\Events\\TaskCancelled", "trigger": "Task.status -> cancelled.", "queue": "tasks", "consumers": ["audit::WriteToAuditLog"], "payload": { "task_id": "ULID", "tenant_id": "ULID", "at": "ISO 8601" } }
+    {
+      "name": "TaskCreated",
+      "class": "Academorix\\Workflow\\Tasks\\Events\\TaskCreated",
+      "trigger": "New Task row committed.",
+      "queue": "tasks",
+      "consumers": ["audit::WriteToAuditLog", "activity::LogActivity"],
+      "payload": {
+        "task_id": "ULID (tsk_*)",
+        "tenant_id": "ULID",
+        "title": "string",
+        "created_by": "ULID | null",
+        "at": "ISO 8601"
+      }
+    },
+    {
+      "name": "TaskUpdated",
+      "class": "Academorix\\Workflow\\Tasks\\Events\\TaskUpdated",
+      "trigger": "Task fields updated (title/description/priority/due_at).",
+      "queue": "tasks",
+      "consumers": ["audit::WriteToAuditLog"],
+      "payload": {
+        "task_id": "ULID",
+        "tenant_id": "ULID",
+        "changed_fields": "string[]",
+        "at": "ISO 8601"
+      }
+    },
+    {
+      "name": "TaskDeleted",
+      "class": "Academorix\\Workflow\\Tasks\\Events\\TaskDeleted",
+      "trigger": "Task soft-deleted.",
+      "queue": "tasks",
+      "consumers": ["audit::WriteToAuditLog"],
+      "payload": { "task_id": "ULID", "tenant_id": "ULID", "at": "ISO 8601" }
+    },
+    {
+      "name": "TaskStatusChanged",
+      "class": "Academorix\\Workflow\\Tasks\\Events\\TaskStatusChanged",
+      "trigger": "Task.status transition.",
+      "queue": "tasks",
+      "consumers": ["audit::WriteToAuditLog"],
+      "payload": {
+        "task_id": "ULID",
+        "from_status": "string",
+        "to_status": "string",
+        "at": "ISO 8601"
+      }
+    },
+    {
+      "name": "TaskAssigned",
+      "class": "Academorix\\Workflow\\Tasks\\Events\\TaskAssigned",
+      "trigger": "New TaskAssignment row committed.",
+      "queue": "tasks",
+      "consumers": ["notifications::DispatchTaskAssignedNotificationListener"],
+      "payload": {
+        "task_id": "ULID",
+        "assignment_id": "ULID (tas_*)",
+        "user_id": "ULID",
+        "role": "string",
+        "assigned_by": "ULID | null",
+        "at": "ISO 8601"
+      }
+    },
+    {
+      "name": "TaskUnassigned",
+      "class": "Academorix\\Workflow\\Tasks\\Events\\TaskUnassigned",
+      "trigger": "TaskAssignment.unassigned_at set.",
+      "queue": "tasks",
+      "consumers": ["audit::WriteToAuditLog"],
+      "payload": { "task_id": "ULID", "assignment_id": "ULID", "user_id": "ULID", "at": "ISO 8601" }
+    },
+    {
+      "name": "TaskAssignmentAccepted",
+      "class": "Academorix\\Workflow\\Tasks\\Events\\TaskAssignmentAccepted",
+      "trigger": "Assignee accepted their assignment.",
+      "queue": "tasks",
+      "consumers": ["audit::WriteToAuditLog"],
+      "payload": { "assignment_id": "ULID", "task_id": "ULID", "user_id": "ULID", "at": "ISO 8601" }
+    },
+    {
+      "name": "TaskAssignmentDeclined",
+      "class": "Academorix\\Workflow\\Tasks\\Events\\TaskAssignmentDeclined",
+      "trigger": "Assignee declined their assignment.",
+      "queue": "tasks",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "notifications::DispatchTaskAssignmentDeclinedNotificationListener"
+      ],
+      "payload": {
+        "assignment_id": "ULID",
+        "task_id": "ULID",
+        "user_id": "ULID",
+        "reason": "string | null",
+        "at": "ISO 8601"
+      }
+    },
+    {
+      "name": "TaskCommentAdded",
+      "class": "Academorix\\Workflow\\Tasks\\Events\\TaskCommentAdded",
+      "trigger": "New TaskComment row committed.",
+      "queue": "tasks",
+      "consumers": [
+        "notifications::DispatchTaskCommentAddedNotificationListener",
+        "notifications::DispatchTaskCommentMentionedNotificationListener"
+      ],
+      "payload": {
+        "task_id": "ULID",
+        "comment_id": "ULID (tcm_*)",
+        "user_id": "ULID",
+        "mentioned_user_ids": "ULID[]",
+        "at": "ISO 8601"
+      }
+    },
+    {
+      "name": "TaskCommentEdited",
+      "class": "Academorix\\Workflow\\Tasks\\Events\\TaskCommentEdited",
+      "trigger": "TaskComment edited within 15-minute window.",
+      "queue": "tasks",
+      "consumers": ["audit::WriteToAuditLog"],
+      "payload": { "comment_id": "ULID", "task_id": "ULID", "at": "ISO 8601" }
+    },
+    {
+      "name": "TaskCommentDeleted",
+      "class": "Academorix\\Workflow\\Tasks\\Events\\TaskCommentDeleted",
+      "trigger": "TaskComment soft-deleted.",
+      "queue": "tasks",
+      "consumers": ["audit::WriteToAuditLog"],
+      "payload": { "comment_id": "ULID", "task_id": "ULID", "at": "ISO 8601" }
+    },
+    {
+      "name": "TaskCommentMentioned",
+      "class": "Academorix\\Workflow\\Tasks\\Events\\TaskCommentMentioned",
+      "trigger": "TaskComment created with non-empty mentioned_user_ids.",
+      "queue": "tasks",
+      "consumers": ["notifications::DispatchTaskCommentMentionedNotificationListener"],
+      "payload": {
+        "comment_id": "ULID",
+        "task_id": "ULID",
+        "mentioned_user_ids": "ULID[]",
+        "at": "ISO 8601"
+      }
+    },
+    {
+      "name": "TaskDueSoon",
+      "class": "Academorix\\Workflow\\Tasks\\Events\\TaskDueSoon",
+      "trigger": "FireDueSoonRemindersJob detected task due within reminder window.",
+      "queue": "tasks",
+      "consumers": ["notifications::DispatchTaskDueSoonNotificationListener"],
+      "payload": { "task_id": "ULID", "tenant_id": "ULID", "due_at": "ISO 8601", "at": "ISO 8601" }
+    },
+    {
+      "name": "TaskOverdue",
+      "class": "Academorix\\Workflow\\Tasks\\Events\\TaskOverdue",
+      "trigger": "MarkOverdueTasksJob detected due_at < NOW() with status='open' or 'in_progress'.",
+      "queue": "tasks",
+      "consumers": ["notifications::DispatchTaskOverdueNotificationListener"],
+      "payload": { "task_id": "ULID", "tenant_id": "ULID", "due_at": "ISO 8601", "at": "ISO 8601" }
+    },
+    {
+      "name": "TaskCompleted",
+      "class": "Academorix\\Workflow\\Tasks\\Events\\TaskCompleted",
+      "trigger": "Task.status -> completed.",
+      "queue": "tasks",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "notifications::DispatchTaskCompletedNotificationListener"
+      ],
+      "payload": {
+        "task_id": "ULID",
+        "tenant_id": "ULID",
+        "completed_by": "ULID | null",
+        "at": "ISO 8601"
+      }
+    },
+    {
+      "name": "TaskCancelled",
+      "class": "Academorix\\Workflow\\Tasks\\Events\\TaskCancelled",
+      "trigger": "Task.status -> cancelled.",
+      "queue": "tasks",
+      "consumers": ["audit::WriteToAuditLog"],
+      "payload": { "task_id": "ULID", "tenant_id": "ULID", "at": "ISO 8601" }
+    }
   ]
 }

@@ -5,5 +5,5 @@
  *   component + its owned props interface.
  */
 
-export { NotificationList } from './notification-list.component';
-export type { NotificationListProps } from './notification-list.interface';
+export { NotificationList } from "./notification-list.component";
+export type { NotificationListProps } from "./notification-list.interface";

@@ -15,7 +15,9 @@
     "incrementing": false,
     "model": "Academorix\\Observability\\Monitoring\\Models\\HealthCheckRun",
     "interface": "Academorix\\Observability\\Monitoring\\Contracts\\Data\\HealthCheckRunInterface",
-    "implements": ["Academorix\\Observability\\Monitoring\\Contracts\\Data\\HealthCheckRunInterface"],
+    "implements": [
+      "Academorix\\Observability\\Monitoring\\Contracts\\Data\\HealthCheckRunInterface"
+    ],
     "traits": [
       "HasFactory",
       "HasUlids",
@@ -91,12 +93,27 @@
       "updated_at": { "type": "timestamptz", "nullable": false }
     },
     "indexes": [
-      { "columns": ["tenant_id", "health_check_id", "run_at"], "name": "health_check_runs_check_history_idx" },
+      {
+        "columns": ["tenant_id", "health_check_id", "run_at"],
+        "name": "health_check_runs_check_history_idx"
+      },
       { "columns": ["tenant_id", "status", "run_at"], "name": "health_check_runs_status_idx" },
-      { "columns": ["created_at"], "name": "health_check_runs_retention_idx", "description": "Used by PurgeExpiredHealthCheckRunsJob." }
+      {
+        "columns": ["created_at"],
+        "name": "health_check_runs_retention_idx",
+        "description": "Used by PurgeExpiredHealthCheckRunsJob."
+      }
     ]
   },
-  "required": ["id", "tenant_id", "health_check_id", "status", "run_at", "created_at", "updated_at"],
+  "required": [
+    "id",
+    "tenant_id",
+    "health_check_id",
+    "status",
+    "run_at",
+    "created_at",
+    "updated_at"
+  ],
   "properties": {
     "id": { "type": "string", "pattern": "^hcr_[0-9A-HJKMNP-TV-Z]{26}$" },
     "tenant_id": { "type": "string", "pattern": "^ten_[0-9A-HJKMNP-TV-Z]{26}$" },

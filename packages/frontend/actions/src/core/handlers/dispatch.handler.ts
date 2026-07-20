@@ -5,14 +5,14 @@
  *   action kind by name.
  */
 
-import { Inject, Injectable } from '@stackra/container';
+import { Inject, Injectable } from "@stackra/container";
 import type {
   IActionContext,
   IActionDispatcher,
   IActionResponse,
   IDispatchAction,
-} from '@stackra/contracts';
-import { ACTION_DISPATCHER, ActionKind } from '@stackra/contracts';
+} from "@stackra/contracts";
+import { ACTION_DISPATCHER, ActionKind } from "@stackra/contracts";
 
 /**
  * Dispatch handler — re-dispatches `payload` against the handler
@@ -30,7 +30,7 @@ export class DispatchHandler {
 
   public async execute(
     descriptor: IDispatchAction,
-    context: IActionContext
+    context: IActionContext,
   ): Promise<IActionResponse> {
     return this.dispatcher.dispatch({ ...descriptor.payload, kind: descriptor.name }, context);
   }

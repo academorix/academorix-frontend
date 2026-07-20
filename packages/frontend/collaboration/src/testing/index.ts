@@ -21,9 +21,9 @@
  * ```
  */
 
-export { MockCollaborationTransport, type RecordedBroadcast } from './mock-collaboration-transport';
-export { MockRoomManager } from './mock-room-manager';
+export { MockCollaborationTransport, type RecordedBroadcast } from "./mock-collaboration-transport";
+export { MockRoomManager } from "./mock-room-manager";
 export {
   createMockRoomManager,
   createMockCollaborationTransport,
-} from './create-mock-room-manager';
+} from "./create-mock-room-manager";

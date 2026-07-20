@@ -6,7 +6,15 @@
   "namespace": "academorix.sports_registry",
   "labelConventions": {
     "always": [],
-    "commonlyAvailable": ["entity_kind", "category", "gender_typical", "is_platform_seeded", "outcome", "source", "resolver_context"],
+    "commonlyAvailable": [
+      "entity_kind",
+      "category",
+      "gender_typical",
+      "is_platform_seeded",
+      "outcome",
+      "source",
+      "resolver_context"
+    ],
     "forbiddenAsLabels": ["sport_id", "discipline_id", "position_id", "tenant_id", "slug"]
   },
   "metrics": [

@@ -3,9 +3,12 @@
 A small (side-effect free by default) layer on top of
 `trigger_error(E_USER_DEPRECATED)` or PSR-3 logging.
 
-- no side-effects by default, making it a perfect fit for libraries that don't know how the error handler works they operate under
-- options to avoid having to rely on error handlers global state by using PSR-3 logging
-- deduplicate deprecation messages to avoid excessive triggering and reduce overhead
+- no side-effects by default, making it a perfect fit for libraries that don't
+  know how the error handler works they operate under
+- options to avoid having to rely on error handlers global state by using PSR-3
+  logging
+- deduplicate deprecation messages to avoid excessive triggering and reduce
+  overhead
 
 We recommend to collect Deprecations using a PSR logger instead of relying on
 the global error handler.
@@ -18,17 +21,17 @@ Enable Doctrine deprecations to be sent to a PSR3 logger:
 \Doctrine\Deprecations\Deprecation::enableWithPsrLogger($logger);
 ```
 
-Enable Doctrine deprecations to be sent as `@trigger_error($message, E_USER_DEPRECATED)`
-messages by setting the `DOCTRINE_DEPRECATIONS` environment variable to `trigger`.
-Alternatively, call:
+Enable Doctrine deprecations to be sent as
+`@trigger_error($message, E_USER_DEPRECATED)` messages by setting the
+`DOCTRINE_DEPRECATIONS` environment variable to `trigger`. Alternatively, call:
 
 ```php
 \Doctrine\Deprecations\Deprecation::enableWithTriggerError();
 ```
 
-If you only want to enable deprecation tracking, without logging or calling `trigger_error`
-then set the `DOCTRINE_DEPRECATIONS` environment variable to `track`.
-Alternatively, call:
+If you only want to enable deprecation tracking, without logging or calling
+`trigger_error` then set the `DOCTRINE_DEPRECATIONS` environment variable to
+`track`. Alternatively, call:
 
 ```php
 \Doctrine\Deprecations\Deprecation::enableTrackingDeprecations();
@@ -61,8 +64,8 @@ Disable all deprecations from a package
 
 ### Other Operations
 
-When used within PHPUnit or other tools that could collect multiple instances of the same deprecations
-the deduplication can be disabled:
+When used within PHPUnit or other tools that could collect multiple instances of
+the same deprecations the deduplication can be disabled:
 
 ```php
 \Doctrine\Deprecations\Deprecation::withoutDeduplication();
@@ -76,8 +79,8 @@ Disable deprecation tracking again:
 
 ## Usage from a library/producer perspective:
 
-When you want to unconditionally trigger a deprecation even when called
-from the library itself then the `trigger` method is the way to go:
+When you want to unconditionally trigger a deprecation even when called from the
+library itself then the `trigger` method is the way to go:
 
 ```php
 \Doctrine\Deprecations\Deprecation::trigger(
@@ -101,8 +104,8 @@ the message.
 ```
 
 When you want to trigger a deprecation only when it is called by a function
-outside of the current package, but not trigger when the package itself is the cause,
-then use:
+outside of the current package, but not trigger when the package itself is the
+cause, then use:
 
 ```php
 \Doctrine\Deprecations\Deprecation::triggerIfCalledFromOutside(
@@ -118,14 +121,13 @@ request.
 A limited stacktrace is included in the deprecation message to find the
 offending location.
 
-Note: A producer/library should never call `Deprecation::enableWith` methods
-and leave the decision how to handle deprecations to application and
-frameworks.
+Note: A producer/library should never call `Deprecation::enableWith` methods and
+leave the decision how to handle deprecations to application and frameworks.
 
 ## Usage in PHPUnit tests
 
-There is a `VerifyDeprecations` trait that you can use to make assertions on
-the occurrence of deprecations within a test.
+There is a `VerifyDeprecations` trait that you can use to make assertions on the
+occurrence of deprecations within a test.
 
 ```php
 use Doctrine\Deprecations\PHPUnit\VerifyDeprecations;

@@ -14,4 +14,4 @@
  * Package-owned: consent categories are a consent-package concept and do
  * not appear in the cross-package contract surface.
  */
-export const CONSENT_REGISTRY = Symbol.for('CONSENT_REGISTRY');
+export const CONSENT_REGISTRY = Symbol.for("CONSENT_REGISTRY");

@@ -11,12 +11,12 @@
  *   without re-registering the tool on every render.
  */
 
-import { useEffect, useRef } from 'react';
-import { useInject } from '@stackra/container/react';
-import { AI_TOOL_REGISTRY } from '@stackra/contracts';
+import { useEffect, useRef } from "react";
+import { useInject } from "@stackra/container/react";
+import { AI_TOOL_REGISTRY } from "@stackra/contracts";
 
-import { ToolRegistry, type ToolHandler } from '@/core/registries/tool.registry';
-import type { IAiToolDefinition } from '@/core/utils/define-ai-tool.util';
+import { ToolRegistry, type ToolHandler } from "@/core/registries/tool.registry";
+import type { IAiToolDefinition } from "@/core/utils/define-ai-tool.util";
 
 /**
  * A tool definition that carries its handler inline — the shape
@@ -69,7 +69,7 @@ export function createAiTool(definition: IAiToolDefinition): AiToolHook {
     const boundHandler = handler ?? definition.handler;
     if (!boundHandler) {
       throw new Error(
-        `[createAiTool] tool "${definition.name}" needs a handler — pass it to createAiTool, defineAiTool, or the returned hook`
+        `[createAiTool] tool "${definition.name}" needs a handler — pass it to createAiTool, defineAiTool, or the returned hook`,
       );
     }
     // The ref indirection lets the handler close over live state without

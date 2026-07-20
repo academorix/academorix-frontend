@@ -13,20 +13,20 @@
  *   package, which builds on this one.
  */
 
-import { Module, registerWith } from '@stackra/container';
-import type { DynamicModule } from '@stackra/container';
-import { DevtoolsModule } from '@stackra/devtools';
-import { Store } from '@tanstack/store';
+import { Module, registerWith } from "@stackra/container";
+import type { DynamicModule } from "@stackra/container";
+import { DevtoolsModule } from "@stackra/devtools";
+import { Store } from "@tanstack/store";
 
-import { STATE_REGISTRY, EVENT_EMITTER } from '@stackra/contracts';
-import type { IEventEmitter, IStoreFeatureConfig, FactoryProvider } from '@stackra/contracts';
-import { StateRegistry } from './registries/state.registry';
-import { CrossTabBroadcaster } from './broadcasters/cross-tab.broadcaster';
-import { RealtimeBroadcaster } from './broadcasters/realtime.broadcaster';
-import { PersistenceBroadcaster } from './broadcasters/persistence.broadcaster';
-import { createReactiveStore } from './utils/create-reactive-store.util';
-import type { StateFeatureOptions } from './interfaces/state-feature-options.interface';
-import { StateDevtoolsPanel } from '../react/devtools/state.devtools-panel';
+import { STATE_REGISTRY, EVENT_EMITTER } from "@stackra/contracts";
+import type { IEventEmitter, IStoreFeatureConfig, FactoryProvider } from "@stackra/contracts";
+import { StateRegistry } from "./registries/state.registry";
+import { CrossTabBroadcaster } from "./broadcasters/cross-tab.broadcaster";
+import { RealtimeBroadcaster } from "./broadcasters/realtime.broadcaster";
+import { PersistenceBroadcaster } from "./broadcasters/persistence.broadcaster";
+import { createReactiveStore } from "./utils/create-reactive-store.util";
+import type { StateFeatureOptions } from "./interfaces/state-feature-options.interface";
+import { StateDevtoolsPanel } from "../react/devtools/state.devtools-panel";
 
 /** A store-registration entry accepted by `forFeature`. */
 type StoreConfig<S> = StateFeatureOptions<S> | IStoreFeatureConfig<S>;
@@ -112,7 +112,7 @@ export class StateModule {
         [StateRegistry, entry.token],
         (registry, store) => {
           registry.registerStore(entry.name, entry.token, store, entry.initialState);
-        }
+        },
       ),
       // Wire broadcasters based on config.
       ...StateModule.createBroadcasterRegistrations(entry),
@@ -137,7 +137,7 @@ export class StateModule {
       registrations.push(
         registerWith<CrossTabBroadcaster>(CrossTabBroadcaster, (broadcaster) => {
           broadcaster.enableForStore(entry.name);
-        })
+        }),
       );
     }
 
@@ -145,18 +145,18 @@ export class StateModule {
     if (config.realtime ?? false) {
       registrations.push(
         registerWith<RealtimeBroadcaster>(RealtimeBroadcaster, (broadcaster) => {
-          broadcaster.enableForStore(entry.name, config.updateStrategy ?? 'instant');
-        })
+          broadcaster.enableForStore(entry.name, config.updateStrategy ?? "instant");
+        }),
       );
     }
 
     // Persistence (default: "localStorage" — opt out with false).
-    const persistence = config.persistence ?? 'localStorage';
+    const persistence = config.persistence ?? "localStorage";
     if (persistence !== false) {
       registrations.push(
         registerWith<PersistenceBroadcaster>(PersistenceBroadcaster, (broadcaster) => {
           broadcaster.enableForStore(entry.name, persistence);
-        })
+        }),
       );
     }
 

@@ -5,12 +5,99 @@
   "namespace": "Academorix\\Finance\\Payout\\Events",
   "dispatchMode": "afterCommit",
   "events": [
-    { "name": "PayoutInitiated", "class": "Academorix\\Finance\\Payout\\Events\\PayoutInitiated", "trigger": "New payout row synced from gateway with status='pending'.", "queue": "payout", "consumers": ["audit::WriteToAuditLog"], "payload": { "payout_id": "ULID (pyo_*)", "tenant_id": "ULID", "amount_minor": "integer", "currency": "string", "at": "ISO 8601" } },
-    { "name": "PayoutInTransit", "class": "Academorix\\Finance\\Payout\\Events\\PayoutInTransit", "trigger": "Payout.status transitions pending -> in_transit.", "queue": "payout", "consumers": ["audit::WriteToAuditLog"], "payload": { "payout_id": "ULID", "tenant_id": "ULID", "arrival_at": "ISO 8601 | null", "at": "ISO 8601" } },
-    { "name": "PayoutPaid", "class": "Academorix\\Finance\\Payout\\Events\\PayoutPaid", "trigger": "Payout.status transitions -> paid. Triggers reconciliation job.", "queue": "payout-critical", "consumers": ["audit::WriteToAuditLog", "payout::ReconcilePayoutListener", "notifications::DispatchPayoutPaidNotificationListener"], "payload": { "payout_id": "ULID", "tenant_id": "ULID", "net_minor": "integer", "paid_at": "ISO 8601" } },
-    { "name": "PayoutFailed", "class": "Academorix\\Finance\\Payout\\Events\\PayoutFailed", "trigger": "Payout.status transitions -> failed. Provider rejected the payout.", "queue": "payout-critical", "consumers": ["audit::WriteToAuditLog", "notifications::DispatchPayoutFailedNotificationListener", "monitoring::MetricsCollector"], "payload": { "payout_id": "ULID", "tenant_id": "ULID", "reason": "string", "failed_at": "ISO 8601" } },
-    { "name": "PayoutCancelled", "class": "Academorix\\Finance\\Payout\\Events\\PayoutCancelled", "trigger": "Payout.status transitions -> cancelled.", "queue": "payout", "consumers": ["audit::WriteToAuditLog"], "payload": { "payout_id": "ULID", "tenant_id": "ULID", "at": "ISO 8601" } },
-    { "name": "PayoutReconciled", "class": "Academorix\\Finance\\Payout\\Events\\PayoutReconciled", "trigger": "PayoutReconciliation.status -> matched. Local + provider totals agree.", "queue": "payout", "consumers": ["audit::WriteToAuditLog"], "payload": { "payout_id": "ULID", "reconciliation_id": "ULID (pyr_*)", "at": "ISO 8601" } },
-    { "name": "PayoutReconciliationDrift", "class": "Academorix\\Finance\\Payout\\Events\\PayoutReconciliationDrift", "trigger": "Reconciliation found drift_minor != 0. INCIDENT SIGNAL.", "queue": "payout-critical", "consumers": ["audit::WriteToAuditLog", "notifications::DispatchPayoutDriftNotificationListener", "monitoring::MetricsCollector"], "payload": { "payout_id": "ULID", "reconciliation_id": "ULID", "drift_minor": "integer", "at": "ISO 8601" } }
+    {
+      "name": "PayoutInitiated",
+      "class": "Academorix\\Finance\\Payout\\Events\\PayoutInitiated",
+      "trigger": "New payout row synced from gateway with status='pending'.",
+      "queue": "payout",
+      "consumers": ["audit::WriteToAuditLog"],
+      "payload": {
+        "payout_id": "ULID (pyo_*)",
+        "tenant_id": "ULID",
+        "amount_minor": "integer",
+        "currency": "string",
+        "at": "ISO 8601"
+      }
+    },
+    {
+      "name": "PayoutInTransit",
+      "class": "Academorix\\Finance\\Payout\\Events\\PayoutInTransit",
+      "trigger": "Payout.status transitions pending -> in_transit.",
+      "queue": "payout",
+      "consumers": ["audit::WriteToAuditLog"],
+      "payload": {
+        "payout_id": "ULID",
+        "tenant_id": "ULID",
+        "arrival_at": "ISO 8601 | null",
+        "at": "ISO 8601"
+      }
+    },
+    {
+      "name": "PayoutPaid",
+      "class": "Academorix\\Finance\\Payout\\Events\\PayoutPaid",
+      "trigger": "Payout.status transitions -> paid. Triggers reconciliation job.",
+      "queue": "payout-critical",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "payout::ReconcilePayoutListener",
+        "notifications::DispatchPayoutPaidNotificationListener"
+      ],
+      "payload": {
+        "payout_id": "ULID",
+        "tenant_id": "ULID",
+        "net_minor": "integer",
+        "paid_at": "ISO 8601"
+      }
+    },
+    {
+      "name": "PayoutFailed",
+      "class": "Academorix\\Finance\\Payout\\Events\\PayoutFailed",
+      "trigger": "Payout.status transitions -> failed. Provider rejected the payout.",
+      "queue": "payout-critical",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "notifications::DispatchPayoutFailedNotificationListener",
+        "monitoring::MetricsCollector"
+      ],
+      "payload": {
+        "payout_id": "ULID",
+        "tenant_id": "ULID",
+        "reason": "string",
+        "failed_at": "ISO 8601"
+      }
+    },
+    {
+      "name": "PayoutCancelled",
+      "class": "Academorix\\Finance\\Payout\\Events\\PayoutCancelled",
+      "trigger": "Payout.status transitions -> cancelled.",
+      "queue": "payout",
+      "consumers": ["audit::WriteToAuditLog"],
+      "payload": { "payout_id": "ULID", "tenant_id": "ULID", "at": "ISO 8601" }
+    },
+    {
+      "name": "PayoutReconciled",
+      "class": "Academorix\\Finance\\Payout\\Events\\PayoutReconciled",
+      "trigger": "PayoutReconciliation.status -> matched. Local + provider totals agree.",
+      "queue": "payout",
+      "consumers": ["audit::WriteToAuditLog"],
+      "payload": { "payout_id": "ULID", "reconciliation_id": "ULID (pyr_*)", "at": "ISO 8601" }
+    },
+    {
+      "name": "PayoutReconciliationDrift",
+      "class": "Academorix\\Finance\\Payout\\Events\\PayoutReconciliationDrift",
+      "trigger": "Reconciliation found drift_minor != 0. INCIDENT SIGNAL.",
+      "queue": "payout-critical",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "notifications::DispatchPayoutDriftNotificationListener",
+        "monitoring::MetricsCollector"
+      ],
+      "payload": {
+        "payout_id": "ULID",
+        "reconciliation_id": "ULID",
+        "drift_minor": "integer",
+        "at": "ISO 8601"
+      }
+    }
   ]
 }

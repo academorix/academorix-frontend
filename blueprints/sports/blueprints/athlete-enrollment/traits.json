@@ -34,13 +34,13 @@
       { "trait": "Academorix\\Foundation\\Concerns\\Filterable" },
       { "trait": "Academorix\\Foundation\\Concerns\\Searchable" }
     ],
-    "tenants": [ { "trait": "Academorix\\Tenancy\\Concerns\\BelongsToTenant" } ],
-    "branch": [ { "trait": "Academorix\\Branch\\Concerns\\BelongsToBranch" } ],
-    "teams": [ { "trait": "Academorix\\Teams\\Concerns\\BelongsToTeam" } ],
-    "athlete": [ { "trait": "Academorix\\Sports\\Athlete\\Concerns\\BelongsToAthlete" } ],
-    "season": [ { "trait": "Academorix\\Sports\\Season\\Concerns\\BelongsToSeason" } ],
-    "audit": [ { "trait": "Academorix\\Audit\\Concerns\\Auditable" } ],
-    "activity": [ { "trait": "Academorix\\Activity\\Concerns\\HasActivityLog" } ]
+    "tenants": [{ "trait": "Academorix\\Tenancy\\Concerns\\BelongsToTenant" }],
+    "branch": [{ "trait": "Academorix\\Branch\\Concerns\\BelongsToBranch" }],
+    "teams": [{ "trait": "Academorix\\Teams\\Concerns\\BelongsToTeam" }],
+    "athlete": [{ "trait": "Academorix\\Sports\\Athlete\\Concerns\\BelongsToAthlete" }],
+    "season": [{ "trait": "Academorix\\Sports\\Season\\Concerns\\BelongsToSeason" }],
+    "audit": [{ "trait": "Academorix\\Audit\\Concerns\\Auditable" }],
+    "activity": [{ "trait": "Academorix\\Activity\\Concerns\\HasActivityLog" }]
   },
   "composition": {
     "athleteEnrollment": {

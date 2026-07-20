@@ -37,10 +37,7 @@
       "class": "Academorix\\Sports\\Season\\Events\\SeasonUpdated",
       "trigger": "Any Season scalar field mutated except the specific-transition fields below (status, is_current, start_date, end_date, sport_key, late_registration_fee_cents, capacity_target). Umbrella event for renames, description edits, primary_color changes, sort_order tweaks, allows_late_registration toggles.",
       "queue": "notifications",
-      "consumers": [
-        "audit::WriteToAuditLog",
-        "activity::WriteToActivityLog"
-      ],
+      "consumers": ["audit::WriteToAuditLog", "activity::WriteToActivityLog"],
       "payload": {
         "season_id": "ULID",
         "tenant_id": "ULID",
@@ -53,10 +50,7 @@
       "class": "Academorix\\Sports\\Season\\Events\\SeasonStatusChanged",
       "trigger": "Season.status transitioned to any new value. A superset event; the specific-state events below (SeasonStarted, SeasonCompleted, ...) fire alongside for the routing case that cares.",
       "queue": "notifications",
-      "consumers": [
-        "audit::WriteToAuditLog",
-        "activity::WriteToActivityLog"
-      ],
+      "consumers": ["audit::WriteToAuditLog", "activity::WriteToActivityLog"],
       "payload": {
         "season_id": "ULID",
         "tenant_id": "ULID",
@@ -90,10 +84,7 @@
       "class": "Academorix\\Sports\\Season\\Events\\SeasonRegistrationClosed",
       "trigger": "Season.status transitioned registration_open -> registration_closed. Fires from CloseExpiredRegistrationsJob (every 15 min when now() reaches registration_closes_at) OR manual admin close action. Does NOT block late enrollments — the late window is independent.",
       "queue": "notifications",
-      "consumers": [
-        "audit::WriteToAuditLog",
-        "activity::WriteToActivityLog"
-      ],
+      "consumers": ["audit::WriteToAuditLog", "activity::WriteToActivityLog"],
       "payload": {
         "season_id": "ULID",
         "tenant_id": "ULID",
@@ -125,10 +116,7 @@
       "class": "Academorix\\Sports\\Season\\Events\\SeasonPlayoffsBegun",
       "trigger": "Season.status transitioned in_progress -> playoffs. Fires from automated RollSeasonPhaseJob (when now() reaches playoff_starts_at) OR manual admin action. Only fires when Season.has_playoffs=true (guarded by observer).",
       "queue": "notifications",
-      "consumers": [
-        "audit::WriteToAuditLog",
-        "activity::WriteToActivityLog"
-      ],
+      "consumers": ["audit::WriteToAuditLog", "activity::WriteToActivityLog"],
       "payload": {
         "season_id": "ULID",
         "tenant_id": "ULID",
@@ -160,10 +148,7 @@
       "class": "Academorix\\Sports\\Season\\Events\\SeasonArchived",
       "trigger": "Season.status transitioned completed -> archived. Soft-delete completed; the row is hidden from tenant selectors + booking flows but readable via `?include_archived=true`. Refused when active downstream enrollments still reference this Season.",
       "queue": "notifications",
-      "consumers": [
-        "audit::WriteToAuditLog",
-        "activity::WriteToActivityLog"
-      ],
+      "consumers": ["audit::WriteToAuditLog", "activity::WriteToActivityLog"],
       "payload": {
         "season_id": "ULID",
         "tenant_id": "ULID",
@@ -178,10 +163,7 @@
       "class": "Academorix\\Sports\\Season\\Events\\SeasonRestored",
       "trigger": "Archived -> completed. Only within the retention window (default 2555 days = 7 years). Reactivates the row without touching the (retired) enrollments that pointed at it.",
       "queue": "notifications",
-      "consumers": [
-        "audit::WriteToAuditLog",
-        "activity::WriteToActivityLog"
-      ],
+      "consumers": ["audit::WriteToAuditLog", "activity::WriteToActivityLog"],
       "payload": {
         "season_id": "ULID",
         "tenant_id": "ULID",
@@ -283,10 +265,7 @@
       "class": "Academorix\\Sports\\Season\\Events\\SeasonCapacityTargetChanged",
       "trigger": "Season.capacity_target mutated (set / changed / cleared). Feeds capacity-planning dashboards. Not enforced anywhere — informational only.",
       "queue": "notifications",
-      "consumers": [
-        "audit::WriteToAuditLog",
-        "activity::WriteToActivityLog"
-      ],
+      "consumers": ["audit::WriteToAuditLog", "activity::WriteToActivityLog"],
       "payload": {
         "season_id": "ULID",
         "tenant_id": "ULID",
@@ -300,10 +279,7 @@
       "class": "Academorix\\Sports\\Season\\Events\\SeasonRegistrationCapReached",
       "trigger": "The enrolled-athlete count for this Season crossed `capacity_target` for the first time. Wave 3 athlete-enrollment consumers fire this from their post-commit hook; this module owns the event class so the notification + audit consumers can subscribe today. Informational only — enrollments continue past capacity_target unless a Wave 3 quota gate blocks them.",
       "queue": "notifications",
-      "consumers": [
-        "audit::WriteToAuditLog",
-        "activity::WriteToActivityLog"
-      ],
+      "consumers": ["audit::WriteToAuditLog", "activity::WriteToActivityLog"],
       "payload": {
         "season_id": "ULID",
         "tenant_id": "ULID",
@@ -317,10 +293,7 @@
       "class": "Academorix\\Sports\\Season\\Events\\SeasonLateRegistrationOpened",
       "trigger": "Season transitioned from registration_closed into the late-registration window (now() >= registration_closes_at AND now() < late_registration_ends_at AND allows_late_registration=true). Fires from CloseExpiredRegistrationsJob when it observes the crossover — the Season row itself stays status=registration_closed; this event is informational to notification consumers.",
       "queue": "notifications",
-      "consumers": [
-        "audit::WriteToAuditLog",
-        "activity::WriteToActivityLog"
-      ],
+      "consumers": ["audit::WriteToAuditLog", "activity::WriteToActivityLog"],
       "payload": {
         "season_id": "ULID",
         "tenant_id": "ULID",
@@ -334,10 +307,7 @@
       "class": "Academorix\\Sports\\Season\\Events\\TenantDefaultSeasonSeeded",
       "trigger": "SeedDefaultSeasonForTenantJob completed for an eligible seasonal-business_type tenant. Fires exactly once per tenant lifetime under normal operations (subsequent seasons come from admin action, not from this listener).",
       "queue": "notifications",
-      "consumers": [
-        "audit::WriteToAuditLog",
-        "activity::WriteToActivityLog"
-      ],
+      "consumers": ["audit::WriteToAuditLog", "activity::WriteToActivityLog"],
       "payload": {
         "tenant_id": "ULID",
         "season_id": "ULID",

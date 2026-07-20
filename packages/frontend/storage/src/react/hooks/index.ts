@@ -5,10 +5,10 @@
  *   `@stackra/storage/react`.
  */
 
-export { useStorage } from './use-storage';
+export { useStorage } from "./use-storage";
 export {
   useStorageValue,
   type UseStorageValueOptions,
   type UseStorageValueMeta,
   type UseStorageValueResult,
-} from './use-storage-value';
+} from "./use-storage-value";

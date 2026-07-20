@@ -7,43 +7,43 @@
  *   types/interfaces. React bindings live in `@stackra/csp/react`.
  */
 
-import 'reflect-metadata';
+import "reflect-metadata";
 
 // ════════════════════════════════════════════════════════════════════════════════
 // Module
 // ════════════════════════════════════════════════════════════════════════════════
-export { CspModule } from './csp.module';
+export { CspModule } from "./csp.module";
 
 // ════════════════════════════════════════════════════════════════════════════════
 // Services
 // ════════════════════════════════════════════════════════════════════════════════
-export { CspService, NonceGenerator, CspPolicyLoader } from './services';
+export { CspService, NonceGenerator, CspPolicyLoader } from "./services";
 
 // ════════════════════════════════════════════════════════════════════════════════
 // Registries
 // ════════════════════════════════════════════════════════════════════════════════
-export { CspRegistry } from './registries';
+export { CspRegistry } from "./registries";
 
 // ════════════════════════════════════════════════════════════════════════════════
 // Decorators
 // ════════════════════════════════════════════════════════════════════════════════
-export { CspPolicy } from './decorators';
+export { CspPolicy } from "./decorators";
 
 // ════════════════════════════════════════════════════════════════════════════════
 // Constants
 // ════════════════════════════════════════════════════════════════════════════════
-export { CSP_POLICY_METADATA } from './constants';
+export { CSP_POLICY_METADATA } from "./constants";
 
 // ════════════════════════════════════════════════════════════════════════════════
 // Utilities
 // ════════════════════════════════════════════════════════════════════════════════
-export { createSeedLoader, seedLoaderToken, type SeedLoader } from './utils';
+export { createSeedLoader, seedLoaderToken, type SeedLoader } from "./utils";
 
 // ════════════════════════════════════════════════════════════════════════════════
 // Interfaces / Types (package-local)
 // ════════════════════════════════════════════════════════════════════════════════
-export type { CspModuleOptions, CspFeaturePolicy } from './interfaces';
-export type { CspSource, MergedCspSources } from './types';
+export type { CspModuleOptions, CspFeaturePolicy } from "./interfaces";
+export type { CspSource, MergedCspSources } from "./types";
 
 // NOTE: CSP tokens (CSP_SERVICE / CSP_CONFIG / CSP_REGISTRY) and the
 // ICspService / ICspPolicyResult contracts live in `@stackra/contracts`.

@@ -1,7 +1,7 @@
 {
   "name": "@stackra/state",
   "version": "0.1.0",
-  "description": "Reactive state management for the Stackra framework — DI-managed TanStack Stores with optimistic mutations, cross-tab sync, realtime, and persistence.",
+  "description": "Reactive state management for the Stackra framework \u2014 DI-managed TanStack Stores with optimistic mutations, cross-tab sync, realtime, and persistence.",
   "license": "MIT",
   "author": {
     "name": "Stackra L.L.C",
@@ -108,12 +108,14 @@
     }
   },
   "devDependencies": {
+    "@academorix/config-tsconfig": "workspace:*",
+    "@academorix/config-tsup": "workspace:*",
+    "@stackra/actions": "workspace:*",
     "@stackra/container": "workspace:*",
     "@stackra/contracts": "workspace:*",
     "@stackra/coordinator": "workspace:*",
     "@stackra/devtools": "workspace:*",
     "@stackra/logger": "workspace:*",
-    "@stackra/actions": "workspace:*",
     "@stackra/storage": "workspace:*",
     "@stackra/support": "workspace:*",
     "@stackra/testing": "workspace:*",

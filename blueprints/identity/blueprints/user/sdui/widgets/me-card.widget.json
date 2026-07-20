@@ -7,7 +7,11 @@
   "props": {
     "layout": { "type": "string", "default": "compact", "enum": ["compact", "expanded"] },
     "showRole": { "type": "boolean", "default": true },
-    "showEmail": { "type": "boolean", "default": false, "description": "Off by default \u2014 email is PII; only show on the /me expanded surface where the subject reads their own record." }
+    "showEmail": {
+      "type": "boolean",
+      "default": false,
+      "description": "Off by default \u2014 email is PII; only show on the /me expanded surface where the subject reads their own record."
+    }
   },
   "dataSources": [
     {

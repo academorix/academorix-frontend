@@ -11,10 +11,7 @@
       "class": "Academorix\\Sports\\Event\\Events\\EventCreated",
       "trigger": "EventProvisioner completed a successful create. Fires exactly once per `events.id`.",
       "queue": "notifications",
-      "consumers": [
-        "audit::WriteToAuditLog",
-        "activity::WriteToActivityLog"
-      ],
+      "consumers": ["audit::WriteToAuditLog", "activity::WriteToActivityLog"],
       "payload": {
         "event_id": "ULID (eve_*)",
         "tenant_id": "ULID (ten_*)",
@@ -37,10 +34,7 @@
       "class": "Academorix\\Sports\\Event\\Events\\EventUpdated",
       "trigger": "Any Event scalar field mutated except the specific-transition fields (status, visibility, starts_at, ends_at, branch_id, entry_fee_cents, min_age, max_age, age_group_ids). Umbrella event for renames, description edits, hero_image_url changes, sort tweaks.",
       "queue": "notifications",
-      "consumers": [
-        "audit::WriteToAuditLog",
-        "activity::WriteToActivityLog"
-      ],
+      "consumers": ["audit::WriteToAuditLog", "activity::WriteToActivityLog"],
       "payload": {
         "event_id": "ULID",
         "tenant_id": "ULID",
@@ -53,10 +47,7 @@
       "class": "Academorix\\Sports\\Event\\Events\\EventStatusChanged",
       "trigger": "Event.status transitioned to any new value. A superset event; the specific-state events below (EventAnnounced, EventRegistrationOpened, ...) fire alongside for the routing case that cares.",
       "queue": "notifications",
-      "consumers": [
-        "audit::WriteToAuditLog",
-        "activity::WriteToActivityLog"
-      ],
+      "consumers": ["audit::WriteToAuditLog", "activity::WriteToActivityLog"],
       "payload": {
         "event_id": "ULID",
         "tenant_id": "ULID",
@@ -108,10 +99,7 @@
       "class": "Academorix\\Sports\\Event\\Events\\EventRegistrationClosed",
       "trigger": "Event.status transitioned registration_open -> registration_closed. Automated (ExpireExpiredEventRegistrationsJob) OR manual. Late-registration window is independent — see allow_late_registration flag.",
       "queue": "notifications",
-      "consumers": [
-        "audit::WriteToAuditLog",
-        "activity::WriteToActivityLog"
-      ],
+      "consumers": ["audit::WriteToAuditLog", "activity::WriteToActivityLog"],
       "payload": {
         "event_id": "ULID",
         "tenant_id": "ULID",
@@ -142,10 +130,7 @@
       "class": "Academorix\\Sports\\Event\\Events\\EventCompleted",
       "trigger": "Event.status transitioned in_progress -> completed. Fires from RollEventStatusJob at ends_at + 1h grace OR manual admin.",
       "queue": "notifications",
-      "consumers": [
-        "audit::WriteToAuditLog",
-        "activity::WriteToActivityLog"
-      ],
+      "consumers": ["audit::WriteToAuditLog", "activity::WriteToActivityLog"],
       "payload": {
         "event_id": "ULID",
         "tenant_id": "ULID",
@@ -218,10 +203,7 @@
       "class": "Academorix\\Sports\\Event\\Events\\EventCapacityChanged",
       "trigger": "Event.max_participants OR max_teams changed. Informational; the enrollment surface enforces the cap.",
       "queue": "notifications",
-      "consumers": [
-        "audit::WriteToAuditLog",
-        "activity::WriteToActivityLog"
-      ],
+      "consumers": ["audit::WriteToAuditLog", "activity::WriteToActivityLog"],
       "payload": {
         "event_id": "ULID",
         "tenant_id": "ULID",
@@ -293,10 +275,7 @@
       "class": "Academorix\\Sports\\Event\\Events\\EventArchived",
       "trigger": "Event.status transitioned completed -> archived OR cancelled -> archived. Soft-delete; the row is hidden from tenant selectors + registration flows but readable via `?include_archived=true`.",
       "queue": "notifications",
-      "consumers": [
-        "audit::WriteToAuditLog",
-        "activity::WriteToActivityLog"
-      ],
+      "consumers": ["audit::WriteToAuditLog", "activity::WriteToActivityLog"],
       "payload": {
         "event_id": "ULID",
         "tenant_id": "ULID",
@@ -311,10 +290,7 @@
       "class": "Academorix\\Sports\\Event\\Events\\EventRestored",
       "trigger": "Archived -> completed OR archived -> cancelled (whichever it was prior to archive). Only within the retention window (default 2555 days = 7 years).",
       "queue": "notifications",
-      "consumers": [
-        "audit::WriteToAuditLog",
-        "activity::WriteToActivityLog"
-      ],
+      "consumers": ["audit::WriteToAuditLog", "activity::WriteToActivityLog"],
       "payload": {
         "event_id": "ULID",
         "tenant_id": "ULID",
@@ -364,10 +340,7 @@
       "class": "Academorix\\Sports\\Event\\Events\\EventFacilityAdded",
       "trigger": "A new event_facilities row created. Fires per attachment.",
       "queue": "notifications",
-      "consumers": [
-        "audit::WriteToAuditLog",
-        "activity::WriteToActivityLog"
-      ],
+      "consumers": ["audit::WriteToAuditLog", "activity::WriteToActivityLog"],
       "payload": {
         "event_id": "ULID",
         "event_facility_id": "ULID (efc_*)",
@@ -383,10 +356,7 @@
       "class": "Academorix\\Sports\\Event\\Events\\EventFacilityRemoved",
       "trigger": "An event_facilities row soft-deleted. Fires per detachment. Refused via observer when the event is in_progress + the row is primary + no other facility can replace it.",
       "queue": "notifications",
-      "consumers": [
-        "audit::WriteToAuditLog",
-        "activity::WriteToActivityLog"
-      ],
+      "consumers": ["audit::WriteToAuditLog", "activity::WriteToActivityLog"],
       "payload": {
         "event_id": "ULID",
         "event_facility_id": "ULID",
@@ -401,10 +371,7 @@
       "class": "Academorix\\Sports\\Event\\Events\\EventPrimaryFacilityChanged",
       "trigger": "The is_primary flag flipped on any event_facilities row. Auto-demote of the previous primary happens in the same transaction.",
       "queue": "notifications",
-      "consumers": [
-        "audit::WriteToAuditLog",
-        "activity::WriteToActivityLog"
-      ],
+      "consumers": ["audit::WriteToAuditLog", "activity::WriteToActivityLog"],
       "payload": {
         "event_id": "ULID",
         "tenant_id": "ULID",
@@ -435,9 +402,7 @@
       "class": "Academorix\\Sports\\Event\\Events\\EventReminderScheduled",
       "trigger": "Fires when NotifyEventReminderJob queues a T-24h / T-1h reminder for an event. Informational — feeds ops dashboards for reminder-cadence health.",
       "queue": "low",
-      "consumers": [
-        "activity::WriteToActivityLog"
-      ],
+      "consumers": ["activity::WriteToActivityLog"],
       "payload": {
         "event_id": "ULID",
         "tenant_id": "ULID",

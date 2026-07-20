@@ -32,13 +32,20 @@
         {
           "kind": "Text",
           "props": { "as": "h1", "className": "text-2xl font-semibold" },
-          "bindings": { "children": { "$expr": "'Edit ' + member.member.name + ' on ' + team.name" } }
+          "bindings": {
+            "children": { "$expr": "'Edit ' + member.member.name + ' on ' + team.name" }
+          }
         },
         {
           "kind": "Alert",
           "props": { "variant": "info", "className": "text-sm" },
           "children": [
-            { "kind": "Text", "props": { "children": "Member type and identity are immutable. To swap a member out, remove them and add a new roster row." } }
+            {
+              "kind": "Text",
+              "props": {
+                "children": "Member type and identity are immutable. To swap a member out, remove them and add a new roster row."
+              }
+            }
           ]
         },
         {
@@ -62,7 +69,12 @@
               "children": [
                 {
                   "kind": "ComboBox",
-                  "props": { "name": "role_on_team", "label": "Role", "required": true, "menuTrigger": "focus" },
+                  "props": {
+                    "name": "role_on_team",
+                    "label": "Role",
+                    "required": true,
+                    "menuTrigger": "focus"
+                  },
                   "props_items": [
                     { "id": "player", "label": "Player" },
                     { "id": "captain", "label": "Captain" },
@@ -79,8 +91,19 @@
                   "kind": "View",
                   "props": { "className": "grid grid-cols-2 gap-3" },
                   "children": [
-                    { "kind": "NumberField", "props": { "name": "jersey_number", "label": "Jersey number", "min": 0, "max": 999 } },
-                    { "kind": "TextField", "props": { "name": "position", "label": "Position", "maxLength": 64 } }
+                    {
+                      "kind": "NumberField",
+                      "props": {
+                        "name": "jersey_number",
+                        "label": "Jersey number",
+                        "min": 0,
+                        "max": 999
+                      }
+                    },
+                    {
+                      "kind": "TextField",
+                      "props": { "name": "position", "label": "Position", "maxLength": 64 }
+                    }
                   ]
                 }
               ]
@@ -89,7 +112,15 @@
               "kind": "Fieldset",
               "props": { "legend": "Notes", "className": "space-y-3" },
               "children": [
-                { "kind": "TextArea", "props": { "name": "notes", "label": "Coach-visible notes", "rows": 3, "helpText": "Staff-only. Never surfaced to the member themselves." } }
+                {
+                  "kind": "TextArea",
+                  "props": {
+                    "name": "notes",
+                    "label": "Coach-visible notes",
+                    "rows": 3,
+                    "helpText": "Staff-only. Never surfaced to the member themselves."
+                  }
+                }
               ]
             },
             {
@@ -117,8 +148,21 @@
                   "kind": "View",
                   "props": { "className": "flex gap-2" },
                   "children": [
-                    { "kind": "Button", "props": { "variant": "ghost", "children": "Cancel" }, "actions": { "onPress": { "kind": "navigate", "toExpr": "'/tenant/teams/' + team.id" } } },
-                    { "kind": "Button", "props": { "type": "submit", "variant": "primary", "children": "Save changes" } }
+                    {
+                      "kind": "Button",
+                      "props": { "variant": "ghost", "children": "Cancel" },
+                      "actions": {
+                        "onPress": { "kind": "navigate", "toExpr": "'/tenant/teams/' + team.id" }
+                      }
+                    },
+                    {
+                      "kind": "Button",
+                      "props": {
+                        "type": "submit",
+                        "variant": "primary",
+                        "children": "Save changes"
+                      }
+                    }
                   ]
                 }
               ]

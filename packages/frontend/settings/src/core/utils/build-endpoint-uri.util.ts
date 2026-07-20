@@ -17,7 +17,7 @@
  */
 export function buildEndpointUri(
   template: string,
-  params: Readonly<Record<string, string>>
+  params: Readonly<Record<string, string>>,
 ): string {
   return template.replace(/\{([^}]+)\}/g, (match, name: string) => {
     const value = params[name];

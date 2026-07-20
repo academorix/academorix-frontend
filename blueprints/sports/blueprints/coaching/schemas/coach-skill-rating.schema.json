@@ -37,26 +37,86 @@
       "metadata": "array"
     },
     "observers": ["CoachSkillRatingObserver"],
-    "appends": [
-      "coach_display_name",
-      "ratable_display_name",
-      "is_current"
-    ]
+    "appends": ["coach_display_name", "ratable_display_name", "is_current"]
   },
   "x-database": {
     "engine": "postgres",
     "columns": {
-      "id": { "type": "string", "length": 30, "primary": true, "description": "Prefixed ULID: `csr_<26>`." },
-      "tenant_id": { "type": "string", "length": 30, "nullable": false, "foreign": { "table": "tenants", "column": "id", "onUpdate": "cascade", "onDelete": "cascade" } },
-      "coaching_profile_id": { "type": "string", "length": 30, "nullable": false, "foreign": { "table": "coaching_profiles", "column": "id", "onUpdate": "cascade", "onDelete": "cascade" }, "description": "The rated coach." },
-      "ratable_type": { "type": "string", "length": 32, "nullable": false, "description": "Enum: Sport / Discipline / Position. Corresponds to a sports/registry target model." },
-      "ratable_id": { "type": "string", "length": 30, "nullable": false, "description": "The target row's ULID." },
-      "rating_scale": { "type": "string", "length": 16, "nullable": false, "description": "Enum: stars_1_5 / level_5_stage." },
-      "rating_value": { "type": "smallint", "nullable": false, "description": "Integer 1..5. Encoding differs per scale (stars = literal; level = 1=beginner, 2=intermediate, 3=advanced, 4=expert, 5=master)." },
-      "rated_by_user_id": { "type": "string", "length": 30, "nullable": false, "foreign": { "table": "users", "column": "id", "onUpdate": "cascade", "onDelete": "restrict" }, "description": "The rater's User. RESTRICT — cannot hard-delete a User while ratings reference." },
+      "id": {
+        "type": "string",
+        "length": 30,
+        "primary": true,
+        "description": "Prefixed ULID: `csr_<26>`."
+      },
+      "tenant_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": {
+          "table": "tenants",
+          "column": "id",
+          "onUpdate": "cascade",
+          "onDelete": "cascade"
+        }
+      },
+      "coaching_profile_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": {
+          "table": "coaching_profiles",
+          "column": "id",
+          "onUpdate": "cascade",
+          "onDelete": "cascade"
+        },
+        "description": "The rated coach."
+      },
+      "ratable_type": {
+        "type": "string",
+        "length": 32,
+        "nullable": false,
+        "description": "Enum: Sport / Discipline / Position. Corresponds to a sports/registry target model."
+      },
+      "ratable_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "description": "The target row's ULID."
+      },
+      "rating_scale": {
+        "type": "string",
+        "length": 16,
+        "nullable": false,
+        "description": "Enum: stars_1_5 / level_5_stage."
+      },
+      "rating_value": {
+        "type": "smallint",
+        "nullable": false,
+        "description": "Integer 1..5. Encoding differs per scale (stars = literal; level = 1=beginner, 2=intermediate, 3=advanced, 4=expert, 5=master)."
+      },
+      "rated_by_user_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": {
+          "table": "users",
+          "column": "id",
+          "onUpdate": "cascade",
+          "onDelete": "restrict"
+        },
+        "description": "The rater's User. RESTRICT — cannot hard-delete a User while ratings reference."
+      },
       "rated_at": { "type": "timestamptz", "nullable": false },
-      "notes": { "type": "text", "nullable": true, "description": "Admin-authored rationale. HR-visible only (never surfaces on coach's /me/ratings)." },
-      "expires_at": { "type": "date", "nullable": true, "description": "When the rating auto-expires. Defaults to rated_at + config('coaching.rating.default_expiry_years', 2) years. NULL = never expire." },
+      "notes": {
+        "type": "text",
+        "nullable": true,
+        "description": "Admin-authored rationale. HR-visible only (never surfaces on coach's /me/ratings)."
+      },
+      "expires_at": {
+        "type": "date",
+        "nullable": true,
+        "description": "When the rating auto-expires. Defaults to rated_at + config('coaching.rating.default_expiry_years', 2) years. NULL = never expire."
+      },
       "metadata": { "type": "jsonb", "nullable": true },
       "created_by": { "type": "string", "length": 30, "nullable": true },
       "updated_by": { "type": "string", "length": 30, "nullable": true },
@@ -73,8 +133,15 @@
         "predicate": "deleted_at IS NULL",
         "description": "One live rating per (coach, ratable). Updates replace values; duplicates refused."
       },
-      { "columns": ["tenant_id", "coaching_profile_id", "ratable_type"], "name": "coach_skill_ratings_profile_type_idx" },
-      { "columns": ["tenant_id", "expires_at"], "name": "coach_skill_ratings_expires_idx", "description": "Feeds PurgeExpiredSkillRatingsJob." }
+      {
+        "columns": ["tenant_id", "coaching_profile_id", "ratable_type"],
+        "name": "coach_skill_ratings_profile_type_idx"
+      },
+      {
+        "columns": ["tenant_id", "expires_at"],
+        "name": "coach_skill_ratings_expires_idx",
+        "description": "Feeds PurgeExpiredSkillRatingsJob."
+      }
     ]
   },
   "required": [

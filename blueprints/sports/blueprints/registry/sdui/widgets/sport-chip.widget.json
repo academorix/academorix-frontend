@@ -10,7 +10,11 @@
     "When `showCategory=true`, appends a subordinate category chip in the neutral variant."
   ],
   "props": {
-    "sportKey": { "type": "string", "required": true, "description": "Sport slug — the widget hydrates the row via SportKeyResolver." },
+    "sportKey": {
+      "type": "string",
+      "required": true,
+      "description": "Sport slug — the widget hydrates the row via SportKeyResolver."
+    },
     "showIcon": { "type": "boolean", "default": true },
     "showCategory": { "type": "boolean", "default": false },
     "size": { "type": "string", "default": "sm", "enum": ["xs", "sm", "md"] }
@@ -36,7 +40,9 @@
             "props": {
               "size": { "$ref": "props.size" },
               "variant": { "$expr": "sport.primary_color ? 'custom' : 'neutral'" },
-              "style": { "$expr": "sport.primary_color ? { backgroundColor: sport.primary_color, borderColor: sport.primary_color } : {}" },
+              "style": {
+                "$expr": "sport.primary_color ? { backgroundColor: sport.primary_color, borderColor: sport.primary_color } : {}"
+              },
               "children": { "$ref": "sport.name" },
               "leadingIcon": { "$expr": "props.showIcon ? sport.icon : null" }
             }

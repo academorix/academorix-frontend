@@ -11,8 +11,8 @@
  *   returns).
  */
 
-import type { ReactElement, ReactNode } from 'react';
-import type { IActionContext, IActionDescriptor, IActionResponse } from '@stackra/contracts';
+import type { ReactElement, ReactNode } from "react";
+import type { IActionContext, IActionDescriptor, IActionResponse } from "@stackra/contracts";
 
 /**
  * Props accepted by the `<Action>` slot.

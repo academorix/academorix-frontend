@@ -20,7 +20,7 @@
  *     observability (analytics, audit, sdui).
  */
 
-import { Injectable, Inject, Optional } from '@stackra/container';
+import { Injectable, Inject, Optional } from "@stackra/container";
 import {
   EVENT_EMITTER,
   SETTINGS_CONFIG,
@@ -37,10 +37,10 @@ import {
   type SettingsSubscriber,
   type SettingsUnsubscribe,
   type Type,
-} from '@stackra/contracts';
+} from "@stackra/contracts";
 
-import { SettingsNotRegisteredError, SettingsUpdateFailedError } from '@/core/errors';
-import { resolveFieldDefaults } from '@/core/utils/resolve-field-defaults.util';
+import { SettingsNotRegisteredError, SettingsUpdateFailedError } from "@/core/errors";
+import { resolveFieldDefaults } from "@/core/utils/resolve-field-defaults.util";
 
 /**
  * Build a deferred promise — a promise plus resolvers we can call
@@ -98,7 +98,7 @@ export class SettingsService implements ISettingsService {
     @Inject(SETTINGS_CONFIG) private readonly config: ISettingsConfig,
     @Inject(SETTINGS_REGISTRY) private readonly registry: ISettingsRegistry,
     @Inject(SETTINGS_MANAGER) private readonly manager: ISettingsManager,
-    @Optional() @Inject(EVENT_EMITTER) private readonly events?: IEventEmitter
+    @Optional() @Inject(EVENT_EMITTER) private readonly events?: IEventEmitter,
   ) {}
 
   // ══════════════════════════════════════════════════════════════════
@@ -158,7 +158,7 @@ export class SettingsService implements ISettingsService {
 
     this.schedulePersist(groupKey, merged, Object.keys(values));
     this.notifyListeners(groupKey);
-    this.emitChanged(groupKey, Object.keys(values), values, 'local');
+    this.emitChanged(groupKey, Object.keys(values), values, "local");
   }
 
   /** @inheritDoc */
@@ -199,7 +199,7 @@ export class SettingsService implements ISettingsService {
     const merged = Object.freeze({ ...resolveFieldDefaults(definition), ...values });
     this.cache.set(groupKey, merged);
     this.notifyListeners(groupKey);
-    this.emitChanged(groupKey, Object.keys(values), values, 'remote');
+    this.emitChanged(groupKey, Object.keys(values), values, "remote");
   }
 
   /** @inheritDoc */
@@ -243,7 +243,7 @@ export class SettingsService implements ISettingsService {
     // hop for the common case where every group shares the same
     // store.
     const defaultStore = this.manager.instance();
-    if (typeof defaultStore.loadAll === 'function') {
+    if (typeof defaultStore.loadAll === "function") {
       const groups = await defaultStore.loadAll();
       this.hydrateAll(groups);
       return;
@@ -261,7 +261,7 @@ export class SettingsService implements ISettingsService {
           // fail-soft — one bad group must not fail the whole batch.
           return null;
         }
-      })
+      }),
     );
 
     for (const entry of results) {
@@ -369,7 +369,7 @@ export class SettingsService implements ISettingsService {
   private trackHydration(
     groupKey: string,
     persisted: Promise<Record<string, unknown>>,
-    defaults: Record<string, unknown>
+    defaults: Record<string, unknown>,
   ): void {
     if (this.hydrationInFlight.has(groupKey)) return;
 
@@ -378,7 +378,7 @@ export class SettingsService implements ISettingsService {
         const merged = Object.freeze({ ...defaults, ...values });
         this.cache.set(groupKey, merged);
         this.notifyListeners(groupKey);
-        this.emitChanged(groupKey, Object.keys(values), values, 'remote');
+        this.emitChanged(groupKey, Object.keys(values), values, "remote");
       })
       .catch(() => {
         // fail-soft — the defaults are already in the cache; the
@@ -408,7 +408,7 @@ export class SettingsService implements ISettingsService {
   private schedulePersist(
     groupKey: string,
     values: Record<string, unknown>,
-    changedKeys: readonly string[]
+    changedKeys: readonly string[],
   ): void {
     // Arm a fresh deferred for this cycle. If there was a prior
     // pending deferred (its persist hadn't fired yet), resolve it
@@ -442,7 +442,7 @@ export class SettingsService implements ISettingsService {
   private persist(
     groupKey: string,
     values: Record<string, unknown>,
-    changedKeys: readonly string[]
+    changedKeys: readonly string[],
   ): void {
     const store: ISettingsStore = this.manager.storeForGroup(groupKey);
     let result: void | Promise<void>;
@@ -486,7 +486,7 @@ export class SettingsService implements ISettingsService {
   private reportPersistError(
     groupKey: string,
     changedKeys: readonly string[],
-    cause: unknown
+    cause: unknown,
   ): void {
     const error = new SettingsUpdateFailedError(groupKey, changedKeys, cause);
     this.emitEvent(SETTINGS_EVENTS.UPDATE_FAILED, {
@@ -518,7 +518,7 @@ export class SettingsService implements ISettingsService {
     groupKey: string,
     keys: readonly string[],
     values: Record<string, unknown>,
-    source: 'local' | 'remote'
+    source: "local" | "remote",
   ): void {
     this.emitEvent(SETTINGS_EVENTS.CHANGED, {
       group: groupKey,

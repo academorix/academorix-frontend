@@ -16,8 +16,18 @@
           "reference_id": "{invoice.id}",
           "amount": "{invoice.total_amount_cents}",
           "ledger_entries": [
-            { "account": "cash", "side": "debit", "amount": "{invoice.total_amount_cents}", "description": "Cash received on invoice {invoice.number}" },
-            { "account": "accounts_receivable", "side": "credit", "amount": "{invoice.total_amount_cents}", "description": "AR cleared for invoice {invoice.number}" }
+            {
+              "account": "cash",
+              "side": "debit",
+              "amount": "{invoice.total_amount_cents}",
+              "description": "Cash received on invoice {invoice.number}"
+            },
+            {
+              "account": "accounts_receivable",
+              "side": "credit",
+              "amount": "{invoice.total_amount_cents}",
+              "description": "AR cleared for invoice {invoice.number}"
+            }
           ]
         }
       ],
@@ -39,8 +49,18 @@
           "reversal_reason": "refund",
           "amount": "{refund.amount_cents}",
           "ledger_entries": [
-            { "account": "refunds_owed", "side": "debit", "amount": "{refund.amount_cents}", "description": "Refund liability recognized" },
-            { "account": "cash", "side": "credit", "amount": "{refund.amount_cents}", "description": "Money removed from cash" }
+            {
+              "account": "refunds_owed",
+              "side": "debit",
+              "amount": "{refund.amount_cents}",
+              "description": "Refund liability recognized"
+            },
+            {
+              "account": "cash",
+              "side": "credit",
+              "amount": "{refund.amount_cents}",
+              "description": "Money removed from cash"
+            }
           ]
         },
         {
@@ -51,8 +71,18 @@
           "reversal_reason": "refund",
           "amount": "{refund.amount_cents}",
           "ledger_entries": [
-            { "account": "refunds_expense", "side": "debit", "amount": "{refund.amount_cents}", "description": "Refund recognized as expense" },
-            { "account": "revenue", "side": "credit", "amount": "{refund.amount_cents}", "description": "Revenue reversed" }
+            {
+              "account": "refunds_expense",
+              "side": "debit",
+              "amount": "{refund.amount_cents}",
+              "description": "Refund recognized as expense"
+            },
+            {
+              "account": "revenue",
+              "side": "credit",
+              "amount": "{refund.amount_cents}",
+              "description": "Revenue reversed"
+            }
           ]
         }
       ],
@@ -74,8 +104,18 @@
           "reversal_reason": "chargeback",
           "amount": "{chargeback.amount_cents}",
           "ledger_entries": [
-            { "account": "chargebacks_expense", "side": "debit", "amount": "{chargeback.amount_cents}", "description": "Chargeback loss recognized" },
-            { "account": "cash", "side": "credit", "amount": "{chargeback.amount_cents}", "description": "Money removed by the bank" }
+            {
+              "account": "chargebacks_expense",
+              "side": "debit",
+              "amount": "{chargeback.amount_cents}",
+              "description": "Chargeback loss recognized"
+            },
+            {
+              "account": "cash",
+              "side": "credit",
+              "amount": "{chargeback.amount_cents}",
+              "description": "Money removed by the bank"
+            }
           ]
         }
       ],
@@ -95,8 +135,18 @@
           "reference_id": "{coupon_redemption.id}",
           "amount": "{coupon_redemption.discount_cents}",
           "ledger_entries": [
-            { "account": "coupons_expense", "side": "debit", "amount": "{coupon_redemption.discount_cents}", "description": "Coupon discount recognized as marketing expense" },
-            { "account": "revenue", "side": "credit", "amount": "{coupon_redemption.discount_cents}", "description": "Revenue reduction for the coupon discount" }
+            {
+              "account": "coupons_expense",
+              "side": "debit",
+              "amount": "{coupon_redemption.discount_cents}",
+              "description": "Coupon discount recognized as marketing expense"
+            },
+            {
+              "account": "revenue",
+              "side": "credit",
+              "amount": "{coupon_redemption.discount_cents}",
+              "description": "Revenue reduction for the coupon discount"
+            }
           ]
         }
       ],
@@ -116,8 +166,18 @@
           "reference_id": "{tax_remittance.id}",
           "amount": "{tax_remittance.amount_cents}",
           "ledger_entries": [
-            { "account": "tax_payable", "side": "debit", "amount": "{tax_remittance.amount_cents}", "description": "Tax liability cleared" },
-            { "account": "cash", "side": "credit", "amount": "{tax_remittance.amount_cents}", "description": "Money to tax authority" }
+            {
+              "account": "tax_payable",
+              "side": "debit",
+              "amount": "{tax_remittance.amount_cents}",
+              "description": "Tax liability cleared"
+            },
+            {
+              "account": "cash",
+              "side": "credit",
+              "amount": "{tax_remittance.amount_cents}",
+              "description": "Money to tax authority"
+            }
           ]
         }
       ],
@@ -137,8 +197,18 @@
           "reference_id": "{payment.id}",
           "amount": "{payment.gateway_fee_cents}",
           "ledger_entries": [
-            { "account": "gateway_fees", "side": "debit", "amount": "{payment.gateway_fee_cents}", "description": "Gateway fee expense" },
-            { "account": "cash", "side": "credit", "amount": "{payment.gateway_fee_cents}", "description": "Fee removed by gateway" }
+            {
+              "account": "gateway_fees",
+              "side": "debit",
+              "amount": "{payment.gateway_fee_cents}",
+              "description": "Gateway fee expense"
+            },
+            {
+              "account": "cash",
+              "side": "credit",
+              "amount": "{payment.gateway_fee_cents}",
+              "description": "Fee removed by gateway"
+            }
           ]
         }
       ],
@@ -158,8 +228,18 @@
           "reference_id": "{invoice.id}",
           "amount": "{invoice.total_amount_cents}",
           "ledger_entries": [
-            { "account": "write_offs", "side": "debit", "amount": "{invoice.total_amount_cents}", "description": "Loss recognized on write-off" },
-            { "account": "accounts_receivable", "side": "credit", "amount": "{invoice.total_amount_cents}", "description": "Receivable removed" }
+            {
+              "account": "write_offs",
+              "side": "debit",
+              "amount": "{invoice.total_amount_cents}",
+              "description": "Loss recognized on write-off"
+            },
+            {
+              "account": "accounts_receivable",
+              "side": "credit",
+              "amount": "{invoice.total_amount_cents}",
+              "description": "Receivable removed"
+            }
           ]
         }
       ],
@@ -179,8 +259,18 @@
           "reference_id": null,
           "amount": "{amount_cents}",
           "ledger_entries": [
-            { "account": "bank_deposits", "side": "debit", "amount": "{amount_cents}", "description": "{description}" },
-            { "account": "cash", "side": "credit", "amount": "{amount_cents}", "description": "Cash to bank" }
+            {
+              "account": "bank_deposits",
+              "side": "debit",
+              "amount": "{amount_cents}",
+              "description": "{description}"
+            },
+            {
+              "account": "cash",
+              "side": "credit",
+              "amount": "{amount_cents}",
+              "description": "Cash to bank"
+            }
           ]
         }
       ],
@@ -200,8 +290,18 @@
           "reference_id": null,
           "amount": "{amount_cents}",
           "ledger_entries": [
-            { "account": "cash", "side": "debit", "amount": "{amount_cents}", "description": "Cash from bank" },
-            { "account": "bank_deposits", "side": "credit", "amount": "{amount_cents}", "description": "{description}" }
+            {
+              "account": "cash",
+              "side": "debit",
+              "amount": "{amount_cents}",
+              "description": "Cash from bank"
+            },
+            {
+              "account": "bank_deposits",
+              "side": "credit",
+              "amount": "{amount_cents}",
+              "description": "{description}"
+            }
           ]
         }
       ],
@@ -223,8 +323,20 @@
           "currency": "{source_currency}",
           "base_amount_cents": "{target_cash_cents in base currency terms}",
           "ledger_entries": [
-            { "account": "cash", "side": "debit", "amount": "{target_cash_cents}", "account_currency": "{target_currency}", "description": "Cash gained in target currency" },
-            { "account": "cash", "side": "credit", "amount": "{source_cash_cents}", "account_currency": "{source_currency}", "description": "Cash lost in source currency" }
+            {
+              "account": "cash",
+              "side": "debit",
+              "amount": "{target_cash_cents}",
+              "account_currency": "{target_currency}",
+              "description": "Cash gained in target currency"
+            },
+            {
+              "account": "cash",
+              "side": "credit",
+              "amount": "{source_cash_cents}",
+              "account_currency": "{source_currency}",
+              "description": "Cash lost in source currency"
+            }
           ]
         }
       ],

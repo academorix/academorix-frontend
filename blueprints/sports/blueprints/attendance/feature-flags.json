@@ -4,14 +4,59 @@
   "title": "attendance — kill switches",
   "engine": "laravel/pennant",
   "flags": [
-    { "key": "attendance.check_in_writes", "kind": "kill-switch", "default": "on", "description": "Master toggle for check-in POSTs. Off = POST /attendance/check-in returns 503. Emergency-only." },
-    { "key": "attendance.status_transitions", "kind": "kill-switch", "default": "on", "description": "Off = every state transition endpoint returns 503. Kiosks stop mutating attendance state. Emergency-only." },
-    { "key": "attendance.reconciliation_job", "kind": "kill-switch", "default": "on", "description": "Off = ReconcileAttendanceJob no-ops. Absences accumulate untriaged." },
-    { "key": "attendance.no_show_fee_job", "kind": "kill-switch", "default": "on", "description": "Off = ChargeNoShowFeeJob no-ops. Emergency-only for tenant-specific dispute resolution." },
-    { "key": "attendance.freeze_cascade", "kind": "kill-switch", "default": "on", "description": "Off = FreezeMembershipOnThresholdReached hook no-ops. AbsenceFreezeThresholdReached still fires (audit trail); membership stays active." },
-    { "key": "attendance.cleanup_orphan_job", "kind": "kill-switch", "default": "on", "description": "Off = CleanupOrphanCheckinsJob no-ops. Atomicity drift accumulates until re-enabled — dangerous." },
-    { "key": "attendance.retention_purge", "kind": "kill-switch", "default": "on", "description": "Off = PurgeCompletedAttendanceJob no-ops. Records past retention accumulate." },
-    { "key": "attendance.report_generation", "kind": "kill-switch", "default": "on", "description": "Off = GenerateAttendanceReportJob no-ops. Weekly digest emails suspended." },
-    { "key": "attendance.geofence_strict_mode", "kind": "boolean", "default": "on", "description": "When ON, geofence-verified check-ins refuse when GPS outside radius. When OFF (test / staging), warns but allows." }
+    {
+      "key": "attendance.check_in_writes",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Master toggle for check-in POSTs. Off = POST /attendance/check-in returns 503. Emergency-only."
+    },
+    {
+      "key": "attendance.status_transitions",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = every state transition endpoint returns 503. Kiosks stop mutating attendance state. Emergency-only."
+    },
+    {
+      "key": "attendance.reconciliation_job",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = ReconcileAttendanceJob no-ops. Absences accumulate untriaged."
+    },
+    {
+      "key": "attendance.no_show_fee_job",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = ChargeNoShowFeeJob no-ops. Emergency-only for tenant-specific dispute resolution."
+    },
+    {
+      "key": "attendance.freeze_cascade",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = FreezeMembershipOnThresholdReached hook no-ops. AbsenceFreezeThresholdReached still fires (audit trail); membership stays active."
+    },
+    {
+      "key": "attendance.cleanup_orphan_job",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = CleanupOrphanCheckinsJob no-ops. Atomicity drift accumulates until re-enabled — dangerous."
+    },
+    {
+      "key": "attendance.retention_purge",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = PurgeCompletedAttendanceJob no-ops. Records past retention accumulate."
+    },
+    {
+      "key": "attendance.report_generation",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = GenerateAttendanceReportJob no-ops. Weekly digest emails suspended."
+    },
+    {
+      "key": "attendance.geofence_strict_mode",
+      "kind": "boolean",
+      "default": "on",
+      "description": "When ON, geofence-verified check-ins refuse when GPS outside radius. When OFF (test / staging), warns but allows."
+    }
   ]
 }

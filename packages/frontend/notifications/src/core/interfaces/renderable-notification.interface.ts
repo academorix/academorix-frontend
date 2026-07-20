@@ -8,8 +8,8 @@
  *   filter pipeline uses.
  */
 
-import type { IInAppNotification } from './in-app-notification.interface';
-import type { NotificationPriority } from './notification-priority.type';
+import type { IInAppNotification } from "./in-app-notification.interface";
+import type { NotificationPriority } from "./notification-priority.type";
 
 /**
  * A single renderable row.

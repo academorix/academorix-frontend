@@ -109,24 +109,24 @@ export function KeyboardCatalog({
   return (
     <Modal.Backdrop
       isDismissable
-      className="backdrop-blur-sm bg-background/60"
+      className="bg-background/60 backdrop-blur-sm"
       isOpen={isOpen}
       onOpenChange={(open) => {
         if (!open) service.close();
       }}
     >
       <Modal.Container placement="center" size="lg">
-        <Modal.Dialog className="bg-content1 text-foreground rounded-large border border-default-100 p-0 shadow-2xl shadow-default-900/10 dark:shadow-default-50/5 overflow-hidden">
+        <Modal.Dialog className="bg-content1 text-foreground rounded-large border-default-100 shadow-default-900/10 dark:shadow-default-50/5 overflow-hidden border p-0 shadow-2xl">
           {/* ── Header ──────────────────────────────────────────── */}
-          <Modal.Header className="flex flex-col items-start gap-1 border-b border-default-100 px-6 py-4">
-            <Modal.Heading className="text-base font-semibold leading-none">
+          <Modal.Header className="border-default-100 flex flex-col items-start gap-1 border-b px-6 py-4">
+            <Modal.Heading className="text-base leading-none font-semibold">
               {resolvedTitle}
             </Modal.Heading>
-            <p className="text-xs text-default-500">{resolvedSubtitle}</p>
+            <p className="text-default-500 text-xs">{resolvedSubtitle}</p>
           </Modal.Header>
 
           {/* ── Search ──────────────────────────────────────────── */}
-          <div className="border-b border-default-100 px-4 py-3">
+          <div className="border-default-100 border-b px-4 py-3">
             <SearchField
               autoFocus
               fullWidth
@@ -144,7 +144,7 @@ export function KeyboardCatalog({
           </div>
 
           {/* ── Filter Segment ───────────────────────────────────── */}
-          <div className="border-b border-default-100 px-4 py-3">
+          <div className="border-default-100 border-b px-4 py-3">
             <Segment
               selectedKey={visibleTab}
               size="sm"
@@ -178,14 +178,14 @@ export function KeyboardCatalog({
                   return (
                     <section key={typeId} className="flex flex-col gap-2">
                       <header className="flex items-center gap-2 px-1">
-                        <h3 className="text-[11px] font-semibold uppercase tracking-[0.08em] text-default-500">
+                        <h3 className="text-default-500 text-[11px] font-semibold tracking-[0.08em] uppercase">
                           {t(commandType.label)}
                         </h3>
-                        <span className="text-[11px] font-medium text-default-400">
+                        <span className="text-default-400 text-[11px] font-medium">
                           {list.length}
                         </span>
                       </header>
-                      <ul className="flex flex-col divide-y divide-default-100 rounded-medium border border-default-100 bg-content2/30">
+                      <ul className="divide-default-100 rounded-medium border-default-100 bg-content2/30 flex flex-col divide-y border">
                         {list.map((s) => (
                           <ShortcutRow key={s.id} shortcut={s} />
                         ))}
@@ -198,7 +198,7 @@ export function KeyboardCatalog({
           </ScrollShadow>
 
           {/* ── Footer ──────────────────────────────────────────── */}
-          <footer className="flex items-center justify-between gap-3 border-t border-default-100 bg-content2/40 px-4 py-2 text-[11px] text-default-500">
+          <footer className="border-default-100 bg-content2/40 text-default-500 flex items-center justify-between gap-3 border-t px-4 py-2 text-[11px]">
             <div className="flex items-center gap-3">
               <CatalogFooterHint keys={["↑", "↓"]}>
                 {t("kbd.components.keyboard_catalog.navigate")}
@@ -234,9 +234,9 @@ function ShortcutRow({ shortcut }: ShortcutRowProps): ReactElement {
   return (
     <li className="flex items-center justify-between gap-3 px-3 py-2.5">
       <div className="flex min-w-0 flex-col">
-        <span className="truncate text-sm text-foreground">{shortcut.description}</span>
+        <span className="text-foreground truncate text-sm">{shortcut.description}</span>
         {shortcut.scope && shortcut.scope !== "global" && (
-          <span className="text-[11px] uppercase tracking-wide text-default-400">
+          <span className="text-default-400 text-[11px] tracking-wide uppercase">
             {t("kbd.catalog.scope_label", { args: { scope: shortcut.scope } })}
           </span>
         )}
@@ -245,7 +245,7 @@ function ShortcutRow({ shortcut }: ShortcutRowProps): ReactElement {
         {combos.map((c, i) => (
           <Fragment key={i}>
             {i > 0 && (
-              <span className="text-[11px] text-default-400">{t("kbd.catalog.or_separator")}</span>
+              <span className="text-default-400 text-[11px]">{t("kbd.catalog.or_separator")}</span>
             )}
             <KeyboardShortcut combo={c} />
           </Fragment>
@@ -270,7 +270,7 @@ function CatalogEmpty({ message, hint }: CatalogEmptyProps): ReactElement {
     <div className="flex flex-col items-center gap-2 px-6 py-12 text-center">
       <span
         aria-hidden="true"
-        className="grid size-10 place-items-center rounded-full bg-default-100 text-default-500"
+        className="bg-default-100 text-default-500 grid size-10 place-items-center rounded-full"
       >
         <svg
           className="size-5"
@@ -286,8 +286,8 @@ function CatalogEmpty({ message, hint }: CatalogEmptyProps): ReactElement {
           />
         </svg>
       </span>
-      <p className="text-sm font-medium text-foreground">{message}</p>
-      <p className="text-xs text-default-500">{hint}</p>
+      <p className="text-foreground text-sm font-medium">{message}</p>
+      <p className="text-default-500 text-xs">{hint}</p>
     </div>
   );
 }

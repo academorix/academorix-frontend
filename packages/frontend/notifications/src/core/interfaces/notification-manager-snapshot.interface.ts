@@ -7,7 +7,7 @@
  *   Consumed by `useSyncExternalStore` inside the React binding.
  */
 
-import type { INotificationPermissionState } from './notification-permission-state.interface';
+import type { INotificationPermissionState } from "./notification-permission-state.interface";
 
 /**
  * Manager-level snapshot exposed to React subscribers.

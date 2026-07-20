@@ -10,12 +10,12 @@ import type {
   IMonitoringManager,
   IMonitoringProvider,
   IMonitoringUser,
-} from '@stackra/contracts';
+} from "@stackra/contracts";
 
 /** A recorded capture for assertions. */
 export interface RecordedCapture {
   /** `exception` or `message`. */
-  kind: 'exception' | 'message';
+  kind: "exception" | "message";
   /** The error (for `exception`) or message string (for `message`). */
   payload: Error | string;
   /** The context passed to the capture. */
@@ -39,11 +39,11 @@ export class MockMonitoringManager implements IMonitoringManager {
   private readonly providers: IMonitoringProvider[] = [];
 
   public captureException(error: Error, context?: ICaptureContext): void {
-    this.captures.push({ kind: 'exception', payload: error, context });
+    this.captures.push({ kind: "exception", payload: error, context });
   }
 
   public captureMessage(message: string, context?: ICaptureContext): void {
-    this.captures.push({ kind: 'message', payload: message, context });
+    this.captures.push({ kind: "message", payload: message, context });
   }
 
   public addBreadcrumb(breadcrumb: IMonitoringBreadcrumb): void {

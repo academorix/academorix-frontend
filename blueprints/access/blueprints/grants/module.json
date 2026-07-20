@@ -19,37 +19,15 @@
     "iso27001-a.9.2.5"
   ],
   "priority": 32,
-  "providers": [
-    "Academorix\\Grant\\Providers\\GrantServiceProvider"
-  ],
+  "providers": ["Academorix\\Grant\\Providers\\GrantServiceProvider"],
   "files": [],
-  "dependencies": [
-    "foundation",
-    "identity",
-    "user",
-    "application",
-    "tenancy",
-    "rbac"
-  ],
-  "extendedBy": [
-    "requests",
-    "approvals",
-    "delegation"
-  ],
+  "dependencies": ["foundation", "identity", "user", "application", "tenancy", "rbac"],
+  "extendedBy": ["requests", "approvals", "delegation"],
   "contributes": {
-    "traits": [
-      "HasResourceGrants",
-      "IsGrantable",
-      "BelongsToGrant"
-    ],
-    "attributes": [
-      "Grantable",
-      "AsGrantListener"
-    ],
+    "traits": ["HasResourceGrants", "IsGrantable", "BelongsToGrant"],
+    "attributes": ["Grantable", "AsGrantListener"],
     "blueprints": [],
-    "middleware": [
-      "grants.warm_grant_cache"
-    ],
+    "middleware": ["grants.warm_grant_cache"],
     "events": [
       "GrantIssued",
       "GrantUpdated",
@@ -64,9 +42,7 @@
       "GrantEvaluationCacheHit",
       "GrantEvaluationCacheMiss"
     ],
-    "policies": [
-      "AccessGrantPolicy"
-    ],
+    "policies": ["AccessGrantPolicy"],
     "hooks": [],
     "commands": [
       "grants:list",
@@ -96,13 +72,8 @@
       "DeniedAccessAttemptNotification",
       "SelfServiceGrantAttemptNotification"
     ],
-    "broadcasts": [
-      "tenant.{id}.grants",
-      "user.{id}.grants"
-    ],
-    "observers": [
-      "AccessGrantObserver"
-    ],
+    "broadcasts": ["tenant.{id}.grants", "user.{id}.grants"],
+    "observers": ["AccessGrantObserver"],
     "rules": [
       "valid_permission_list",
       "grant_expires_in_future",
@@ -112,17 +83,10 @@
       "grantable_resource_registered",
       "grantable_subject_type"
     ],
-    "casts": [
-      "GrantDecision",
-      "GrantSource"
-    ],
+    "casts": ["GrantDecision", "GrantSource"],
     "views": [],
-    "lang": [
-      "grants"
-    ],
-    "config": [
-      "grants"
-    ],
+    "lang": ["grants"],
+    "config": ["grants"],
     "macros": [],
     "bindings": [
       "AccessGrantRepository",
@@ -134,9 +98,7 @@
       "GrantableRegistry",
       "GrantEvaluationCache"
     ],
-    "resources": [
-      "access-grant"
-    ]
+    "resources": ["access-grant"]
   },
   "hosts": {
     "tenant": {

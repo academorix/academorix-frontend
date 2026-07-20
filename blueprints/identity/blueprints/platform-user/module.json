@@ -23,32 +23,15 @@
     "audit-heavy"
   ],
   "priority": 19,
-  "providers": [
-    "Academorix\\PlatformUser\\Providers\\PlatformUserServiceProvider"
-  ],
+  "providers": ["Academorix\\PlatformUser\\Providers\\PlatformUserServiceProvider"],
   "files": [],
-  "dependencies": [
-    "foundation",
-    "identity"
-  ],
-  "extendedBy": [
-    "rbac",
-    "delegation",
-    "auth"
-  ],
+  "dependencies": ["foundation", "identity"],
+  "extendedBy": ["rbac", "delegation", "auth"],
   "contributes": {
-    "traits": [
-      "IsPlatformUser",
-      "HasEmploymentLifecycle"
-    ],
-    "attributes": [
-      "AsPlatformUserListener"
-    ],
+    "traits": ["IsPlatformUser", "HasEmploymentLifecycle"],
+    "attributes": ["AsPlatformUserListener"],
     "blueprints": [],
-    "middleware": [
-      "platform.audit",
-      "platform.mfa_required"
-    ],
+    "middleware": ["platform.audit", "platform.mfa_required"],
     "events": [
       "PlatformUserHired",
       "PlatformUserActivated",
@@ -59,10 +42,7 @@
       "PlatformUserManagerReassigned",
       "PlatformUserDepartmentChanged"
     ],
-    "policies": [
-      "PlatformUserPolicy",
-      "PlatformProfilePolicy"
-    ],
+    "policies": ["PlatformUserPolicy", "PlatformProfilePolicy"],
     "hooks": [],
     "commands": [
       "platform-user:list",
@@ -72,38 +52,24 @@
       "platform-user:reassign-manager",
       "platform-user:audit-report"
     ],
-    "jobs": [
-      "RevokePlatformUserAccessJob",
-      "PurgeOffboardedPlatformUsersJob"
-    ],
+    "jobs": ["RevokePlatformUserAccessJob", "PurgeOffboardedPlatformUsersJob"],
     "notifications": [
       "PlatformUserHiredNotification",
       "PlatformUserOffboardingScheduledNotification",
       "PlatformUserOnCallEscalationNotification"
     ],
     "broadcasts": [],
-    "observers": [
-      "PlatformUserObserver",
-      "PlatformProfileObserver"
-    ],
+    "observers": ["PlatformUserObserver", "PlatformProfileObserver"],
     "rules": [
       "valid_e164_phone",
       "valid_iana_timezone",
       "valid_department",
       "manager_belongs_to_platform"
     ],
-    "casts": [
-      "EmploymentType",
-      "PlatformDepartment",
-      "PlatformUserStatus"
-    ],
+    "casts": ["EmploymentType", "PlatformDepartment", "PlatformUserStatus"],
     "views": [],
-    "lang": [
-      "platform-user"
-    ],
-    "config": [
-      "platform-user"
-    ],
+    "lang": ["platform-user"],
+    "config": ["platform-user"],
     "macros": [],
     "bindings": [
       "PlatformUserRepository",
@@ -112,10 +78,7 @@
       "PlatformOffboardingCoordinator",
       "OnCallResolver"
     ],
-    "resources": [
-      "platform-user",
-      "platform-profile"
-    ]
+    "resources": ["platform-user", "platform-profile"]
   },
   "hosts": {
     "platform-admin": {

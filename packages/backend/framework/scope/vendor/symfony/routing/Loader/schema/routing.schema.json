@@ -24,7 +24,11 @@
         "path": {
           "oneOf": [
             { "type": "string" },
-            { "type": "object", "patternProperties": { "^.+$": { "type": "string" } }, "additionalProperties": false }
+            {
+              "type": "object",
+              "patternProperties": { "^.+$": { "type": "string" } },
+              "additionalProperties": false
+            }
           ],
           "description": "The URL path or a map of locale=>path for localized routes."
         },
@@ -34,10 +38,7 @@
         },
         "methods": {
           "description": "The HTTP method(s) this route matches.",
-          "oneOf": [
-            { "type": "string" },
-            { "type": "array", "items": { "type": "string" } }
-          ]
+          "oneOf": [{ "type": "string" }, { "type": "array", "items": { "type": "string" } }]
         },
         "requirements": {
           "type": "object",
@@ -49,14 +50,15 @@
         "host": {
           "oneOf": [
             { "type": "string" },
-            { "type": "object", "patternProperties": { "^.+$": { "type": "string" } }, "additionalProperties": false }
+            {
+              "type": "object",
+              "patternProperties": { "^.+$": { "type": "string" } },
+              "additionalProperties": false
+            }
           ]
         },
         "schemes": {
-          "oneOf": [
-            { "type": "string" },
-            { "type": "array", "items": { "type": "string" } }
-          ]
+          "oneOf": [{ "type": "string" }, { "type": "array", "items": { "type": "string" } }]
         },
         "condition": { "type": "string" },
         "locale": { "type": "string" },
@@ -89,7 +91,10 @@
               "type": "object",
               "properties": {
                 "path": { "type": "string", "description": "The directory path to the resource." },
-                "namespace": { "type": "string", "description": "The namespace of the controllers in the imported resource (e.g., 'App\\Availability\\UserInterface\\Api')." }
+                "namespace": {
+                  "type": "string",
+                  "description": "The namespace of the controllers in the imported resource (e.g., 'App\\Availability\\UserInterface\\Api')."
+                }
               },
               "required": ["path"],
               "additionalProperties": true
@@ -103,7 +108,11 @@
         "prefix": {
           "oneOf": [
             { "type": "string" },
-            { "type": "object", "patternProperties": { "^.+$": { "type": "string" } }, "additionalProperties": false }
+            {
+              "type": "object",
+              "patternProperties": { "^.+$": { "type": "string" } },
+              "additionalProperties": false
+            }
           ],
           "description": "A URL prefix to apply to all routes from the imported resource."
         },
@@ -117,22 +126,27 @@
         "host": {
           "oneOf": [
             { "type": "string" },
-            { "type": "object", "patternProperties": { "^.+$": { "type": "string" } }, "additionalProperties": false }
+            {
+              "type": "object",
+              "patternProperties": { "^.+$": { "type": "string" } },
+              "additionalProperties": false
+            }
           ]
         },
         "schemes": {
-          "oneOf": [
-            { "type": "string" },
-            { "type": "array", "items": { "type": "string" } }
-          ]
+          "oneOf": [{ "type": "string" }, { "type": "array", "items": { "type": "string" } }]
         },
         "condition": { "type": "string" },
         "trailing_slash_on_root": { "type": "boolean" },
-        "methods": { "oneOf": [ { "type": "string" }, { "type": "array", "items": { "type": "string" } } ] },
+        "methods": {
+          "oneOf": [{ "type": "string" }, { "type": "array", "items": { "type": "string" } }]
+        },
         "locale": { "type": "string" },
         "format": { "type": "string" },
         "utf8": { "type": "boolean" },
-        "exclude": { "oneOf": [ { "type": "string" }, { "type": "array", "items": { "type": "string" } } ] },
+        "exclude": {
+          "oneOf": [{ "type": "string" }, { "type": "array", "items": { "type": "string" } }]
+        },
         "stateless": { "type": "boolean" },
         "controller": { "type": "string" }
       },

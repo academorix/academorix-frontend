@@ -4,4 +4,4 @@
  * @description Barrel export for web component prop interfaces.
  */
 
-export type { ConsentBannerProps } from './consent-banner-props.interface';
+export type { ConsentBannerProps } from "./consent-banner-props.interface";

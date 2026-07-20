@@ -1,7 +1,7 @@
 {
   "name": "@stackra/notifications",
   "version": "0.1.0",
-  "description": "Enterprise multi-channel notification orchestrator for the Stackra framework — Web Push subscription management, an in-app notification centre backed by @stackra/storage, Expo native push token handling, permission management, analytics event fan-out, HeroUI-based permission prompt + list + badge components, and a full testing subpath with in-memory mocks.",
+  "description": "Enterprise multi-channel notification orchestrator for the Stackra framework \u2014 Web Push subscription management, an in-app notification centre backed by @stackra/storage, Expo native push token handling, permission management, analytics event fan-out, HeroUI-based permission prompt + list + badge components, and a full testing subpath with in-memory mocks.",
   "license": "MIT",
   "author": {
     "name": "Stackra L.L.C",
@@ -132,6 +132,8 @@
     }
   },
   "devDependencies": {
+    "@academorix/config-tsconfig": "workspace:*",
+    "@academorix/config-tsup": "workspace:*",
     "@heroicons/react": "catalog:",
     "@stackra/analytics": "workspace:*",
     "@stackra/container": "workspace:*",

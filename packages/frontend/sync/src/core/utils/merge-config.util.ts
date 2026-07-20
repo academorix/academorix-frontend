@@ -6,8 +6,8 @@
  *   sync service.
  */
 
-import type { ISyncModuleOptions } from '@stackra/contracts';
-import { DEFAULT_SYNC_CONFIG } from '../constants/default-sync-config.constant';
+import type { ISyncModuleOptions } from "@stackra/contracts";
+import { DEFAULT_SYNC_CONFIG } from "../constants/default-sync-config.constant";
 
 /**
  * Merge caller-supplied options over the package defaults.

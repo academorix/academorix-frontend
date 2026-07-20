@@ -128,7 +128,11 @@
               "children": [
                 {
                   "kind": "Text",
-                  "props": { "as": "h2", "className": "text-lg font-semibold", "children": "Field diff" }
+                  "props": {
+                    "as": "h2",
+                    "className": "text-lg font-semibold",
+                    "children": "Field diff"
+                  }
                 },
                 {
                   "kind": "Button",

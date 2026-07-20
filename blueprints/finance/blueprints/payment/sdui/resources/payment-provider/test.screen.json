@@ -26,7 +26,11 @@
         {
           "kind": "Text",
           "props": { "as": "h1", "className": "text-2xl font-semibold" },
-          "bindings": { "children": { "$expr": "'Test ' + provider.provider.charAt(0).toUpperCase() + provider.provider.slice(1)" } }
+          "bindings": {
+            "children": {
+              "$expr": "'Test ' + provider.provider.charAt(0).toUpperCase() + provider.provider.slice(1)"
+            }
+          }
         },
         {
           "kind": "Alert",
@@ -67,7 +71,11 @@
                 {
                   "kind": "Text",
                   "props": { "as": "h2", "className": "text-lg font-medium" },
-                  "bindings": { "children": { "$expr": "form.result?.outcome === 'succeeded' ? 'Test succeeded' : 'Test failed'" } }
+                  "bindings": {
+                    "children": {
+                      "$expr": "form.result?.outcome === 'succeeded' ? 'Test succeeded' : 'Test failed'"
+                    }
+                  }
                 }
               ]
             },

@@ -5,12 +5,28 @@
   "kind": "SduiWidget",
   "description": "Amenity-tag picker with category grouping + inline search. Consumed by the branch create + edit screens. Feature-gates custom-tag entry on Enterprise-only (`branch_amenities: custom`).",
   "props": {
-    "value_field": { "type": "string", "required": true, "description": "The form field name to submit under (typically 'amenities')." },
+    "value_field": {
+      "type": "string",
+      "required": true,
+      "description": "The form field name to submit under (typically 'amenities')."
+    },
     "defaultValue": { "type": "array", "default": [], "description": "Initial selected tags." },
-    "catalog": { "type": "array", "required": true, "description": "The platform amenity catalogue categories from data/amenity-catalog.json." },
-    "allow_custom": { "type": "boolean", "default": false, "description": "Enable the free-text 'add custom tag' input. Requires branch_amenities:custom entitlement." },
+    "catalog": {
+      "type": "array",
+      "required": true,
+      "description": "The platform amenity catalogue categories from data/amenity-catalog.json."
+    },
+    "allow_custom": {
+      "type": "boolean",
+      "default": false,
+      "description": "Enable the free-text 'add custom tag' input. Requires branch_amenities:custom entitlement."
+    },
     "layout": { "type": "string", "default": "grid", "enum": ["grid", "list"] },
-    "max_tags": { "type": "integer", "default": 30, "description": "Upper bound on selected count (matches config('branch.validation.max_amenity_tags'))." }
+    "max_tags": {
+      "type": "integer",
+      "default": 30,
+      "description": "Upper bound on selected count (matches config('branch.validation.max_amenity_tags'))."
+    }
   },
   "nodes": [
     {
@@ -24,7 +40,11 @@
           "children": [
             {
               "kind": "SearchField",
-              "props": { "placeholder": "Filter amenities...", "name": "amenity_search", "className": "w-64" }
+              "props": {
+                "placeholder": "Filter amenities...",
+                "name": "amenity_search",
+                "className": "w-64"
+              }
             },
             {
               "kind": "Text",
@@ -148,7 +168,10 @@
         },
         {
           "kind": "Fieldset",
-          "props": { "legend": "Custom amenities", "description": "Add tags that aren't in the platform catalogue." },
+          "props": {
+            "legend": "Custom amenities",
+            "description": "Add tags that aren't in the platform catalogue."
+          },
           "bindings": { "hidden": { "$expr": "!props.allow_custom" } },
           "children": [
             {

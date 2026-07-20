@@ -5,7 +5,7 @@
  *   `notifications.config.ts`.
  */
 
-import type { INotificationModuleOptions } from '../interfaces';
+import type { INotificationModuleOptions } from "../interfaces";
 
 /**
  * Type-safe notifications configuration helper — identity

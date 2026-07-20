@@ -4,6 +4,6 @@
  * @description Errors barrel export.
  */
 
-export { SyncError } from './sync.error';
-export { ConflictError } from './conflict.error';
-export { NetworkError } from './network.error';
+export { SyncError } from "./sync.error";
+export { ConflictError } from "./conflict.error";
+export { NetworkError } from "./network.error";

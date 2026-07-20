@@ -43,7 +43,11 @@
               "children": [
                 {
                   "kind": "Text",
-                  "props": { "as": "h1", "className": "text-2xl font-semibold", "children": "Impersonation session" }
+                  "props": {
+                    "as": "h1",
+                    "className": "text-2xl font-semibold",
+                    "children": "Impersonation session"
+                  }
                 },
                 {
                   "kind": "Text",
@@ -221,7 +225,11 @@
           "children": [
             {
               "kind": "Text",
-              "props": { "as": "h2", "className": "text-lg font-semibold mb-2", "children": "Session audit trail" }
+              "props": {
+                "as": "h2",
+                "className": "text-lg font-semibold mb-2",
+                "children": "Session audit trail"
+              }
             },
             {
               "kind": "Text",

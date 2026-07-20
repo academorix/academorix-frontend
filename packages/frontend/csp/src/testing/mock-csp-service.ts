@@ -9,10 +9,10 @@
  *   which side of the SSR-vs-SPA contract was exercised.
  */
 
-import type { ICspPolicyResult, ICspService } from '@stackra/contracts';
+import type { ICspPolicyResult, ICspService } from "@stackra/contracts";
 
 /** A recorded `ICspService` call. */
-export type RecordedCspCall = 'generatePolicy' | 'getPolicy' | 'resetPolicy';
+export type RecordedCspCall = "generatePolicy" | "getPolicy" | "resetPolicy";
 
 /** Options for {@link MockCspService}. */
 export interface MockCspServiceOptions {
@@ -44,12 +44,12 @@ export class MockCspService implements ICspService {
 
   public constructor(options: MockCspServiceOptions = {}) {
     this.nonceSequence = options.nonces ?? [];
-    this.headerName = options.headerName ?? 'Content-Security-Policy';
+    this.headerName = options.headerName ?? "Content-Security-Policy";
     this.headerTemplate = options.header;
   }
 
   public generatePolicy(): ICspPolicyResult {
-    this.calls.push('generatePolicy');
+    this.calls.push("generatePolicy");
     const nonce = this.nextNonce();
     return {
       nonce,
@@ -59,7 +59,7 @@ export class MockCspService implements ICspService {
   }
 
   public getPolicy(): ICspPolicyResult {
-    this.calls.push('getPolicy');
+    this.calls.push("getPolicy");
     if (!this.cached) {
       // Bump the counter for the internal generation, then record via
       // this method (not `generatePolicy`) so the call log reflects the
@@ -75,7 +75,7 @@ export class MockCspService implements ICspService {
   }
 
   public resetPolicy(): void {
-    this.calls.push('resetPolicy');
+    this.calls.push("resetPolicy");
     this.cached = null;
   }
 

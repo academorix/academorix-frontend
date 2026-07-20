@@ -5,8 +5,8 @@
  *   state. Composes HeroUI Pro's `PromptSuggestion` (Req 20.1, 20.2).
  */
 
-import type { JSX, ReactNode } from 'react';
-import { PromptSuggestion } from '@stackra/ui/react';
+import type { JSX, ReactNode } from "react";
+import { PromptSuggestion } from "@stackra/ui/react";
 
 /** A single suggestion. */
 export interface IAiSuggestion {

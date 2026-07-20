@@ -5,14 +5,14 @@
  *   sequentially through the dispatcher.
  */
 
-import { Inject, Injectable } from '@stackra/container';
+import { Inject, Injectable } from "@stackra/container";
 import type {
   IActionContext,
   IActionDispatcher,
   IActionResponse,
   ICompositeAction,
-} from '@stackra/contracts';
-import { ACTION_DISPATCHER, ActionKind } from '@stackra/contracts';
+} from "@stackra/contracts";
+import { ACTION_DISPATCHER, ActionKind } from "@stackra/contracts";
 
 /**
  * Composite handler.
@@ -28,7 +28,7 @@ export class CompositeHandler {
 
   public async execute(
     descriptor: ICompositeAction,
-    context: IActionContext
+    context: IActionContext,
   ): Promise<IActionResponse> {
     let last: IActionResponse = { success: true };
     for (const step of descriptor.actions) {

@@ -11,8 +11,8 @@ platform ops) scan this file to know what changed since the last audit.
   attributes, routes, middleware, events, listeners, observers, hooks, jobs,
   schedule, commands, notifications, broadcasts, policies, permissions,
   features, entitlements, health, metrics, analytics, caches, retention,
-  compliance, data-classes, errors, rules, feature-flags, config, settings,
-  data fixtures, sdui).
+  compliance, data-classes, errors, rules, feature-flags, config, settings, data
+  fixtures, sdui).
 - **two entities** — `Activity` (the vendor-adapted `activity_log` table with
   `tenant_id NOT NULL` + `application_id NULLABLE` columns added by
   `Schema::table` migration on top of `spatie/laravel-activitylog`'s vendor
@@ -30,17 +30,17 @@ platform ops) scan this file to know what changed since the last audit.
   activity captures deliberate user-visible events like "Alice booked Court 3
   for tomorrow". Consumer contract documented in `readme.md §8`.
 - **two-lane contract lock** — a mutation fires audit OR activity, never both.
-  Same steering entry (`hierarchy.md §11`) that governs `audit`'s scope
-  governs activity's.
-- **event contract** — 7 events. `ActivityRecorded` (afterCommit) fires on
-  every vendor row insert and drives downstream broadcast +
-  digest-notification queue. `ActivityBatchStarted / Completed` bracket a
-  request. `ActivityRetentionPolicyCreated / Updated` are admin CRUD signals.
+  Same steering entry (`hierarchy.md §11`) that governs `audit`'s scope governs
+  activity's.
+- **event contract** — 7 events. `ActivityRecorded` (afterCommit) fires on every
+  vendor row insert and drives downstream broadcast + digest-notification queue.
+  `ActivityBatchStarted / Completed` bracket a request.
+  `ActivityRetentionPolicyCreated / Updated` are admin CRUD signals.
   `ActivityPurgeExecuted` is retention plumbing. `ActivityFeedSubscribed`
   captures reads for feed-analytics (functional consent tier).
-- **broadcast surface** — two channels: `tenant.{tenantId}.activity` (for
-  admin dashboards + shared feeds) and `user.{userId}.activity` (for the
-  caller's own "My activity" panel). Gated by `activity_broadcast` (Small+).
+- **broadcast surface** — two channels: `tenant.{tenantId}.activity` (for admin
+  dashboards + shared feeds) and `user.{userId}.activity` (for the caller's own
+  "My activity" panel). Gated by `activity_broadcast` (Small+).
 - **retention** — 90-day default (all tiers); extendable to 365 days with the
   `activity_extended_retention` entitlement (Enterprise); up to 730 days for
   regulator-holds. `PurgeExpiredActivitiesJob` runs nightly respecting per-

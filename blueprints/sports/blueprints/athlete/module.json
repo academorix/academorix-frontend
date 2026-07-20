@@ -29,9 +29,7 @@
     "wave-3a"
   ],
   "priority": 55,
-  "providers": [
-    "Academorix\\Sports\\Athlete\\Providers\\AthleteServiceProvider"
-  ],
+  "providers": ["Academorix\\Sports\\Athlete\\Providers\\AthleteServiceProvider"],
   "files": [],
   "dependencies": [
     "foundation",
@@ -57,16 +55,9 @@
     "communications"
   ],
   "contributes": {
-    "traits": [
-      "BelongsToAthlete",
-      "HasAthleteHealthProfile"
-    ],
-    "attributes": [
-      "AsAthleteListener"
-    ],
-    "blueprints": [
-      "athlete"
-    ],
+    "traits": ["BelongsToAthlete", "HasAthleteHealthProfile"],
+    "attributes": ["AsAthleteListener"],
+    "blueprints": ["athlete"],
     "middleware": [
       "athlete.enforce_active",
       "athlete.enforce_medical_permission",
@@ -92,9 +83,7 @@
       "AthletePhotoConsentChanged",
       "AthleteMinorTurnedAdult"
     ],
-    "policies": [
-      "AthletePolicy"
-    ],
+    "policies": ["AthletePolicy"],
     "hooks": [
       "PreventAthleteOrphansOnBranchArchived",
       "PreventUserArchiveWithActiveAthlete",
@@ -140,9 +129,7 @@
       "branch.{branchId}.athletes",
       "user.{userId}.athletes"
     ],
-    "observers": [
-      "AthleteObserver"
-    ],
+    "observers": ["AthleteObserver"],
     "rules": [
       "valid_hex_color",
       "valid_e164_phone",
@@ -157,23 +144,11 @@
       "one_active_athlete_per_user_tenant",
       "athlete_age_within_platform_bounds"
     ],
-    "casts": [
-      "AthleteStatus",
-      "AthleteGender",
-      "AthleteDominantHand",
-      "WithdrawalReason"
-    ],
+    "casts": ["AthleteStatus", "AthleteGender", "AthleteDominantHand", "WithdrawalReason"],
     "views": [],
-    "lang": [
-      "athlete"
-    ],
-    "config": [
-      "athlete"
-    ],
-    "macros": [
-      "Request::activeAthlete",
-      "Request::activeAthleteId"
-    ],
+    "lang": ["athlete"],
+    "config": ["athlete"],
+    "macros": ["Request::activeAthlete", "Request::activeAthleteId"],
     "bindings": [
       "AthleteRepository",
       "AthleteProvisioner",
@@ -183,9 +158,7 @@
       "EmergencyContactGate",
       "AthleteStatusMachine"
     ],
-    "resources": [
-      "athlete"
-    ]
+    "resources": ["athlete"]
   },
   "hosts": {
     "tenant": {

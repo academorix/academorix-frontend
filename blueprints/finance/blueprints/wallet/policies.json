@@ -8,9 +8,17 @@
       "model": "Wallet",
       "class": "Academorix\\Finance\\Wallet\\Policies\\WalletPolicy",
       "abilities": [
-        { "action": "viewAny", "permission": "wallets.viewAny", "scope": "guardian narrowed to own." },
+        {
+          "action": "viewAny",
+          "permission": "wallets.viewAny",
+          "scope": "guardian narrowed to own."
+        },
         { "action": "view", "permission": "wallets.view", "scope": "same narrowing." },
-        { "action": "adjust", "permission": "wallets.adjust", "scope": "refuses when wallet.closed_at IS NOT NULL." },
+        {
+          "action": "adjust",
+          "permission": "wallets.adjust",
+          "scope": "refuses when wallet.closed_at IS NOT NULL."
+        },
         { "action": "reconcile", "permission": "wallets.reconcile", "scope": "kind='cash' only." }
       ]
     },
@@ -18,7 +26,11 @@
       "model": "WalletTransaction",
       "class": "Academorix\\Finance\\Wallet\\Policies\\WalletTransactionPolicy",
       "abilities": [
-        { "action": "viewAny", "permission": "wallet-transactions.viewAny", "scope": "narrowed by wallet_id ownership." },
+        {
+          "action": "viewAny",
+          "permission": "wallet-transactions.viewAny",
+          "scope": "narrowed by wallet_id ownership."
+        },
         { "action": "view", "permission": "wallet-transactions.view" }
       ]
     },
@@ -28,7 +40,11 @@
       "abilities": [
         { "action": "viewAny", "permission": "wallet-holds.viewAny" },
         { "action": "view", "permission": "wallet-holds.view" },
-        { "action": "release", "permission": "wallet-holds.release", "scope": "refuses when status != 'active'." }
+        {
+          "action": "release",
+          "permission": "wallet-holds.release",
+          "scope": "refuses when status != 'active'."
+        }
       ]
     }
   ]

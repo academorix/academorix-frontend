@@ -13,12 +13,12 @@
  *   RN equivalent of ARIA `aria-live`).
  */
 
-import type { JSX } from 'react';
-import { View } from 'react-native';
-import { Avatar, Card, Typography } from '@stackra/ui/native';
-import type { IAiMessage } from '@stackra/contracts';
+import type { JSX } from "react";
+import { View } from "react-native";
+import { Avatar, Card, Typography } from "@stackra/ui/native";
+import type { IAiMessage } from "@stackra/contracts";
 
-import { AiToolCall } from '../ai-tool-call';
+import { AiToolCall } from "../ai-tool-call";
 
 /** Props accepted by {@link AiMessage}. */
 export interface IAiMessageProps {
@@ -38,9 +38,9 @@ export interface IAiMessageProps {
 export function AiMessage(props: IAiMessageProps): JSX.Element {
   const { message, onApproveTool, onRejectTool, isStreaming = false, className } = props;
 
-  if (message.role === 'user') {
+  if (message.role === "user") {
     return (
-      <View className={`flex-row justify-end${className ? ` ${className}` : ''}`}>
+      <View className={`flex-row justify-end${className ? ` ${className}` : ""}`}>
         <Card variant="default" className="max-w-[85%]">
           <Card.Body>
             <Typography.Paragraph>{message.text}</Typography.Paragraph>
@@ -51,12 +51,12 @@ export function AiMessage(props: IAiMessageProps): JSX.Element {
   }
 
   return (
-    <View className={`flex-row gap-3${className ? ` ${className}` : ''}`}>
+    <View className={`flex-row gap-3${className ? ` ${className}` : ""}`}>
       <Avatar size="sm" color="accent">
         <Avatar.Fallback>AI</Avatar.Fallback>
       </Avatar>
       <View className="flex-1 gap-2">
-        <Typography.Paragraph accessibilityLiveRegion={isStreaming ? 'polite' : 'none'}>
+        <Typography.Paragraph accessibilityLiveRegion={isStreaming ? "polite" : "none"}>
           {message.text}
         </Typography.Paragraph>
 
@@ -79,7 +79,7 @@ export function AiMessage(props: IAiMessageProps): JSX.Element {
               <Typography.Paragraph type="body-sm" weight="semibold">
                 Sources
               </Typography.Paragraph>
-              <View className="gap-1 mt-1">
+              <View className="mt-1 gap-1">
                 {message.sources.map((source) => (
                   <Typography.Paragraph
                     key={source.id}
@@ -88,7 +88,7 @@ export function AiMessage(props: IAiMessageProps): JSX.Element {
                     numberOfLines={2}
                   >
                     {source.title}
-                    {source.url ? ` — ${source.url}` : ''}
+                    {source.url ? ` — ${source.url}` : ""}
                   </Typography.Paragraph>
                 ))}
               </View>

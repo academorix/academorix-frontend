@@ -12,7 +12,7 @@
  *   draining, token refresh).
  */
 
-import { Injectable, Inject, Optional } from '@stackra/container';
+import { Injectable, Inject, Optional } from "@stackra/container";
 import {
   COORDINATOR_CONFIG,
   COORDINATOR_EVENTS,
@@ -21,12 +21,12 @@ import {
   type IEventEmitterSync,
   type ITabTransport,
   type ITabTransportManager,
-} from '@stackra/contracts';
-import { Str } from '@stackra/support';
-import type { ICoordinatorModuleOptions } from '@/core/interfaces';
-import type { ITabInfo } from '@/core/interfaces';
-import type { CoordinatorMessage, RoleListener, TabRole } from '@/core/types';
-import { CoordinatorMessageKind } from '@/core/enums';
+} from "@stackra/contracts";
+import { Str } from "@stackra/support";
+import type { ICoordinatorModuleOptions } from "@/core/interfaces";
+import type { ITabInfo } from "@/core/interfaces";
+import type { CoordinatorMessage, RoleListener, TabRole } from "@/core/types";
+import { CoordinatorMessageKind } from "@/core/enums";
 
 // ════════════════════════════════════════════════════════════════════════════════
 // Implementation
@@ -83,7 +83,7 @@ export class TabCoordinator {
   private readonly knownTabs: Map<string, number> = new Map();
 
   /** Current role. */
-  private currentRole: TabRole = 'follower';
+  private currentRole: TabRole = "follower";
 
   /** Role change listeners. */
   private readonly roleListeners: Set<RoleListener> = new Set();
@@ -95,11 +95,11 @@ export class TabCoordinator {
   private readonly config: Required<
     Pick<
       ICoordinatorModuleOptions,
-      | 'channelName'
-      | 'heartbeatMs'
-      | 'staleThresholdMs'
-      | 'preferWebLocksElection'
-      | 'preferVisibleLeader'
+      | "channelName"
+      | "heartbeatMs"
+      | "staleThresholdMs"
+      | "preferWebLocksElection"
+      | "preferVisibleLeader"
     >
   >;
 
@@ -114,11 +114,11 @@ export class TabCoordinator {
   public constructor(
     @Optional() @Inject(TAB_TRANSPORT_MANAGER) private readonly manager?: ITabTransportManager,
     @Optional() @Inject(COORDINATOR_CONFIG) options?: ICoordinatorModuleOptions,
-    @Optional() @Inject(EVENT_EMITTER) private readonly eventEmitter?: IEventEmitterSync
+    @Optional() @Inject(EVENT_EMITTER) private readonly eventEmitter?: IEventEmitterSync,
   ) {
     this.tabId = this.generateTabId();
     this.config = {
-      channelName: options?.channelName ?? 'stackra-coordinator',
+      channelName: options?.channelName ?? "stackra-coordinator",
       heartbeatMs: options?.heartbeatMs ?? 1000,
       staleThresholdMs: options?.staleThresholdMs ?? 3000,
       preferWebLocksElection: options?.preferWebLocksElection ?? true,
@@ -229,7 +229,7 @@ export class TabCoordinator {
     this.postMessage({ kind: CoordinatorMessageKind.RESIGNED, tabId: this.tabId });
     this.leaderId = null;
     this.stopHeartbeat();
-    this.setRole('follower');
+    this.setRole("follower");
   }
 
   /**
@@ -280,13 +280,13 @@ export class TabCoordinator {
   private becomeLeader(): void {
     this.leaderId = this.tabId;
     this.startHeartbeat();
-    this.setRole('leader');
+    this.setRole("leader");
   }
 
   /** Handle incoming messages. */
   private onMessage(msg: CoordinatorMessage): void {
     if (this.destroyed) return;
-    if ('tabId' in msg) {
+    if ("tabId" in msg) {
       const isNew = !this.knownTabs.has(msg.tabId);
       this.knownTabs.set(msg.tabId, Date.now());
       if (isNew && msg.tabId !== this.tabId) {
@@ -300,7 +300,7 @@ export class TabCoordinator {
         this.lastHeartbeatAt = msg.at;
         if (this.isLeader() && msg.tabId !== this.tabId) {
           this.stopHeartbeat();
-          this.setRole('follower');
+          this.setRole("follower");
         }
         break;
       case CoordinatorMessageKind.CLAIM:
@@ -308,7 +308,7 @@ export class TabCoordinator {
           this.stopHeartbeat();
           this.leaderId = msg.tabId;
           this.lastHeartbeatAt = msg.at;
-          this.setRole('follower');
+          this.setRole("follower");
         }
         break;
       case CoordinatorMessageKind.RESIGNED:
@@ -392,7 +392,7 @@ export class TabCoordinator {
     this.currentRole = role;
 
     // Emit lifecycle event via @stackra/events (optional)
-    if (role === 'leader') {
+    if (role === "leader") {
       this.emit(COORDINATOR_EVENTS.LEADER_ELECTED, { tabId: this.tabId });
     } else {
       this.emit(COORDINATOR_EVENTS.LEADER_RESIGNED, { tabId: this.tabId });

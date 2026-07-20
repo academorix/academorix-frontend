@@ -6,11 +6,11 @@
  *   {@link ConflictResolver}.
  */
 
-import { useCallback, useState } from 'react';
-import { useInject } from '@stackra/container/react';
-import type { IConflict, IConflictResolution } from '@stackra/contracts';
-import { CONFLICT_RESOLVER } from '@stackra/contracts';
-import type { ConflictResolver } from '@/core/resolvers/conflict.resolver';
+import { useCallback, useState } from "react";
+import { useInject } from "@stackra/container/react";
+import type { IConflict, IConflictResolution } from "@stackra/contracts";
+import { CONFLICT_RESOLVER } from "@stackra/contracts";
+import type { ConflictResolver } from "@/core/resolvers/conflict.resolver";
 
 /**
  * Result returned by {@link useConflictResolver}.
@@ -49,7 +49,7 @@ export function useConflictResolver(): IUseConflictResolverResult {
       setConflicts((prev) => prev.filter((c) => c.id !== conflict.id));
       return resolution;
     },
-    [resolver]
+    [resolver],
   );
 
   const reset = useCallback(() => setConflicts([]), []);

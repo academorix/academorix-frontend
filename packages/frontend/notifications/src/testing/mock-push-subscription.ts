@@ -8,7 +8,7 @@
  *   to a plausible value; overrides customise per-test shape.
  */
 
-import type { IWebPushSubscription } from '@/push/interfaces';
+import type { IWebPushSubscription } from "@/push/interfaces";
 
 /**
  * Options accepted by {@link MockPushSubscription}.
@@ -43,9 +43,9 @@ export class MockPushSubscription {
   private readonly unsubscribeResult: boolean;
 
   public constructor(options: IMockPushSubscriptionOptions = {}) {
-    this.endpoint = options.endpoint ?? 'https://push.example.com/subs/test-endpoint';
-    this.p256dh = options.p256dh ?? 'p256dh-key-base64';
-    this.auth = options.auth ?? 'auth-secret-base64';
+    this.endpoint = options.endpoint ?? "https://push.example.com/subs/test-endpoint";
+    this.p256dh = options.p256dh ?? "p256dh-key-base64";
+    this.auth = options.auth ?? "auth-secret-base64";
     this.expirationTime = options.expirationTime ?? null;
     this.unsubscribeResult = options.unsubscribeResult ?? true;
   }
@@ -58,8 +58,8 @@ export class MockPushSubscription {
    * `arrayBufferToBase64` helper decodes them the same way as the
    * real API.
    */
-  public getKey(name: 'p256dh' | 'auth'): ArrayBuffer {
-    const raw = name === 'p256dh' ? this.p256dh : this.auth;
+  public getKey(name: "p256dh" | "auth"): ArrayBuffer {
+    const raw = name === "p256dh" ? this.p256dh : this.auth;
     const bytes = new Uint8Array(raw.length);
     for (let i = 0; i < raw.length; i += 1) bytes[i] = raw.charCodeAt(i);
     return bytes.buffer as ArrayBuffer;

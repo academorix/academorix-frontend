@@ -24,10 +24,7 @@
       "name": "HashiCorp Vault",
       "role": "encryption_at_rest",
       "purpose": "Envelope encryption alternative to AWS KMS for on-prem deployments. Same operational contract.",
-      "data_processed": [
-        "AES-256 data-key ciphertexts",
-        "no plaintext credentials"
-      ],
+      "data_processed": ["AES-256 data-key ciphertexts", "no plaintext credentials"],
       "location": "customer-managed (self-hosted)",
       "legal_basis": "contract",
       "dpa_url": "https://www.hashicorp.com/data-processing-addendum",

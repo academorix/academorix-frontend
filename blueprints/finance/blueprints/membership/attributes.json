@@ -10,7 +10,12 @@
       "targets": ["class"],
       "description": "Marks a service as a subscriber to membership lifecycle events. Contract-critical events (MembershipChargedBack, MembershipRefunded) require explicit opt-in (they route on finance-critical queue and are financially load-bearing).",
       "params": [
-        { "name": "events", "type": "array<string>", "default": [], "description": "Empty = subscribe to every Academorix\\Finance\\Membership\\Events\\Membership* + Pass* event EXCEPT MembershipChargedBack + MembershipRefunded (explicit opt-in required)." },
+        {
+          "name": "events",
+          "type": "array<string>",
+          "default": [],
+          "description": "Empty = subscribe to every Academorix\\Finance\\Membership\\Events\\Membership* + Pass* event EXCEPT MembershipChargedBack + MembershipRefunded (explicit opt-in required)."
+        },
         { "name": "queue", "type": "string | null", "default": null },
         { "name": "priority", "type": "integer", "default": 100 }
       ],
@@ -22,7 +27,12 @@
       "targets": ["class"],
       "description": "Marks a session/event/booking module as a Pass consumer. When a marked class is invoked with a pass id, PassObserver's consuming-branch performs the idempotent consumption + links consumed_by_session_id to the caller's session context.",
       "params": [
-        { "name": "consumer_kind", "type": "string", "required": true, "description": "Enum: 'session' | 'event' | 'facility_booking'. Selects which polymorphic link to use." }
+        {
+          "name": "consumer_kind",
+          "type": "string",
+          "required": true,
+          "description": "Enum: 'session' | 'event' | 'facility_booking'. Selects which polymorphic link to use."
+        }
       ],
       "example": "#[AsPassConsumer(consumer_kind: 'session')]\nfinal class SessionCheckInService\n{\n    public function consumePass(Pass $pass, Session $session): void { /* ... */ }\n}"
     }

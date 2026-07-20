@@ -4,9 +4,9 @@
 
 ## Scope
 
-Time window every enrollment / attendance / progress / performance row
-is tenant-scoped to. Every operational sports record belongs to
-exactly one Season. Season boundaries drive:
+Time window every enrollment / attendance / progress / performance row is
+tenant-scoped to. Every operational sports record belongs to exactly one Season.
+Season boundaries drive:
 
 - Enrollment rollovers (`sports/athlete-enrollment`).
 - Age-group snapshot rolls (`sports/athlete`).
@@ -24,44 +24,41 @@ exactly one Season. Season boundaries drive:
 
 ### Actions
 
-- **`CreateSeasonAction`** — validated payload. Refuse overlapping
-  seasons with `status = Active` on the same organisation.
-- **`ActivateSeasonAction`** — POST /seasons/{season}/activate.
-  Transitions from `Planned` → `Active`. At most ONE active season
-  per organisation at a time (invariant). Fires `SeasonActivated`
-  which triggers roster / age-group snapshot rollovers.
-- **`CompleteSeasonAction`** — POST /seasons/{season}/complete.
-  Precondition: end_date past. Cascade — close every open enrollment
-  for the season.
-- **`RolloverAction`** — POST /seasons/{season}/rollover. Creates the
-  NEXT season from this one's template (name pattern, age windows,
-  fee schedule). Optionally auto-enroll every active athlete into the
-  new season on rollover.
+- **`CreateSeasonAction`** — validated payload. Refuse overlapping seasons with
+  `status = Active` on the same organisation.
+- **`ActivateSeasonAction`** — POST /seasons/{season}/activate. Transitions from
+  `Planned` → `Active`. At most ONE active season per organisation at a time
+  (invariant). Fires `SeasonActivated` which triggers roster / age-group
+  snapshot rollovers.
+- **`CompleteSeasonAction`** — POST /seasons/{season}/complete. Precondition:
+  end_date past. Cascade — close every open enrollment for the season.
+- **`RolloverAction`** — POST /seasons/{season}/rollover. Creates the NEXT
+  season from this one's template (name pattern, age windows, fee schedule).
+  Optionally auto-enroll every active athlete into the new season on rollover.
 
 ### Services
 
-- **`SeasonProvisioner`** — create + activate orchestrator. Enforces
-  the single-active-season invariant + fires the cascade events.
-- **`SeasonRolloverService`** — the copy-forward logic. Reads the
-  source season + emits `SeasonRolledOver` with the new season id.
-- **`SeasonSnapshotBuilder`** — build the season-level rollup for the
-  report card / competition module (# enrollments, # sessions, # goals
-  scored, etc.).
+- **`SeasonProvisioner`** — create + activate orchestrator. Enforces the
+  single-active-season invariant + fires the cascade events.
+- **`SeasonRolloverService`** — the copy-forward logic. Reads the source
+  season + emits `SeasonRolledOver` with the new season id.
+- **`SeasonSnapshotBuilder`** — build the season-level rollup for the report
+  card / competition module (# enrollments, # sessions, # goals scored, etc.).
 
 ### Events
 
 - `SeasonCreated`, `SeasonActivated`, `SeasonCompleted`, `SeasonRolledOver`.
-- Listeners: sports/athlete's `RollAthleteAgeGroupSnapshotJob` fires
-  on `SeasonActivated`.
+- Listeners: sports/athlete's `RollAthleteAgeGroupSnapshotJob` fires on
+  `SeasonActivated`.
 
 ### Cross-module dependencies
 
-- **`sports/age-group`** — Age windows change per season. Every
-  athlete's snapshot rolls at season activation.
-- **`sports/athlete-enrollment`** — Every enrollment carries a
-  `season_id`. Rollover creates new enrollment rows.
-- **`sports/team`** — Roster is season-scoped. Rollover creates new
-  Team rows or reactivates them.
+- **`sports/age-group`** — Age windows change per season. Every athlete's
+  snapshot rolls at season activation.
+- **`sports/athlete-enrollment`** — Every enrollment carries a `season_id`.
+  Rollover creates new enrollment rows.
+- **`sports/team`** — Roster is season-scoped. Rollover creates new Team rows or
+  reactivates them.
 
 ## Backlog priorities
 

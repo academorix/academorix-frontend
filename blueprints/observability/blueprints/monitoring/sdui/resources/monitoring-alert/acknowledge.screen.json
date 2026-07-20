@@ -10,7 +10,12 @@
   "requiresPermission": "monitoring.alerts.acknowledge",
   "requiresEntitlement": "monitoring_capture",
   "dataSources": [
-    { "name": "alert", "kind": "http.get", "url": "/api/v1/monitoring/alerts/{alert}", "unwrap": "data" }
+    {
+      "name": "alert",
+      "kind": "http.get",
+      "url": "/api/v1/monitoring/alerts/{alert}",
+      "unwrap": "data"
+    }
   ],
   "nodes": [
     {
@@ -18,7 +23,14 @@
       "kind": "Form",
       "props": { "className": "max-w-2xl mx-auto p-6 flex flex-col gap-4" },
       "children": [
-        { "kind": "Text", "props": { "as": "h1", "className": "text-2xl font-semibold", "children": "Acknowledge alert" } },
+        {
+          "kind": "Text",
+          "props": {
+            "as": "h1",
+            "className": "text-2xl font-semibold",
+            "children": "Acknowledge alert"
+          }
+        },
         {
           "kind": "Card",
           "props": { "className": "p-4" },
@@ -27,17 +39,36 @@
               "kind": "View",
               "props": { "className": "flex items-center gap-3 mb-2" },
               "children": [
-                { "kind": "Widget", "widget": "monitoring.severity-chip", "bindings": { "severity": { "$ref": "alert.severity" } } },
-                { "kind": "Text", "props": { "className": "font-medium" }, "bindings": { "children": { "$ref": "alert.signal_type" } } }
+                {
+                  "kind": "Widget",
+                  "widget": "monitoring.severity-chip",
+                  "bindings": { "severity": { "$ref": "alert.severity" } }
+                },
+                {
+                  "kind": "Text",
+                  "props": { "className": "font-medium" },
+                  "bindings": { "children": { "$ref": "alert.signal_type" } }
+                }
               ]
             },
-            { "kind": "Text", "props": { "className": "text-sm text-muted" }, "bindings": { "children": { "$expr": "'Fired at ' + alert.fired_at" } } },
-            { "kind": "Text", "props": { "className": "text-sm mt-2" }, "bindings": { "children": { "$expr": "'Signal value: ' + alert.signal_value" } } }
+            {
+              "kind": "Text",
+              "props": { "className": "text-sm text-muted" },
+              "bindings": { "children": { "$expr": "'Fired at ' + alert.fired_at" } }
+            },
+            {
+              "kind": "Text",
+              "props": { "className": "text-sm mt-2" },
+              "bindings": { "children": { "$expr": "'Signal value: ' + alert.signal_value" } }
+            }
           ]
         },
         {
           "kind": "TextArea",
-          "props": { "label": "Acknowledgment note (optional)", "placeholder": "I'm investigating. ETA on resolution: 10 min." },
+          "props": {
+            "label": "Acknowledgment note (optional)",
+            "placeholder": "I'm investigating. ETA on resolution: 10 min."
+          },
           "actions": { "onChange": { "kind": "form.set", "field": "note", "valueExpr": "$value" } }
         },
         {

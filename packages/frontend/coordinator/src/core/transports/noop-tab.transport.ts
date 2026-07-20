@@ -7,7 +7,7 @@
  *   as unconditionally present.
  */
 
-import type { ITabTransport, TabTransportListener } from '@stackra/contracts';
+import type { ITabTransport, TabTransportListener } from "@stackra/contracts";
 
 /**
  * `ITabTransport` implementation that swallows every operation.

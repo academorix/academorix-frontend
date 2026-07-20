@@ -14,21 +14,21 @@
  *   `ConsentManager.onApplicationBootstrap()`.
  */
 
-import { Module, type DynamicModule, type Provider } from '@stackra/container';
+import { Module, type DynamicModule, type Provider } from "@stackra/container";
 import {
   CONSENT_CONFIG,
   CONSENT_MANAGER,
   CONSENT_STORAGE_ADAPTER,
   type IAsyncModuleOptions,
-} from '@stackra/contracts';
+} from "@stackra/contracts";
 
-import { CONSENT_REGISTRY } from './constants';
-import { MemoryConsentAdapter } from './adapters/memory-consent.adapter';
-import { StorageBackedConsentAdapter } from './adapters/storage-backed-consent.adapter';
-import { ConsentManager } from './services/consent-manager.service';
-import { ConsentRegistry } from './services/consent-registry.service';
-import { mergeConfig } from './utils/merge-config.util';
-import type { IConsentModuleOptions } from './types';
+import { CONSENT_REGISTRY } from "./constants";
+import { MemoryConsentAdapter } from "./adapters/memory-consent.adapter";
+import { StorageBackedConsentAdapter } from "./adapters/storage-backed-consent.adapter";
+import { ConsentManager } from "./services/consent-manager.service";
+import { ConsentRegistry } from "./services/consent-registry.service";
+import { mergeConfig } from "./utils/merge-config.util";
+import type { IConsentModuleOptions } from "./types";
 
 /**
  * Backends that resolve to the durable, storage-backed adapter.
@@ -38,9 +38,9 @@ import type { IConsentModuleOptions } from './types';
  * through the app's `StorageManager`. The `'cookie'` driver landed
  * in `@stackra/storage/react` in the pattern-alignment sweep.
  */
-function needsStorageBacking(storage: IConsentModuleOptions['storage']): boolean {
+function needsStorageBacking(storage: IConsentModuleOptions["storage"]): boolean {
   if (!storage) return false;
-  return storage !== 'memory';
+  return storage !== "memory";
 }
 
 /**
@@ -114,7 +114,7 @@ export class ConsentModule {
    * @returns Dynamic module definition.
    */
   public static forRootAsync(
-    options: IAsyncModuleOptions<Partial<IConsentModuleOptions>>
+    options: IAsyncModuleOptions<Partial<IConsentModuleOptions>>,
   ): DynamicModule {
     return {
       module: ConsentModule,

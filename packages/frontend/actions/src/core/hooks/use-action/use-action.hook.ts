@@ -13,11 +13,11 @@
  *   and `@stackra/actions/native` re-export this hook.
  */
 
-import { useCallback, useEffect, useRef, useState } from 'react';
-import type { IActionContext, IActionDescriptor, IActionResponse } from '@stackra/contracts';
+import { useCallback, useEffect, useRef, useState } from "react";
+import type { IActionContext, IActionDescriptor, IActionResponse } from "@stackra/contracts";
 
-import { useActionDispatcher } from '../use-action-dispatcher';
-import type { IUseActionResult, IUseActionState } from './use-action.interface';
+import { useActionDispatcher } from "../use-action-dispatcher";
+import type { IUseActionResult, IUseActionState } from "./use-action.interface";
 
 /**
  * Initial state used by the reducer inside {@link useAction} and by
@@ -73,7 +73,7 @@ const INITIAL_STATE: IUseActionState<unknown> = Object.freeze({
  * ```
  */
 export function useAction<D extends IActionDescriptor = IActionDescriptor, R = unknown>(
-  _kind: D['kind']
+  _kind: D["kind"],
 ): IUseActionResult<D, R> {
   const dispatch = useActionDispatcher();
 
@@ -122,12 +122,12 @@ export function useAction<D extends IActionDescriptor = IActionDescriptor, R = u
             isPending: false,
             response,
             data: null,
-            error: response.message ?? 'Action failed',
+            error: response.message ?? "Action failed",
           };
       setState(nextState);
       return response;
     },
-    [dispatch]
+    [dispatch],
   );
 
   const reset = useCallback(() => {

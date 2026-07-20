@@ -18,8 +18,21 @@
         {
           "kind": "View",
           "children": [
-            { "kind": "Text", "props": { "as": "h1", "className": "text-2xl font-semibold", "children": "Generate campaign code" } },
-            { "kind": "Text", "props": { "className": "text-sm text-muted", "children": "User codes are auto-issued when users activate. Use this form for campaign codes (SUMMER25) + opaque codes (A/B cohorts)." } }
+            {
+              "kind": "Text",
+              "props": {
+                "as": "h1",
+                "className": "text-2xl font-semibold",
+                "children": "Generate campaign code"
+              }
+            },
+            {
+              "kind": "Text",
+              "props": {
+                "className": "text-sm text-muted",
+                "children": "User codes are auto-issued when users activate. Use this form for campaign codes (SUMMER25) + opaque codes (A/B cohorts)."
+              }
+            }
           ]
         },
         {
@@ -65,13 +78,20 @@
         },
         {
           "kind": "TextField",
-          "props": { "label": "Campaign name", "description": "Internal name for reporting. E.g. 'Summer 2026 Facebook Ads'." },
+          "props": {
+            "label": "Campaign name",
+            "description": "Internal name for reporting. E.g. 'Summer 2026 Facebook Ads'."
+          },
           "bindings": { "hidden": { "$expr": "form.code_type !== 'campaign'" } },
           "form": { "field": "campaign_name" }
         },
         {
           "kind": "NumberField",
-          "props": { "label": "Usage cap", "minValue": 1, "description": "Max redemptions. Leave empty for unlimited." },
+          "props": {
+            "label": "Usage cap",
+            "minValue": 1,
+            "description": "Max redemptions. Leave empty for unlimited."
+          },
           "form": { "field": "usage_cap" }
         },
         {

@@ -5,4 +5,4 @@
  *   (`AI_CONFIG`, `IAiConfig`, …) are imported directly from
  *   `@stackra/contracts` and never re-exported here.
  */
-export { DEFAULT_AI_CONFIG } from './default-ai-config.constant';
+export { DEFAULT_AI_CONFIG } from "./default-ai-config.constant";

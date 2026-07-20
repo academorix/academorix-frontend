@@ -59,8 +59,8 @@ function levenshteinDistance(a: string, b: string): number {
 export function fuzzyMatch(
   input: string,
   candidates: string[],
-  maxDistance: number = 3,
-  maxResults: number = 3,
+  maxDistance = 3,
+  maxResults = 3,
 ): string[] {
   const scored = candidates
     .map((candidate) => ({

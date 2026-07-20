@@ -11,15 +11,15 @@
  *   assumption.
  */
 
-import { useCallback } from 'react';
-import { useInject } from '@stackra/container/react';
+import { useCallback } from "react";
+import { useInject } from "@stackra/container/react";
 import type {
   IActionContext,
   IActionDescriptor,
   IActionDispatcher,
   IActionResponse,
-} from '@stackra/contracts';
-import { ACTION_DISPATCHER } from '@stackra/contracts';
+} from "@stackra/contracts";
+import { ACTION_DISPATCHER } from "@stackra/contracts";
 
 /**
  * Signature of the stable dispatch callback returned by
@@ -27,7 +27,7 @@ import { ACTION_DISPATCHER } from '@stackra/contracts';
  */
 export type ActionDispatchCallback = <D extends IActionDescriptor, R = unknown>(
   descriptor: D,
-  context?: IActionContext
+  context?: IActionContext,
 ) => Promise<IActionResponse<R>>;
 
 /**
@@ -62,6 +62,6 @@ export function useActionDispatcher(): ActionDispatchCallback {
   return useCallback(
     <D extends IActionDescriptor, R = unknown>(descriptor: D, context?: IActionContext) =>
       dispatcher.dispatch<D, R>(descriptor, context),
-    [dispatcher]
+    [dispatcher],
   );
 }

@@ -8,8 +8,8 @@
  *   not shallow-clobbered.
  */
 
-import type { IAiModuleOptions } from '@stackra/contracts';
-import { DEFAULT_AI_CONFIG } from '@/core/constants/default-ai-config.constant';
+import type { IAiModuleOptions } from "@stackra/contracts";
+import { DEFAULT_AI_CONFIG } from "@/core/constants/default-ai-config.constant";
 
 /**
  * Merge user options into {@link DEFAULT_AI_CONFIG}.

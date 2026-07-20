@@ -1,7 +1,7 @@
 {
   "name": "@stackra/sync",
   "version": "0.1.0",
-  "description": "Offline-first synchronization engine — cursor-based pull, batched push, pluggable conflict resolution, and cross-tab coordination.",
+  "description": "Offline-first synchronization engine \u2014 cursor-based pull, batched push, pluggable conflict resolution, and cross-tab coordination.",
   "license": "MIT",
   "author": {
     "name": "Stackra L.L.C",
@@ -110,6 +110,8 @@
     }
   },
   "devDependencies": {
+    "@academorix/config-tsconfig": "workspace:*",
+    "@academorix/config-tsup": "workspace:*",
     "@stackra/container": "workspace:*",
     "@stackra/contracts": "workspace:*",
     "@stackra/coordinator": "workspace:*",

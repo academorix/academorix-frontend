@@ -4,14 +4,14 @@
  * @description Test doubles for the analytics system.
  */
 
-import type { IAnalyticsManager, IAnalyticsPageView, IAnalyticsProvider } from '@stackra/contracts';
+import type { IAnalyticsManager, IAnalyticsPageView, IAnalyticsProvider } from "@stackra/contracts";
 
 /** A recorded analytics call for assertions. */
 export type RecordedCall =
-  | { kind: 'track'; name: string; properties?: Record<string, unknown> }
-  | { kind: 'page'; view: IAnalyticsPageView }
-  | { kind: 'identify'; userId: string; traits?: Record<string, unknown> }
-  | { kind: 'reset' };
+  | { kind: "track"; name: string; properties?: Record<string, unknown> }
+  | { kind: "page"; view: IAnalyticsPageView }
+  | { kind: "identify"; userId: string; traits?: Record<string, unknown> }
+  | { kind: "reset" };
 
 /**
  * In-memory analytics manager for tests. Records every call so specs can
@@ -24,19 +24,19 @@ export class MockAnalyticsManager implements IAnalyticsManager {
   private readonly providers: IAnalyticsProvider[] = [];
 
   public track(name: string, properties?: Record<string, unknown>): void {
-    this.calls.push({ kind: 'track', name, properties });
+    this.calls.push({ kind: "track", name, properties });
   }
 
   public page(view: IAnalyticsPageView): void {
-    this.calls.push({ kind: 'page', view });
+    this.calls.push({ kind: "page", view });
   }
 
   public identify(userId: string, traits?: Record<string, unknown>): void {
-    this.calls.push({ kind: 'identify', userId, traits });
+    this.calls.push({ kind: "identify", userId, traits });
   }
 
   public reset(): void {
-    this.calls.push({ kind: 'reset' });
+    this.calls.push({ kind: "reset" });
   }
 
   public register(provider: IAnalyticsProvider): void {

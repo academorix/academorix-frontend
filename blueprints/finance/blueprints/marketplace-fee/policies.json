@@ -8,20 +8,40 @@
       "model": "FeeSchedule",
       "class": "Academorix\\Finance\\MarketplaceFee\\Policies\\FeeSchedulePolicy",
       "abilities": [
-        { "action": "viewAny", "permission": "fee-schedules.viewAny", "scope": "tenant narrowed to own." },
+        {
+          "action": "viewAny",
+          "permission": "fee-schedules.viewAny",
+          "scope": "tenant narrowed to own."
+        },
         { "action": "view", "permission": "fee-schedules.view", "scope": "same narrowing." },
         { "action": "platformViewAny", "permission": "platform.fee-schedules.viewAny" },
         { "action": "platformCreate", "permission": "platform.fee-schedules.create" },
-        { "action": "platformUpdate", "permission": "platform.fee-schedules.update", "scope": "refuses when status='active' — must create a new version instead." },
-        { "action": "platformActivate", "permission": "platform.fee-schedules.activate", "scope": "refuses when effective_from IS in the past (never retroactive)." },
-        { "action": "platformDeactivate", "permission": "platform.fee-schedules.deactivate", "scope": "refuses when status != 'active'." }
+        {
+          "action": "platformUpdate",
+          "permission": "platform.fee-schedules.update",
+          "scope": "refuses when status='active' — must create a new version instead."
+        },
+        {
+          "action": "platformActivate",
+          "permission": "platform.fee-schedules.activate",
+          "scope": "refuses when effective_from IS in the past (never retroactive)."
+        },
+        {
+          "action": "platformDeactivate",
+          "permission": "platform.fee-schedules.deactivate",
+          "scope": "refuses when status != 'active'."
+        }
       ]
     },
     {
       "model": "FeeApplication",
       "class": "Academorix\\Finance\\MarketplaceFee\\Policies\\FeeApplicationPolicy",
       "abilities": [
-        { "action": "viewAny", "permission": "fee-applications.viewAny", "scope": "tenant narrowed to own." },
+        {
+          "action": "viewAny",
+          "permission": "fee-applications.viewAny",
+          "scope": "tenant narrowed to own."
+        },
         { "action": "view", "permission": "fee-applications.view", "scope": "same narrowing." }
       ]
     },
@@ -31,7 +51,11 @@
       "abilities": [
         { "action": "platformViewAny", "permission": "platform.fee-payouts.viewAny" },
         { "action": "platformView", "permission": "platform.fee-payouts.view" },
-        { "action": "platformSettle", "permission": "platform.fee-payouts.settle", "scope": "refuses when status != 'pending'." }
+        {
+          "action": "platformSettle",
+          "permission": "platform.fee-payouts.settle",
+          "scope": "refuses when status != 'pending'."
+        }
       ]
     }
   ]

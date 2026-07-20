@@ -7,4 +7,4 @@
  * @module @stackra/http/connectors
  */
 
-export { AxiosConnector } from './axios.connector';
+export { AxiosConnector } from "./axios.connector";

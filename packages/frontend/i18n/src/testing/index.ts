@@ -30,15 +30,15 @@
  * ```
  */
 
-export { MockI18nManager } from './mock-i18n-manager';
-export { MockLocaleService } from './mock-locale-service';
+export { MockI18nManager } from "./mock-i18n-manager";
+export { MockLocaleService } from "./mock-locale-service";
 export {
   MockDirectionAdapter,
   MockDirectionService,
   MockLocaleStorage,
   MockTranslationProvider,
   MockI18nLoader,
-} from './mocks';
+} from "./mocks";
 export {
   createMockI18nManager,
   createMockLocaleService,
@@ -47,4 +47,4 @@ export {
   createMockLocaleStorage,
   createMockTranslationProvider,
   createMockI18nLoader,
-} from './create-mocks';
+} from "./create-mocks";

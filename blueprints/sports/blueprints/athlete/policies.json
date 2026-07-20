@@ -8,28 +8,110 @@
       "model": "Athlete",
       "class": "Academorix\\Sports\\Athlete\\Policies\\AthletePolicy",
       "abilities": [
-        { "action": "viewAny", "permission": "athletes.viewAny", "scope": "any tenant member with athlete.core feature; narrows to caller's active branch scope when set. Guardians additionally narrow to athletes with active AthleteGuardian rows where user_id = current_user_id (via athletes.viewAny.own)" },
-        { "action": "view", "permission": "athletes.view", "scope": "same as viewAny + self-view allowed via .own suffix (`athletes.view.own` narrows to WHERE user_id = current_user_id OR EXISTS(SELECT 1 FROM athlete_guardians WHERE athlete_id = athletes.id AND user_id = current_user_id AND deleted_at IS NULL))" },
-        { "action": "create", "permission": "athletes.create", "scope": "reception + hr + branch_manager + admin + owner. Distinct from athletes.update — the create action includes slot consumption + welcome-notification cascade + age-group snapshot resolution" },
-        { "action": "update", "permission": "athletes.update", "scope": "hr + branch_manager (own branch) + admin + owner. Medical + emergency contact fields additionally require the field-level permissions below. Self-update by adult athletes uses .own with a restricted field set" },
-        { "action": "delete", "permission": "athletes.delete", "scope": "admin + owner only. Precondition: status='archived'" },
-        { "action": "linkUser", "permission": "athletes.link-user", "scope": "hr + admin + owner. One-shot — post-first-link the user_id is immutable" },
-        { "action": "pause", "permission": "athletes.pause", "scope": "hr + branch_manager (own branch) + admin + owner. paused_reason is HR-visible only (confidential-tier)" },
+        {
+          "action": "viewAny",
+          "permission": "athletes.viewAny",
+          "scope": "any tenant member with athlete.core feature; narrows to caller's active branch scope when set. Guardians additionally narrow to athletes with active AthleteGuardian rows where user_id = current_user_id (via athletes.viewAny.own)"
+        },
+        {
+          "action": "view",
+          "permission": "athletes.view",
+          "scope": "same as viewAny + self-view allowed via .own suffix (`athletes.view.own` narrows to WHERE user_id = current_user_id OR EXISTS(SELECT 1 FROM athlete_guardians WHERE athlete_id = athletes.id AND user_id = current_user_id AND deleted_at IS NULL))"
+        },
+        {
+          "action": "create",
+          "permission": "athletes.create",
+          "scope": "reception + hr + branch_manager + admin + owner. Distinct from athletes.update — the create action includes slot consumption + welcome-notification cascade + age-group snapshot resolution"
+        },
+        {
+          "action": "update",
+          "permission": "athletes.update",
+          "scope": "hr + branch_manager (own branch) + admin + owner. Medical + emergency contact fields additionally require the field-level permissions below. Self-update by adult athletes uses .own with a restricted field set"
+        },
+        {
+          "action": "delete",
+          "permission": "athletes.delete",
+          "scope": "admin + owner only. Precondition: status='archived'"
+        },
+        {
+          "action": "linkUser",
+          "permission": "athletes.link-user",
+          "scope": "hr + admin + owner. One-shot — post-first-link the user_id is immutable"
+        },
+        {
+          "action": "pause",
+          "permission": "athletes.pause",
+          "scope": "hr + branch_manager (own branch) + admin + owner. paused_reason is HR-visible only (confidential-tier)"
+        },
         { "action": "returnFromPause", "permission": "athletes.pause" },
-        { "action": "graduate", "permission": "athletes.graduate", "scope": "hr + admin + owner. Soft-terminal — the row is retained for alumni. cascade=true requires additional athletes.graduate.cascade permission" },
-        { "action": "withdraw", "permission": "athletes.withdraw", "scope": "hr + branch_manager (own branch) + admin + owner. Adult athletes may withdraw themselves via `athletes.withdraw.own`; guardians may withdraw their assigned minors" },
-        { "action": "archive", "permission": "athletes.archive", "scope": "admin + owner. Terminal + restoration path" },
+        {
+          "action": "graduate",
+          "permission": "athletes.graduate",
+          "scope": "hr + admin + owner. Soft-terminal — the row is retained for alumni. cascade=true requires additional athletes.graduate.cascade permission"
+        },
+        {
+          "action": "withdraw",
+          "permission": "athletes.withdraw",
+          "scope": "hr + branch_manager (own branch) + admin + owner. Adult athletes may withdraw themselves via `athletes.withdraw.own`; guardians may withdraw their assigned minors"
+        },
+        {
+          "action": "archive",
+          "permission": "athletes.archive",
+          "scope": "admin + owner. Terminal + restoration path"
+        },
         { "action": "restore", "permission": "athletes.archive" },
-        { "action": "viewMedical", "permission": "athletes.view.medical", "scope": "hr + safeguarding_officer + owner. The redactor strips medical_* fields when the caller lacks this. Coach access requires consent_medical_disclosure=true (via MedicalDisclosureGate). Athletes themselves see own medical via `athletes.view.medical.own`; guardians see minor's medical when consent_medical_disclosure=true" },
-        { "action": "manageMedical", "permission": "athletes.manage.medical", "scope": "hr + safeguarding_officer + owner. Distinct permission — the observer refuses writes without this even if caller has athletes.update. Requires athlete_medical_tracking entitlement" },
-        { "action": "viewEmergencyContact", "permission": "athletes.view.emergency_contact", "scope": "hr + coach + reception + branch_manager (own branch) + safeguarding_officer + owner. Redactor strips fields for others. `athletes.view.emergency_contact.own` allows self-view / guardian-view" },
-        { "action": "manageEmergencyContact", "permission": "athletes.manage.emergency_contact", "scope": "hr + reception + branch_manager + admin + owner. Additionally, adult athletes may update their OWN emergency contact via /me/athletes/{athlete}/emergency-contact (permission `athletes.manage.emergency_contact.own`); guardians for their assigned minors" },
-        { "action": "viewConsents", "permission": "athletes.view.consents", "scope": "hr + reception + branch_manager + safeguarding_officer + admin + owner + athlete (own) + guardian (own children)" },
-        { "action": "manageConsents", "permission": "athletes.manage.consents", "scope": "hr + admin + owner for admin recording; guardians + adult athletes for own consents via `.own`. For minors, the recording user MUST be a User with an active AthleteGuardian row + has_legal_custody=true (Wave 3b hard-fail via cross-module rule)" },
-        { "action": "auditMedical", "permission": "athletes.audit.medical", "scope": "safeguarding_officer + hr + owner. Emits an audit CSV of medical mutations for a tenant." },
-        { "action": "platformViewAny", "permission": "platform.athletes.viewAny", "guard": "platform_admin", "scope": "Medical + emergency contact ALWAYS stripped; minor names redacted to initials only" },
-        { "action": "platformView", "permission": "platform.athletes.view", "guard": "platform_admin" },
-        { "action": "platformAuditMedical", "permission": "platform.athletes.audit-medical", "guard": "platform_admin", "scope": "super_admin only with two-person approval. Emits a signed audit CSV of every medical change across all tenants" }
+        {
+          "action": "viewMedical",
+          "permission": "athletes.view.medical",
+          "scope": "hr + safeguarding_officer + owner. The redactor strips medical_* fields when the caller lacks this. Coach access requires consent_medical_disclosure=true (via MedicalDisclosureGate). Athletes themselves see own medical via `athletes.view.medical.own`; guardians see minor's medical when consent_medical_disclosure=true"
+        },
+        {
+          "action": "manageMedical",
+          "permission": "athletes.manage.medical",
+          "scope": "hr + safeguarding_officer + owner. Distinct permission — the observer refuses writes without this even if caller has athletes.update. Requires athlete_medical_tracking entitlement"
+        },
+        {
+          "action": "viewEmergencyContact",
+          "permission": "athletes.view.emergency_contact",
+          "scope": "hr + coach + reception + branch_manager (own branch) + safeguarding_officer + owner. Redactor strips fields for others. `athletes.view.emergency_contact.own` allows self-view / guardian-view"
+        },
+        {
+          "action": "manageEmergencyContact",
+          "permission": "athletes.manage.emergency_contact",
+          "scope": "hr + reception + branch_manager + admin + owner. Additionally, adult athletes may update their OWN emergency contact via /me/athletes/{athlete}/emergency-contact (permission `athletes.manage.emergency_contact.own`); guardians for their assigned minors"
+        },
+        {
+          "action": "viewConsents",
+          "permission": "athletes.view.consents",
+          "scope": "hr + reception + branch_manager + safeguarding_officer + admin + owner + athlete (own) + guardian (own children)"
+        },
+        {
+          "action": "manageConsents",
+          "permission": "athletes.manage.consents",
+          "scope": "hr + admin + owner for admin recording; guardians + adult athletes for own consents via `.own`. For minors, the recording user MUST be a User with an active AthleteGuardian row + has_legal_custody=true (Wave 3b hard-fail via cross-module rule)"
+        },
+        {
+          "action": "auditMedical",
+          "permission": "athletes.audit.medical",
+          "scope": "safeguarding_officer + hr + owner. Emits an audit CSV of medical mutations for a tenant."
+        },
+        {
+          "action": "platformViewAny",
+          "permission": "platform.athletes.viewAny",
+          "guard": "platform_admin",
+          "scope": "Medical + emergency contact ALWAYS stripped; minor names redacted to initials only"
+        },
+        {
+          "action": "platformView",
+          "permission": "platform.athletes.view",
+          "guard": "platform_admin"
+        },
+        {
+          "action": "platformAuditMedical",
+          "permission": "platform.athletes.audit-medical",
+          "guard": "platform_admin",
+          "scope": "super_admin only with two-person approval. Emits a signed audit CSV of every medical change across all tenants"
+        }
       ]
     }
   ]

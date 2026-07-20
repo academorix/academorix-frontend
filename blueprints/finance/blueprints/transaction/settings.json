@@ -75,7 +75,22 @@
                 "prepayments": "Prepayments",
                 "deferred_revenue": "Deferred Revenue"
               },
-              "defaultValue": ["revenue", "accounts_receivable", "cash", "refunds_owed", "refunds_expense", "tax_payable", "gateway_fees", "bank_deposits", "write_offs", "coupons_expense", "chargebacks_expense", "accounts_payable", "prepayments", "deferred_revenue"],
+              "defaultValue": [
+                "revenue",
+                "accounts_receivable",
+                "cash",
+                "refunds_owed",
+                "refunds_expense",
+                "tax_payable",
+                "gateway_fees",
+                "bank_deposits",
+                "write_offs",
+                "coupons_expense",
+                "chargebacks_expense",
+                "accounts_payable",
+                "prepayments",
+                "deferred_revenue"
+              ],
               "helpText": "Disabling an account after use will preserve historical ledger entries but refuse new writes against it. Regulator audit trail preserved.",
               "sortOrder": 1
             }

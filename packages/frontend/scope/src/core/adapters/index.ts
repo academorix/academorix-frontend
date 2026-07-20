@@ -7,4 +7,4 @@
  *   `@stackra/storage`'s manager.
  */
 
-export { StorageBackedScopePersistAdapter } from './storage-backed-scope-persist.adapter';
+export { StorageBackedScopePersistAdapter } from "./storage-backed-scope-persist.adapter";

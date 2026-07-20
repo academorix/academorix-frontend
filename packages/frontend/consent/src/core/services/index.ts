@@ -4,5 +4,5 @@
  * @description Barrel export for consent services.
  */
 
-export { ConsentRegistry } from './consent-registry.service';
-export { ConsentManager } from './consent-manager.service';
+export { ConsentRegistry } from "./consent-registry.service";
+export { ConsentManager } from "./consent-manager.service";

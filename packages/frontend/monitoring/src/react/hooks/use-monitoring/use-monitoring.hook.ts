@@ -4,9 +4,9 @@
  * @description Resolve the MonitoringManager from the DI container.
  */
 
-import { useInject } from '@stackra/container/react';
-import { MONITORING_MANAGER } from '@stackra/contracts';
-import type { IMonitoringManager } from '@stackra/contracts';
+import { useInject } from "@stackra/container/react";
+import { MONITORING_MANAGER } from "@stackra/contracts";
+import type { IMonitoringManager } from "@stackra/contracts";
 
 /**
  * Resolve the {@link IMonitoringManager} from the surrounding

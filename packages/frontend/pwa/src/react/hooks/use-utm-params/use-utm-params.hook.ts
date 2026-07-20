@@ -8,13 +8,13 @@
  *   past the initial URL still surfaces the same attribution.
  */
 
-import { useMemo, useEffect } from 'react';
+import { useMemo, useEffect } from "react";
 
-import { parseUtmParams } from '@/core/utils';
-import type { IPwaUtmParams } from '@/core/interfaces';
+import { parseUtmParams } from "@/core/utils";
+import type { IPwaUtmParams } from "@/core/interfaces";
 
 /** Storage key holding the cached UTM params. */
-const STORAGE_KEY = 'stackra:pwa:utm';
+const STORAGE_KEY = "stackra:pwa:utm";
 
 /**
  * Read the current UTM parameters, cached to `sessionStorage`.
@@ -38,7 +38,7 @@ export function useUtmParams(): IPwaUtmParams {
   // across re-renders. SSR-safe: `parseUtmParams` returns `{}` when
   // `window` is absent.
   const utm = useMemo<IPwaUtmParams>(() => {
-    if (typeof window === 'undefined') return {};
+    if (typeof window === "undefined") return {};
     try {
       const cached = window.sessionStorage?.getItem(STORAGE_KEY);
       if (cached) return JSON.parse(cached) as IPwaUtmParams;
@@ -49,7 +49,7 @@ export function useUtmParams(): IPwaUtmParams {
   }, []);
 
   useEffect(() => {
-    if (typeof window === 'undefined') return;
+    if (typeof window === "undefined") return;
     if (Object.keys(utm).length === 0) return;
     try {
       // Persist once so future SPA navigations reuse the attribution.

@@ -6,21 +6,21 @@
  *   classes and registers them with the scheduler service.
  */
 
-import 'reflect-metadata';
-import { describe, it, expect, beforeEach } from 'vitest';
+import "reflect-metadata";
+import { describe, it, expect, beforeEach } from "vitest";
 
-import { Scheduled } from '@/core/decorators/scheduled.decorator';
-import { SchedulerService } from '@/core/services/scheduler.service';
-import { ScheduledTaskLoader } from '@/core/services/scheduled-task-loader.service';
-import { MockTaskRunner } from '@/testing/mock-task-runner';
+import { Scheduled } from "@/core/decorators/scheduled.decorator";
+import { SchedulerService } from "@/core/services/scheduler.service";
+import { ScheduledTaskLoader } from "@/core/services/scheduled-task-loader.service";
+import { MockTaskRunner } from "@/testing/mock-task-runner";
 
-import { MockDiscoveryService } from '../support/mock-discovery';
+import { MockDiscoveryService } from "../support/mock-discovery";
 
 // ════════════════════════════════════════════════════════════════════════════
 // Decorated test tasks
 // ════════════════════════════════════════════════════════════════════════════
 
-@Scheduled({ name: 'sync-orders', every: 60_000, retries: 2 })
+@Scheduled({ name: "sync-orders", every: 60_000, retries: 2 })
 class SyncOrdersTask {
   public runs = 0;
   public async run(): Promise<void> {
@@ -28,7 +28,7 @@ class SyncOrdersTask {
   }
 }
 
-@Scheduled({ name: 'heartbeat', every: 30_000, immediate: true })
+@Scheduled({ name: "heartbeat", every: 30_000, immediate: true })
 class HeartbeatTask {
   public runs = 0;
   public async run(): Promise<void> {
@@ -37,7 +37,7 @@ class HeartbeatTask {
 }
 
 /** Decorated but lacks a `run()` method — must be rejected. */
-@Scheduled({ name: 'malformed', every: 60_000 })
+@Scheduled({ name: "malformed", every: 60_000 })
 class MalformedTask {
   // No `run` method.
 }
@@ -51,7 +51,7 @@ class UndecoratedTask {
 // Specs
 // ════════════════════════════════════════════════════════════════════════════
 
-describe('ScheduledTaskLoader', () => {
+describe("ScheduledTaskLoader", () => {
   let runner: MockTaskRunner;
   let scheduler: SchedulerService;
 
@@ -60,7 +60,7 @@ describe('ScheduledTaskLoader', () => {
     scheduler = new SchedulerService(runner);
   });
 
-  it('registers every @Scheduled() class on bootstrap', () => {
+  it("registers every @Scheduled() class on bootstrap", () => {
     const orders = new SyncOrdersTask();
     const heartbeat = new HeartbeatTask();
     const discovery = new MockDiscoveryService([{ instance: orders }, { instance: heartbeat }]);
@@ -72,45 +72,45 @@ describe('ScheduledTaskLoader', () => {
       .getRegistered()
       .map((t) => t.name)
       .sort();
-    expect(names).toEqual(['heartbeat', 'sync-orders']);
+    expect(names).toEqual(["heartbeat", "sync-orders"]);
   });
 
-  it('is a no-op without a discovery service', () => {
+  it("is a no-op without a discovery service", () => {
     const loader = new ScheduledTaskLoader(scheduler);
     expect(() => loader.onApplicationBootstrap()).not.toThrow();
     expect(runner.getRegistered()).toHaveLength(0);
   });
 
-  it('routes discovered task.run() calls through the scheduler', async () => {
+  it("routes discovered task.run() calls through the scheduler", async () => {
     const orders = new SyncOrdersTask();
     const discovery = new MockDiscoveryService([{ instance: orders }]);
     new ScheduledTaskLoader(scheduler, discovery).onApplicationBootstrap();
 
-    await scheduler.runNow('sync-orders');
+    await scheduler.runNow("sync-orders");
     expect(orders.runs).toBe(1);
   });
 
-  it('skips decorated instances without a run() method', () => {
+  it("skips decorated instances without a run() method", () => {
     const good = new SyncOrdersTask();
     const bad = new MalformedTask();
     const discovery = new MockDiscoveryService([{ instance: bad }, { instance: good }]);
     new ScheduledTaskLoader(scheduler, discovery).onApplicationBootstrap();
 
-    expect(runner.getRegistered().map((t) => t.name)).toEqual(['sync-orders']);
+    expect(runner.getRegistered().map((t) => t.name)).toEqual(["sync-orders"]);
   });
 
-  it('ignores undecorated classes returned by discovery', () => {
+  it("ignores undecorated classes returned by discovery", () => {
     const discovery = new MockDiscoveryService([{ instance: new UndecoratedTask() }]);
     new ScheduledTaskLoader(scheduler, discovery).onApplicationBootstrap();
     expect(runner.getRegistered()).toHaveLength(0);
   });
 
-  it('propagates every field of @Scheduled() into the runner options', () => {
+  it("propagates every field of @Scheduled() into the runner options", () => {
     const heartbeat = new HeartbeatTask();
     const discovery = new MockDiscoveryService([{ instance: heartbeat }]);
     new ScheduledTaskLoader(scheduler, discovery).onApplicationBootstrap();
 
-    const entry = runner.getRegistered().find((t) => t.name === 'heartbeat');
+    const entry = runner.getRegistered().find((t) => t.name === "heartbeat");
     expect(entry).toBeDefined();
     // `every` maps to `interval` on ITaskOptions.
     expect(entry!.interval).toBe(30_000);

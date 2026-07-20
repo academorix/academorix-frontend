@@ -12,10 +12,10 @@
  *   dropped in favour of the endpoint-backed reader.
  */
 
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from "react";
 
-import { SNOOZE_PRESETS_MS } from '@/core/constants';
-import type { SnoozePreset } from '@/core/interfaces';
+import { SNOOZE_PRESETS_MS } from "@/core/constants";
+import type { SnoozePreset } from "@/core/interfaces";
 
 /**
  * Return shape for the native
@@ -87,7 +87,7 @@ export function useSnoozeStore(): IUseSnoozeStoreResult {
       if (until === undefined) return false;
       return until > Date.now();
     },
-    [store]
+    [store],
   );
 
   const snoozeUntil = useCallback((id: string, until: Date): void => {
@@ -99,7 +99,7 @@ export function useSnoozeStore(): IUseSnoozeStoreResult {
       const until = new Date(Date.now() + SNOOZE_PRESETS_MS[preset]);
       snoozeUntil(id, until);
     },
-    [snoozeUntil]
+    [snoozeUntil],
   );
 
   const unsnooze = useCallback((id: string): void => {

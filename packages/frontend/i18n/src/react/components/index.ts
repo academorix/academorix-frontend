@@ -5,5 +5,5 @@
  *   in `../interfaces` and are re-exported by the react interfaces barrel.
  */
 
-export { LanguageSelector } from './language-selector';
-export { LanguageToggle } from './language-toggle';
+export { LanguageSelector } from "./language-selector";
+export { LanguageToggle } from "./language-toggle";

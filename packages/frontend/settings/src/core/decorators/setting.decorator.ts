@@ -9,8 +9,8 @@
  *   companion `getSettingMetadata` helper below.
  */
 
-import { defineMetadata, getMetadata } from '@vivtel/metadata';
-import { SETTING_METADATA_KEY, type Type, type SettingScope } from '@stackra/contracts';
+import { defineMetadata, getMetadata } from "@vivtel/metadata";
+import { SETTING_METADATA_KEY, type Type, type SettingScope } from "@stackra/contracts";
 
 /**
  * Options accepted by the `@Setting()` class decorator.

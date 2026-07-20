@@ -3,4 +3,4 @@
  * @module @stackra/scheduler/react/hooks
  * @description Barrel export for scheduler React hooks.
  */
-export { useScheduler, type UseSchedulerResult } from './use-scheduler';
+export { useScheduler, type UseSchedulerResult } from "./use-scheduler";

@@ -11,10 +11,10 @@
  *   site.
  */
 
-import { buildManifest } from '../../manifest';
-import { getRuntimeCaching } from '../../workbox';
-import { DEFAULT_NAVIGATE_FALLBACK_DENYLIST } from '../constants';
-import type { IGetVitePwaOptionsInput } from '../interfaces';
+import { buildManifest } from "../../manifest";
+import { getRuntimeCaching } from "../../workbox";
+import { DEFAULT_NAVIGATE_FALLBACK_DENYLIST } from "../constants";
+import type { IGetVitePwaOptionsInput } from "../interfaces";
 
 /**
  * Compose a `vite-plugin-pwa` options object.
@@ -42,9 +42,9 @@ export function getVitePwaOptions(input: IGetVitePwaOptionsInput): Record<string
   const {
     manifest,
     runtimeCaching,
-    registerType = 'prompt',
-    precacheGlobs = ['**/*.{js,css,html,ico,png,svg,webp,woff,woff2}'],
-    navigateFallback = 'index.html',
+    registerType = "prompt",
+    precacheGlobs = ["**/*.{js,css,html,ico,png,svg,webp,woff,woff2}"],
+    navigateFallback = "index.html",
     navigateFallbackDenylist = DEFAULT_NAVIGATE_FALLBACK_DENYLIST,
     devEnabled = false,
     workboxExtras = {},

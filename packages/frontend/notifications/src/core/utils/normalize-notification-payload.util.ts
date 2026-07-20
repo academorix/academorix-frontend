@@ -7,9 +7,9 @@
  *   mutates the caller's input.
  */
 
-import { Str } from '@stackra/support';
+import { Str } from "@stackra/support";
 
-import type { INotificationPayload } from '../interfaces';
+import type { INotificationPayload } from "../interfaces";
 
 /**
  * Return a fresh normalised copy of `payload`.

@@ -19,16 +19,16 @@
  *   route stack.
  */
 
-import { type ReactElement } from 'react';
-import { useOptionalInject } from '@stackra/container/react';
+import { type ReactElement } from "react";
+import { useOptionalInject } from "@stackra/container/react";
 
-import { DEFAULT_DEVTOOLS_CONFIG, DEVTOOLS_CONFIG } from '@/core/constants';
-import type { IDevtoolsModuleOptions } from '@/core/interfaces';
-import { mergeConfig } from '@/core/utils';
+import { DEFAULT_DEVTOOLS_CONFIG, DEVTOOLS_CONFIG } from "@/core/constants";
+import type { IDevtoolsModuleOptions } from "@/core/interfaces";
+import { mergeConfig } from "@/core/utils";
 
-import { DevtoolsLauncher } from './components/devtools-launcher';
-import { DevtoolsShell } from './components/devtools-shell';
-import { DevtoolsProvider } from './providers/devtools';
+import { DevtoolsLauncher } from "./components/devtools-launcher";
+import { DevtoolsShell } from "./components/devtools-shell";
+import { DevtoolsProvider } from "./providers/devtools";
 
 /** Props for the native `<Devtools />` wrapper. */
 export interface DevtoolsProps {

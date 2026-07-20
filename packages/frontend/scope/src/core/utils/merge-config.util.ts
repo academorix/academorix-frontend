@@ -4,8 +4,8 @@
  * @description Merge user scope options with defaults.
  */
 
-import type { IScopeModuleOptions } from '../interfaces';
-import { DEFAULT_SCOPE_OPTIONS } from '../constants/defaults.constant';
+import type { IScopeModuleOptions } from "../interfaces";
+import { DEFAULT_SCOPE_OPTIONS } from "../constants/defaults.constant";
 
 /**
  * Merge partial scope options over {@link DEFAULT_SCOPE_OPTIONS}.

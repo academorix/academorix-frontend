@@ -21,7 +21,7 @@ export interface II18nState {
   locale: string;
 
   /** Text direction for the current locale ('ltr' or 'rtl'). */
-  dir: 'ltr' | 'rtl';
+  dir: "ltr" | "rtl";
 
   /** Whether a locale switch is in progress (translations loading). */
   isLoading: boolean;

@@ -3,7 +3,12 @@
   "$version": 1,
   "title": "transaction — cache keys + tags",
   "driver": "redis",
-  "ownedTags": ["transaction", "transaction.balances", "transaction.reconciliation", "transaction.reports"],
+  "ownedTags": [
+    "transaction",
+    "transaction.balances",
+    "transaction.reconciliation",
+    "transaction.reports"
+  ],
   "keys": [
     {
       "pattern": "trx:balance:{tenant_id}:{account}",
@@ -21,10 +26,7 @@
       "description": "Running balance per (tenant, account, currency) — for multi-currency tenants where an account (e.g. cash) may hold balances in multiple currencies simultaneously. Same TTL + invalidation as the base-currency key.",
       "ttlSeconds": 60,
       "tags": ["transaction", "transaction.balances", "tenant"],
-      "invalidatedBy": [
-        "TransactionLedgerEntryObserver.created",
-        "LedgerReconciliationCompleted"
-      ]
+      "invalidatedBy": ["TransactionLedgerEntryObserver.created", "LedgerReconciliationCompleted"]
     },
     {
       "pattern": "trx:balance-history:{tenant_id}:{account}:{from}:{to}",
@@ -70,10 +72,7 @@
       "description": "Cached exchange rate for a currency pair. TTL 1h (aligns with the transaction.exchange_rate.cache_ttl_seconds config). Fresh fetches update the key + notify TransactionCurrencyConverted downstream listeners.",
       "ttlSeconds": 3600,
       "tags": ["transaction"],
-      "invalidatedBy": [
-        "TTL only",
-        "manual: transaction:refresh-exchange-rates"
-      ]
+      "invalidatedBy": ["TTL only", "manual: transaction:refresh-exchange-rates"]
     },
     {
       "pattern": "trx:halt-flag:{tenant_id}",
@@ -90,9 +89,7 @@
       "description": "Latest reconciler-run stats per tenant. Fed by the SDUI reconciliation-report screen. TTL 25h (aligns with nightly cadence + 1h slop).",
       "ttlSeconds": 90000,
       "tags": ["transaction", "transaction.reconciliation", "tenant"],
-      "invalidatedBy": [
-        "LedgerReconciliationCompleted"
-      ]
+      "invalidatedBy": ["LedgerReconciliationCompleted"]
     },
     {
       "pattern": "trx:reconciliation:imbalances:{tenant_id}",

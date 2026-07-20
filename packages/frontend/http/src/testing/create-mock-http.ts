@@ -4,9 +4,9 @@
  * @description Factories returning assertable HTTP mocks.
  */
 
-import { createAssertableProxy, type AssertableProxy } from '@stackra/testing';
-import { MockHttpClient } from './mock-http-client';
-import { MockHttpManager } from './mock-http-manager';
+import { createAssertableProxy, type AssertableProxy } from "@stackra/testing";
+import { MockHttpClient } from "./mock-http-client";
+import { MockHttpManager } from "./mock-http-manager";
 
 /**
  * Create an assertable mock HTTP manager.

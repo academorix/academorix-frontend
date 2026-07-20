@@ -9,14 +9,22 @@
     "Options include only disciplines whose parent Sport is is_active + matches the parent scope."
   ],
   "props": {
-    "name": { "type": "string", "required": true, "description": "Form field name (e.g. `discipline_key`). Widget writes the Discipline slug." },
+    "name": {
+      "type": "string",
+      "required": true,
+      "description": "Form field name (e.g. `discipline_key`). Widget writes the Discipline slug."
+    },
     "label": { "type": "string", "default": "Discipline" },
     "required": { "type": "boolean", "default": false },
     "clearable": { "type": "boolean", "default": true },
     "placeholder": { "type": "string", "default": "Search disciplines..." },
     "size": { "type": "string", "default": "md" },
     "defaultValue": { "type": "string", "default": null },
-    "sportKey": { "type": "string", "required": true, "description": "Parent sport slug — the picker filters to Disciplines belonging to this Sport." },
+    "sportKey": {
+      "type": "string",
+      "required": true,
+      "description": "Parent sport slug — the picker filters to Disciplines belonging to this Sport."
+    },
     "filter": { "type": "string", "default": "active", "enum": ["active", "all"] }
   },
   "dataSources": [
@@ -50,7 +58,10 @@
         {
           "kind": "ComboBox.InputGroup",
           "children": [
-            { "kind": "Input", "bindings": { "props": { "placeholder": { "$ref": "props.placeholder" } } } },
+            {
+              "kind": "Input",
+              "bindings": { "props": { "placeholder": { "$ref": "props.placeholder" } } }
+            },
             { "kind": "ComboBox.Trigger" }
           ]
         },
@@ -82,14 +93,29 @@
                             "kind": "View",
                             "props": { "className": "flex items-center gap-1" },
                             "children": [
-                              { "kind": "Text", "props": { "className": "font-medium" }, "bindings": { "children": { "$ref": "item.name" } } },
-                              { "kind": "Chip", "props": { "size": "xs", "variant": "neutral" }, "bindings": { "hidden": { "$expr": "!item.format_type" }, "children": { "$ref": "item.format_type" } } }
+                              {
+                                "kind": "Text",
+                                "props": { "className": "font-medium" },
+                                "bindings": { "children": { "$ref": "item.name" } }
+                              },
+                              {
+                                "kind": "Chip",
+                                "props": { "size": "xs", "variant": "neutral" },
+                                "bindings": {
+                                  "hidden": { "$expr": "!item.format_type" },
+                                  "children": { "$ref": "item.format_type" }
+                                }
+                              }
                             ]
                           },
                           {
                             "kind": "Text",
                             "props": { "className": "text-xs text-muted" },
-                            "bindings": { "children": { "$expr": "(item.player_count_min || 1) + '-' + (item.player_count_max || 1) + ' players · ' + (item.session_duration_default_minutes || 60) + ' min'" } }
+                            "bindings": {
+                              "children": {
+                                "$expr": "(item.player_count_min || 1) + '-' + (item.player_count_max || 1) + ' players · ' + (item.session_duration_default_minutes || 60) + ' min'"
+                              }
+                            }
                           }
                         ]
                       },

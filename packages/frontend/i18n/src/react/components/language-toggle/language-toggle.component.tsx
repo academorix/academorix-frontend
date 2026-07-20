@@ -18,14 +18,14 @@
  * ```
  */
 
-'use client';
+"use client";
 
-import React, { useCallback, useMemo } from 'react';
-import type { Key } from 'react';
-import { ToggleButton, ToggleButtonGroup } from '@stackra/ui/react';
+import React, { useCallback, useMemo } from "react";
+import type { Key } from "react";
+import { ToggleButton, ToggleButtonGroup } from "@stackra/ui/react";
 
-import { useI18n } from '@/core/hooks/use-i18n.hook';
-import type { LanguageToggleOption, LanguageToggleProps } from '@/react/interfaces';
+import { useI18n } from "@/core/hooks/use-i18n.hook";
+import type { LanguageToggleOption, LanguageToggleProps } from "@/react/interfaces";
 
 /**
  * Compact language toggle — pill-shaped button group for 2–3 locales.
@@ -35,18 +35,18 @@ export function LanguageToggle({ options, className }: LanguageToggleProps): Rea
 
   const items: LanguageToggleOption[] = useMemo(
     () => options ?? languages.map((code) => ({ code, label: code.toUpperCase() })),
-    [options, languages]
+    [options, languages],
   );
 
   const handleSelectionChange = useCallback(
     (keys: Set<Key>) => {
       // Single-selection mode — the set holds at most one entry.
       const [next] = [...keys];
-      if (typeof next === 'string' && next !== locale) {
+      if (typeof next === "string" && next !== locale) {
         void setLocale(next);
       }
     },
-    [locale, setLocale]
+    [locale, setLocale],
   );
 
   return (

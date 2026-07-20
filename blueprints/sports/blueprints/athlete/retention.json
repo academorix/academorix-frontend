@@ -33,7 +33,10 @@
     },
     {
       "entity": "Athlete — emergency_contact_* + medical_* (post-terminal)",
-      "hot": { "days": 90, "description": "emergency_contact_name + emergency_contact_phone + emergency_contact_relationship + medical_conditions + medical_allergies + medical_medications + medical_notes" },
+      "hot": {
+        "days": 90,
+        "description": "emergency_contact_name + emergency_contact_phone + emergency_contact_relationship + medical_conditions + medical_allergies + medical_medications + medical_notes"
+      },
       "purge": {
         "trigger": "status IN ('withdrawn', 'archived') AND deleted_at + 90 days (or withdrawn_at + 90 days if archived without soft-delete)",
         "action": "field-level redaction (replace with [REDACTED]) via PurgeArchivedAthletesJob phase 1",

@@ -9,17 +9,17 @@ import type {
   IAnalyticsIdentity,
   IAnalyticsPageView,
   IAnalyticsProvider,
-} from '@stackra/contracts';
+} from "@stackra/contracts";
 
-import type { IAnalyticsCspDirectives, IPixelProviderOptions } from '../interfaces';
-import { CONSENT_CATEGORY_MARKETING } from '../constants';
+import type { IAnalyticsCspDirectives, IPixelProviderOptions } from "../interfaces";
+import { CONSENT_CATEGORY_MARKETING } from "../constants";
 
 /** CSP directives the TikTok pixel requires. */
 export const TIKTOK_PIXEL_CSP: IAnalyticsCspDirectives = {
-  name: 'analytics:tiktok-pixel',
-  scriptSrc: ['https://analytics.tiktok.com'],
-  imgSrc: ['https://analytics.tiktok.com'],
-  connectSrc: ['https://analytics.tiktok.com'],
+  name: "analytics:tiktok-pixel",
+  scriptSrc: ["https://analytics.tiktok.com"],
+  imgSrc: ["https://analytics.tiktok.com"],
+  connectSrc: ["https://analytics.tiktok.com"],
 };
 
 interface Ttq {
@@ -36,7 +36,7 @@ interface Ttq {
  * default.
  */
 export class TiktokPixelProvider implements IAnalyticsProvider {
-  public readonly name = 'tiktok-pixel';
+  public readonly name = "tiktok-pixel";
 
   public readonly consentCategory: string;
 
@@ -45,7 +45,7 @@ export class TiktokPixelProvider implements IAnalyticsProvider {
   }
 
   public init(): void {
-    if (typeof window === 'undefined' || typeof document === 'undefined') return;
+    if (typeof window === "undefined" || typeof document === "undefined") return;
 
     const w = window as unknown as { ttq?: Ttq; TiktokAnalyticsObject?: string };
     if (w.ttq) {
@@ -53,18 +53,18 @@ export class TiktokPixelProvider implements IAnalyticsProvider {
       return;
     }
 
-    w.TiktokAnalyticsObject = 'ttq';
+    w.TiktokAnalyticsObject = "ttq";
     const queue: unknown[] = [];
     const ttq = ((...args: unknown[]) => {
       queue.push(args);
     }) as Ttq;
     w.ttq = ttq;
 
-    if (!document.getElementById('stackra-tiktok-pixel')) {
-      const script = document.createElement('script');
-      script.id = 'stackra-tiktok-pixel';
+    if (!document.getElementById("stackra-tiktok-pixel")) {
+      const script = document.createElement("script");
+      script.id = "stackra-tiktok-pixel";
       script.async = true;
-      script.src = 'https://analytics.tiktok.com/i18n/pixel/events.js';
+      script.src = "https://analytics.tiktok.com/i18n/pixel/events.js";
       document.head.appendChild(script);
     }
 
@@ -84,7 +84,7 @@ export class TiktokPixelProvider implements IAnalyticsProvider {
   }
 
   private ttq(): Ttq | undefined {
-    if (typeof window === 'undefined') return undefined;
+    if (typeof window === "undefined") return undefined;
     return (window as unknown as { ttq?: Ttq }).ttq;
   }
 }

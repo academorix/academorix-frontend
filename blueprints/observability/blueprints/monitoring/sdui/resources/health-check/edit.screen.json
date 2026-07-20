@@ -23,7 +23,14 @@
       "kind": "Form",
       "props": { "className": "max-w-3xl mx-auto p-6 flex flex-col gap-4" },
       "children": [
-        { "kind": "Text", "props": { "as": "h1", "className": "text-2xl font-semibold", "children": "Edit health check" } },
+        {
+          "kind": "Text",
+          "props": {
+            "as": "h1",
+            "className": "text-2xl font-semibold",
+            "children": "Edit health check"
+          }
+        },
         {
           "kind": "Input",
           "props": { "label": "Display name" },
@@ -72,7 +79,10 @@
               "kind": "http.patch",
               "url": "/api/v1/monitoring/health-checks/{check}",
               "body": "{{form}}",
-              "onSuccess": { "kind": "navigate", "toExpr": "'/tenant/monitoring/health-checks/' + $routeParams.check" }
+              "onSuccess": {
+                "kind": "navigate",
+                "toExpr": "'/tenant/monitoring/health-checks/' + $routeParams.check"
+              }
             }
           }
         }

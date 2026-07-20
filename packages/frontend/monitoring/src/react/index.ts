@@ -4,4 +4,4 @@
  * @description React bindings for the monitoring system.
  */
 
-export { useMonitoring } from './hooks';
+export { useMonitoring } from "./hooks";

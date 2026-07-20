@@ -36,18 +36,34 @@
             {
               "kind": "View",
               "children": [
-                { "kind": "Text", "props": { "as": "h1", "className": "text-2xl font-semibold" }, "bindings": { "children": { "$expr": "'Marketing event: ' + event.event_type" } } },
-                { "kind": "Text", "props": { "className": "text-sm text-muted font-mono" }, "bindings": { "children": { "$ref": "event.id" } } }
+                {
+                  "kind": "Text",
+                  "props": { "as": "h1", "className": "text-2xl font-semibold" },
+                  "bindings": { "children": { "$expr": "'Marketing event: ' + event.event_type" } }
+                },
+                {
+                  "kind": "Text",
+                  "props": { "className": "text-sm text-muted font-mono" },
+                  "bindings": { "children": { "$ref": "event.id" } }
+                }
               ]
             },
             {
               "kind": "View",
               "props": { "className": "flex items-center gap-2" },
               "children": [
-                { "kind": "Widget", "widget": "marketing.provider-status-chip", "bindings": { "status": { "$ref": "event.status" } } },
+                {
+                  "kind": "Widget",
+                  "widget": "marketing.provider-status-chip",
+                  "bindings": { "status": { "$ref": "event.status" } }
+                },
                 {
                   "kind": "Button",
-                  "props": { "variant": "secondary", "leadingIcon": "arrow-path", "children": "Re-dispatch" },
+                  "props": {
+                    "variant": "secondary",
+                    "leadingIcon": "arrow-path",
+                    "children": "Re-dispatch"
+                  },
                   "requiresPermission": "marketing.events.dispatch",
                   "actions": {
                     "onPress": {
@@ -70,22 +86,49 @@
           "kind": "Card",
           "props": { "className": "p-6" },
           "children": [
-            { "kind": "Text", "props": { "as": "h2", "className": "text-lg font-semibold mb-4", "children": "Event details" } },
+            {
+              "kind": "Text",
+              "props": {
+                "as": "h2",
+                "className": "text-lg font-semibold mb-4",
+                "children": "Event details"
+              }
+            },
             {
               "kind": "DescriptionList",
               "props": {
                 "items": [
                   { "label": "Event type", "field": "event.event_type" },
                   { "label": "Source", "field": "event.source" },
-                  { "label": "Subject", "expr": "event.subject_type + ' (' + event.subject_id + ')'" },
-                  { "label": "Value", "field": "event.value_amount_cents", "formatter": "currency", "currencyField": "event.value_currency" },
+                  {
+                    "label": "Subject",
+                    "expr": "event.subject_type + ' (' + event.subject_id + ')'"
+                  },
+                  {
+                    "label": "Value",
+                    "field": "event.value_amount_cents",
+                    "formatter": "currency",
+                    "currencyField": "event.value_currency"
+                  },
                   { "label": "Eligible providers", "field": "event.eligible_provider_count" },
                   { "label": "Delivered providers", "field": "event.delivered_provider_count" },
                   { "label": "Retry count", "field": "event.retry_count" },
-                  { "label": "Deduplication key", "field": "event.deduplication_key", "className": "font-mono text-sm" },
+                  {
+                    "label": "Deduplication key",
+                    "field": "event.deduplication_key",
+                    "className": "font-mono text-sm"
+                  },
                   { "label": "Captured at", "field": "event.created_at", "formatter": "datetime" },
-                  { "label": "First dispatched at", "field": "event.first_dispatched_at", "formatter": "datetime" },
-                  { "label": "Last dispatched at", "field": "event.last_dispatched_at", "formatter": "datetime" }
+                  {
+                    "label": "First dispatched at",
+                    "field": "event.first_dispatched_at",
+                    "formatter": "datetime"
+                  },
+                  {
+                    "label": "Last dispatched at",
+                    "field": "event.last_dispatched_at",
+                    "formatter": "datetime"
+                  }
                 ]
               }
             }
@@ -95,11 +138,28 @@
           "kind": "Card",
           "props": { "className": "p-6" },
           "children": [
-            { "kind": "Text", "props": { "as": "h2", "className": "text-lg font-semibold mb-4", "children": "Attribution snapshot" } },
-            { "kind": "Text", "props": { "className": "text-xs text-muted mb-3", "children": "Frozen at capture time. Immutable." } },
+            {
+              "kind": "Text",
+              "props": {
+                "as": "h2",
+                "className": "text-lg font-semibold mb-4",
+                "children": "Attribution snapshot"
+              }
+            },
+            {
+              "kind": "Text",
+              "props": {
+                "className": "text-xs text-muted mb-3",
+                "children": "Frozen at capture time. Immutable."
+              }
+            },
             {
               "kind": "DescriptionList",
-              "bindings": { "items": { "$expr": "Object.entries(event.attribution).map(([k,v]) => ({label: k, value: v}))" } }
+              "bindings": {
+                "items": {
+                  "$expr": "Object.entries(event.attribution).map(([k,v]) => ({label: k, value: v}))"
+                }
+              }
             }
           ]
         },
@@ -107,16 +167,36 @@
           "kind": "Card",
           "props": { "className": "p-6" },
           "children": [
-            { "kind": "Text", "props": { "as": "h2", "className": "text-lg font-semibold mb-4", "children": "Consent snapshot" } },
-            { "kind": "Text", "props": { "className": "text-xs text-muted mb-3", "children": "Frozen at capture time. Immutable." } },
+            {
+              "kind": "Text",
+              "props": {
+                "as": "h2",
+                "className": "text-lg font-semibold mb-4",
+                "children": "Consent snapshot"
+              }
+            },
+            {
+              "kind": "Text",
+              "props": {
+                "className": "text-xs text-muted mb-3",
+                "children": "Frozen at capture time. Immutable."
+              }
+            },
             {
               "kind": "DescriptionList",
               "props": {
                 "items": [
                   { "label": "Marketing", "field": "event.consent_snapshot.marketing" },
                   { "label": "Advertising", "field": "event.consent_snapshot.advertising" },
-                  { "label": "Personalized advertising", "field": "event.consent_snapshot.personalized_advertising" },
-                  { "label": "Recorded at", "field": "event.consent_snapshot.recorded_at", "formatter": "datetime" }
+                  {
+                    "label": "Personalized advertising",
+                    "field": "event.consent_snapshot.personalized_advertising"
+                  },
+                  {
+                    "label": "Recorded at",
+                    "field": "event.consent_snapshot.recorded_at",
+                    "formatter": "datetime"
+                  }
                 ]
               }
             }
@@ -126,7 +206,14 @@
           "kind": "Card",
           "props": { "className": "p-6" },
           "children": [
-            { "kind": "Text", "props": { "as": "h2", "className": "text-lg font-semibold mb-4", "children": "Per-provider delivery ledger" } },
+            {
+              "kind": "Text",
+              "props": {
+                "as": "h2",
+                "className": "text-lg font-semibold mb-4",
+                "children": "Per-provider delivery ledger"
+              }
+            },
             {
               "kind": "DataGrid",
               "bindings": { "items": { "$ref": "deliveries" } },
@@ -137,8 +224,18 @@
                   { "field": "status", "label": "Status", "width": 200 },
                   { "field": "response_status_code", "label": "HTTP", "width": 90 },
                   { "field": "latency_ms", "label": "Latency (ms)", "width": 120 },
-                  { "field": "attempted_at", "label": "Attempted", "width": 160, "formatter": "datetime-relative" },
-                  { "field": "next_retry_at", "label": "Next retry", "width": 160, "formatter": "datetime-relative" }
+                  {
+                    "field": "attempted_at",
+                    "label": "Attempted",
+                    "width": 160,
+                    "formatter": "datetime-relative"
+                  },
+                  {
+                    "field": "next_retry_at",
+                    "label": "Next retry",
+                    "width": 160,
+                    "formatter": "datetime-relative"
+                  }
                 ]
               }
             }

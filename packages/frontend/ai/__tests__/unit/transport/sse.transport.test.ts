@@ -7,7 +7,7 @@
  *   consumed by the `StreamDecoder`.
  */
 
-import { describe, expect, it, vi } from 'vitest';
+import { describe, expect, it, vi } from "vitest";
 import {
   AiConnectionState,
   type IAiChatRequest,
@@ -17,15 +17,15 @@ import {
   type IHttpStream,
   type ISseConfig,
   type ISseEvent,
-} from '@stackra/contracts';
+} from "@stackra/contracts";
 
-import { SseTransport } from '@/core/transport/sse.transport';
-import { AiAuthError, AiTransportError } from '@/core/errors';
+import { SseTransport } from "@/core/transport/sse.transport";
+import { AiAuthError, AiTransportError } from "@/core/errors";
 
 /** Build a canned `IHttpStream<ISseEvent<unknown>>` from an event array. */
 function makeStream(
   events: ISseEvent<unknown>[],
-  errorAfter?: number
+  errorAfter?: number,
 ): IHttpStream<ISseEvent<unknown>> & { cancelled: boolean } {
   const state = { cancelled: false };
   const iterator: AsyncIterator<ISseEvent<unknown>> = {
@@ -35,7 +35,7 @@ function makeStream(
       const value = events.shift();
       if (value === undefined)
         return { value: undefined, done: true } as IteratorResult<ISseEvent<unknown>>;
-      if (errorAfter !== undefined && errorAfter-- === 0) throw new Error('transport went boom');
+      if (errorAfter !== undefined && errorAfter-- === 0) throw new Error("transport went boom");
       return { value, done: false };
     },
   };
@@ -46,7 +46,7 @@ function makeStream(
         state.cancelled = true;
       },
     },
-    state
+    state,
   );
 }
 
@@ -56,7 +56,7 @@ function makeStream(
  */
 function makeClient(
   events: ISseEvent<unknown>[],
-  opts: { error?: unknown } = {}
+  opts: { error?: unknown } = {},
 ): { client: IHttpClient; last: { url?: string; config?: ISseConfig } } {
   const last: { url?: string; config?: ISseConfig } = {};
   const client: Partial<IHttpClient> = {
@@ -76,9 +76,9 @@ function makeClient(
       return makeStream(events);
     },
     request: async () => ({
-      data: 'ok' as unknown,
+      data: "ok" as unknown,
       status: 200,
-      statusText: 'OK',
+      statusText: "OK",
       headers: {},
     }),
   };
@@ -105,27 +105,27 @@ function makeAuthProvider(creds: IAiCredentials): {
 
 /** A minimal AI config satisfying the transport's needs. */
 const baseConfig = {
-  baseUrl: 'https://api.example.com',
+  baseUrl: "https://api.example.com",
   authProvider: makeAuthProvider({}),
 };
 
 const chatReq = (): IAiChatRequest => ({
-  persona: 'writer',
-  message: 'hi',
+  persona: "writer",
+  message: "hi",
 });
 
-describe('SseTransport', () => {
-  it('starts in the Disconnected state', () => {
+describe("SseTransport", () => {
+  it("starts in the Disconnected state", () => {
     const { client } = makeClient([]);
     const auth = makeAuthProvider({});
     const transport = new SseTransport(baseConfig, auth, makeManager(client));
     expect(transport.state).toBe(AiConnectionState.Disconnected);
   });
 
-  it('transitions Disconnected → Connecting → Connected → Disconnected across a stream', async () => {
+  it("transitions Disconnected → Connecting → Connected → Disconnected across a stream", async () => {
     const events = [
-      { data: JSON.stringify({ type: 'text-delta', id: 'msg-1', delta: 'Hi' }) },
-      { data: '[DONE]' },
+      { data: JSON.stringify({ type: "text-delta", id: "msg-1", delta: "Hi" }) },
+      { data: "[DONE]" },
     ];
     const { client } = makeClient(events);
     const auth = makeAuthProvider({});
@@ -145,15 +145,15 @@ describe('SseTransport', () => {
       AiConnectionState.Disconnected,
     ]);
     expect(collected).toEqual([
-      JSON.stringify({ type: 'text-delta', id: 'msg-1', delta: 'Hi' }),
-      '[DONE]',
+      JSON.stringify({ type: "text-delta", id: "msg-1", delta: "Hi" }),
+      "[DONE]",
     ]);
   });
 
-  it('re-serializes object SSE `data` payloads so the decoder gets strings', async () => {
+  it("re-serializes object SSE `data` payloads so the decoder gets strings", async () => {
     // Simulate what the http SSE parser produces when parseJsonData is enabled:
     // an event whose `data` is already a JS object.
-    const events = [{ data: { type: 'finish', runId: 'r1', reason: 'stop' } }];
+    const events = [{ data: { type: "finish", runId: "r1", reason: "stop" } }];
     const { client } = makeClient(events);
     const auth = makeAuthProvider({});
     const transport = new SseTransport(baseConfig, auth, makeManager(client));
@@ -163,13 +163,13 @@ describe('SseTransport', () => {
       collected.push(frame);
     }
 
-    expect(collected).toEqual([JSON.stringify({ type: 'finish', runId: 'r1', reason: 'stop' })]);
+    expect(collected).toEqual([JSON.stringify({ type: "finish", runId: "r1", reason: "stop" })]);
   });
 
-  it('attaches Bearer token and custom auth headers to the SSE request (Req 25.1)', async () => {
+  it("attaches Bearer token and custom auth headers to the SSE request (Req 25.1)", async () => {
     const credentials: IAiCredentials = {
-      token: 'super-secret',
-      headers: { 'X-Tenant': 'acme', 'X-Role': 'admin' },
+      token: "super-secret",
+      headers: { "X-Tenant": "acme", "X-Role": "admin" },
     };
     const { client, last } = makeClient([]);
     const auth = makeAuthProvider(credentials);
@@ -180,25 +180,25 @@ describe('SseTransport', () => {
       /* drain */
     }
 
-    expect(last.url).toBe('https://api.example.com/api/ai/chat/writer');
-    expect(last.config?.method).toBe('POST');
+    expect(last.url).toBe("https://api.example.com/api/ai/chat/writer");
+    expect(last.config?.method).toBe("POST");
     expect(last.config?.headers).toEqual({
-      Authorization: 'Bearer super-secret',
-      'X-Tenant': 'acme',
-      'X-Role': 'admin',
+      Authorization: "Bearer super-secret",
+      "X-Tenant": "acme",
+      "X-Role": "admin",
     });
     expect(auth.getCredentials).toHaveBeenCalledOnce();
   });
 
-  it('sends the chat request as the POST body', async () => {
+  it("sends the chat request as the POST body", async () => {
     const { client, last } = makeClient([]);
     const auth = makeAuthProvider({});
     const transport = new SseTransport(baseConfig, auth, makeManager(client));
 
     const req: IAiChatRequest = {
-      persona: 'analyst',
-      threadId: 't1',
-      message: 'summarise Q1',
+      persona: "analyst",
+      threadId: "t1",
+      message: "summarise Q1",
       tools: [],
     };
 
@@ -209,39 +209,39 @@ describe('SseTransport', () => {
     expect(last.config?.data).toEqual(req);
   });
 
-  it('URL-encodes the persona segment', async () => {
+  it("URL-encodes the persona segment", async () => {
     const { client, last } = makeClient([]);
     const auth = makeAuthProvider({});
     const transport = new SseTransport(baseConfig, auth, makeManager(client));
 
-    const req: IAiChatRequest = { persona: 'weird/name with space', message: '.' };
+    const req: IAiChatRequest = { persona: "weird/name with space", message: "." };
     for await (const _ of transport.stream(req, new AbortController().signal)) {
       /* drain */
     }
 
     expect(last.url).toBe(
-      `https://api.example.com/api/ai/chat/${encodeURIComponent('weird/name with space')}`
+      `https://api.example.com/api/ai/chat/${encodeURIComponent("weird/name with space")}`,
     );
   });
 
-  it('strips a trailing slash from baseUrl', async () => {
+  it("strips a trailing slash from baseUrl", async () => {
     const { client, last } = makeClient([]);
     const auth = makeAuthProvider({});
     const transport = new SseTransport(
-      { ...baseConfig, baseUrl: 'https://api.example.com/' },
+      { ...baseConfig, baseUrl: "https://api.example.com/" },
       auth,
-      makeManager(client)
+      makeManager(client),
     );
 
     for await (const _ of transport.stream(chatReq(), new AbortController().signal)) {
       /* drain */
     }
 
-    expect(last.url).toBe('https://api.example.com/api/ai/chat/writer');
+    expect(last.url).toBe("https://api.example.com/api/ai/chat/writer");
   });
 
-  it('throws AiAuthError on a 401 stream failure (Req 25.3)', async () => {
-    const { client } = makeClient([], { error: { statusCode: 401, message: 'nope' } });
+  it("throws AiAuthError on a 401 stream failure (Req 25.3)", async () => {
+    const { client } = makeClient([], { error: { statusCode: 401, message: "nope" } });
     const auth = makeAuthProvider({});
     const transport = new SseTransport(baseConfig, auth, makeManager(client));
 
@@ -253,8 +253,8 @@ describe('SseTransport', () => {
     expect(transport.state).toBe(AiConnectionState.Error);
   });
 
-  it('throws AiAuthError on a 403 stream failure', async () => {
-    const { client } = makeClient([], { error: { statusCode: 403, message: 'forbidden' } });
+  it("throws AiAuthError on a 403 stream failure", async () => {
+    const { client } = makeClient([], { error: { statusCode: 403, message: "forbidden" } });
     const auth = makeAuthProvider({});
     const transport = new SseTransport(baseConfig, auth, makeManager(client));
 
@@ -265,8 +265,8 @@ describe('SseTransport', () => {
     }).rejects.toBeInstanceOf(AiAuthError);
   });
 
-  it('throws AiTransportError on a non-auth stream failure', async () => {
-    const { client } = makeClient([], { error: new Error('connection reset') });
+  it("throws AiTransportError on a non-auth stream failure", async () => {
+    const { client } = makeClient([], { error: new Error("connection reset") });
     const auth = makeAuthProvider({});
     const transport = new SseTransport(baseConfig, auth, makeManager(client));
 
@@ -278,7 +278,7 @@ describe('SseTransport', () => {
     expect(transport.state).toBe(AiConnectionState.Error);
   });
 
-  it('onStateChange returns an unsubscribe function', async () => {
+  it("onStateChange returns an unsubscribe function", async () => {
     const { client } = makeClient([]);
     const auth = makeAuthProvider({});
     const transport = new SseTransport(baseConfig, auth, makeManager(client));
@@ -294,46 +294,46 @@ describe('SseTransport', () => {
     expect(listener).not.toHaveBeenCalled();
   });
 
-  it('performs one-shot request<T> with credentials and returns the response data', async () => {
+  it("performs one-shot request<T> with credentials and returns the response data", async () => {
     const client: IHttpClient = {
       request: vi.fn(async () => ({
         data: { runs: [] } as unknown,
         status: 200,
-        statusText: 'OK',
+        statusText: "OK",
         headers: {},
       })),
       sse: vi.fn(),
     } as unknown as IHttpClient;
-    const auth = makeAuthProvider({ token: 't', headers: { 'X-A': 'b' } });
+    const auth = makeAuthProvider({ token: "t", headers: { "X-A": "b" } });
     const transport = new SseTransport(baseConfig, auth, makeManager(client));
 
     const body = await transport.request<{ runs: unknown[] }>({
-      method: 'GET',
-      path: '/api/admin/ai/personas',
+      method: "GET",
+      path: "/api/admin/ai/personas",
     });
 
     expect(body).toEqual({ runs: [] });
     expect(client.request).toHaveBeenCalledWith(
       expect.objectContaining({
-        method: 'GET',
-        url: 'https://api.example.com/api/admin/ai/personas',
-        headers: expect.objectContaining({ Authorization: 'Bearer t', 'X-A': 'b' }),
-      })
+        method: "GET",
+        url: "https://api.example.com/api/admin/ai/personas",
+        headers: expect.objectContaining({ Authorization: "Bearer t", "X-A": "b" }),
+      }),
     );
   });
 
-  it('surfaces AiAuthError on a 401 one-shot response', async () => {
+  it("surfaces AiAuthError on a 401 one-shot response", async () => {
     const client: IHttpClient = {
       request: vi.fn(async () => {
-        throw { statusCode: 401, message: 'unauth' };
+        throw { statusCode: 401, message: "unauth" };
       }),
       sse: vi.fn(),
     } as unknown as IHttpClient;
     const auth = makeAuthProvider({});
     const transport = new SseTransport(baseConfig, auth, makeManager(client));
 
-    await expect(transport.request({ method: 'POST', path: '/x' })).rejects.toBeInstanceOf(
-      AiAuthError
+    await expect(transport.request({ method: "POST", path: "/x" })).rejects.toBeInstanceOf(
+      AiAuthError,
     );
   });
 });

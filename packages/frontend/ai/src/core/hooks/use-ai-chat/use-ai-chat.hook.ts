@@ -18,23 +18,23 @@
  *   - `error` — the last surfaced typed error.
  */
 
-import { useCallback, useEffect, useMemo, useState } from 'react';
-import { useInject } from '@stackra/container/react';
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { useInject } from "@stackra/container/react";
 import {
   AI_CONNECTION_MANAGER,
   AI_CONVERSATION_STORE,
   AI_ORCHESTRATOR,
   type IAiMessage,
-} from '@stackra/contracts';
+} from "@stackra/contracts";
 
-import { ConnectionManager } from '@/core/services/connection-manager.service';
-import { ConversationStore } from '@/core/services/conversation-store.service';
+import { ConnectionManager } from "@/core/services/connection-manager.service";
+import { ConversationStore } from "@/core/services/conversation-store.service";
 import {
   ChatOrchestrator,
   type IOrchestratorError,
   type OrchestratorStatus,
-} from '@/core/services/chat-orchestrator.service';
-import { useAiConnection, type IUseAiConnectionResult } from '../use-ai-connection';
+} from "@/core/services/chat-orchestrator.service";
+import { useAiConnection, type IUseAiConnectionResult } from "../use-ai-connection";
 
 /** Options accepted by {@link useAiChat}. */
 export interface IUseAiChatOptions {
@@ -88,7 +88,7 @@ export function useAiChat(options: IUseAiChatOptions): IUseAiChatResult {
   const connection = useAiConnection();
 
   const [threadId, setThreadId] = useState<string | null>(options.threadId ?? null);
-  const [input, setInput] = useState<string>('');
+  const [input, setInput] = useState<string>("");
   const [status, setStatus] = useState<OrchestratorStatus>(orchestrator.status);
   const [error, setError] = useState<IOrchestratorError | null>(null);
   const [messages, setMessages] = useState<IAiMessage[]>(() => currentMessages(store, threadId));
@@ -121,7 +121,7 @@ export function useAiChat(options: IUseAiChatOptions): IUseAiChatResult {
         setThreadId(activeThreadId);
       }
 
-      if (textOverride === undefined) setInput('');
+      if (textOverride === undefined) setInput("");
       setError(null);
       try {
         await orchestrator.send({
@@ -136,7 +136,7 @@ export function useAiChat(options: IUseAiChatOptions): IUseAiChatResult {
         });
       }
     },
-    [input, threadId, connectionManager, store, options.persona, orchestrator]
+    [input, threadId, connectionManager, store, options.persona, orchestrator],
   );
 
   const stop = useCallback(() => orchestrator.stop(), [orchestrator]);
@@ -145,7 +145,7 @@ export function useAiChat(options: IUseAiChatOptions): IUseAiChatResult {
 
   const canSubmit = useMemo(
     () => connectionManager.isConnected && input.trim().length > 0,
-    [connectionManager, input]
+    [connectionManager, input],
   );
 
   return {

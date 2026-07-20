@@ -16,14 +16,14 @@ import type {
   IHttpInterceptor,
   IHttpNextFunction,
   IHttpResponse,
-} from '@stackra/contracts';
+} from "@stackra/contracts";
 
-import { HttpInterceptor } from '../decorators/http-interceptor.decorator';
+import { HttpInterceptor } from "../decorators/http-interceptor.decorator";
 
 /**
  * Error-normalizer interceptor.
  */
-@HttpInterceptor({ priority: 5, name: 'error-normalizer' })
+@HttpInterceptor({ priority: 5, name: "error-normalizer" })
 export class ErrorNormalizerInterceptor implements IHttpInterceptor {
   /** @inheritdoc */
   public async intercept(context: IHttpContext, next: IHttpNextFunction): Promise<IHttpResponse> {
@@ -54,7 +54,7 @@ export class ErrorNormalizerInterceptor implements IHttpInterceptor {
     };
 
     if (maybeAxios?.isAxiosError) {
-      if (maybeAxios.code === 'ECONNABORTED' || maybeAxios.code === 'ETIMEDOUT') {
+      if (maybeAxios.code === "ECONNABORTED" || maybeAxios.code === "ETIMEDOUT") {
         return {
           message: `Request timeout after ${context.request.timeout ?? 30000}ms`,
           statusCode: 0,
@@ -65,7 +65,7 @@ export class ErrorNormalizerInterceptor implements IHttpInterceptor {
 
       if (!maybeAxios.response) {
         return {
-          message: maybeAxios.message ?? 'Network error — no response received',
+          message: maybeAxios.message ?? "Network error — no response received",
           statusCode: 0,
           config: context.request,
           isHttpError: true,
@@ -75,13 +75,13 @@ export class ErrorNormalizerInterceptor implements IHttpInterceptor {
       const data = maybeAxios.response.data as
         { message?: string; errors?: Record<string, string[]> } | undefined;
       return {
-        message: data?.message ?? maybeAxios.response.statusText ?? 'Request failed',
+        message: data?.message ?? maybeAxios.response.statusText ?? "Request failed",
         statusCode: maybeAxios.response.status ?? 0,
         ...(data?.errors !== undefined ? { errors: data.errors } : {}),
         response: {
           data: maybeAxios.response.data,
           status: maybeAxios.response.status ?? 0,
-          statusText: maybeAxios.response.statusText ?? '',
+          statusText: maybeAxios.response.statusText ?? "",
           headers: maybeAxios.response.headers ?? {},
           config: context.request,
         },
@@ -92,16 +92,16 @@ export class ErrorNormalizerInterceptor implements IHttpInterceptor {
 
     // AbortError surfaces as a DOMException when fetch is cancelled.
     const abort = err as { name?: string; message?: string };
-    if (abort?.name === 'AbortError') {
+    if (abort?.name === "AbortError") {
       return {
-        message: abort.message ?? 'Request aborted',
+        message: abort.message ?? "Request aborted",
         statusCode: 0,
         config: context.request,
         isHttpError: true,
       };
     }
 
-    const message = err instanceof Error ? err.message : 'An unexpected error occurred';
+    const message = err instanceof Error ? err.message : "An unexpected error occurred";
     return {
       message,
       statusCode: 0,
@@ -113,9 +113,9 @@ export class ErrorNormalizerInterceptor implements IHttpInterceptor {
   /** Type guard for already-normalized errors. */
   private isHttpError(err: unknown): err is IHttpError {
     return (
-      typeof err === 'object' &&
+      typeof err === "object" &&
       err !== null &&
-      'isHttpError' in err &&
+      "isHttpError" in err &&
       (err as { isHttpError?: unknown }).isHttpError === true
     );
   }

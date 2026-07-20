@@ -9,10 +9,10 @@
  *   switch as read-only.
  */
 
-import type { ReactElement } from 'react';
-import { Switch } from '@stackra/ui/react';
+import type { ReactElement } from "react";
+import { Switch } from "@stackra/ui/react";
 
-import type { ChannelToggleProps } from './channel-toggle.interface';
+import type { ChannelToggleProps } from "./channel-toggle.interface";
 
 /**
  * Channel toggle row.
@@ -37,12 +37,12 @@ export function ChannelToggle({
 }: ChannelToggleProps): ReactElement {
   return (
     <div
-      className="flex items-start justify-between gap-4 rounded-xl border border-border bg-surface p-3"
+      className="border-border bg-surface flex items-start justify-between gap-4 rounded-xl border p-3"
       data-notifications-channel-toggle={id}
     >
       <div className="flex min-w-0 flex-col">
-        <span className="text-sm font-medium text-foreground">{label}</span>
-        {note ? <span className="mt-0.5 text-xs text-muted">{note}</span> : null}
+        <span className="text-foreground text-sm font-medium">{label}</span>
+        {note ? <span className="text-muted mt-0.5 text-xs">{note}</span> : null}
       </div>
       <Switch
         aria-label={label}

@@ -57,19 +57,34 @@
       { "trait": "Academorix\\Foundation\\Concerns\\HasMetadata" },
       { "trait": "Academorix\\Foundation\\Concerns\\Filterable" },
       { "trait": "Academorix\\Foundation\\Concerns\\Searchable" },
-      { "trait": "Academorix\\Foundation\\Concerns\\HasSlug", "reason": "Facility only — unique per (tenant_id, branch_id)." }
+      {
+        "trait": "Academorix\\Foundation\\Concerns\\HasSlug",
+        "reason": "Facility only — unique per (tenant_id, branch_id)."
+      }
     ],
     "tenants": [
-      { "trait": "Academorix\\Tenancy\\Concerns\\BelongsToTenant", "reason": "Every owned row carries tenant_id per tenancy-columns.md §3." }
+      {
+        "trait": "Academorix\\Tenancy\\Concerns\\BelongsToTenant",
+        "reason": "Every owned row carries tenant_id per tenancy-columns.md §3."
+      }
     ],
     "branch": [
-      { "trait": "Academorix\\Branch\\Concerns\\BelongsToBranch", "reason": "Facility, DayPass, Pass all carry branch_id directly. ResourceBooking does NOT — it cascades through facility.branch_id." }
+      {
+        "trait": "Academorix\\Branch\\Concerns\\BelongsToBranch",
+        "reason": "Facility, DayPass, Pass all carry branch_id directly. ResourceBooking does NOT — it cascades through facility.branch_id."
+      }
     ],
     "audit": [
-      { "trait": "Academorix\\Audit\\Concerns\\Auditable", "reason": "Every write to facilities / resource_bookings / day_passes / passes is compliance-relevant (financial-record retention 7 years)." }
+      {
+        "trait": "Academorix\\Audit\\Concerns\\Auditable",
+        "reason": "Every write to facilities / resource_bookings / day_passes / passes is compliance-relevant (financial-record retention 7 years)."
+      }
     ],
     "activity": [
-      { "trait": "Academorix\\Activity\\Concerns\\HasActivityLog", "reason": "Booking lifecycle transitions + pass credit consumption feed the staff-visible activity feed. NOT on DayPass — POS-issued rows are high-volume + already covered by receipt_number." }
+      {
+        "trait": "Academorix\\Activity\\Concerns\\HasActivityLog",
+        "reason": "Booking lifecycle transitions + pass credit consumption feed the staff-visible activity feed. NOT on DayPass — POS-issued rows are high-volume + already covered by receipt_number."
+      }
     ]
   },
   "composition": {

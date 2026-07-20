@@ -4,8 +4,8 @@
 
 ## Terminology guard (see hierarchy.md §1c)
 
-> **`Finance\Membership` is the parent's paid subscription enrolling an
-> athlete on a plan** (renewing money contract). Do NOT confuse with
+> **`Finance\Membership` is the parent's paid subscription enrolling an athlete
+> on a plan** (renewing money contract). Do NOT confuse with
 > `TenantSubscription` (the tenant's SaaS subscription to Academorix).
 
 ## Implementation plan
@@ -23,31 +23,31 @@ subscription-to-a-plan. Each membership row:
 
 Standard CRUD + lifecycle:
 
-| Action                                | Contract                                                                | Notes                                                                                                                                          |
-| ------------------------------------- | ----------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
-| `CreateMembershipAction`              | `POST /api/v1/memberships`                                              | Delegates to `finance/order::CreateOrder + Checkout`.                                                                                          |
-| `ShowMembershipAction`                | `GET /api/v1/memberships/{membership}`                                  | Read-only.                                                                                                                                     |
-| `ListMembershipAction`                | `GET /api/v1/memberships`                                               | Read-only.                                                                                                                                     |
-| `UpdateMembershipAction`              | `PATCH /api/v1/memberships/{membership}`                                | Only mutable fields — never plan_id or start_date.                                                                                             |
-| `CancelMembershipAction`              | `POST /api/v1/memberships/{membership}/cancel`                          | End-of-period cancel by default; `immediate: true` opt-in.                                                                                     |
-| `ReactivateMembershipAction`          | `POST /api/v1/memberships/{membership}/reactivate`                      | For canceled memberships still inside their paid period.                                                                                        |
-| `PauseMembershipAction`               | `POST /api/v1/memberships/{membership}/pause`                           | Suspend billing + entitlements for N days. Only allowed if plan.allow_pause = true.                                                            |
-| `ResumeMembershipAction`              | `POST /api/v1/memberships/{membership}/resume`                          | Undo pause. Extends `renewal_at` by the pause duration.                                                                                        |
-| `UpgradePlanAction`                   | `POST /api/v1/memberships/{membership}/upgrade`                         | Body: `{ new_plan_id }`. Prorated charge for the difference, effective immediately.                                                             |
-| `DowngradePlanAction`                 | `POST /api/v1/memberships/{membership}/downgrade`                       | Body: `{ new_plan_id }`. Takes effect at next renewal (no prorating).                                                                          |
-| `RenewMembershipAction`               | Queued job trigger only — cron dispatches `MembershipRenewalJob`.       | Consumes payment. On failure → `finance/dunning`.                                                                                              |
-| `PlanListAction` / `PlanCrud`         | `/api/v1/membership-plans/**`                                           | The plan catalogue — usually admin-only writes.                                                                                                |
+| Action                        | Contract                                                          | Notes                                                                               |
+| ----------------------------- | ----------------------------------------------------------------- | ----------------------------------------------------------------------------------- |
+| `CreateMembershipAction`      | `POST /api/v1/memberships`                                        | Delegates to `finance/order::CreateOrder + Checkout`.                               |
+| `ShowMembershipAction`        | `GET /api/v1/memberships/{membership}`                            | Read-only.                                                                          |
+| `ListMembershipAction`        | `GET /api/v1/memberships`                                         | Read-only.                                                                          |
+| `UpdateMembershipAction`      | `PATCH /api/v1/memberships/{membership}`                          | Only mutable fields — never plan_id or start_date.                                  |
+| `CancelMembershipAction`      | `POST /api/v1/memberships/{membership}/cancel`                    | End-of-period cancel by default; `immediate: true` opt-in.                          |
+| `ReactivateMembershipAction`  | `POST /api/v1/memberships/{membership}/reactivate`                | For canceled memberships still inside their paid period.                            |
+| `PauseMembershipAction`       | `POST /api/v1/memberships/{membership}/pause`                     | Suspend billing + entitlements for N days. Only allowed if plan.allow_pause = true. |
+| `ResumeMembershipAction`      | `POST /api/v1/memberships/{membership}/resume`                    | Undo pause. Extends `renewal_at` by the pause duration.                             |
+| `UpgradePlanAction`           | `POST /api/v1/memberships/{membership}/upgrade`                   | Body: `{ new_plan_id }`. Prorated charge for the difference, effective immediately. |
+| `DowngradePlanAction`         | `POST /api/v1/memberships/{membership}/downgrade`                 | Body: `{ new_plan_id }`. Takes effect at next renewal (no prorating).               |
+| `RenewMembershipAction`       | Queued job trigger only — cron dispatches `MembershipRenewalJob`. | Consumes payment. On failure → `finance/dunning`.                                   |
+| `PlanListAction` / `PlanCrud` | `/api/v1/membership-plans/**`                                     | The plan catalogue — usually admin-only writes.                                     |
 
 ### Support services
 
-- `MembershipProvisioner` (Services/) — creates membership after
-  `OrderPaid`. Wires the initial `Pass` records.
-- `MembershipRenewer` (Services/) — background job (per membership,
-  scheduled at `renewal_at`) that charges the payment method + extends
-  the period on success, dispatches `PaymentFailed` on decline.
+- `MembershipProvisioner` (Services/) — creates membership after `OrderPaid`.
+  Wires the initial `Pass` records.
+- `MembershipRenewer` (Services/) — background job (per membership, scheduled at
+  `renewal_at`) that charges the payment method + extends the period on success,
+  dispatches `PaymentFailed` on decline.
 - `MembershipEntitlementBridge` (Services/) — subscribes to
-  `MembershipActivated` / `MembershipSuspended` / `MembershipCanceled`
-  and calls `entitlements::Grant` / `Revoke`.
+  `MembershipActivated` / `MembershipSuspended` / `MembershipCanceled` and calls
+  `entitlements::Grant` / `Revoke`.
 
 ### Events
 
@@ -58,9 +58,9 @@ Standard CRUD + lifecycle:
 
 ### Coupon integration
 
-At order creation: `Order::ApplyCoupon` reserves the coupon; at payment
-success (`OrderPaid`), the coupon is committed by `CouponRedeemer::redeem`
-against the membership's first invoice.
+At order creation: `Order::ApplyCoupon` reserves the coupon; at payment success
+(`OrderPaid`), the coupon is committed by `CouponRedeemer::redeem` against the
+membership's first invoice.
 
 ### Wallet integration
 

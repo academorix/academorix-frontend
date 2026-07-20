@@ -4,5 +4,5 @@
  * @description Barrel for the {@link ChannelToggle} compound.
  */
 
-export { ChannelToggle } from './channel-toggle.component';
-export type { ChannelToggleProps } from './channel-toggle.interface';
+export { ChannelToggle } from "./channel-toggle.component";
+export type { ChannelToggleProps } from "./channel-toggle.interface";

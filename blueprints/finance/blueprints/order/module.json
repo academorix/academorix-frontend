@@ -43,9 +43,21 @@
     ],
     "policies": ["OrderPolicy", "OrderLinePolicy", "OrderAdjustmentPolicy"],
     "hooks": ["PurgeOrdersForErasedTenant", "ExpireAbandonedOrders"],
-    "commands": ["order:list", "order:show", "order:cancel", "order:refund", "order:expire-abandoned", "order:recalculate-totals"],
+    "commands": [
+      "order:list",
+      "order:show",
+      "order:cancel",
+      "order:refund",
+      "order:expire-abandoned",
+      "order:recalculate-totals"
+    ],
     "jobs": ["ExpireAbandonedOrderJob", "RecalculateOrderTotalsJob", "SettleWalletHoldsJob"],
-    "notifications": ["OrderPaidNotification", "OrderAbandonedNotification", "OrderCancelledNotification", "OrderRefundedNotification"],
+    "notifications": [
+      "OrderPaidNotification",
+      "OrderAbandonedNotification",
+      "OrderCancelledNotification",
+      "OrderRefundedNotification"
+    ],
     "broadcasts": ["tenant.{tenantId}.orders", "guardian.{guardianId}.orders"],
     "observers": ["OrderObserver", "OrderLineObserver", "OrderAdjustmentObserver"],
     "rules": ["valid_currency", "valid_order_state", "valid_adjustment_kind", "positive_quantity"],

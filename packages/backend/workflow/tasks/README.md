@@ -1,7 +1,7 @@
 # academorix/tasks
 
-Server-side Laravel package for the `tasks` module. Auto-generated from
-the blueprint at `modules/workflow/blueprints/tasks/`.
+Server-side Laravel package for the `tasks` module. Auto-generated from the
+blueprint at `modules/workflow/blueprints/tasks/`.
 
 ## Entities
 
@@ -39,11 +39,12 @@ python3 modules/shared/blueprints/foundation/scripts/generate-module.py \
     workflow tasks --force
 ```
 
-Files carrying the `AUTO-GENERATED` header are safe to regenerate; every
-other file is a hand-tuned override that survives regeneration.
+Files carrying the `AUTO-GENERATED` header are safe to regenerate; every other
+file is a hand-tuned override that survives regeneration.
 
 ## Companion wire SDK
 
-The wire-visible Saloon + Spatie Data package lives at `academorix-workflow/tasks-sdk`
-under `sdk/workflow-tasks-sdk/`. Consumers cross the service boundary
-through the SDK; this package is the SERVER-side owner of the domain.
+The wire-visible Saloon + Spatie Data package lives at
+`academorix-workflow/tasks-sdk` under `sdk/workflow-tasks-sdk/`. Consumers cross
+the service boundary through the SDK; this package is the SERVER-side owner of
+the domain.

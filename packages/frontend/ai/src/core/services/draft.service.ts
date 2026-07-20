@@ -14,8 +14,8 @@
  *   - 16.4 — keep drafts pending + surface a descriptive error on failure.
  */
 
-import { Inject, Injectable, Optional } from '@stackra/container';
-import { Logger } from '@stackra/logger';
+import { Inject, Injectable, Optional } from "@stackra/container";
+import { Logger } from "@stackra/logger";
 import {
   AI_CLIENT,
   AI_EVENTS,
@@ -24,9 +24,9 @@ import {
   type IAiClient,
   type IAiDraft,
   type IEventEmitter,
-} from '@stackra/contracts';
+} from "@stackra/contracts";
 
-import { AiDraftError } from '../errors';
+import { AiDraftError } from "../errors";
 
 /**
  * DraftService — Requirement 16.
@@ -43,7 +43,7 @@ export class DraftService {
 
   public constructor(
     @Inject(AI_CLIENT) private readonly client: IAiClient,
-    @Optional() @Inject(EVENT_EMITTER) private readonly events?: IEventEmitter
+    @Optional() @Inject(EVENT_EMITTER) private readonly events?: IEventEmitter,
   ) {}
 
   // ────────────────────────────────────────────────────────────────────
@@ -127,7 +127,7 @@ export class DraftService {
       try {
         listener();
       } catch (err) {
-        this.logger.warn('[DraftService] change listener threw', {
+        this.logger.warn("[DraftService] change listener threw", {
           error: err instanceof Error ? err.message : String(err),
         });
       }

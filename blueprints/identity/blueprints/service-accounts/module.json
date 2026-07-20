@@ -23,24 +23,13 @@
     "platform-plane"
   ],
   "priority": 24,
-  "providers": [
-    "Academorix\\ServiceAccount\\Providers\\ServiceAccountServiceProvider"
-  ],
+  "providers": ["Academorix\\ServiceAccount\\Providers\\ServiceAccountServiceProvider"],
   "files": [],
-  "dependencies": [
-    "foundation",
-    "application"
-  ],
-  "extendedBy": [
-    "auth"
-  ],
+  "dependencies": ["foundation", "application"],
+  "extendedBy": ["auth"],
   "contributes": {
-    "traits": [
-      "IsServiceAccount"
-    ],
-    "attributes": [
-      "AsServiceAccountListener"
-    ],
+    "traits": ["IsServiceAccount"],
+    "attributes": ["AsServiceAccountListener"],
     "blueprints": [],
     "middleware": [
       "service_account.audit",
@@ -58,9 +47,7 @@
       "ServiceAccountUsageDetected",
       "ServiceAccountExpired"
     ],
-    "policies": [
-      "ServiceAccountPolicy"
-    ],
+    "policies": ["ServiceAccountPolicy"],
     "hooks": [],
     "commands": [
       "service-account:create",
@@ -88,23 +75,12 @@
       "SuspiciousServiceAccountActivityNotification"
     ],
     "broadcasts": [],
-    "observers": [
-      "ServiceAccountObserver"
-    ],
-    "rules": [
-      "valid_service_account_name",
-      "valid_kid_format"
-    ],
-    "casts": [
-      "ServiceAccountStatus"
-    ],
+    "observers": ["ServiceAccountObserver"],
+    "rules": ["valid_service_account_name", "valid_kid_format"],
+    "casts": ["ServiceAccountStatus"],
     "views": [],
-    "lang": [
-      "service-accounts"
-    ],
-    "config": [
-      "service-accounts"
-    ],
+    "lang": ["service-accounts"],
+    "config": ["service-accounts"],
     "macros": [],
     "bindings": [
       "ServiceAccountRepository",
@@ -115,9 +91,7 @@
       "DormantAccountDetector",
       "ServiceAccountFingerprinter"
     ],
-    "resources": [
-      "service-account"
-    ]
+    "resources": ["service-account"]
   },
   "wraps": {
     "packages": [
@@ -143,9 +117,7 @@
     },
     "public-exchange": {
       "description": "Unauthenticated exchange endpoint used by service accounts to trade their bcrypt-hashed secret for a short-lived HS256 JWT. Aggressively rate-limited (per-SA per-IP). Never exposes SA existence — unknown SA + wrong secret return the same generic error to avoid enumeration.",
-      "routes": [
-        "POST /api/v1/service-accounts/token"
-      ]
+      "routes": ["POST /api/v1/service-accounts/token"]
     }
   },
   "compliance_note": "SOC 2 CC6.1 (logical access controls — every machine action correlated to its identity via service_account.audit middleware) + CC7.2 (system monitoring — dormant credential detection + suspicious-activity alerts) + NIST SP 800-131A (minimum HS256 key length 32 bytes; enforced by the auth module's JwtSigningKey creation flow, not this module) + OWASP ASVS V6 (service account key rotation, revocation, and audit trail).",

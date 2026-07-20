@@ -15,7 +15,14 @@
       "kind": "View",
       "props": { "className": "max-w-2xl mx-auto p-6 flex flex-col gap-6" },
       "children": [
-        { "kind": "Text", "props": { "as": "h1", "className": "text-2xl font-semibold", "children": "Add custom jurisdiction" } },
+        {
+          "kind": "Text",
+          "props": {
+            "as": "h1",
+            "className": "text-2xl font-semibold",
+            "children": "Add custom jurisdiction"
+          }
+        },
         {
           "kind": "Alert",
           "props": {
@@ -33,7 +40,11 @@
               "props": { "label": "Country", "menuTrigger": "input", "required": true },
               "props_items_source": "tax.jurisdiction-country-catalog",
               "actions": {
-                "onSelectionChange": { "kind": "form.set", "field": "country_code", "valueExpr": "$selectedKey" }
+                "onSelectionChange": {
+                  "kind": "form.set",
+                  "field": "country_code",
+                  "valueExpr": "$selectedKey"
+                }
               }
             },
             {
@@ -58,7 +69,11 @@
                 "helpText": "PCRE regex for zip-based jurisdictions. Example: ^902\\d{2}$ matches Los Angeles county zips."
               },
               "actions": {
-                "onChange": { "kind": "form.set", "field": "postal_code_pattern", "valueExpr": "$value" }
+                "onChange": {
+                  "kind": "form.set",
+                  "field": "postal_code_pattern",
+                  "valueExpr": "$value"
+                }
               }
             },
             {
@@ -79,7 +94,11 @@
                 { "id": "digital_services_tax", "label": "Digital services tax" }
               ],
               "actions": {
-                "onSelectionChange": { "kind": "form.set", "field": "tax_type", "valueExpr": "$selectedKey" }
+                "onSelectionChange": {
+                  "kind": "form.set",
+                  "field": "tax_type",
+                  "valueExpr": "$selectedKey"
+                }
               }
             },
             {
@@ -89,7 +108,11 @@
                 "helpText": "Confidential — competitor intel. Support role sees redacted view."
               },
               "actions": {
-                "onChange": { "kind": "form.set", "field": "registration_number", "valueExpr": "$value" }
+                "onChange": {
+                  "kind": "form.set",
+                  "field": "registration_number",
+                  "valueExpr": "$value"
+                }
               }
             },
             {
@@ -101,7 +124,11 @@
                 { "id": "marketplace", "label": "Marketplace" }
               ],
               "actions": {
-                "onSelectionChange": { "kind": "form.set", "field": "nexus_type", "valueExpr": "$selectedKey" }
+                "onSelectionChange": {
+                  "kind": "form.set",
+                  "field": "nexus_type",
+                  "valueExpr": "$selectedKey"
+                }
               }
             }
           ]

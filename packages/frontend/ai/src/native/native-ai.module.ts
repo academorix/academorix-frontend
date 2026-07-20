@@ -10,11 +10,11 @@
  *   same one-line `useClass` change (Requirement 3.3, 3.5, 21).
  */
 
-import { Global, Module, type DynamicModule } from '@stackra/container';
-import { AI_TRANSPORT, type IAiModuleOptions } from '@stackra/contracts';
+import { Global, Module, type DynamicModule } from "@stackra/container";
+import { AI_TRANSPORT, type IAiModuleOptions } from "@stackra/contracts";
 
-import { AiModule } from '@/core/ai.module';
-import { SseTransport } from '@/core/transport/sse.transport';
+import { AiModule } from "@/core/ai.module";
+import { SseTransport } from "@/core/transport/sse.transport";
 
 /**
  * The React Native AI module.

@@ -1,6 +1,7 @@
 # Changelog
 
-All notable changes to this project will be documented in this file, in reverse chronological order by release.
+All notable changes to this project will be documented in this file, in reverse
+chronological order by release.
 
 ## 1.0.1 - 2016-08-06
 
@@ -23,8 +24,8 @@ All notable changes to this project will be documented in this file, in reverse 
   specification.
 - Updated the `MessageInterface::getHeaders()` return annotation to use the
   value `string[][]`, indicating the format is a nested array of strings.
-- Updated the `@link` annotation for `RequestInterface::withRequestTarget()`
-  to point to the correct section of RFC 7230.
+- Updated the `@link` annotation for `RequestInterface::withRequestTarget()` to
+  point to the correct section of RFC 7230.
 - Updated the `ServerRequestInterface::withUploadedFiles()` parameter annotation
   to add the parameter name (`$uploadedFiles`).
 - Updated a `@throws` annotation for the `UploadedFileInterface::moveTo()`

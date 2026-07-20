@@ -10,7 +10,7 @@
  * Sample preferences store. Rename + reshape for your app; register
  * with `StateModule.forFeature(preferencesStore)` in your AppModule.
  */
-export const PREFERENCES_STORE = Symbol.for('PREFERENCES_STORE');
+export const PREFERENCES_STORE = Symbol.for("PREFERENCES_STORE");
 
 export interface PreferencesState {
   readonly greeting: string;
@@ -27,7 +27,7 @@ export const preferencesStore = {
   | routing key for cross-tab / realtime broadcasts. Keep it short.
   |
   */
-  name: 'preferences',
+  name: "preferences",
 
   /*
   |--------------------------------------------------------------------------
@@ -51,7 +51,7 @@ export const preferencesStore = {
   |
   */
   initialState: {
-    greeting: 'Hello Stackra',
+    greeting: "Hello Stackra",
     compact: false,
   } satisfies PreferencesState,
 
@@ -86,5 +86,5 @@ export const preferencesStore = {
   | `'localStorage'` survives reloads; `false` disables persistence.
   |
   */
-  persistence: 'localStorage' as const,
+  persistence: "localStorage" as const,
 };

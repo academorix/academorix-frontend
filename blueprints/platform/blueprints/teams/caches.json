@@ -10,7 +10,14 @@
       "description": "Per-branch team catalogue (list of team rows for a branch, filtered by status='active'). Read by SDUI list screens + the roster picker widget.",
       "ttlSeconds": 300,
       "tags": ["teams", "tenant"],
-      "invalidatedBy": ["TeamObserver.created", "TeamObserver.updated", "TeamObserver.deleted", "TeamStatusChanged", "TeamArchived", "TeamRestored"]
+      "invalidatedBy": [
+        "TeamObserver.created",
+        "TeamObserver.updated",
+        "TeamObserver.deleted",
+        "TeamStatusChanged",
+        "TeamArchived",
+        "TeamRestored"
+      ]
     },
     {
       "pattern": "teams:catalogue:{tenant_id}",
@@ -24,7 +31,12 @@
       "description": "Active roster for a team — the list of TeamMember rows with status='active'. Read hot by the team detail screen + attendance flows.",
       "ttlSeconds": 300,
       "tags": ["teams", "teams.roster"],
-      "invalidatedBy": ["TeamMemberJoined", "TeamMemberLeft", "TeamMemberStatusChanged", "TeamMemberRoleChanged"]
+      "invalidatedBy": [
+        "TeamMemberJoined",
+        "TeamMemberLeft",
+        "TeamMemberStatusChanged",
+        "TeamMemberRoleChanged"
+      ]
     },
     {
       "pattern": "teams:roster:{team_id}:count",
@@ -45,7 +57,15 @@
       "description": "Active + upcoming trials for a team (status IN scheduled / in_progress / completed). Feeds the trial-pipeline board.",
       "ttlSeconds": 300,
       "tags": ["teams", "teams.trials"],
-      "invalidatedBy": ["TrialScheduled", "TrialStarted", "TrialCompleted", "TrialConvertedToMember", "TrialRejected", "TrialNoShow", "TrialCancelled"]
+      "invalidatedBy": [
+        "TrialScheduled",
+        "TrialStarted",
+        "TrialCompleted",
+        "TrialConvertedToMember",
+        "TrialRejected",
+        "TrialNoShow",
+        "TrialCancelled"
+      ]
     },
     {
       "pattern": "teams:member:{tenant_id}:{member_type}:{member_id}",
@@ -66,7 +86,12 @@
       "description": "Upcoming event participations for the tenant. Feeds the event calendar widget.",
       "ttlSeconds": 300,
       "tags": ["teams", "teams.event_teams"],
-      "invalidatedBy": ["EventTeamRegistered", "EventTeamWithdrew", "EventTeamCheckedIn", "EventTeamResultRecorded"]
+      "invalidatedBy": [
+        "EventTeamRegistered",
+        "EventTeamWithdrew",
+        "EventTeamCheckedIn",
+        "EventTeamResultRecorded"
+      ]
     },
     {
       "pattern": "teams:eligibility:{team_id}",
@@ -80,7 +105,13 @@
       "description": "Roster + trial-conversion + participation rollup per team per (day/week/month) window. Powers audit-usage dashboards on both tenant + platform planes.",
       "ttlSeconds": 3600,
       "tags": ["teams", "tenant"],
-      "invalidatedBy": ["TeamMemberJoined", "TeamMemberLeft", "TrialConvertedToMember", "TrialRejected", "EventTeamResultRecorded"]
+      "invalidatedBy": [
+        "TeamMemberJoined",
+        "TeamMemberLeft",
+        "TrialConvertedToMember",
+        "TrialRejected",
+        "EventTeamResultRecorded"
+      ]
     }
   ]
 }

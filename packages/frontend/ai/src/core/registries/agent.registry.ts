@@ -14,9 +14,9 @@
  *   (`AiClientService.listPersonas`) in `useAiCatalog`.
  */
 
-import { Inject, Injectable, Optional, type OnModuleInit } from '@stackra/container';
-import { Logger } from '@stackra/logger';
-import { AI_CONFIG, type IAiConfig, type IPersona } from '@stackra/contracts';
+import { Inject, Injectable, Optional, type OnModuleInit } from "@stackra/container";
+import { Logger } from "@stackra/logger";
+import { AI_CONFIG, type IAiConfig, type IPersona } from "@stackra/contracts";
 
 /**
  * Persona registry — Requirement 14.
@@ -43,7 +43,7 @@ export class AgentRegistry implements OnModuleInit {
    */
   public register(persona: IPersona): void {
     if (!persona.slug) {
-      this.logger.warn('[AgentRegistry] ignoring persona without slug');
+      this.logger.warn("[AgentRegistry] ignoring persona without slug");
       return;
     }
     this.items.set(persona.slug, persona);
@@ -81,7 +81,7 @@ export class AgentRegistry implements OnModuleInit {
       try {
         listener();
       } catch (err) {
-        this.logger.warn('[AgentRegistry] change listener threw', {
+        this.logger.warn("[AgentRegistry] change listener threw", {
           error: err instanceof Error ? err.message : String(err),
         });
       }

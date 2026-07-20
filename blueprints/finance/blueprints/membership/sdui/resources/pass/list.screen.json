@@ -9,7 +9,13 @@
   "resource": { "module": "membership", "entity": "pass", "action": "list" },
   "requiresPermission": "passes.viewAny",
   "dataSources": [
-    { "name": "passes", "kind": "http.get", "url": "/api/v1/passes", "unwrap": "data", "queryFromFilters": true }
+    {
+      "name": "passes",
+      "kind": "http.get",
+      "url": "/api/v1/passes",
+      "unwrap": "data",
+      "queryFromFilters": true
+    }
   ],
   "nodes": [
     {
@@ -24,8 +30,21 @@
             {
               "kind": "View",
               "children": [
-                { "kind": "Text", "props": { "as": "h1", "className": "text-2xl font-semibold", "children": "Passes" } },
-                { "kind": "Text", "props": { "className": "text-sm text-muted", "children": "Per-session admission credits. Consumed at session check-in." } }
+                {
+                  "kind": "Text",
+                  "props": {
+                    "as": "h1",
+                    "className": "text-2xl font-semibold",
+                    "children": "Passes"
+                  }
+                },
+                {
+                  "kind": "Text",
+                  "props": {
+                    "className": "text-sm text-muted",
+                    "children": "Per-session admission credits. Consumed at session check-in."
+                  }
+                }
               ]
             }
           ]
@@ -43,7 +62,13 @@
                 { "id": "expired", "label": "Expired" },
                 { "id": "refunded", "label": "Refunded" }
               ],
-              "actions": { "onSelectionChange": { "kind": "filter.set", "field": "status", "valueExpr": "$selectedKey" } }
+              "actions": {
+                "onSelectionChange": {
+                  "kind": "filter.set",
+                  "field": "status",
+                  "valueExpr": "$selectedKey"
+                }
+              }
             },
             {
               "kind": "ComboBox",
@@ -56,7 +81,13 @@
                 { "id": "event", "label": "Event" },
                 { "id": "promotional", "label": "Promotional" }
               ],
-              "actions": { "onSelectionChange": { "kind": "filter.set", "field": "pass_type", "valueExpr": "$selectedKey" } }
+              "actions": {
+                "onSelectionChange": {
+                  "kind": "filter.set",
+                  "field": "pass_type",
+                  "valueExpr": "$selectedKey"
+                }
+              }
             }
           ]
         },
@@ -68,8 +99,14 @@
             "kind": "View",
             "props": { "className": "text-center py-12" },
             "children": [
-              { "kind": "Icon", "props": { "name": "ticket", "className": "size-12 mx-auto text-muted" } },
-              { "kind": "Text", "props": { "className": "mt-4 text-lg font-medium", "children": "No passes" } }
+              {
+                "kind": "Icon",
+                "props": { "name": "ticket", "className": "size-12 mx-auto text-muted" }
+              },
+              {
+                "kind": "Text",
+                "props": { "className": "mt-4 text-lg font-medium", "children": "No passes" }
+              }
             ]
           },
           "columns": [
@@ -79,7 +116,12 @@
               "renderer": {
                 "kind": "Link",
                 "propsExpr": "{ hrefExpr: '/tenant/memberships/' + row.membership_id }",
-                "children": [{ "kind": "Text", "bindings": { "children": { "$ref": "row.membership.athlete_display_name" } } }]
+                "children": [
+                  {
+                    "kind": "Text",
+                    "bindings": { "children": { "$ref": "row.membership.athlete_display_name" } }
+                  }
+                ]
               }
             },
             {
@@ -97,7 +139,9 @@
               "renderer": {
                 "kind": "Text",
                 "props": { "className": "tabular-nums text-sm" },
-                "bindings": { "childrenExpr": "$formatDate(row.valid_from, 'D MMM') + ' → ' + $formatDate(row.valid_until, 'D MMM YYYY')" }
+                "bindings": {
+                  "childrenExpr": "$formatDate(row.valid_from, 'D MMM') + ' → ' + $formatDate(row.valid_until, 'D MMM YYYY')"
+                }
               }
             },
             {
@@ -118,7 +162,13 @@
                 "kind": "Link",
                 "propsExpr": "{ hrefExpr: '/tenant/sessions/' + row.consumed_by_session_id }",
                 "bindings": { "hidden": { "$expr": "!row.consumed_by_session_id" } },
-                "children": [{ "kind": "Text", "props": { "className": "text-sm" }, "bindings": { "children": { "$ref": "row.consumed_by_session.name" } } }]
+                "children": [
+                  {
+                    "kind": "Text",
+                    "props": { "className": "text-sm" },
+                    "bindings": { "children": { "$ref": "row.consumed_by_session.name" } }
+                  }
+                ]
               }
             },
             {
@@ -127,7 +177,12 @@
               "renderer": {
                 "kind": "Chip",
                 "propsExpr": "{ size: 'sm', variant: row.consumed_at && !row.refunded_at ? 'success' : row.refunded_at ? 'info' : (!row.consumed_at && $now() < row.valid_until) ? 'success' : 'neutral' }",
-                "children": [{ "kind": "Text", "propsExpr": "{ children: row.consumed_at && !row.refunded_at ? 'Consumed' : row.refunded_at ? 'Refunded' : (!row.consumed_at && $now() < row.valid_until) ? 'Available' : 'Expired' }" }]
+                "children": [
+                  {
+                    "kind": "Text",
+                    "propsExpr": "{ children: row.consumed_at && !row.refunded_at ? 'Consumed' : row.refunded_at ? 'Refunded' : (!row.consumed_at && $now() < row.valid_until) ? 'Available' : 'Expired' }"
+                  }
+                ]
               }
             }
           ]

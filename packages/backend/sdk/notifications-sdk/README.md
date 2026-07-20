@@ -1,9 +1,10 @@
 # academorix/notifications-sdk
 
-Typed Saloon SDK for the Notifications service — email, SMS, push, in-app, WhatsApp, templates, digests.
+Typed Saloon SDK for the Notifications service — email, SMS, push, in-app,
+WhatsApp, templates, digests.
 
-Per-service umbrella SDK built on the shared kernel (`academorix/api-sdk`).
-It owns the Notifications service connector (config `sdk.notifications.*`), a typed
+Per-service umbrella SDK built on the shared kernel (`academorix/api-sdk`). It
+owns the Notifications service connector (config `sdk.notifications.*`), a typed
 `NotificationsSdk` client, and a discovery pass scoped to
 `#[AsSdkResource(service: 'notifications')]`.
 
@@ -28,6 +29,6 @@ Scaffold one with:
 
 ## Config
 
-`config/notifications-sdk.php` (publish tag `notifications-sdk-config`). Every value is
-env-driven under `SDK_NOTIFICATIONS_*` — set at minimum `SDK_NOTIFICATIONS_BASE_URL` and
-`SDK_NOTIFICATIONS_TOKEN`.
+`config/notifications-sdk.php` (publish tag `notifications-sdk-config`). Every
+value is env-driven under `SDK_NOTIFICATIONS_*` — set at minimum
+`SDK_NOTIFICATIONS_BASE_URL` and `SDK_NOTIFICATIONS_TOKEN`.

@@ -3,7 +3,8 @@
 All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
-and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+and this project adheres to
+[Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
@@ -225,7 +226,8 @@ constraint, see [#1266](https://github.com/mockery/mockery/issues/1266)
 - Adds support for tentative types #1130
 - Fixes for PHP 8.1 Support (#1130 and #1140)
 - Add method that allows defining a set of arguments the mock should yield #1133
-- Added option to configure default matchers for objects `\Mockery::getConfiguration()->setDefaultMatcher($class, $matcherClass)` #1120
+- Added option to configure default matchers for objects
+  `\Mockery::getConfiguration()->setDefaultMatcher($class, $matcherClass)` #1120
 
 ## 1.3.5 (2021-09-13)
 
@@ -233,7 +235,8 @@ constraint, see [#1266](https://github.com/mockery/mockery/issues/1266)
 - Adds support for tentative types #1130
 - Fixes for PHP 8.1 Support (#1130 and #1140)
 - Add method that allows defining a set of arguments the mock should yield #1133
-- Added option to configure default matchers for objects `\Mockery::getConfiguration()->setDefaultMatcher($class, $matcherClass)` #1120
+- Added option to configure default matchers for objects
+  `\Mockery::getConfiguration()->setDefaultMatcher($class, $matcherClass)` #1120
 
 ## 1.4.3 (2021-02-24)
 
@@ -258,9 +261,11 @@ constraint, see [#1266](https://github.com/mockery/mockery/issues/1266)
 ## 1.4.1 (2020-07-09)
 
 - Allow quick definitions to use 'at least once' expectation
-  `\Mockery::getConfiguration()->getQuickDefinitions()->shouldBeCalledAtLeastOnce(true)` (#1056)
+  `\Mockery::getConfiguration()->getQuickDefinitions()->shouldBeCalledAtLeastOnce(true)`
+  (#1056)
 - Added provisional support for PHP 8.0 (#1068, #1072,#1079)
-- Fix mocking methods with iterable return type without specifying a return value (#1075)
+- Fix mocking methods with iterable return type without specifying a return
+  value (#1075)
 
 ## 1.3.3 (2020-08-11)
 
@@ -275,7 +280,8 @@ constraint, see [#1266](https://github.com/mockery/mockery/issues/1266)
 - Fix mocking with anonymous classes (#1039)
 - Fix andAnyOthers() to properly match earlier expectations (#1051)
 - Added provisional support for PHP 8.0 (#1068, #1072,#1079)
-- Fix mocking methods with iterable return type without specifying a return value (#1075)
+- Fix mocking methods with iterable return type without specifying a return
+  value (#1075)
 
 ## 1.4.0 (2020-05-19)
 
@@ -290,13 +296,15 @@ constraint, see [#1266](https://github.com/mockery/mockery/issues/1266)
 ## 1.3.0 (2019-11-24)
 
 - Added capture `Mockery::capture` convenience matcher (#1020)
-- Added `andReturnArg` to echo back an argument passed to a an expectation (#992)
+- Added `andReturnArg` to echo back an argument passed to a an expectation
+  (#992)
 - Improved exception debugging (#1000)
 - Fixed `andSet` to not reuse properties between mock objects (#1012)
 
 ## 1.2.4 (2019-09-30)
 
-- Fix a bug introduced with previous release, for empty method definition lists (#1009)
+- Fix a bug introduced with previous release, for empty method definition lists
+  (#1009)
 
 ## 1.2.3 (2019-08-07)
 
@@ -346,12 +354,14 @@ constraint, see [#1266](https://github.com/mockery/mockery/issues/1266)
 - Fix internal error when using --static-backup (#845)
 - Adds `andAnyOtherArgs` as an optional argument matcher (#860)
 - Fixes namespace qualifying with namespaced named mocks (#872)
-- Added possibility to add Constructor-Expections on hard dependencies, read: Mockery::mock('overload:...') (#781)
+- Added possibility to add Constructor-Expections on hard dependencies, read:
+  Mockery::mock('overload:...') (#781)
 
 ## 1.0.0 (2017-09-06)
 
 - Destructors (`__destruct`) are stubbed out where it makes sense
-- Allow passing a closure argument to `withArgs()` to validate multiple arguments at once.
+- Allow passing a closure argument to `withArgs()` to validate multiple
+  arguments at once.
 - `Mockery\Adapter\Phpunit\TestListener` has been rewritten because it
   incorrectly marked some tests as risky. It will no longer verify mock
   expectations but instead check that tests do that themselves. PHPUnit 6 is
@@ -366,14 +376,18 @@ constraint, see [#1266](https://github.com/mockery/mockery/issues/1266)
 - `Mockery\Matcher\MustBe` was deprecated
 - Marked `Mockery\MockInterface` as internal
 - Subset matcher matches recursively
-- BC BREAK - Spies return `null` by default from ignored (non-mocked) methods with nullable return type
+- BC BREAK - Spies return `null` by default from ignored (non-mocked) methods
+  with nullable return type
 - Removed extracting getter methods of object instances
-- BC BREAK - Remove implicit regex matching when trying to match string arguments, introduce `\Mockery::pattern()` when regex matching is needed
+- BC BREAK - Remove implicit regex matching when trying to match string
+  arguments, introduce `\Mockery::pattern()` when regex matching is needed
 - Fix Mockery not getting closed in cases of failing test cases
 - Fix Mockery not setting properties on overloaded instance mocks
-- BC BREAK - Fix Mockery not trying default expectations if there is any concrete expectation
+- BC BREAK - Fix Mockery not trying default expectations if there is any
+  concrete expectation
 - BC BREAK - Mockery's PHPUnit integration will mark a test as risky if it
-  thinks one it's exceptions has been swallowed in PHPUnit > 5.7.6. Use `$e->dismiss()` to dismiss.
+  thinks one it's exceptions has been swallowed in PHPUnit > 5.7.6. Use
+  `$e->dismiss()` to dismiss.
 
 ## 0.9.4 (XXXX-XX-XX)
 
@@ -382,7 +396,7 @@ constraint, see [#1266](https://github.com/mockery/mockery/issues/1266)
 - Some support for variadic parameters
 - Hamcrest is now a required dependency
 - Instance mocks now respect `shouldIgnoreMissing` call on control instance
-- This will be the *last version to support PHP 5.3*
+- This will be the _last version to support PHP 5.3_
 - Added `Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration` trait
 - Added `makePartial` to `Mockery\MockInterface` as it was missing
 
@@ -394,8 +408,8 @@ constraint, see [#1266](https://github.com/mockery/mockery/issues/1266)
 
 ## 0.9.2 (2014-09-03)
 
-- Some workarounds for the serialisation problems created by changes to PHP in 5.5.13, 5.4.29,
-  5.6.
+- Some workarounds for the serialisation problems created by changes to PHP in
+  5.5.13, 5.4.29, 5.6.
 - Demeter chains attempt to reuse doubles as they see fit, so for foo->bar and
   foo->baz, we'll attempt to use the same foo
 

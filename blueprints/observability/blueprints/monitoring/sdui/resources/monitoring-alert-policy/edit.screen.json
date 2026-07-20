@@ -10,7 +10,12 @@
   "requiresPermission": "monitoring.alert_policies.update",
   "requiresEntitlement": "monitoring_capture",
   "dataSources": [
-    { "name": "policy", "kind": "http.get", "url": "/api/v1/monitoring/alert-policies/{policy}", "unwrap": "data" }
+    {
+      "name": "policy",
+      "kind": "http.get",
+      "url": "/api/v1/monitoring/alert-policies/{policy}",
+      "unwrap": "data"
+    }
   ],
   "nodes": [
     {
@@ -18,7 +23,14 @@
       "kind": "Form",
       "props": { "className": "max-w-3xl mx-auto p-6 flex flex-col gap-4" },
       "children": [
-        { "kind": "Text", "props": { "as": "h1", "className": "text-2xl font-semibold", "children": "Edit alert policy" } },
+        {
+          "kind": "Text",
+          "props": {
+            "as": "h1",
+            "className": "text-2xl font-semibold",
+            "children": "Edit alert policy"
+          }
+        },
         {
           "kind": "Input",
           "props": { "label": "Name" },
@@ -29,13 +41,17 @@
           "kind": "Input",
           "props": { "label": "Threshold value", "type": "number" },
           "bindings": { "defaultValue": { "$ref": "policy.threshold_value" } },
-          "actions": { "onChange": { "kind": "form.set", "field": "threshold_value", "valueExpr": "$value" } }
+          "actions": {
+            "onChange": { "kind": "form.set", "field": "threshold_value", "valueExpr": "$value" }
+          }
         },
         {
           "kind": "Switch",
           "props": { "label": "Enabled" },
           "bindings": { "defaultValue": { "$ref": "policy.is_enabled" } },
-          "actions": { "onChange": { "kind": "form.set", "field": "is_enabled", "valueExpr": "$value" } }
+          "actions": {
+            "onChange": { "kind": "form.set", "field": "is_enabled", "valueExpr": "$value" }
+          }
         },
         {
           "kind": "Alert",

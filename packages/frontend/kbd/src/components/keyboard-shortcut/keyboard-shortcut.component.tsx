@@ -35,7 +35,7 @@ export function KeyboardShortcut({ combo, className }: KeyboardShortcutProps): R
         {sequence.map((key, i) => (
           <Fragment key={`${key}-${i}`}>
             {i > 0 && (
-              <span aria-hidden="true" className="mx-1 text-default-400">
+              <span aria-hidden="true" className="text-default-400 mx-1">
                 ·
               </span>
             )}

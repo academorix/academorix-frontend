@@ -7,7 +7,12 @@
   "route": "/sessions/{session}/edit",
   "description": "Edit session. resource_booking_id read-only (reschedule uses dedicated endpoint). Coach reassign shows warning when <24h + minors registered.",
   "dataSources": [
-    { "name": "session", "kind": "http.get", "urlExpr": "'/api/v1/sessions/' + route.params.session + '?include=resource_booking,team,head_coach,attendance'", "unwrap": "data" }
+    {
+      "name": "session",
+      "kind": "http.get",
+      "urlExpr": "'/api/v1/sessions/' + route.params.session + '?include=resource_booking,team,head_coach,attendance'",
+      "unwrap": "data"
+    }
   ],
   "form": {
     "endpointExpr": "'PATCH /api/v1/sessions/' + route.params.session",
@@ -15,24 +20,58 @@
     "onSuccess": { "$action": "route.push", "urlExpr": "'/sessions/' + route.params.session" }
   },
   "nodes": [
-    { "kind": "PageHeader", "children": [{ "kind": "PageHeader.Title", "bindings": { "children": { "$expr": "'Edit session: ' + session.name" } } }] },
+    {
+      "kind": "PageHeader",
+      "children": [
+        {
+          "kind": "PageHeader.Title",
+          "bindings": { "children": { "$expr": "'Edit session: ' + session.name" } }
+        }
+      ]
+    },
     {
       "kind": "View",
-      "bindings": { "hidden": { "$expr": "hoursBetween(now(), session.resource_booking.starts_at) >= 24 || !session.has_minor_registrants" } },
+      "bindings": {
+        "hidden": {
+          "$expr": "hoursBetween(now(), session.resource_booking.starts_at) >= 24 || !session.has_minor_registrants"
+        }
+      },
       "children": [
-        { "kind": "Alert", "props": { "variant": "warning", "leadingIcon": "shield-exclamation-outline", "title": "Short-notice changes affect minor participants", "description": "Coach reassignment or cancellation less than 24h before start requires the short-notice permission and fires a cannot-opt-out notification to registered minors' guardians." } }
+        {
+          "kind": "Alert",
+          "props": {
+            "variant": "warning",
+            "leadingIcon": "shield-exclamation-outline",
+            "title": "Short-notice changes affect minor participants",
+            "description": "Coach reassignment or cancellation less than 24h before start requires the short-notice permission and fires a cannot-opt-out notification to registered minors' guardians."
+          }
+        }
       ]
     },
     {
       "kind": "Card",
       "children": [
-        { "kind": "Card.Header", "children": [{ "kind": "Card.Title", "props": { "children": "Identity" } }] },
+        {
+          "kind": "Card.Header",
+          "children": [{ "kind": "Card.Title", "props": { "children": "Identity" } }]
+        },
         {
           "kind": "Card.Content",
           "props": { "className": "flex flex-col gap-4" },
           "children": [
-            { "kind": "TextField", "props": { "name": "name", "label": "Name", "isRequired": true, "maxLength": 128 } },
-            { "kind": "TextField", "props": { "name": "resource_booking_id", "label": "Booking slot", "isDisabled": true, "helpText": "Use the Reschedule action to change the slot" } }
+            {
+              "kind": "TextField",
+              "props": { "name": "name", "label": "Name", "isRequired": true, "maxLength": 128 }
+            },
+            {
+              "kind": "TextField",
+              "props": {
+                "name": "resource_booking_id",
+                "label": "Booking slot",
+                "isDisabled": true,
+                "helpText": "Use the Reschedule action to change the slot"
+              }
+            }
           ]
         }
       ]
@@ -40,13 +79,33 @@
     {
       "kind": "Card",
       "children": [
-        { "kind": "Card.Header", "children": [{ "kind": "Card.Title", "props": { "children": "Coaches" } }] },
+        {
+          "kind": "Card.Header",
+          "children": [{ "kind": "Card.Title", "props": { "children": "Coaches" } }]
+        },
         {
           "kind": "Card.Content",
           "props": { "className": "flex flex-col gap-4" },
           "children": [
-            { "kind": "Widget", "props": { "id": "coaching.coach-picker", "props": { "name": "head_coach_id", "label": "Head coach", "clearable": true } } },
-            { "kind": "Widget", "props": { "id": "coaching.coach-multi-picker", "props": { "name": "assistant_coach_ids", "label": "Assistant coaches", "clearable": true, "maxSelections": 3 } } }
+            {
+              "kind": "Widget",
+              "props": {
+                "id": "coaching.coach-picker",
+                "props": { "name": "head_coach_id", "label": "Head coach", "clearable": true }
+              }
+            },
+            {
+              "kind": "Widget",
+              "props": {
+                "id": "coaching.coach-multi-picker",
+                "props": {
+                  "name": "assistant_coach_ids",
+                  "label": "Assistant coaches",
+                  "clearable": true,
+                  "maxSelections": 3
+                }
+              }
+            }
           ]
         }
       ]
@@ -54,14 +113,26 @@
     {
       "kind": "Card",
       "children": [
-        { "kind": "Card.Header", "children": [{ "kind": "Card.Title", "props": { "children": "Curriculum" } }] },
+        {
+          "kind": "Card.Header",
+          "children": [{ "kind": "Card.Title", "props": { "children": "Curriculum" } }]
+        },
         {
           "kind": "Card.Content",
           "props": { "className": "flex flex-col gap-4" },
           "children": [
-            { "kind": "TextField", "props": { "name": "curriculum_topic", "label": "Curriculum topic", "maxLength": 256 } },
-            { "kind": "TagInput", "props": { "name": "equipment_needed", "label": "Equipment", "maxTags": 20 } },
-            { "kind": "TextArea", "props": { "name": "description", "label": "Description", "rows": 3 } }
+            {
+              "kind": "TextField",
+              "props": { "name": "curriculum_topic", "label": "Curriculum topic", "maxLength": 256 }
+            },
+            {
+              "kind": "TagInput",
+              "props": { "name": "equipment_needed", "label": "Equipment", "maxTags": 20 }
+            },
+            {
+              "kind": "TextArea",
+              "props": { "name": "description", "label": "Description", "rows": 3 }
+            }
           ]
         }
       ]
@@ -70,12 +141,23 @@
       "kind": "Card",
       "bindings": { "hidden": { "$expr": "!caller.can('sessions.viewNotes')" } },
       "children": [
-        { "kind": "Card.Header", "children": [{ "kind": "Card.Title", "props": { "children": "Coach's private notes" } }] },
+        {
+          "kind": "Card.Header",
+          "children": [{ "kind": "Card.Title", "props": { "children": "Coach's private notes" } }]
+        },
         {
           "kind": "Card.Content",
           "props": { "className": "flex flex-col gap-4" },
           "children": [
-            { "kind": "TextArea", "props": { "name": "session_notes", "label": "Session notes (private)", "rows": 6, "helpText": "Never visible to athletes or guardians. Required when flagging safeguarding incident." } }
+            {
+              "kind": "TextArea",
+              "props": {
+                "name": "session_notes",
+                "label": "Session notes (private)",
+                "rows": 6,
+                "helpText": "Never visible to athletes or guardians. Required when flagging safeguarding incident."
+              }
+            }
           ]
         }
       ]
@@ -83,8 +165,17 @@
     {
       "kind": "FormActions",
       "children": [
-        { "kind": "Button", "props": { "variant": "outline", "children": "Cancel" }, "bindings": { "onPress": { "$action": "route.push", "urlExpr": "'/sessions/' + route.params.session" } } },
-        { "kind": "Button", "props": { "variant": "solid", "type": "submit", "children": "Save changes" } }
+        {
+          "kind": "Button",
+          "props": { "variant": "outline", "children": "Cancel" },
+          "bindings": {
+            "onPress": { "$action": "route.push", "urlExpr": "'/sessions/' + route.params.session" }
+          }
+        },
+        {
+          "kind": "Button",
+          "props": { "variant": "solid", "type": "submit", "children": "Save changes" }
+        }
       ]
     }
   ]

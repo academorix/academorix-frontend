@@ -9,7 +9,7 @@
  *   the manager's buffer-and-flush code path is exercised end-to-end.
  */
 
-import type { IConsentGate } from '@/core/interfaces';
+import type { IConsentGate } from "@/core/interfaces";
 
 /** Controllable consent gate that emits change notifications. */
 export class ControllableConsentGate implements IConsentGate {

@@ -35,7 +35,10 @@
       "kind": "http.patch",
       "urlExpr": "'/api/v1/coaching-profiles/' + $route.profile_id",
       "body": "$form",
-      "onSuccess": { "kind": "navigate", "toExpr": "'/tenant/coaching-profiles/' + $route.profile_id" },
+      "onSuccess": {
+        "kind": "navigate",
+        "toExpr": "'/tenant/coaching-profiles/' + $route.profile_id"
+      },
       "onError": { "kind": "toast.error", "message": "Could not update profile." }
     }
   },
@@ -45,16 +48,38 @@
       "kind": "View",
       "props": { "className": "flex flex-col gap-4 p-6 max-w-3xl mx-auto" },
       "children": [
-        { "kind": "Text", "props": { "as": "h1", "className": "text-2xl font-semibold" }, "bindings": { "children": { "$expr": "'Edit ' + $ref('profile.display_name')" } } },
+        {
+          "kind": "Text",
+          "props": { "as": "h1", "className": "text-2xl font-semibold" },
+          "bindings": { "children": { "$expr": "'Edit ' + $ref('profile.display_name')" } }
+        },
         {
           "kind": "Card",
           "children": [
-            { "kind": "Card.Header", "children": [{ "kind": "Text", "props": { "as": "h2", "className": "font-semibold", "children": "Identity (read-only)" } }] },
+            {
+              "kind": "Card.Header",
+              "children": [
+                {
+                  "kind": "Text",
+                  "props": {
+                    "as": "h2",
+                    "className": "font-semibold",
+                    "children": "Identity (read-only)"
+                  }
+                }
+              ]
+            },
             {
               "kind": "Card.Content",
               "children": [
-                { "kind": "Description", "props": { "label": "Staff", "children": { "$ref": "profile.display_name" } } },
-                { "kind": "Description", "props": { "label": "Branch", "children": { "$ref": "profile.branch_id" } } }
+                {
+                  "kind": "Description",
+                  "props": { "label": "Staff", "children": { "$ref": "profile.display_name" } }
+                },
+                {
+                  "kind": "Description",
+                  "props": { "label": "Branch", "children": { "$ref": "profile.branch_id" } }
+                }
               ]
             }
           ]
@@ -62,7 +87,19 @@
         {
           "kind": "Card",
           "children": [
-            { "kind": "Card.Header", "children": [{ "kind": "Text", "props": { "as": "h2", "className": "font-semibold", "children": "Sport & specialization" } }] },
+            {
+              "kind": "Card.Header",
+              "children": [
+                {
+                  "kind": "Text",
+                  "props": {
+                    "as": "h2",
+                    "className": "font-semibold",
+                    "children": "Sport & specialization"
+                  }
+                }
+              ]
+            },
             {
               "kind": "Card.Content",
               "children": [
@@ -71,12 +108,43 @@
                   "props": { "name": "primary_sport_id", "menuTrigger": "focus" },
                   "children": [
                     { "kind": "Label", "propsExpr": "{ children: 'Primary sport' }" },
-                    { "kind": "ComboBox.InputGroup", "children": [{ "kind": "Input" }, { "kind": "ComboBox.Trigger" }] },
-                    { "kind": "ComboBox.Popover", "children": [{ "kind": "ListBox", "bindings": { "items": { "$ref": "sports" } }, "children": [{ "kind": "ListBox.Item", "propsExpr": "{ id: $item.id, textValue: $item.name }", "children": [{ "kind": "Text", "bindings": { "children": { "$ref": "$item.name" } } }, { "kind": "ListBox.ItemIndicator" }] }] }] }
+                    {
+                      "kind": "ComboBox.InputGroup",
+                      "children": [{ "kind": "Input" }, { "kind": "ComboBox.Trigger" }]
+                    },
+                    {
+                      "kind": "ComboBox.Popover",
+                      "children": [
+                        {
+                          "kind": "ListBox",
+                          "bindings": { "items": { "$ref": "sports" } },
+                          "children": [
+                            {
+                              "kind": "ListBox.Item",
+                              "propsExpr": "{ id: $item.id, textValue: $item.name }",
+                              "children": [
+                                {
+                                  "kind": "Text",
+                                  "bindings": { "children": { "$ref": "$item.name" } }
+                                },
+                                { "kind": "ListBox.ItemIndicator" }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
                   ]
                 },
-                { "kind": "NumberField", "props": { "name": "coaching_since_year", "label": "Coaching since year" } },
-                { "kind": "MultiSelect", "props": { "name": "specializations", "label": "Specializations" }, "bindings": { "options": { "$ref": "specializationsCatalog.specializations" } } }
+                {
+                  "kind": "NumberField",
+                  "props": { "name": "coaching_since_year", "label": "Coaching since year" }
+                },
+                {
+                  "kind": "MultiSelect",
+                  "props": { "name": "specializations", "label": "Specializations" },
+                  "bindings": { "options": { "$ref": "specializationsCatalog.specializations" } }
+                }
               ]
             }
           ]
@@ -84,16 +152,50 @@
         {
           "kind": "Card",
           "children": [
-            { "kind": "Card.Header", "children": [{ "kind": "Text", "props": { "as": "h2", "className": "font-semibold", "children": "Bio & availability" } }] },
+            {
+              "kind": "Card.Header",
+              "children": [
+                {
+                  "kind": "Text",
+                  "props": {
+                    "as": "h2",
+                    "className": "font-semibold",
+                    "children": "Bio & availability"
+                  }
+                }
+              ]
+            },
             {
               "kind": "Card.Content",
               "children": [
                 { "kind": "TextArea", "props": { "name": "bio", "label": "Biography", "rows": 4 } },
-                { "kind": "TextField", "props": { "name": "photo_url_signed", "label": "Photo URL (S3 signed)" } },
-                { "kind": "Widget", "widget": "coaching.availability-calendar", "props": { "name": "availability", "editable": true } },
-                { "kind": "Switch", "props": { "name": "is_accepting_new_athletes", "label": "Accepting new athletes" } },
-                { "kind": "NumberField", "props": { "name": "max_athletes_per_session", "label": "Max athletes per session" } },
-                { "kind": "TagGroup", "props": { "name": "languages_spoken", "label": "Languages spoken" } }
+                {
+                  "kind": "TextField",
+                  "props": { "name": "photo_url_signed", "label": "Photo URL (S3 signed)" }
+                },
+                {
+                  "kind": "Widget",
+                  "widget": "coaching.availability-calendar",
+                  "props": { "name": "availability", "editable": true }
+                },
+                {
+                  "kind": "Switch",
+                  "props": {
+                    "name": "is_accepting_new_athletes",
+                    "label": "Accepting new athletes"
+                  }
+                },
+                {
+                  "kind": "NumberField",
+                  "props": {
+                    "name": "max_athletes_per_session",
+                    "label": "Max athletes per session"
+                  }
+                },
+                {
+                  "kind": "TagGroup",
+                  "props": { "name": "languages_spoken", "label": "Languages spoken" }
+                }
               ]
             }
           ]
@@ -102,12 +204,34 @@
           "kind": "Card",
           "requiresPermission": "coaching_profiles.update.rate",
           "children": [
-            { "kind": "Card.Header", "children": [{ "kind": "Text", "props": { "as": "h2", "className": "font-semibold", "children": "Reference hourly rate" } }] },
+            {
+              "kind": "Card.Header",
+              "children": [
+                {
+                  "kind": "Text",
+                  "props": {
+                    "as": "h2",
+                    "className": "font-semibold",
+                    "children": "Reference hourly rate"
+                  }
+                }
+              ]
+            },
             {
               "kind": "Card.Content",
               "children": [
-                { "kind": "NumberField", "props": { "name": "hourly_rate_cents", "label": "Hourly rate (cents)" } },
-                { "kind": "TextField", "props": { "name": "rate_currency", "label": "Currency (ISO 4217)", "maxLength": 3 } }
+                {
+                  "kind": "NumberField",
+                  "props": { "name": "hourly_rate_cents", "label": "Hourly rate (cents)" }
+                },
+                {
+                  "kind": "TextField",
+                  "props": {
+                    "name": "rate_currency",
+                    "label": "Currency (ISO 4217)",
+                    "maxLength": 3
+                  }
+                }
               ]
             }
           ]
@@ -116,8 +240,20 @@
           "kind": "View",
           "props": { "className": "flex justify-end gap-2" },
           "children": [
-            { "kind": "Button", "props": { "variant": "flat", "children": "Cancel" }, "actions": { "onPress": { "kind": "navigate", "toExpr": "'/tenant/coaching-profiles/' + $route.profile_id" } } },
-            { "kind": "Button", "props": { "variant": "primary", "type": "submit", "children": "Save changes" } }
+            {
+              "kind": "Button",
+              "props": { "variant": "flat", "children": "Cancel" },
+              "actions": {
+                "onPress": {
+                  "kind": "navigate",
+                  "toExpr": "'/tenant/coaching-profiles/' + $route.profile_id"
+                }
+              }
+            },
+            {
+              "kind": "Button",
+              "props": { "variant": "primary", "type": "submit", "children": "Save changes" }
+            }
           ]
         }
       ]

@@ -5,7 +5,7 @@
  *   {@link NotificationEmptyState} component.
  */
 
-import type { ReactNode } from 'react';
+import type { ReactNode } from "react";
 
 /**
  * Props accepted by the native {@link NotificationEmptyState}.
@@ -25,7 +25,7 @@ export interface NotificationEmptyStateProps {
    *
    * @default 'drawer'
    */
-  readonly variant?: 'drawer' | 'page';
+  readonly variant?: "drawer" | "page";
   /** Optional action element rendered inside `EmptyState.Content`. */
   readonly action?: ReactNode;
   /** Additional Uniwind classes appended to the root. */

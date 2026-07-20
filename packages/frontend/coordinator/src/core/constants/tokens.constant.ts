@@ -14,4 +14,4 @@
  *   cross-package consumer ever appears, promote this to
  *   `@stackra/contracts`.
  */
-export const TAB_LOCK_MANAGER = Symbol.for('TAB_LOCK_MANAGER');
+export const TAB_LOCK_MANAGER = Symbol.for("TAB_LOCK_MANAGER");

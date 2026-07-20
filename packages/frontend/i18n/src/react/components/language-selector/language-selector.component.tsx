@@ -24,14 +24,14 @@
  * ```
  */
 
-'use client';
+"use client";
 
-import React, { useCallback, useMemo } from 'react';
-import type { Key } from 'react';
-import { ComboBox, Input, Label, ListBox } from '@stackra/ui/react';
+import React, { useCallback, useMemo } from "react";
+import type { Key } from "react";
+import { ComboBox, Input, Label, ListBox } from "@stackra/ui/react";
 
-import { useI18n } from '@/core/hooks/use-i18n.hook';
-import type { LanguageSelectorProps, LocaleItem } from '@/react/interfaces';
+import { useI18n } from "@/core/hooks/use-i18n.hook";
+import type { LanguageSelectorProps, LocaleItem } from "@/react/interfaces";
 
 /**
  * Language selector — a filterable dropdown for switching the active locale.
@@ -40,23 +40,23 @@ export function LanguageSelector({
   label,
   locales,
   className,
-  placeholder = 'Select language',
+  placeholder = "Select language",
 }: LanguageSelectorProps): React.ReactElement {
   const { locale, setLocale, languages } = useI18n();
 
   // Fall back to supportedLocales when the consumer didn't override
   const items: LocaleItem[] = useMemo(
     () => locales ?? languages.map((code) => ({ code, name: code })),
-    [locales, languages]
+    [locales, languages],
   );
 
   const handleSelectionChange = useCallback(
     (key: Key | null) => {
-      if (typeof key === 'string' && key !== locale) {
+      if (typeof key === "string" && key !== locale) {
         void setLocale(key);
       }
     },
-    [locale, setLocale]
+    [locale, setLocale],
   );
 
   return (

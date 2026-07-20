@@ -5,6 +5,8 @@
  *   Defines all available options for configuring the CLI framework.
  */
 
+import type { InjectionToken, OptionalFactoryDependency } from "@stackra/contracts";
+
 /**
  * Console module configuration options.
  *
@@ -40,5 +42,5 @@ export interface IConsoleModuleAsyncOptions {
   useFactory: (...args: unknown[]) => IConsoleModuleOptions | Promise<IConsoleModuleOptions>;
 
   /** DI tokens to inject into the factory function. */
-  inject?: any[];
+  inject?: (InjectionToken<unknown> | OptionalFactoryDependency)[];
 }

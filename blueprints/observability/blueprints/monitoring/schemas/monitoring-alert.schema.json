@@ -15,7 +15,9 @@
     "incrementing": false,
     "model": "Academorix\\Observability\\Monitoring\\Models\\MonitoringAlert",
     "interface": "Academorix\\Observability\\Monitoring\\Contracts\\Data\\MonitoringAlertInterface",
-    "implements": ["Academorix\\Observability\\Monitoring\\Contracts\\Data\\MonitoringAlertInterface"],
+    "implements": [
+      "Academorix\\Observability\\Monitoring\\Contracts\\Data\\MonitoringAlertInterface"
+    ],
     "traits": [
       "HasFactory",
       "HasUlids",
@@ -115,19 +117,42 @@
     "indexes": [
       { "columns": ["tenant_id", "status", "fired_at"], "name": "monitoring_alerts_status_idx" },
       { "columns": ["tenant_id", "severity", "status"], "name": "monitoring_alerts_severity_idx" },
-      { "columns": ["monitoring_alert_policy_id", "status", "fired_at"], "name": "monitoring_alerts_by_policy_idx" },
-      { "columns": ["monitoring_incident_id"], "name": "monitoring_alerts_incident_idx", "predicate": "monitoring_incident_id IS NOT NULL" },
+      {
+        "columns": ["monitoring_alert_policy_id", "status", "fired_at"],
+        "name": "monitoring_alerts_by_policy_idx"
+      },
+      {
+        "columns": ["monitoring_incident_id"],
+        "name": "monitoring_alerts_incident_idx",
+        "predicate": "monitoring_incident_id IS NOT NULL"
+      },
       { "columns": ["created_at"], "name": "monitoring_alerts_retention_idx" }
     ]
   },
-  "required": ["id", "tenant_id", "monitoring_alert_policy_id", "severity", "status", "fired_at", "signal_value", "created_at", "updated_at"],
+  "required": [
+    "id",
+    "tenant_id",
+    "monitoring_alert_policy_id",
+    "severity",
+    "status",
+    "fired_at",
+    "signal_value",
+    "created_at",
+    "updated_at"
+  ],
   "properties": {
     "id": { "type": "string", "pattern": "^mal_[0-9A-HJKMNP-TV-Z]{26}$" },
     "tenant_id": { "type": "string", "pattern": "^ten_[0-9A-HJKMNP-TV-Z]{26}$" },
     "monitoring_alert_policy_id": { "type": "string", "pattern": "^map_[0-9A-HJKMNP-TV-Z]{26}$" },
-    "monitoring_incident_id": { "type": ["string", "null"], "pattern": "^mci_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "monitoring_incident_id": {
+      "type": ["string", "null"],
+      "pattern": "^mci_[0-9A-HJKMNP-TV-Z]{26}$"
+    },
     "severity": { "type": "string", "enum": ["p1", "p2", "p3", "p4"] },
-    "status": { "type": "string", "enum": ["firing", "acknowledged", "resolved", "suppressed", "expired"] },
+    "status": {
+      "type": "string",
+      "enum": ["firing", "acknowledged", "resolved", "suppressed", "expired"]
+    },
     "fired_at": { "type": "string", "format": "date-time" },
     "acknowledged_at": { "type": ["string", "null"], "format": "date-time" },
     "acknowledged_by_user_id": { "type": ["string", "null"] },

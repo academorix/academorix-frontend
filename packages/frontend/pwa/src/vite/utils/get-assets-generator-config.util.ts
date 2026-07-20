@@ -9,7 +9,7 @@
  *   at the call site (we don't hard-depend on the generator's types).
  */
 
-import type { IGetAssetsGeneratorConfigInput } from '../interfaces';
+import type { IGetAssetsGeneratorConfigInput } from "../interfaces";
 
 /**
  * Compose a `@vite-pwa/assets-generator` config.
@@ -30,9 +30,9 @@ import type { IGetAssetsGeneratorConfigInput } from '../interfaces';
  * ```
  */
 export function getAssetsGeneratorConfig(
-  input: IGetAssetsGeneratorConfigInput
+  input: IGetAssetsGeneratorConfigInput,
 ): Record<string, unknown> {
-  const { source, preset = 'minimal-2023', outDir = 'public/', extra } = input;
+  const { source, preset = "minimal-2023", outDir = "public/", extra } = input;
 
   return {
     preset,

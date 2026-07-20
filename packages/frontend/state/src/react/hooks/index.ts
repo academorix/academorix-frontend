@@ -8,6 +8,6 @@
  *   writes and server writes — live in `@stackra/query` (`useMutation`).
  */
 
-export { useStore } from './use-store';
-export { useStoreValue } from './use-store-value';
-export { useStoreDispatch } from './use-store-dispatch';
+export { useStore } from "./use-store";
+export { useStoreValue } from "./use-store-value";
+export { useStoreDispatch } from "./use-store-dispatch";

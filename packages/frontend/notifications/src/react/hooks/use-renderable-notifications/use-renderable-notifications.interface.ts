@@ -4,7 +4,7 @@
  * @description Return shape for the {@link useRenderableNotifications} hook.
  */
 
-import type { IRenderableNotification } from '@/core/interfaces';
+import type { IRenderableNotification } from "@/core/interfaces";
 
 /**
  * Value returned by {@link useRenderableNotifications}.

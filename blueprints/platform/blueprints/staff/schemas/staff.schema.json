@@ -53,32 +53,159 @@
   "x-database": {
     "engine": "postgres",
     "columns": {
-      "id": { "type": "string", "length": 64, "primary": true, "description": "Prefixed ULID: `stf_<26>`." },
-      "tenant_id": { "type": "string", "length": 64, "nullable": false, "foreign": { "table": "tenants", "column": "id", "onDelete": "cascade" } },
-      "branch_id": { "type": "string", "length": 64, "nullable": false, "foreign": { "table": "branches", "column": "id", "onDelete": "restrict" }, "description": "Home branch. Immutable in Wave 2b." },
-      "user_id": { "type": "string", "length": 64, "nullable": false, "foreign": { "table": "users", "column": "id", "onDelete": "restrict" }, "description": "The login/identity side. RESTRICT — user cannot be archived while an active Staff row references it. Immutable post-create." },
-      "employee_number": { "type": "string", "length": 32, "nullable": true, "description": "External HR system integration ID. Unique per (tenant_id, employee_number) when non-null." },
-      "employment_type": { "type": "string", "length": 16, "nullable": false, "description": "Enum: full_time / part_time / contract / volunteer / intern / seasonal." },
-      "employment_status": { "type": "string", "length": 16, "nullable": false, "default": "'pre_hire'", "description": "Enum: pre_hire / active / on_leave / suspended / offboarding / offboarded." },
-      "position": { "type": "string", "length": 128, "nullable": false, "description": "Free-text job title. e.g. 'Head Coach', 'Receptionist', 'HR Manager'." },
-      "department": { "type": "string", "length": 64, "nullable": true, "description": "Free-text. e.g. 'Sports', 'Front Desk', 'Facilities', 'Admin'." },
-      "is_branch_manager": { "type": "boolean", "nullable": false, "default": "false", "description": "Exactly one active Staff per branch may hold this — enforced by partial unique index." },
-      "reports_to_staff_id": { "type": "string", "length": 64, "nullable": true, "foreign": { "table": "staff", "column": "id", "onDelete": "set null" }, "description": "Self-reference for the org chart. Available when staff_org_chart entitlement is on (Enterprise)." },
-      "started_at": { "type": "date", "nullable": false, "description": "Hire date. Locked once employment_status leaves pre_hire." },
-      "ended_at": { "type": "date", "nullable": true, "description": "Offboard date. Set on employment_status → offboarded." },
-      "termination_reason": { "type": "string", "length": 32, "nullable": true, "description": "Enum: resigned / terminated / retired / contract_ended / seasonal_end / other. Required when employment_status transitions to offboarding." },
-      "termination_notes": { "type": "text", "nullable": true, "description": "HR-visible internal notes on the termination. Confidential-tier." },
-      "probation_ends_at": { "type": "date", "nullable": true, "description": "For full_time/part_time hires. Max 365 days from started_at." },
-      "weekly_hours": { "type": "integer", "nullable": true, "description": "Contracted weekly hours. Helps schedule against capacity." },
-      "compensation_type": { "type": "string", "length": 16, "nullable": true, "description": "Enum: hourly / salary / stipend / volunteer / commission. REGULATED_FINANCIAL-tier. Requires staff_compensation_tracking entitlement + staff.manage.compensation permission." },
-      "compensation_amount_cents": { "type": "integer", "nullable": true, "description": "REGULATED_FINANCIAL-tier. Redacted unless caller carries staff.view.compensation." },
-      "compensation_currency": { "type": "string", "length": 3, "nullable": true, "description": "ISO 4217. REGULATED_FINANCIAL-tier." },
-      "pay_frequency": { "type": "string", "length": 16, "nullable": true, "description": "Enum: hourly / weekly / biweekly / monthly / per_session. REGULATED_FINANCIAL-tier." },
-      "emergency_contact_name": { "type": "string", "length": 128, "nullable": true, "description": "CONFIDENTIAL-tier. Redacted unless caller carries staff.view.emergency_contact. Hard-purged 90 days post-offboarding." },
-      "emergency_contact_phone": { "type": "string", "length": 20, "nullable": true, "description": "E.164 phone. CONFIDENTIAL-tier." },
-      "emergency_contact_relationship": { "type": "string", "length": 32, "nullable": true, "description": "Free-text: 'spouse', 'parent', etc. CONFIDENTIAL-tier." },
-      "tax_id_last4": { "type": "string", "length": 4, "nullable": true, "description": "Last 4 digits of SSN/national tax ID. CONFIDENTIAL-tier. Full ID NEVER stored." },
-      "notes": { "type": "text", "nullable": true, "description": "HR-visible internal notes. Confidential-tier." },
+      "id": {
+        "type": "string",
+        "length": 64,
+        "primary": true,
+        "description": "Prefixed ULID: `stf_<26>`."
+      },
+      "tenant_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "foreign": { "table": "tenants", "column": "id", "onDelete": "cascade" }
+      },
+      "branch_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "foreign": { "table": "branches", "column": "id", "onDelete": "restrict" },
+        "description": "Home branch. Immutable in Wave 2b."
+      },
+      "user_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "foreign": { "table": "users", "column": "id", "onDelete": "restrict" },
+        "description": "The login/identity side. RESTRICT — user cannot be archived while an active Staff row references it. Immutable post-create."
+      },
+      "employee_number": {
+        "type": "string",
+        "length": 32,
+        "nullable": true,
+        "description": "External HR system integration ID. Unique per (tenant_id, employee_number) when non-null."
+      },
+      "employment_type": {
+        "type": "string",
+        "length": 16,
+        "nullable": false,
+        "description": "Enum: full_time / part_time / contract / volunteer / intern / seasonal."
+      },
+      "employment_status": {
+        "type": "string",
+        "length": 16,
+        "nullable": false,
+        "default": "'pre_hire'",
+        "description": "Enum: pre_hire / active / on_leave / suspended / offboarding / offboarded."
+      },
+      "position": {
+        "type": "string",
+        "length": 128,
+        "nullable": false,
+        "description": "Free-text job title. e.g. 'Head Coach', 'Receptionist', 'HR Manager'."
+      },
+      "department": {
+        "type": "string",
+        "length": 64,
+        "nullable": true,
+        "description": "Free-text. e.g. 'Sports', 'Front Desk', 'Facilities', 'Admin'."
+      },
+      "is_branch_manager": {
+        "type": "boolean",
+        "nullable": false,
+        "default": "false",
+        "description": "Exactly one active Staff per branch may hold this — enforced by partial unique index."
+      },
+      "reports_to_staff_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": true,
+        "foreign": { "table": "staff", "column": "id", "onDelete": "set null" },
+        "description": "Self-reference for the org chart. Available when staff_org_chart entitlement is on (Enterprise)."
+      },
+      "started_at": {
+        "type": "date",
+        "nullable": false,
+        "description": "Hire date. Locked once employment_status leaves pre_hire."
+      },
+      "ended_at": {
+        "type": "date",
+        "nullable": true,
+        "description": "Offboard date. Set on employment_status → offboarded."
+      },
+      "termination_reason": {
+        "type": "string",
+        "length": 32,
+        "nullable": true,
+        "description": "Enum: resigned / terminated / retired / contract_ended / seasonal_end / other. Required when employment_status transitions to offboarding."
+      },
+      "termination_notes": {
+        "type": "text",
+        "nullable": true,
+        "description": "HR-visible internal notes on the termination. Confidential-tier."
+      },
+      "probation_ends_at": {
+        "type": "date",
+        "nullable": true,
+        "description": "For full_time/part_time hires. Max 365 days from started_at."
+      },
+      "weekly_hours": {
+        "type": "integer",
+        "nullable": true,
+        "description": "Contracted weekly hours. Helps schedule against capacity."
+      },
+      "compensation_type": {
+        "type": "string",
+        "length": 16,
+        "nullable": true,
+        "description": "Enum: hourly / salary / stipend / volunteer / commission. REGULATED_FINANCIAL-tier. Requires staff_compensation_tracking entitlement + staff.manage.compensation permission."
+      },
+      "compensation_amount_cents": {
+        "type": "integer",
+        "nullable": true,
+        "description": "REGULATED_FINANCIAL-tier. Redacted unless caller carries staff.view.compensation."
+      },
+      "compensation_currency": {
+        "type": "string",
+        "length": 3,
+        "nullable": true,
+        "description": "ISO 4217. REGULATED_FINANCIAL-tier."
+      },
+      "pay_frequency": {
+        "type": "string",
+        "length": 16,
+        "nullable": true,
+        "description": "Enum: hourly / weekly / biweekly / monthly / per_session. REGULATED_FINANCIAL-tier."
+      },
+      "emergency_contact_name": {
+        "type": "string",
+        "length": 128,
+        "nullable": true,
+        "description": "CONFIDENTIAL-tier. Redacted unless caller carries staff.view.emergency_contact. Hard-purged 90 days post-offboarding."
+      },
+      "emergency_contact_phone": {
+        "type": "string",
+        "length": 20,
+        "nullable": true,
+        "description": "E.164 phone. CONFIDENTIAL-tier."
+      },
+      "emergency_contact_relationship": {
+        "type": "string",
+        "length": 32,
+        "nullable": true,
+        "description": "Free-text: 'spouse', 'parent', etc. CONFIDENTIAL-tier."
+      },
+      "tax_id_last4": {
+        "type": "string",
+        "length": 4,
+        "nullable": true,
+        "description": "Last 4 digits of SSN/national tax ID. CONFIDENTIAL-tier. Full ID NEVER stored."
+      },
+      "notes": {
+        "type": "text",
+        "nullable": true,
+        "description": "HR-visible internal notes. Confidential-tier."
+      },
       "metadata": { "type": "jsonb", "nullable": true },
       "created_by": { "type": "string", "length": 64, "nullable": true },
       "updated_by": { "type": "string", "length": 64, "nullable": true },
@@ -144,7 +271,10 @@
     "position": { "type": "string", "minLength": 1, "maxLength": 128 },
     "department": { "type": ["string", "null"], "maxLength": 64 },
     "is_branch_manager": { "type": "boolean" },
-    "reports_to_staff_id": { "type": ["string", "null"], "pattern": "^stf_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "reports_to_staff_id": {
+      "type": ["string", "null"],
+      "pattern": "^stf_[0-9A-HJKMNP-TV-Z]{26}$"
+    },
     "started_at": { "type": "string", "format": "date" },
     "ended_at": { "type": ["string", "null"], "format": "date" },
     "termination_reason": {

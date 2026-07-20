@@ -5,8 +5,8 @@
  *   contribution.
  */
 
-export { StorageDevtoolsPanel } from './storage.devtools-panel';
+export { StorageDevtoolsPanel } from "./storage.devtools-panel";
 export {
   StorageDevtoolsPanelView,
   type StorageDevtoolsPanelViewProps,
-} from './storage-devtools-panel-view';
+} from "./storage-devtools-panel-view";

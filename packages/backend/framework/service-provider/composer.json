@@ -1,52 +1,58 @@
 {
-    "name": "academorix/service-provider",
-    "type": "library",
-    "description": "Attribute-driven module service provider for Laravel — declarative resource loading, olvlvl-cached discovery, lifecycle hooks. The enterprise-grade replacement for hand-rolled boot() / register() methods.",
-    "license": "proprietary",
-    "keywords": ["academorix", "laravel", "service-provider", "attributes", "modules"],
-    "require": {
-        "php": "^8.3",
-        "academorix/console": "@dev",
-        "academorix/enum": "@dev",
-        "academorix/foundation": "@dev",
-        "illuminate/console": "^13.0",
-        "illuminate/contracts": "^13.0",
-        "illuminate/routing": "^13.0",
-        "illuminate/support": "^13.0",
-        "olvlvl/composer-attribute-collector": "^2.0"
-    },
-    "require-dev": {
-        "orchestra/testbench": "^11.0",
-        "pestphp/pest": "^4.0",
-        "phpstan/phpstan": "^2.0"
-    },
-    "suggest": {
-        "spatie/laravel-health": "For HasHealthChecks integration"
-    },
-    "autoload": {
-        "psr-4": {
-            "Academorix\\ServiceProvider\\": "src/"
-        }
-    },
-    "autoload-dev": {
-        "psr-4": {
-            "Academorix\\ServiceProvider\\Tests\\": "tests/"
-        }
-    },
-    "extra": {
-        "laravel": {
-            "providers": [
-                "Academorix\\ServiceProvider\\Providers\\ServiceProviderServiceProvider"
-            ]
-        }
-    },
-    "config": {
-        "sort-packages": true,
-        "allow-plugins": {
-            "pestphp/pest-plugin": true,
-            "olvlvl/composer-attribute-collector": true
-        }
-    },
-    "minimum-stability": "stable",
-    "prefer-stable": true
+  "name": "academorix/service-provider",
+  "type": "library",
+  "description": "Attribute-driven module service provider for Laravel — declarative resource loading, olvlvl-cached discovery, lifecycle hooks. The enterprise-grade replacement for hand-rolled boot() / register() methods.",
+  "license": "proprietary",
+  "keywords": [
+    "academorix",
+    "laravel",
+    "service-provider",
+    "attributes",
+    "modules"
+  ],
+  "require": {
+    "php": "^8.3",
+    "academorix/console": "@dev",
+    "academorix/enum": "@dev",
+    "academorix/foundation": "@dev",
+    "illuminate/console": "^13.0",
+    "illuminate/contracts": "^13.0",
+    "illuminate/routing": "^13.0",
+    "illuminate/support": "^13.0",
+    "olvlvl/composer-attribute-collector": "^2.0"
+  },
+  "require-dev": {
+    "orchestra/testbench": "^11.0",
+    "pestphp/pest": "^4.0",
+    "phpstan/phpstan": "^2.0"
+  },
+  "suggest": {
+    "spatie/laravel-health": "For HasHealthChecks integration"
+  },
+  "autoload": {
+    "psr-4": {
+      "Academorix\\ServiceProvider\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Academorix\\ServiceProvider\\Tests\\": "tests/"
+    }
+  },
+  "extra": {
+    "laravel": {
+      "providers": [
+        "Academorix\\ServiceProvider\\Providers\\ServiceProviderServiceProvider"
+      ]
+    }
+  },
+  "config": {
+    "sort-packages": true,
+    "allow-plugins": {
+      "pestphp/pest-plugin": true,
+      "olvlvl/composer-attribute-collector": true
+    }
+  },
+  "minimum-stability": "stable",
+  "prefer-stable": true
 }

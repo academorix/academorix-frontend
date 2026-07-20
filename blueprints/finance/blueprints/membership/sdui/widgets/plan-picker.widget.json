@@ -56,7 +56,11 @@
           {
             "kind": "View",
             "children": [
-              { "kind": "Text", "props": { "className": "font-medium" }, "bindings": { "children": { "$ref": "item.name" } } },
+              {
+                "kind": "Text",
+                "props": { "className": "font-medium" },
+                "bindings": { "children": { "$ref": "item.name" } }
+              },
               {
                 "kind": "Text",
                 "props": { "className": "text-xs text-muted" },

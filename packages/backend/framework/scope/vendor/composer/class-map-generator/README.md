@@ -14,19 +14,16 @@ Install the latest version with:
 composer require composer/class-map-generator
 ```
 
-
 Requirements
 ------------
 
-* PHP 7.2 is required.
-
+- PHP 7.2 is required.
 
 Basic usage
 -----------
 
 If all you want is to scan a directory and extract a classmap with all
 classes/interfaces/traits/enums mapped to their paths, you can simply use:
-
 
 ```php
 use Composer\ClassMapGenerator\ClassMapGenerator;
@@ -37,8 +34,9 @@ foreach ($map as $symbol => $path) {
 }
 ```
 
-For more advanced usage, you can instantiate a generator object and call scanPaths one or more time
-then call getClassMap to get a ClassMap object containing the resulting map + eventual warnings.
+For more advanced usage, you can instantiate a generator object and call
+scanPaths one or more time then call getClassMap to get a ClassMap object
+containing the resulting map + eventual warnings.
 
 ```php
 use Composer\ClassMapGenerator\ClassMapGenerator;
@@ -58,8 +56,8 @@ foreach ($classMap->getAmbiguousClasses() as $symbol => $paths) {
 }
 ```
 
-
 License
 -------
 
-composer/class-map-generator is licensed under the MIT License, see the LICENSE file for details.
+composer/class-map-generator is licensed under the MIT License, see the LICENSE
+file for details.

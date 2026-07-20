@@ -32,11 +32,7 @@ export interface IBroadcastViewLogRecord {
    * state transitions.
    */
   readonly eventType:
-    | "unlock_success"
-    | "unlock_failure"
-    | "resolve_success"
-    | "resolve_denied"
-    | "revoked";
+    "unlock_success" | "unlock_failure" | "resolve_success" | "resolve_denied" | "revoked";
 
   /** Human-facing event label already localised on the backend. */
   readonly eventTypeLabel: string;

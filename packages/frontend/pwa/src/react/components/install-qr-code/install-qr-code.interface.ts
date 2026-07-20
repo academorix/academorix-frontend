@@ -27,7 +27,7 @@ export interface InstallQrCodeProps {
    *
    * @default 'M'
    */
-  readonly errorCorrection?: 'L' | 'M' | 'Q' | 'H';
+  readonly errorCorrection?: "L" | "M" | "Q" | "H";
   /** Additional CSS classes appended to the root. */
   readonly className?: string;
   /** Optional card title rendered above the QR code. */

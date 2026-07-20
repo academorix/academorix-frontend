@@ -5,6 +5,7 @@
  */
 
 import { describe, it, expect, beforeEach } from "vitest";
+
 import { TestConsoleOutput } from "@/testing/test-console-output";
 
 describe("TestConsoleOutput", () => {

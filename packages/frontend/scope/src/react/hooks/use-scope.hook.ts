@@ -11,11 +11,11 @@
  *   state changes, satisfying that contract.
  */
 
-import { useCallback, useSyncExternalStore } from 'react';
-import { useInject } from '@stackra/container/react';
-import { SCOPE_SERVICE } from '@/core/constants';
-import type { ScopeService } from '@/core/services';
-import type { IScopeContext, IScopeNodeTreeNode } from '@/core/interfaces';
+import { useCallback, useSyncExternalStore } from "react";
+import { useInject } from "@stackra/container/react";
+import { SCOPE_SERVICE } from "@/core/constants";
+import type { ScopeService } from "@/core/services";
+import type { IScopeContext, IScopeNodeTreeNode } from "@/core/interfaces";
 
 /** Value returned by {@link useScope}. */
 export interface UseScopeResult {

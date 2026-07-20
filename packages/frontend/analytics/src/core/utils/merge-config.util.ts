@@ -5,12 +5,12 @@
  *   provider instances that are disabled or missing a required field.
  */
 
-import type { IAnalyticsInstanceConfig, IAnalyticsModuleOptions } from '../interfaces';
-import { ANALYTICS_REQUIRED_FIELDS, DEFAULT_ANALYTICS_CONFIG } from '../constants';
+import type { IAnalyticsInstanceConfig, IAnalyticsModuleOptions } from "../interfaces";
+import { ANALYTICS_REQUIRED_FIELDS, DEFAULT_ANALYTICS_CONFIG } from "../constants";
 
 /** Whether a value counts as "present" for a required field. */
 function isPresent(value: unknown): boolean {
-  return value !== undefined && value !== null && value !== '';
+  return value !== undefined && value !== null && value !== "";
 }
 
 /**

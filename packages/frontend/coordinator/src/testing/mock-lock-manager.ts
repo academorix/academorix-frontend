@@ -8,7 +8,7 @@
  *   consumer code that relies on `run()` serialising execution.
  */
 
-import type { ILockOptions } from '@/core/interfaces';
+import type { ILockOptions } from "@/core/interfaces";
 
 /**
  * In-memory lock manager for testing.
@@ -27,7 +27,7 @@ export class MockLockManager {
   public async run<T>(
     name: string,
     callback: () => Promise<T> | T,
-    options: ILockOptions = {}
+    options: ILockOptions = {},
   ): Promise<T> {
     const previous = this.queues.get(name) ?? Promise.resolve();
     let release!: () => void;
@@ -70,7 +70,7 @@ export class MockLockManager {
   private awaitWithTimeout(
     previous: Promise<void>,
     timeoutMs: number | undefined,
-    name: string
+    name: string,
   ): Promise<void> {
     if (!timeoutMs || timeoutMs <= 0) return previous;
     return new Promise<void>((resolve, reject) => {

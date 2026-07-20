@@ -26,9 +26,22 @@
     "engine": "postgres",
     "columns": {
       "id": { "type": "string", "length": 30, "primary": true },
-      "identity_id": { "type": "string", "length": 30, "nullable": false, "description": "FK to identities.id ON DELETE CASCADE." },
-      "token_hash": { "type": "text", "nullable": false, "description": "SHA-256 hash. Plaintext returned once in the emailed verification link." },
-      "reason": { "type": "string", "nullable": false, "description": "'registration' | 'email_change' | 'resend'. Passed to EmailVerificationRequested event payload." },
+      "identity_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "description": "FK to identities.id ON DELETE CASCADE."
+      },
+      "token_hash": {
+        "type": "text",
+        "nullable": false,
+        "description": "SHA-256 hash. Plaintext returned once in the emailed verification link."
+      },
+      "reason": {
+        "type": "string",
+        "nullable": false,
+        "description": "'registration' | 'email_change' | 'resend'. Passed to EmailVerificationRequested event payload."
+      },
       "expires_at": { "type": "timestamptz", "nullable": false },
       "consumed_at": { "type": "timestamptz", "nullable": true },
       "created_by": { "type": "uuid", "nullable": true },
@@ -38,11 +51,28 @@
     },
     "indexes": [
       { "columns": ["token_hash"], "unique": true, "name": "auth_email_verifications_hash_unique" },
-      { "columns": ["identity_id"], "unique": false, "name": "auth_email_verifications_identity_idx" },
-      { "columns": ["expires_at"], "unique": false, "predicate": "consumed_at IS NULL", "name": "auth_email_verifications_active_expiry_idx" }
+      {
+        "columns": ["identity_id"],
+        "unique": false,
+        "name": "auth_email_verifications_identity_idx"
+      },
+      {
+        "columns": ["expires_at"],
+        "unique": false,
+        "predicate": "consumed_at IS NULL",
+        "name": "auth_email_verifications_active_expiry_idx"
+      }
     ]
   },
-  "required": ["id", "identity_id", "token_hash", "reason", "expires_at", "created_at", "updated_at"],
+  "required": [
+    "id",
+    "identity_id",
+    "token_hash",
+    "reason",
+    "expires_at",
+    "created_at",
+    "updated_at"
+  ],
   "properties": {
     "id": { "type": "string", "pattern": "^aev_[0-9A-HJKMNP-TV-Z]{26}$" },
     "identity_id": { "type": "string", "pattern": "^idn_[0-9A-HJKMNP-TV-Z]{26}$" },

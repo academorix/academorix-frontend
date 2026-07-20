@@ -3,7 +3,10 @@
   "$version": 1,
   "title": "platform-user \u2014 subprocessors",
   "description": "One optional subprocessor: PagerDuty for on-call rotation resolution + escalation paging. Optional \u2014 enabled per environment via `platform-user.on_call.enabled`. Off = the internal `on_call_rotation_entries` table backs OnCallResolver and no external calls fire. Even when enabled, only PlatformUser display_name + phone_e164 + department are sent to PagerDuty \u2014 never tenant data. Since PagerDuty processes ACADEMORIX employee data (not tenant end-user data), this is a workforce-management subprocessor arrangement, distinct from the tenant-side subprocessor tier that GDPR Art. 28 primarily governs.",
-  "regulatoryBasis": ["soc2 CC6.7 (subprocessor evaluation)", "iso 27001 A.15.1 (supplier relationships)"],
+  "regulatoryBasis": [
+    "soc2 CC6.7 (subprocessor evaluation)",
+    "iso 27001 A.15.1 (supplier relationships)"
+  ],
   "subprocessors": [
     {
       "name": "PagerDuty",

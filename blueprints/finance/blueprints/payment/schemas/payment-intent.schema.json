@@ -191,9 +191,22 @@
     },
     "indexes": [
       { "columns": ["tenant_id", "invoice_id"], "name": "payment_intents_tenant_invoice_idx" },
-      { "columns": ["tenant_id", "status"], "name": "payment_intents_status_idx", "description": "For reconciliation queries + stale-intent detection." },
-      { "columns": ["provider_reference_id"], "name": "payment_intents_provider_reference_idx", "description": "For webhook dispatch lookup — the webhook body carries provider_reference_id; we join on it. Note: encrypted column requires a matching hash column for exact-match index in production; here we assume the query goes through the SearchableEncrypted trait." },
-      { "columns": ["status", "created_at"], "name": "payment_intents_stale_idx", "predicate": "status IN ('initialized', 'requires_action', 'requires_payment_method', 'requires_confirmation', 'processing')", "description": "For ExpireStalePaymentIntentsJob nightly sweep." },
+      {
+        "columns": ["tenant_id", "status"],
+        "name": "payment_intents_status_idx",
+        "description": "For reconciliation queries + stale-intent detection."
+      },
+      {
+        "columns": ["provider_reference_id"],
+        "name": "payment_intents_provider_reference_idx",
+        "description": "For webhook dispatch lookup — the webhook body carries provider_reference_id; we join on it. Note: encrypted column requires a matching hash column for exact-match index in production; here we assume the query goes through the SearchableEncrypted trait."
+      },
+      {
+        "columns": ["status", "created_at"],
+        "name": "payment_intents_stale_idx",
+        "predicate": "status IN ('initialized', 'requires_action', 'requires_payment_method', 'requires_confirmation', 'processing')",
+        "description": "For ExpireStalePaymentIntentsJob nightly sweep."
+      },
       { "columns": ["tenant_id", "created_at"], "name": "payment_intents_recent_idx" }
     ]
   },
@@ -225,13 +238,30 @@
     "currency": { "type": "string", "pattern": "^[A-Z]{3}$" },
     "status": {
       "type": "string",
-      "enum": ["initialized", "requires_action", "requires_payment_method", "requires_confirmation", "requires_capture", "processing", "succeeded", "cancelled", "failed"]
+      "enum": [
+        "initialized",
+        "requires_action",
+        "requires_payment_method",
+        "requires_confirmation",
+        "requires_capture",
+        "processing",
+        "succeeded",
+        "cancelled",
+        "failed"
+      ]
     },
     "capture_method": { "type": "string", "enum": ["automatic", "manual"] },
     "confirmation_method": { "type": "string", "enum": ["automatic", "manual"] },
     "next_action_type": {
       "type": ["string", "null"],
-      "enum": [null, "redirect_to_url", "use_stripe_sdk", "three_d_secure_redirect", "verify_with_micro_deposits", "oxxo_display_details"]
+      "enum": [
+        null,
+        "redirect_to_url",
+        "use_stripe_sdk",
+        "three_d_secure_redirect",
+        "verify_with_micro_deposits",
+        "oxxo_display_details"
+      ]
     },
     "next_action_url": { "type": ["string", "null"], "format": "uri", "maxLength": 512 },
     "next_action_data": { "type": ["object", "null"] },
@@ -241,7 +271,15 @@
     "last_error_message": { "type": ["string", "null"], "maxLength": 512 },
     "last_error_type": {
       "type": ["string", "null"],
-      "enum": [null, "authentication_error", "card_error", "api_error", "idempotency_error", "rate_limit_error", "validation_error"]
+      "enum": [
+        null,
+        "authentication_error",
+        "card_error",
+        "api_error",
+        "idempotency_error",
+        "rate_limit_error",
+        "validation_error"
+      ]
     },
     "succeeded_at": { "type": ["string", "null"], "format": "date-time" },
     "cancelled_at": { "type": ["string", "null"], "format": "date-time" },

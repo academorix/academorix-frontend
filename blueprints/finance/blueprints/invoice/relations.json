@@ -175,11 +175,7 @@
       "onModels": ["Invoice"],
       "morphType": "customer_type",
       "morphId": "customer_id",
-      "supportedTypes": [
-        "user::User",
-        "sports::Athlete",
-        "organization::Organization"
-      ],
+      "supportedTypes": ["user::User", "sports::Athlete", "organization::Organization"],
       "description": "Polymorphic customer of the invoice. Each supported type is tenant-scoped. Observer validates cross-model tenant integrity on write."
     },
     {
@@ -201,11 +197,7 @@
       "onModels": ["CreditNote"],
       "morphType": "applied_to_type",
       "morphId": "applied_to_id",
-      "supportedTypes": [
-        "refund::Refund",
-        "invoice::Invoice",
-        "user::UserBalance"
-      ],
+      "supportedTypes": ["refund::Refund", "invoice::Invoice", "user::UserBalance"],
       "description": "Polymorphic target of applied credit notes. Set on status transition issued → applied."
     }
   ],

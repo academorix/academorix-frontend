@@ -4,4 +4,4 @@
  * @description Types re-exported by the UTM hook.
  */
 
-export type { IPwaUtmParams } from '@/core/interfaces';
+export type { IPwaUtmParams } from "@/core/interfaces";

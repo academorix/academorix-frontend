@@ -9,12 +9,12 @@
  *   by slicing off a specific facet of the snapshot.
  */
 
-import { useCallback, useSyncExternalStore } from 'react';
-import { useInject } from '@stackra/container/react';
+import { useCallback, useSyncExternalStore } from "react";
+import { useInject } from "@stackra/container/react";
 
-import { PWA_SERVICE } from '@/core/constants';
-import type { PwaService } from '@/core/services';
-import type { IUsePwaResult } from './use-pwa.interface';
+import { PWA_SERVICE } from "@/core/constants";
+import type { PwaService } from "@/core/services";
+import type { IUsePwaResult } from "./use-pwa.interface";
 
 /**
  * Aggregate PWA snapshot hook.

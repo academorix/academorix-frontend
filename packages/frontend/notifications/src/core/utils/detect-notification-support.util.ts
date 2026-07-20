@@ -18,7 +18,7 @@ export function detectNotificationSupport(): boolean {
   // `typeof` guard is the only safe way to probe a global in every
   // environment — SSR / RN / older Safari all react badly to a
   // direct reference.
-  if (typeof globalThis === 'undefined') return false;
+  if (typeof globalThis === "undefined") return false;
   const g = globalThis as { readonly Notification?: unknown };
-  return typeof g.Notification === 'function';
+  return typeof g.Notification === "function";
 }

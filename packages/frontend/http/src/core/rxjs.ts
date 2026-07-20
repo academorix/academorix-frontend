@@ -18,9 +18,9 @@
  * @module @stackra/http/rxjs
  */
 
-import { Observable } from 'rxjs';
+import { Observable } from "rxjs";
 
-import type { IHttpStream } from '@stackra/contracts';
+import type { IHttpStream } from "@stackra/contracts";
 
 /**
  * Wrap an `IHttpStream<T>` in an RxJS `Observable<T>`.

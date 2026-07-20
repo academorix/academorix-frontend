@@ -38,14 +38,82 @@
   "x-database": {
     "engine": "postgres",
     "columns": {
-      "id": { "type": "string", "length": 30, "primary": true, "description": "Prefixed ULID: `lat_<26>`." },
-      "tenant_id": { "type": "string", "length": 30, "nullable": false, "foreign": { "table": "tenants", "column": "id", "onUpdate": "cascade", "onDelete": "cascade" } },
-      "attendance_record_id": { "type": "string", "length": 30, "nullable": false, "foreign": { "table": "attendance_records", "column": "id", "onUpdate": "cascade", "onDelete": "restrict" }, "description": "Parent AttendanceRecord. IMMUTABLE. Cascade-deleted only when parent is hard-deleted." },
-      "session_id": { "type": "string", "length": 30, "nullable": false, "foreign": { "table": "sessions", "column": "id", "onUpdate": "cascade", "onDelete": "restrict" }, "description": "Denormalised from parent attendance_record.session_id. IMMUTABLE." },
-      "athlete_id": { "type": "string", "length": 30, "nullable": false, "foreign": { "table": "athletes", "column": "id", "onUpdate": "cascade", "onDelete": "restrict" }, "description": "Denormalised from parent attendance_record.athlete_id. IMMUTABLE." },
-      "minutes_late": { "type": "integer", "nullable": false, "description": "Minutes past session.starts_at. Must be > 0. IMMUTABLE — event timestamp facts." },
-      "policy_id": { "type": "string", "length": 30, "nullable": true, "foreign": { "table": "attendance_policies", "column": "id", "onUpdate": "cascade", "onDelete": "restrict" }, "description": "The AttendancePolicy resolved at check-in time. SNAPSHOT — survives even when the policy is later deactivated. IMMUTABLE." },
-      "penalty_applied": { "type": "string", "length": 32, "nullable": true, "description": "Enum: none / consume_pass_anyway / fractional_consume / notify_only. Snapshot of policy.late_arrival_penalty_type at check-in. IMMUTABLE." },
+      "id": {
+        "type": "string",
+        "length": 30,
+        "primary": true,
+        "description": "Prefixed ULID: `lat_<26>`."
+      },
+      "tenant_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": {
+          "table": "tenants",
+          "column": "id",
+          "onUpdate": "cascade",
+          "onDelete": "cascade"
+        }
+      },
+      "attendance_record_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": {
+          "table": "attendance_records",
+          "column": "id",
+          "onUpdate": "cascade",
+          "onDelete": "restrict"
+        },
+        "description": "Parent AttendanceRecord. IMMUTABLE. Cascade-deleted only when parent is hard-deleted."
+      },
+      "session_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": {
+          "table": "sessions",
+          "column": "id",
+          "onUpdate": "cascade",
+          "onDelete": "restrict"
+        },
+        "description": "Denormalised from parent attendance_record.session_id. IMMUTABLE."
+      },
+      "athlete_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": {
+          "table": "athletes",
+          "column": "id",
+          "onUpdate": "cascade",
+          "onDelete": "restrict"
+        },
+        "description": "Denormalised from parent attendance_record.athlete_id. IMMUTABLE."
+      },
+      "minutes_late": {
+        "type": "integer",
+        "nullable": false,
+        "description": "Minutes past session.starts_at. Must be > 0. IMMUTABLE — event timestamp facts."
+      },
+      "policy_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": true,
+        "foreign": {
+          "table": "attendance_policies",
+          "column": "id",
+          "onUpdate": "cascade",
+          "onDelete": "restrict"
+        },
+        "description": "The AttendancePolicy resolved at check-in time. SNAPSHOT — survives even when the policy is later deactivated. IMMUTABLE."
+      },
+      "penalty_applied": {
+        "type": "string",
+        "length": 32,
+        "nullable": true,
+        "description": "Enum: none / consume_pass_anyway / fractional_consume / notify_only. Snapshot of policy.late_arrival_penalty_type at check-in. IMMUTABLE."
+      },
       "metadata": { "type": "jsonb", "nullable": true },
       "created_by": { "type": "string", "length": 30, "nullable": true },
       "updated_by": { "type": "string", "length": 30, "nullable": true },
@@ -53,7 +121,11 @@
       "updated_at": { "type": "timestamptz", "nullable": false }
     },
     "indexes": [
-      { "columns": ["tenant_id", "athlete_id", "minutes_late"], "name": "late_arrivals_by_athlete_idx", "description": "Feeds coach dashboard's per-athlete lateness pattern view." },
+      {
+        "columns": ["tenant_id", "athlete_id", "minutes_late"],
+        "name": "late_arrivals_by_athlete_idx",
+        "description": "Feeds coach dashboard's per-athlete lateness pattern view."
+      },
       { "columns": ["tenant_id", "session_id"], "name": "late_arrivals_by_session_idx" },
       { "columns": ["attendance_record_id"], "name": "late_arrivals_by_attendance_idx" }
     ]

@@ -27,7 +27,7 @@
  */
 export async function registerBackgroundSync(
   tag: string,
-  registration: ServiceWorkerRegistration
+  registration: ServiceWorkerRegistration,
 ): Promise<boolean> {
   // Standard-lib DOM types don't include `sync` on ServiceWorkerRegistration
   // yet — Chromium ships it but it's an interop lag.

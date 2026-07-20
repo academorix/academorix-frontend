@@ -10,9 +10,9 @@
  *   swallow it.
  */
 
-import { useEffect } from 'react';
+import { useEffect } from "react";
 
-import type { IDevtoolsShortcut } from '@/core/interfaces';
+import type { IDevtoolsShortcut } from "@/core/interfaces";
 
 /**
  * Bind a global keyboard combo that fires `onFire`.
@@ -23,7 +23,7 @@ import type { IDevtoolsShortcut } from '@/core/interfaces';
 export function useDevtoolsShortcut(shortcut: IDevtoolsShortcut | false, onFire: () => void): void {
   useEffect(() => {
     // SSR guard — `window` is undefined during server renders.
-    if (typeof window === 'undefined') return;
+    if (typeof window === "undefined") return;
     if (!shortcut) return;
 
     const target = window;
@@ -56,9 +56,9 @@ export function useDevtoolsShortcut(shortcut: IDevtoolsShortcut | false, onFire:
       onFire();
     };
 
-    target.addEventListener('keydown', handler, true /* capture */);
+    target.addEventListener("keydown", handler, true /* capture */);
     return () => {
-      target.removeEventListener('keydown', handler, true);
+      target.removeEventListener("keydown", handler, true);
     };
   }, [shortcut, onFire]);
 }

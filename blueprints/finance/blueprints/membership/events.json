@@ -320,10 +320,7 @@
       "class": "Academorix\\Finance\\Membership\\Events\\MembershipTrialEnded",
       "trigger": "Trial period ended. Fires alongside the first real renewal attempt. Distinct from MembershipTrialConverted (which fires only on trial-to-paid conversion success).",
       "queue": "finance",
-      "consumers": [
-        "audit::WriteToAuditLog",
-        "activity::WriteToActivityLog"
-      ],
+      "consumers": ["audit::WriteToAuditLog", "activity::WriteToActivityLog"],
       "payload": {
         "membership_id": "ULID",
         "tenant_id": "ULID",
@@ -353,10 +350,7 @@
       "class": "Academorix\\Finance\\Membership\\Events\\MembershipPlanCreated",
       "trigger": "New plan added to the catalog. Consumes 1 unit of membership_plan_slot.",
       "queue": "finance",
-      "consumers": [
-        "audit::WriteToAuditLog",
-        "activity::WriteToActivityLog"
-      ],
+      "consumers": ["audit::WriteToAuditLog", "activity::WriteToActivityLog"],
       "payload": {
         "plan_id": "ULID (mbp_*)",
         "tenant_id": "ULID",
@@ -373,10 +367,7 @@
       "class": "Academorix\\Finance\\Membership\\Events\\MembershipPlanArchived",
       "trigger": "Plan archived (is_active=false). Refused when active memberships reference the plan — enforced by PreventPlanArchiveWithActiveMemberships hook. Releases 1 unit of membership_plan_slot.",
       "queue": "finance",
-      "consumers": [
-        "audit::WriteToAuditLog",
-        "activity::WriteToActivityLog"
-      ],
+      "consumers": ["audit::WriteToAuditLog", "activity::WriteToActivityLog"],
       "payload": {
         "plan_id": "ULID",
         "tenant_id": "ULID",
@@ -406,10 +397,7 @@
       "class": "Academorix\\Finance\\Membership\\Events\\PassIssued",
       "trigger": "One pass issued for a membership period. Fires N times when a period grants N passes.",
       "queue": "finance",
-      "consumers": [
-        "audit::WriteToAuditLog",
-        "cache::InvalidatePassCache"
-      ],
+      "consumers": ["audit::WriteToAuditLog", "cache::InvalidatePassCache"],
       "payload": {
         "pass_id": "ULID (pss_*)",
         "membership_id": "ULID",
@@ -442,10 +430,7 @@
       "class": "Academorix\\Finance\\Membership\\Events\\PassExpired",
       "trigger": "ExpireStalePassesJob nightly sweep found an unconsumed pass past valid_until. Distinct from PassRefunded (admin-initiated return).",
       "queue": "finance",
-      "consumers": [
-        "audit::WriteToAuditLog",
-        "cache::InvalidatePassCache"
-      ],
+      "consumers": ["audit::WriteToAuditLog", "cache::InvalidatePassCache"],
       "payload": {
         "pass_id": "ULID",
         "membership_id": "ULID",

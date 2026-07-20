@@ -23,11 +23,11 @@ import path from "node:path";
 
 import { describe, expect, it, beforeEach, afterEach, vi } from "vitest";
 
+import type { IPublishableRegistryEntry } from "@stackra/contracts";
+
+import { VendorPublishCommand } from "@/commands/vendor-publish.command";
 import { PublishableRegistry } from "@/publishing/registries/publishable.registry";
 import { StubRenderer } from "@/services/stub-renderer.service";
-import { VendorPublishCommand } from "@/commands/vendor-publish.command";
-
-import type { IPublishableRegistryEntry } from "@stackra/contracts";
 
 // ────────────────────────────────────────────────────────────────
 // Test doubles
@@ -344,7 +344,7 @@ describe("VendorPublishCommand", () => {
       expect(exitCode).toBe(0);
       // Prompt fired exactly once with the tags visible.
       expect(output.multiselect).toHaveBeenCalledTimes(1);
-      const options = output.multiselect.mock.calls[0]?.[1] as Array<{ value: string }>;
+      const options = output.multiselect.mock.calls[0]?.[1] as { value: string }[];
       expect(options.map((o) => o.value)).toContain(entry.tag);
       // File materialized.
       const dest = path.join(sandbox.cwd, entry.files[0]!.to!);

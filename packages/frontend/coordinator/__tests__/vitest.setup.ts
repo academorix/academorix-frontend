@@ -1,1 +1,1 @@
-import '@stackra/testing/setup';
+import "@stackra/testing/setup";

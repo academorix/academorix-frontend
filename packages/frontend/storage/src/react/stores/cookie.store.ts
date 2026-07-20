@@ -13,9 +13,9 @@
  *   choices, consent preferences) not blob-shaped data.
  */
 
-import type { IStorage, IStorageSetOptions } from '@stackra/contracts';
+import type { IStorage, IStorageSetOptions } from "@stackra/contracts";
 
-import { prefixKey, stripPrefix } from '@/core/utils/prefix-key.util';
+import { prefixKey, stripPrefix } from "@/core/utils/prefix-key.util";
 
 /**
  * Constructor config accepted by `CookieStore`.
@@ -51,7 +51,7 @@ export interface CookieStoreConfig {
    * default that keeps cookies for top-level GETs (locale, consent
    * choice) but drops them for cross-site subresource requests.
    */
-  readonly sameSite?: 'Strict' | 'Lax' | 'None';
+  readonly sameSite?: "Strict" | "Lax" | "None";
 
   /**
    * Only send the cookie over HTTPS. Defaults to `false` because
@@ -92,17 +92,17 @@ export class CookieStore implements IStorage {
   private readonly defaultMaxAge?: number;
   private readonly path: string;
   private readonly domain?: string;
-  private readonly sameSite: 'Strict' | 'Lax' | 'None';
+  private readonly sameSite: "Strict" | "Lax" | "None";
   private readonly secure: boolean;
 
   /**
    * @param config - Optional cookie-specific defaults.
    */
   public constructor(config: CookieStoreConfig = {}) {
-    this.prefix = config.prefix ?? '';
+    this.prefix = config.prefix ?? "";
     this.defaultMaxAge = config.maxAge;
-    this.path = config.path ?? '/';
-    this.sameSite = config.sameSite ?? 'Lax';
+    this.path = config.path ?? "/";
+    this.sameSite = config.sameSite ?? "Lax";
     this.secure = config.secure ?? false;
     if (config.domain) this.domain = config.domain;
   }
@@ -137,7 +137,7 @@ export class CookieStore implements IStorage {
   public async delete(key: string): Promise<void> {
     if (!this.isAvailable()) return;
     // Set an empty value with a max-age of 0 to expire immediately.
-    document.cookie = this.buildCookieString(prefixKey(this.prefix, key), '', 0);
+    document.cookie = this.buildCookieString(prefixKey(this.prefix, key), "", 0);
   }
 
   /** @inheritdoc */
@@ -146,7 +146,7 @@ export class CookieStore implements IStorage {
     for (const name of this.parseCookieNames()) {
       const userKey = stripPrefix(this.prefix, name);
       if (userKey === null) continue;
-      document.cookie = this.buildCookieString(name, '', 0);
+      document.cookie = this.buildCookieString(name, "", 0);
     }
   }
 
@@ -175,7 +175,7 @@ export class CookieStore implements IStorage {
    * SSR / worker contexts return `false`.
    */
   private isAvailable(): boolean {
-    return typeof document !== 'undefined' && typeof document.cookie === 'string';
+    return typeof document !== "undefined" && typeof document.cookie === "string";
   }
 
   /**
@@ -187,7 +187,7 @@ export class CookieStore implements IStorage {
     if (!cookieString) return null;
 
     const target = `${name}=`;
-    for (const part of cookieString.split(';')) {
+    for (const part of cookieString.split(";")) {
       const trimmed = part.trim();
       if (trimmed.startsWith(target)) {
         return decodeURIComponent(trimmed.slice(target.length));
@@ -205,9 +205,9 @@ export class CookieStore implements IStorage {
     if (!cookieString) return [];
 
     const names: string[] = [];
-    for (const part of cookieString.split(';')) {
+    for (const part of cookieString.split(";")) {
       const trimmed = part.trim();
-      const equalsIdx = trimmed.indexOf('=');
+      const equalsIdx = trimmed.indexOf("=");
       if (equalsIdx < 0) continue;
       names.push(trimmed.slice(0, equalsIdx));
     }
@@ -225,8 +225,8 @@ export class CookieStore implements IStorage {
   private buildCookieString(name: string, value: string, maxAge?: number): string {
     const parts: string[] = [`${name}=${value}`, `path=${this.path}`, `SameSite=${this.sameSite}`];
     if (this.domain) parts.push(`domain=${this.domain}`);
-    if (this.secure) parts.push('Secure');
+    if (this.secure) parts.push("Secure");
     if (maxAge !== undefined) parts.push(`Max-Age=${maxAge}`);
-    return parts.join('; ');
+    return parts.join("; ");
   }
 }

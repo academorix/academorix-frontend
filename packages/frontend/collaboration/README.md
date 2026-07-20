@@ -1,6 +1,8 @@
 # @stackra/collaboration
 
-Liveblocks-style real-time collaboration for the Stackra framework — presence, cursors, threads, shared state, and notifications with pluggable transports (BroadcastChannel, Laravel Reverb, mock).
+Liveblocks-style real-time collaboration for the Stackra framework — presence,
+cursors, threads, shared state, and notifications with pluggable transports
+(BroadcastChannel, Laravel Reverb, mock).
 
 ## Install
 
@@ -17,14 +19,14 @@ pnpm add @stackra/realtime
 ## Quick start
 
 ```typescript
-import { CollaborationModule } from '@stackra/collaboration';
+import { CollaborationModule } from "@stackra/collaboration";
 
 @Module({
   imports: [
     // 'broadcast' — same-origin tabs only, no server (BroadcastChannel)
     // 'reverb'    — Laravel Reverb backend via @stackra/realtime
     // 'auto'      — tries Reverb, falls back to BroadcastChannel
-    CollaborationModule.forRoot({ transport: 'broadcast' }),
+    CollaborationModule.forRoot({ transport: "broadcast" }),
   ],
 })
 export class AppModule {}
@@ -32,7 +34,8 @@ export class AppModule {}
 
 ## React hooks — all-in-one
 
-The primary surface is a set of React hooks. Each hook opens the room lazily on mount and cleans up on unmount:
+The primary surface is a set of React hooks. Each hook opens the room lazily on
+mount and cleans up on unmount:
 
 ```tsx
 import {
@@ -43,7 +46,7 @@ import {
   useThreads,
   useNotifications,
   useActivityFeed,
-} from '@stackra/collaboration';
+} from "@stackra/collaboration";
 ```
 
 ### `useRoom`
@@ -54,7 +57,7 @@ Join a room by id. Returns the current member list plus join/leave callbacks.
 function DocumentEditor({ docId, currentUser }) {
   const { members, leave } = useRoom(`doc-${docId}`, {
     self: currentUser,
-    metadata: { role: 'editor' },
+    metadata: { role: "editor" },
   });
 
   return (
@@ -78,7 +81,12 @@ function CollaborativeCanvas({ docId }) {
   return (
     <div onMouseMove={(e) => setCursor({ x: e.clientX, y: e.clientY })}>
       {cursors.map((c) => (
-        <Cursor key={c.member.id} x={c.position.x} y={c.position.y} name={c.member.name} />
+        <Cursor
+          key={c.member.id}
+          x={c.position.x}
+          y={c.position.y}
+          name={c.member.name}
+        />
       ))}
     </div>
   );
@@ -91,12 +99,17 @@ Emit and observe "user is typing" signals:
 
 ```tsx
 function ChatInput({ roomId, threadId }) {
-  const { typing, startTyping, stopTyping } = useTypingIndicator(roomId, threadId);
+  const { typing, startTyping, stopTyping } = useTypingIndicator(
+    roomId,
+    threadId,
+  );
 
   return (
     <>
       <input onFocus={startTyping} onBlur={stopTyping} />
-      {typing.length > 0 && <span>{typing.map((m) => m.name).join(', ')} typing…</span>}
+      {typing.length > 0 && (
+        <span>{typing.map((m) => m.name).join(", ")} typing…</span>
+      )}
     </>
   );
 }
@@ -104,11 +117,12 @@ function ChatInput({ roomId, threadId }) {
 
 ### `useSharedState`
 
-Room-scoped state that syncs across members. Any member can read, but only the room owner (configurable) can write:
+Room-scoped state that syncs across members. Any member can read, but only the
+room owner (configurable) can write:
 
 ```tsx
 function ScoreCard({ roomId }) {
-  const [score, setScore] = useSharedState(roomId, 'score', 0);
+  const [score, setScore] = useSharedState(roomId, "score", 0);
 
   return (
     <>
@@ -125,7 +139,9 @@ Comment threads with replies and resolve state:
 
 ```tsx
 function CommentsSidebar({ docId }) {
-  const { threads, createThread, replyToThread, resolveThread } = useThreads(`doc-${docId}`);
+  const { threads, createThread, replyToThread, resolveThread } = useThreads(
+    `doc-${docId}`,
+  );
 
   return (
     <ul>
@@ -156,7 +172,8 @@ function NotificationBell({ roomId }) {
 
 ### `useActivityFeed`
 
-Aggregated activity log — every thread create, resolve, and reply becomes a feed entry:
+Aggregated activity log — every thread create, resolve, and reply becomes a feed
+entry:
 
 ```tsx
 function ActivitySidebar({ roomId }) {
@@ -176,7 +193,7 @@ function ActivitySidebar({ roomId }) {
 Custom transport:
 
 ```typescript
-import type { CollaborationTransport } from '@stackra/collaboration';
+import type { CollaborationTransport } from "@stackra/collaboration";
 
 class MyTransport implements CollaborationTransport {
   connect(roomId: string) {
@@ -199,42 +216,62 @@ Register it via `CollaborationModule.forFeature('my-transport', MyTransport)`.
 ## Wire events
 
 ```typescript
-import { COLLABORATION_EVENTS } from '@stackra/contracts';
+import { COLLABORATION_EVENTS } from "@stackra/contracts";
 
-events.on(COLLABORATION_EVENTS.CURSOR_MOVE, ({ roomId, member, position }) => {});
+events.on(
+  COLLABORATION_EVENTS.CURSOR_MOVE,
+  ({ roomId, member, position }) => {},
+);
 events.on(COLLABORATION_EVENTS.CURSOR_REMOVE, ({ roomId, memberId }) => {});
-events.on(COLLABORATION_EVENTS.TYPING_START, ({ roomId, member, threadId }) => {});
-events.on(COLLABORATION_EVENTS.TYPING_STOP, ({ roomId, member, threadId }) => {});
+events.on(
+  COLLABORATION_EVENTS.TYPING_START,
+  ({ roomId, member, threadId }) => {},
+);
+events.on(
+  COLLABORATION_EVENTS.TYPING_STOP,
+  ({ roomId, member, threadId }) => {},
+);
 events.on(COLLABORATION_EVENTS.THREAD_CREATE, ({ roomId, thread }) => {});
-events.on(COLLABORATION_EVENTS.THREAD_REPLY, ({ roomId, threadId, message }) => {});
-events.on(COLLABORATION_EVENTS.THREAD_RESOLVE, ({ roomId, threadId, resolvedBy }) => {});
+events.on(
+  COLLABORATION_EVENTS.THREAD_REPLY,
+  ({ roomId, threadId, message }) => {},
+);
+events.on(
+  COLLABORATION_EVENTS.THREAD_RESOLVE,
+  ({ roomId, threadId, resolvedBy }) => {},
+);
 events.on(COLLABORATION_EVENTS.THREAD_DELETE, ({ roomId, threadId }) => {});
 ```
 
 ## Testing helper — `@stackra/collaboration/testing`
 
 ```typescript
-import { createMockRoomManager } from '@stackra/collaboration/testing';
+import { createMockRoomManager } from "@stackra/collaboration/testing";
 
 const rooms = createMockRoomManager();
 const transport = rooms.getTransport();
 
 // Connect the current user
-await transport.connect('doc-42', 'user-1', { name: 'Alice', color: '#e74c3c' });
-expect(transport.getMembers('doc-42')).toHaveLength(1);
+await transport.connect("doc-42", "user-1", {
+  name: "Alice",
+  color: "#e74c3c",
+});
+expect(transport.getMembers("doc-42")).toHaveLength(1);
 
 // Simulate an external member joining — fires every onMemberJoin listener
-transport.simulateMemberJoin('doc-42', {
-  userId: 'user-2',
-  name: 'Bob',
-  color: '#3498db',
+transport.simulateMemberJoin("doc-42", {
+  userId: "user-2",
+  name: "Bob",
+  color: "#3498db",
   joinedAt: Date.now(),
   presence: {},
 });
 
 // Fluent assertion on broadcasts
-transport.broadcast('doc-42', 'cursor', { x: 100, y: 200 });
-transport.$.assertCalled('broadcast').with('doc-42', 'cursor', { x: 100, y: 200 }).once();
+transport.broadcast("doc-42", "cursor", { x: 100, y: 200 });
+transport.$.assertCalled("broadcast")
+  .with("doc-42", "cursor", { x: 100, y: 200 })
+  .once();
 
 // Or introspect the recorded ledger
 expect(transport.broadcasts).toHaveLength(1);

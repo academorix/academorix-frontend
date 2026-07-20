@@ -6,8 +6,6 @@
  */
 
 import "reflect-metadata";
-import { Module, Injectable, Inject } from "@stackra/container";
-import { ApplicationFactory } from "@stackra/container";
 import {
   existsSync,
   readFileSync,
@@ -19,18 +17,23 @@ import {
   writeFileSync,
 } from "fs";
 import { resolve, join, parse, relative } from "path";
+import { fileURLToPath } from "url";
+
+import { Module, Injectable, Inject } from "@stackra/container";
+import { ApplicationFactory } from "@stackra/container";
 import { CONSOLE_OUTPUT, DISCOVERY_SERVICE } from "@stackra/contracts";
-import type { IConsoleOutput, IDiscoveryService, IDiscoveryProvider } from "@stackra/contracts";
 import { getMetadata } from "@vivtel/metadata";
-import { ConsoleOutput } from "../../src/services/console-output.service";
+
 import { BaseCommand } from "../../src/base";
+import { COMMAND_METADATA_KEY } from "../../src/constants";
 import { Command } from "../../src/decorators";
 import { CommandRegistry } from "../../src/registries";
-import { COMMAND_METADATA_KEY } from "../../src/constants";
+import { ConsoleOutput } from "../../src/services/console-output.service";
 import { renderBanner } from "../../src/utils/ascii-banner.util";
 import { fuzzyMatch } from "../../src/utils/fuzzy-match.util";
 
-import { fileURLToPath } from "url";
+import type { IConsoleOutput, IDiscoveryService, IDiscoveryProvider } from "@stackra/contracts";
+
 const __filename2 = fileURLToPath(import.meta.url);
 const __dirname2 = resolve(__filename2, "..");
 const ROOT = resolve(__dirname2, "../../../../.."); // monorepo root

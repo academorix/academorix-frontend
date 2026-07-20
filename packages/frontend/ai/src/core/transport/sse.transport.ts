@@ -26,8 +26,8 @@
  *   `StreamDecoder`'s responsibility.
  */
 
-import { Inject, Injectable } from '@stackra/container';
-import { Logger } from '@stackra/logger';
+import { Inject, Injectable } from "@stackra/container";
+import { Logger } from "@stackra/logger";
 import {
   AI_AUTH_PROVIDER,
   AI_CONFIG,
@@ -41,9 +41,9 @@ import {
   type IAiTransport,
   type IHttpManager,
   type IHttpRequestConfig,
-} from '@stackra/contracts';
+} from "@stackra/contracts";
 
-import { AiAuthError, AiTransportError } from '../errors';
+import { AiAuthError, AiTransportError } from "../errors";
 
 /** Listener invoked when the connection state changes. */
 type StateListener = (state: AiConnectionState) => void;
@@ -69,7 +69,7 @@ export class SseTransport implements IAiTransport {
   public constructor(
     @Inject(AI_CONFIG) private readonly config: IAiConfig,
     @Inject(AI_AUTH_PROVIDER) private readonly authProvider: IAiAuthProvider,
-    @Inject(HTTP_MANAGER) private readonly httpManager: IHttpManager
+    @Inject(HTTP_MANAGER) private readonly httpManager: IHttpManager,
   ) {}
 
   /** @inheritdoc */
@@ -104,7 +104,7 @@ export class SseTransport implements IAiTransport {
     const url = `${this.trimSlash(this.config.baseUrl)}/api/ai/chat/${encodeURIComponent(req.persona)}`;
 
     const httpStream = client.sse<unknown>(url, {
-      method: 'POST',
+      method: "POST",
       data: req,
       headers: this.buildHeaders(credentials),
       signal,
@@ -114,14 +114,14 @@ export class SseTransport implements IAiTransport {
     // already forwards `signal` internally, but keeping this explicit
     // cancel() call means transport-level cancellation stays deterministic
     // even for future transports where the http-level plumbing differs.
-    signal.addEventListener('abort', () => httpStream.cancel(), { once: true });
+    signal.addEventListener("abort", () => httpStream.cancel(), { once: true });
 
     try {
       this.setState(AiConnectionState.Connected);
       for await (const event of httpStream) {
         // The SSE parser JSON-parses `data:` payloads by default. Re-serialize
         // objects so the `StreamDecoder` always sees strings (Req 4).
-        yield typeof event.data === 'string' ? event.data : JSON.stringify(event.data);
+        yield typeof event.data === "string" ? event.data : JSON.stringify(event.data);
       }
       this.setState(AiConnectionState.Disconnected);
     } catch (err) {
@@ -146,7 +146,7 @@ export class SseTransport implements IAiTransport {
   public async request<T>(spec: IAiRequestSpec): Promise<T> {
     const credentials = await this.authProvider.getCredentials();
     const client = await this.httpManager.connection(this.config.connection);
-    const url = `${this.trimSlash(this.config.baseUrl)}${spec.path.startsWith('/') ? spec.path : `/${spec.path}`}`;
+    const url = `${this.trimSlash(this.config.baseUrl)}${spec.path.startsWith("/") ? spec.path : `/${spec.path}`}`;
 
     const config: IHttpRequestConfig = {
       method: spec.method,
@@ -178,7 +178,7 @@ export class SseTransport implements IAiTransport {
 
   /** Strip a trailing slash so `${baseUrl}/api/...` never doubles up. */
   private trimSlash(url: string): string {
-    return url.endsWith('/') ? url.slice(0, -1) : url;
+    return url.endsWith("/") ? url.slice(0, -1) : url;
   }
 
   /** Update state and fan out to every registered listener. */
@@ -189,7 +189,7 @@ export class SseTransport implements IAiTransport {
       try {
         listener(next);
       } catch (err) {
-        this.logger.warn('[SseTransport] state listener threw', {
+        this.logger.warn("[SseTransport] state listener threw", {
           error: err instanceof Error ? err.message : String(err),
         });
       }
@@ -209,18 +209,18 @@ export class SseTransport implements IAiTransport {
     if (err instanceof Error) {
       return new AiTransportError(`[SseTransport] ${err.message}`, err);
     }
-    return new AiTransportError('[SseTransport] transport failure', err);
+    return new AiTransportError("[SseTransport] transport failure", err);
   }
 
   /** Best-effort extraction of a numeric HTTP status from an unknown error. */
   private extractStatus(err: unknown): number | undefined {
-    if (err && typeof err === 'object') {
+    if (err && typeof err === "object") {
       const record = err as Record<string, unknown>;
       // `IHttpError` (normalised) uses `statusCode`; some libraries use `status`.
-      if (typeof record.statusCode === 'number') return record.statusCode;
-      if (typeof record.status === 'number') return record.status;
+      if (typeof record.statusCode === "number") return record.statusCode;
+      if (typeof record.status === "number") return record.status;
       const response = record.response as Record<string, unknown> | undefined;
-      if (response && typeof response.status === 'number') return response.status;
+      if (response && typeof response.status === "number") return response.status;
     }
     return undefined;
   }

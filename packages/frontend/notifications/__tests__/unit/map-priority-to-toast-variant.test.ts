@@ -5,21 +5,21 @@
  *   the priority → HeroUI toast variant mapping.
  */
 
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it } from "vitest";
 
-import { mapPriorityToToastVariant } from '@/core/utils';
+import { mapPriorityToToastVariant } from "@/core/utils";
 
-describe('mapPriorityToToastVariant', () => {
-  it('urgent → danger', () => {
-    expect(mapPriorityToToastVariant('urgent')).toBe('danger');
+describe("mapPriorityToToastVariant", () => {
+  it("urgent → danger", () => {
+    expect(mapPriorityToToastVariant("urgent")).toBe("danger");
   });
-  it('high → warning', () => {
-    expect(mapPriorityToToastVariant('high')).toBe('warning');
+  it("high → warning", () => {
+    expect(mapPriorityToToastVariant("high")).toBe("warning");
   });
-  it('normal → info', () => {
-    expect(mapPriorityToToastVariant('normal')).toBe('info');
+  it("normal → info", () => {
+    expect(mapPriorityToToastVariant("normal")).toBe("info");
   });
-  it('low → success', () => {
-    expect(mapPriorityToToastVariant('low')).toBe('success');
+  it("low → success", () => {
+    expect(mapPriorityToToastVariant("low")).toBe("success");
   });
 });

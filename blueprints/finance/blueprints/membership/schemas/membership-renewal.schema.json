@@ -41,9 +41,7 @@
       "failed_at": "datetime",
       "next_attempt_at": "datetime"
     },
-    "observers": [
-      "MembershipRenewalObserver"
-    ],
+    "observers": ["MembershipRenewalObserver"],
     "notes": [
       "No SoftDeletes — renewals are append-only audit records. Retention is 7 years financial.",
       "No HasActivityLog — every event is on the Membership side; renewal is internal accounting."
@@ -57,7 +55,12 @@
         "type": "string",
         "length": 30,
         "nullable": false,
-        "foreign": { "table": "tenants", "column": "id", "onUpdate": "cascade", "onDelete": "cascade" }
+        "foreign": {
+          "table": "tenants",
+          "column": "id",
+          "onUpdate": "cascade",
+          "onDelete": "cascade"
+        }
       },
       "membership_id": {
         "type": "string",
@@ -164,10 +167,24 @@
       "updated_at": { "type": "timestamptz", "nullable": false }
     },
     "indexes": [
-      { "columns": ["tenant_id", "membership_id", "period_starts_at"], "name": "membership_renewals_by_period_idx" },
-      { "columns": ["tenant_id", "status", "next_attempt_at"], "name": "membership_renewals_retry_ladder_idx", "predicate": "status = 'failed_transient' AND next_attempt_at IS NOT NULL" },
-      { "columns": ["tenant_id", "membership_id", "attempt_number"], "name": "membership_renewals_attempt_idx" },
-      { "columns": ["tenant_id", "invoice_id"], "name": "membership_renewals_invoice_idx", "predicate": "invoice_id IS NOT NULL" }
+      {
+        "columns": ["tenant_id", "membership_id", "period_starts_at"],
+        "name": "membership_renewals_by_period_idx"
+      },
+      {
+        "columns": ["tenant_id", "status", "next_attempt_at"],
+        "name": "membership_renewals_retry_ladder_idx",
+        "predicate": "status = 'failed_transient' AND next_attempt_at IS NOT NULL"
+      },
+      {
+        "columns": ["tenant_id", "membership_id", "attempt_number"],
+        "name": "membership_renewals_attempt_idx"
+      },
+      {
+        "columns": ["tenant_id", "invoice_id"],
+        "name": "membership_renewals_invoice_idx",
+        "predicate": "invoice_id IS NOT NULL"
+      }
     ]
   },
   "required": [
@@ -203,7 +220,14 @@
     "attempt_number": { "type": "integer", "minimum": 1, "maximum": 4 },
     "status": {
       "type": "string",
-      "enum": ["pending", "attempting", "succeeded", "failed_transient", "failed_permanent", "cancelled"]
+      "enum": [
+        "pending",
+        "attempting",
+        "succeeded",
+        "failed_transient",
+        "failed_permanent",
+        "cancelled"
+      ]
     },
     "attempted_at": { "type": ["string", "null"], "format": "date-time" },
     "succeeded_at": { "type": ["string", "null"], "format": "date-time" },

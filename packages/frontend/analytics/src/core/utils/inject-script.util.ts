@@ -12,10 +12,10 @@
  * @param id - Stable element id used for the idempotency guard.
  */
 export function injectScript(src: string, id: string): void {
-  if (typeof document === 'undefined') return;
+  if (typeof document === "undefined") return;
   if (document.getElementById(id)) return;
 
-  const script = document.createElement('script');
+  const script = document.createElement("script");
   script.async = true;
   script.src = src;
   script.id = id;

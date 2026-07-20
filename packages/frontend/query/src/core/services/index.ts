@@ -4,7 +4,7 @@
  * @description Barrel for query-layer services.
  */
 
-export { UndoableQueueService } from './undoable-queue.service';
+export { UndoableQueueService } from "./undoable-queue.service";
 export {
   QueryService,
   type QueryServiceMutation,
@@ -13,4 +13,4 @@ export {
   type QueryServicePublishOptions,
   type QueryServiceQuery,
   type QueryServiceSubscribe,
-} from './query.service';
+} from "./query.service";

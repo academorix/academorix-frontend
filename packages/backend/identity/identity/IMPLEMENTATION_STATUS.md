@@ -13,27 +13,26 @@
 - `Models/Identity.php` — recomposed. Implements `AuthenticatableContract` +
   `CanResetPasswordContract` + `IdentityInterface`; uses
   `Illuminate\Auth\Authenticatable` + `HasApiTokens` (Sanctum) + `Notifiable` +
-  the three module traits. `#[Hidden([PASSWORD_HASH, MFA_SECRET_ENCRYPTED,
-  MFA_RECOVERY_CODES_HASHED, EMAIL_VERIFICATION_TOKEN_HASH,
-  PASSWORD_HISTORY_HASHED])]` — every secret is opted out of `toArray()`.
-  `authPasswordName()` returns `password_hash` so Sanctum's Guard reads the
-  correct column.
+  the three module traits.
+  `#[Hidden([PASSWORD_HASH, MFA_SECRET_ENCRYPTED, MFA_RECOVERY_CODES_HASHED, EMAIL_VERIFICATION_TOKEN_HASH, PASSWORD_HISTORY_HASHED])]`
+  — every secret is opted out of `toArray()`. `authPasswordName()` returns
+  `password_hash` so Sanctum's Guard reads the correct column.
 
 ## Deferred
 
 ### Actions (still `return null` scaffolds)
 
-Every action under `identity/identity/src/Actions/**` (if the module ships any
-— check the blueprint routes.json). Typical set based on the module's role:
+Every action under `identity/identity/src/Actions/**` (if the module ships any —
+check the blueprint routes.json). Typical set based on the module's role:
 
-| Concern                          | Action                                    | Notes                                                                                                                 |
-| -------------------------------- | ----------------------------------------- | --------------------------------------------------------------------------------------------------------------------- |
-| Lookup                           | `FindIdentityByEmailAction`               | Platform-scope only — returns 404 to non-platform-admin callers regardless of whether the email exists (anti-enum).   |
-| Registration                     | `RegisterIdentityAction`                  | Body: email + password (validated by `PasswordWeakException` rules) + optional DOB (age gate). Creates Identity, emits `IdentityCreated`. Handles the case where `Auth\Actions\Tenant\CreateRegisterAction` delegates in. |
-| Email verification issue         | `RequestEmailVerificationAction`          | Delegates to `EmailVerificationTokenIssuer::issue`. Rate-limited.                                                     |
-| Email verification consume       | `VerifyEmailAction`                       | Consumes the one-shot token; sets `email_verified_at`.                                                                |
-| Password reset issue             | `RequestPasswordResetAction`              | Delegates to `PasswordResetTokenIssuer::issue`. Rate-limited.                                                         |
-| Password reset consume           | `ResetPasswordAction`                     | Consumes the one-shot token; sets new `password_hash` via bcrypt cost 12; enforces `PasswordHistoryChecker` refusal on reuse. |
+| Concern                    | Action                           | Notes                                                                                                                                                                                                                     |
+| -------------------------- | -------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Lookup                     | `FindIdentityByEmailAction`      | Platform-scope only — returns 404 to non-platform-admin callers regardless of whether the email exists (anti-enum).                                                                                                       |
+| Registration               | `RegisterIdentityAction`         | Body: email + password (validated by `PasswordWeakException` rules) + optional DOB (age gate). Creates Identity, emits `IdentityCreated`. Handles the case where `Auth\Actions\Tenant\CreateRegisterAction` delegates in. |
+| Email verification issue   | `RequestEmailVerificationAction` | Delegates to `EmailVerificationTokenIssuer::issue`. Rate-limited.                                                                                                                                                         |
+| Email verification consume | `VerifyEmailAction`              | Consumes the one-shot token; sets `email_verified_at`.                                                                                                                                                                    |
+| Password reset issue       | `RequestPasswordResetAction`     | Delegates to `PasswordResetTokenIssuer::issue`. Rate-limited.                                                                                                                                                             |
+| Password reset consume     | `ResetPasswordAction`            | Consumes the one-shot token; sets new `password_hash` via bcrypt cost 12; enforces `PasswordHistoryChecker` refusal on reuse.                                                                                             |
 
 ### Services that still need bodies
 

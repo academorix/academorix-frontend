@@ -6,14 +6,14 @@
  *   surfaced when not connected (Req 24.1, 24.6).
  */
 
-import { useEffect, useState } from 'react';
-import { useInject } from '@stackra/container/react';
-import { AI_CONNECTION_MANAGER, AiConnectionState } from '@stackra/contracts';
+import { useEffect, useState } from "react";
+import { useInject } from "@stackra/container/react";
+import { AI_CONNECTION_MANAGER, AiConnectionState } from "@stackra/contracts";
 
 import {
   ConnectionManager,
   type IConnectionReason,
-} from '@/core/services/connection-manager.service';
+} from "@/core/services/connection-manager.service";
 
 /** The value returned by {@link useAiConnection}. */
 export interface IUseAiConnectionResult {

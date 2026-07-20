@@ -10,11 +10,11 @@
  *   is the canonical pattern.
  */
 
-import type { ReactElement } from 'react';
-import { Badge } from '@stackra/ui/react';
+import type { ReactElement } from "react";
+import { Badge } from "@stackra/ui/react";
 
-import { useInAppNotifications } from '../../hooks/use-in-app-notifications';
-import type { NotificationBadgeProps } from './notification-badge.interface';
+import { useInAppNotifications } from "../../hooks/use-in-app-notifications";
+import type { NotificationBadgeProps } from "./notification-badge.interface";
 
 /**
  * Cap the numeric badge label to the given ceiling.

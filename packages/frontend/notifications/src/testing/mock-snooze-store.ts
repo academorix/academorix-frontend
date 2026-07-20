@@ -8,8 +8,8 @@
  *   `useSnoozeStore` import with `vi.mock`.
  */
 
-import { SNOOZE_PRESETS_MS } from '@/core/constants';
-import type { SnoozePreset } from '@/core/interfaces';
+import { SNOOZE_PRESETS_MS } from "@/core/constants";
+import type { SnoozePreset } from "@/core/interfaces";
 
 /**
  * In-memory snooze registry.

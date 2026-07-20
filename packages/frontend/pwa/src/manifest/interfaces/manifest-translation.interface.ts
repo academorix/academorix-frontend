@@ -14,7 +14,7 @@
  *   add plugin-specific translated fields without a cast.
  */
 
-import type { IWebAppManifest } from './web-app-manifest.interface';
+import type { IWebAppManifest } from "./web-app-manifest.interface";
 
 /**
  * Per-locale translated manifest fields.
@@ -25,15 +25,15 @@ import type { IWebAppManifest } from './web-app-manifest.interface';
 export type IManifestTranslation = Partial<
   Pick<
     IWebAppManifest,
-    | 'name'
-    | 'short_name'
-    | 'description'
-    | 'lang'
-    | 'dir'
-    | 'categories'
-    | 'keywords'
-    | 'shortcuts'
-    | 'screenshots'
+    | "name"
+    | "short_name"
+    | "description"
+    | "lang"
+    | "dir"
+    | "categories"
+    | "keywords"
+    | "shortcuts"
+    | "screenshots"
   >
 > & {
   /** Free-form extensions per locale — plugin-specific translations. */

@@ -16,11 +16,11 @@
  *   closed / open to force a re-read.
  */
 
-import { type ReactElement, useEffect, useMemo, useRef, useState } from 'react';
-import { Card, Chip } from '@stackra/ui/react';
-import type { IStorage, IStorageManager, IStorageStoreConfig } from '@stackra/contracts';
+import { type ReactElement, useEffect, useMemo, useRef, useState } from "react";
+import { Card, Chip } from "@stackra/ui/react";
+import type { IStorage, IStorageManager, IStorageStoreConfig } from "@stackra/contracts";
 
-import type { StorageDevtoolsPanelViewProps } from './storage-devtools-panel-view.interface';
+import type { StorageDevtoolsPanelViewProps } from "./storage-devtools-panel-view.interface";
 
 /** How many sample keys to display per instance. */
 const SAMPLE_KEY_LIMIT = 20;
@@ -46,7 +46,7 @@ interface InstanceRow {
  */
 function useStorageKeys(
   manager: IStorageManager | undefined,
-  instanceName: string
+  instanceName: string,
 ): { keys: readonly string[] | null; total: number | null } {
   const [keys, setKeys] = useState<readonly string[] | null>(null);
   const [total, setTotal] = useState<number | null>(null);
@@ -112,9 +112,9 @@ function InstanceCard({
           ) : null}
           <Chip
             size="sm"
-            variant={typeof total === 'number' && total > 0 ? 'primary' : 'secondary'}
+            variant={typeof total === "number" && total > 0 ? "primary" : "secondary"}
           >
-            <Chip.Label>{typeof total === 'number' ? `${total} keys` : 'idle'}</Chip.Label>
+            <Chip.Label>{typeof total === "number" ? `${total} keys` : "idle"}</Chip.Label>
           </Chip>
         </div>
         <Card.Description>
@@ -129,15 +129,15 @@ function InstanceCard({
                 <code className="truncate text-xs">{k}</code>
               </li>
             ))}
-            {typeof total === 'number' && total > keys.length ? (
-              <li className="text-xs text-muted">… and {total - keys.length} more</li>
+            {typeof total === "number" && total > keys.length ? (
+              <li className="text-muted text-xs">… and {total - keys.length} more</li>
             ) : null}
           </ul>
         ) : (
-          <p className="text-xs text-muted">
+          <p className="text-muted text-xs">
             {manager
-              ? 'No keys stored in this instance yet.'
-              : 'Storage manager not resolved — sample keys unavailable.'}
+              ? "No keys stored in this instance yet."
+              : "Storage manager not resolved — sample keys unavailable."}
           </p>
         )}
       </Card.Content>
@@ -175,7 +175,7 @@ export function StorageDevtoolsPanelView({
           <Card.Header>
             <Card.Title>No storage instances configured</Card.Title>
             <Card.Description>
-              Register an instance in{' '}
+              Register an instance in{" "}
               <code>StorageModule.forRoot(&#123; stores: &#123; ... &#125; &#125;)</code> to see it
               here.
             </Card.Description>
@@ -188,9 +188,9 @@ export function StorageDevtoolsPanelView({
   return (
     <div className="flex flex-col gap-3">
       <header>
-        <h3 className="text-base font-semibold text-foreground">Storage instances</h3>
-        <p className="text-xs text-muted">
-          Configured via <code>StorageModule.forRoot()</code>. Keys are read once per open —{' '}
+        <h3 className="text-foreground text-base font-semibold">Storage instances</h3>
+        <p className="text-muted text-xs">
+          Configured via <code>StorageModule.forRoot()</code>. Keys are read once per open —{" "}
           <code>IStorage</code> has no subscribe API, so a re-open refreshes the sample.
         </p>
       </header>

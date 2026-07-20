@@ -15,7 +15,7 @@
  */
 
 // Module
-export { WebStorageModule } from './web-storage.module';
+export { WebStorageModule } from "./web-storage.module";
 
 // Stores
 export {
@@ -27,7 +27,7 @@ export {
   type WebStorageBaseConfig,
   type IndexedDbStoreConfig,
   type CookieStoreConfig,
-} from './stores';
+} from "./stores";
 
 // Hooks
 export {
@@ -36,7 +36,7 @@ export {
   type UseStorageValueOptions,
   type UseStorageValueMeta,
   type UseStorageValueResult,
-} from './hooks';
+} from "./hooks";
 
 // ════════════════════════════════════════════════════════════════════════════════
 // Devtools contribution
@@ -45,4 +45,4 @@ export {
   StorageDevtoolsPanel,
   StorageDevtoolsPanelView,
   type StorageDevtoolsPanelViewProps,
-} from './devtools';
+} from "./devtools";

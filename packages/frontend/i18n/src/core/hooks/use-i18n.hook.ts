@@ -8,13 +8,13 @@
  *   I18nManager and I18nLocaleService via proper DI tokens.
  */
 
-import { useCallback } from 'react';
-import { useInject } from '@stackra/container/react';
-import { I18N_MANAGER, I18N_LOCALE_SERVICE, type TranslateOptions } from '@stackra/contracts';
+import { useCallback } from "react";
+import { useInject } from "@stackra/container/react";
+import { I18N_MANAGER, I18N_LOCALE_SERVICE, type TranslateOptions } from "@stackra/contracts";
 
-import type { I18nManager } from '../services/i18n-manager.service';
-import type { I18nLocaleService } from '../services/i18n-locale.service';
-import type { UseI18nReturn } from '../interfaces';
+import type { I18nManager } from "../services/i18n-manager.service";
+import type { I18nLocaleService } from "../services/i18n-locale.service";
+import type { UseI18nReturn } from "../interfaces";
 
 /**
  * Access the i18n system from a React component.
@@ -42,23 +42,23 @@ export function useI18n<K = Record<string, unknown>>(): UseI18nReturn<K> {
     async (newLocale: string) => {
       await localeService.setLocale(newLocale);
     },
-    [localeService]
+    [localeService],
   );
 
   const t = useCallback(
     (key: string, options?: TranslateOptions) => {
       return manager.t(key, { ...options, lang: locale });
     },
-    [manager, locale]
+    [manager, locale],
   );
 
   return {
     locale,
     dir,
-    isRTL: dir === 'rtl',
+    isRTL: dir === "rtl",
     languages: localeService.getSupportedLocales(),
     setLocale,
     isLoading: false,
-    t: t as UseI18nReturn<K>['t'],
+    t: t as UseI18nReturn<K>["t"],
   };
 }

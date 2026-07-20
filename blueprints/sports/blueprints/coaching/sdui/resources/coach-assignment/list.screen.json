@@ -30,14 +30,33 @@
             {
               "kind": "View",
               "children": [
-                { "kind": "Text", "props": { "as": "h1", "className": "text-2xl font-semibold", "children": "Coach assignments" } },
-                { "kind": "Text", "props": { "className": "text-sm text-muted", "children": "Coach ↔ Session / Team / Event pivots." } }
+                {
+                  "kind": "Text",
+                  "props": {
+                    "as": "h1",
+                    "className": "text-2xl font-semibold",
+                    "children": "Coach assignments"
+                  }
+                },
+                {
+                  "kind": "Text",
+                  "props": {
+                    "className": "text-sm text-muted",
+                    "children": "Coach ↔ Session / Team / Event pivots."
+                  }
+                }
               ]
             },
             {
               "kind": "Button",
-              "props": { "variant": "primary", "leadingIcon": "plus", "children": "New assignment" },
-              "actions": { "onPress": { "kind": "navigate", "toExpr": "'/tenant/coach-assignments/create'" } },
+              "props": {
+                "variant": "primary",
+                "leadingIcon": "plus",
+                "children": "New assignment"
+              },
+              "actions": {
+                "onPress": { "kind": "navigate", "toExpr": "'/tenant/coach-assignments/create'" }
+              },
               "requiresPermission": "coach_assignments.create"
             }
           ]
@@ -45,7 +64,10 @@
         {
           "kind": "Table",
           "props": { "aria-label": "Coach assignments table" },
-          "bindings": { "rows": { "$ref": "assignments" }, "isLoading": { "$ref": "assignments.isLoading" } },
+          "bindings": {
+            "rows": { "$ref": "assignments" },
+            "isLoading": { "$ref": "assignments.isLoading" }
+          },
           "columns": [
             {
               "key": "coach",
@@ -63,8 +85,16 @@
                 "kind": "View",
                 "props": { "className": "flex items-center gap-2" },
                 "children": [
-                  { "kind": "Chip", "props": { "size": "xs" }, "bindings": { "children": { "$ref": "row.assignable_type" } } },
-                  { "kind": "Text", "props": { "className": "text-sm" }, "bindings": { "children": { "$ref": "row.assignable_summary" } } }
+                  {
+                    "kind": "Chip",
+                    "props": { "size": "xs" },
+                    "bindings": { "children": { "$ref": "row.assignable_type" } }
+                  },
+                  {
+                    "kind": "Text",
+                    "props": { "className": "text-sm" },
+                    "bindings": { "children": { "$ref": "row.assignable_summary" } }
+                  }
                 ]
               }
             },
@@ -76,21 +106,32 @@
                 "props": { "size": "sm" },
                 "bindings": {
                   "children": { "$ref": "row.role" },
-                  "variant": { "$expr": "row.role === 'head_coach' ? 'primary' : (row.role === 'observer' ? 'secondary' : 'success')" }
+                  "variant": {
+                    "$expr": "row.role === 'head_coach' ? 'primary' : (row.role === 'observer' ? 'secondary' : 'success')"
+                  }
                 }
               }
             },
             {
               "key": "start_date",
               "label": "Start",
-              "renderer": { "kind": "Text", "bindings": { "children": { "$expr": "$formatDate(row.start_date, 'MMM d, yyyy')" } } }
+              "renderer": {
+                "kind": "Text",
+                "bindings": {
+                  "children": { "$expr": "$formatDate(row.start_date, 'MMM d, yyyy')" }
+                }
+              }
             },
             {
               "key": "end_date",
               "label": "End",
               "renderer": {
                 "kind": "Text",
-                "bindings": { "children": { "$expr": "row.end_date ? $formatDate(row.end_date, 'MMM d, yyyy') : 'Open'" } }
+                "bindings": {
+                  "children": {
+                    "$expr": "row.end_date ? $formatDate(row.end_date, 'MMM d, yyyy') : 'Open'"
+                  }
+                }
               }
             },
             {
@@ -102,13 +143,33 @@
                 "children": [
                   {
                     "kind": "Button",
-                    "props": { "size": "sm", "variant": "flat", "leadingIcon": "eye", "children": "View" },
-                    "actions": { "onPress": { "kind": "navigate", "toExpr": "'/tenant/coach-assignments/' + row.id" } }
+                    "props": {
+                      "size": "sm",
+                      "variant": "flat",
+                      "leadingIcon": "eye",
+                      "children": "View"
+                    },
+                    "actions": {
+                      "onPress": {
+                        "kind": "navigate",
+                        "toExpr": "'/tenant/coach-assignments/' + row.id"
+                      }
+                    }
                   },
                   {
                     "kind": "Button",
-                    "props": { "size": "sm", "variant": "flat", "leadingIcon": "stop-circle", "children": "End" },
-                    "actions": { "onPress": { "kind": "navigate", "toExpr": "'/tenant/coach-assignments/' + row.id + '/end'" } },
+                    "props": {
+                      "size": "sm",
+                      "variant": "flat",
+                      "leadingIcon": "stop-circle",
+                      "children": "End"
+                    },
+                    "actions": {
+                      "onPress": {
+                        "kind": "navigate",
+                        "toExpr": "'/tenant/coach-assignments/' + row.id + '/end'"
+                      }
+                    },
                     "bindings": { "hidden": { "$expr": "!row.is_active" } },
                     "requiresPermission": "coach_assignments.end"
                   }

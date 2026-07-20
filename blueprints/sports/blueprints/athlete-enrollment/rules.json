@@ -4,8 +4,18 @@
   "title": "athlete-enrollment — validation rules",
   "namespace": "Academorix\\Sports\\AthleteEnrollment\\Rules",
   "rules": [
-    { "name": "valid_iso4217_currency", "class": "Academorix\\Foundation\\Rules\\ValidIso4217Currency", "signature": "valid_iso4217_currency", "description": "ISO 4217 3-letter currency code. Used on price_currency." },
-    { "name": "valid_positive_int", "class": "Academorix\\Foundation\\Rules\\ValidPositiveInt", "signature": "valid_positive_int", "description": "Non-negative integer. Used on price_amount_cents + jersey_number_*." },
+    {
+      "name": "valid_iso4217_currency",
+      "class": "Academorix\\Foundation\\Rules\\ValidIso4217Currency",
+      "signature": "valid_iso4217_currency",
+      "description": "ISO 4217 3-letter currency code. Used on price_currency."
+    },
+    {
+      "name": "valid_positive_int",
+      "class": "Academorix\\Foundation\\Rules\\ValidPositiveInt",
+      "signature": "valid_positive_int",
+      "description": "Non-negative integer. Used on price_amount_cents + jersey_number_*."
+    },
     {
       "name": "valid_enrollment_status_transition",
       "class": "Academorix\\Sports\\AthleteEnrollment\\Rules\\ValidEnrollmentStatusTransition",

@@ -5,7 +5,7 @@
  *   Consumed by `RealtimeModule.forRoot()` at bootstrap.
  */
 
-import { defineConfig } from '@stackra/realtime';
+import { defineConfig } from "@stackra/realtime";
 
 export const realtimeConfig = defineConfig({
   /*
@@ -29,7 +29,7 @@ export const realtimeConfig = defineConfig({
   | to channels without specifying an explicit connection name.
   |
   */
-  default: 'main',
+  default: "main",
 
   /*
   |--------------------------------------------------------------------------
@@ -44,10 +44,10 @@ export const realtimeConfig = defineConfig({
   */
   connections: {
     main: {
-      driver: 'socketio',
-      url: 'ws://localhost:3001',
+      driver: "socketio",
+      url: "ws://localhost:3001",
       autoConnect: true,
-      namespace: '/',
+      namespace: "/",
       auth: {
         token: undefined,
         headers: {},

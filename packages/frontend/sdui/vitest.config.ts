@@ -1,6 +1,6 @@
-import path from 'node:path';
-import { defineConfig, mergeConfig } from 'vitest/config';
-import preset from '@stackra/testing/preset';
+import path from "node:path";
+import { defineConfig, mergeConfig } from "vitest/config";
+import preset from "@stackra/testing/preset";
 
 export default mergeConfig(
   preset,
@@ -8,9 +8,9 @@ export default mergeConfig(
     oxc: false,
     esbuild: false,
     test: {
-      environment: 'node',
-      setupFiles: ['./__tests__/vitest.setup.ts'],
+      environment: "node",
+      setupFiles: ["./__tests__/vitest.setup.ts"],
     },
-    resolve: { alias: { '@': path.resolve(__dirname, './src') } },
-  })
+    resolve: { alias: { "@": path.resolve(__dirname, "./src") } },
+  }),
 );

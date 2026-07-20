@@ -4,7 +4,7 @@
  * @description Error thrown when a sync HTTP request fails.
  */
 
-import { SyncError } from './sync.error';
+import { SyncError } from "./sync.error";
 
 /**
  * Network-layer error raised by the sync HTTP client.
@@ -20,15 +20,15 @@ export class NetworkError extends SyncError {
     message: string,
     url?: string,
     statusCode?: number,
-    context?: Record<string, unknown>
+    context?: Record<string, unknown>,
   ) {
-    super(message, 'NETWORK_ERROR', { ...context, url, statusCode });
-    this.name = 'NetworkError';
+    super(message, "NETWORK_ERROR", { ...context, url, statusCode });
+    this.name = "NetworkError";
     this.url = url;
     this.statusCode = statusCode;
 
     if (
-      typeof (Error as unknown as { captureStackTrace?: unknown }).captureStackTrace === 'function'
+      typeof (Error as unknown as { captureStackTrace?: unknown }).captureStackTrace === "function"
     ) {
       (
         Error as unknown as { captureStackTrace: (target: object, ctor: Function) => void }

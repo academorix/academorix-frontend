@@ -5,11 +5,11 @@
  *   Returns reactive members list, joining, and leaving callbacks.
  */
 
-import { useState, useEffect, useRef } from 'react';
-import { useInject } from '@stackra/container/react';
-import { REALTIME_MANAGER } from '@stackra/contracts';
-import { RealtimeManager } from '@/core/services/realtime-manager.service';
-import type { IRealtimePresenceChannel } from '@/core/interfaces/realtime-connection.interface';
+import { useState, useEffect, useRef } from "react";
+import { useInject } from "@stackra/container/react";
+import { REALTIME_MANAGER } from "@stackra/contracts";
+import { RealtimeManager } from "@/core/services/realtime-manager.service";
+import type { IRealtimePresenceChannel } from "@/core/interfaces/realtime-connection.interface";
 
 // ════════════════════════════════════════════════════════════════════════════════
 // Types

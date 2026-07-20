@@ -26,10 +26,10 @@
 
 import { describe, expect, it, beforeEach } from "vitest";
 
+import type { IPublishableEntry, IPublishableRegistryEntry, Type } from "@stackra/contracts";
+
 import { PublishableConsumer } from "@/publishing/publishable.consumer";
 import { PublishableRegistry } from "@/publishing/registries/publishable.registry";
-
-import type { IPublishableEntry, IPublishableRegistryEntry, Type } from "@stackra/contracts";
 
 /**
  * Named modules used in the assertions. Each carries a different
@@ -144,11 +144,7 @@ describe("PublishableConsumer", () => {
       const consumer = new PublishableConsumer(registry, ModuleWithRoot as Type<unknown>);
       consumer.publish({
         tag: "cfg-shorthand",
-        files: [
-          "config/queue.config.ts",
-          "stubs/processor.ejs",
-          "stubs/scheduler.ejs",
-        ],
+        files: ["config/queue.config.ts", "stubs/processor.ejs", "stubs/scheduler.ejs"],
       });
       const stored = registry.byTag("cfg-shorthand");
       expect(stored?.files).toEqual([

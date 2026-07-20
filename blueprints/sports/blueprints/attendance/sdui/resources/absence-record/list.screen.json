@@ -9,7 +9,13 @@
   "resource": { "module": "attendance", "entity": "absence-record", "action": "list" },
   "requiresPermission": "absences.viewAny",
   "dataSources": [
-    { "name": "absences", "kind": "http.get", "url": "/api/v1/absences", "unwrap": "data", "queryFromFilters": true }
+    {
+      "name": "absences",
+      "kind": "http.get",
+      "url": "/api/v1/absences",
+      "unwrap": "data",
+      "queryFromFilters": true
+    }
   ],
   "nodes": [
     {
@@ -24,8 +30,21 @@
             {
               "kind": "View",
               "children": [
-                { "kind": "Text", "props": { "as": "h1", "className": "text-2xl font-semibold", "children": "Absences" } },
-                { "kind": "Text", "props": { "className": "text-sm text-muted", "children": "Missed sessions — unexcused, excused, advance-notified." } }
+                {
+                  "kind": "Text",
+                  "props": {
+                    "as": "h1",
+                    "className": "text-2xl font-semibold",
+                    "children": "Absences"
+                  }
+                },
+                {
+                  "kind": "Text",
+                  "props": {
+                    "className": "text-sm text-muted",
+                    "children": "Missed sessions — unexcused, excused, advance-notified."
+                  }
+                }
               ]
             }
           ]
@@ -45,12 +64,24 @@
                 { "id": "medical", "label": "Medical" },
                 { "id": "bereavement", "label": "Bereavement" }
               ],
-              "actions": { "onSelectionChange": { "kind": "filter.set", "field": "status", "valueExpr": "$selectedKey" } }
+              "actions": {
+                "onSelectionChange": {
+                  "kind": "filter.set",
+                  "field": "status",
+                  "valueExpr": "$selectedKey"
+                }
+              }
             },
             {
               "kind": "Switch",
               "props": { "label": "Counting toward freeze" },
-              "actions": { "onChange": { "kind": "filter.set", "field": "counted_toward_freeze", "valueExpr": "$value ? 'true' : null" } }
+              "actions": {
+                "onChange": {
+                  "kind": "filter.set",
+                  "field": "counted_toward_freeze",
+                  "valueExpr": "$value ? 'true' : null"
+                }
+              }
             }
           ]
         },
@@ -66,22 +97,46 @@
                 "kind": "View",
                 "props": { "className": "flex items-center gap-2" },
                 "children": [
-                  { "kind": "Text", "props": { "className": "font-medium" }, "bindings": { "children": { "$ref": "row.athlete_display_name" } } },
-                  { "kind": "Widget", "widget": "athlete.minor-badge", "bindings": { "hidden": { "$expr": "!row.athlete.is_minor" } } }
+                  {
+                    "kind": "Text",
+                    "props": { "className": "font-medium" },
+                    "bindings": { "children": { "$ref": "row.athlete_display_name" } }
+                  },
+                  {
+                    "kind": "Widget",
+                    "widget": "athlete.minor-badge",
+                    "bindings": { "hidden": { "$expr": "!row.athlete.is_minor" } }
+                  }
                 ]
               }
             },
-            { "key": "session_id", "label": "Session", "renderer": { "kind": "Text", "bindings": { "children": { "$ref": "row.session_display_name" } } } },
+            {
+              "key": "session_id",
+              "label": "Session",
+              "renderer": {
+                "kind": "Text",
+                "bindings": { "children": { "$ref": "row.session_display_name" } }
+              }
+            },
             {
               "key": "status",
               "label": "Status",
               "renderer": {
                 "kind": "Chip",
                 "propsExpr": "{ variant: row.status === 'unexcused' ? 'danger' : row.status === 'excused' ? 'success' : 'primary', className: 'capitalize' }",
-                "children": [{ "kind": "Text", "propsExpr": "{ children: row.status.replace(/_/g, ' ') }" }]
+                "children": [
+                  { "kind": "Text", "propsExpr": "{ children: row.status.replace(/_/g, ' ') }" }
+                ]
               }
             },
-            { "key": "absence_reason", "label": "Reason", "renderer": { "kind": "Text", "bindings": { "children": { "$ref": "row.absence_reason" } } } },
+            {
+              "key": "absence_reason",
+              "label": "Reason",
+              "renderer": {
+                "kind": "Text",
+                "bindings": { "children": { "$ref": "row.absence_reason" } }
+              }
+            },
             {
               "key": "reported_source",
               "label": "Source",
@@ -89,7 +144,10 @@
                 "kind": "Chip",
                 "propsExpr": "{ variant: 'neutral', size: 'sm' }",
                 "children": [
-                  { "kind": "Text", "propsExpr": "{ children: row.reported_by_user_id ? 'Self-report' : 'Auto-detected' }" }
+                  {
+                    "kind": "Text",
+                    "propsExpr": "{ children: row.reported_by_user_id ? 'Self-report' : 'Auto-detected' }"
+                  }
                 ]
               }
             },
@@ -99,7 +157,12 @@
               "renderer": {
                 "kind": "Chip",
                 "propsExpr": "{ variant: row.counted_toward_freeze ? 'warning' : 'neutral', size: 'sm' }",
-                "children": [{ "kind": "Text", "propsExpr": "{ children: row.counted_toward_freeze ? 'Yes' : 'No' }" }]
+                "children": [
+                  {
+                    "kind": "Text",
+                    "propsExpr": "{ children: row.counted_toward_freeze ? 'Yes' : 'No' }"
+                  }
+                ]
               }
             }
           ],

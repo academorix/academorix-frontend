@@ -6,19 +6,82 @@
   "isSystem": true,
   "description": "Guardian narrows to own orders (buyer_type='guardian', buyer_id=current user). Staff + finance + owner see all tenant orders.",
   "permissions": [
-    { "name": "orders.viewAny", "guard": "sanctum", "seededOn": ["admin", "owner", "finance", "support", "guardian"] },
-    { "name": "orders.view", "guard": "sanctum", "seededOn": ["admin", "owner", "finance", "support", "guardian"] },
-    { "name": "orders.create", "guard": "sanctum", "seededOn": ["admin", "owner", "finance", "receptionist", "guardian"] },
-    { "name": "orders.update", "guard": "sanctum", "description": "Modify draft/pending order lines + adjustments.", "seededOn": ["admin", "owner", "finance", "receptionist", "guardian"] },
-    { "name": "orders.delete", "guard": "sanctum", "description": "Soft-delete a draft order.", "seededOn": ["admin", "owner"] },
-    { "name": "orders.checkout", "guard": "sanctum", "description": "Transition draft->pending and initiate payment.", "seededOn": ["admin", "owner", "finance", "receptionist", "guardian"] },
-    { "name": "orders.cancel", "guard": "sanctum", "description": "Cancel pending/paid orders.", "seededOn": ["admin", "owner", "finance"] },
-    { "name": "orders.refund", "guard": "sanctum", "description": "Refund a paid order (routes through finance/refund).", "seededOn": ["admin", "owner", "finance"] },
-    { "name": "orders.recalculate", "guard": "sanctum", "description": "Force-recalculate totals (e.g. after price changes).", "seededOn": ["admin", "owner", "finance"] },
-    { "name": "order-lines.create", "guard": "sanctum", "seededOn": ["admin", "owner", "finance", "receptionist", "guardian"] },
-    { "name": "order-lines.update", "guard": "sanctum", "seededOn": ["admin", "owner", "finance", "receptionist", "guardian"] },
-    { "name": "order-lines.delete", "guard": "sanctum", "seededOn": ["admin", "owner", "finance", "receptionist", "guardian"] },
-    { "name": "order-adjustments.create", "guard": "sanctum", "description": "Apply coupon / credit / manual discount.", "seededOn": ["admin", "owner", "finance", "receptionist"] },
-    { "name": "order-adjustments.delete", "guard": "sanctum", "seededOn": ["admin", "owner", "finance"] }
+    {
+      "name": "orders.viewAny",
+      "guard": "sanctum",
+      "seededOn": ["admin", "owner", "finance", "support", "guardian"]
+    },
+    {
+      "name": "orders.view",
+      "guard": "sanctum",
+      "seededOn": ["admin", "owner", "finance", "support", "guardian"]
+    },
+    {
+      "name": "orders.create",
+      "guard": "sanctum",
+      "seededOn": ["admin", "owner", "finance", "receptionist", "guardian"]
+    },
+    {
+      "name": "orders.update",
+      "guard": "sanctum",
+      "description": "Modify draft/pending order lines + adjustments.",
+      "seededOn": ["admin", "owner", "finance", "receptionist", "guardian"]
+    },
+    {
+      "name": "orders.delete",
+      "guard": "sanctum",
+      "description": "Soft-delete a draft order.",
+      "seededOn": ["admin", "owner"]
+    },
+    {
+      "name": "orders.checkout",
+      "guard": "sanctum",
+      "description": "Transition draft->pending and initiate payment.",
+      "seededOn": ["admin", "owner", "finance", "receptionist", "guardian"]
+    },
+    {
+      "name": "orders.cancel",
+      "guard": "sanctum",
+      "description": "Cancel pending/paid orders.",
+      "seededOn": ["admin", "owner", "finance"]
+    },
+    {
+      "name": "orders.refund",
+      "guard": "sanctum",
+      "description": "Refund a paid order (routes through finance/refund).",
+      "seededOn": ["admin", "owner", "finance"]
+    },
+    {
+      "name": "orders.recalculate",
+      "guard": "sanctum",
+      "description": "Force-recalculate totals (e.g. after price changes).",
+      "seededOn": ["admin", "owner", "finance"]
+    },
+    {
+      "name": "order-lines.create",
+      "guard": "sanctum",
+      "seededOn": ["admin", "owner", "finance", "receptionist", "guardian"]
+    },
+    {
+      "name": "order-lines.update",
+      "guard": "sanctum",
+      "seededOn": ["admin", "owner", "finance", "receptionist", "guardian"]
+    },
+    {
+      "name": "order-lines.delete",
+      "guard": "sanctum",
+      "seededOn": ["admin", "owner", "finance", "receptionist", "guardian"]
+    },
+    {
+      "name": "order-adjustments.create",
+      "guard": "sanctum",
+      "description": "Apply coupon / credit / manual discount.",
+      "seededOn": ["admin", "owner", "finance", "receptionist"]
+    },
+    {
+      "name": "order-adjustments.delete",
+      "guard": "sanctum",
+      "seededOn": ["admin", "owner", "finance"]
+    }
   ]
 }

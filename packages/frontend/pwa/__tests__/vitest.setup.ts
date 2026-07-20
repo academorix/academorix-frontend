@@ -6,4 +6,4 @@
  *   `Injectable()` in the suite.
  */
 
-import 'reflect-metadata';
+import "reflect-metadata";

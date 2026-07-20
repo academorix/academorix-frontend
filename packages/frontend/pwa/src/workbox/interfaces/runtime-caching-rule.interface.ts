@@ -23,7 +23,7 @@ export interface IRuntimeCachingRule {
     RegExp | ((context: { readonly url: URL; readonly sameOrigin: boolean }) => boolean);
   /** Workbox strategy name. */
   readonly handler:
-    'CacheFirst' | 'NetworkFirst' | 'StaleWhileRevalidate' | 'NetworkOnly' | 'CacheOnly';
+    "CacheFirst" | "NetworkFirst" | "StaleWhileRevalidate" | "NetworkOnly" | "CacheOnly";
   /** Strategy-specific options. */
   readonly options?: {
     readonly cacheName?: string;

@@ -18,17 +18,17 @@
  *     tearing-free rendering under concurrent React.
  */
 
-import { Injectable, Inject, Optional } from '@stackra/container';
-import type { OnModuleInit } from '@stackra/contracts';
+import { Injectable, Inject, Optional } from "@stackra/container";
+import type { OnModuleInit } from "@stackra/contracts";
 
-import { SCOPE_CONFIG, SCOPE_DATA_SOURCE } from '../constants';
+import { SCOPE_CONFIG, SCOPE_DATA_SOURCE } from "../constants";
 import type {
   IScopeContext,
   IScopeDataSource,
   IScopeModuleOptions,
   IScopeNodeTreeNode,
   IScopeSnapshot,
-} from '../interfaces';
+} from "../interfaces";
 
 /** Listener invoked whenever the scope state changes. */
 export type ScopeListener = () => void;
@@ -61,7 +61,7 @@ export class ScopeService implements OnModuleInit {
 
   public constructor(
     @Optional() @Inject(SCOPE_CONFIG) config?: IScopeModuleOptions,
-    @Optional() @Inject(SCOPE_DATA_SOURCE) private readonly dataSource?: IScopeDataSource
+    @Optional() @Inject(SCOPE_DATA_SOURCE) private readonly dataSource?: IScopeDataSource,
   ) {
     this.scope = config?.initialScope ?? null;
     this.tree = config?.initialTree ?? [];

@@ -9,14 +9,14 @@
  *   fail-soft when the discovery package isn't wired.
  */
 
-import { Injectable, Inject, Optional } from '@stackra/container';
-import { DISCOVERY_SERVICE } from '@stackra/contracts';
-import type { IDiscoveryService, OnApplicationBootstrap } from '@stackra/contracts';
-import { getMetadata } from '@vivtel/metadata';
+import { Injectable, Inject, Optional } from "@stackra/container";
+import { DISCOVERY_SERVICE } from "@stackra/contracts";
+import type { IDiscoveryService, OnApplicationBootstrap } from "@stackra/contracts";
+import { getMetadata } from "@vivtel/metadata";
 
-import { CSP_POLICY_METADATA } from '../constants';
-import { CspRegistry } from '../registries/csp.registry';
-import type { CspFeaturePolicy } from '../interfaces/csp-feature-policy.interface';
+import { CSP_POLICY_METADATA } from "../constants";
+import { CspRegistry } from "../registries/csp.registry";
+import type { CspFeaturePolicy } from "../interfaces/csp-feature-policy.interface";
 
 /**
  * Discovers and registers all `@CspPolicy()`-decorated classes with the
@@ -27,7 +27,7 @@ import type { CspFeaturePolicy } from '../interfaces/csp-feature-policy.interfac
 export class CspPolicyLoader implements OnApplicationBootstrap {
   public constructor(
     private readonly registry: CspRegistry,
-    @Optional() @Inject(DISCOVERY_SERVICE) private readonly discovery?: IDiscoveryService
+    @Optional() @Inject(DISCOVERY_SERVICE) private readonly discovery?: IDiscoveryService,
   ) {}
 
   /**

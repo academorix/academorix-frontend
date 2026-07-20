@@ -1,7 +1,7 @@
 {
   "name": "@stackra/collaboration",
   "version": "0.1.0",
-  "description": "Liveblocks-style real-time collaboration for the Stackra framework — presence, cursors, threads, shared state, and notifications with pluggable transports.",
+  "description": "Liveblocks-style real-time collaboration for the Stackra framework \u2014 presence, cursors, threads, shared state, and notifications with pluggable transports.",
   "license": "MIT",
   "author": {
     "name": "Stackra L.L.C",
@@ -87,6 +87,8 @@
     }
   },
   "devDependencies": {
+    "@academorix/config-tsconfig": "workspace:*",
+    "@academorix/config-tsup": "workspace:*",
     "@stackra/container": "workspace:*",
     "@stackra/contracts": "workspace:*",
     "@stackra/coordinator": "workspace:*",

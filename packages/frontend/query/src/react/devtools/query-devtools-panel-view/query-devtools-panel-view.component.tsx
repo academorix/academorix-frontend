@@ -16,12 +16,12 @@
  *   exposes the same shape natively.
  */
 
-import { type ReactElement, useCallback, useSyncExternalStore } from 'react';
-import { Card, Chip } from '@stackra/ui/react';
-import type { QueryClient } from '@tanstack/query-core';
-import type { IUndoableMutation } from '@stackra/contracts';
+import { type ReactElement, useCallback, useSyncExternalStore } from "react";
+import { Card, Chip } from "@stackra/ui/react";
+import type { QueryClient } from "@tanstack/query-core";
+import type { IUndoableMutation } from "@stackra/contracts";
 
-import type { QueryDevtoolsPanelViewProps } from './query-devtools-panel-view.interface';
+import type { QueryDevtoolsPanelViewProps } from "./query-devtools-panel-view.interface";
 
 /** How many cached queries to preview. */
 const QUERY_PREVIEW_LIMIT = 10;
@@ -45,8 +45,8 @@ interface QueryCacheSnapshot {
 interface QueryPreviewRow {
   readonly hash: string;
   readonly key: string;
-  readonly status: 'pending' | 'success' | 'error' | 'idle';
-  readonly fetchStatus: 'idle' | 'fetching' | 'paused';
+  readonly status: "pending" | "success" | "error" | "idle";
+  readonly fetchStatus: "idle" | "fetching" | "paused";
   readonly isStale: boolean;
   readonly dataUpdatedAt: number;
 }
@@ -85,8 +85,8 @@ function readQueryCache(client: QueryClient): QueryCacheSnapshot {
     if (q.isStale()) stale++;
     // fetchStatus is 'fetching' whenever the query is actually
     // hitting the network; status covers the last-known result.
-    if (q.state.fetchStatus === 'fetching') fetching++;
-    if (q.state.status === 'error') errored++;
+    if (q.state.fetchStatus === "fetching") fetching++;
+    if (q.state.status === "error") errored++;
   }
   const previews: QueryPreviewRow[] = [];
   for (const q of all.slice(0, QUERY_PREVIEW_LIMIT)) {
@@ -123,8 +123,8 @@ function readMutationCache(client: QueryClient): MutationCacheSnapshot {
   let pending = 0;
   let errored = 0;
   for (const m of all) {
-    if (m.state.status === 'pending') pending++;
-    if (m.state.status === 'error') errored++;
+    if (m.state.status === "pending") pending++;
+    if (m.state.status === "error") errored++;
   }
   return {
     total: all.length,
@@ -143,11 +143,11 @@ function useQueryCache(client: QueryClient | undefined): QueryCacheSnapshot {
       if (!client) return () => undefined;
       return client.getQueryCache().subscribe(() => cb());
     },
-    [client]
+    [client],
   );
   const getSnapshot = useCallback(
     () => (client ? readQueryCache(client) : EMPTY_QUERIES),
-    [client]
+    [client],
   );
   return useSyncExternalStore(subscribe, getSnapshot, getSnapshot);
 }
@@ -161,11 +161,11 @@ function useMutationCache(client: QueryClient | undefined): MutationCacheSnapsho
       if (!client) return () => undefined;
       return client.getMutationCache().subscribe(() => cb());
     },
-    [client]
+    [client],
   );
   const getSnapshot = useCallback(
     () => (client ? readMutationCache(client) : EMPTY_MUTATIONS),
-    [client]
+    [client],
   );
   return useSyncExternalStore(subscribe, getSnapshot, getSnapshot);
 }
@@ -174,18 +174,18 @@ function useMutationCache(client: QueryClient | undefined): MutationCacheSnapsho
  * Subscribe to the undoable-mutation queue's pending list.
  */
 function useUndoableQueue(
-  queue: QueryDevtoolsPanelViewProps['undoable']
+  queue: QueryDevtoolsPanelViewProps["undoable"],
 ): readonly IUndoableMutation[] {
   const subscribe = useCallback(
     (cb: () => void): (() => void) => {
       if (!queue) return () => undefined;
       return queue.subscribe(() => cb());
     },
-    [queue]
+    [queue],
   );
   const getSnapshot = useCallback(
     () => (queue ? queue.getPending() : (EMPTY_PENDING as readonly IUndoableMutation[])),
-    [queue]
+    [queue],
   );
   return useSyncExternalStore(subscribe, getSnapshot, getSnapshot);
 }
@@ -198,18 +198,18 @@ const EMPTY_PENDING: readonly IUndoableMutation[] = Object.freeze([]);
  * so chip identity is stable.
  */
 function statusVariant(
-  status: 'pending' | 'success' | 'error' | 'idle'
-): 'primary' | 'secondary' | 'soft' | 'tertiary' {
+  status: "pending" | "success" | "error" | "idle",
+): "primary" | "secondary" | "soft" | "tertiary" {
   switch (status) {
-    case 'pending':
-      return 'primary';
-    case 'success':
-      return 'soft';
-    case 'error':
-      return 'tertiary';
-    case 'idle':
+    case "pending":
+      return "primary";
+    case "success":
+      return "soft";
+    case "error":
+      return "tertiary";
+    case "idle":
     default:
-      return 'secondary';
+      return "secondary";
   }
 }
 
@@ -217,9 +217,9 @@ function statusVariant(
  * Format a `dataUpdatedAt` timestamp as a short relative label.
  */
 function formatFetchedAt(ms: number): string {
-  if (!ms) return 'never';
+  if (!ms) return "never";
   const diff = Date.now() - ms;
-  if (diff < 1_000) return 'now';
+  if (diff < 1_000) return "now";
   if (diff < 60_000) return `${Math.floor(diff / 1_000)}s ago`;
   if (diff < 3_600_000) return `${Math.floor(diff / 60_000)}m ago`;
   return `${Math.floor(diff / 3_600_000)}h ago`;
@@ -258,8 +258,8 @@ export function QueryDevtoolsPanelView({
   return (
     <div className="flex flex-col gap-3">
       <header>
-        <h3 className="text-base font-semibold text-foreground">Query</h3>
-        <p className="text-xs text-muted">
+        <h3 className="text-foreground text-base font-semibold">Query</h3>
+        <p className="text-muted text-xs">
           Live TanStack Query cache stats + Stackra&apos;s undoable-mutation queue.
         </p>
       </header>
@@ -271,20 +271,20 @@ export function QueryDevtoolsPanelView({
             <Chip size="sm" variant="secondary">
               <Chip.Label>{queries.total} cached</Chip.Label>
             </Chip>
-            <Chip size="sm" variant={queries.fetching > 0 ? 'primary' : 'secondary'}>
+            <Chip size="sm" variant={queries.fetching > 0 ? "primary" : "secondary"}>
               <Chip.Label>{queries.fetching} fetching</Chip.Label>
             </Chip>
             <Chip size="sm" variant="secondary">
               <Chip.Label>{queries.stale} stale</Chip.Label>
             </Chip>
-            <Chip size="sm" variant={queries.errored > 0 ? 'tertiary' : 'secondary'}>
+            <Chip size="sm" variant={queries.errored > 0 ? "tertiary" : "secondary"}>
               <Chip.Label>{queries.errored} errored</Chip.Label>
             </Chip>
           </div>
           <Card.Description>
             {queries.total > 0
               ? `First ${Math.min(queries.total, QUERY_PREVIEW_LIMIT)} keys shown below.`
-              : 'No cached queries yet.'}
+              : "No cached queries yet."}
           </Card.Description>
         </Card.Header>
         {queries.queries.length > 0 ? (
@@ -293,7 +293,7 @@ export function QueryDevtoolsPanelView({
               {queries.queries.map((q) => (
                 <li key={q.hash} className="flex items-center justify-between gap-2">
                   <code className="truncate text-xs">{q.key}</code>
-                  <span className="flex items-center gap-2 text-muted">
+                  <span className="text-muted flex items-center gap-2">
                     <Chip size="sm" variant={statusVariant(q.status)}>
                       <Chip.Label>{q.status}</Chip.Label>
                     </Chip>
@@ -313,18 +313,18 @@ export function QueryDevtoolsPanelView({
             <Chip size="sm" variant="secondary">
               <Chip.Label>{mutations.total} total</Chip.Label>
             </Chip>
-            <Chip size="sm" variant={mutations.pending > 0 ? 'primary' : 'secondary'}>
+            <Chip size="sm" variant={mutations.pending > 0 ? "primary" : "secondary"}>
               <Chip.Label>{mutations.pending} in flight</Chip.Label>
             </Chip>
-            <Chip size="sm" variant={mutations.errored > 0 ? 'tertiary' : 'secondary'}>
+            <Chip size="sm" variant={mutations.errored > 0 ? "tertiary" : "secondary"}>
               <Chip.Label>{mutations.errored} errored</Chip.Label>
             </Chip>
-            <Chip size="sm" variant={pending.length > 0 ? 'primary' : 'secondary'}>
+            <Chip size="sm" variant={pending.length > 0 ? "primary" : "secondary"}>
               <Chip.Label>{pending.length} undoable</Chip.Label>
             </Chip>
           </div>
           <Card.Description>
-            TanStack Query&apos;s live mutation cache plus Stackra&apos;s countdown queue for{' '}
+            TanStack Query&apos;s live mutation cache plus Stackra&apos;s countdown queue for{" "}
             <code>mutationMode: &apos;undoable&apos;</code>.
           </Card.Description>
         </Card.Header>
@@ -333,8 +333,8 @@ export function QueryDevtoolsPanelView({
             <ul className="flex flex-col gap-1 text-sm">
               {pending.map((m) => (
                 <li key={m.id} className="flex items-center justify-between gap-2">
-                  <span className="truncate text-foreground">{m.label ?? m.resource ?? m.id}</span>
-                  <span className="text-xs text-muted">
+                  <span className="text-foreground truncate">{m.label ?? m.resource ?? m.id}</span>
+                  <span className="text-muted text-xs">
                     <code>{m.timeoutMs}ms</code>
                   </span>
                 </li>

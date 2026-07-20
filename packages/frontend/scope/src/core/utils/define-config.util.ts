@@ -4,7 +4,7 @@
  * @description Typed identity helper for authoring `scope.config.ts`.
  */
 
-import type { IScopeModuleOptions } from '../interfaces';
+import type { IScopeModuleOptions } from "../interfaces";
 
 /**
  * Type-safe scope configuration helper — identity pass-through for

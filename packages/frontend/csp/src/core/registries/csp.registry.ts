@@ -13,44 +13,44 @@
  *   Standalone — backed by a plain internal `Map<string, CspFeaturePolicy>`.
  */
 
-import { Injectable } from '@stackra/container';
+import { Injectable } from "@stackra/container";
 
-import type { CspFeaturePolicy } from '../interfaces/csp-feature-policy.interface';
-import type { MergedCspSources } from '../types/merged-csp-sources.type';
+import type { CspFeaturePolicy } from "../interfaces/csp-feature-policy.interface";
+import type { MergedCspSources } from "../types/merged-csp-sources.type";
 
 /**
  * Internal directive key list — kept in sync with `CspFeaturePolicy`.
  */
 type DirectiveKey =
-  | 'defaultSrc'
-  | 'scriptSrc'
-  | 'styleSrc'
-  | 'imgSrc'
-  | 'connectSrc'
-  | 'fontSrc'
-  | 'frameSrc'
-  | 'objectSrc'
-  | 'workerSrc'
-  | 'mediaSrc'
-  | 'baseUri'
-  | 'formAction';
+  | "defaultSrc"
+  | "scriptSrc"
+  | "styleSrc"
+  | "imgSrc"
+  | "connectSrc"
+  | "fontSrc"
+  | "frameSrc"
+  | "objectSrc"
+  | "workerSrc"
+  | "mediaSrc"
+  | "baseUri"
+  | "formAction";
 
 /**
  * All directive keys for iteration.
  */
 const DIRECTIVE_KEYS: DirectiveKey[] = [
-  'defaultSrc',
-  'scriptSrc',
-  'styleSrc',
-  'imgSrc',
-  'connectSrc',
-  'fontSrc',
-  'frameSrc',
-  'objectSrc',
-  'workerSrc',
-  'mediaSrc',
-  'baseUri',
-  'formAction',
+  "defaultSrc",
+  "scriptSrc",
+  "styleSrc",
+  "imgSrc",
+  "connectSrc",
+  "fontSrc",
+  "frameSrc",
+  "objectSrc",
+  "workerSrc",
+  "mediaSrc",
+  "baseUri",
+  "formAction",
 ];
 
 /**

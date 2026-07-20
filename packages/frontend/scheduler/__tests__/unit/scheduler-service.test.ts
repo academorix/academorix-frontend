@@ -6,15 +6,15 @@
  *   lifecycle event emission.
  */
 
-import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { SCHEDULER_EVENTS } from '@stackra/contracts';
+import { describe, it, expect, beforeEach, vi } from "vitest";
+import { SCHEDULER_EVENTS } from "@stackra/contracts";
 
-import { SchedulerService } from '@/core/services/scheduler.service';
-import { MockTaskRunner } from '@/testing/mock-task-runner';
+import { SchedulerService } from "@/core/services/scheduler.service";
+import { MockTaskRunner } from "@/testing/mock-task-runner";
 
-import { RecordingEmitter } from '../support/recording-emitter';
+import { RecordingEmitter } from "../support/recording-emitter";
 
-describe('SchedulerService', () => {
+describe("SchedulerService", () => {
   let runner: MockTaskRunner;
   let emitter: RecordingEmitter;
   let service: SchedulerService;
@@ -25,27 +25,27 @@ describe('SchedulerService', () => {
     service = new SchedulerService(runner, emitter);
   });
 
-  it('registers a task through the runner and emits TASK_REGISTERED', async () => {
+  it("registers a task through the runner and emits TASK_REGISTERED", async () => {
     const fn = vi.fn(async () => {});
-    service.register('sync-orders', fn, { interval: 1_000 });
+    service.register("sync-orders", fn, { interval: 1_000 });
 
     // The runner stored the task.
     expect(runner.getRegistered()).toHaveLength(1);
-    expect(runner.getRegistered()[0]!.name).toBe('sync-orders');
+    expect(runner.getRegistered()[0]!.name).toBe("sync-orders");
 
     // Emission of TASK_REGISTERED with the options.
     expect(emitter.emitted).toContainEqual({
       event: SCHEDULER_EVENTS.TASK_REGISTERED,
-      payload: { name: 'sync-orders', options: { interval: 1_000 } },
+      payload: { name: "sync-orders", options: { interval: 1_000 } },
     });
   });
 
-  it('wraps register() to emit STARTED + COMPLETED around a successful run', async () => {
+  it("wraps register() to emit STARTED + COMPLETED around a successful run", async () => {
     const fn = vi.fn(async () => {});
-    service.register('sync-orders', fn, { interval: 1_000 });
+    service.register("sync-orders", fn, { interval: 1_000 });
     emitter.reset();
 
-    await service.runNow('sync-orders');
+    await service.runNow("sync-orders");
     expect(fn).toHaveBeenCalledOnce();
 
     const events = emitter.emitted.map((e) => e.event);
@@ -60,19 +60,19 @@ describe('SchedulerService', () => {
     const completed = emitter.emitted.find((e) => e.event === SCHEDULER_EVENTS.TASK_COMPLETED) as {
       payload: { name: string; timestamp: number };
     };
-    expect(completed.payload.name).toBe('sync-orders');
-    expect(typeof completed.payload.timestamp).toBe('number');
+    expect(completed.payload.name).toBe("sync-orders");
+    expect(typeof completed.payload.timestamp).toBe("number");
   });
 
-  it('emits STARTED + FAILED and re-throws when the task throws', async () => {
-    const err = new Error('task boom');
+  it("emits STARTED + FAILED and re-throws when the task throws", async () => {
+    const err = new Error("task boom");
     const fn = vi.fn(async () => {
       throw err;
     });
-    service.register('bad', fn, { interval: 1_000 });
+    service.register("bad", fn, { interval: 1_000 });
     emitter.reset();
 
-    await expect(service.runNow('bad')).rejects.toBe(err);
+    await expect(service.runNow("bad")).rejects.toBe(err);
 
     const events = emitter.emitted.map((e) => e.event);
     expect(events).toContain(SCHEDULER_EVENTS.TASK_STARTED);
@@ -81,73 +81,73 @@ describe('SchedulerService', () => {
     const failed = emitter.emitted.find((e) => e.event === SCHEDULER_EVENTS.TASK_FAILED) as {
       payload: { name: string; error: Error };
     };
-    expect(failed.payload.name).toBe('bad');
+    expect(failed.payload.name).toBe("bad");
     expect(failed.payload.error).toBe(err);
   });
 
-  it('unregister removes the task and emits TASK_UNREGISTERED', () => {
-    service.register('x', async () => {}, { interval: 1_000 });
+  it("unregister removes the task and emits TASK_UNREGISTERED", () => {
+    service.register("x", async () => {}, { interval: 1_000 });
     emitter.reset();
 
-    service.unregister('x');
+    service.unregister("x");
     expect(runner.getRegistered()).toHaveLength(0);
     expect(emitter.emitted).toContainEqual({
       event: SCHEDULER_EVENTS.TASK_UNREGISTERED,
-      payload: { name: 'x' },
+      payload: { name: "x" },
     });
   });
 
-  it('pause emits TASK_PAUSED and sets the flag on the runner', () => {
-    service.register('x', async () => {}, { interval: 1_000 });
+  it("pause emits TASK_PAUSED and sets the flag on the runner", () => {
+    service.register("x", async () => {}, { interval: 1_000 });
     emitter.reset();
 
-    service.pause('x');
+    service.pause("x");
     expect(runner.getRegistered()[0]!.isPaused).toBe(true);
     expect(emitter.emitted).toContainEqual({
       event: SCHEDULER_EVENTS.TASK_PAUSED,
-      payload: { name: 'x' },
+      payload: { name: "x" },
     });
   });
 
-  it('resume emits TASK_RESUMED', () => {
-    service.register('x', async () => {}, { interval: 1_000 });
-    service.pause('x');
+  it("resume emits TASK_RESUMED", () => {
+    service.register("x", async () => {}, { interval: 1_000 });
+    service.pause("x");
     emitter.reset();
 
-    service.resume('x');
+    service.resume("x");
     expect(runner.getRegistered()[0]!.isPaused).toBe(false);
     expect(emitter.emitted).toContainEqual({
       event: SCHEDULER_EVENTS.TASK_RESUMED,
-      payload: { name: 'x' },
+      payload: { name: "x" },
     });
   });
 
-  it('getRegistered forwards to the runner', () => {
-    service.register('x', async () => {}, { interval: 1_000 });
-    service.register('y', async () => {}, { interval: 5_000 });
+  it("getRegistered forwards to the runner", () => {
+    service.register("x", async () => {}, { interval: 1_000 });
+    service.register("y", async () => {}, { interval: 5_000 });
     const names = service
       .getRegistered()
       .map((t) => t.name)
       .sort();
-    expect(names).toEqual(['x', 'y']);
+    expect(names).toEqual(["x", "y"]);
   });
 
-  it('operates without an event emitter injected', async () => {
+  it("operates without an event emitter injected", async () => {
     // The `@Optional` decorator lets consumers wire the service without
     // an emitter — every call is a no-op on the emit side.
     const bareService = new SchedulerService(runner);
-    bareService.register('x', async () => {}, { interval: 1_000 });
-    await expect(bareService.runNow('x')).resolves.toBeUndefined();
-    bareService.pause('x');
-    bareService.resume('x');
-    bareService.unregister('x');
+    bareService.register("x", async () => {}, { interval: 1_000 });
+    await expect(bareService.runNow("x")).resolves.toBeUndefined();
+    bareService.pause("x");
+    bareService.resume("x");
+    bareService.unregister("x");
   });
 
-  it('is fail-soft when the emitter throws', async () => {
+  it("is fail-soft when the emitter throws", async () => {
     // Any listener throw must never break scheduling.
     const throwing = {
       emit: () => {
-        throw new Error('subscriber exploded');
+        throw new Error("subscriber exploded");
       },
       on: () => () => {},
       eventNames: () => [],
@@ -155,7 +155,7 @@ describe('SchedulerService', () => {
       removeAllListeners: () => {},
     };
     const bareService = new SchedulerService(runner, throwing);
-    expect(() => bareService.register('x', async () => {}, { interval: 1_000 })).not.toThrow();
-    await expect(bareService.runNow('x')).resolves.toBeUndefined();
+    expect(() => bareService.register("x", async () => {}, { interval: 1_000 })).not.toThrow();
+    await expect(bareService.runNow("x")).resolves.toBeUndefined();
   });
 });

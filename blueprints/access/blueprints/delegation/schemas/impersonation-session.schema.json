@@ -234,13 +234,7 @@
     "ended_at": { "type": ["string", "null"], "format": "date-time" },
     "end_trigger": {
       "type": ["string", "null"],
-      "enum": [
-        "self_service",
-        "ttl_expired",
-        "admin_revocation",
-        "security_lockdown",
-        null
-      ]
+      "enum": ["self_service", "ttl_expired", "admin_revocation", "security_lockdown", null]
     },
     "is_read_only": { "type": "boolean" },
     "impersonator_display_name": { "type": "string", "minLength": 1, "maxLength": 128 },

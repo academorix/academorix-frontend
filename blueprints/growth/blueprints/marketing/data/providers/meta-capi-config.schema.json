@@ -25,7 +25,16 @@
     },
     "action_source": {
       "type": "string",
-      "enum": ["website", "app", "email", "phone_call", "chat", "physical_store", "system_generated", "other"],
+      "enum": [
+        "website",
+        "app",
+        "email",
+        "phone_call",
+        "chat",
+        "physical_store",
+        "system_generated",
+        "other"
+      ],
       "default": "website",
       "description": "Meta CAPI action_source parameter. Defaults to 'website' for browser-originated events; 'app' for mobile app; 'system_generated' for server-only events like subscription renewals."
     },

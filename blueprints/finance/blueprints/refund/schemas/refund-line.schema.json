@@ -38,7 +38,12 @@
   "x-database": {
     "engine": "postgres",
     "columns": {
-      "id": { "type": "string", "length": 64, "primary": true, "description": "Prefixed ULID: `rfl_<26>`." },
+      "id": {
+        "type": "string",
+        "length": 64,
+        "primary": true,
+        "description": "Prefixed ULID: `rfl_<26>`."
+      },
       "tenant_id": {
         "type": "string",
         "length": 64,
@@ -116,7 +121,16 @@
     "currency": { "type": "string", "pattern": "^[A-Z]{3}$" },
     "proration_config": {
       "type": ["object", "null"],
-      "required": ["unused_period_start", "unused_period_end", "total_period_days", "unused_days", "unused_pass_count", "unused_pass_credit_cents", "billing_interval", "formula_schema_version"],
+      "required": [
+        "unused_period_start",
+        "unused_period_end",
+        "total_period_days",
+        "unused_days",
+        "unused_pass_count",
+        "unused_pass_credit_cents",
+        "billing_interval",
+        "formula_schema_version"
+      ],
       "properties": {
         "unused_period_start": { "type": "string", "format": "date-time" },
         "unused_period_end": { "type": "string", "format": "date-time" },

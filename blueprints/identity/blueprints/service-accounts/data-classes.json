@@ -22,9 +22,7 @@
       "ServiceAccount.updated_at",
       "ServiceAccount.deleted_at"
     ],
-    "confidential": [
-      "ServiceAccount.last_used_ip"
-    ],
+    "confidential": ["ServiceAccount.last_used_ip"],
     "restricted": [],
     "regulated_minor": [],
     "regulated_health": [],

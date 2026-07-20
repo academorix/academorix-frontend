@@ -13,12 +13,12 @@ Manage active + historical themes for the tenant.
   offers Activate / Preview / Delete action buttons per row.
 - `create.screen.json` — new-theme form. Pick preset + set mode + configure
   accessibility flags. Submits `POST /api/v1/themes`.
-- `activate.screen.json` — confirmation screen for `POST
-  /api/v1/themes/{theme}/activate`. Shows the diff between current + candidate
-  activations (which color pairs change, which overrides land).
-- `preview.screen.json` — dry-run preview panel calling `POST
-  /api/v1/themes/{theme}/preview`. Renders the compiled CSS + contrast audit
-  findings + accessibility flag preview side-by-side.
+- `activate.screen.json` — confirmation screen for
+  `POST /api/v1/themes/{theme}/activate`. Shows the diff between current +
+  candidate activations (which color pairs change, which overrides land).
+- `preview.screen.json` — dry-run preview panel calling
+  `POST /api/v1/themes/{theme}/preview`. Renders the compiled CSS + contrast
+  audit findings + accessibility flag preview side-by-side.
 
 ### `resources/theme-preset/`
 
@@ -39,8 +39,8 @@ Per-theme token override management.
 
 - `list.screen.json` — table of overrides for a theme with token_key,
   token_value, token_type columns + delete action per row.
-- `edit.screen.json` — token override form. Auto-fills token_type from the
-  key, validates value against the type schema.
+- `edit.screen.json` — token override form. Auto-fills token_type from the key,
+  validates value against the type schema.
 
 ### `widgets/`
 
@@ -50,5 +50,5 @@ Per-theme token override management.
 - `preset-thumbnail.widget.json` — 1200×630 preset preview thumbnail with
   loading state + placeholder fallback (color swatch derived from
   `color.primary.500` when the thumbnail is missing).
-- `mode-switcher.widget.json` — light/dark/auto radio group + accessibility
-  flag checkboxes. Reused on the theme-edit + `/me/theme-preference` screens.
+- `mode-switcher.widget.json` — light/dark/auto radio group + accessibility flag
+  checkboxes. Reused on the theme-edit + `/me/theme-preference` screens.

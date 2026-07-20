@@ -13,16 +13,16 @@
  *   `useSyncExternalStore` needs.
  */
 
-import { type ReactElement, useCallback, useSyncExternalStore } from 'react';
-import { Card, Chip } from '@stackra/ui/react';
+import { type ReactElement, useCallback, useSyncExternalStore } from "react";
+import { Card, Chip } from "@stackra/ui/react";
 import {
   OperationStatus,
   type IGlobalSyncState,
   type IQueueStats,
   type IQueuedOperation,
-} from '@stackra/contracts';
+} from "@stackra/contracts";
 
-import type { SyncDevtoolsPanelViewProps } from './sync-devtools-panel-view.interface';
+import type { SyncDevtoolsPanelViewProps } from "./sync-devtools-panel-view.interface";
 
 /** Frozen empty state used when the engine is absent. */
 const EMPTY_ENGINE_STATE: IGlobalSyncState = Object.freeze({
@@ -48,10 +48,10 @@ const EMPTY_QUEUE_STATS: IQueueStats = Object.freeze({
  * older. Kept as a pure function so React reconciles cleanly.
  */
 function formatRelative(date: Date | null): string {
-  if (!date) return 'never';
+  if (!date) return "never";
   const now = Date.now();
   const diffMs = now - date.getTime();
-  if (diffMs < 60_000) return 'just now';
+  if (diffMs < 60_000) return "just now";
   if (diffMs < 3_600_000) return `${Math.floor(diffMs / 60_000)}m ago`;
   if (diffMs < 86_400_000) return `${Math.floor(diffMs / 3_600_000)}h ago`;
   if (diffMs < 604_800_000) return `${Math.floor(diffMs / 86_400_000)}d ago`;
@@ -65,18 +65,18 @@ function formatRelative(date: Date | null): string {
  * Handles the "no engine" case with a frozen empty state so the
  * hook stays tearing-free.
  */
-function useEngineState(engine: SyncDevtoolsPanelViewProps['engine']): IGlobalSyncState {
+function useEngineState(engine: SyncDevtoolsPanelViewProps["engine"]): IGlobalSyncState {
   const subscribe = useCallback(
     (cb: () => void): (() => void) => {
       if (!engine) return () => undefined;
       const sub = engine.state$.subscribe(() => cb());
       return () => sub.unsubscribe();
     },
-    [engine]
+    [engine],
   );
   const getSnapshot = useCallback(
     () => (engine ? engine.getSyncStatus() : EMPTY_ENGINE_STATE),
-    [engine]
+    [engine],
   );
   return useSyncExternalStore(subscribe, getSnapshot, getSnapshot);
 }
@@ -85,7 +85,7 @@ function useEngineState(engine: SyncDevtoolsPanelViewProps['engine']): IGlobalSy
  * Hook — subscribe to the queue's `stats$` observable via
  * `useSyncExternalStore`.
  */
-function useQueueStats(queue: SyncDevtoolsPanelViewProps['queue']): {
+function useQueueStats(queue: SyncDevtoolsPanelViewProps["queue"]): {
   stats: IQueueStats;
   recent: readonly IQueuedOperation[];
 } {
@@ -95,7 +95,7 @@ function useQueueStats(queue: SyncDevtoolsPanelViewProps['queue']): {
       const sub = queue.stats$.subscribe(() => cb());
       return () => sub.unsubscribe();
     },
-    [queue]
+    [queue],
   );
   const getSnapshot = useCallback(() => (queue ? queue.getStats() : EMPTY_QUEUE_STATS), [queue]);
   const stats = useSyncExternalStore(subscribe, getSnapshot, getSnapshot);
@@ -113,17 +113,17 @@ function useQueueStats(queue: SyncDevtoolsPanelViewProps['queue']): {
  * Map an operation status to a HeroUI `Chip` variant. Kept pure so
  * chip identity is stable.
  */
-function statusVariant(status: OperationStatus): 'primary' | 'secondary' | 'soft' | 'tertiary' {
+function statusVariant(status: OperationStatus): "primary" | "secondary" | "soft" | "tertiary" {
   switch (status) {
     case OperationStatus.Processing:
-      return 'primary';
+      return "primary";
     case OperationStatus.Completed:
-      return 'soft';
+      return "soft";
     case OperationStatus.Failed:
-      return 'tertiary';
+      return "tertiary";
     case OperationStatus.Pending:
     default:
-      return 'secondary';
+      return "secondary";
   }
 }
 
@@ -157,8 +157,8 @@ export function SyncDevtoolsPanelView({ engine, queue }: SyncDevtoolsPanelViewPr
   return (
     <div className="flex flex-col gap-3">
       <header>
-        <h3 className="text-base font-semibold text-foreground">Sync</h3>
-        <p className="text-xs text-muted">
+        <h3 className="text-foreground text-base font-semibold">Sync</h3>
+        <p className="text-muted text-xs">
           Offline-first synchronisation status. Live counts stream from the engine and operation
           queue.
         </p>
@@ -168,19 +168,19 @@ export function SyncDevtoolsPanelView({ engine, queue }: SyncDevtoolsPanelViewPr
         <Card.Header>
           <div className="flex flex-wrap items-center gap-2">
             <Card.Title className="text-sm">Engine</Card.Title>
-            <Chip size="sm" variant={state.isOnline ? 'soft' : 'tertiary'}>
-              <Chip.Label>{state.isOnline ? 'online' : 'offline'}</Chip.Label>
+            <Chip size="sm" variant={state.isOnline ? "soft" : "tertiary"}>
+              <Chip.Label>{state.isOnline ? "online" : "offline"}</Chip.Label>
             </Chip>
-            <Chip size="sm" variant={state.isSyncing ? 'primary' : 'secondary'}>
-              <Chip.Label>{state.isSyncing ? 'syncing' : 'idle'}</Chip.Label>
+            <Chip size="sm" variant={state.isSyncing ? "primary" : "secondary"}>
+              <Chip.Label>{state.isSyncing ? "syncing" : "idle"}</Chip.Label>
             </Chip>
-            <Chip size="sm" variant={state.totalPendingOperations > 0 ? 'primary' : 'secondary'}>
+            <Chip size="sm" variant={state.totalPendingOperations > 0 ? "primary" : "secondary"}>
               <Chip.Label>{state.totalPendingOperations} pending</Chip.Label>
             </Chip>
           </div>
           <Card.Description>
             Last sync {formatRelative(state.lastSyncAt)} — {collectionNames.length} tracked
-            collection{collectionNames.length === 1 ? '' : 's'}.
+            collection{collectionNames.length === 1 ? "" : "s"}.
           </Card.Description>
         </Card.Header>
         {collectionNames.length > 0 ? (
@@ -193,7 +193,7 @@ export function SyncDevtoolsPanelView({ engine, queue }: SyncDevtoolsPanelViewPr
                     <span className="text-foreground">{name}</span>
                     <span className="text-muted">
                       <code className="text-xs">{c.status}</code>
-                      {' · '}
+                      {" · "}
                       <code className="text-xs">{c.pendingOperations} pending</code>
                     </span>
                   </li>
@@ -211,18 +211,18 @@ export function SyncDevtoolsPanelView({ engine, queue }: SyncDevtoolsPanelViewPr
             <Chip size="sm" variant="secondary">
               <Chip.Label>{stats.pending} pending</Chip.Label>
             </Chip>
-            <Chip size="sm" variant={stats.processing > 0 ? 'primary' : 'secondary'}>
+            <Chip size="sm" variant={stats.processing > 0 ? "primary" : "secondary"}>
               <Chip.Label>{stats.processing} processing</Chip.Label>
             </Chip>
             <Chip size="sm" variant="soft">
               <Chip.Label>{stats.completed} completed</Chip.Label>
             </Chip>
-            <Chip size="sm" variant={stats.failed > 0 ? 'tertiary' : 'secondary'}>
+            <Chip size="sm" variant={stats.failed > 0 ? "tertiary" : "secondary"}>
               <Chip.Label>{stats.failed} failed</Chip.Label>
             </Chip>
           </div>
           <Card.Description>
-            {stats.total} operation{stats.total === 1 ? '' : 's'} queued. Recent 10 shown below.
+            {stats.total} operation{stats.total === 1 ? "" : "s"} queued. Recent 10 shown below.
           </Card.Description>
         </Card.Header>
         {recent.length > 0 ? (
@@ -230,7 +230,7 @@ export function SyncDevtoolsPanelView({ engine, queue }: SyncDevtoolsPanelViewPr
             <ul className="flex flex-col gap-1 text-sm">
               {recent.map((op) => (
                 <li key={op.id} className="flex items-center justify-between gap-2">
-                  <span className="truncate text-foreground">
+                  <span className="text-foreground truncate">
                     <code className="text-xs">{op.type ?? op.id}</code>
                   </span>
                   <Chip size="sm" variant={statusVariant(op.status)}>

@@ -4,7 +4,7 @@
  * @description Wrapper around `navigator.vibrate`.
  */
 
-import { useCallback, useMemo } from 'react';
+import { useCallback, useMemo } from "react";
 
 /**
  * Vibration pattern accepted by `navigator.vibrate`.
@@ -42,8 +42,8 @@ export interface IUseVibrationResult {
  */
 export function useVibration(): IUseVibrationResult {
   const isSupported = useMemo(
-    () => typeof navigator !== 'undefined' && typeof navigator.vibrate === 'function',
-    []
+    () => typeof navigator !== "undefined" && typeof navigator.vibrate === "function",
+    [],
   );
 
   const vibrate = useCallback(
@@ -51,10 +51,10 @@ export function useVibration(): IUseVibrationResult {
       if (!isSupported) return false;
       // `navigator.vibrate` returns `false` when the browser denies
       // (e.g. no user gesture). Coerce to boolean uniformly.
-      const arg = typeof pattern === 'number' ? pattern : [...pattern];
+      const arg = typeof pattern === "number" ? pattern : [...pattern];
       return navigator.vibrate(arg);
     },
-    [isSupported]
+    [isSupported],
   );
 
   return { isSupported, vibrate };

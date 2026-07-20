@@ -49,7 +49,12 @@
   "x-database": {
     "engine": "postgres",
     "columns": {
-      "id": { "type": "string", "length": 64, "primary": true, "description": "Prefixed ULID: `ref_<26>`." },
+      "id": {
+        "type": "string",
+        "length": 64,
+        "primary": true,
+        "description": "Prefixed ULID: `ref_<26>`."
+      },
       "tenant_id": {
         "type": "string",
         "length": 64,
@@ -152,8 +157,14 @@
         "description": "One referral per program per referrer-referred pair (only when referred resolved). Prevents double-counting."
       },
       { "columns": ["tenant_id", "status", "created_at"], "name": "referrals_status_idx" },
-      { "columns": ["tenant_id", "referrer_type", "referrer_id"], "name": "referrals_by_referrer_idx" },
-      { "columns": ["tenant_id", "referred_type", "referred_id"], "name": "referrals_by_referred_idx" },
+      {
+        "columns": ["tenant_id", "referrer_type", "referrer_id"],
+        "name": "referrals_by_referrer_idx"
+      },
+      {
+        "columns": ["tenant_id", "referred_type", "referred_id"],
+        "name": "referrals_by_referred_idx"
+      },
       { "columns": ["tenant_id", "referral_code_id"], "name": "referrals_by_code_idx" },
       { "columns": ["tenant_id", "fraud_score"], "name": "referrals_fraud_score_idx" }
     ]
@@ -193,7 +204,18 @@
     },
     "status": {
       "type": "string",
-      "enum": ["pending_claim", "claimed", "signed_up", "trigger_pending", "vesting", "vested", "rewarded", "cancelled", "expired", "fraudulent"]
+      "enum": [
+        "pending_claim",
+        "claimed",
+        "signed_up",
+        "trigger_pending",
+        "vesting",
+        "vested",
+        "rewarded",
+        "cancelled",
+        "expired",
+        "fraudulent"
+      ]
     },
     "claimed_at": { "type": ["string", "null"], "format": "date-time" },
     "signed_up_at": { "type": ["string", "null"], "format": "date-time" },
@@ -203,7 +225,15 @@
     "cancelled_at": { "type": ["string", "null"], "format": "date-time" },
     "cancellation_reason": {
       "type": ["string", "null"],
-      "enum": [null, "refund_issued", "chargeback_filed", "fraud_detected", "manual_admin", "referred_withdrew", "program_archived"]
+      "enum": [
+        null,
+        "refund_issued",
+        "chargeback_filed",
+        "fraud_detected",
+        "manual_admin",
+        "referred_withdrew",
+        "program_archived"
+      ]
     },
     "fraud_score": { "type": "integer", "minimum": 0, "maximum": 100 },
     "metadata": { "type": ["object", "null"] },

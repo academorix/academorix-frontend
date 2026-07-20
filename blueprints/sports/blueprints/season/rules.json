@@ -21,8 +21,18 @@
       "signature": "valid_date_range:min_days,max_days",
       "description": "Ensures `end_date > start_date` with an optional minimum + maximum span in days. Used at the Data-class layer (SeasonCreateData) to check start_date + end_date fields together. Field-level rule; must be attached to the composite object, not a single field.",
       "params": [
-        { "name": "min_days", "type": "int", "default": 1, "description": "Minimum span in days (default 1 — a Season must span at least one day)." },
-        { "name": "max_days", "type": "int", "default": 3653, "description": "Maximum span in days (default 3653 = 10 years — an upper bound to catch mis-parsed dates)." }
+        {
+          "name": "min_days",
+          "type": "int",
+          "default": 1,
+          "description": "Minimum span in days (default 1 — a Season must span at least one day)."
+        },
+        {
+          "name": "max_days",
+          "type": "int",
+          "default": 3653,
+          "description": "Maximum span in days (default 3653 = 10 years — an upper bound to catch mis-parsed dates)."
+        }
       ],
       "example_field_rule": "rule('valid_date_range:1,3653')",
       "error_message_key": "season::validation.valid_date_range",

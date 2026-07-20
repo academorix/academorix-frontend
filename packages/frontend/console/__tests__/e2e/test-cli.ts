@@ -9,16 +9,18 @@ import "reflect-metadata";
 import { Module, Injectable, Inject } from "@stackra/container";
 import { ApplicationFactory } from "@stackra/container";
 import { CONSOLE_OUTPUT, DISCOVERY_SERVICE } from "@stackra/contracts";
-import type { IConsoleOutput, IDiscoveryService, IDiscoveryProvider } from "@stackra/contracts";
 import { defineMetadata, getMetadata } from "@vivtel/metadata";
-import { ConsoleModule } from "../../src/console.module";
+
 import { BaseCommand } from "../../src/base";
+import { ConsoleModule } from "../../src/console.module";
+import { COMMAND_METADATA_KEY } from "../../src/constants";
 import { Command } from "../../src/decorators";
 import { CommandRegistry } from "../../src/registries";
 import { ConsoleOutput } from "../../src/services/console-output.service";
-import { COMMAND_METADATA_KEY } from "../../src/constants";
 import { renderBanner, renderCompactBanner } from "../../src/utils/ascii-banner.util";
 import { fuzzyMatch } from "../../src/utils/fuzzy-match.util";
+
+import type { IConsoleOutput, IDiscoveryService, IDiscoveryProvider } from "@stackra/contracts";
 
 // ============================================================================
 // Sample Commands

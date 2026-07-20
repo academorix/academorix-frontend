@@ -10,13 +10,7 @@
       "name": "Platform User Hired",
       "kind": "track",
       "consent_required": "essential",
-      "properties": [
-        "platform_user_id",
-        "department",
-        "employment_type",
-        "hire_date",
-        "actor_id"
-      ],
+      "properties": ["platform_user_id", "department", "employment_type", "hire_date", "actor_id"],
       "description": "New Academorix staffer provisioned. Feeds the headcount + hiring-velocity dashboards."
     },
     {
@@ -37,24 +31,14 @@
       "name": "Platform User Department Changed",
       "kind": "track",
       "consent_required": "essential",
-      "properties": [
-        "platform_user_id",
-        "from_department",
-        "to_department",
-        "actor_id"
-      ],
+      "properties": ["platform_user_id", "from_department", "to_department", "actor_id"],
       "description": "Internal transfer. Feeds the internal-mobility dashboard."
     },
     {
       "name": "Platform User Manager Reassigned",
       "kind": "track",
       "consent_required": "essential",
-      "properties": [
-        "platform_user_id",
-        "previous_manager_id",
-        "new_manager_id",
-        "actor_id"
-      ],
+      "properties": ["platform_user_id", "previous_manager_id", "new_manager_id", "actor_id"],
       "description": "Org-chart mutation. Spikes correlate with re-org events."
     },
     {

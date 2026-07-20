@@ -7,10 +7,7 @@
     "publishedBy": "entitlements",
     "seededFrom": "Plan.default_entitlements"
   },
-  "kinds": [
-    { "kind": "boolean" },
-    { "kind": "slot" }
-  ],
+  "kinds": [{ "kind": "boolean" }, { "kind": "slot" }],
   "entitlements": [
     {
       "key": "membership_capture",

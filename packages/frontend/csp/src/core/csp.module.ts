@@ -23,16 +23,16 @@
  * ```
  */
 
-import { Module, type DynamicModule } from '@stackra/container';
-import { CSP_CONFIG, CSP_SERVICE, CSP_REGISTRY } from '@stackra/contracts';
+import { Module, type DynamicModule } from "@stackra/container";
+import { CSP_CONFIG, CSP_SERVICE, CSP_REGISTRY } from "@stackra/contracts";
 
-import { CspService } from './services/csp.service';
-import { CspPolicyLoader } from './services/csp-policy-loader.service';
-import { NonceGenerator } from './services/nonce-generator.service';
-import { CspRegistry } from './registries/csp.registry';
-import { createSeedLoader, seedLoaderToken } from '@stackra/support';
-import type { CspModuleOptions } from './interfaces/csp-module-options.interface';
-import type { CspFeaturePolicy } from './interfaces/csp-feature-policy.interface';
+import { CspService } from "./services/csp.service";
+import { CspPolicyLoader } from "./services/csp-policy-loader.service";
+import { NonceGenerator } from "./services/nonce-generator.service";
+import { CspRegistry } from "./registries/csp.registry";
+import { createSeedLoader, seedLoaderToken } from "@stackra/support";
+import type { CspModuleOptions } from "./interfaces/csp-module-options.interface";
+import type { CspFeaturePolicy } from "./interfaces/csp-feature-policy.interface";
 
 /**
  * CSP Module — Content Security Policy management with a registry system.
@@ -91,7 +91,7 @@ export class CspModule {
       module: CspModule,
       providers: [
         {
-          provide: seedLoaderToken('csp-feature'),
+          provide: seedLoaderToken("csp-feature"),
           useFactory: (registry: CspRegistry) =>
             createSeedLoader(() => {
               for (const p of policies) registry.registerPolicy(p);

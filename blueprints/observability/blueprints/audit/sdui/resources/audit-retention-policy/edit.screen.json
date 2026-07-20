@@ -30,7 +30,9 @@
             {
               "kind": "Button",
               "props": { "variant": "ghost", "leadingIcon": "arrow-left", "children": "Back" },
-              "actions": { "onPress": { "kind": "navigate", "to": "/tenant/audit/retention-policies" } }
+              "actions": {
+                "onPress": { "kind": "navigate", "to": "/tenant/audit/retention-policies" }
+              }
             },
             {
               "kind": "Text",

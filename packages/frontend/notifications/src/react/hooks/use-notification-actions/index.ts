@@ -4,5 +4,5 @@
  * @description Barrel for the {@link useNotificationActions} hook.
  */
 
-export { useNotificationActions } from './use-notification-actions.hook';
-export type { IUseNotificationActionsResult } from './use-notification-actions.interface';
+export { useNotificationActions } from "./use-notification-actions.hook";
+export type { IUseNotificationActionsResult } from "./use-notification-actions.interface";

@@ -68,12 +68,18 @@
                       "kind": "View",
                       "props": { "className": "flex items-center gap-2 mt-1" },
                       "children": [
-                        { "kind": "Chip", "props": { "size": "sm", "variant": "neutral" }, "bindings": { "children": { "$ref": "team.team_type" } } },
+                        {
+                          "kind": "Chip",
+                          "props": { "size": "sm", "variant": "neutral" },
+                          "bindings": { "children": { "$ref": "team.team_type" } }
+                        },
                         {
                           "kind": "Chip",
                           "props": { "size": "sm" },
                           "bindings": {
-                            "variant": { "$expr": "team.status === 'active' ? 'success' : (team.status === 'paused' ? 'warning' : 'neutral')" },
+                            "variant": {
+                              "$expr": "team.status === 'active' ? 'success' : (team.status === 'paused' ? 'warning' : 'neutral')"
+                            },
                             "children": { "$ref": "team.status" }
                           }
                         },
@@ -94,14 +100,28 @@
               "children": [
                 {
                   "kind": "Button",
-                  "props": { "variant": "primary", "leadingIcon": "plus", "children": "Add member" },
-                  "actions": { "onPress": { "kind": "navigate", "toExpr": "'/tenant/teams/' + team.id + '/members/new'" } },
+                  "props": {
+                    "variant": "primary",
+                    "leadingIcon": "plus",
+                    "children": "Add member"
+                  },
+                  "actions": {
+                    "onPress": {
+                      "kind": "navigate",
+                      "toExpr": "'/tenant/teams/' + team.id + '/members/new'"
+                    }
+                  },
                   "requiresPermission": "team_members.create"
                 },
                 {
                   "kind": "Button",
                   "props": { "variant": "ghost", "leadingIcon": "pencil", "children": "Edit" },
-                  "actions": { "onPress": { "kind": "navigate", "toExpr": "'/tenant/teams/' + team.id + '/edit'" } },
+                  "actions": {
+                    "onPress": {
+                      "kind": "navigate",
+                      "toExpr": "'/tenant/teams/' + team.id + '/edit'"
+                    }
+                  },
                   "requiresPermission": "teams.update"
                 }
               ]
@@ -172,19 +192,51 @@
           },
           "columns": [
             { "field": "member.name", "label": "Member", "sortable": true },
-            { "field": "role_on_team", "label": "Role", "renderer": { "kind": "Widget", "widget": "teams.member-role-chip", "bindings": { "role": { "$ref": "row.role_on_team" } } } },
+            {
+              "field": "role_on_team",
+              "label": "Role",
+              "renderer": {
+                "kind": "Widget",
+                "widget": "teams.member-role-chip",
+                "bindings": { "role": { "$ref": "row.role_on_team" } }
+              }
+            },
             { "field": "jersey_number", "label": "#", "align": "right" },
             { "field": "position", "label": "Position" },
             { "field": "joined_at", "label": "Joined", "format": "date" },
-            { "field": "status", "label": "Status", "renderer": { "kind": "Chip", "bindings": { "variant": { "$expr": "row.status === 'active' ? 'success' : (row.status === 'injured' ? 'warning' : (row.status === 'suspended' ? 'danger' : 'neutral'))" }, "children": { "$ref": "row.status" } } } }
+            {
+              "field": "status",
+              "label": "Status",
+              "renderer": {
+                "kind": "Chip",
+                "bindings": {
+                  "variant": {
+                    "$expr": "row.status === 'active' ? 'success' : (row.status === 'injured' ? 'warning' : (row.status === 'suspended' ? 'danger' : 'neutral'))"
+                  },
+                  "children": { "$ref": "row.status" }
+                }
+              }
+            }
           ],
           "emptyState": {
             "kind": "View",
             "props": { "className": "text-center py-8" },
             "children": [
-              { "kind": "Icon", "props": { "name": "user-plus", "className": "size-10 mx-auto text-muted" } },
-              { "kind": "Text", "props": { "className": "mt-3 text-lg font-medium", "children": "Roster is empty" } },
-              { "kind": "Text", "props": { "className": "text-sm text-muted", "children": "Add members to build the roster." } }
+              {
+                "kind": "Icon",
+                "props": { "name": "user-plus", "className": "size-10 mx-auto text-muted" }
+              },
+              {
+                "kind": "Text",
+                "props": { "className": "mt-3 text-lg font-medium", "children": "Roster is empty" }
+              },
+              {
+                "kind": "Text",
+                "props": {
+                  "className": "text-sm text-muted",
+                  "children": "Add members to build the roster."
+                }
+              }
             ]
           }
         }

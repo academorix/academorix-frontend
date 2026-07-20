@@ -8,7 +8,7 @@
  * @module @stackra/http/parsers/ndjson-parser
  */
 
-import type { IStreamParser } from './stream-parser.interface';
+import type { IStreamParser } from "./stream-parser.interface";
 
 /**
  * Newline-delimited JSON parser.
@@ -17,19 +17,19 @@ import type { IStreamParser } from './stream-parser.interface';
  */
 export class NdjsonStreamParser<T = unknown> implements IStreamParser<T> {
   /** UTF-8 streaming decoder. */
-  private readonly decoder: TextDecoder = new TextDecoder('utf-8', { fatal: false });
+  private readonly decoder: TextDecoder = new TextDecoder("utf-8", { fatal: false });
 
   /** Pending text awaiting a newline boundary. */
-  private buffer: string = '';
+  private buffer: string = "";
 
   /** @inheritdoc */
   public *feed(chunk: Uint8Array): Iterable<T> {
     this.buffer += this.decoder.decode(chunk, { stream: true });
 
     // Split on \n — keep the trailing partial line in the buffer.
-    let newlineIndex = this.buffer.indexOf('\n');
+    let newlineIndex = this.buffer.indexOf("\n");
     while (newlineIndex !== -1) {
-      const line = this.buffer.slice(0, newlineIndex).replace(/\r$/, '');
+      const line = this.buffer.slice(0, newlineIndex).replace(/\r$/, "");
       this.buffer = this.buffer.slice(newlineIndex + 1);
 
       if (line.length > 0) {
@@ -37,7 +37,7 @@ export class NdjsonStreamParser<T = unknown> implements IStreamParser<T> {
         if (parsed !== undefined) yield parsed;
       }
 
-      newlineIndex = this.buffer.indexOf('\n');
+      newlineIndex = this.buffer.indexOf("\n");
     }
   }
 
@@ -46,7 +46,7 @@ export class NdjsonStreamParser<T = unknown> implements IStreamParser<T> {
     // Decode any pending bytes inside the streaming decoder.
     this.buffer += this.decoder.decode(new Uint8Array(0));
     const tail = this.buffer;
-    this.buffer = '';
+    this.buffer = "";
 
     if (tail.length > 0) {
       const parsed = NdjsonStreamParser.tryParse<T>(tail);

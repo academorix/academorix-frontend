@@ -56,12 +56,16 @@
     {
       "type": "path",
       "url": "../../*",
-      "options": { "symlink": true }
+      "options": {
+        "symlink": true
+      }
     },
     {
       "type": "path",
       "url": "../*",
-      "options": { "symlink": true }
+      "options": {
+        "symlink": true
+      }
     }
   ],
   "extra": {

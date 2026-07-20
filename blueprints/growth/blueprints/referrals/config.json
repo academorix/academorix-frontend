@@ -20,21 +20,43 @@
           "type": "string",
           "env": "REFERRALS_DEFAULT_REWARD_TYPE",
           "default": "percent_discount",
-          "enum": ["percent_discount", "fixed_amount", "free_months", "free_sessions", "credits", "point_award"]
+          "enum": [
+            "percent_discount",
+            "fixed_amount",
+            "free_months",
+            "free_sessions",
+            "credits",
+            "point_award"
+          ]
         },
         {
           "path": "referrals.program_defaults.trigger_event",
           "type": "string",
           "env": "REFERRALS_DEFAULT_TRIGGER",
           "default": "first_payment",
-          "enum": ["signup", "trial_started", "first_payment", "subscription_renewal_1", "subscription_renewal_3", "lifetime_value_threshold_hit", "athlete_enrolled", "event_registered"]
+          "enum": [
+            "signup",
+            "trial_started",
+            "first_payment",
+            "subscription_renewal_1",
+            "subscription_renewal_3",
+            "lifetime_value_threshold_hit",
+            "athlete_enrolled",
+            "event_registered"
+          ]
         },
         {
           "path": "referrals.program_defaults.vesting_rule",
           "type": "string",
           "env": "REFERRALS_DEFAULT_VESTING",
           "default": "trigger_plus_hold_days",
-          "enum": ["immediate", "trigger_plus_hold_days", "after_refund_window_closes", "n_events_completed", "manual_approval"]
+          "enum": [
+            "immediate",
+            "trigger_plus_hold_days",
+            "after_refund_window_closes",
+            "n_events_completed",
+            "manual_approval"
+          ]
         },
         {
           "path": "referrals.program_defaults.vesting_hold_days",

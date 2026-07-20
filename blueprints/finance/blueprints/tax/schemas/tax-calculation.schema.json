@@ -102,7 +102,11 @@
         "nullable": false,
         "description": "Immutable timestamp — regulator audit. Not updatable."
       },
-      "metadata": { "type": "jsonb", "nullable": true, "description": "Includes correlation_id (request-scoped tracing), frozen_by_payment (defense-in-depth marker set on transaction::PaymentCaptured)." },
+      "metadata": {
+        "type": "jsonb",
+        "nullable": true,
+        "description": "Includes correlation_id (request-scoped tracing), frozen_by_payment (defense-in-depth marker set on transaction::PaymentCaptured)."
+      },
       "created_by": { "type": "string", "length": 64, "nullable": true },
       "updated_by": { "type": "string", "length": 64, "nullable": true },
       "created_at": { "type": "timestamptz", "nullable": false },
@@ -110,11 +114,29 @@
     },
     "indexes": [
       { "columns": ["tenant_id", "calculated_at"], "name": "tax_calculations_tenant_time_idx" },
-      { "columns": ["invoice_line_id"], "name": "tax_calculations_invoice_line_idx", "predicate": "invoice_line_id IS NOT NULL" },
-      { "columns": ["tenant_id", "provider", "calculated_at"], "name": "tax_calculations_provider_idx" }
+      {
+        "columns": ["invoice_line_id"],
+        "name": "tax_calculations_invoice_line_idx",
+        "predicate": "invoice_line_id IS NOT NULL"
+      },
+      {
+        "columns": ["tenant_id", "provider", "calculated_at"],
+        "name": "tax_calculations_provider_idx"
+      }
     ]
   },
-  "required": ["id", "tenant_id", "source_amount_cents", "source_currency", "tax_amount_cents", "tax_rate_snapshot", "provider", "calculated_at", "created_at", "updated_at"],
+  "required": [
+    "id",
+    "tenant_id",
+    "source_amount_cents",
+    "source_currency",
+    "tax_amount_cents",
+    "tax_rate_snapshot",
+    "provider",
+    "calculated_at",
+    "created_at",
+    "updated_at"
+  ],
   "properties": {
     "id": { "type": "string", "pattern": "^txc_[0-9A-HJKMNP-TV-Z]{26}$" },
     "tenant_id": { "type": "string", "pattern": "^ten_[0-9A-HJKMNP-TV-Z]{26}$" },
@@ -124,7 +146,14 @@
     "tax_amount_cents": { "type": "integer" },
     "tax_rate_snapshot": {
       "type": "object",
-      "required": ["rate_id", "percentage", "jurisdiction", "rate_type", "applies_to", "effective_at"],
+      "required": [
+        "rate_id",
+        "percentage",
+        "jurisdiction",
+        "rate_type",
+        "applies_to",
+        "effective_at"
+      ],
       "properties": {
         "rate_id": { "type": "string", "pattern": "^txr_[0-9A-HJKMNP-TV-Z]{26}$" },
         "percentage": { "type": "number", "minimum": 0, "maximum": 1 },
@@ -146,14 +175,20 @@
       "type": ["object", "null"],
       "properties": {
         "exemption_id": { "type": "string", "pattern": "^txe_[0-9A-HJKMNP-TV-Z]{26}$" },
-        "certificate_number": { "type": "string", "description": "REDACTED on egress except for admin/owner roles" },
+        "certificate_number": {
+          "type": "string",
+          "description": "REDACTED on egress except for admin/owner roles"
+        },
         "exemption_type": { "type": "string" },
         "issuing_jurisdiction_id": { "type": "string", "pattern": "^txj_[0-9A-HJKMNP-TV-Z]{26}$" },
         "valid_from": { "type": "string", "format": "date" },
         "valid_until": { "type": ["string", "null"], "format": "date" }
       }
     },
-    "provider": { "type": "string", "enum": ["taxjar", "avalara", "stripe_tax", "native_calculator", "custom_webhook"] },
+    "provider": {
+      "type": "string",
+      "enum": ["taxjar", "avalara", "stripe_tax", "native_calculator", "custom_webhook"]
+    },
     "provider_transaction_id": { "type": ["string", "null"], "maxLength": 128 },
     "provider_metadata": { "type": ["object", "null"] },
     "calculated_at": { "type": "string", "format": "date-time" },

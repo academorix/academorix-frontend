@@ -11,13 +11,13 @@
  *   identical.
  */
 
-import { cleanup, render } from '@testing-library/react';
-import { afterEach, describe, expect, it, vi } from 'vitest';
-import type { ReactNode } from 'react';
+import { cleanup, render } from "@testing-library/react";
+import { afterEach, describe, expect, it, vi } from "vitest";
+import type { ReactNode } from "react";
 
 // Stub react-native primitives — `View`, `Text` become plain DOM
 // elements.
-vi.mock('react-native', () => ({
+vi.mock("react-native", () => ({
   View: ({ children, ...rest }: { readonly children?: ReactNode }) => (
     <div {...rest}>{children}</div>
   ),
@@ -39,7 +39,7 @@ vi.mock('react-native', () => ({
   ScrollView: ({ children }: { readonly children?: ReactNode }) => <div>{children}</div>,
 }));
 
-vi.mock('@stackra/ui/native', () => {
+vi.mock("@stackra/ui/native", () => {
   function Chip({ children }: { readonly children?: ReactNode }) {
     return <div data-testid="chip">{children}</div>;
   }
@@ -69,14 +69,14 @@ const state = {
   panels: [] as { readonly id: string; readonly title: string }[],
 };
 
-vi.mock('@/native/hooks/use-native-devtools-frame-state.hook', () => ({
+vi.mock("@/native/hooks/use-native-devtools-frame-state.hook", () => ({
   useNativeDevtoolsFrameState: () => ({
     state: { isOpen: state.isOpen },
     update: state.update,
   }),
 }));
 
-vi.mock('@/native/hooks/use-native-devtools-panels.hook', () => ({
+vi.mock("@/native/hooks/use-native-devtools-panels.hook", () => ({
   useNativeDevtoolsPanels: () => ({
     panels: state.panels,
     byCategory: new Map(),
@@ -84,7 +84,7 @@ vi.mock('@/native/hooks/use-native-devtools-panels.hook', () => ({
   }),
 }));
 
-import { DevtoolsLauncher } from '@/native/components/devtools-launcher';
+import { DevtoolsLauncher } from "@/native/components/devtools-launcher";
 
 afterEach(() => {
   cleanup();
@@ -93,20 +93,20 @@ afterEach(() => {
   state.update = vi.fn();
 });
 
-describe('native <DevtoolsLauncher />', () => {
-  it('renders without crashing', () => {
+describe("native <DevtoolsLauncher />", () => {
+  it("renders without crashing", () => {
     state.panels = [
-      { id: 'a', title: 'A' },
-      { id: 'b', title: 'B' },
+      { id: "a", title: "A" },
+      { id: "b", title: "B" },
     ];
     const { getByTestId } = render(<DevtoolsLauncher />);
-    expect(getByTestId('chip')).toBeDefined();
-    expect(getByTestId('chip-label').textContent).toContain('2');
+    expect(getByTestId("chip")).toBeDefined();
+    expect(getByTestId("chip-label").textContent).toContain("2");
   });
 
-  it('does not render when the sheet is open', () => {
+  it("does not render when the sheet is open", () => {
     state.isOpen = true;
     const { queryByTestId } = render(<DevtoolsLauncher />);
-    expect(queryByTestId('chip')).toBeNull();
+    expect(queryByTestId("chip")).toBeNull();
   });
 });

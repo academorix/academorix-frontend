@@ -65,9 +65,7 @@
     {
       "module": "user",
       "table": "users",
-      "usedFor": [
-        "Requester + approver + resource-owner projections. All three are `User` rows."
-      ]
+      "usedFor": ["Requester + approver + resource-owner projections. All three are `User` rows."]
     }
   ],
   "writesTo": [

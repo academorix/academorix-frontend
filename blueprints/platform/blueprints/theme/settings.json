@@ -57,7 +57,10 @@
               "label": "WCAG target level",
               "defaultValue": "AA",
               "validation": ["required", "in:AA,AAA"],
-              "options": { "AA": "AA (4.5:1 body / 3:1 large)", "AAA": "AAA (7:1 body / 4.5:1 large)" },
+              "options": {
+                "AA": "AA (4.5:1 body / 3:1 large)",
+                "AAA": "AAA (7:1 body / 4.5:1 large)"
+              },
               "sortOrder": 2
             }
           ]

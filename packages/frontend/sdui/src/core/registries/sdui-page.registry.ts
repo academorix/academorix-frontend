@@ -5,9 +5,9 @@
  *   keyed by URL path.
  */
 
-import { Injectable } from '@stackra/container';
-import { BaseRegistry } from '@stackra/support';
-import type { ISduiPageDescriptor } from '@stackra/contracts';
+import { Injectable } from "@stackra/container";
+import { BaseRegistry } from "@stackra/support";
+import type { ISduiPageDescriptor } from "@stackra/contracts";
 
 /**
  * SduiPageRegistry — `BaseRegistry<string, ISduiPageDescriptor>` keyed

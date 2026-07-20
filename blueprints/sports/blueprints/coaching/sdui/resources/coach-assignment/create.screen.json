@@ -45,7 +45,10 @@
       "kind": "http.post",
       "url": "/api/v1/coach-assignments",
       "body": "$form",
-      "onSuccess": { "kind": "navigate", "toExpr": "'/tenant/coach-assignments/' + $response.data.id" },
+      "onSuccess": {
+        "kind": "navigate",
+        "toExpr": "'/tenant/coach-assignments/' + $response.data.id"
+      },
       "onError": { "kind": "toast.error", "message": "Could not create assignment." }
     }
   },
@@ -55,11 +58,26 @@
       "kind": "View",
       "props": { "className": "flex flex-col gap-4 p-6 max-w-2xl mx-auto" },
       "children": [
-        { "kind": "Text", "props": { "as": "h1", "className": "text-2xl font-semibold", "children": "New coach assignment" } },
+        {
+          "kind": "Text",
+          "props": {
+            "as": "h1",
+            "className": "text-2xl font-semibold",
+            "children": "New coach assignment"
+          }
+        },
         {
           "kind": "Card",
           "children": [
-            { "kind": "Card.Header", "children": [{ "kind": "Text", "props": { "as": "h2", "className": "font-semibold", "children": "Coach" } }] },
+            {
+              "kind": "Card.Header",
+              "children": [
+                {
+                  "kind": "Text",
+                  "props": { "as": "h2", "className": "font-semibold", "children": "Coach" }
+                }
+              ]
+            },
             {
               "kind": "Card.Content",
               "children": [
@@ -68,7 +86,13 @@
                   "props": { "name": "coaching_profile_id", "menuTrigger": "focus" },
                   "children": [
                     { "kind": "Label", "propsExpr": "{ children: 'Coach' }" },
-                    { "kind": "ComboBox.InputGroup", "children": [{ "kind": "Input", "props": { "placeholder": "Search coach..." } }, { "kind": "ComboBox.Trigger" }] },
+                    {
+                      "kind": "ComboBox.InputGroup",
+                      "children": [
+                        { "kind": "Input", "props": { "placeholder": "Search coach..." } },
+                        { "kind": "ComboBox.Trigger" }
+                      ]
+                    },
                     {
                       "kind": "ComboBox.Popover",
                       "children": [
@@ -84,12 +108,31 @@
                                   "kind": "View",
                                   "props": { "className": "flex items-center gap-2" },
                                   "children": [
-                                    { "kind": "Avatar", "props": { "size": "xs" }, "bindings": { "src": { "$ref": "$item.photo_url_signed" }, "name": { "$ref": "$item.display_name" } } },
+                                    {
+                                      "kind": "Avatar",
+                                      "props": { "size": "xs" },
+                                      "bindings": {
+                                        "src": { "$ref": "$item.photo_url_signed" },
+                                        "name": { "$ref": "$item.display_name" }
+                                      }
+                                    },
                                     {
                                       "kind": "View",
                                       "children": [
-                                        { "kind": "Text", "props": { "className": "text-sm font-medium" }, "bindings": { "children": { "$ref": "$item.display_name" } } },
-                                        { "kind": "Text", "props": { "className": "text-xs text-muted" }, "bindings": { "children": { "$ref": "$item.primary_sport_slug" } } }
+                                        {
+                                          "kind": "Text",
+                                          "props": { "className": "text-sm font-medium" },
+                                          "bindings": {
+                                            "children": { "$ref": "$item.display_name" }
+                                          }
+                                        },
+                                        {
+                                          "kind": "Text",
+                                          "props": { "className": "text-xs text-muted" },
+                                          "bindings": {
+                                            "children": { "$ref": "$item.primary_sport_slug" }
+                                          }
+                                        }
                                       ]
                                     }
                                   ]
@@ -110,7 +153,15 @@
         {
           "kind": "Card",
           "children": [
-            { "kind": "Card.Header", "children": [{ "kind": "Text", "props": { "as": "h2", "className": "font-semibold", "children": "Assignable" } }] },
+            {
+              "kind": "Card.Header",
+              "children": [
+                {
+                  "kind": "Text",
+                  "props": { "as": "h2", "className": "font-semibold", "children": "Assignable" }
+                }
+              ]
+            },
             {
               "kind": "Card.Content",
               "children": [
@@ -118,7 +169,10 @@
                   "kind": "ToggleButtonGroup",
                   "props": { "name": "assignable_type", "aria-label": "Assignable type" },
                   "children": [
-                    { "kind": "ToggleButton", "props": { "value": "Session", "children": "Session" } },
+                    {
+                      "kind": "ToggleButton",
+                      "props": { "value": "Session", "children": "Session" }
+                    },
                     { "kind": "ToggleButton", "props": { "value": "Team", "children": "Team" } },
                     { "kind": "ToggleButton", "props": { "value": "Event", "children": "Event" } }
                   ]
@@ -129,15 +183,37 @@
                   "bindings": { "hidden": { "$expr": "!$form.assignable_type" } },
                   "children": [
                     { "kind": "Label", "propsExpr": "{ children: 'Target' }" },
-                    { "kind": "ComboBox.InputGroup", "children": [{ "kind": "Input", "props": { "placeholder": "Search..." } }, { "kind": "ComboBox.Trigger" }] },
+                    {
+                      "kind": "ComboBox.InputGroup",
+                      "children": [
+                        { "kind": "Input", "props": { "placeholder": "Search..." } },
+                        { "kind": "ComboBox.Trigger" }
+                      ]
+                    },
                     {
                       "kind": "ComboBox.Popover",
                       "children": [
                         {
                           "kind": "ListBox",
-                          "bindings": { "items": { "$expr": "$form.assignable_type === 'Session' ? $ref('sessions') : ($form.assignable_type === 'Team' ? $ref('teams') : $ref('events'))" } },
+                          "bindings": {
+                            "items": {
+                              "$expr": "$form.assignable_type === 'Session' ? $ref('sessions') : ($form.assignable_type === 'Team' ? $ref('teams') : $ref('events'))"
+                            }
+                          },
                           "children": [
-                            { "kind": "ListBox.Item", "propsExpr": "{ id: $item.id, textValue: $item.title || $item.name }", "children": [{ "kind": "Text", "bindings": { "children": { "$expr": "$item.title || $item.name" } } }, { "kind": "ListBox.ItemIndicator" }] }
+                            {
+                              "kind": "ListBox.Item",
+                              "propsExpr": "{ id: $item.id, textValue: $item.title || $item.name }",
+                              "children": [
+                                {
+                                  "kind": "Text",
+                                  "bindings": {
+                                    "children": { "$expr": "$item.title || $item.name" }
+                                  }
+                                },
+                                { "kind": "ListBox.ItemIndicator" }
+                              ]
+                            }
                           ]
                         }
                       ]
@@ -151,7 +227,15 @@
         {
           "kind": "Card",
           "children": [
-            { "kind": "Card.Header", "children": [{ "kind": "Text", "props": { "as": "h2", "className": "font-semibold", "children": "Role & dates" } }] },
+            {
+              "kind": "Card.Header",
+              "children": [
+                {
+                  "kind": "Text",
+                  "props": { "as": "h2", "className": "font-semibold", "children": "Role & dates" }
+                }
+              ]
+            },
             {
               "kind": "Card.Content",
               "children": [
@@ -164,9 +248,18 @@
                     "propsExpr": "{ value: $item.value, children: $item.label + ($item.value === 'head_coach' ? ' (one per target)' : '') }"
                   }
                 },
-                { "kind": "DateField", "props": { "name": "start_date", "label": "Start date", "isRequired": true } },
-                { "kind": "DateField", "props": { "name": "end_date", "label": "End date (optional)" } },
-                { "kind": "TextArea", "props": { "name": "notes", "label": "Notes (optional)", "rows": 3 } }
+                {
+                  "kind": "DateField",
+                  "props": { "name": "start_date", "label": "Start date", "isRequired": true }
+                },
+                {
+                  "kind": "DateField",
+                  "props": { "name": "end_date", "label": "End date (optional)" }
+                },
+                {
+                  "kind": "TextArea",
+                  "props": { "name": "notes", "label": "Notes (optional)", "rows": 3 }
+                }
               ]
             }
           ]
@@ -175,8 +268,17 @@
           "kind": "View",
           "props": { "className": "flex justify-end gap-2" },
           "children": [
-            { "kind": "Button", "props": { "variant": "flat", "children": "Cancel" }, "actions": { "onPress": { "kind": "navigate", "toExpr": "'/tenant/coach-assignments'" } } },
-            { "kind": "Button", "props": { "variant": "primary", "type": "submit", "children": "Create assignment" } }
+            {
+              "kind": "Button",
+              "props": { "variant": "flat", "children": "Cancel" },
+              "actions": {
+                "onPress": { "kind": "navigate", "toExpr": "'/tenant/coach-assignments'" }
+              }
+            },
+            {
+              "kind": "Button",
+              "props": { "variant": "primary", "type": "submit", "children": "Create assignment" }
+            }
           ]
         }
       ]

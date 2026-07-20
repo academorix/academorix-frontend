@@ -10,7 +10,12 @@
   "requiresPermission": "monitoring.providers.update",
   "requiresEntitlement": "monitoring_capture",
   "dataSources": [
-    { "name": "provider", "kind": "http.get", "url": "/api/v1/monitoring/providers/{provider}", "unwrap": "data" }
+    {
+      "name": "provider",
+      "kind": "http.get",
+      "url": "/api/v1/monitoring/providers/{provider}",
+      "unwrap": "data"
+    }
   ],
   "nodes": [
     {
@@ -22,8 +27,19 @@
           "kind": "View",
           "props": { "className": "flex items-center justify-between mb-2" },
           "children": [
-            { "kind": "Text", "props": { "as": "h1", "className": "text-2xl font-semibold", "children": "Edit provider" } },
-            { "kind": "Widget", "widget": "monitoring.circuit-breaker-badge", "bindings": { "provider_config": { "$ref": "provider" } } }
+            {
+              "kind": "Text",
+              "props": {
+                "as": "h1",
+                "className": "text-2xl font-semibold",
+                "children": "Edit provider"
+              }
+            },
+            {
+              "kind": "Widget",
+              "widget": "monitoring.circuit-breaker-badge",
+              "bindings": { "provider_config": { "$ref": "provider" } }
+            }
           ]
         },
         {
@@ -34,19 +50,31 @@
         },
         {
           "kind": "Alert",
-          "props": { "variant": "info", "title": "Provider slug is immutable", "description": "To change provider type, delete this config + create a new one." }
+          "props": {
+            "variant": "info",
+            "title": "Provider slug is immutable",
+            "description": "To change provider type, delete this config + create a new one."
+          }
         },
         {
           "kind": "Switch",
           "props": { "label": "Active" },
           "bindings": { "defaultValue": { "$ref": "provider.is_active" } },
-          "actions": { "onChange": { "kind": "form.set", "field": "is_active", "valueExpr": "$value" } }
+          "actions": {
+            "onChange": { "kind": "form.set", "field": "is_active", "valueExpr": "$value" }
+          }
         },
         {
           "kind": "MultiSelect",
           "props": { "label": "Enabled severities", "options": ["p1", "p2", "p3", "p4"] },
           "bindings": { "defaultValue": { "$ref": "provider.enabled_severities" } },
-          "actions": { "onSelectionChange": { "kind": "form.set", "field": "enabled_severities", "valueExpr": "$selectedKeys" } }
+          "actions": {
+            "onSelectionChange": {
+              "kind": "form.set",
+              "field": "enabled_severities",
+              "valueExpr": "$selectedKeys"
+            }
+          }
         },
         {
           "kind": "View",
@@ -66,9 +94,18 @@
             },
             {
               "kind": "Button",
-              "props": { "variant": "secondary", "leadingIcon": "beaker", "children": "Test provider" },
+              "props": {
+                "variant": "secondary",
+                "leadingIcon": "beaker",
+                "children": "Test provider"
+              },
               "requiresPermission": "monitoring.providers.test",
-              "actions": { "onPress": { "kind": "navigate", "toExpr": "'/tenant/monitoring/providers/' + $routeParams.provider + '/test'" } }
+              "actions": {
+                "onPress": {
+                  "kind": "navigate",
+                  "toExpr": "'/tenant/monitoring/providers/' + $routeParams.provider + '/test'"
+                }
+              }
             },
             {
               "kind": "Button",

@@ -8,9 +8,9 @@
  *   time and inner options remain importable in isolation from tests.
  */
 
-import type { IPwaInstallConfig } from './install-config.interface';
-import type { IPwaUpdateConfig } from './update-config.interface';
-import type { IAppUpdateConfig } from './app-update-config.interface';
+import type { IPwaInstallConfig } from "./install-config.interface";
+import type { IPwaUpdateConfig } from "./update-config.interface";
+import type { IAppUpdateConfig } from "./app-update-config.interface";
 
 /**
  * Root `PwaModule.forRoot` options.

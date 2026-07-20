@@ -10,15 +10,15 @@ Default expiry 7 days.
 
 ### Actions to fill
 
-| Action                    | Contract                                                | Notes                                                                                                                       |
-| ------------------------- | ------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
-| `SendInvitationAction`    | `POST /api/v1/invitations`                              | Body: `{ email, target_type, target_id, role?, message? }`. Generate a fresh 32-byte token, bcrypt-hash for storage, plaintext in the queued mail. Fires `InvitationCreated`. |
-| `AcceptInvitationAction`  | `POST /api/v1/invitations/accept`                       | Body: `{ token }`. Look up by hashing the token; constant-time compare. Refuse on expired/consumed. Provisions the target relationship (User → Tenant, User → Team, etc.). Fires `InvitationAccepted`. |
-| `DeclineInvitationAction` | `POST /api/v1/invitations/decline`                      | Same lookup path. Marks as declined; no target-relationship provisioned.                                                    |
-| `ResendInvitationAction`  | `POST /api/v1/invitations/{invitation}/resend`          | Regenerate the token (invalidating the old one) + queue a fresh email. Rate-limited.                                        |
-| `RevokeInvitationAction`  | `DELETE /api/v1/invitations/{invitation}`               | Mark as revoked. Idempotent.                                                                                                |
-| `ListInvitationsAction`   | `GET /api/v1/invitations`                               | Tenant scope + `#[RequirePermission(InvitationsPermission::View)]`. Filter by status / target_type.                         |
-| `ShowInvitationAction`    | `GET /api/v1/invitations/{invitation}`                  | Row + polymorphic target (eager-loaded).                                                                                    |
+| Action                    | Contract                                       | Notes                                                                                                                                                                                                  |
+| ------------------------- | ---------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `SendInvitationAction`    | `POST /api/v1/invitations`                     | Body: `{ email, target_type, target_id, role?, message? }`. Generate a fresh 32-byte token, bcrypt-hash for storage, plaintext in the queued mail. Fires `InvitationCreated`.                          |
+| `AcceptInvitationAction`  | `POST /api/v1/invitations/accept`              | Body: `{ token }`. Look up by hashing the token; constant-time compare. Refuse on expired/consumed. Provisions the target relationship (User → Tenant, User → Team, etc.). Fires `InvitationAccepted`. |
+| `DeclineInvitationAction` | `POST /api/v1/invitations/decline`             | Same lookup path. Marks as declined; no target-relationship provisioned.                                                                                                                               |
+| `ResendInvitationAction`  | `POST /api/v1/invitations/{invitation}/resend` | Regenerate the token (invalidating the old one) + queue a fresh email. Rate-limited.                                                                                                                   |
+| `RevokeInvitationAction`  | `DELETE /api/v1/invitations/{invitation}`      | Mark as revoked. Idempotent.                                                                                                                                                                           |
+| `ListInvitationsAction`   | `GET /api/v1/invitations`                      | Tenant scope + `#[RequirePermission(InvitationsPermission::View)]`. Filter by status / target_type.                                                                                                    |
+| `ShowInvitationAction`    | `GET /api/v1/invitations/{invitation}`         | Row + polymorphic target (eager-loaded).                                                                                                                                                               |
 
 ### Services to implement
 
@@ -43,5 +43,5 @@ Default expiry 7 days.
 - `notifications` — email dispatch with the plaintext token.
 - `identity/user` — target provisioning via `UserProvisioner`.
 - `access/rbac` — role attachment on acceptance.
-- Every tenant-scoped module that wants to be an invitation target — provides
-  an `#[Invitable]`-decorated resolver.
+- Every tenant-scoped module that wants to be an invitation target — provides an
+  `#[Invitable]`-decorated resolver.

@@ -16,5 +16,5 @@
  * ```
  */
 
-export { MockStateRegistry, type MockStoreEntry } from './mock-state-registry';
-export { createMockStateRegistry } from './create-mock-state-registry';
+export { MockStateRegistry, type MockStoreEntry } from "./mock-state-registry";
+export { createMockStateRegistry } from "./create-mock-state-registry";

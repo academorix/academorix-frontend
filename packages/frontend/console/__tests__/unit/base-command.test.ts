@@ -5,6 +5,7 @@
  */
 
 import { describe, it, expect, vi } from "vitest";
+
 import { BaseCommand } from "@/base";
 import { MissingArgumentError } from "@/errors";
 

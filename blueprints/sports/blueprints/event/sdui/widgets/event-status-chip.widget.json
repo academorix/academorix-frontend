@@ -8,7 +8,16 @@
     "status": {
       "type": "string",
       "required": true,
-      "enum": ["draft", "announced", "registration_open", "registration_closed", "in_progress", "completed", "cancelled", "archived"]
+      "enum": [
+        "draft",
+        "announced",
+        "registration_open",
+        "registration_closed",
+        "in_progress",
+        "completed",
+        "cancelled",
+        "archived"
+      ]
     },
     "size": { "type": "string", "default": "xs", "enum": ["xs", "sm", "md"] }
   },

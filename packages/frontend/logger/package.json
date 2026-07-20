@@ -1,7 +1,7 @@
 {
   "name": "@stackra/logger",
   "version": "0.1.0",
-  "description": "Cross-platform logger for the Stackra framework — pluggable reporters, enrichers, and formatters, with React bindings.",
+  "description": "Cross-platform logger for the Stackra framework \u2014 pluggable reporters, enrichers, and formatters, with React bindings.",
   "license": "MIT",
   "author": {
     "name": "Stackra L.L.C",
@@ -91,6 +91,8 @@
     }
   },
   "devDependencies": {
+    "@academorix/config-tsconfig": "workspace:*",
+    "@academorix/config-tsup": "workspace:*",
     "@stackra/config": "workspace:*",
     "@stackra/container": "workspace:*",
     "@stackra/contracts": "workspace:*",

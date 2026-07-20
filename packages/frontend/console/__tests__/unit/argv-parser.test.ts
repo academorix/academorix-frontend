@@ -1,4 +1,5 @@
 import { describe, it, expect } from "vitest";
+
 import { parseArgv } from "@/utils/argv-parser.util";
 
 describe("parseArgv", () => {

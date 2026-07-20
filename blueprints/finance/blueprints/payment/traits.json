@@ -67,19 +67,34 @@
       { "trait": "Academorix\\Foundation\\Concerns\\HasUserstamps" },
       { "trait": "Academorix\\Foundation\\Concerns\\HasMetadata" },
       { "trait": "Academorix\\Foundation\\Concerns\\Filterable" },
-      { "trait": "Academorix\\Foundation\\Concerns\\Searchable", "reason": "Payment (searchable by payment_number, provider_reference_id, invoice number cross-reference). NOT the other three (accessed via relations)." }
+      {
+        "trait": "Academorix\\Foundation\\Concerns\\Searchable",
+        "reason": "Payment (searchable by payment_number, provider_reference_id, invoice number cross-reference). NOT the other three (accessed via relations)."
+      }
     ],
     "tenants": [
-      { "trait": "Academorix\\Tenancy\\Concerns\\BelongsToTenant", "reason": "Every owned row carries tenant_id per tenancy-columns.md §3." }
+      {
+        "trait": "Academorix\\Tenancy\\Concerns\\BelongsToTenant",
+        "reason": "Every owned row carries tenant_id per tenancy-columns.md §3."
+      }
     ],
     "audit": [
-      { "trait": "Academorix\\Audit\\Concerns\\Auditable", "reason": "Every write to payments / payment_methods / payment_intents / payment_disputes is compliance-relevant (financial retention 7 years; 10y Enterprise)." }
+      {
+        "trait": "Academorix\\Audit\\Concerns\\Auditable",
+        "reason": "Every write to payments / payment_methods / payment_intents / payment_disputes is compliance-relevant (financial retention 7 years; 10y Enterprise)."
+      }
     ],
     "activity": [
-      { "trait": "Academorix\\Activity\\Concerns\\HasActivityLog", "reason": "Payment + PaymentMethod + PaymentIntent + PaymentDispute — every admin action feeds the staff-visible activity feed." }
+      {
+        "trait": "Academorix\\Activity\\Concerns\\HasActivityLog",
+        "reason": "Payment + PaymentMethod + PaymentIntent + PaymentDispute — every admin action feeds the staff-visible activity feed."
+      }
     ],
     "invoice": [
-      { "trait": "Academorix\\Finance\\Invoice\\Concerns\\BelongsToInvoice", "reason": "Payment + PaymentIntent both reference invoice_id." }
+      {
+        "trait": "Academorix\\Finance\\Invoice\\Concerns\\BelongsToInvoice",
+        "reason": "Payment + PaymentIntent both reference invoice_id."
+      }
     ]
   },
   "composition": {

@@ -69,7 +69,13 @@
       "audience": ["export.requester"],
       "template_key": "audit.export.ready",
       "trigger": "GenerateComplianceReportJob OR the DSAR export job completed successfully. Payload includes the signed S3 download URL (24h expiry).",
-      "payload_fields": ["audit_export_id", "signed_url", "signed_url_expires_at", "row_count", "manifest_sha256"]
+      "payload_fields": [
+        "audit_export_id",
+        "signed_url",
+        "signed_url_expires_at",
+        "row_count",
+        "manifest_sha256"
+      ]
     }
   ]
 }

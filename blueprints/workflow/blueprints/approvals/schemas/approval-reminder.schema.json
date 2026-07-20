@@ -29,7 +29,12 @@
   "x-database": {
     "engine": "postgres",
     "columns": {
-      "id": { "type": "string", "length": 64, "primary": true, "description": "Prefixed ULID: `apn_<26>`." },
+      "id": {
+        "type": "string",
+        "length": 64,
+        "primary": true,
+        "description": "Prefixed ULID: `apn_<26>`."
+      },
       "approval_requirement_id": {
         "type": "string",
         "length": 64,
@@ -72,7 +77,16 @@
       }
     ]
   },
-  "required": ["id", "approval_requirement_id", "tenant_id", "approver_id", "reminder_number", "sent_at", "created_at", "updated_at"],
+  "required": [
+    "id",
+    "approval_requirement_id",
+    "tenant_id",
+    "approver_id",
+    "reminder_number",
+    "sent_at",
+    "created_at",
+    "updated_at"
+  ],
   "properties": {
     "id": { "type": "string", "pattern": "^apn_[0-9A-HJKMNP-TV-Z]{26}$" },
     "approval_requirement_id": { "type": "string", "pattern": "^apr_[0-9A-HJKMNP-TV-Z]{26}$" },

@@ -10,14 +10,14 @@
  * @category Transports
  */
 
-import type { ITabTransport, ITabTransportManager } from '@stackra/contracts';
+import type { ITabTransport, ITabTransportManager } from "@stackra/contracts";
 
-import type { CollaborationTransport } from '@/interfaces/transport.interface';
-import type { RoomMember } from '@/interfaces/room-member.interface';
+import type { CollaborationTransport } from "@/interfaces/transport.interface";
+import type { RoomMember } from "@/interfaces/room-member.interface";
 
 /** Internal message envelope for the cross-tab channel. */
 interface ChannelMessage {
-  type: 'join' | 'leave' | 'heartbeat' | 'broadcast' | 'state_update' | 'presence_update';
+  type: "join" | "leave" | "heartbeat" | "broadcast" | "state_update" | "presence_update";
   roomId: string;
   sender: RoomMember;
   event?: string;
@@ -86,7 +86,7 @@ export class BroadcastChannelTransport implements CollaborationTransport {
   public async connect(
     roomId: string,
     userId: string,
-    userInfo: Record<string, unknown>
+    userInfo: Record<string, unknown>,
   ): Promise<void> {
     if (this.rooms.has(roomId)) return;
     if (!this.manager || !this.manager.isSupported()) return;
@@ -97,7 +97,7 @@ export class BroadcastChannelTransport implements CollaborationTransport {
     const self: RoomMember = {
       userId,
       name: (userInfo.name as string) ?? userId,
-      color: (userInfo.color as string) ?? '#3498db',
+      color: (userInfo.color as string) ?? "#3498db",
       joinedAt: Date.now(),
       presence: userInfo,
     };
@@ -110,21 +110,21 @@ export class BroadcastChannelTransport implements CollaborationTransport {
     // broadcast on refresh / close. `pagehide` is more reliable in
     // modern browsers (bfcache, mobile Safari).
     const beforeUnloadHandler = (): void => {
-      transport.broadcast({ type: 'leave', roomId, sender: self } satisfies ChannelMessage);
+      transport.broadcast({ type: "leave", roomId, sender: self } satisfies ChannelMessage);
     };
     const pageHideHandler = (): void => {
-      transport.broadcast({ type: 'leave', roomId, sender: self } satisfies ChannelMessage);
+      transport.broadcast({ type: "leave", roomId, sender: self } satisfies ChannelMessage);
     };
     // Re-announce on `pageshow` for bfcache restoration
     // (back / forward navigation).
     const pageShowHandler = (event: PageTransitionEvent): void => {
       if (event.persisted) {
-        transport.broadcast({ type: 'join', roomId, sender: self } satisfies ChannelMessage);
+        transport.broadcast({ type: "join", roomId, sender: self } satisfies ChannelMessage);
       }
     };
-    window.addEventListener('beforeunload', beforeUnloadHandler);
-    window.addEventListener('pagehide', pageHideHandler);
-    window.addEventListener('pageshow', pageShowHandler);
+    window.addEventListener("beforeunload", beforeUnloadHandler);
+    window.addEventListener("pagehide", pageHideHandler);
+    window.addEventListener("pageshow", pageShowHandler);
 
     const roomState: RoomState = {
       channelName,
@@ -133,7 +133,7 @@ export class BroadcastChannelTransport implements CollaborationTransport {
       self,
       members: new Map(),
       heartbeatInterval: setInterval(() => {
-        this.sendMessage(roomId, { type: 'heartbeat', roomId, sender: self });
+        this.sendMessage(roomId, { type: "heartbeat", roomId, sender: self });
       }, HEARTBEAT_MS),
       cleanupInterval: setInterval(() => {
         this.cleanupStalePeers(roomId);
@@ -152,7 +152,7 @@ export class BroadcastChannelTransport implements CollaborationTransport {
     this.rooms.set(roomId, roomState);
 
     // Announce join.
-    this.sendMessage(roomId, { type: 'join', roomId, sender: self });
+    this.sendMessage(roomId, { type: "join", roomId, sender: self });
   }
 
   /**
@@ -164,13 +164,13 @@ export class BroadcastChannelTransport implements CollaborationTransport {
     const room = this.rooms.get(roomId);
     if (!room) return;
 
-    window.removeEventListener('beforeunload', room.beforeUnloadHandler);
-    window.removeEventListener('pagehide', room.pageHideHandler);
-    window.removeEventListener('pageshow', room.pageShowHandler);
+    window.removeEventListener("beforeunload", room.beforeUnloadHandler);
+    window.removeEventListener("pagehide", room.pageHideHandler);
+    window.removeEventListener("pageshow", room.pageShowHandler);
 
     // Announce leave BEFORE tearing the transport down so peers
     // see the message.
-    this.sendMessage(roomId, { type: 'leave', roomId, sender: room.self });
+    this.sendMessage(roomId, { type: "leave", roomId, sender: room.self });
 
     clearInterval(room.heartbeatInterval);
     clearInterval(room.cleanupInterval);
@@ -240,7 +240,7 @@ export class BroadcastChannelTransport implements CollaborationTransport {
 
     room.self = { ...room.self, presence: { ...room.self.presence, ...data } };
     this.sendMessage(roomId, {
-      type: 'presence_update',
+      type: "presence_update",
       roomId,
       sender: room.self,
       data,
@@ -259,7 +259,7 @@ export class BroadcastChannelTransport implements CollaborationTransport {
     if (!room) return;
 
     this.sendMessage(roomId, {
-      type: 'broadcast',
+      type: "broadcast",
       roomId,
       sender: room.self,
       event,
@@ -278,7 +278,7 @@ export class BroadcastChannelTransport implements CollaborationTransport {
   public onBroadcast(
     roomId: string,
     event: string,
-    callback: (data: unknown, sender: RoomMember) => void
+    callback: (data: unknown, sender: RoomMember) => void,
   ): () => void {
     const room = this.rooms.get(roomId);
     if (!room) return () => {};
@@ -322,7 +322,7 @@ export class BroadcastChannelTransport implements CollaborationTransport {
     room.state = next;
 
     this.sendMessage(roomId, {
-      type: 'state_update',
+      type: "state_update",
       roomId,
       sender: room.self,
       data: next,
@@ -339,7 +339,7 @@ export class BroadcastChannelTransport implements CollaborationTransport {
    */
   public onStateChange<T>(
     roomId: string,
-    callback: (state: T, updatedBy: RoomMember) => void
+    callback: (state: T, updatedBy: RoomMember) => void,
   ): () => void {
     const room = this.rooms.get(roomId);
     if (!room) return () => {};
@@ -374,16 +374,16 @@ export class BroadcastChannelTransport implements CollaborationTransport {
     const { sender } = message;
 
     switch (message.type) {
-      case 'join': {
+      case "join": {
         room.members.set(sender.userId, sender);
         room.lastSeen.set(sender.userId, Date.now());
         room.joinCallbacks.forEach((cb) => cb(sender));
         // Respond with heartbeat so the new member sees us.
-        this.sendMessage(roomId, { type: 'heartbeat', roomId, sender: room.self });
+        this.sendMessage(roomId, { type: "heartbeat", roomId, sender: room.self });
         break;
       }
 
-      case 'heartbeat': {
+      case "heartbeat": {
         const isNew = !room.members.has(sender.userId);
         room.members.set(sender.userId, sender);
         room.lastSeen.set(sender.userId, Date.now());
@@ -393,20 +393,20 @@ export class BroadcastChannelTransport implements CollaborationTransport {
         break;
       }
 
-      case 'leave': {
+      case "leave": {
         room.members.delete(sender.userId);
         room.lastSeen.delete(sender.userId);
         room.leaveCallbacks.forEach((cb) => cb(sender));
         break;
       }
 
-      case 'presence_update': {
+      case "presence_update": {
         room.members.set(sender.userId, sender);
         room.lastSeen.set(sender.userId, Date.now());
         break;
       }
 
-      case 'broadcast': {
+      case "broadcast": {
         if (message.event) {
           const callbacks = room.broadcastCallbacks.get(message.event);
           callbacks?.forEach((cb) => cb(message.data, sender));
@@ -414,7 +414,7 @@ export class BroadcastChannelTransport implements CollaborationTransport {
         break;
       }
 
-      case 'state_update': {
+      case "state_update": {
         room.state = message.data;
         room.stateCallbacks.forEach((cb) => cb(message.data, sender));
         break;

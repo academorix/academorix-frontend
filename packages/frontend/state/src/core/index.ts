@@ -22,17 +22,17 @@
 // ═══════════════════════════════════════════════════════════════════════
 // Module
 // ═══════════════════════════════════════════════════════════════════════
-export { StateModule } from './state.module';
+export { StateModule } from "./state.module";
 
 // ═══════════════════════════════════════════════════════════════════════
 // Registry
 // ═══════════════════════════════════════════════════════════════════════
-export { StateRegistry, type StoreEntry } from './registries';
+export { StateRegistry, type StoreEntry } from "./registries";
 
 // ═══════════════════════════════════════════════════════════════════════
 // Broadcasters
 // ═══════════════════════════════════════════════════════════════════════
-export { CrossTabBroadcaster, RealtimeBroadcaster, PersistenceBroadcaster } from './broadcasters';
+export { CrossTabBroadcaster, RealtimeBroadcaster, PersistenceBroadcaster } from "./broadcasters";
 
 // Storage adapters removed since v0.2 — persistence is now delegated
 // to `@stackra/storage`. Configure a named `IStorage` instance in
@@ -42,17 +42,17 @@ export { CrossTabBroadcaster, RealtimeBroadcaster, PersistenceBroadcaster } from
 // ═══════════════════════════════════════════════════════════════════════
 // Utilities
 // ═══════════════════════════════════════════════════════════════════════
-export { createReactiveStore } from './utils';
+export { createReactiveStore } from "./utils";
 
 // ═══════════════════════════════════════════════════════════════════════
 // Package-owned types & interfaces
 // ═══════════════════════════════════════════════════════════════════════
-export type { StateSelector } from './types';
-export type { StateFeatureOptions } from './interfaces';
+export type { StateSelector } from "./types";
+export type { StateFeatureOptions } from "./interfaces";
 
 // ═══════════════════════════════════════════════════════════════════════
 // TanStack Store — intentional 3rd-party convenience re-export.
 // `@stackra/state` IS the TanStack Store integration, so consumers get the
 // primitive from one place. (See contract-reexports steering: allowed.)
 // ═══════════════════════════════════════════════════════════════════════
-export { Store } from '@tanstack/store';
+export { Store } from "@tanstack/store";

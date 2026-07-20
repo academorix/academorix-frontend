@@ -6,18 +6,18 @@ that answer "what did I / my team / this branch do this week?".
 
 ## 1. What this module owns
 
-| Concern                                        | Owned artefact                                                                                                                                                                                                                                    |
-| ---------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Vendor-adapted activity_log table              | `Activity` model wrapping `spatie/laravel-activitylog`'s `activity_log` table + added `tenant_id NOT NULL` + `application_id NULLABLE` + composite indexes + `BelongsToTenant` global scope                                                       |
-| Retention policy per tenant                    | `ActivityRetentionPolicy` — per-tenant, per-log_name override on top of the config default. Enterprise entitlement gates extending past 90d                                                                                                       |
-| The opt-in trait                               | `LogsActivity` — composed on domain models when their mutations should surface on the tenant feed                                                                                                                                                 |
-| Description formatting                         | `ActivityFormatter` — renders human-readable description strings from event + properties. Descriptions are AUTHORED by developers as template strings; the formatter interpolates properties in                                                  |
-| Real-time broadcast to tenant feeds            | `ActivityBroadcastPublisher` — pushes new activity rows to `tenant.{tenantId}.activity` + `user.{userId}.activity` reverb channels. Opt-in via `activity_broadcast` entitlement                                                                   |
-| Per-request batch aggregator                   | `ActivityBatcher` — groups all activities from one HTTP request under a shared `batch_uuid` so the feed can render 'Alice made 3 changes to Court 3 booking' as one item instead of three                                                         |
-| Retention pipeline                             | Nightly `PurgeExpiredActivitiesJob` respecting per-tenant policies; weekly `ArchiveActivitiesToColdStorageJob` sending >90d rows to S3; nightly `ReconcileActivityBatchesJob` closing orphan batches from crashed requests                        |
-| Backfill                                       | One-shot `BackfillActivityTenantIdFromJsonbJob` reads `tenant_id` out of the vendor's `properties` JSONB blob and populates the new dedicated column (existing installs shipped `tenant_id` inside the blob — the new column is the primary path) |
-| DPO / GDPR surface                             | Right-of-access via `/api/v1/activities/mine`; right-to-erasure cascades activity rows for a subject on `user::IdentityErased`                                                                                                                    |
-| Digest emails                                  | `ActivityDigestEmailNotification` — opt-in per user (daily / weekly summary of activity on entities they follow). Gated by `activity_digest_email` entitlement (Medium+)                                                                          |
+| Concern                             | Owned artefact                                                                                                                                                                                                                                    |
+| ----------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Vendor-adapted activity_log table   | `Activity` model wrapping `spatie/laravel-activitylog`'s `activity_log` table + added `tenant_id NOT NULL` + `application_id NULLABLE` + composite indexes + `BelongsToTenant` global scope                                                       |
+| Retention policy per tenant         | `ActivityRetentionPolicy` — per-tenant, per-log_name override on top of the config default. Enterprise entitlement gates extending past 90d                                                                                                       |
+| The opt-in trait                    | `LogsActivity` — composed on domain models when their mutations should surface on the tenant feed                                                                                                                                                 |
+| Description formatting              | `ActivityFormatter` — renders human-readable description strings from event + properties. Descriptions are AUTHORED by developers as template strings; the formatter interpolates properties in                                                   |
+| Real-time broadcast to tenant feeds | `ActivityBroadcastPublisher` — pushes new activity rows to `tenant.{tenantId}.activity` + `user.{userId}.activity` reverb channels. Opt-in via `activity_broadcast` entitlement                                                                   |
+| Per-request batch aggregator        | `ActivityBatcher` — groups all activities from one HTTP request under a shared `batch_uuid` so the feed can render 'Alice made 3 changes to Court 3 booking' as one item instead of three                                                         |
+| Retention pipeline                  | Nightly `PurgeExpiredActivitiesJob` respecting per-tenant policies; weekly `ArchiveActivitiesToColdStorageJob` sending >90d rows to S3; nightly `ReconcileActivityBatchesJob` closing orphan batches from crashed requests                        |
+| Backfill                            | One-shot `BackfillActivityTenantIdFromJsonbJob` reads `tenant_id` out of the vendor's `properties` JSONB blob and populates the new dedicated column (existing installs shipped `tenant_id` inside the blob — the new column is the primary path) |
+| DPO / GDPR surface                  | Right-of-access via `/api/v1/activities/mine`; right-to-erasure cascades activity rows for a subject on `user::IdentityErased`                                                                                                                    |
+| Digest emails                       | `ActivityDigestEmailNotification` — opt-in per user (daily / weekly summary of activity on entities they follow). Gated by `activity_digest_email` entitlement (Medium+)                                                                          |
 
 ## 2. Placement rationale
 
@@ -60,8 +60,8 @@ We adapt it in-place via a `Schema::table` migration that adds:
   read path; `(tenant_id, log_name, created_at DESC)` — filter by feed name;
   `(subject_type, subject_id, created_at DESC)` — per-entity activity;
   `(causer_type, causer_id, created_at DESC)` — per-actor "my activity";
-  `(batch_uuid)` partial — group requests; `(application_id, tenant_id,
-created_at DESC)` — cross-app rollup
+  `(batch_uuid)` partial — group requests;
+  `(application_id, tenant_id, created_at DESC)` — cross-app rollup
 
 The `Activity` model implements the vendor's `Activity` contract and composes:
 
@@ -87,8 +87,8 @@ Per `.kiro/steering/tenancy-columns.md` §3 §9:
 1. **Add `tenant_id` to `activity_log`.** The vendor extracts tenant id from the
    `properties` JSONB blob which prevents indexing. This module ships the
    `Schema::table` migration adding `tenant_id UUID NOT NULL` + a composite
-   index with `created_at`, plus the `BackfillActivityTenantIdFromJsonbJob`
-   that reads `properties.tenant_id` on existing rows.
+   index with `created_at`, plus the `BackfillActivityTenantIdFromJsonbJob` that
+   reads `properties.tenant_id` on existing rows.
 2. **Add `application_id` to `activity_log`.** Rows written under a tenant
    audience carry the active `X-Application-Id`; rows written from platform
    contexts (a `PlatformUser` mutation) leave it NULL. Enables per-application
@@ -158,8 +158,8 @@ columns living gap register.
 
 ### Platform-admin host
 
-Read-only cross-tenant support-tool endpoints for Academorix ops. No writes,
-no policy CRUD.
+Read-only cross-tenant support-tool endpoints for Academorix ops. No writes, no
+policy CRUD.
 
 ## 8. Consumer contract — how domain modules opt in
 
@@ -198,8 +198,8 @@ final class Booking extends Model
 Rules for authors:
 
 - **Choose `logOnly()` deliberately.** Every field logged appears in
-  `properties` — sensitive fields should NOT be logged. Prefer named fields
-  over `logAll()`.
+  `properties` — sensitive fields should NOT be logged. Prefer named fields over
+  `logAll()`.
 - **Descriptions are user-facing.** Write in second-person or third-person
   narrative ("Alice booked Court 3 for tomorrow"). Never emit stack traces or
   raw payloads.
@@ -236,10 +236,10 @@ Rules for authors:
   management"). Consumers pick one per model.
 - **Subject** — the polymorphic target of the activity (what happened TO). A
   Booking, an Athlete, a Team.
-- **Causer** — the polymorphic actor (who did it). Usually a User;
-  occasionally a `System` sentinel; rarely a `PlatformUser` for support ops.
-- **Batch** — group of activities from one HTTP request, keyed by
-  `batch_uuid`. Enables collapsed feed rendering ("Alice made 3 changes").
+- **Causer** — the polymorphic actor (who did it). Usually a User; occasionally
+  a `System` sentinel; rarely a `PlatformUser` for support ops.
+- **Batch** — group of activities from one HTTP request, keyed by `batch_uuid`.
+  Enables collapsed feed rendering ("Alice made 3 changes").
 - **Retention policy** — per-tenant, per-log_name override on `retention_days`.
   Default 90; up to 365 with entitlement; up to 730 for regulator holds.
 

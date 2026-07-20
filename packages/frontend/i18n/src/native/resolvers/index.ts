@@ -4,4 +4,4 @@
  * @description Barrel export for native locale resolvers.
  */
 
-export { DeviceLocaleResolver } from './device-locale.resolver';
+export { DeviceLocaleResolver } from "./device-locale.resolver";

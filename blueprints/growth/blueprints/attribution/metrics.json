@@ -6,8 +6,29 @@
   "namespace": "academorix.attribution",
   "labelConventions": {
     "always": [],
-    "commonlyAvailable": ["subject_type", "lifecycle_state", "touchpoint_type", "provider_hint", "was_first_touch", "consent_state_summary"],
-    "forbiddenAsLabels": ["tenant_id", "attribution_id", "touchpoint_id", "subject_id", "user_id", "session_id", "campaign", "source_raw", "landing_page", "referrer", "ip_hash", "gclid", "fbclid"]
+    "commonlyAvailable": [
+      "subject_type",
+      "lifecycle_state",
+      "touchpoint_type",
+      "provider_hint",
+      "was_first_touch",
+      "consent_state_summary"
+    ],
+    "forbiddenAsLabels": [
+      "tenant_id",
+      "attribution_id",
+      "touchpoint_id",
+      "subject_id",
+      "user_id",
+      "session_id",
+      "campaign",
+      "source_raw",
+      "landing_page",
+      "referrer",
+      "ip_hash",
+      "gclid",
+      "fbclid"
+    ]
   },
   "metrics": [
     {

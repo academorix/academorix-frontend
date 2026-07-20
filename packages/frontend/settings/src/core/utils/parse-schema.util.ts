@@ -6,7 +6,7 @@
  *   we validate structure before trusting values.
  */
 
-import type { ISettingDefinition } from '@stackra/contracts';
+import type { ISettingDefinition } from "@stackra/contracts";
 
 /**
  * Coerce an unknown payload into a definition array.
@@ -25,27 +25,27 @@ export function parseSchemaPayload(payload: unknown): ISettingDefinition[] {
 
   for (const raw of list) {
     if (!isRecord(raw)) continue;
-    const key = typeof raw.key === 'string' ? raw.key : undefined;
+    const key = typeof raw.key === "string" ? raw.key : undefined;
     if (!key) continue;
 
     // We trust the server to send well-typed field / group records;
     // the record guard just makes sure we don't crash on primitives.
     const fields = Array.isArray(raw.fields)
-      ? (raw.fields.filter(isRecord) as unknown as ISettingDefinition['fields'])
+      ? (raw.fields.filter(isRecord) as unknown as ISettingDefinition["fields"])
       : [];
 
     const groups = Array.isArray(raw.groups)
-      ? (raw.groups.filter(isRecord) as unknown as ISettingDefinition['groups'])
+      ? (raw.groups.filter(isRecord) as unknown as ISettingDefinition["groups"])
       : [];
 
     definitions.push({
       key,
-      label: typeof raw.label === 'string' ? raw.label : key,
-      description: typeof raw.description === 'string' ? raw.description : undefined,
-      icon: typeof raw.icon === 'string' ? raw.icon : undefined,
-      order: typeof raw.order === 'number' ? raw.order : 0,
-      scope: typeof raw.scope === 'string' ? (raw.scope as ISettingDefinition['scope']) : undefined,
-      public: typeof raw.public === 'boolean' ? raw.public : undefined,
+      label: typeof raw.label === "string" ? raw.label : key,
+      description: typeof raw.description === "string" ? raw.description : undefined,
+      icon: typeof raw.icon === "string" ? raw.icon : undefined,
+      order: typeof raw.order === "number" ? raw.order : 0,
+      scope: typeof raw.scope === "string" ? (raw.scope as ISettingDefinition["scope"]) : undefined,
+      public: typeof raw.public === "boolean" ? raw.public : undefined,
       permissions: Array.isArray(raw.permissions) ? (raw.permissions as string[]) : undefined,
       writePermissions: Array.isArray(raw.writePermissions)
         ? (raw.writePermissions as string[])
@@ -54,9 +54,9 @@ export function parseSchemaPayload(payload: unknown): ISettingDefinition[] {
       fields,
       groups,
       sections: isRecord(raw.sections)
-        ? (raw.sections as ISettingDefinition['sections'])
+        ? (raw.sections as ISettingDefinition["sections"])
         : undefined,
-      meta: isRecord(raw.meta) ? (raw.meta as ISettingDefinition['meta']) : undefined,
+      meta: isRecord(raw.meta) ? (raw.meta as ISettingDefinition["meta"]) : undefined,
     });
   }
 
@@ -74,5 +74,5 @@ function extractGroups(payload: unknown): unknown[] {
 
 /** Runtime record guard. */
 function isRecord(value: unknown): value is Record<string, unknown> {
-  return typeof value === 'object' && value !== null && !Array.isArray(value);
+  return typeof value === "object" && value !== null && !Array.isArray(value);
 }

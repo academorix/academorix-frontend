@@ -15,7 +15,9 @@
     "incrementing": false,
     "model": "Academorix\\Observability\\Monitoring\\Models\\MonitoringProviderConfig",
     "interface": "Academorix\\Observability\\Monitoring\\Contracts\\Data\\MonitoringProviderConfigInterface",
-    "implements": ["Academorix\\Observability\\Monitoring\\Contracts\\Data\\MonitoringProviderConfigInterface"],
+    "implements": [
+      "Academorix\\Observability\\Monitoring\\Contracts\\Data\\MonitoringProviderConfigInterface"
+    ],
     "traits": [
       "HasFactory",
       "HasUlids",
@@ -132,10 +134,29 @@
         "predicate": "deleted_at IS NULL"
       },
       { "columns": ["tenant_id", "is_active"], "name": "monitoring_provider_configs_active_idx" },
-      { "columns": ["circuit_breaker_open_until"], "name": "monitoring_provider_configs_breaker_idx", "predicate": "circuit_breaker_open_until IS NOT NULL" }
+      {
+        "columns": ["circuit_breaker_open_until"],
+        "name": "monitoring_provider_configs_breaker_idx",
+        "predicate": "circuit_breaker_open_until IS NOT NULL"
+      }
     ]
   },
-  "required": ["id", "tenant_id", "provider", "name", "is_active", "config", "enabled_severities", "test_mode", "consecutive_failure_count", "circuit_breaker_reset_count", "circuit_breaker_config", "retry_config", "created_at", "updated_at"],
+  "required": [
+    "id",
+    "tenant_id",
+    "provider",
+    "name",
+    "is_active",
+    "config",
+    "enabled_severities",
+    "test_mode",
+    "consecutive_failure_count",
+    "circuit_breaker_reset_count",
+    "circuit_breaker_config",
+    "retry_config",
+    "created_at",
+    "updated_at"
+  ],
   "properties": {
     "id": { "type": "string", "pattern": "^mpr_[0-9A-HJKMNP-TV-Z]{26}$" },
     "tenant_id": { "type": "string", "pattern": "^ten_[0-9A-HJKMNP-TV-Z]{26}$" },

@@ -9,16 +9,16 @@
  *   at `onApplicationBootstrap` and registers each panel it finds.
  */
 
-import { describe, expect, it, vi } from 'vitest';
+import { describe, expect, it, vi } from "vitest";
 import type {
   IDevtoolsPanel,
   IDevtoolsPanelsRegistry,
   IDiscoveryProvider,
   IDiscoveryService,
-} from '@stackra/contracts';
+} from "@stackra/contracts";
 
-import { DevtoolsPanelsLoaderService } from '@/core/services/devtools-panels-loader.service';
-import { createMockDevtoolsPanel } from '@/testing/create-mock-devtools-panel.util';
+import { DevtoolsPanelsLoaderService } from "@/core/services/devtools-panels-loader.service";
+import { createMockDevtoolsPanel } from "@/testing/create-mock-devtools-panel.util";
 
 /** Build a minimal `IDevtoolsPanelsRegistry` mock. */
 function makeRegistry(): IDevtoolsPanelsRegistry & { readonly registered: IDevtoolsPanel[] } {
@@ -48,7 +48,7 @@ function makeDiscovery(providers: IDiscoveryProvider[]): IDiscoveryService {
 }
 
 /** Build a provider wrapper around an instance. */
-function wrap(instance: unknown, name = 'X'): IDiscoveryProvider {
+function wrap(instance: unknown, name = "X"): IDiscoveryProvider {
   return {
     name,
     metatype: instance ? ((instance as object).constructor as never) : undefined,
@@ -57,25 +57,25 @@ function wrap(instance: unknown, name = 'X'): IDiscoveryProvider {
   } as unknown as IDiscoveryProvider;
 }
 
-describe('DevtoolsPanelsLoaderService', () => {
-  it('is a no-op when no discovery service is bound', () => {
+describe("DevtoolsPanelsLoaderService", () => {
+  it("is a no-op when no discovery service is bound", () => {
     const registry = makeRegistry();
     const loader = new DevtoolsPanelsLoaderService(registry);
     loader.onApplicationBootstrap();
     expect(registry.registered).toHaveLength(0);
   });
 
-  it('registers every discovered panel', () => {
+  it("registers every discovered panel", () => {
     const registry = makeRegistry();
-    const p1 = createMockDevtoolsPanel({ id: 'a' });
-    const p2 = createMockDevtoolsPanel({ id: 'b' });
+    const p1 = createMockDevtoolsPanel({ id: "a" });
+    const p2 = createMockDevtoolsPanel({ id: "b" });
     const discovery = makeDiscovery([wrap(p1), wrap(p2)]);
     const loader = new DevtoolsPanelsLoaderService(registry, discovery);
     loader.onApplicationBootstrap();
-    expect(registry.registered.map((p) => p.id)).toEqual(['a', 'b']);
+    expect(registry.registered.map((p) => p.id)).toEqual(["a", "b"]);
   });
 
-  it('handles the zero-panels case', () => {
+  it("handles the zero-panels case", () => {
     const registry = makeRegistry();
     const discovery = makeDiscovery([]);
     const loader = new DevtoolsPanelsLoaderService(registry, discovery);
@@ -83,7 +83,7 @@ describe('DevtoolsPanelsLoaderService', () => {
     expect(registry.registered).toHaveLength(0);
   });
 
-  it('skips discovered instances that do not implement IDevtoolsPanel', () => {
+  it("skips discovered instances that do not implement IDevtoolsPanel", () => {
     const registry = makeRegistry();
     // Mid-refactor stub — decorator stamped, but the instance
     // doesn't carry the required fields yet. Loader must skip
@@ -94,24 +94,24 @@ describe('DevtoolsPanelsLoaderService', () => {
     expect(registry.registered).toHaveLength(0);
   });
 
-  it('uses getProvidersByMetadata (not getProviders)', () => {
+  it("uses getProvidersByMetadata (not getProviders)", () => {
     const registry = makeRegistry();
-    const providers = [wrap(createMockDevtoolsPanel({ id: 'x' }))];
+    const providers = [wrap(createMockDevtoolsPanel({ id: "x" }))];
     const discovery = makeDiscovery(providers);
-    const spy = vi.spyOn(discovery, 'getProvidersByMetadata');
+    const spy = vi.spyOn(discovery, "getProvidersByMetadata");
     const loader = new DevtoolsPanelsLoaderService(registry, discovery);
     loader.onApplicationBootstrap();
     expect(spy).toHaveBeenCalledTimes(1);
   });
 
-  it('forwards every discovered instance to the registry (dedup is registry-side)', () => {
+  it("forwards every discovered instance to the registry (dedup is registry-side)", () => {
     // The loader does NOT dedup — that responsibility belongs to
     // the registry (last-wins per id). We assert both providers
     // reach the register call so the registry gets a chance to
     // apply its last-wins rule.
     const registry = makeRegistry();
-    const first = createMockDevtoolsPanel({ id: 'dup', title: 'First' });
-    const second = createMockDevtoolsPanel({ id: 'dup', title: 'Second' });
+    const first = createMockDevtoolsPanel({ id: "dup", title: "First" });
+    const second = createMockDevtoolsPanel({ id: "dup", title: "Second" });
     const discovery = makeDiscovery([wrap(first), wrap(second)]);
     const loader = new DevtoolsPanelsLoaderService(registry, discovery);
     loader.onApplicationBootstrap();

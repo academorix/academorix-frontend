@@ -27,8 +27,21 @@
         {
           "kind": "View",
           "children": [
-            { "kind": "Text", "props": { "as": "h1", "className": "text-2xl font-semibold", "children": "Referrals" } },
-            { "kind": "Text", "props": { "className": "text-sm text-muted", "children": "Every tracked referrer × referred instance across every program." } }
+            {
+              "kind": "Text",
+              "props": {
+                "as": "h1",
+                "className": "text-2xl font-semibold",
+                "children": "Referrals"
+              }
+            },
+            {
+              "kind": "Text",
+              "props": {
+                "className": "text-sm text-muted",
+                "children": "Every tracked referrer × referred instance across every program."
+              }
+            }
           ]
         },
         {
@@ -40,7 +53,11 @@
               "widget": "referrals.program-picker",
               "props": { "label": "Program", "onlyActive": false },
               "actions": {
-                "onSelectionChange": { "kind": "filter.set", "field": "program_id", "valueExpr": "$payload.program_id" }
+                "onSelectionChange": {
+                  "kind": "filter.set",
+                  "field": "program_id",
+                  "valueExpr": "$payload.program_id"
+                }
               }
             },
             {
@@ -58,7 +75,13 @@
                 { "id": "expired", "label": "Expired" },
                 { "id": "fraudulent", "label": "Fraudulent" }
               ],
-              "actions": { "onSelectionChange": { "kind": "filter.set", "field": "status", "valueExpr": "$selectedKey" } }
+              "actions": {
+                "onSelectionChange": {
+                  "kind": "filter.set",
+                  "field": "status",
+                  "valueExpr": "$selectedKey"
+                }
+              }
             },
             {
               "kind": "ComboBox",
@@ -67,7 +90,13 @@
                 { "id": "true", "label": "Yes" },
                 { "id": "false", "label": "No" }
               ],
-              "actions": { "onSelectionChange": { "kind": "filter.set", "field": "has_fraud_flag", "valueExpr": "$selectedKey" } }
+              "actions": {
+                "onSelectionChange": {
+                  "kind": "filter.set",
+                  "field": "has_fraud_flag",
+                  "valueExpr": "$selectedKey"
+                }
+              }
             }
           ]
         },
@@ -83,7 +112,9 @@
               "label": "Referrer",
               "renderer": {
                 "kind": "Text",
-                "bindings": { "children": { "$expr": "row.referrer?.display_name || row.referrer_id" } }
+                "bindings": {
+                  "children": { "$expr": "row.referrer?.display_name || row.referrer_id" }
+                }
               }
             },
             {

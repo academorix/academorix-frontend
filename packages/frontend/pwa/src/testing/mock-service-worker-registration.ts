@@ -19,16 +19,16 @@ export interface IMockServiceWorker {
   /** Simulate a `statechange` event with the given next state. */
   simulateStateChange(next: ServiceWorkerState): void;
   /** Add a `statechange` listener (matches the real API). */
-  addEventListener(type: 'statechange', listener: Listener): void;
+  addEventListener(type: "statechange", listener: Listener): void;
   /** Remove a `statechange` listener. */
-  removeEventListener(type: 'statechange', listener: Listener): void;
+  removeEventListener(type: "statechange", listener: Listener): void;
   /** Send a message to the worker. */
   postMessage(message: unknown): void;
 }
 
 /** Create a minimal `IMockServiceWorker`. */
 function createMockServiceWorker(
-  initialState: ServiceWorkerState = 'installed'
+  initialState: ServiceWorkerState = "installed",
 ): IMockServiceWorker {
   const listeners = new Map<string, Set<Listener>>();
   const messages: unknown[] = [];
@@ -37,7 +37,7 @@ function createMockServiceWorker(
     messages,
     simulateStateChange(next: ServiceWorkerState) {
       this.state = next;
-      const set = listeners.get('statechange');
+      const set = listeners.get("statechange");
       if (!set) return;
       for (const listener of set) listener();
     },
@@ -75,34 +75,34 @@ export class MockServiceWorkerRegistration {
     options: {
       /** Seed the `waiting` slot immediately (for "update ready at bind" cases). */
       readonly waiting?: boolean;
-    } = {}
+    } = {},
   ) {
-    if (options.waiting) this.waiting = createMockServiceWorker('installed');
+    if (options.waiting) this.waiting = createMockServiceWorker("installed");
   }
 
   /** Fire the `updatefound` event with a new installing worker. */
   public simulateUpdateFound(installing?: IMockServiceWorker): IMockServiceWorker {
-    const worker = installing ?? createMockServiceWorker('installing');
+    const worker = installing ?? createMockServiceWorker("installing");
     this.installing = worker;
-    const set = this.listeners.get('updatefound');
+    const set = this.listeners.get("updatefound");
     if (set) for (const listener of set) listener();
     return worker;
   }
 
   /** Set the `waiting` slot without dispatching an event. */
   public simulateWaiting(worker?: IMockServiceWorker): IMockServiceWorker {
-    const next = worker ?? createMockServiceWorker('installed');
+    const next = worker ?? createMockServiceWorker("installed");
     this.waiting = next;
     return next;
   }
 
-  public addEventListener(type: 'updatefound', listener: Listener): void {
+  public addEventListener(type: "updatefound", listener: Listener): void {
     const set = this.listeners.get(type) ?? new Set<Listener>();
     set.add(listener);
     this.listeners.set(type, set);
   }
 
-  public removeEventListener(type: 'updatefound', listener: Listener): void {
+  public removeEventListener(type: "updatefound", listener: Listener): void {
     this.listeners.get(type)?.delete(listener);
   }
 

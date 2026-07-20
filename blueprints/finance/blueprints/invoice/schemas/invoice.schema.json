@@ -57,40 +57,204 @@
   "x-database": {
     "engine": "postgres",
     "columns": {
-      "id": { "type": "string", "length": 64, "primary": true, "description": "Prefixed ULID: `ivc_<26>`." },
-      "tenant_id": { "type": "string", "length": 64, "nullable": false, "foreign": { "table": "tenants", "column": "id", "onDelete": "cascade" } },
-      "invoice_number": { "type": "string", "length": 32, "nullable": false, "description": "Sequential per tenant per year. Format: '{series?}-{YYYY}-{seq:06}' (e.g. '2026-000001', 'INV-2026-000001'). Generated via Postgres advisory lock." },
-      "invoice_series": { "type": "string", "length": 8, "nullable": false, "default": "'INV'", "description": "Series prefix (INV / SO / RECEIPT / custom 3-8 char). Small tenants locked to 'INV'." },
-      "customer_type": { "type": "string", "length": 96, "nullable": false, "description": "Polymorphic customer class name (User / Athlete / Organization)." },
-      "customer_id": { "type": "string", "length": 64, "nullable": true, "description": "Polymorphic customer ID. Nullable after UserErased-triggered redaction (GDPR Art. 17)." },
-      "membership_id": { "type": "string", "length": 64, "nullable": true, "foreign": { "table": "memberships", "column": "id", "onDelete": "restrict" }, "description": "Set when the invoice is for a membership renewal or initial signup. RESTRICT — membership hard-delete forbidden while open invoices exist." },
-      "membership_renewal_id": { "type": "string", "length": 64, "nullable": true, "foreign": { "table": "membership_renewals", "column": "id", "onDelete": "restrict" } },
-      "billing_address": { "type": "jsonb", "nullable": false, "description": "Frozen at issuance. Shape: { name, street, street_2?, city, state?, postal_code, country, phone?, email? }. See schemas/address-snapshot.embed.json." },
-      "shipping_address": { "type": "jsonb", "nullable": true, "description": "Optional shipping snapshot. Same shape as billing_address. Defaults to billing_address when null." },
-      "customer_tax_id": { "type": "string", "length": 128, "nullable": true, "description": "VAT / GST / EIN. Frozen at issuance. Required for VAT-jurisdiction invoices." },
-      "issue_date": { "type": "date", "nullable": false, "description": "Frozen at issuance. Never mutated (GAAP)." },
-      "due_date": { "type": "date", "nullable": false, "description": "Computed from payment_terms at creation." },
-      "currency": { "type": "string", "length": 3, "nullable": false, "description": "ISO 4217 3-letter code. Frozen at issuance." },
-      "subtotal_cents": { "type": "bigint", "nullable": false, "default": 0, "description": "Sum of line subtotals (before discount + tax). Frozen after finalize." },
-      "discount_amount_cents": { "type": "bigint", "nullable": false, "default": 0, "description": "Total discount (from coupon + adjustment lines). Frozen after finalize." },
-      "tax_amount_cents": { "type": "bigint", "nullable": false, "default": 0, "description": "Total tax across all lines. Frozen after finalize." },
-      "total_cents": { "type": "bigint", "nullable": false, "default": 0, "description": "subtotal - discount + tax. Frozen after finalize." },
-      "amount_paid_cents": { "type": "bigint", "nullable": false, "default": 0, "description": "Running total from linked transactions." },
-      "amount_due_cents": { "type": "bigint", "nullable": false, "default": 0, "description": "total_cents - amount_paid_cents. May be negative if overpaid." },
-      "status": { "type": "string", "length": 32, "nullable": false, "default": "'draft'", "description": "Enum: draft / open / paid / partially_paid / void / uncollectible / pastdue / refunded / disputed / written_off." },
-      "state_reason": { "type": "string", "length": 256, "nullable": true, "description": "Free-form reason for state transitions (void_reason, uncollectible_note, disputed_reason)." },
-      "payment_terms": { "type": "string", "length": 24, "nullable": false, "default": "'net_30'", "description": "Enum: due_on_receipt / net_15 / net_30 / net_60 / custom." },
-      "payment_terms_custom_days": { "type": "integer", "nullable": true, "description": "Required when payment_terms='custom'. Range: 1-365." },
-      "collection_status": { "type": "string", "length": 32, "nullable": true, "description": "Enum: pending / in_dunning / with_collections / written_off. NULL until first past-due." },
-      "notes": { "type": "text", "nullable": true, "description": "Customer-visible notes appearing on the PDF." },
-      "internal_notes": { "type": "text", "nullable": true, "description": "Admin-only notes; never shown to customer." },
-      "external_id": { "type": "string", "length": 128, "nullable": true, "description": "Provider-side ID (Stripe invoice ID, QuickBooks invoice ID) when imported/synced." },
-      "provider_metadata": { "type": "jsonb", "nullable": true, "description": "Free-form provider metadata (Stripe metadata, QuickBooks class, etc.)." },
-      "issued_by_user_id": { "type": "string", "length": 64, "nullable": true, "foreign": { "table": "users", "column": "id", "onDelete": "restrict" }, "description": "Admin who created the invoice. NULL for system-created (via CreateInvoiceOnMembershipCreated hook)." },
-      "pdf_url": { "type": "string", "length": 512, "nullable": true, "description": "Signed S3 URL to the current invoice PDF. Regenerated per viewer request via a dedicated signing service." },
-      "dunning_dispatched_stages": { "type": "jsonb", "nullable": true, "description": "Tracks which dunning stages fired ({ day_3: '2026-01-15T09:00:00Z', day_7: ... }). Prevents duplicate dispatches." },
-      "sent_at": { "type": "timestamptz", "nullable": true, "description": "First email delivery time." },
-      "viewed_by_customer_at": { "type": "timestamptz", "nullable": true, "description": "First view time (email pixel or portal access)." },
+      "id": {
+        "type": "string",
+        "length": 64,
+        "primary": true,
+        "description": "Prefixed ULID: `ivc_<26>`."
+      },
+      "tenant_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "foreign": { "table": "tenants", "column": "id", "onDelete": "cascade" }
+      },
+      "invoice_number": {
+        "type": "string",
+        "length": 32,
+        "nullable": false,
+        "description": "Sequential per tenant per year. Format: '{series?}-{YYYY}-{seq:06}' (e.g. '2026-000001', 'INV-2026-000001'). Generated via Postgres advisory lock."
+      },
+      "invoice_series": {
+        "type": "string",
+        "length": 8,
+        "nullable": false,
+        "default": "'INV'",
+        "description": "Series prefix (INV / SO / RECEIPT / custom 3-8 char). Small tenants locked to 'INV'."
+      },
+      "customer_type": {
+        "type": "string",
+        "length": 96,
+        "nullable": false,
+        "description": "Polymorphic customer class name (User / Athlete / Organization)."
+      },
+      "customer_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": true,
+        "description": "Polymorphic customer ID. Nullable after UserErased-triggered redaction (GDPR Art. 17)."
+      },
+      "membership_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": true,
+        "foreign": { "table": "memberships", "column": "id", "onDelete": "restrict" },
+        "description": "Set when the invoice is for a membership renewal or initial signup. RESTRICT — membership hard-delete forbidden while open invoices exist."
+      },
+      "membership_renewal_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": true,
+        "foreign": { "table": "membership_renewals", "column": "id", "onDelete": "restrict" }
+      },
+      "billing_address": {
+        "type": "jsonb",
+        "nullable": false,
+        "description": "Frozen at issuance. Shape: { name, street, street_2?, city, state?, postal_code, country, phone?, email? }. See schemas/address-snapshot.embed.json."
+      },
+      "shipping_address": {
+        "type": "jsonb",
+        "nullable": true,
+        "description": "Optional shipping snapshot. Same shape as billing_address. Defaults to billing_address when null."
+      },
+      "customer_tax_id": {
+        "type": "string",
+        "length": 128,
+        "nullable": true,
+        "description": "VAT / GST / EIN. Frozen at issuance. Required for VAT-jurisdiction invoices."
+      },
+      "issue_date": {
+        "type": "date",
+        "nullable": false,
+        "description": "Frozen at issuance. Never mutated (GAAP)."
+      },
+      "due_date": {
+        "type": "date",
+        "nullable": false,
+        "description": "Computed from payment_terms at creation."
+      },
+      "currency": {
+        "type": "string",
+        "length": 3,
+        "nullable": false,
+        "description": "ISO 4217 3-letter code. Frozen at issuance."
+      },
+      "subtotal_cents": {
+        "type": "bigint",
+        "nullable": false,
+        "default": 0,
+        "description": "Sum of line subtotals (before discount + tax). Frozen after finalize."
+      },
+      "discount_amount_cents": {
+        "type": "bigint",
+        "nullable": false,
+        "default": 0,
+        "description": "Total discount (from coupon + adjustment lines). Frozen after finalize."
+      },
+      "tax_amount_cents": {
+        "type": "bigint",
+        "nullable": false,
+        "default": 0,
+        "description": "Total tax across all lines. Frozen after finalize."
+      },
+      "total_cents": {
+        "type": "bigint",
+        "nullable": false,
+        "default": 0,
+        "description": "subtotal - discount + tax. Frozen after finalize."
+      },
+      "amount_paid_cents": {
+        "type": "bigint",
+        "nullable": false,
+        "default": 0,
+        "description": "Running total from linked transactions."
+      },
+      "amount_due_cents": {
+        "type": "bigint",
+        "nullable": false,
+        "default": 0,
+        "description": "total_cents - amount_paid_cents. May be negative if overpaid."
+      },
+      "status": {
+        "type": "string",
+        "length": 32,
+        "nullable": false,
+        "default": "'draft'",
+        "description": "Enum: draft / open / paid / partially_paid / void / uncollectible / pastdue / refunded / disputed / written_off."
+      },
+      "state_reason": {
+        "type": "string",
+        "length": 256,
+        "nullable": true,
+        "description": "Free-form reason for state transitions (void_reason, uncollectible_note, disputed_reason)."
+      },
+      "payment_terms": {
+        "type": "string",
+        "length": 24,
+        "nullable": false,
+        "default": "'net_30'",
+        "description": "Enum: due_on_receipt / net_15 / net_30 / net_60 / custom."
+      },
+      "payment_terms_custom_days": {
+        "type": "integer",
+        "nullable": true,
+        "description": "Required when payment_terms='custom'. Range: 1-365."
+      },
+      "collection_status": {
+        "type": "string",
+        "length": 32,
+        "nullable": true,
+        "description": "Enum: pending / in_dunning / with_collections / written_off. NULL until first past-due."
+      },
+      "notes": {
+        "type": "text",
+        "nullable": true,
+        "description": "Customer-visible notes appearing on the PDF."
+      },
+      "internal_notes": {
+        "type": "text",
+        "nullable": true,
+        "description": "Admin-only notes; never shown to customer."
+      },
+      "external_id": {
+        "type": "string",
+        "length": 128,
+        "nullable": true,
+        "description": "Provider-side ID (Stripe invoice ID, QuickBooks invoice ID) when imported/synced."
+      },
+      "provider_metadata": {
+        "type": "jsonb",
+        "nullable": true,
+        "description": "Free-form provider metadata (Stripe metadata, QuickBooks class, etc.)."
+      },
+      "issued_by_user_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": true,
+        "foreign": { "table": "users", "column": "id", "onDelete": "restrict" },
+        "description": "Admin who created the invoice. NULL for system-created (via CreateInvoiceOnMembershipCreated hook)."
+      },
+      "pdf_url": {
+        "type": "string",
+        "length": 512,
+        "nullable": true,
+        "description": "Signed S3 URL to the current invoice PDF. Regenerated per viewer request via a dedicated signing service."
+      },
+      "dunning_dispatched_stages": {
+        "type": "jsonb",
+        "nullable": true,
+        "description": "Tracks which dunning stages fired ({ day_3: '2026-01-15T09:00:00Z', day_7: ... }). Prevents duplicate dispatches."
+      },
+      "sent_at": {
+        "type": "timestamptz",
+        "nullable": true,
+        "description": "First email delivery time."
+      },
+      "viewed_by_customer_at": {
+        "type": "timestamptz",
+        "nullable": true,
+        "description": "First view time (email pixel or portal access)."
+      },
       "paid_at": { "type": "timestamptz", "nullable": true },
       "voided_at": { "type": "timestamptz", "nullable": true },
       "void_reason": { "type": "string", "length": 256, "nullable": true },
@@ -102,12 +266,32 @@
       "updated_at": { "type": "timestamptz", "nullable": false }
     },
     "indexes": [
-      { "columns": ["tenant_id", "invoice_number"], "unique": true, "name": "invoices_tenant_number_unique", "predicate": "deleted_at IS NULL" },
-      { "columns": ["tenant_id", "customer_type", "customer_id", "issue_date"], "name": "invoices_customer_recent_idx" },
-      { "columns": ["tenant_id", "status", "due_date"], "name": "invoices_status_due_idx", "description": "Dunning + aging query index" },
-      { "columns": ["tenant_id", "membership_id"], "name": "invoices_membership_idx", "predicate": "membership_id IS NOT NULL" },
+      {
+        "columns": ["tenant_id", "invoice_number"],
+        "unique": true,
+        "name": "invoices_tenant_number_unique",
+        "predicate": "deleted_at IS NULL"
+      },
+      {
+        "columns": ["tenant_id", "customer_type", "customer_id", "issue_date"],
+        "name": "invoices_customer_recent_idx"
+      },
+      {
+        "columns": ["tenant_id", "status", "due_date"],
+        "name": "invoices_status_due_idx",
+        "description": "Dunning + aging query index"
+      },
+      {
+        "columns": ["tenant_id", "membership_id"],
+        "name": "invoices_membership_idx",
+        "predicate": "membership_id IS NOT NULL"
+      },
       { "columns": ["tenant_id", "created_at"], "name": "invoices_recent_idx" },
-      { "columns": ["tenant_id", "collection_status"], "name": "invoices_collection_idx", "predicate": "collection_status IS NOT NULL" }
+      {
+        "columns": ["tenant_id", "collection_status"],
+        "name": "invoices_collection_idx",
+        "predicate": "collection_status IS NOT NULL"
+      }
     ]
   },
   "required": [
@@ -134,7 +318,11 @@
   "properties": {
     "id": { "type": "string", "pattern": "^ivc_[0-9A-HJKMNP-TV-Z]{26}$" },
     "tenant_id": { "type": "string", "pattern": "^ten_[0-9A-HJKMNP-TV-Z]{26}$" },
-    "invoice_number": { "type": "string", "pattern": "^(?:[A-Z]{2,8}-)?[0-9]{4}-[0-9]{6}$", "maxLength": 32 },
+    "invoice_number": {
+      "type": "string",
+      "pattern": "^(?:[A-Z]{2,8}-)?[0-9]{4}-[0-9]{6}$",
+      "maxLength": 32
+    },
     "invoice_series": { "type": "string", "pattern": "^[A-Z]{2,8}$" },
     "customer_type": { "type": "string" },
     "customer_id": { "type": ["string", "null"] },
@@ -166,11 +354,31 @@
     "total_cents": { "type": "integer" },
     "amount_paid_cents": { "type": "integer", "minimum": 0 },
     "amount_due_cents": { "type": "integer" },
-    "status": { "type": "string", "enum": ["draft", "open", "paid", "partially_paid", "void", "uncollectible", "pastdue", "refunded", "disputed", "written_off"] },
+    "status": {
+      "type": "string",
+      "enum": [
+        "draft",
+        "open",
+        "paid",
+        "partially_paid",
+        "void",
+        "uncollectible",
+        "pastdue",
+        "refunded",
+        "disputed",
+        "written_off"
+      ]
+    },
     "state_reason": { "type": ["string", "null"], "maxLength": 256 },
-    "payment_terms": { "type": "string", "enum": ["due_on_receipt", "net_15", "net_30", "net_60", "custom"] },
+    "payment_terms": {
+      "type": "string",
+      "enum": ["due_on_receipt", "net_15", "net_30", "net_60", "custom"]
+    },
     "payment_terms_custom_days": { "type": ["integer", "null"], "minimum": 1, "maximum": 365 },
-    "collection_status": { "type": ["string", "null"], "enum": ["pending", "in_dunning", "with_collections", "written_off", null] },
+    "collection_status": {
+      "type": ["string", "null"],
+      "enum": ["pending", "in_dunning", "with_collections", "written_off", null]
+    },
     "notes": { "type": ["string", "null"] },
     "internal_notes": { "type": ["string", "null"] },
     "external_id": { "type": ["string", "null"], "maxLength": 128 },

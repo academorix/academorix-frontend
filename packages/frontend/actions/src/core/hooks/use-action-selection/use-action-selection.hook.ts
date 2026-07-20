@@ -6,12 +6,12 @@
  *   selection widgets (`Select`, `ListBox`, `RadioGroup`, `TagGroup`).
  */
 
-import { useCallback } from 'react';
-import type { IActionDescriptor, IActionResponse } from '@stackra/contracts';
+import { useCallback } from "react";
+import type { IActionDescriptor, IActionResponse } from "@stackra/contracts";
 
-import { useAction } from '../use-action';
-import type { IUseActionPressOptions } from '../use-action-press/use-action-press.interface';
-import type { ActionSelection, ActionSelectionMapper } from './use-action-selection.type';
+import { useAction } from "../use-action";
+import type { IUseActionPressOptions } from "../use-action-press/use-action-press.interface";
+import type { ActionSelection, ActionSelectionMapper } from "./use-action-selection.type";
 
 /**
  * Result of {@link useActionSelection} — an `onSelectionChange` handler
@@ -76,7 +76,7 @@ export function useActionSelection<
 >(
   base: D,
   mapper: ActionSelectionMapper<K, D>,
-  options: IUseActionPressOptions<D, R> = {}
+  options: IUseActionPressOptions<D, R> = {},
 ): IUseActionSelectionResult<K, R> {
   const { run, reset, isPending, error } = useAction<D, R>(base.kind);
   const { context, onDone } = options;
@@ -91,7 +91,7 @@ export function useActionSelection<
       onDone?.(result, descriptor);
       return result;
     },
-    [run, mapper, base, context, onDone]
+    [run, mapper, base, context, onDone],
   );
 
   return { onSelectionChange, isPending, error, reset };

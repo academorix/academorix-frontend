@@ -104,7 +104,9 @@
                 {
                   "kind": "Checkbox",
                   "bindings": {
-                    "name": { "$expr": "props.accessibilityFlagsFieldName + '.focus_visible_always'" },
+                    "name": {
+                      "$expr": "props.accessibilityFlagsFieldName + '.focus_visible_always'"
+                    },
                     "children": "Always show focus indicator (force outline on every interaction)"
                   }
                 }

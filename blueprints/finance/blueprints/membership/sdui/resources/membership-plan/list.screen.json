@@ -9,10 +9,33 @@
   "resource": { "module": "membership", "entity": "membership-plan", "action": "list" },
   "requiresPermission": "membership_plans.viewAny",
   "dataSources": [
-    { "name": "plans", "kind": "http.get", "url": "/api/v1/membership-plans", "unwrap": "data", "queryFromFilters": true },
-    { "name": "branches", "kind": "http.get", "url": "/api/v1/branches?filter[is_active]=true", "unwrap": "data", "cache": { "ttlSeconds": 300 } },
-    { "name": "age_groups", "kind": "http.get", "url": "/api/v1/age-groups", "unwrap": "data", "cache": { "ttlSeconds": 300 } },
-    { "name": "plan_slot_entitlement", "kind": "http.get", "url": "/api/v1/entitlements/membership_plan_slot", "unwrap": "data" }
+    {
+      "name": "plans",
+      "kind": "http.get",
+      "url": "/api/v1/membership-plans",
+      "unwrap": "data",
+      "queryFromFilters": true
+    },
+    {
+      "name": "branches",
+      "kind": "http.get",
+      "url": "/api/v1/branches?filter[is_active]=true",
+      "unwrap": "data",
+      "cache": { "ttlSeconds": 300 }
+    },
+    {
+      "name": "age_groups",
+      "kind": "http.get",
+      "url": "/api/v1/age-groups",
+      "unwrap": "data",
+      "cache": { "ttlSeconds": 300 }
+    },
+    {
+      "name": "plan_slot_entitlement",
+      "kind": "http.get",
+      "url": "/api/v1/entitlements/membership_plan_slot",
+      "unwrap": "data"
+    }
   ],
   "nodes": [
     {
@@ -27,8 +50,21 @@
             {
               "kind": "View",
               "children": [
-                { "kind": "Text", "props": { "as": "h1", "className": "text-2xl font-semibold", "children": "Membership plans" } },
-                { "kind": "Text", "props": { "className": "text-sm text-muted", "children": "Your subscription catalog — the SKUs customers choose from at signup." } }
+                {
+                  "kind": "Text",
+                  "props": {
+                    "as": "h1",
+                    "className": "text-2xl font-semibold",
+                    "children": "Membership plans"
+                  }
+                },
+                {
+                  "kind": "Text",
+                  "props": {
+                    "className": "text-sm text-muted",
+                    "children": "Your subscription catalog — the SKUs customers choose from at signup."
+                  }
+                }
               ]
             },
             {
@@ -38,18 +74,31 @@
                 {
                   "kind": "Widget",
                   "widget": "entitlements.entitlement-usage-bar",
-                  "props": { "cap": { "$ref": "plan_slot_entitlement.value_cap" }, "used": { "$ref": "plan_slot_entitlement.value_used" }, "size": "sm", "label": "Plans in catalog" }
+                  "props": {
+                    "cap": { "$ref": "plan_slot_entitlement.value_cap" },
+                    "used": { "$ref": "plan_slot_entitlement.value_used" },
+                    "size": "sm",
+                    "label": "Plans in catalog"
+                  }
                 },
                 {
                   "kind": "Button",
-                  "props": { "variant": "secondary", "leadingIcon": "document-duplicate", "children": "Start from template" },
-                  "actions": { "onPress": { "kind": "modal.open", "modal": "membership.plan-template-picker" } },
+                  "props": {
+                    "variant": "secondary",
+                    "leadingIcon": "document-duplicate",
+                    "children": "Start from template"
+                  },
+                  "actions": {
+                    "onPress": { "kind": "modal.open", "modal": "membership.plan-template-picker" }
+                  },
                   "requiresPermission": "membership_plans.create"
                 },
                 {
                   "kind": "Button",
                   "props": { "variant": "primary", "leadingIcon": "plus", "children": "New plan" },
-                  "actions": { "onPress": { "kind": "navigate", "to": "/tenant/membership-plans/create" } },
+                  "actions": {
+                    "onPress": { "kind": "navigate", "to": "/tenant/membership-plans/create" }
+                  },
                   "bindings": { "disabled": { "$ref": "plan_slot_entitlement.is_exceeded" } },
                   "requiresPermission": "membership_plans.create"
                 }
@@ -65,18 +114,36 @@
               "kind": "ComboBox",
               "props": { "label": "Branch", "menuTrigger": "focus", "className": "min-w-56" },
               "bindings": { "items": { "$ref": "branches" } },
-              "actions": { "onSelectionChange": { "kind": "filter.set", "field": "branch_id", "valueExpr": "$selectedKey" } }
+              "actions": {
+                "onSelectionChange": {
+                  "kind": "filter.set",
+                  "field": "branch_id",
+                  "valueExpr": "$selectedKey"
+                }
+              }
             },
             {
               "kind": "ComboBox",
               "props": { "label": "Age group", "menuTrigger": "focus", "className": "min-w-56" },
               "bindings": { "items": { "$ref": "age_groups" } },
-              "actions": { "onSelectionChange": { "kind": "filter.set", "field": "age_group_id", "valueExpr": "$selectedKey" } }
+              "actions": {
+                "onSelectionChange": {
+                  "kind": "filter.set",
+                  "field": "age_group_id",
+                  "valueExpr": "$selectedKey"
+                }
+              }
             },
             {
               "kind": "Switch",
               "props": { "label": "Active only", "defaultSelected": true },
-              "actions": { "onChange": { "kind": "filter.set", "field": "is_active", "valueExpr": "$value ? true : null" } }
+              "actions": {
+                "onChange": {
+                  "kind": "filter.set",
+                  "field": "is_active",
+                  "valueExpr": "$value ? true : null"
+                }
+              }
             }
           ]
         },
@@ -88,20 +155,42 @@
             "kind": "View",
             "props": { "className": "text-center py-12" },
             "children": [
-              { "kind": "Icon", "props": { "name": "rectangle-stack", "className": "size-12 mx-auto text-muted" } },
-              { "kind": "Text", "props": { "className": "mt-4 text-lg font-medium", "children": "No plans yet" } },
-              { "kind": "Text", "props": { "className": "mt-1 text-sm text-muted", "children": "Create your first plan to start capturing memberships." } }
+              {
+                "kind": "Icon",
+                "props": { "name": "rectangle-stack", "className": "size-12 mx-auto text-muted" }
+              },
+              {
+                "kind": "Text",
+                "props": { "className": "mt-4 text-lg font-medium", "children": "No plans yet" }
+              },
+              {
+                "kind": "Text",
+                "props": {
+                  "className": "mt-1 text-sm text-muted",
+                  "children": "Create your first plan to start capturing memberships."
+                }
+              }
             ]
           },
           "columns": [
-            { "key": "name", "label": "Name", "renderer": { "kind": "Text", "props": { "className": "font-medium" }, "bindings": { "children": { "$ref": "row.name" } } } },
+            {
+              "key": "name",
+              "label": "Name",
+              "renderer": {
+                "kind": "Text",
+                "props": { "className": "font-medium" },
+                "bindings": { "children": { "$ref": "row.name" } }
+              }
+            },
             {
               "key": "price",
               "label": "Price",
               "renderer": {
                 "kind": "Text",
                 "props": { "className": "tabular-nums font-semibold" },
-                "bindings": { "childrenExpr": "$formatCurrency(row.price_cents, row.currency) + ' / ' + row.billing_interval" }
+                "bindings": {
+                  "childrenExpr": "$formatCurrency(row.price_cents, row.currency) + ' / ' + row.billing_interval"
+                }
               }
             },
             {
@@ -110,7 +199,9 @@
               "renderer": {
                 "kind": "Text",
                 "props": { "className": "text-sm" },
-                "bindings": { "childrenExpr": "row.passes_per_period ? row.passes_per_period + ' per period' : 'Unlimited'" }
+                "bindings": {
+                  "childrenExpr": "row.passes_per_period ? row.passes_per_period + ' per period' : 'Unlimited'"
+                }
               }
             },
             {
@@ -119,7 +210,9 @@
               "renderer": {
                 "kind": "Text",
                 "props": { "className": "text-sm" },
-                "bindings": { "childrenExpr": "row.trial_days > 0 ? row.trial_days + ' days' : '—'" }
+                "bindings": {
+                  "childrenExpr": "row.trial_days > 0 ? row.trial_days + ' days' : '—'"
+                }
               }
             },
             {
@@ -151,11 +244,18 @@
               "renderer": {
                 "kind": "Chip",
                 "propsExpr": "{ size: 'sm', variant: row.is_active ? 'success' : 'neutral' }",
-                "children": [{ "kind": "Text", "propsExpr": "{ children: row.is_active ? 'Active' : 'Archived' }" }]
+                "children": [
+                  {
+                    "kind": "Text",
+                    "propsExpr": "{ children: row.is_active ? 'Active' : 'Archived' }"
+                  }
+                ]
               }
             }
           ],
-          "rowActions": { "onPress": { "kind": "navigate", "toExpr": "'/tenant/membership-plans/' + row.id" } }
+          "rowActions": {
+            "onPress": { "kind": "navigate", "toExpr": "'/tenant/membership-plans/' + row.id" }
+          }
         }
       ]
     }

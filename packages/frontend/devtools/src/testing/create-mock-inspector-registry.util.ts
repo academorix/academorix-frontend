@@ -5,9 +5,9 @@
  *   `MockDevtoolsInspectorRegistry`.
  */
 
-import { createAssertableProxy, type AssertableProxy } from '@stackra/testing';
+import { createAssertableProxy, type AssertableProxy } from "@stackra/testing";
 
-import { MockDevtoolsInspectorRegistry } from './mock-devtools-inspector-registry';
+import { MockDevtoolsInspectorRegistry } from "./mock-devtools-inspector-registry";
 
 /**
  * Build an assertable {@link MockDevtoolsInspectorRegistry}.

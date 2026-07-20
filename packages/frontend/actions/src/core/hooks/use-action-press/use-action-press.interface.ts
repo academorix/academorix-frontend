@@ -4,8 +4,8 @@
  * @description Result contract for the `useActionPress` hook.
  */
 
-import type { IActionContext, IActionDescriptor, IActionResponse } from '@stackra/contracts';
-import type { IUseActionState } from '../use-action/use-action.interface';
+import type { IActionContext, IActionDescriptor, IActionResponse } from "@stackra/contracts";
+import type { IUseActionState } from "../use-action/use-action.interface";
 
 /**
  * Options accepted by {@link useActionPress}.

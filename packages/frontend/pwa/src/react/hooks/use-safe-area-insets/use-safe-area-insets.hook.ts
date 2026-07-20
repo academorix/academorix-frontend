@@ -10,9 +10,9 @@
  *   the resulting `padding-*` values off `getComputedStyle`.
  */
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState } from "react";
 
-import type { IUseSafeAreaInsetsResult } from './use-safe-area-insets.interface';
+import type { IUseSafeAreaInsetsResult } from "./use-safe-area-insets.interface";
 
 /** Parse a `Npx` string returned by `getComputedStyle`. */
 function parsePx(value: string): number {
@@ -46,23 +46,23 @@ export function useSafeAreaInsets(): IUseSafeAreaInsetsResult {
 
   useEffect(() => {
     // SSR guard.
-    if (typeof document === 'undefined' || typeof window === 'undefined') return;
+    if (typeof document === "undefined" || typeof window === "undefined") return;
 
     // Probe element — fixed-position + `env(safe-area-inset-*)`
     // padding gives us the four insets in a single style read.
-    const probe = document.createElement('div');
-    probe.style.position = 'fixed';
-    probe.style.pointerEvents = 'none';
-    probe.style.top = '0';
-    probe.style.left = '0';
-    probe.style.width = '0';
-    probe.style.height = '0';
+    const probe = document.createElement("div");
+    probe.style.position = "fixed";
+    probe.style.pointerEvents = "none";
+    probe.style.top = "0";
+    probe.style.left = "0";
+    probe.style.width = "0";
+    probe.style.height = "0";
     // The `env()` fallback of `0px` keeps browsers without safe-area
     // support from producing NaN.
-    probe.style.paddingTop = 'env(safe-area-inset-top, 0px)';
-    probe.style.paddingRight = 'env(safe-area-inset-right, 0px)';
-    probe.style.paddingBottom = 'env(safe-area-inset-bottom, 0px)';
-    probe.style.paddingLeft = 'env(safe-area-inset-left, 0px)';
+    probe.style.paddingTop = "env(safe-area-inset-top, 0px)";
+    probe.style.paddingRight = "env(safe-area-inset-right, 0px)";
+    probe.style.paddingBottom = "env(safe-area-inset-bottom, 0px)";
+    probe.style.paddingLeft = "env(safe-area-inset-left, 0px)";
     document.body.appendChild(probe);
 
     const measure = (): void => {
@@ -77,12 +77,12 @@ export function useSafeAreaInsets(): IUseSafeAreaInsetsResult {
     measure();
 
     // Rotation / resize both change the safe-area extent.
-    window.addEventListener('resize', measure);
-    window.addEventListener('orientationchange', measure);
+    window.addEventListener("resize", measure);
+    window.addEventListener("orientationchange", measure);
 
     return () => {
-      window.removeEventListener('resize', measure);
-      window.removeEventListener('orientationchange', measure);
+      window.removeEventListener("resize", measure);
+      window.removeEventListener("orientationchange", measure);
       probe.remove();
     };
   }, []);

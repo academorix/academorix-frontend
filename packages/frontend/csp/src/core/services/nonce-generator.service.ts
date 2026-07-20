@@ -7,8 +7,8 @@
  *   `crypto.getRandomValues()` for older environments.
  */
 
-import { Injectable } from '@stackra/container';
-import { Str } from '@stackra/support';
+import { Injectable } from "@stackra/container";
+import { Str } from "@stackra/support";
 
 /**
  * Generates cryptographically secure nonces for CSP.
@@ -34,6 +34,6 @@ export class NonceGenerator {
    * @returns A unique nonce string.
    */
   public generate(): string {
-    return Str.uuid().replace(/-/g, '');
+    return Str.uuid().replace(/-/g, "");
   }
 }

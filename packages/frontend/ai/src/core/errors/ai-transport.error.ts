@@ -5,7 +5,7 @@
  *   request could not complete. Wraps the originating error under `.cause`.
  */
 
-import { AiError } from './ai.error';
+import { AiError } from "./ai.error";
 
 /**
  * Thrown by `SseTransport` (and any future `IAiTransport` implementation)

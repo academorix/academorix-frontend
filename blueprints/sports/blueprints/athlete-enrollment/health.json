@@ -3,11 +3,47 @@
   "$version": 1,
   "title": "athlete-enrollment — health probes",
   "probes": [
-    { "name": "enrollment-schema-migrations-applied", "class": "Academorix\\Sports\\AthleteEnrollment\\Health\\Probes\\SchemaMigrationsAppliedProbe", "category": "startup", "critical": true, "description": "Confirms athlete_enrollments table + partial unique indexes exist." },
-    { "name": "enrollment-atomicity-invariant-clean", "class": "Academorix\\Sports\\AthleteEnrollment\\Health\\Probes\\AtomicityInvariantCleanProbe", "category": "readiness", "critical": true, "description": "Runs the ReconcileEnrollmentTeamMemberInvariantJob queries. Any active enrollment without a TeamMember OR any orphan TeamMember without an enrollment is a P1 finding." },
-    { "name": "enrollment-activation-backlog", "class": "Academorix\\Sports\\AthleteEnrollment\\Health\\Probes\\ActivationBacklogProbe", "category": "readiness", "critical": false, "description": "Confirmed enrollments whose season has started but haven't been activated. Fires WARN when > 50. Indicates ActivateConfirmedEnrollmentsJob stalled." },
-    { "name": "enrollment-waitlist-backlog", "class": "Academorix\\Sports\\AthleteEnrollment\\Health\\Probes\\WaitlistBacklogProbe", "category": "readiness", "critical": false, "description": "Waitlisted enrollments on teams with open capacity. WARN when > 20 — PromoteWaitlistedEnrollmentsJob stalled or misconfigured." },
-    { "name": "enrollment-atomicity-failure-rate", "class": "Academorix\\Sports\\AthleteEnrollment\\Health\\Probes\\AtomicityFailureRateProbe", "category": "readiness", "critical": true, "description": "Percentage of activation attempts firing EnrollmentAtomicityFailed. Any non-zero rate is a P1 signal." },
-    { "name": "enrollment-slot-headroom", "class": "Academorix\\Sports\\AthleteEnrollment\\Health\\Probes\\SlotHeadroomProbe", "category": "readiness", "critical": false, "description": "Tenants within 10% of their athlete_enrollment_slot cap. Product signal for upgrade CTA." }
+    {
+      "name": "enrollment-schema-migrations-applied",
+      "class": "Academorix\\Sports\\AthleteEnrollment\\Health\\Probes\\SchemaMigrationsAppliedProbe",
+      "category": "startup",
+      "critical": true,
+      "description": "Confirms athlete_enrollments table + partial unique indexes exist."
+    },
+    {
+      "name": "enrollment-atomicity-invariant-clean",
+      "class": "Academorix\\Sports\\AthleteEnrollment\\Health\\Probes\\AtomicityInvariantCleanProbe",
+      "category": "readiness",
+      "critical": true,
+      "description": "Runs the ReconcileEnrollmentTeamMemberInvariantJob queries. Any active enrollment without a TeamMember OR any orphan TeamMember without an enrollment is a P1 finding."
+    },
+    {
+      "name": "enrollment-activation-backlog",
+      "class": "Academorix\\Sports\\AthleteEnrollment\\Health\\Probes\\ActivationBacklogProbe",
+      "category": "readiness",
+      "critical": false,
+      "description": "Confirmed enrollments whose season has started but haven't been activated. Fires WARN when > 50. Indicates ActivateConfirmedEnrollmentsJob stalled."
+    },
+    {
+      "name": "enrollment-waitlist-backlog",
+      "class": "Academorix\\Sports\\AthleteEnrollment\\Health\\Probes\\WaitlistBacklogProbe",
+      "category": "readiness",
+      "critical": false,
+      "description": "Waitlisted enrollments on teams with open capacity. WARN when > 20 — PromoteWaitlistedEnrollmentsJob stalled or misconfigured."
+    },
+    {
+      "name": "enrollment-atomicity-failure-rate",
+      "class": "Academorix\\Sports\\AthleteEnrollment\\Health\\Probes\\AtomicityFailureRateProbe",
+      "category": "readiness",
+      "critical": true,
+      "description": "Percentage of activation attempts firing EnrollmentAtomicityFailed. Any non-zero rate is a P1 signal."
+    },
+    {
+      "name": "enrollment-slot-headroom",
+      "class": "Academorix\\Sports\\AthleteEnrollment\\Health\\Probes\\SlotHeadroomProbe",
+      "category": "readiness",
+      "critical": false,
+      "description": "Tenants within 10% of their athlete_enrollment_slot cap. Product signal for upgrade CTA."
+    }
   ]
 }

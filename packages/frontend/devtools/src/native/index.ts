@@ -31,18 +31,18 @@
  *   `.kiro/steering/contract-reexports.md`.
  */
 
-import 'reflect-metadata';
+import "reflect-metadata";
 
 // ════════════════════════════════════════════════════════════════════
 // Top-level wrapper
 // ════════════════════════════════════════════════════════════════════
-export { Devtools, type DevtoolsProps } from './devtools';
+export { Devtools, type DevtoolsProps } from "./devtools";
 
 // ════════════════════════════════════════════════════════════════════
 // Provider + context
 // ════════════════════════════════════════════════════════════════════
-export { DevtoolsProvider, type DevtoolsProviderProps } from './providers';
-export { DevtoolsContext } from './contexts';
+export { DevtoolsProvider, type DevtoolsProviderProps } from "./providers";
+export { DevtoolsContext } from "./contexts";
 
 // ════════════════════════════════════════════════════════════════════
 // Components — sheet + panels
@@ -63,12 +63,12 @@ export {
   type DevtoolsPanelViewProps,
   type DevtoolsShellProps,
   type OverviewPanelProps,
-} from './components';
+} from "./components";
 
 // ════════════════════════════════════════════════════════════════════
 // Built-in native panels — registered by DevtoolsProvider
 // ════════════════════════════════════════════════════════════════════
-export { ActionsNativeDevtoolsPanel, OverviewNativeDevtoolsPanel } from './panels';
+export { ActionsNativeDevtoolsPanel, OverviewNativeDevtoolsPanel } from "./panels";
 
 // ════════════════════════════════════════════════════════════════════
 // Hooks
@@ -80,9 +80,9 @@ export {
   useNativeDevtoolsPanels,
   type IUseNativeDevtoolsFrameStateResult,
   type IUseNativeDevtoolsPanelsResult,
-} from './hooks';
+} from "./hooks";
 
 // ════════════════════════════════════════════════════════════════════
 // Interfaces — package-owned only
 // ════════════════════════════════════════════════════════════════════
-export type { IDevtoolsNativeContextValue } from './interfaces';
+export type { IDevtoolsNativeContextValue } from "./interfaces";

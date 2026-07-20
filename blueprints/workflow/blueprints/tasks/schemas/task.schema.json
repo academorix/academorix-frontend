@@ -16,7 +16,16 @@
     "model": "Academorix\\Workflow\\Tasks\\Models\\Task",
     "interface": "Academorix\\Workflow\\Tasks\\Contracts\\Data\\TaskInterface",
     "implements": ["Academorix\\Workflow\\Tasks\\Contracts\\Data\\TaskInterface"],
-    "traits": ["HasFactory", "HasUlids", "BelongsToTenant", "BelongsToBranch", "HasMetadata", "HasUserstamps", "Auditable", "SoftDeletes"],
+    "traits": [
+      "HasFactory",
+      "HasUlids",
+      "BelongsToTenant",
+      "BelongsToBranch",
+      "HasMetadata",
+      "HasUserstamps",
+      "Auditable",
+      "SoftDeletes"
+    ],
     "casts": {
       "status": "TaskStatus",
       "priority": "TaskPriority",
@@ -31,20 +40,66 @@
   "x-database": {
     "engine": "postgres",
     "columns": {
-      "id": { "type": "string", "length": 64, "primary": true, "description": "Prefixed ULID: `tsk_<26>`." },
-      "tenant_id": { "type": "string", "length": 64, "nullable": false, "foreign": { "table": "tenants", "column": "id", "onDelete": "cascade" } },
-      "branch_id": { "type": "string", "length": 64, "nullable": true, "foreign": { "table": "branches", "column": "id", "onDelete": "restrict" }, "description": "Task tied to a specific venue. NULL = tenant-wide." },
-      "subject_type": { "type": "string", "length": 64, "nullable": true, "description": "Polymorphic reference to the domain thing the task is about. Registered aliases via #[AsTaskSubject]. NULL = generic task." },
+      "id": {
+        "type": "string",
+        "length": 64,
+        "primary": true,
+        "description": "Prefixed ULID: `tsk_<26>`."
+      },
+      "tenant_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "foreign": { "table": "tenants", "column": "id", "onDelete": "cascade" }
+      },
+      "branch_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": true,
+        "foreign": { "table": "branches", "column": "id", "onDelete": "restrict" },
+        "description": "Task tied to a specific venue. NULL = tenant-wide."
+      },
+      "subject_type": {
+        "type": "string",
+        "length": 64,
+        "nullable": true,
+        "description": "Polymorphic reference to the domain thing the task is about. Registered aliases via #[AsTaskSubject]. NULL = generic task."
+      },
       "subject_id": { "type": "string", "length": 64, "nullable": true },
       "title": { "type": "string", "length": 255, "nullable": false },
-      "description": { "type": "text", "nullable": true, "description": "Markdown-friendly long description." },
-      "status": { "type": "string", "length": 16, "nullable": false, "default": "'open'", "description": "Enum: open / in_progress / blocked / completed / cancelled." },
-      "priority": { "type": "string", "length": 8, "nullable": false, "default": "'medium'", "description": "Enum: low / medium / high / urgent." },
+      "description": {
+        "type": "text",
+        "nullable": true,
+        "description": "Markdown-friendly long description."
+      },
+      "status": {
+        "type": "string",
+        "length": 16,
+        "nullable": false,
+        "default": "'open'",
+        "description": "Enum: open / in_progress / blocked / completed / cancelled."
+      },
+      "priority": {
+        "type": "string",
+        "length": 8,
+        "nullable": false,
+        "default": "'medium'",
+        "description": "Enum: low / medium / high / urgent."
+      },
       "due_at": { "type": "timestamptz", "nullable": true },
       "completed_at": { "type": "timestamptz", "nullable": true },
       "cancelled_at": { "type": "timestamptz", "nullable": true },
-      "reminder_at": { "type": "timestamptz", "nullable": true, "description": "When the reminder notification should fire. NULL = no reminder." },
-      "labels_json": { "type": "jsonb", "nullable": false, "default": "'[]'::jsonb", "description": "Tenant-defined labels: ['follow-up', 'urgent-care', 'billing']." },
+      "reminder_at": {
+        "type": "timestamptz",
+        "nullable": true,
+        "description": "When the reminder notification should fire. NULL = no reminder."
+      },
+      "labels_json": {
+        "type": "jsonb",
+        "nullable": false,
+        "default": "'[]'::jsonb",
+        "description": "Tenant-defined labels: ['follow-up', 'urgent-care', 'billing']."
+      },
       "metadata": { "type": "jsonb", "nullable": true },
       "created_by": { "type": "string", "length": 64, "nullable": true },
       "updated_by": { "type": "string", "length": 64, "nullable": true },
@@ -57,16 +112,32 @@
       { "columns": ["tenant_id", "status", "priority", "due_at"], "name": "tasks_queue_idx" },
       { "columns": ["tenant_id", "subject_type", "subject_id"], "name": "tasks_subject_idx" },
       { "columns": ["tenant_id", "branch_id", "status"], "name": "tasks_branch_status_idx" },
-      { "columns": ["tenant_id", "status", "reminder_at"], "name": "tasks_reminder_idx", "predicate": "status IN ('open', 'in_progress') AND reminder_at IS NOT NULL" }
+      {
+        "columns": ["tenant_id", "status", "reminder_at"],
+        "name": "tasks_reminder_idx",
+        "predicate": "status IN ('open', 'in_progress') AND reminder_at IS NOT NULL"
+      }
     ]
   },
-  "required": ["id", "tenant_id", "title", "status", "priority", "labels_json", "created_at", "updated_at"],
+  "required": [
+    "id",
+    "tenant_id",
+    "title",
+    "status",
+    "priority",
+    "labels_json",
+    "created_at",
+    "updated_at"
+  ],
   "properties": {
     "id": { "type": "string", "pattern": "^tsk_[0-9A-HJKMNP-TV-Z]{26}$" },
     "tenant_id": { "type": "string", "pattern": "^ten_[0-9A-HJKMNP-TV-Z]{26}$" },
     "branch_id": { "type": ["string", "null"], "pattern": "^bra_[0-9A-HJKMNP-TV-Z]{26}$" },
     "title": { "type": "string", "maxLength": 255 },
-    "status": { "type": "string", "enum": ["open", "in_progress", "blocked", "completed", "cancelled"] },
+    "status": {
+      "type": "string",
+      "enum": ["open", "in_progress", "blocked", "completed", "cancelled"]
+    },
     "priority": { "type": "string", "enum": ["low", "medium", "high", "urgent"] },
     "created_at": { "type": "string", "format": "date-time" },
     "updated_at": { "type": "string", "format": "date-time" }

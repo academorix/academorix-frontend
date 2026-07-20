@@ -1,7 +1,7 @@
 {
   "name": "@stackra/config",
   "version": "0.1.0",
-  "description": "Configuration + DI namespace registry for the Stackra framework — derived from @nestjs/config, adapted for browser + Vite.",
+  "description": "Configuration + DI namespace registry for the Stackra framework \u2014 derived from @nestjs/config, adapted for browser + Vite.",
   "license": "MIT",
   "author": {
     "name": "Stackra L.L.C",
@@ -79,6 +79,8 @@
     }
   },
   "devDependencies": {
+    "@academorix/config-tsconfig": "workspace:*",
+    "@academorix/config-tsup": "workspace:*",
     "@stackra/container": "workspace:*",
     "@stackra/contracts": "workspace:*",
     "@stackra/support": "workspace:*",

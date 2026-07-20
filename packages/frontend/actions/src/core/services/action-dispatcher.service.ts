@@ -9,8 +9,8 @@
  *   emits `ACTION_EVENTS.STARTED / SUCCEEDED / FAILED / HANDLER_REGISTERED`.
  */
 
-import { Inject, Injectable, Optional } from '@stackra/container';
-import { PIPELINE_FACTORY, type PipelineFactory } from '@stackra/pipeline';
+import { Inject, Injectable, Optional } from "@stackra/container";
+import { PIPELINE_FACTORY, type PipelineFactory } from "@stackra/pipeline";
 import type {
   IActionContext,
   IActionDescriptor,
@@ -20,14 +20,14 @@ import type {
   IActionsConfig,
   IEventEmitter,
   ILoggerManager,
-} from '@stackra/contracts';
-import { ACTION_CONFIG, ACTION_EVENTS, EVENT_EMITTER, LOGGER_MANAGER } from '@stackra/contracts';
+} from "@stackra/contracts";
+import { ACTION_CONFIG, ACTION_EVENTS, EVENT_EMITTER, LOGGER_MANAGER } from "@stackra/contracts";
 
-import { ActionRegistry } from '../registries/action.registry';
-import { AuthorizeMiddleware } from '../pipeline/authorize.middleware';
-import { LogMiddleware } from '../pipeline/log.middleware';
-import { TraceMiddleware } from '../pipeline/trace.middleware';
-import type { IMiddlewarePassable } from '../pipeline/middleware-passable.interface';
+import { ActionRegistry } from "../registries/action.registry";
+import { AuthorizeMiddleware } from "../pipeline/authorize.middleware";
+import { LogMiddleware } from "../pipeline/log.middleware";
+import { TraceMiddleware } from "../pipeline/trace.middleware";
+import type { IMiddlewarePassable } from "../pipeline/middleware-passable.interface";
 
 /**
  * The action dispatcher.
@@ -51,16 +51,16 @@ export class ActionDispatcherService implements IActionDispatcher {
     private readonly log: LogMiddleware,
     private readonly trace: TraceMiddleware,
     @Optional() @Inject(EVENT_EMITTER) private readonly events?: IEventEmitter,
-    @Optional() @Inject(LOGGER_MANAGER) private readonly logger?: ILoggerManager
+    @Optional() @Inject(LOGGER_MANAGER) private readonly logger?: ILoggerManager,
   ) {}
 
   public async dispatch<D extends IActionDescriptor, R = unknown>(
     descriptor: D,
-    context: IActionContext = {}
+    context: IActionContext = {},
   ): Promise<IActionResponse<R>> {
     // Early-abort short-circuit.
     if (context.signal?.aborted) {
-      return { success: false, message: 'Aborted' } as IActionResponse<R>;
+      return { success: false, message: "Aborted" } as IActionResponse<R>;
     }
 
     const handler = this.registry.resolve(descriptor.kind);
@@ -88,7 +88,7 @@ export class ActionDispatcherService implements IActionDispatcher {
           } catch (err) {
             const message = err instanceof Error ? err.message : String(err);
             this.logger
-              ?.channel('actions', 'dispatcher')
+              ?.channel("actions", "dispatcher")
               .warn(`[actions] Handler threw for kind "${p.descriptor.kind}": ${message}`);
             p.response = { success: false, message };
           }
@@ -97,12 +97,12 @@ export class ActionDispatcherService implements IActionDispatcher {
 
       return (finalPassable.response ?? {
         success: false,
-        message: 'Handler returned no response',
+        message: "Handler returned no response",
       }) as IActionResponse<R>;
     } catch (err) {
       // Middleware/pipeline itself threw — return failure without crashing.
       const message = err instanceof Error ? err.message : String(err);
-      this.logger?.channel('actions', 'dispatcher').error(`[actions] Pipeline error: ${message}`);
+      this.logger?.channel("actions", "dispatcher").error(`[actions] Pipeline error: ${message}`);
       return { success: false, message } as IActionResponse<R>;
     }
   }

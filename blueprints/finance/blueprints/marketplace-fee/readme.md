@@ -30,9 +30,9 @@ platform fee.
 
 ## Cross-references
 
-- `finance/payment` — reads active fee schedule to compute `application_fee`
-  for Stripe.
+- `finance/payment` — reads active fee schedule to compute `application_fee` for
+  Stripe.
 - `finance/payout` — fees appear on tenant payouts as `payout_items` of
   `kind='fee'`.
-- `finance/gateway` — the underlying Stripe adapter passes the calculated fee
-  to `payment_intents.create({ application_fee_amount })`.
+- `finance/gateway` — the underlying Stripe adapter passes the calculated fee to
+  `payment_intents.create({ application_fee_amount })`.

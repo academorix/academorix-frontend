@@ -86,7 +86,12 @@
               "name": "customer_allowed_reasons",
               "controlType": "multi-select",
               "label": "Customer-allowed reasons",
-              "defaultValue": ["customer_requested", "product_not_received", "product_unacceptable", "subscription_cancelled"],
+              "defaultValue": [
+                "customer_requested",
+                "product_not_received",
+                "product_unacceptable",
+                "subscription_cancelled"
+              ],
               "options": {
                 "customer_requested": "Customer requested",
                 "product_not_received": "Product not received",

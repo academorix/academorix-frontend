@@ -9,10 +9,7 @@
       "priority": 42,
       "description": "Attaches a request-correlation-id to any TaxCalculationRequested event fired during the request. Ensures every calculation write emits an audit event tagged with the originating request (compliance CC7.2 traceability). Runs on tenant-plane routes that write calculations (POST /calculate + downstream invoice-line create paths).",
       "auto_applied": false,
-      "auto_applied_to": [
-        "/api/v1/tax/calculate",
-        "/api/v1/tax/rates/sync"
-      ]
+      "auto_applied_to": ["/api/v1/tax/calculate", "/api/v1/tax/rates/sync"]
     }
   ],
   "consumed": [

@@ -6,7 +6,7 @@
  *   `CONNECTION_CHANGED` event emission (Req 24.1–24.6).
  */
 
-import { describe, expect, it, vi } from 'vitest';
+import { describe, expect, it, vi } from "vitest";
 import {
   AI_EVENTS,
   AiConnectionState,
@@ -15,9 +15,9 @@ import {
   type IEventEmitter,
   type INetworkDetector,
   type INetworkStatus,
-} from '@stackra/contracts';
+} from "@stackra/contracts";
 
-import { ConnectionManager } from '@/core/services/connection-manager.service';
+import { ConnectionManager } from "@/core/services/connection-manager.service";
 
 // ── Test doubles ─────────────────────────────────────────────────────────
 
@@ -64,7 +64,7 @@ class FakeDetector implements INetworkDetector {
 }
 
 const baseConfig: IAiConfig = {
-  baseUrl: 'https://api.example.com',
+  baseUrl: "https://api.example.com",
   authProvider: {
     getCredentials: () => Promise.resolve({}),
     refresh: () => Promise.resolve({}),
@@ -78,27 +78,27 @@ function makeManager(
     detector?: INetworkDetector;
     events?: IEventEmitter;
     config?: IAiConfig;
-  } = {}
+  } = {},
 ): ConnectionManager {
   const manager = new ConnectionManager(
     overrides.config ?? baseConfig,
     overrides.transport,
     overrides.detector,
-    overrides.events
+    overrides.events,
   );
   manager.onModuleInit();
   return manager;
 }
 
-describe('ConnectionManager', () => {
-  describe('state overlay (Req 24.1, 24.5)', () => {
-    it('starts Disconnected with no transport bound', () => {
+describe("ConnectionManager", () => {
+  describe("state overlay (Req 24.1, 24.5)", () => {
+    it("starts Disconnected with no transport bound", () => {
       const manager = makeManager();
       expect(manager.state).toBe(AiConnectionState.Disconnected);
       expect(manager.isConnected).toBe(false);
     });
 
-    it('mirrors the transport state on subscribe + on change', () => {
+    it("mirrors the transport state on subscribe + on change", () => {
       const transport = new FakeTransport();
       const manager = makeManager({ transport });
       expect(manager.state).toBe(AiConnectionState.Disconnected);
@@ -117,7 +117,7 @@ describe('ConnectionManager', () => {
       ]);
     });
 
-    it('overlays Offline when the detector reports offline', () => {
+    it("overlays Offline when the detector reports offline", () => {
       const transport = new FakeTransport();
       const detector = new FakeDetector();
       const manager = makeManager({ transport, detector });
@@ -126,20 +126,20 @@ describe('ConnectionManager', () => {
 
       detector.flip(false);
       expect(manager.state).toBe(AiConnectionState.Offline);
-      expect(manager.reason?.message).toContain('offline');
+      expect(manager.reason?.message).toContain("offline");
 
       detector.flip(true);
       expect(manager.state).toBe(AiConnectionState.Connected);
     });
 
-    it('populates a human-readable reason on non-Connected states (Req 24.6)', () => {
+    it("populates a human-readable reason on non-Connected states (Req 24.6)", () => {
       const transport = new FakeTransport();
       const manager = makeManager({ transport });
 
       transport.setState(AiConnectionState.Error);
       expect(manager.reason).toEqual({
         state: AiConnectionState.Error,
-        message: expect.stringContaining('error'),
+        message: expect.stringContaining("error"),
       });
       expect(manager.isConnected).toBe(false);
 
@@ -148,7 +148,7 @@ describe('ConnectionManager', () => {
       expect(manager.isConnected).toBe(true);
     });
 
-    it('does not fire listeners on no-op transitions', () => {
+    it("does not fire listeners on no-op transitions", () => {
       const transport = new FakeTransport();
       const manager = makeManager({ transport });
       const listener = vi.fn();
@@ -160,7 +160,7 @@ describe('ConnectionManager', () => {
       expect(listener).toHaveBeenCalledTimes(1);
     });
 
-    it('unsubscribes cleanly', () => {
+    it("unsubscribes cleanly", () => {
       const transport = new FakeTransport();
       const manager = makeManager({ transport });
       const listener = vi.fn();
@@ -171,8 +171,8 @@ describe('ConnectionManager', () => {
     });
   });
 
-  describe('event emission', () => {
-    it('emits AI_EVENTS.CONNECTION_CHANGED on every state change', async () => {
+  describe("event emission", () => {
+    it("emits AI_EVENTS.CONNECTION_CHANGED on every state change", async () => {
       const transport = new FakeTransport();
       const emit = vi.fn(() => Promise.resolve());
       const events: IEventEmitter = {
@@ -188,18 +188,18 @@ describe('ConnectionManager', () => {
 
       expect(emit).toHaveBeenCalledWith(
         AI_EVENTS.CONNECTION_CHANGED,
-        expect.objectContaining({ state: AiConnectionState.Connecting })
+        expect.objectContaining({ state: AiConnectionState.Connecting }),
       );
       expect(emit).toHaveBeenCalledWith(
         AI_EVENTS.CONNECTION_CHANGED,
-        expect.objectContaining({ state: AiConnectionState.Connected })
+        expect.objectContaining({ state: AiConnectionState.Connected }),
       );
       expect(manager).toBeDefined();
     });
   });
 
-  describe('scheduleReconnect (Req 24.3)', () => {
-    it('produces a bounded exponential backoff sequence with monotonic delays', () => {
+  describe("scheduleReconnect (Req 24.3)", () => {
+    it("produces a bounded exponential backoff sequence with monotonic delays", () => {
       const manager = makeManager();
       const delays: number[] = [];
       let step = manager.scheduleReconnect();
@@ -211,7 +211,7 @@ describe('ConnectionManager', () => {
       expect(delays).toEqual([100, 200, 400, 800]);
     });
 
-    it('returns null once maxAttempts is exhausted', () => {
+    it("returns null once maxAttempts is exhausted", () => {
       const manager = makeManager();
       for (let i = 0; i < baseConfig.retryPolicy!.maxAttempts; i++) {
         expect(manager.scheduleReconnect()).not.toBeNull();
@@ -219,7 +219,7 @@ describe('ConnectionManager', () => {
       expect(manager.scheduleReconnect()).toBeNull();
     });
 
-    it('resets attempt counter on resetBackoff', () => {
+    it("resets attempt counter on resetBackoff", () => {
       const manager = makeManager();
       manager.scheduleReconnect();
       manager.scheduleReconnect();
@@ -230,7 +230,7 @@ describe('ConnectionManager', () => {
       expect(manager.scheduleReconnect()?.attempt).toBe(0);
     });
 
-    it('falls back to defaults when config omits retryPolicy', () => {
+    it("falls back to defaults when config omits retryPolicy", () => {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { retryPolicy: _, ...rest } = baseConfig;
       const manager = makeManager({ config: rest as IAiConfig });
@@ -241,26 +241,26 @@ describe('ConnectionManager', () => {
     });
   });
 
-  describe('resume context (Req 24.4)', () => {
-    it('preserves runId and messageIds across getResumeContext', () => {
+  describe("resume context (Req 24.4)", () => {
+    it("preserves runId and messageIds across getResumeContext", () => {
       const manager = makeManager();
-      manager.noteRunActive('run-42', ['m1', 'm2']);
+      manager.noteRunActive("run-42", ["m1", "m2"]);
       const context = manager.getResumeContext();
-      expect(context).toEqual({ runId: 'run-42', messageIds: ['m1', 'm2'] });
+      expect(context).toEqual({ runId: "run-42", messageIds: ["m1", "m2"] });
     });
 
-    it('returns cloned message ids so external mutation does not leak', () => {
+    it("returns cloned message ids so external mutation does not leak", () => {
       const manager = makeManager();
-      manager.noteRunActive('run', ['m1']);
+      manager.noteRunActive("run", ["m1"]);
       const a = manager.getResumeContext();
-      a!.messageIds.push('leaked');
+      a!.messageIds.push("leaked");
       const b = manager.getResumeContext();
-      expect(b?.messageIds).toEqual(['m1']);
+      expect(b?.messageIds).toEqual(["m1"]);
     });
 
-    it('clears context + resets backoff on noteRunFinished', () => {
+    it("clears context + resets backoff on noteRunFinished", () => {
       const manager = makeManager();
-      manager.noteRunActive('run', ['m1']);
+      manager.noteRunActive("run", ["m1"]);
       manager.scheduleReconnect();
       manager.noteRunFinished();
       expect(manager.getResumeContext()).toBeNull();
@@ -268,8 +268,8 @@ describe('ConnectionManager', () => {
     });
   });
 
-  describe('lifecycle', () => {
-    it('unsubscribes from transport on onModuleDestroy', () => {
+  describe("lifecycle", () => {
+    it("unsubscribes from transport on onModuleDestroy", () => {
       const transport = new FakeTransport();
       const manager = makeManager({ transport });
       const listener = vi.fn();

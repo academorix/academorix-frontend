@@ -15,9 +15,9 @@ import type {
   ISettingsApiEndpoints,
   ISettingsConfig,
   ISettingsModuleOptions,
-} from '@stackra/contracts';
+} from "@stackra/contracts";
 
-import { DEFAULT_SETTINGS_CONFIG } from '@/core/constants/default-settings-config.constant';
+import { DEFAULT_SETTINGS_CONFIG } from "@/core/constants/default-settings-config.constant";
 
 /**
  * Merge user options into the default settings config.

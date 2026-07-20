@@ -25,21 +25,31 @@
       "children": [
         {
           "kind": "Step",
-          "props": { "title": "Provider", "description": "Choose which payment provider to save this method with." },
+          "props": {
+            "title": "Provider",
+            "description": "Choose which payment provider to save this method with."
+          },
           "children": [
             {
               "kind": "ComboBox",
               "props": { "label": "Provider", "menuTrigger": "focus" },
               "bindings": { "items": { "$ref": "providers" } },
               "actions": {
-                "onSelectionChange": { "kind": "form.set", "field": "provider", "valueExpr": "$selectedKey" }
+                "onSelectionChange": {
+                  "kind": "form.set",
+                  "field": "provider",
+                  "valueExpr": "$selectedKey"
+                }
               }
             }
           ]
         },
         {
           "kind": "Step",
-          "props": { "title": "Card details", "description": "Your card information is tokenized by the provider before it reaches our servers." },
+          "props": {
+            "title": "Card details",
+            "description": "Your card information is tokenized by the provider before it reaches our servers."
+          },
           "children": [
             {
               "kind": "ProviderSdk",

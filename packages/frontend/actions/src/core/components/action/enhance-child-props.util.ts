@@ -11,10 +11,10 @@
  *   a child outside the `<Action>` slot itself.
  */
 
-import type { ReactElement } from 'react';
-import type { IActionContext, IActionDescriptor, IActionResponse } from '@stackra/contracts';
+import type { ReactElement } from "react";
+import type { IActionContext, IActionDescriptor, IActionResponse } from "@stackra/contracts";
 
-import type { IActionChildProps, IEnhanceOptions, IEnhancedChildProps } from './action.interface';
+import type { IActionChildProps, IEnhanceOptions, IEnhancedChildProps } from "./action.interface";
 
 /**
  * Merge two callbacks so both fire when the resulting function is
@@ -28,7 +28,7 @@ import type { IActionChildProps, IEnhanceOptions, IEnhancedChildProps } from './
  */
 function chainHandlers(
   existing: ((...args: unknown[]) => unknown) | undefined,
-  injected: (...args: unknown[]) => unknown
+  injected: (...args: unknown[]) => unknown,
 ): (...args: unknown[]) => unknown {
   if (!existing) return injected;
   return (...args: unknown[]) => {
@@ -75,12 +75,12 @@ export function enhanceActionChildProps<
   descriptor: D,
   dispatch: (d: D, ctx?: IActionContext) => Promise<IActionResponse<R>>,
   isPending: boolean,
-  options: IEnhanceOptions<D, R> = {}
+  options: IEnhanceOptions<D, R> = {},
 ): IEnhancedChildProps {
   // Default to `onPress` — the shared event name used by HeroUI Button
   // + React Aria Pressable + React Native Pressable. HTML button
   // consumers explicitly pass `eventProp: 'onClick'`.
-  const eventProp = options.eventProp ?? 'onPress';
+  const eventProp = options.eventProp ?? "onPress";
   const forwardPending = options.forwardPending ?? true;
 
   const injected = async (): Promise<void> => {
@@ -94,7 +94,7 @@ export function enhanceActionChildProps<
   // Only forward pending when both requested AND the child already
   // acknowledges the prop — avoid smuggling unknown props into DOM
   // elements which React logs as a warning.
-  const shouldForwardPending = forwardPending && 'isPending' in child.props;
+  const shouldForwardPending = forwardPending && "isPending" in child.props;
 
   // Build the enhanced object in a single expression so the resulting
   // shape stays compatible with the readonly `IEnhancedChildProps`

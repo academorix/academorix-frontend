@@ -6,37 +6,179 @@
   "isSystem": true,
   "description": "Two audiences. Tenant plane (sanctum) — customer manages own payment methods + views own payments + intents + own dispute status; admin+finance manages provider CRUD + captures + dispute evidence. Platform plane (platform_admin) — cross-tenant support tooling for ops + support cross-tenant P1 review. All tenant-plane permissions carry the `payment.` prefix (or `platform.payment.` on the platform audience) per hierarchy.md §4 audience-boundary rules.",
   "permissions": [
-    { "name": "payment.payments.viewAny", "guard": "sanctum", "seededOn": ["finance", "admin", "owner"] },
-    { "name": "payment.payments.view", "guard": "sanctum", "seededOn": ["finance", "admin", "owner", "support", "customer"], "description": "Customer sees own payments via invoice.customer_id scoping." },
-    { "name": "payment.payments.capture", "guard": "sanctum", "description": "Manual capture for authorization holds. Requires `payment_manual_capture` entitlement.", "seededOn": ["finance", "admin", "owner"] },
-    { "name": "payment.methods.viewAny", "guard": "sanctum", "seededOn": ["finance", "admin", "owner", "customer"] },
-    { "name": "payment.methods.view", "guard": "sanctum", "seededOn": ["finance", "admin", "owner", "support", "customer"] },
-    { "name": "payment.methods.create", "guard": "sanctum", "description": "Save a new payment method via SetupIntent flow.", "seededOn": ["finance", "admin", "owner", "customer"] },
-    { "name": "payment.methods.update", "guard": "sanctum", "seededOn": ["finance", "admin", "owner", "customer"] },
-    { "name": "payment.methods.set-default", "guard": "sanctum", "description": "Atomic lock-and-swap for is_default flag.", "seededOn": ["finance", "admin", "owner", "customer"] },
-    { "name": "payment.methods.delete", "guard": "sanctum", "description": "Soft-delete a saved method. Customer can delete own; admin can delete any tenant method.", "seededOn": ["finance", "admin", "owner", "customer"] },
-    { "name": "payment.intents.viewAny", "guard": "sanctum", "seededOn": ["finance", "admin", "owner"] },
-    { "name": "payment.intents.view", "guard": "sanctum", "seededOn": ["finance", "admin", "owner", "support", "customer"] },
-    { "name": "payment.intents.create", "guard": "sanctum", "description": "Create a new payment intent for an invoice.", "seededOn": ["finance", "admin", "owner", "customer"] },
-    { "name": "payment.intents.confirm", "guard": "sanctum", "description": "Confirm an intent from the customer's SDK.", "seededOn": ["finance", "admin", "owner", "customer"] },
-    { "name": "payment.intents.cancel", "guard": "sanctum", "seededOn": ["finance", "admin", "owner", "customer"] },
-    { "name": "payment.disputes.viewAny", "guard": "sanctum", "seededOn": ["finance", "admin", "owner"] },
-    { "name": "payment.disputes.view", "guard": "sanctum", "seededOn": ["finance", "admin", "owner", "support", "customer"], "description": "Customer sees status of their own disputes only." },
-    { "name": "payment.disputes.submit-evidence", "guard": "sanctum", "description": "Submit collected evidence to the provider.", "seededOn": ["finance", "admin", "owner"] },
-    { "name": "payment.disputes.accept", "guard": "sanctum", "description": "Accept the dispute — concede + refund via the refund module.", "seededOn": ["finance", "admin", "owner"] },
-    { "name": "payment.providers.viewAny", "guard": "sanctum", "seededOn": ["finance", "admin", "owner"] },
-    { "name": "payment.providers.view", "guard": "sanctum", "description": "Config field returned encrypted; support role sees redacted view.", "seededOn": ["finance", "admin", "owner", "support"] },
-    { "name": "payment.providers.create", "guard": "sanctum", "description": "Configure a new payment provider. Credentials are financial-critical.", "seededOn": ["admin", "owner"] },
+    {
+      "name": "payment.payments.viewAny",
+      "guard": "sanctum",
+      "seededOn": ["finance", "admin", "owner"]
+    },
+    {
+      "name": "payment.payments.view",
+      "guard": "sanctum",
+      "seededOn": ["finance", "admin", "owner", "support", "customer"],
+      "description": "Customer sees own payments via invoice.customer_id scoping."
+    },
+    {
+      "name": "payment.payments.capture",
+      "guard": "sanctum",
+      "description": "Manual capture for authorization holds. Requires `payment_manual_capture` entitlement.",
+      "seededOn": ["finance", "admin", "owner"]
+    },
+    {
+      "name": "payment.methods.viewAny",
+      "guard": "sanctum",
+      "seededOn": ["finance", "admin", "owner", "customer"]
+    },
+    {
+      "name": "payment.methods.view",
+      "guard": "sanctum",
+      "seededOn": ["finance", "admin", "owner", "support", "customer"]
+    },
+    {
+      "name": "payment.methods.create",
+      "guard": "sanctum",
+      "description": "Save a new payment method via SetupIntent flow.",
+      "seededOn": ["finance", "admin", "owner", "customer"]
+    },
+    {
+      "name": "payment.methods.update",
+      "guard": "sanctum",
+      "seededOn": ["finance", "admin", "owner", "customer"]
+    },
+    {
+      "name": "payment.methods.set-default",
+      "guard": "sanctum",
+      "description": "Atomic lock-and-swap for is_default flag.",
+      "seededOn": ["finance", "admin", "owner", "customer"]
+    },
+    {
+      "name": "payment.methods.delete",
+      "guard": "sanctum",
+      "description": "Soft-delete a saved method. Customer can delete own; admin can delete any tenant method.",
+      "seededOn": ["finance", "admin", "owner", "customer"]
+    },
+    {
+      "name": "payment.intents.viewAny",
+      "guard": "sanctum",
+      "seededOn": ["finance", "admin", "owner"]
+    },
+    {
+      "name": "payment.intents.view",
+      "guard": "sanctum",
+      "seededOn": ["finance", "admin", "owner", "support", "customer"]
+    },
+    {
+      "name": "payment.intents.create",
+      "guard": "sanctum",
+      "description": "Create a new payment intent for an invoice.",
+      "seededOn": ["finance", "admin", "owner", "customer"]
+    },
+    {
+      "name": "payment.intents.confirm",
+      "guard": "sanctum",
+      "description": "Confirm an intent from the customer's SDK.",
+      "seededOn": ["finance", "admin", "owner", "customer"]
+    },
+    {
+      "name": "payment.intents.cancel",
+      "guard": "sanctum",
+      "seededOn": ["finance", "admin", "owner", "customer"]
+    },
+    {
+      "name": "payment.disputes.viewAny",
+      "guard": "sanctum",
+      "seededOn": ["finance", "admin", "owner"]
+    },
+    {
+      "name": "payment.disputes.view",
+      "guard": "sanctum",
+      "seededOn": ["finance", "admin", "owner", "support", "customer"],
+      "description": "Customer sees status of their own disputes only."
+    },
+    {
+      "name": "payment.disputes.submit-evidence",
+      "guard": "sanctum",
+      "description": "Submit collected evidence to the provider.",
+      "seededOn": ["finance", "admin", "owner"]
+    },
+    {
+      "name": "payment.disputes.accept",
+      "guard": "sanctum",
+      "description": "Accept the dispute — concede + refund via the refund module.",
+      "seededOn": ["finance", "admin", "owner"]
+    },
+    {
+      "name": "payment.providers.viewAny",
+      "guard": "sanctum",
+      "seededOn": ["finance", "admin", "owner"]
+    },
+    {
+      "name": "payment.providers.view",
+      "guard": "sanctum",
+      "description": "Config field returned encrypted; support role sees redacted view.",
+      "seededOn": ["finance", "admin", "owner", "support"]
+    },
+    {
+      "name": "payment.providers.create",
+      "guard": "sanctum",
+      "description": "Configure a new payment provider. Credentials are financial-critical.",
+      "seededOn": ["admin", "owner"]
+    },
     { "name": "payment.providers.update", "guard": "sanctum", "seededOn": ["admin", "owner"] },
-    { "name": "payment.providers.test", "guard": "sanctum", "description": "Send a synthetic test event via a provider's sandbox endpoint.", "seededOn": ["admin", "owner"] },
-    { "name": "payment.providers.reconcile", "guard": "sanctum", "description": "Trigger on-demand reconciliation for a provider.", "seededOn": ["admin", "owner", "finance"] },
-    { "name": "platform.payment.payments.viewAny", "guard": "platform_admin", "seededOn": ["super_admin", "ops", "support"] },
-    { "name": "platform.payment.payments.view", "guard": "platform_admin", "seededOn": ["super_admin", "ops", "support"] },
-    { "name": "platform.payment.methods.viewAny", "guard": "platform_admin", "description": "Cross-tenant methods read (encrypted fields never decrypted).", "seededOn": ["super_admin", "ops", "support"] },
-    { "name": "platform.payment.intents.viewAny", "guard": "platform_admin", "seededOn": ["super_admin", "ops", "support"] },
-    { "name": "platform.payment.disputes.viewAny", "guard": "platform_admin", "seededOn": ["super_admin", "ops", "support"] },
-    { "name": "platform.payment.disputes.accept", "guard": "platform_admin", "description": "Cross-tenant support-intervention accept. Every fire notifies the tenant admin + writes audit with 7-year retention.", "seededOn": ["super_admin", "ops"] },
-    { "name": "platform.payment.providers.viewAny", "guard": "platform_admin", "description": "Cross-tenant provider config read (redacted — no credentials).", "seededOn": ["super_admin", "ops", "support"] },
-    { "name": "platform.payment.pii.view", "guard": "platform_admin", "description": "Reveal PII fields on payments (customer name, email, phone, billing address). Highly restricted — requires explicit compliance approval workflow.", "seededOn": ["super_admin"] }
+    {
+      "name": "payment.providers.test",
+      "guard": "sanctum",
+      "description": "Send a synthetic test event via a provider's sandbox endpoint.",
+      "seededOn": ["admin", "owner"]
+    },
+    {
+      "name": "payment.providers.reconcile",
+      "guard": "sanctum",
+      "description": "Trigger on-demand reconciliation for a provider.",
+      "seededOn": ["admin", "owner", "finance"]
+    },
+    {
+      "name": "platform.payment.payments.viewAny",
+      "guard": "platform_admin",
+      "seededOn": ["super_admin", "ops", "support"]
+    },
+    {
+      "name": "platform.payment.payments.view",
+      "guard": "platform_admin",
+      "seededOn": ["super_admin", "ops", "support"]
+    },
+    {
+      "name": "platform.payment.methods.viewAny",
+      "guard": "platform_admin",
+      "description": "Cross-tenant methods read (encrypted fields never decrypted).",
+      "seededOn": ["super_admin", "ops", "support"]
+    },
+    {
+      "name": "platform.payment.intents.viewAny",
+      "guard": "platform_admin",
+      "seededOn": ["super_admin", "ops", "support"]
+    },
+    {
+      "name": "platform.payment.disputes.viewAny",
+      "guard": "platform_admin",
+      "seededOn": ["super_admin", "ops", "support"]
+    },
+    {
+      "name": "platform.payment.disputes.accept",
+      "guard": "platform_admin",
+      "description": "Cross-tenant support-intervention accept. Every fire notifies the tenant admin + writes audit with 7-year retention.",
+      "seededOn": ["super_admin", "ops"]
+    },
+    {
+      "name": "platform.payment.providers.viewAny",
+      "guard": "platform_admin",
+      "description": "Cross-tenant provider config read (redacted — no credentials).",
+      "seededOn": ["super_admin", "ops", "support"]
+    },
+    {
+      "name": "platform.payment.pii.view",
+      "guard": "platform_admin",
+      "description": "Reveal PII fields on payments (customer name, email, phone, billing address). Highly restricted — requires explicit compliance approval workflow.",
+      "seededOn": ["super_admin"]
+    }
   ]
 }

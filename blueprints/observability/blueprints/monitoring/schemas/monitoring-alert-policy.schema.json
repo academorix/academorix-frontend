@@ -15,7 +15,9 @@
     "incrementing": false,
     "model": "Academorix\\Observability\\Monitoring\\Models\\MonitoringAlertPolicy",
     "interface": "Academorix\\Observability\\Monitoring\\Contracts\\Data\\MonitoringAlertPolicyInterface",
-    "implements": ["Academorix\\Observability\\Monitoring\\Contracts\\Data\\MonitoringAlertPolicyInterface"],
+    "implements": [
+      "Academorix\\Observability\\Monitoring\\Contracts\\Data\\MonitoringAlertPolicyInterface"
+    ],
     "traits": [
       "HasFactory",
       "HasUlids",
@@ -130,21 +132,52 @@
     },
     "indexes": [
       { "columns": ["tenant_id", "is_enabled"], "name": "monitoring_alert_policies_enabled_idx" },
-      { "columns": ["tenant_id", "signal_type", "signal_source"], "name": "monitoring_alert_policies_signal_idx" }
+      {
+        "columns": ["tenant_id", "signal_type", "signal_source"],
+        "name": "monitoring_alert_policies_signal_idx"
+      }
     ]
   },
-  "required": ["id", "tenant_id", "name", "signal_type", "signal_source", "severity", "threshold_operator", "threshold_value", "threshold_unit", "window_seconds", "consecutive_breaches_required", "is_enabled", "notify_provider_configs", "suppression_config", "created_at", "updated_at"],
+  "required": [
+    "id",
+    "tenant_id",
+    "name",
+    "signal_type",
+    "signal_source",
+    "severity",
+    "threshold_operator",
+    "threshold_value",
+    "threshold_unit",
+    "window_seconds",
+    "consecutive_breaches_required",
+    "is_enabled",
+    "notify_provider_configs",
+    "suppression_config",
+    "created_at",
+    "updated_at"
+  ],
   "properties": {
     "id": { "type": "string", "pattern": "^map_[0-9A-HJKMNP-TV-Z]{26}$" },
     "tenant_id": { "type": "string", "pattern": "^ten_[0-9A-HJKMNP-TV-Z]{26}$" },
     "name": { "type": "string", "minLength": 1, "maxLength": 128 },
     "signal_type": {
       "type": "string",
-      "enum": ["health_check_status", "error_rate", "latency_p95", "latency_p99", "queue_depth", "worker_health", "custom_metric"]
+      "enum": [
+        "health_check_status",
+        "error_rate",
+        "latency_p95",
+        "latency_p99",
+        "queue_depth",
+        "worker_health",
+        "custom_metric"
+      ]
     },
     "signal_source": { "type": "string", "minLength": 1, "maxLength": 128 },
     "severity": { "type": "string", "enum": ["p1", "p2", "p3", "p4"] },
-    "threshold_operator": { "type": "string", "enum": ["greater_than", "less_than", "equals", "not_equals"] },
+    "threshold_operator": {
+      "type": "string",
+      "enum": ["greater_than", "less_than", "equals", "not_equals"]
+    },
     "threshold_value": { "type": "number" },
     "threshold_unit": { "type": "string", "enum": ["percent", "ms", "count", "bytes"] },
     "window_seconds": { "type": "integer", "minimum": 60, "maximum": 86400 },

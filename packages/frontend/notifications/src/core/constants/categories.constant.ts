@@ -12,7 +12,7 @@
  *   cannot toggle off — safety × push is the only current entry.
  */
 
-import type { NotificationCategory } from '../interfaces';
+import type { NotificationCategory } from "../interfaces";
 
 /**
  * Descriptor for one category row in the preferences UI.
@@ -43,34 +43,34 @@ export const NOTIFICATION_CATEGORIES: Readonly<
   Record<NotificationCategory, INotificationCategoryDescriptor>
 > = {
   operational: {
-    key: 'operational',
-    label: 'Operational',
-    description: 'Day-to-day activity — attendance, sessions, teams.',
-    typePrefixes: ['attendance_', 'session_', 'team_', 'training_'],
+    key: "operational",
+    label: "Operational",
+    description: "Day-to-day activity — attendance, sessions, teams.",
+    typePrefixes: ["attendance_", "session_", "team_", "training_"],
   },
   billing: {
-    key: 'billing',
-    label: 'Billing',
-    description: 'Invoices, payments, subscription changes.',
-    typePrefixes: ['payment_', 'invoice_', 'subscription_'],
+    key: "billing",
+    label: "Billing",
+    description: "Invoices, payments, subscription changes.",
+    typePrefixes: ["payment_", "invoice_", "subscription_"],
   },
   safety: {
-    key: 'safety',
-    label: 'Safety',
-    description: 'Child-safety alerts + emergency notifications.',
-    typePrefixes: ['child_safety_', 'safeguarding_', 'emergency_'],
+    key: "safety",
+    label: "Safety",
+    description: "Child-safety alerts + emergency notifications.",
+    typePrefixes: ["child_safety_", "safeguarding_", "emergency_"],
   },
   marketing: {
-    key: 'marketing',
-    label: 'Marketing',
-    description: 'Announcements + optional tenant campaigns.',
-    typePrefixes: ['marketing_', 'announcement_'],
+    key: "marketing",
+    label: "Marketing",
+    description: "Announcements + optional tenant campaigns.",
+    typePrefixes: ["marketing_", "announcement_"],
   },
   system: {
-    key: 'system',
-    label: 'System',
-    description: 'Auth, security, and maintenance events.',
-    typePrefixes: ['system_', 'security_'],
+    key: "system",
+    label: "System",
+    description: "Auth, security, and maintenance events.",
+    typePrefixes: ["system_", "security_"],
   },
 };
 
@@ -84,7 +84,7 @@ export const NOTIFICATION_CATEGORIES: Readonly<
 export const MANDATORY_ON_MATRIX: Readonly<Record<NotificationCategory, readonly string[]>> = {
   operational: [],
   billing: [],
-  safety: ['os-notification'],
+  safety: ["os-notification"],
   marketing: [],
   system: [],
 };

@@ -40,21 +40,11 @@
       { "trait": "Academorix\\Foundation\\Concerns\\Filterable" },
       { "trait": "Academorix\\Foundation\\Concerns\\Searchable" }
     ],
-    "tenants": [
-      { "trait": "Academorix\\Tenancy\\Concerns\\BelongsToTenant" }
-    ],
-    "organization": [
-      { "trait": "Academorix\\Organization\\Concerns\\BelongsToOrganization" }
-    ],
-    "region": [
-      { "trait": "Academorix\\Region\\Concerns\\BelongsToRegion" }
-    ],
-    "audit": [
-      { "trait": "OwenIt\\Auditing\\Auditable" }
-    ],
-    "activity": [
-      { "trait": "Academorix\\Activity\\Concerns\\HasActivityLog" }
-    ]
+    "tenants": [{ "trait": "Academorix\\Tenancy\\Concerns\\BelongsToTenant" }],
+    "organization": [{ "trait": "Academorix\\Organization\\Concerns\\BelongsToOrganization" }],
+    "region": [{ "trait": "Academorix\\Region\\Concerns\\BelongsToRegion" }],
+    "audit": [{ "trait": "OwenIt\\Auditing\\Auditable" }],
+    "activity": [{ "trait": "Academorix\\Activity\\Concerns\\HasActivityLog" }]
   },
   "composition": {
     "branch": {

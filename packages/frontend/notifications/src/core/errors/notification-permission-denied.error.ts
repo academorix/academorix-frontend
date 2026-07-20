@@ -4,7 +4,7 @@
  * @description Thrown when the user has denied notification permission.
  */
 
-import { NotificationError } from './notification.error';
+import { NotificationError } from "./notification.error";
 
 /**
  * Thrown by services that require `Notification.permission === 'granted'`
@@ -15,5 +15,5 @@ import { NotificationError } from './notification.error';
  * they call the manager directly instead of using the React hooks.
  */
 export class NotificationPermissionDeniedError extends NotificationError {
-  public readonly code = 'NOTIFICATION_PERMISSION_DENIED' as const;
+  public readonly code = "NOTIFICATION_PERMISSION_DENIED" as const;
 }

@@ -191,7 +191,18 @@
       }
     ]
   },
-  "required": ["id", "name", "slug", "category", "gender_typical", "sort_order", "is_active", "is_platform_seeded", "created_at", "updated_at"],
+  "required": [
+    "id",
+    "name",
+    "slug",
+    "category",
+    "gender_typical",
+    "sort_order",
+    "is_active",
+    "is_platform_seeded",
+    "created_at",
+    "updated_at"
+  ],
   "properties": {
     "id": { "type": "string", "pattern": "^spo_[0-9A-HJKMNP-TV-Z]{26}$" },
     "tenant_id": { "type": ["string", "null"], "pattern": "^ten_[0-9A-HJKMNP-TV-Z]{26}$" },
@@ -199,14 +210,28 @@
     "slug": { "type": "string", "minLength": 2, "maxLength": 32, "pattern": "^[a-z][a-z0-9_]*$" },
     "category": {
       "type": "string",
-      "enum": ["team_sport", "individual_sport", "racquet", "combat", "aquatic", "winter", "cycling", "track_field", "fitness", "recreational"]
+      "enum": [
+        "team_sport",
+        "individual_sport",
+        "racquet",
+        "combat",
+        "aquatic",
+        "winter",
+        "cycling",
+        "track_field",
+        "fitness",
+        "recreational"
+      ]
     },
     "description": { "type": ["string", "null"], "maxLength": 500 },
     "governing_body": { "type": ["string", "null"], "maxLength": 128 },
     "gender_typical": { "type": "string", "enum": ["male_only", "female_only", "mixed", "any"] },
     "age_range_min": { "type": ["integer", "null"], "minimum": 3, "maximum": 99 },
     "age_range_max": { "type": ["integer", "null"], "minimum": 3, "maximum": 99 },
-    "primary_color": { "type": ["string", "null"], "pattern": "^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$" },
+    "primary_color": {
+      "type": ["string", "null"],
+      "pattern": "^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$"
+    },
     "icon": { "type": ["string", "null"], "pattern": "^[a-z0-9-]+:[a-z0-9-]+$", "maxLength": 64 },
     "sort_order": { "type": "integer", "minimum": 0, "maximum": 9999 },
     "is_active": { "type": "boolean" },
@@ -242,7 +267,10 @@
   },
   "x-route-binding": {
     "strategy": "resolveRouteBinding",
-    "accepts": ["ULID (`spo_<26>`)", "slug (case-insensitive within the caller's merged catalog — platform + own tenant customs)"]
+    "accepts": [
+      "ULID (`spo_<26>`)",
+      "slug (case-insensitive within the caller's merged catalog — platform + own tenant customs)"
+    ]
   },
   "invariants": [
     "slug matches `^[a-z][a-z0-9_]*$` AND is not in the reserved list.",

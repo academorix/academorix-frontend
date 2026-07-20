@@ -24,7 +24,6 @@
 
 import { DiscoveryModule, Module, type DynamicModule } from "@stackra/container";
 import { CONSOLE_OUTPUT, CONSOLE_CONFIG } from "@stackra/contracts";
-import type { IPublishableConsumer } from "@stackra/contracts";
 import { Path } from "@stackra/support";
 
 import {
@@ -36,12 +35,14 @@ import {
 } from "./commands";
 import { DEFAULT_BINARY_NAME, DEFAULT_COMMANDS_DIRECTORY, DEFAULT_VERBOSE } from "./constants";
 import { ModuleAlreadyRegisteredError } from "./errors";
-import type { IConsoleModuleOptions, IConsoleModuleAsyncOptions } from "./interfaces";
 import { PublishableLoader, PublishableRegistry } from "./publishing";
 import { CommandRegistry } from "./registries";
 import { CommandLoader } from "./services/command-loader.service";
 import { ConsoleOutput } from "./services/console-output.service";
 import { StubRenderer } from "./services/stub-renderer.service";
+
+import type { IConsoleModuleOptions, IConsoleModuleAsyncOptions } from "./interfaces";
+import type { IPublishableConsumer } from "@stackra/contracts";
 
 /**
  * Console CLI framework module.

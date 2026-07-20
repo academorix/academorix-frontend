@@ -6,18 +6,18 @@ Overlays above the RBAC role tables owned by `access/rbac`.
 
 ## 1. What this module owns
 
-| Concern                                | Owned artefact                                                                                                                                                                                                                                                       |
-| -------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Persistent grant table                 | `AccessGrant` (subject-polymorphic, resource-polymorphic, JSONB permission list, decision enum, expiry, revoke trail)                                                                                                                                                |
-| The overlay resolver                   | `GrantOverlayResolver` — consulted by `access/rbac`'s `PermissionResolver` on every check (per D-A3)                                                                                                                                                                 |
-| The central issue action               | `GrantIssuer` — the one place grants are minted, whether from manual admin CRUD, from access-request approvals, or from delegation flows                                                                                                                             |
-| The revoke action                      | `GrantRevoker` — the one place grants are torn down (soft-delete + audit)                                                                                                                                                                                            |
-| Grantable-registry substrate           | `GrantableRegistry` container binding — consumer modules register `resource_type` keys at boot so grants stay polymorphic across the whole platform                                                                                                                  |
-| Per-request caching                    | `GrantEvaluationCache` — L1 in-process + L2 Redis. Warmed by the `grants.warm_grant_cache` middleware on Sanctum PAT usage; invalidated per-subject on `GrantIssued` / `GrantRevoked` / `GrantExpired`                                                               |
-| Traits + attribute                     | `HasResourceGrants` (compose on invitable-target-shaped models), `IsGrantable` (marker), `BelongsToGrant` (provenance on the User/Role row produced by a grant), `#[Grantable]` class attribute (resource-type discovery)                                            |
-| Bulk provision                         | CSV bulk-issue for larger enterprise deployments                                                                                                                                                                                                                     |
-| Notifications                          | Subject + grantor notifications on issue / revoke / expiring / expired; opt-in "denied access attempt" notification for admins                                                                                                                                       |
-| Compliance                             | SOC 2 CC6.3 access provisioning audit, ISO 27001 A.9.2.5 access reviews, GDPR Art. 17 erasure cascade                                                                                                                                                                |
+| Concern                      | Owned artefact                                                                                                                                                                                                            |
+| ---------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Persistent grant table       | `AccessGrant` (subject-polymorphic, resource-polymorphic, JSONB permission list, decision enum, expiry, revoke trail)                                                                                                     |
+| The overlay resolver         | `GrantOverlayResolver` — consulted by `access/rbac`'s `PermissionResolver` on every check (per D-A3)                                                                                                                      |
+| The central issue action     | `GrantIssuer` — the one place grants are minted, whether from manual admin CRUD, from access-request approvals, or from delegation flows                                                                                  |
+| The revoke action            | `GrantRevoker` — the one place grants are torn down (soft-delete + audit)                                                                                                                                                 |
+| Grantable-registry substrate | `GrantableRegistry` container binding — consumer modules register `resource_type` keys at boot so grants stay polymorphic across the whole platform                                                                       |
+| Per-request caching          | `GrantEvaluationCache` — L1 in-process + L2 Redis. Warmed by the `grants.warm_grant_cache` middleware on Sanctum PAT usage; invalidated per-subject on `GrantIssued` / `GrantRevoked` / `GrantExpired`                    |
+| Traits + attribute           | `HasResourceGrants` (compose on invitable-target-shaped models), `IsGrantable` (marker), `BelongsToGrant` (provenance on the User/Role row produced by a grant), `#[Grantable]` class attribute (resource-type discovery) |
+| Bulk provision               | CSV bulk-issue for larger enterprise deployments                                                                                                                                                                          |
+| Notifications                | Subject + grantor notifications on issue / revoke / expiring / expired; opt-in "denied access attempt" notification for admins                                                                                            |
+| Compliance                   | SOC 2 CC6.3 access provisioning audit, ISO 27001 A.9.2.5 access reviews, GDPR Art. 17 erasure cascade                                                                                                                     |
 
 ## 2. Placement rationale
 
@@ -35,8 +35,8 @@ The module boots before `access/requests` because access requests materialise
 into grants on approval. Requests are a workflow wrapper, grants are the state
 that gets written.
 
-Same-plane sibling of `access/delegation` (priority 33) — grants and
-delegations share the RBAC substrate but never write each other's rows.
+Same-plane sibling of `access/delegation` (priority 33) — grants and delegations
+share the RBAC substrate but never write each other's rows.
 
 ## 3. The overlay contract (D-A3, canonical)
 
@@ -99,8 +99,8 @@ Composite indexes on the hot-paths — see `schemas/access-grant.schema.json`.
 ```
 
 Terminal states: `expired`, `revoked`. Once terminal, the row lives for the
-retention window (90 days) and is then hard-deleted by
-`PurgeRevokedGrantsJob` / `PurgeExpiredGrantsJob`.
+retention window (90 days) and is then hard-deleted by `PurgeRevokedGrantsJob` /
+`PurgeExpiredGrantsJob`.
 
 ## 6. Public surface
 
@@ -124,17 +124,17 @@ compliance evidence.
 
 ## 7. The three ways grants get created
 
-1. **Manual admin CRUD** — an owner or admin hits `POST /api/v1/grants` from
-   the tenant dashboard. `source = 'manual'`.
+1. **Manual admin CRUD** — an owner or admin hits `POST /api/v1/grants` from the
+   tenant dashboard. `source = 'manual'`.
 2. **Access request approval** — `access/requests` opens a `workflow/approvals`
-   instance with `action_key = 'access.grants.create'`. On
-   `ApprovalExecuted` where the action key matches, this module's
-   `AccessRequestApprovedListener` reads `approval_instance.context_json` and
-   calls `GrantIssuer::issue(...)` with `source = 'access_request'`,
+   instance with `action_key = 'access.grants.create'`. On `ApprovalExecuted`
+   where the action key matches, this module's `AccessRequestApprovedListener`
+   reads `approval_instance.context_json` and calls `GrantIssuer::issue(...)`
+   with `source = 'access_request'`,
    `source_reference = <approval_instance_id>`.
-3. **Bulk provision** — enterprise-only. Admin uploads a CSV
-   (subject_id, resource_type, resource_id, permissions, expires_at,
-   reason). `source = 'bulk_provision'`.
+3. **Bulk provision** — enterprise-only. Admin uploads a CSV (subject_id,
+   resource_type, resource_id, permissions, expires_at, reason).
+   `source = 'bulk_provision'`.
 
 A fourth `source = 'delegation'` is reserved for `access/delegation` when it
 lands — delegation-driven grants (e.g. a manager delegating "grant edit on all
@@ -143,15 +143,14 @@ my invoices to my assistant for two weeks") route through the same issuer.
 ## 8. What this module does NOT do
 
 - **No group-based grants in Wave 1b.** `subject_type` is technically
-  polymorphic and the resolver walks it that way, but only `User` is
-  registered. `Group` is deferred to Wave 2 alongside the group-management
-  module.
-- **No conditional grants.** A grant either exists or it doesn't. "Grant IF
-  the invoice amount > $500" is what `workflow/approvals` templates are for —
-  the gate is on the way in, not on the row itself.
+  polymorphic and the resolver walks it that way, but only `User` is registered.
+  `Group` is deferred to Wave 2 alongside the group-management module.
+- **No conditional grants.** A grant either exists or it doesn't. "Grant IF the
+  invoice amount > $500" is what `workflow/approvals` templates are for — the
+  gate is on the way in, not on the row itself.
 - **No cross-tenant grants.** Refused by observer + rule; a cross-tenant grant
-  is a schema violation. Cross-app SSO is the correct pattern for
-  cross-tenant collaboration.
+  is a schema violation. Cross-app SSO is the correct pattern for cross-tenant
+  collaboration.
 - **No cross-guard grants.** A grant issued under the `sanctum` guard never
   applies on the `platform_admin` guard, and vice versa. Enforced by
   `GuardMismatch` (422) on the issue path.
@@ -171,9 +170,9 @@ my invoices to my assistant for two weeks") route through the same issuer.
   `resource_id` — Invoice, Athlete, Team, …).
 - **Grantor** — the User who issued the grant. `granted_by` FK. Nullable for
   system-issued grants (approvals, bulk provision).
-- **Permissions** — the JSONB array of permission names scoped to that
-  specific resource. No scope suffix — the resource is explicit, so
-  `invoices.view` in a grant on `Invoice#123` means "view THIS invoice".
+- **Permissions** — the JSONB array of permission names scoped to that specific
+  resource. No scope suffix — the resource is explicit, so `invoices.view` in a
+  grant on `Invoice#123` means "view THIS invoice".
 - **Decision** — `allow` (positive grant) or `deny` (inviolable block).
 - **Reason** — mandatory operator note. Minimum 20 chars. Retained for audit
   indefinitely; never redacted on grant expiry.
@@ -183,8 +182,8 @@ my invoices to my assistant for two weeks") route through the same issuer.
 
 ## 10. Cross-references
 
-- Design spec: `.kiro/specs/access-approvals/design.md` §2 D-A3 (deny wins),
-  §3 access_grants shape, §6 access request flow.
+- Design spec: `.kiro/specs/access-approvals/design.md` §2 D-A3 (deny wins), §3
+  access_grants shape, §6 access request flow.
 - Sibling: `modules/access/rbac/` — the substrate this module overlays.
 - Sibling: `modules/access/requests/` — the wrapper that opens approval
   workflows for grant creation.
@@ -194,8 +193,8 @@ my invoices to my assistant for two weeks") route through the same issuer.
   `ApprovalExecuted` events consumed by our `AccessRequestApprovedListener`.
 - Steering: `.kiro/steering/hierarchy.md` §4 (two-audience boundary).
 - Steering: `.kiro/steering/tenancy-columns.md` — grants are tenant-scoped;
-  `application_id` cascades through `tenant_id` (grants are NOT one of the
-  eight rows that carry `application_id` directly).
+  `application_id` cascades through `tenant_id` (grants are NOT one of the eight
+  rows that carry `application_id` directly).
 
 ## 11. Blueprint layout (this folder)
 

@@ -1,1 +1,1 @@
-export { SduiScreenView, type ISduiScreenViewProps } from './SduiScreenView';
+export { SduiScreenView, type ISduiScreenViewProps } from "./SduiScreenView";

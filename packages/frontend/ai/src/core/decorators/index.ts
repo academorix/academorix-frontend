@@ -4,4 +4,4 @@
  * @description Barrel export for `@stackra/ai` core decorators.
  */
 
-export { AiAgent, getAiAgentMetadata } from './ai-agent.decorator';
+export { AiAgent, getAiAgentMetadata } from "./ai-agent.decorator";

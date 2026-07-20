@@ -16,7 +16,7 @@ import type {
   INotificationPayload,
   INotificationPermissionState,
   NotificationManagerListener,
-} from '@/core/interfaces';
+} from "@/core/interfaces";
 
 /**
  * A single recorded dispatch call — used for assertions.
@@ -67,7 +67,7 @@ export class MockNotificationManager implements INotificationManager {
   }) {
     this.permission = initial?.permission ?? {
       supported: true,
-      permission: 'default',
+      permission: "default",
     };
     for (const driver of initial?.drivers ?? []) this.drivers.set(driver.id, driver);
     this.snapshot = this.buildSnapshot();
@@ -82,7 +82,7 @@ export class MockNotificationManager implements INotificationManager {
 
   public async dispatch(
     payload: INotificationPayload,
-    options?: { readonly channels?: readonly string[] }
+    options?: { readonly channels?: readonly string[] },
   ): Promise<readonly IDeliveryReport[]> {
     const channels = options?.channels ?? [...this.drivers.keys()];
     this.dispatchCalls.push({ payload, channels });

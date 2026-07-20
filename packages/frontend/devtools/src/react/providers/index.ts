@@ -4,4 +4,4 @@
  * @description Barrel for the devtools React providers.
  */
 
-export { DevtoolsProvider, type DevtoolsProviderProps } from './devtools';
+export { DevtoolsProvider, type DevtoolsProviderProps } from "./devtools";

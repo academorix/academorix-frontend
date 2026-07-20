@@ -11,7 +11,7 @@
 import type {
   IRealtimeChannel,
   IRealtimePresenceChannel,
-} from '@/core/interfaces/realtime-connection.interface';
+} from "@/core/interfaces/realtime-connection.interface";
 
 /** Recorded whisper entry — channel, event, and payload. */
 export interface RecordedWhisper<T = unknown> {
@@ -41,7 +41,7 @@ export class MockRealtimeChannel implements IRealtimeChannel {
     /** Channel name — echoed in whisper records. */
     public readonly name: string,
     /** Shared whisper ledger owned by the parent connection. */
-    private readonly whispers: RecordedWhisper[]
+    private readonly whispers: RecordedWhisper[],
   ) {}
 
   public on(event: string, handler: Handler): this {

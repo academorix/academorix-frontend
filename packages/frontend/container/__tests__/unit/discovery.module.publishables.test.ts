@@ -97,9 +97,11 @@ describe("DiscoveryModule.PACKAGE_ROOT + configurePublishables", () => {
       const consumer = makeSpyConsumer();
       DiscoveryModule.configurePublishables(consumer);
       // Each mock call's return value should be `consumer`.
-      const returns = (consumer.publish as unknown as {
-        mock: { results: Array<{ value: unknown }> };
-      }).mock.results.map((r) => r.value);
+      const returns = (
+        consumer.publish as unknown as {
+          mock: { results: Array<{ value: unknown }> };
+        }
+      ).mock.results.map((r) => r.value);
       expect(returns).toEqual([consumer, consumer]);
     });
   });

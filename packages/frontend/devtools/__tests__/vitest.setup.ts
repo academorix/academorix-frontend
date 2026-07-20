@@ -6,4 +6,4 @@
  *   production runtime.
  */
 
-import 'reflect-metadata';
+import "reflect-metadata";

@@ -6,12 +6,12 @@
  *   via the optional `EventEmitter` from `@stackra/events`.
  */
 
-import { Injectable, Inject, Optional } from '@stackra/container';
-import { Logger } from '@stackra/logger';
-import { TASK_RUNNER } from '@stackra/contracts';
-import type { ITaskRunner, IScheduledTask, ITaskOptions } from '@/core/interfaces';
-import { EVENT_EMITTER, SCHEDULER_EVENTS } from '@stackra/contracts';
-import type { IEventEmitter } from '@stackra/contracts';
+import { Injectable, Inject, Optional } from "@stackra/container";
+import { Logger } from "@stackra/logger";
+import { TASK_RUNNER } from "@stackra/contracts";
+import type { ITaskRunner, IScheduledTask, ITaskOptions } from "@/core/interfaces";
+import { EVENT_EMITTER, SCHEDULER_EVENTS } from "@stackra/contracts";
+import type { IEventEmitter } from "@stackra/contracts";
 
 // ════════════════════════════════════════════════════════════════════════════════
 // Re-export the canonical event names so existing consumers that
@@ -53,7 +53,7 @@ export class SchedulerService {
    */
   public constructor(
     @Inject(TASK_RUNNER) private readonly runner: ITaskRunner,
-    @Optional() @Inject(EVENT_EMITTER) private readonly eventEmitter?: IEventEmitter
+    @Optional() @Inject(EVENT_EMITTER) private readonly eventEmitter?: IEventEmitter,
   ) {}
 
   /**
@@ -149,7 +149,7 @@ export class SchedulerService {
     try {
       void this.eventEmitter.emit(event, payload);
     } catch (error: unknown) {
-      this.logger.warn('[SchedulerService] failed to emit event', { event, error });
+      this.logger.warn("[SchedulerService] failed to emit event", { event, error });
     }
   }
 }

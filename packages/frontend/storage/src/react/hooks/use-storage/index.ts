@@ -4,4 +4,4 @@
  * @description Barrel export for `useStorage`.
  */
 
-export { useStorage } from './use-storage.hook';
+export { useStorage } from "./use-storage.hook";

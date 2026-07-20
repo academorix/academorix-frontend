@@ -4,7 +4,7 @@
  * @description StaticLoaderOptions interface.
  */
 
-import type { I18nTranslation } from '@stackra/contracts';
+import type { I18nTranslation } from "@stackra/contracts";
 
 /**
  * Options for the StaticLoader.

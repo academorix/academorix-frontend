@@ -7,7 +7,16 @@
   "labelConventions": {
     "always": [],
     "commonlyAvailable": ["method", "outcome", "reason", "trigger"],
-    "forbiddenAsLabels": ["identity_id", "email", "email_fingerprint", "credential_id", "credential_id_b64url", "user_id", "ip", "device_name"],
+    "forbiddenAsLabels": [
+      "identity_id",
+      "email",
+      "email_fingerprint",
+      "credential_id",
+      "credential_id_b64url",
+      "user_id",
+      "ip",
+      "device_name"
+    ],
     "note": "identity_id / email / credential_id MUST NEVER be a metric label. Cardinality explosion + PII leak. Aggregate everything at the (method, outcome, reason) level. `device_name` is user-provided and treated as public in wire payloads but is still forbidden as a metric label — it would leak per-user activity to shared metric stores."
   },
   "metrics": [

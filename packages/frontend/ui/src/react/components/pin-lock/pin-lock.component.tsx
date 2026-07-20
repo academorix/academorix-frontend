@@ -124,7 +124,7 @@ export const PinLock = React.memo(function PinLock({
       data-component="pin-lock"
     >
       {/* Title */}
-      {title && <h2 className="text-xl font-semibold text-foreground">{title}</h2>}
+      {title && <h2 className="text-foreground text-xl font-semibold">{title}</h2>}
       {subtitle && <p className="text-foreground-500 text-sm">{subtitle}</p>}
 
       {/* Dot indicators */}
@@ -139,7 +139,7 @@ export const PinLock = React.memo(function PinLock({
             className={`size-3.5 rounded-full transition-all duration-200 ${
               i < pin.length
                 ? isError
-                  ? "scale-110 bg-danger"
+                  ? "bg-danger scale-110"
                   : "bg-primary scale-110"
                 : "bg-foreground/20"
             }`}

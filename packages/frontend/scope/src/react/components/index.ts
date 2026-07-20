@@ -1,2 +1,2 @@
-export { ScopeSwitcher } from './scope-switcher';
-export type { ScopeSwitcherProps } from './scope-switcher';
+export { ScopeSwitcher } from "./scope-switcher";
+export type { ScopeSwitcherProps } from "./scope-switcher";

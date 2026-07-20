@@ -10,7 +10,7 @@
  *   works without a persisted snapshot.
  */
 
-import type { DevtoolsShellPosition } from '../types/devtools-shell-position.type';
+import type { DevtoolsShellPosition } from "../types/devtools-shell-position.type";
 
 /**
  * Persisted devtools frame state.

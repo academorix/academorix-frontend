@@ -39,7 +39,7 @@ export class MockNonceGenerator {
 
   public constructor(options: MockNonceGeneratorOptions = {}) {
     this.sequence = options.sequence ?? [];
-    this.prefix = options.prefix ?? 'test-nonce';
+    this.prefix = options.prefix ?? "test-nonce";
   }
 
   /** Produce the next nonce in the configured sequence. */

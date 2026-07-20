@@ -4,8 +4,8 @@
  * @description Merge user options with i18n defaults.
  */
 
-import type { II18nConfig } from '../interfaces';
-import { DEFAULT_I18N_CONFIG } from '../constants/defaults.constant';
+import type { II18nConfig } from "../interfaces";
+import { DEFAULT_I18N_CONFIG } from "../constants/defaults.constant";
 
 /**
  * Merge partial i18n options over {@link DEFAULT_I18N_CONFIG}.

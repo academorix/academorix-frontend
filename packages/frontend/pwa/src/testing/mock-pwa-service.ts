@@ -8,15 +8,15 @@
  *   containers as a drop-in.
  */
 
-import { detectDisplayMode, detectIosSafari, detectStandalone } from '@/core/utils';
+import { detectDisplayMode, detectIosSafari, detectStandalone } from "@/core/utils";
 import type {
   IPwaAttribution,
   IPwaInstallState,
   IPwaSnapshot,
   IPwaUpdateState,
   PwaDisplayMode,
-} from '@/core/interfaces';
-import type { PwaListener } from '@/core/services';
+} from "@/core/interfaces";
+import type { PwaListener } from "@/core/services";
 
 /**
  * In-memory PWA service for tests.
@@ -71,7 +71,7 @@ export class MockPwaService {
     this.attribution = {
       utm: {},
       displayMode: this.displayMode,
-      referrer: '',
+      referrer: "",
       isInstalledContext: this.standalone,
       ...initial?.attribution,
     };

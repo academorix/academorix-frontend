@@ -8,6 +8,6 @@
  *   subpaths re-export them verbatim.
  */
 
-export { useSettings, type IUseSettingsResult } from './use-settings';
-export { useSettingValue, type IUseSettingValueResult } from './use-setting-value';
-export { useSettingsSchema } from './use-settings-schema';
+export { useSettings, type IUseSettingsResult } from "./use-settings";
+export { useSettingValue, type IUseSettingValueResult } from "./use-setting-value";
+export { useSettingsSchema } from "./use-settings-schema";

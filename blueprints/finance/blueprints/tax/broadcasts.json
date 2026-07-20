@@ -40,10 +40,7 @@
       "class": "Academorix\\Finance\\Tax\\Broadcasts\\TenantTaxProvidersChannel",
       "description": "Provider-scoped health + config activity. Powers the per-provider status chip + circuit-breaker state indicator in the tax dashboard.",
       "authorization": "sanctum::authed AND tenant_matches AND (finance role OR admin OR owner)",
-      "events": [
-        "TaxProviderConfigured",
-        "TaxProviderCircuitBreakerOpened"
-      ],
+      "events": ["TaxProviderConfigured", "TaxProviderCircuitBreakerOpened"],
       "throttle": "20 events/minute per channel",
       "notes": "Provider config field NEVER broadcast (encrypted at rest; the channel does not decrypt). Every TaxProviderCircuitBreakerOpened fires a companion push notification via the notifications module (cannot-opt-out — tax pipeline degradation is a P1 finance signal)."
     }

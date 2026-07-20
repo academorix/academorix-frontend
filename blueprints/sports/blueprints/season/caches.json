@@ -34,10 +34,7 @@
       "description": "One Season row (full). Read by the SeasonPhaseCalculator + RegistrationWindowEvaluator on hot paths.",
       "ttlSeconds": 300,
       "tags": ["season"],
-      "invalidatedBy": [
-        "SeasonObserver.updated",
-        "SeasonObserver.deleted"
-      ]
+      "invalidatedBy": ["SeasonObserver.updated", "SeasonObserver.deleted"]
     },
     {
       "pattern": "sea:phase:{season_id}",

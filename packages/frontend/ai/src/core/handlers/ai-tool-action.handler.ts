@@ -20,8 +20,8 @@
  *   result posting) lives in `ToolExecutor` upstream of the dispatch.
  */
 
-import { Inject, Injectable } from '@stackra/container';
-import { Logger } from '@stackra/logger';
+import { Inject, Injectable } from "@stackra/container";
+import { Logger } from "@stackra/logger";
 import {
   AI_TOOL_REGISTRY,
   ActionKind,
@@ -29,9 +29,9 @@ import {
   type IActionHandler,
   type IActionResponse,
   type IAiToolAction,
-} from '@stackra/contracts';
+} from "@stackra/contracts";
 
-import { ToolRegistry } from '../registries/tool.registry';
+import { ToolRegistry } from "../registries/tool.registry";
 
 /**
  * Action handler for `ActionKind.AiTool` descriptors.
@@ -81,12 +81,12 @@ export class AiToolActionHandler implements IActionHandler<IAiToolAction, unknow
    */
   public async execute(
     descriptor: IAiToolAction,
-    context: IActionContext
+    context: IActionContext,
   ): Promise<IActionResponse<unknown>> {
     // Early-abort short-circuit — mirrors the dispatcher's own guard so
     // an aborted context never reaches the tool handler at all.
     if (context.signal?.aborted) {
-      return { success: false, message: 'Aborted' };
+      return { success: false, message: "Aborted" };
     }
 
     const entry = this.registry.findByName(descriptor.toolName);
@@ -112,7 +112,7 @@ export class AiToolActionHandler implements IActionHandler<IAiToolAction, unknow
       // Post-await abort check — safeguards the case where the caller
       // aborts between `entry.handler` resolving and this line running.
       if (context.signal?.aborted) {
-        return { success: false, message: 'Aborted' };
+        return { success: false, message: "Aborted" };
       }
       return { success: true, data: result };
     } catch (err) {

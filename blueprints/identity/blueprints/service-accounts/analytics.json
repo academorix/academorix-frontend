@@ -37,12 +37,7 @@
       "name": "Service Account Disabled",
       "kind": "track",
       "consent_required": "essential",
-      "properties": [
-        "service_account_id",
-        "application_id",
-        "trigger",
-        "actor_platform_user_id"
-      ],
+      "properties": ["service_account_id", "application_id", "trigger", "actor_platform_user_id"],
       "description": "SA soft-disabled. `trigger` = manual|expired|dormant|suspicious_activity|incident. Feeds the credential-hygiene dashboard \u2014 dormant + expired triggers should tail down as ops adopts rotation discipline."
     },
     {
@@ -74,13 +69,7 @@
       "name": "Service Account JWT Issued",
       "kind": "track",
       "consent_required": "essential",
-      "properties": [
-        "service_account_id",
-        "application_id",
-        "kid",
-        "requested_ttl_seconds",
-        "aud"
-      ],
+      "properties": ["service_account_id", "application_id", "kid", "requested_ttl_seconds", "aud"],
       "description": "Token-exchange endpoint issued a JWT. Feeds the JWT-issuance-rate dashboard \u2014 anomalies + spikes correlate with either a fleet scale-out (benign) or a compromised-credential replay (malignant). Sampled: 1 event per 100 successful issuances by default to keep event volume manageable."
     },
     {
@@ -135,12 +124,7 @@
       "name": "Service Account Suspicious Activity Detected",
       "kind": "track",
       "consent_required": "essential",
-      "properties": [
-        "service_account_id",
-        "application_id",
-        "signal_type",
-        "request_ip_prefix_24"
-      ],
+      "properties": ["service_account_id", "application_id", "signal_type", "request_ip_prefix_24"],
       "description": "Fingerprinter caught a rate-spike + novel-tuple combination. `signal_type` = rate_spike_novel_ip | rate_spike_novel_ua | high_failure_rate | cross_kid_signature_reuse. Feeds the security incident-response pipeline."
     }
   ],

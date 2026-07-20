@@ -1,9 +1,10 @@
 # academorix/billing-sdk
 
-Typed Saloon SDK for the Billing service — subscriptions, plans, invoices, licenses, usage, entitlements.
+Typed Saloon SDK for the Billing service — subscriptions, plans, invoices,
+licenses, usage, entitlements.
 
-Per-service umbrella SDK built on the shared kernel (`academorix/api-sdk`).
-It owns the Billing service connector (config `sdk.billing.*`), a typed
+Per-service umbrella SDK built on the shared kernel (`academorix/api-sdk`). It
+owns the Billing service connector (config `sdk.billing.*`), a typed
 `BillingSdk` client, and a discovery pass scoped to
 `#[AsSdkResource(service: 'billing')]`.
 

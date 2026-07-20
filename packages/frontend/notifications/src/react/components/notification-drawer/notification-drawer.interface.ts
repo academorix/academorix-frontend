@@ -5,15 +5,15 @@
  *   {@link NotificationDrawer} component.
  */
 
-import type { NotificationCategory } from '@/core/interfaces';
-import type { NotificationWriter } from '../../hooks/use-notification-writes';
+import type { NotificationCategory } from "@/core/interfaces";
+import type { NotificationWriter } from "../../hooks/use-notification-writes";
 
 /**
  * The section tabs the drawer exposes.
  *
  * `'unread'` is the default view; `'all'` shows every entry.
  */
-export type NotificationDrawerSection = 'unread' | 'all';
+export type NotificationDrawerSection = "unread" | "all";
 
 /**
  * The category filter chips the drawer exposes.
@@ -22,7 +22,7 @@ export type NotificationDrawerSection = 'unread' | 'all';
  * for the "no filter" chip. Reserved as its own type so consumers
  * can bind against the same filter surface.
  */
-export type NotificationDrawerCategoryFilter = NotificationCategory | 'all';
+export type NotificationDrawerCategoryFilter = NotificationCategory | "all";
 
 /**
  * Props accepted by {@link NotificationDrawer}.

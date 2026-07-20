@@ -12,5 +12,5 @@
  *     manually (e.g. tests).
  */
 
-export { NativeStorageModule } from './native-storage.module';
-export { AsyncStorageStore, type AsyncStorageStoreConfig } from './stores';
+export { NativeStorageModule } from "./native-storage.module";
+export { AsyncStorageStore, type AsyncStorageStoreConfig } from "./stores";

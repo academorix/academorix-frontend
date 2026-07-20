@@ -19,7 +19,10 @@
           "signature": "rotate(string $ciphertext): string",
           "returns": "Ciphertext re-encrypted under the current KMS data key. Idempotent \u2014 returns the input when already under the current key."
         },
-        { "signature": "healthcheck(): DriverHealth", "description": "Non-billable reachability probe." }
+        {
+          "signature": "healthcheck(): DriverHealth",
+          "description": "Non-billable reachability probe."
+        }
       ]
     },
     {
@@ -65,7 +68,10 @@
       "class": "Academorix\\Identity\\Drivers\\LocalMfaSecretEncryptor",
       "purpose": "DEV-ONLY. Reads a key from disk and performs AES-256-GCM inline. Refuses to load when APP_ENV=production. Retained here for local-development ergonomics.",
       "strengths": ["Zero external dependencies"],
-      "weaknesses": ["No key rotation; single-point-of-compromise", "Explicitly refuses in production"],
+      "weaknesses": [
+        "No key rotation; single-point-of-compromise",
+        "Explicitly refuses in production"
+      ],
       "config_prefix": "identity.mfa_secret.local"
     }
   ],

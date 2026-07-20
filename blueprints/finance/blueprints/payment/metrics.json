@@ -7,7 +7,18 @@
   "labelConventions": {
     "always": [],
     "commonlyAvailable": ["provider", "status", "method_type", "brand_bucket", "currency"],
-    "forbiddenAsLabels": ["tenant_id", "payment_id", "payment_intent_id", "payment_method_id", "payment_dispute_id", "customer_id", "amount_cents_raw", "cardholder_name", "email", "phone"]
+    "forbiddenAsLabels": [
+      "tenant_id",
+      "payment_id",
+      "payment_intent_id",
+      "payment_method_id",
+      "payment_dispute_id",
+      "customer_id",
+      "amount_cents_raw",
+      "cardholder_name",
+      "email",
+      "phone"
+    ]
   },
   "metrics": [
     {

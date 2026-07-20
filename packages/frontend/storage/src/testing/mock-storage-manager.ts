@@ -9,9 +9,9 @@
  *   which stores exist.
  */
 
-import type { IStorage, IStorageDriverCreator, IStorageManager } from '@stackra/contracts';
+import type { IStorage, IStorageDriverCreator, IStorageManager } from "@stackra/contracts";
 
-import { MockStorage } from './mock-storage';
+import { MockStorage } from "./mock-storage";
 
 /**
  * In-memory `IStorageManager` for testing.
@@ -33,7 +33,7 @@ export class MockStorageManager implements IStorageManager {
   private readonly creators = new Map<string, IStorageDriverCreator>();
 
   /** Configurable default instance name. */
-  private defaultInstance: string = 'default';
+  private defaultInstance: string = "default";
 
   /** @inheritdoc */
   public getDefaultInstance(): string {

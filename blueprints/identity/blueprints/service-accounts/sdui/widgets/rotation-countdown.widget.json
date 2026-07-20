@@ -24,7 +24,10 @@
   "renderRules": [
     {
       "when": "expires_at == null",
-      "render": { "kind": "Text", "props": { "className": "text-xs text-muted italic", "children": "\u2014 no expiry" } }
+      "render": {
+        "kind": "Text",
+        "props": { "className": "text-xs text-muted italic", "children": "\u2014 no expiry" }
+      }
     },
     {
       "when": "days_until_expiry > 30",

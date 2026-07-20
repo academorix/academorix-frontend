@@ -26,9 +26,17 @@
     "columns": {
       "id": { "type": "string", "length": 30, "primary": true },
       "jti": { "type": "uuid", "nullable": false, "description": "The JWT's jti claim. UNIQUE." },
-      "reason": { "type": "string", "nullable": false, "description": "'password_change' | 'user_suspended' | 'manual_revocation' | 'breach_response'" },
+      "reason": {
+        "type": "string",
+        "nullable": false,
+        "description": "'password_change' | 'user_suspended' | 'manual_revocation' | 'breach_response'"
+      },
       "revoked_at": { "type": "timestamptz", "nullable": false, "default": "now()" },
-      "expires_at": { "type": "timestamptz", "nullable": false, "description": "Matches the original JWT's exp. After this timestamp the deny-list row is redundant (natural JWT expiry handles rejection); PurgeExpiredJwtDenyListJob deletes it." },
+      "expires_at": {
+        "type": "timestamptz",
+        "nullable": false,
+        "description": "Matches the original JWT's exp. After this timestamp the deny-list row is redundant (natural JWT expiry handles rejection); PurgeExpiredJwtDenyListJob deletes it."
+      },
       "created_by": { "type": "uuid", "nullable": true },
       "updated_by": { "type": "uuid", "nullable": true },
       "created_at": { "type": "timestamptz", "nullable": false },
@@ -43,7 +51,10 @@
   "properties": {
     "id": { "type": "string", "pattern": "^ajd_[0-9A-HJKMNP-TV-Z]{26}$" },
     "jti": { "type": "string", "format": "uuid" },
-    "reason": { "type": "string", "enum": ["password_change", "user_suspended", "manual_revocation", "breach_response"] },
+    "reason": {
+      "type": "string",
+      "enum": ["password_change", "user_suspended", "manual_revocation", "breach_response"]
+    },
     "revoked_at": { "type": "string", "format": "date-time" },
     "expires_at": { "type": "string", "format": "date-time" },
     "is_expired": { "type": "boolean" }

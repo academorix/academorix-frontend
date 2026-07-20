@@ -132,7 +132,14 @@
         "predicate": "deleted_at IS NULL"
       },
       {
-        "columns": ["tenant_id", "tax_jurisdiction_id", "rate_type", "applies_to", "effective_from", "effective_to"],
+        "columns": [
+          "tenant_id",
+          "tax_jurisdiction_id",
+          "rate_type",
+          "applies_to",
+          "effective_from",
+          "effective_to"
+        ],
         "name": "tax_rates_resolution_idx",
         "description": "Primary lookup index for TaxRateResolver."
       },
@@ -143,12 +150,38 @@
       }
     ]
   },
-  "required": ["id", "tenant_id", "tax_jurisdiction_id", "rate_type", "name", "percentage", "is_inclusive", "applies_to", "effective_from", "source", "created_at", "updated_at"],
+  "required": [
+    "id",
+    "tenant_id",
+    "tax_jurisdiction_id",
+    "rate_type",
+    "name",
+    "percentage",
+    "is_inclusive",
+    "applies_to",
+    "effective_from",
+    "source",
+    "created_at",
+    "updated_at"
+  ],
   "properties": {
     "id": { "type": "string", "pattern": "^txr_[0-9A-HJKMNP-TV-Z]{26}$" },
     "tenant_id": { "type": "string", "pattern": "^ten_[0-9A-HJKMNP-TV-Z]{26}$" },
     "tax_jurisdiction_id": { "type": "string", "pattern": "^txj_[0-9A-HJKMNP-TV-Z]{26}$" },
-    "rate_type": { "type": "string", "enum": ["vat", "gst", "sales_tax", "consumption_tax", "digital_services_tax", "withholding_tax", "stamp_duty", "customs", "other"] },
+    "rate_type": {
+      "type": "string",
+      "enum": [
+        "vat",
+        "gst",
+        "sales_tax",
+        "consumption_tax",
+        "digital_services_tax",
+        "withholding_tax",
+        "stamp_duty",
+        "customs",
+        "other"
+      ]
+    },
     "name": { "type": "string", "minLength": 1, "maxLength": 128 },
     "percentage": { "type": "number", "minimum": 0, "maximum": 1 },
     "is_inclusive": { "type": "boolean" },

@@ -6,11 +6,11 @@
  *   into a single component keyed by `variant` (Req 20.1, 20.2).
  */
 
-import type { JSX, ReactNode } from 'react';
-import { ChatLoader, TextShimmer } from '@stackra/ui/react';
+import type { JSX, ReactNode } from "react";
+import { ChatLoader, TextShimmer } from "@stackra/ui/react";
 
 /** The loader variant to render. */
-export type AiLoaderVariant = 'dots' | 'pulse' | 'spinner' | 'skeleton' | 'shimmer';
+export type AiLoaderVariant = "dots" | "pulse" | "spinner" | "skeleton" | "shimmer";
 
 /** Props accepted by {@link AiLoader}. */
 export interface IAiLoaderProps {
@@ -28,27 +28,27 @@ export interface IAiLoaderProps {
  * labels.
  */
 export function AiLoader(props: IAiLoaderProps): JSX.Element {
-  const { variant = 'dots', label = 'Thinking...', className } = props;
+  const { variant = "dots", label = "Thinking...", className } = props;
   switch (variant) {
-    case 'pulse':
+    case "pulse":
       return <ChatLoader.Pulse className={className} />;
-    case 'spinner':
+    case "spinner":
       return <ChatLoader.Spinner className={className} />;
-    case 'skeleton':
+    case "skeleton":
       return (
         <ChatLoader.Skeleton
           className={className}
-          {...(typeof label === 'string' ? { 'aria-label': label } : {})}
+          {...(typeof label === "string" ? { "aria-label": label } : {})}
         />
       );
-    case 'shimmer':
+    case "shimmer":
       return <TextShimmer className={className}>{label}</TextShimmer>;
-    case 'dots':
+    case "dots":
     default:
       return (
         <ChatLoader.Dots
           className={className}
-          {...(typeof label === 'string' ? { 'aria-label': label } : {})}
+          {...(typeof label === "string" ? { "aria-label": label } : {})}
         />
       );
   }

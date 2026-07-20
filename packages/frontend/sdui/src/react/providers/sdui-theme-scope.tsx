@@ -7,22 +7,22 @@
  *   arbitrary custom properties.
  */
 
-import type { CSSProperties, ReactNode } from 'react';
-import type { ISduiThemeDocument, SduiThemeTokenName } from '@stackra/contracts';
+import type { CSSProperties, ReactNode } from "react";
+import type { ISduiThemeDocument, SduiThemeTokenName } from "@stackra/contracts";
 
 const ALLOWED_TOKENS: ReadonlySet<SduiThemeTokenName> = new Set([
-  'accent',
-  'accent-foreground',
-  'background',
-  'foreground',
-  'surface',
-  'surface-foreground',
-  'muted',
-  'border',
-  'radius',
-  'field-radius',
-  'font-sans',
-  'font-heading',
+  "accent",
+  "accent-foreground",
+  "background",
+  "foreground",
+  "surface",
+  "surface-foreground",
+  "muted",
+  "border",
+  "radius",
+  "field-radius",
+  "font-sans",
+  "font-heading",
 ]);
 
 export interface ISduiThemeScopeProps {
@@ -41,13 +41,13 @@ export function SduiThemeScope({ theme, className, children }: ISduiThemeScopePr
 
   const style: CSSProperties = {};
   for (const [name, value] of Object.entries(theme.tokens ?? {})) {
-    if (ALLOWED_TOKENS.has(name as SduiThemeTokenName) && typeof value === 'string') {
+    if (ALLOWED_TOKENS.has(name as SduiThemeTokenName) && typeof value === "string") {
       (style as Record<string, string>)[`--${name}`] = value;
     }
   }
 
   const scheme = theme.colorScheme;
-  const composed = [scheme === 'dark' ? 'dark' : 'light', className].filter(Boolean).join(' ');
+  const composed = [scheme === "dark" ? "dark" : "light", className].filter(Boolean).join(" ");
 
   return (
     <div className={composed} style={style} data-sdui-theme={theme.id}>

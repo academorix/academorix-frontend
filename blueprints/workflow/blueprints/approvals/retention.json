@@ -32,7 +32,10 @@
     {
       "entity": "ApprovalTemplateApprover",
       "hot": { "days": "indefinite while parent template exists" },
-      "purge": { "trigger": "parent template hard-delete (retention-purge or tenant-erasure)", "action": "hard delete via FK cascade" }
+      "purge": {
+        "trigger": "parent template hard-delete (retention-purge or tenant-erasure)",
+        "action": "hard delete via FK cascade"
+      }
     },
     {
       "entity": "ApprovalInstance (executed)",
@@ -71,7 +74,10 @@
     {
       "entity": "ApprovalReminder",
       "hot": { "days": "matches parent ApprovalRequirement retention" },
-      "purge": { "trigger": "parent requirement hard-delete", "action": "hard delete via FK cascade" }
+      "purge": {
+        "trigger": "parent requirement hard-delete",
+        "action": "hard delete via FK cascade"
+      }
     },
     {
       "entity": "Auditable audit records (owen-it/laravel-auditing)",

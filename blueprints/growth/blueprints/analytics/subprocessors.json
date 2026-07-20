@@ -37,7 +37,13 @@
         "ip (server-side; masked to /24 by Amplitude when GDPR mode enabled)"
       ],
       "dpa_url": "https://amplitude.com/terms/data-processing-addendum",
-      "certifications": ["SOC 2 Type II", "ISO 27001", "GDPR compliant", "CCPA compliant", "HIPAA (Enterprise)"]
+      "certifications": [
+        "SOC 2 Type II",
+        "ISO 27001",
+        "GDPR compliant",
+        "CCPA compliant",
+        "HIPAA (Enterprise)"
+      ]
     },
     {
       "name": "Mixpanel",

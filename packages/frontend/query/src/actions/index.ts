@@ -7,7 +7,7 @@
  *   shared `QueryService`) — this subpath ships only the handlers.
  */
 
-export { QueryActionsModule } from './query-actions.module';
-export { QueryHandler } from './handlers/query.handler';
-export { MutateHandler } from './handlers/mutate.handler';
-export { RefreshHandler } from './handlers/refresh.handler';
+export { QueryActionsModule } from "./query-actions.module";
+export { QueryHandler } from "./handlers/query.handler";
+export { MutateHandler } from "./handlers/mutate.handler";
+export { RefreshHandler } from "./handlers/refresh.handler";

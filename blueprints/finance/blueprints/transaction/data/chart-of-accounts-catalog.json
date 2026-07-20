@@ -34,7 +34,16 @@
       "description": "Money the tenant currently holds in its operational cash account. Debited on invoice payments + credit refunds + chargebacks + fee charges + bank deposits + tax remittances.",
       "default_currency": null,
       "enabled_by_default": true,
-      "used_by_kinds": ["invoice_payment (debit side)", "refund_issued (credit side)", "chargeback_debit (credit side)", "tax_remittance (credit side)", "fee_charge (credit side)", "bank_deposit (credit side)", "bank_withdrawal (debit side)", "currency_conversion (both sides in different currencies)"],
+      "used_by_kinds": [
+        "invoice_payment (debit side)",
+        "refund_issued (credit side)",
+        "chargeback_debit (credit side)",
+        "tax_remittance (credit side)",
+        "fee_charge (credit side)",
+        "bank_deposit (credit side)",
+        "bank_withdrawal (debit side)",
+        "currency_conversion (both sides in different currencies)"
+      ],
       "regulator_notes": "Balance sheet asset — critical for liquidity reporting. low_watermark alerts fire when balance falls below configured threshold."
     },
     {

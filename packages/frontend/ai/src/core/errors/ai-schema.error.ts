@@ -7,7 +7,7 @@
  *   against the client-tool's declared schema (Req 6.13).
  */
 
-import { AiError } from './ai.error';
+import { AiError } from "./ai.error";
 
 /**
  * Thrown when a zod (or JSON) schema is invalid, or when a set of
@@ -25,7 +25,7 @@ export class AiSchemaError extends AiError {
   public constructor(
     message: string,
     public readonly toolName: string,
-    cause?: unknown
+    cause?: unknown,
   ) {
     super(message, cause);
   }

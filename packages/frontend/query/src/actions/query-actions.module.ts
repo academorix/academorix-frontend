@@ -9,10 +9,10 @@
  *   handlers that consume it.
  */
 
-import { Global, Module, type DynamicModule } from '@stackra/container';
+import { Global, Module, type DynamicModule } from "@stackra/container";
 
-import { QueryHandler } from './handlers/query.handler';
-import { RefreshHandler } from './handlers/refresh.handler';
+import { QueryHandler } from "./handlers/query.handler";
+import { RefreshHandler } from "./handlers/refresh.handler";
 
 /**
  * DI module registering the query / refresh action handlers.

@@ -5,7 +5,7 @@
  *   Copy into your app's `src/config/` and import into your AppModule.
  */
 
-import { defineConfig } from '@stackra/notifications';
+import { defineConfig } from "@stackra/notifications";
 
 export const notificationsConfig = defineConfig({
   /*
@@ -20,8 +20,8 @@ export const notificationsConfig = defineConfig({
   |
   */
   centre: {
-    storage: 'localStorage',
-    storageKey: 'stackra:notifications:centre',
+    storage: "localStorage",
+    storageKey: "stackra:notifications:centre",
     maxItems: 100,
   },
 
@@ -34,7 +34,7 @@ export const notificationsConfig = defineConfig({
   | called without an explicit channels array.
   |
   */
-  defaultStack: ['in-app'],
+  defaultStack: ["in-app"],
 
   /*
   |--------------------------------------------------------------------------

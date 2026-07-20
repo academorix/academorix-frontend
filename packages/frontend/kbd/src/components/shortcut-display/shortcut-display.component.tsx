@@ -53,7 +53,7 @@ export function ShortcutDisplay({
     <span className={["inline-flex items-center gap-1", className].filter(Boolean).join(" ")}>
       {combos.map((c, i) => (
         <span key={i} className="inline-flex items-center gap-0.5">
-          {i > 0 && <span className="text-default-400 text-xs mx-0.5">/</span>}
+          {i > 0 && <span className="text-default-400 mx-0.5 text-xs">/</span>}
           <Kbd className={resolveKbdSize(size)}>
             <Kbd.Content>{formatCombo(c)}</Kbd.Content>
           </Kbd>

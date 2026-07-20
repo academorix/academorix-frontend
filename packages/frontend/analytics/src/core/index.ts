@@ -9,17 +9,17 @@
 // ════════════════════════════════════════════════════════════════════════════════
 // Module
 // ════════════════════════════════════════════════════════════════════════════════
-export { AnalyticsModule } from './analytics.module';
+export { AnalyticsModule } from "./analytics.module";
 
 // ════════════════════════════════════════════════════════════════════════════════
 // Services
 // ════════════════════════════════════════════════════════════════════════════════
-export { AnalyticsManager, AnalyticsProviderLoader } from './services';
+export { AnalyticsManager, AnalyticsProviderLoader } from "./services";
 
 // ════════════════════════════════════════════════════════════════════════════════
 // Decorators
 // ════════════════════════════════════════════════════════════════════════════════
-export { AnalyticsProvider, type AnalyticsProviderOptions } from './decorators';
+export { AnalyticsProvider, type AnalyticsProviderOptions } from "./decorators";
 
 // ════════════════════════════════════════════════════════════════════════════════
 // Built-in providers + their CSP directives
@@ -34,17 +34,17 @@ export {
   TIKTOK_PIXEL_CSP,
   SnapchatPixelProvider,
   SNAPCHAT_PIXEL_CSP,
-} from './providers';
+} from "./providers";
 
 // ════════════════════════════════════════════════════════════════════════════════
 // Utilities
 // ════════════════════════════════════════════════════════════════════════════════
-export { defineConfig, getAnalyticsCspPolicies } from './utils';
+export { defineConfig, getAnalyticsCspPolicies } from "./utils";
 
 // ════════════════════════════════════════════════════════════════════════════════
 // Constants (package-owned)
 // ════════════════════════════════════════════════════════════════════════════════
-export { CONSENT_CATEGORY_ANALYTICS, CONSENT_CATEGORY_MARKETING } from './constants';
+export { CONSENT_CATEGORY_ANALYTICS, CONSENT_CATEGORY_MARKETING } from "./constants";
 
 // ════════════════════════════════════════════════════════════════════════════════
 // Types (package-owned)
@@ -55,4 +55,4 @@ export type {
   IPixelProviderOptions,
   IConsentGate,
   IAnalyticsCspDirectives,
-} from './interfaces';
+} from "./interfaces";

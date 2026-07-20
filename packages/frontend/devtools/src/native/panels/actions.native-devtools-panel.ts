@@ -10,27 +10,27 @@
  *   scope / state / discovery).
  */
 
-import { createElement, type ReactNode } from 'react';
-import type { DevtoolsCategory, IDevtoolsPanel, IDevtoolsView } from '@stackra/contracts';
+import { createElement, type ReactNode } from "react";
+import type { DevtoolsCategory, IDevtoolsPanel, IDevtoolsView } from "@stackra/contracts";
 
-import { ActionsPanel } from '../components/actions-panel';
+import { ActionsPanel } from "../components/actions-panel";
 
 /**
  * The built-in Actions panel (native).
  */
 export class ActionsNativeDevtoolsPanel implements IDevtoolsPanel {
   /** @inheritdoc */
-  public readonly id = 'actions';
+  public readonly id = "actions";
   /** @inheritdoc */
-  public readonly title = 'Actions';
+  public readonly title = "Actions";
   /** @inheritdoc */
-  public readonly category: DevtoolsCategory = 'pinned';
+  public readonly category: DevtoolsCategory = "pinned";
   /** @inheritdoc */
   public readonly order = 1;
 
   /** @inheritdoc */
   public readonly view: IDevtoolsView = {
-    type: 'component',
+    type: "component",
     render: (): ReactNode => createElement(ActionsPanel),
   };
 }

@@ -21,9 +21,7 @@
       "trait": "Academorix\\Finance\\Membership\\Concerns\\BelongsToMembershipPlan",
       "description": "Mixed into models with `membership_plan_id`. Adds `plan()` belongsTo.",
       "public": true,
-      "usedBy": [
-        "membership::Membership (owned)"
-      ]
+      "usedBy": ["membership::Membership (owned)"]
     },
     {
       "trait": "Academorix\\Finance\\Membership\\Concerns\\HasMemberships",

@@ -45,17 +45,46 @@
         {
           "kind": "View",
           "children": [
-            { "kind": "Text", "props": { "as": "h1", "className": "text-2xl font-semibold", "children": "New coupon" } },
-            { "kind": "Text", "props": { "className": "text-sm text-muted", "children": "Configure a discount code for a campaign or partner offer." } }
+            {
+              "kind": "Text",
+              "props": {
+                "as": "h1",
+                "className": "text-2xl font-semibold",
+                "children": "New coupon"
+              }
+            },
+            {
+              "kind": "Text",
+              "props": {
+                "className": "text-sm text-muted",
+                "children": "Configure a discount code for a campaign or partner offer."
+              }
+            }
           ]
         },
         {
           "kind": "Form",
-          "props": { "id": "coupon-create-form", "onSubmit": { "kind": "http.post", "url": "/api/v1/coupons", "onSuccessNavigate": "/tenant/coupons" } },
+          "props": {
+            "id": "coupon-create-form",
+            "onSubmit": {
+              "kind": "http.post",
+              "url": "/api/v1/coupons",
+              "onSuccessNavigate": "/tenant/coupons"
+            }
+          },
           "children": [
             {
               "kind": "Stepper",
-              "props": { "steps": ["Basics", "Discount", "Applicability", "Caps + limits", "Validity", "Review"] },
+              "props": {
+                "steps": [
+                  "Basics",
+                  "Discount",
+                  "Applicability",
+                  "Caps + limits",
+                  "Validity",
+                  "Review"
+                ]
+              },
               "children": [
                 {
                   "kind": "StepPanel",
@@ -112,7 +141,10 @@
                       "itemRenderer": {
                         "kind": "View",
                         "children": [
-                          { "kind": "Text", "bindings": { "children": { "$ref": "item.display_name" } } },
+                          {
+                            "kind": "Text",
+                            "bindings": { "children": { "$ref": "item.display_name" } }
+                          },
                           {
                             "kind": "Text",
                             "props": { "className": "text-xs text-muted" },
@@ -136,7 +168,9 @@
                         "minValue": 0
                       },
                       "bindings": {
-                        "hidden": { "$expr": "!form.discount_type || ['first_month_free', 'bogo', 'free_shipping'].includes(form.discount_type)" },
+                        "hidden": {
+                          "$expr": "!form.discount_type || ['first_month_free', 'bogo', 'free_shipping'].includes(form.discount_type)"
+                        },
                         "helpText": {
                           "$expr": "form.discount_type === 'percent' ? 'Fraction 0..1 (0.25 = 25%)' : form.discount_type === 'fixed_amount' ? 'Amount in cents' : 'Days (1..365)'"
                         }
@@ -181,8 +215,15 @@
                       "itemRenderer": {
                         "kind": "View",
                         "children": [
-                          { "kind": "Text", "bindings": { "children": { "$ref": "item.display_name" } } },
-                          { "kind": "Text", "props": { "className": "text-xs text-muted" }, "bindings": { "children": { "$ref": "item.description" } } }
+                          {
+                            "kind": "Text",
+                            "bindings": { "children": { "$ref": "item.display_name" } }
+                          },
+                          {
+                            "kind": "Text",
+                            "props": { "className": "text-xs text-muted" },
+                            "bindings": { "children": { "$ref": "item.description" } }
+                          }
                         ]
                       }
                     },
@@ -195,7 +236,9 @@
                       },
                       "bindings": {
                         "hidden": { "$expr": "form.applicability !== 'specific_membership_plans'" },
-                        "isRequired": { "$expr": "form.applicability === 'specific_membership_plans'" },
+                        "isRequired": {
+                          "$expr": "form.applicability === 'specific_membership_plans'"
+                        },
                         "items": { "$ref": "plans" }
                       }
                     },
@@ -303,7 +346,11 @@
                     },
                     {
                       "kind": "Button",
-                      "props": { "variant": "primary", "children": "Create coupon", "type": "submit" }
+                      "props": {
+                        "variant": "primary",
+                        "children": "Create coupon",
+                        "type": "submit"
+                      }
                     }
                   ]
                 }

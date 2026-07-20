@@ -22,10 +22,10 @@
 
 import { describe, expect, it, beforeEach, vi } from "vitest";
 
+import type { IRegisteredCommand } from "@/interfaces";
+
 import { ConsoleError, DuplicateCommandError } from "@/errors";
 import { CommandRegistry } from "@/registries";
-
-import type { IRegisteredCommand } from "@/interfaces";
 
 // ────────────────────────────────────────────────────────────────
 // Fixtures
@@ -86,9 +86,9 @@ describe("CommandRegistry — BaseRegistry adoption", () => {
       const first = createEntry({ name: "dup-me" });
       registry.register(first);
       // Second attempt via the (key, value) form must still throw.
-      expect(() =>
-        registry.register("dup-me", createEntry({ name: "dup-me" })),
-      ).toThrow(DuplicateCommandError);
+      expect(() => registry.register("dup-me", createEntry({ name: "dup-me" }))).toThrow(
+        DuplicateCommandError,
+      );
     });
 
     it("returns `this` from both overloads for chaining", () => {
@@ -116,9 +116,9 @@ describe("CommandRegistry — BaseRegistry adoption", () => {
       expect(spy.onRegisterSpy).toHaveBeenCalledTimes(1);
 
       // Duplicate — throws BEFORE onRegister runs.
-      expect(() =>
-        spy.register(createEntry({ name: "dup", namespace: "test" })),
-      ).toThrow(DuplicateCommandError);
+      expect(() => spy.register(createEntry({ name: "dup", namespace: "test" }))).toThrow(
+        DuplicateCommandError,
+      );
       // Still exactly 1 — the failed attempt didn't fire.
       expect(spy.onRegisterSpy).toHaveBeenCalledTimes(1);
     });
@@ -134,9 +134,7 @@ describe("CommandRegistry — BaseRegistry adoption", () => {
       // registry drives onRegister after Map insertion, so the
       // subclass hook uses the map that ALREADY contains the parent.
       spy.register(createEntry({ name: "queue", namespace: "" }));
-      spy.register(
-        createEntry({ name: "queue:work", namespace: "queue", parent: "queue" }),
-      );
+      spy.register(createEntry({ name: "queue:work", namespace: "queue", parent: "queue" }));
       // The parent's `subcommands` was mutated by onRegister.
       const parent = spy.get("queue");
       expect(parent?.subcommands).toContain("queue:work");

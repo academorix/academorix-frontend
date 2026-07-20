@@ -7,6 +7,6 @@
  *   re-exported by the interfaces barrel.
  */
 
-export { StaticLoader } from './static.loader';
-export { DynamicImportLoader } from './dynamic-import.loader';
-export { HttpLoader } from './http.loader';
+export { StaticLoader } from "./static.loader";
+export { DynamicImportLoader } from "./dynamic-import.loader";
+export { HttpLoader } from "./http.loader";

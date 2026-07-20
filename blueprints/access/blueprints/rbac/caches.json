@@ -48,7 +48,11 @@
       "description": "The role slugs held by a principal (short list, distinct from the full permission set). Used by the tenant-plane `GET /rbac/principals/{principal}/roles` and by delegation resolvers to walk the role chain.",
       "ttlSeconds": 300,
       "tags": ["rbac", "roles", "principal"],
-      "invalidatedBy": ["RoleAssignedToPrincipal", "RoleRevokedFromPrincipal", "RoleAssignmentExpired"]
+      "invalidatedBy": [
+        "RoleAssignedToPrincipal",
+        "RoleRevokedFromPrincipal",
+        "RoleAssignmentExpired"
+      ]
     },
     {
       "pattern": "rbac:cache:stale:{tenant_id}",

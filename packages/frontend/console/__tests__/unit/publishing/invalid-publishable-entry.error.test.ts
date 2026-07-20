@@ -43,13 +43,7 @@ describe("InvalidPublishableEntryError", () => {
     // Guardrail — the field names below are the specific strings the
     // registry passes when it rejects an entry. If any of these
     // strings change, the tests below need to update in tandem.
-    const cases = [
-      "tag",
-      "packageRoot",
-      "files",
-      "files[].from",
-      "files[].to",
-    ];
+    const cases = ["tag", "packageRoot", "files", "files[].from", "files[].to"];
     for (const field of cases) {
       const err = new InvalidPublishableEntryError(field, "bad shape", "TestModule");
       expect(err.field).toBe(field);

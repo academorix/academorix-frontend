@@ -12,11 +12,11 @@
  *   it verbatim when needed.
  */
 
-import { useCallback, useSyncExternalStore } from 'react';
-import { useInject } from '@stackra/container/react';
-import { SETTINGS_SERVICE, type ISettingsService, type Type } from '@stackra/contracts';
+import { useCallback, useSyncExternalStore } from "react";
+import { useInject } from "@stackra/container/react";
+import { SETTINGS_SERVICE, type ISettingsService, type Type } from "@stackra/contracts";
 
-import type { IUseSettingsResult } from './use-settings.interface';
+import type { IUseSettingsResult } from "./use-settings.interface";
 
 /**
  * Subscribe a component to a settings group.
@@ -39,7 +39,7 @@ import type { IUseSettingsResult } from './use-settings.interface';
  */
 export function useSettings<T extends object>(dto: Type<T>): IUseSettingsResult<T>;
 export function useSettings<T extends Record<string, unknown> = Record<string, unknown>>(
-  groupKey: string
+  groupKey: string,
 ): IUseSettingsResult<T>;
 export function useSettings<T extends object>(dtoOrKey: Type<T> | string): IUseSettingsResult<T> {
   const service = useInject<ISettingsService>(SETTINGS_SERVICE);
@@ -47,7 +47,7 @@ export function useSettings<T extends object>(dtoOrKey: Type<T> | string): IUseS
   // Resolve the group key up-front so we can pass it to
   // `useSyncExternalStore` as a subscribe key + reuse it in the
   // getter / setters.
-  const groupKey = typeof dtoOrKey === 'string' ? dtoOrKey : resolveKey(service, dtoOrKey);
+  const groupKey = typeof dtoOrKey === "string" ? dtoOrKey : resolveKey(service, dtoOrKey);
 
   // useSyncExternalStore needs stable references for `subscribe` and
   // `getSnapshot`. We also cache the last snapshot ourselves so the
@@ -56,13 +56,13 @@ export function useSettings<T extends object>(dtoOrKey: Type<T> | string): IUseS
   // to bail out.
   const subscribe = useCallback(
     (onStoreChange: () => void) => service.subscribe(groupKey, onStoreChange),
-    [service, groupKey]
+    [service, groupKey],
   );
 
   const getSnapshot = useCallback(() => {
     // Prefer the DTO-typed getter when we have it; falls back to the
     // key path for schema-only groups.
-    if (typeof dtoOrKey === 'string') {
+    if (typeof dtoOrKey === "string") {
       return (service.getByKey(dtoOrKey) ?? emptyRecord) as T;
     }
     return service.get(dtoOrKey);
@@ -72,28 +72,28 @@ export function useSettings<T extends object>(dtoOrKey: Type<T> | string): IUseS
 
   const set = useCallback(
     (key: keyof T & string, value: unknown): void => {
-      if (typeof dtoOrKey === 'string') {
+      if (typeof dtoOrKey === "string") {
         service.setByKey(dtoOrKey, key, value);
       } else {
         service.set(dtoOrKey, key, value);
       }
     },
-    [service, dtoOrKey]
+    [service, dtoOrKey],
   );
 
   const setMany = useCallback(
     (partial: Partial<T>): void => {
-      if (typeof dtoOrKey === 'string') {
+      if (typeof dtoOrKey === "string") {
         service.setManyByKey(dtoOrKey, partial as Record<string, unknown>);
       } else {
         service.setMany(dtoOrKey, partial);
       }
     },
-    [service, dtoOrKey]
+    [service, dtoOrKey],
   );
 
   const reset = useCallback((): void => {
-    if (typeof dtoOrKey === 'string') {
+    if (typeof dtoOrKey === "string") {
       service.resetByKey(dtoOrKey);
     } else {
       service.reset(dtoOrKey);
@@ -114,7 +114,7 @@ function resolveKey(service: ISettingsService, dto: Type): string {
   if (!definition) {
     throw new Error(
       `[useSettings] "${dto.name}" is not registered. ` +
-        `Wrap it with SettingsModule.forFeature([${dto.name}]).`
+        `Wrap it with SettingsModule.forFeature([${dto.name}]).`,
     );
   }
   return definition.key;

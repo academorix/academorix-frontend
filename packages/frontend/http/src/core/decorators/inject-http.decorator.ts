@@ -8,9 +8,9 @@
  * @module @stackra/http/decorators/inject-http
  */
 
-import { Inject } from '@stackra/container';
+import { Inject } from "@stackra/container";
 
-import { getHttpConnectionToken } from '../utils/get-http-connection-token.util';
+import { getHttpConnectionToken } from "../utils/get-http-connection-token.util";
 
 /**
  * Inject the `IHttpClient` for a named connection.

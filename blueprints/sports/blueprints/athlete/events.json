@@ -38,10 +38,7 @@
       "class": "Academorix\\Sports\\Athlete\\Events\\AthleteUpdated",
       "trigger": "Any Athlete scalar field mutated except status (dedicated transition events), consent_* (AthleteConsentRecorded / AthleteConsentRevoked / AthletePhotoConsentChanged), medical_* (AthleteMedicalUpdated — private-tier), emergency_contact_* (AthleteEmergencyContactUpdated), user_id (AthleteLinkedToUser), current_age_group_id (AthleteAgeGroupSnapshotUpdated).",
       "queue": "notifications",
-      "consumers": [
-        "audit::WriteToAuditLog",
-        "activity::WriteToActivityLog"
-      ],
+      "consumers": ["audit::WriteToAuditLog", "activity::WriteToActivityLog"],
       "payload": {
         "athlete_id": "ULID",
         "tenant_id": "ULID",
@@ -246,10 +243,7 @@
       "class": "Academorix\\Sports\\Athlete\\Events\\AthleteArchived",
       "trigger": "Athlete soft-deleted (deleted_at set). Status transitions to 'archived'. Releases 1 unit of athlete_slot entitlement.",
       "queue": "notifications",
-      "consumers": [
-        "audit::WriteToAuditLog",
-        "activity::WriteToActivityLog"
-      ],
+      "consumers": ["audit::WriteToAuditLog", "activity::WriteToActivityLog"],
       "payload": {
         "athlete_id": "ULID",
         "tenant_id": "ULID",
@@ -263,10 +257,7 @@
       "class": "Academorix\\Sports\\Athlete\\Events\\AthleteRestored",
       "trigger": "Archived athlete restored (deleted_at cleared, status → active). Consumes 1 unit of athlete_slot. Only within retention window.",
       "queue": "notifications",
-      "consumers": [
-        "audit::WriteToAuditLog",
-        "activity::WriteToActivityLog"
-      ],
+      "consumers": ["audit::WriteToAuditLog", "activity::WriteToActivityLog"],
       "payload": {
         "athlete_id": "ULID",
         "tenant_id": "ULID",
@@ -279,9 +270,7 @@
       "class": "Academorix\\Sports\\Athlete\\Events\\AthleteDeleted",
       "trigger": "Athlete hard-deleted. Fires from PurgeArchivedAthletesJob after 7-year retention window + no downstream references. Also fires on TenantErased cascade.",
       "queue": "notifications",
-      "consumers": [
-        "audit::WriteToAuditLog"
-      ],
+      "consumers": ["audit::WriteToAuditLog"],
       "payload": {
         "athlete_id": "ULID",
         "tenant_id": "ULID",

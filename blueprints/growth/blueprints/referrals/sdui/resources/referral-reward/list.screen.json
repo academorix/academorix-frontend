@@ -26,7 +26,11 @@
       "children": [
         {
           "kind": "Text",
-          "props": { "as": "h1", "className": "text-2xl font-semibold", "children": "Referral rewards" }
+          "props": {
+            "as": "h1",
+            "className": "text-2xl font-semibold",
+            "children": "Referral rewards"
+          }
         },
         {
           "kind": "View",
@@ -44,7 +48,13 @@
                 { "id": "cancelled", "label": "Cancelled" },
                 { "id": "clawback", "label": "Clawback" }
               ],
-              "actions": { "onSelectionChange": { "kind": "filter.set", "field": "status", "valueExpr": "$selectedKey" } }
+              "actions": {
+                "onSelectionChange": {
+                  "kind": "filter.set",
+                  "field": "status",
+                  "valueExpr": "$selectedKey"
+                }
+              }
             },
             {
               "kind": "ComboBox",
@@ -53,7 +63,13 @@
                 { "id": "referrer", "label": "Referrer" },
                 { "id": "referred", "label": "Referred" }
               ],
-              "actions": { "onSelectionChange": { "kind": "filter.set", "field": "recipient_role", "valueExpr": "$selectedKey" } }
+              "actions": {
+                "onSelectionChange": {
+                  "kind": "filter.set",
+                  "field": "recipient_role",
+                  "valueExpr": "$selectedKey"
+                }
+              }
             },
             {
               "kind": "ComboBox",
@@ -66,7 +82,13 @@
                 { "id": "credits", "label": "Credits" },
                 { "id": "point_award", "label": "Points" }
               ],
-              "actions": { "onSelectionChange": { "kind": "filter.set", "field": "reward_type", "valueExpr": "$selectedKey" } }
+              "actions": {
+                "onSelectionChange": {
+                  "kind": "filter.set",
+                  "field": "reward_type",
+                  "valueExpr": "$selectedKey"
+                }
+              }
             }
           ]
         },
@@ -82,7 +104,9 @@
               "label": "Recipient",
               "renderer": {
                 "kind": "Text",
-                "bindings": { "children": { "$expr": "row.recipient?.display_name || row.recipient_id" } }
+                "bindings": {
+                  "children": { "$expr": "row.recipient?.display_name || row.recipient_id" }
+                }
               }
             },
             {

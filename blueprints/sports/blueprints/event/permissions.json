@@ -6,35 +6,127 @@
   "isSystem": true,
   "scope_suffix_convention": "Read permissions may carry a scope suffix (`.any`, `.tenant`). Event has no `.branch` / `.org` variants because visibility filtering handles that — the base permission grants access to every event the caller can see per the visibility model. Writes are always tenant-scoped.",
   "permissions": [
-    { "name": "events.viewAny", "guard": "sanctum", "seededOn": ["admin", "owner", "member", "coach", "reception", "athlete", "guardian"], "description": "List events. Row-level visibility (public / tenant_only / participants_only / private) filters what each role actually sees." },
-    { "name": "events.viewAny.tenant", "guard": "sanctum", "seededOn": ["admin", "owner", "member", "coach", "reception", "athlete", "guardian"] },
-    { "name": "events.view", "guard": "sanctum", "seededOn": ["admin", "owner", "member", "coach", "reception", "athlete", "guardian"], "description": "Single-event read. Visibility rules still apply." },
-    { "name": "events.viewPrivate", "guard": "sanctum", "seededOn": ["admin", "owner"], "description": "Read events with visibility='private'. Admin + owner only — private events are admin-facing dry runs / internal-only." },
-    { "name": "events.create", "guard": "sanctum", "seededOn": ["admin", "owner"], "description": "Consumes 1 unit of the event_slot entitlement per overlapping calendar year." },
-    { "name": "events.update", "guard": "sanctum", "seededOn": ["admin", "owner"], "description": "Mutable fields depend on status. See routes.json PATCH endpoint for the immutability matrix." },
-    { "name": "events.dates.shift", "guard": "sanctum", "seededOn": ["owner"], "description": "Owner-only. Permits starts_at / ends_at changes on Events with status IN (announced, registration_open, registration_closed, in_progress). Fires EventRescheduled (audit-warn) + cannot-opt-out notification to registered." },
-    { "name": "events.venue.change", "guard": "sanctum", "seededOn": ["owner"], "description": "Owner-only. Permits branch_id + primary facility change post-registration_open. Fires EventVenueChanged." },
-    { "name": "events.pricing.change", "guard": "sanctum", "seededOn": ["owner"], "description": "Owner-only. Permits entry_fee_cents / late_registration_fee_cents / prize_pool_cents change post-registration_open. Financial-audit-critical — every fire retained 7 years." },
-    { "name": "events.eligibility.narrow", "guard": "sanctum", "seededOn": ["owner"], "description": "Owner-only. Permits narrowing min_age / max_age / age_group_ids post-registration_open. Fires EventMinorEligibilityCorrected when the narrowing excludes existing registrants." },
-    { "name": "events.delete", "guard": "sanctum", "seededOn": ["owner"], "description": "Owner-only. Soft-delete (archive path). Hard-delete via retention purge only." },
+    {
+      "name": "events.viewAny",
+      "guard": "sanctum",
+      "seededOn": ["admin", "owner", "member", "coach", "reception", "athlete", "guardian"],
+      "description": "List events. Row-level visibility (public / tenant_only / participants_only / private) filters what each role actually sees."
+    },
+    {
+      "name": "events.viewAny.tenant",
+      "guard": "sanctum",
+      "seededOn": ["admin", "owner", "member", "coach", "reception", "athlete", "guardian"]
+    },
+    {
+      "name": "events.view",
+      "guard": "sanctum",
+      "seededOn": ["admin", "owner", "member", "coach", "reception", "athlete", "guardian"],
+      "description": "Single-event read. Visibility rules still apply."
+    },
+    {
+      "name": "events.viewPrivate",
+      "guard": "sanctum",
+      "seededOn": ["admin", "owner"],
+      "description": "Read events with visibility='private'. Admin + owner only — private events are admin-facing dry runs / internal-only."
+    },
+    {
+      "name": "events.create",
+      "guard": "sanctum",
+      "seededOn": ["admin", "owner"],
+      "description": "Consumes 1 unit of the event_slot entitlement per overlapping calendar year."
+    },
+    {
+      "name": "events.update",
+      "guard": "sanctum",
+      "seededOn": ["admin", "owner"],
+      "description": "Mutable fields depend on status. See routes.json PATCH endpoint for the immutability matrix."
+    },
+    {
+      "name": "events.dates.shift",
+      "guard": "sanctum",
+      "seededOn": ["owner"],
+      "description": "Owner-only. Permits starts_at / ends_at changes on Events with status IN (announced, registration_open, registration_closed, in_progress). Fires EventRescheduled (audit-warn) + cannot-opt-out notification to registered."
+    },
+    {
+      "name": "events.venue.change",
+      "guard": "sanctum",
+      "seededOn": ["owner"],
+      "description": "Owner-only. Permits branch_id + primary facility change post-registration_open. Fires EventVenueChanged."
+    },
+    {
+      "name": "events.pricing.change",
+      "guard": "sanctum",
+      "seededOn": ["owner"],
+      "description": "Owner-only. Permits entry_fee_cents / late_registration_fee_cents / prize_pool_cents change post-registration_open. Financial-audit-critical — every fire retained 7 years."
+    },
+    {
+      "name": "events.eligibility.narrow",
+      "guard": "sanctum",
+      "seededOn": ["owner"],
+      "description": "Owner-only. Permits narrowing min_age / max_age / age_group_ids post-registration_open. Fires EventMinorEligibilityCorrected when the narrowing excludes existing registrants."
+    },
+    {
+      "name": "events.delete",
+      "guard": "sanctum",
+      "seededOn": ["owner"],
+      "description": "Owner-only. Soft-delete (archive path). Hard-delete via retention purge only."
+    },
     { "name": "events.announce", "guard": "sanctum", "seededOn": ["admin", "owner"] },
     { "name": "events.open_registration", "guard": "sanctum", "seededOn": ["admin", "owner"] },
     { "name": "events.close_registration", "guard": "sanctum", "seededOn": ["admin", "owner"] },
     { "name": "events.start", "guard": "sanctum", "seededOn": ["admin", "owner"] },
     { "name": "events.complete", "guard": "sanctum", "seededOn": ["admin", "owner"] },
-    { "name": "events.cancel", "guard": "sanctum", "seededOn": ["admin", "owner"], "description": "Fires EventCancelled + EventCancellationBroadcast (cannot-opt-out notification to registered)." },
+    {
+      "name": "events.cancel",
+      "guard": "sanctum",
+      "seededOn": ["admin", "owner"],
+      "description": "Fires EventCancelled + EventCancellationBroadcast (cannot-opt-out notification to registered)."
+    },
     { "name": "events.archive", "guard": "sanctum", "seededOn": ["admin", "owner"] },
     { "name": "events.restore", "guard": "sanctum", "seededOn": ["admin", "owner"] },
-    { "name": "events.publish", "guard": "sanctum", "seededOn": ["admin", "owner"], "description": "Set visibility='public'. Gated by event_public_visibility entitlement." },
+    {
+      "name": "events.publish",
+      "guard": "sanctum",
+      "seededOn": ["admin", "owner"],
+      "description": "Set visibility='public'. Gated by event_public_visibility entitlement."
+    },
     { "name": "events.unpublish", "guard": "sanctum", "seededOn": ["admin", "owner"] },
     { "name": "events.facilities.attach", "guard": "sanctum", "seededOn": ["admin", "owner"] },
     { "name": "events.facilities.detach", "guard": "sanctum", "seededOn": ["admin", "owner"] },
     { "name": "events.facilities.set_primary", "guard": "sanctum", "seededOn": ["admin", "owner"] },
-    { "name": "events.livestream.manage", "guard": "sanctum", "seededOn": ["admin", "owner"], "description": "Manage livestream_url + livestream_password. Gated by event_livestream entitlement." },
-    { "name": "events.enroll.late", "guard": "sanctum", "seededOn": ["admin", "owner"], "description": "Permission for the downstream enrollment surface (Wave 3+) to accept event registrations in the late-registration window. NOT seeded on the reception role by default — admins explicitly grant it." },
-    { "name": "events.manage", "guard": "sanctum", "seededOn": ["admin", "owner"], "description": "Umbrella permission for the settings blueprint gate. Admin + owner." },
-    { "name": "platform.events.viewAny", "guard": "platform_admin", "seededOn": ["super_admin", "ops", "support"] },
-    { "name": "platform.events.view", "guard": "platform_admin", "seededOn": ["super_admin", "ops", "support"] },
-    { "name": "platform.events.force_cancel", "guard": "platform_admin", "seededOn": ["super_admin", "ops"], "description": "Force-cancel escape hatch. Two-person path — ops must document the incident + get super_admin approval. Fires EventCancelled + EventCancellationBroadcast." }
+    {
+      "name": "events.livestream.manage",
+      "guard": "sanctum",
+      "seededOn": ["admin", "owner"],
+      "description": "Manage livestream_url + livestream_password. Gated by event_livestream entitlement."
+    },
+    {
+      "name": "events.enroll.late",
+      "guard": "sanctum",
+      "seededOn": ["admin", "owner"],
+      "description": "Permission for the downstream enrollment surface (Wave 3+) to accept event registrations in the late-registration window. NOT seeded on the reception role by default — admins explicitly grant it."
+    },
+    {
+      "name": "events.manage",
+      "guard": "sanctum",
+      "seededOn": ["admin", "owner"],
+      "description": "Umbrella permission for the settings blueprint gate. Admin + owner."
+    },
+    {
+      "name": "platform.events.viewAny",
+      "guard": "platform_admin",
+      "seededOn": ["super_admin", "ops", "support"]
+    },
+    {
+      "name": "platform.events.view",
+      "guard": "platform_admin",
+      "seededOn": ["super_admin", "ops", "support"]
+    },
+    {
+      "name": "platform.events.force_cancel",
+      "guard": "platform_admin",
+      "seededOn": ["super_admin", "ops"],
+      "description": "Force-cancel escape hatch. Two-person path — ops must document the incident + get super_admin approval. Fires EventCancelled + EventCancellationBroadcast."
+    }
   ]
 }

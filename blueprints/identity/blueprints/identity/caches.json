@@ -11,7 +11,11 @@
       "description": "Identity ID resolved from email (via SHA-256 hash of normalised email, NEVER the plaintext). Read by every login attempt. Very short TTL so a soft-delete propagates within one minute.",
       "ttlSeconds": 30,
       "tags": ["identity"],
-      "invalidatedBy": ["IdentityObserver.creating", "IdentityObserver.updating (email dirty)", "IdentityObserver.deleting"]
+      "invalidatedBy": [
+        "IdentityObserver.creating",
+        "IdentityObserver.updating (email dirty)",
+        "IdentityObserver.deleting"
+      ]
     },
     {
       "pattern": "idn:lookup:id:{identity_id}",

@@ -67,9 +67,7 @@ describe("WidgetCohortRegistry", () => {
   it("rejects a cohort with an empty label", () => {
     const registry = new WidgetCohortRegistry();
 
-    expect(() => registry.register(makeCohort({ label: "" }))).toThrow(
-      InvalidWidgetMetadataError,
-    );
+    expect(() => registry.register(makeCohort({ label: "" }))).toThrow(InvalidWidgetMetadataError);
   });
 
   it("rejects a cohort with an empty description", () => {
@@ -83,9 +81,7 @@ describe("WidgetCohortRegistry", () => {
   it("rejects a cohort with an empty icon", () => {
     const registry = new WidgetCohortRegistry();
 
-    expect(() => registry.register(makeCohort({ icon: "" }))).toThrow(
-      InvalidWidgetMetadataError,
-    );
+    expect(() => registry.register(makeCohort({ icon: "" }))).toThrow(InvalidWidgetMetadataError);
   });
 
   it("iterates cohorts in insertion order via values()", () => {
@@ -95,10 +91,6 @@ describe("WidgetCohortRegistry", () => {
     registry.register(makeCohort({ key: "charts", label: "Charts", icon: "chart-column" }));
     registry.register(makeCohort({ key: "calendar", label: "Calendar", icon: "clock" }));
 
-    expect(registry.values().map((entry) => entry.key)).toEqual([
-      "numbers",
-      "charts",
-      "calendar",
-    ]);
+    expect(registry.values().map((entry) => entry.key)).toEqual(["numbers", "charts", "calendar"]);
   });
 });

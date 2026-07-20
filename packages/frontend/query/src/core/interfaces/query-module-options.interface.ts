@@ -9,7 +9,7 @@
  *   cross-package contract).
  */
 
-import type { MutationMode, QueryLiveMode } from '@stackra/contracts';
+import type { MutationMode, QueryLiveMode } from "@stackra/contracts";
 
 /**
  * Default configuration for the query layer.

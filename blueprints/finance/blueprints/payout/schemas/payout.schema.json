@@ -16,7 +16,14 @@
     "model": "Academorix\\Finance\\Payout\\Models\\Payout",
     "interface": "Academorix\\Finance\\Payout\\Contracts\\Data\\PayoutInterface",
     "implements": ["Academorix\\Finance\\Payout\\Contracts\\Data\\PayoutInterface"],
-    "traits": ["HasFactory", "HasUlids", "BelongsToTenant", "HasMetadata", "HasUserstamps", "Auditable"],
+    "traits": [
+      "HasFactory",
+      "HasUlids",
+      "BelongsToTenant",
+      "HasMetadata",
+      "HasUserstamps",
+      "Auditable"
+    ],
     "casts": {
       "status": "PayoutStatus",
       "amount_minor": "bigint",
@@ -33,21 +40,73 @@
   "x-database": {
     "engine": "postgres",
     "columns": {
-      "id": { "type": "string", "length": 64, "primary": true, "description": "Prefixed ULID: `pyo_<26>`." },
-      "tenant_id": { "type": "string", "length": 64, "nullable": false, "foreign": { "table": "tenants", "column": "id", "onDelete": "cascade" } },
-      "gateway_config_id": { "type": "string", "length": 64, "nullable": false, "foreign": { "table": "payment_gateway_configs", "column": "id", "onDelete": "restrict" } },
-      "provider": { "type": "string", "length": 32, "nullable": false, "description": "Enum: stripe / paddle / checkout_com / square / razorpay." },
-      "provider_payout_id": { "type": "string", "length": 255, "nullable": false, "description": "e.g. Stripe po_*. Unique key per (tenant_id, provider)." },
-      "status": { "type": "string", "length": 24, "nullable": false, "description": "Enum: pending / in_transit / paid / failed / cancelled." },
+      "id": {
+        "type": "string",
+        "length": 64,
+        "primary": true,
+        "description": "Prefixed ULID: `pyo_<26>`."
+      },
+      "tenant_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "foreign": { "table": "tenants", "column": "id", "onDelete": "cascade" }
+      },
+      "gateway_config_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "foreign": { "table": "payment_gateway_configs", "column": "id", "onDelete": "restrict" }
+      },
+      "provider": {
+        "type": "string",
+        "length": 32,
+        "nullable": false,
+        "description": "Enum: stripe / paddle / checkout_com / square / razorpay."
+      },
+      "provider_payout_id": {
+        "type": "string",
+        "length": 255,
+        "nullable": false,
+        "description": "e.g. Stripe po_*. Unique key per (tenant_id, provider)."
+      },
+      "status": {
+        "type": "string",
+        "length": 24,
+        "nullable": false,
+        "description": "Enum: pending / in_transit / paid / failed / cancelled."
+      },
       "currency": { "type": "string", "length": 3, "nullable": false },
-      "amount_minor": { "type": "bigint", "nullable": false, "description": "Gross payout amount (before provider fees)." },
-      "fee_minor": { "type": "bigint", "nullable": false, "default": 0, "description": "Provider fees deducted." },
-      "net_minor": { "type": "bigint", "nullable": false, "description": "amount - fee. What lands in the tenant's bank." },
-      "arrival_at": { "type": "timestamptz", "nullable": true, "description": "Provider's estimated arrival date." },
+      "amount_minor": {
+        "type": "bigint",
+        "nullable": false,
+        "description": "Gross payout amount (before provider fees)."
+      },
+      "fee_minor": {
+        "type": "bigint",
+        "nullable": false,
+        "default": 0,
+        "description": "Provider fees deducted."
+      },
+      "net_minor": {
+        "type": "bigint",
+        "nullable": false,
+        "description": "amount - fee. What lands in the tenant's bank."
+      },
+      "arrival_at": {
+        "type": "timestamptz",
+        "nullable": true,
+        "description": "Provider's estimated arrival date."
+      },
       "paid_at": { "type": "timestamptz", "nullable": true },
       "failed_at": { "type": "timestamptz", "nullable": true },
       "reconciled_at": { "type": "timestamptz", "nullable": true },
-      "destination_type": { "type": "string", "length": 32, "nullable": true, "description": "e.g. bank_account / card / wallet." },
+      "destination_type": {
+        "type": "string",
+        "length": 32,
+        "nullable": true,
+        "description": "e.g. bank_account / card / wallet."
+      },
       "destination_last4": { "type": "string", "length": 4, "nullable": true },
       "provider_snapshot": { "type": "jsonb", "nullable": true },
       "metadata": { "type": "jsonb", "nullable": true },
@@ -57,16 +116,39 @@
       "updated_at": { "type": "timestamptz", "nullable": false }
     },
     "indexes": [
-      { "columns": ["tenant_id", "provider", "provider_payout_id"], "unique": true, "name": "payouts_provider_id_unique" },
+      {
+        "columns": ["tenant_id", "provider", "provider_payout_id"],
+        "unique": true,
+        "name": "payouts_provider_id_unique"
+      },
       { "columns": ["tenant_id", "status", "arrival_at"], "name": "payouts_status_arrival_idx" }
     ]
   },
-  "required": ["id", "tenant_id", "gateway_config_id", "provider", "provider_payout_id", "status", "currency", "amount_minor", "fee_minor", "net_minor", "created_at", "updated_at"],
+  "required": [
+    "id",
+    "tenant_id",
+    "gateway_config_id",
+    "provider",
+    "provider_payout_id",
+    "status",
+    "currency",
+    "amount_minor",
+    "fee_minor",
+    "net_minor",
+    "created_at",
+    "updated_at"
+  ],
   "properties": {
     "id": { "type": "string", "pattern": "^pyo_[0-9A-HJKMNP-TV-Z]{26}$" },
     "tenant_id": { "type": "string", "pattern": "^ten_[0-9A-HJKMNP-TV-Z]{26}$" },
-    "provider": { "type": "string", "enum": ["stripe", "paddle", "checkout_com", "square", "razorpay"] },
-    "status": { "type": "string", "enum": ["pending", "in_transit", "paid", "failed", "cancelled"] },
+    "provider": {
+      "type": "string",
+      "enum": ["stripe", "paddle", "checkout_com", "square", "razorpay"]
+    },
+    "status": {
+      "type": "string",
+      "enum": ["pending", "in_transit", "paid", "failed", "cancelled"]
+    },
     "currency": { "type": "string", "pattern": "^[A-Z]{3}$" },
     "amount_minor": { "type": "integer" },
     "net_minor": { "type": "integer" },

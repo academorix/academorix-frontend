@@ -6,22 +6,22 @@
  *   types. React bindings live in `@stackra/scope/react`.
  */
 
-import 'reflect-metadata';
+import "reflect-metadata";
 
 // ════════════════════════════════════════════════════════════════════════════════
 // Module
 // ════════════════════════════════════════════════════════════════════════════════
-export { ScopeModule, type ScopeRootOptions } from './scope.module';
+export { ScopeModule, type ScopeRootOptions } from "./scope.module";
 
 // ════════════════════════════════════════════════════════════════════════════════
 // Services
 // ════════════════════════════════════════════════════════════════════════════════
-export { ScopeService, type ScopeListener } from './services';
+export { ScopeService, type ScopeListener } from "./services";
 
 // ════════════════════════════════════════════════════════════════════════════════
 // Constants / Tokens
 // ════════════════════════════════════════════════════════════════════════════════
-export { DEFAULT_SCOPE_OPTIONS, SCOPE_SERVICE, SCOPE_CONFIG, SCOPE_DATA_SOURCE } from './constants';
+export { DEFAULT_SCOPE_OPTIONS, SCOPE_SERVICE, SCOPE_CONFIG, SCOPE_DATA_SOURCE } from "./constants";
 
 // ════════════════════════════════════════════════════════════════════════════════
 // Errors
@@ -37,17 +37,17 @@ export {
   ScopeOwnerViolationError,
   ScopeValidationError,
   ScopeContextRequiredError,
-} from './errors';
+} from "./errors";
 
 // ════════════════════════════════════════════════════════════════════════════════
 // Adapters
 // ════════════════════════════════════════════════════════════════════════════════
-export { StorageBackedScopePersistAdapter } from './adapters';
+export { StorageBackedScopePersistAdapter } from "./adapters";
 
 // ════════════════════════════════════════════════════════════════════════════════
 // Utilities
 // ════════════════════════════════════════════════════════════════════════════════
-export { defineConfig, parseMaterializedPath, buildTree, withPersistAdapter } from './utils';
+export { defineConfig, parseMaterializedPath, buildTree, withPersistAdapter } from "./utils";
 
 // ════════════════════════════════════════════════════════════════════════════════
 // Interfaces
@@ -63,4 +63,4 @@ export type {
   IScopeModuleOptions,
   IScopeDataSource,
   IScopePersistAdapter,
-} from './interfaces';
+} from "./interfaces";

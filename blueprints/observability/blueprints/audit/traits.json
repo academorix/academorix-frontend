@@ -13,16 +13,31 @@
       }
     ],
     "foundation": [
-      { "trait": "Academorix\\Foundation\\Concerns\\HasUlids", "consumed_by": "AuditRetentionPolicy (arp_)" },
-      { "trait": "Academorix\\Foundation\\Concerns\\HasUserstamps", "consumed_by": "AuditRetentionPolicy" },
-      { "trait": "Academorix\\Foundation\\Concerns\\HasMetadata", "consumed_by": "AuditRetentionPolicy" },
+      {
+        "trait": "Academorix\\Foundation\\Concerns\\HasUlids",
+        "consumed_by": "AuditRetentionPolicy (arp_)"
+      },
+      {
+        "trait": "Academorix\\Foundation\\Concerns\\HasUserstamps",
+        "consumed_by": "AuditRetentionPolicy"
+      },
+      {
+        "trait": "Academorix\\Foundation\\Concerns\\HasMetadata",
+        "consumed_by": "AuditRetentionPolicy"
+      },
       {
         "trait": "Academorix\\Foundation\\Concerns\\HasAuditable",
         "consumed_by": "AuditRetentionPolicy — the policy itself is audited (SELF-audit). Every policy CRUD writes an audit row via the vendor Auditable trait on the policy model.",
         "note": "Wraps `OwenIt\\Auditing\\Auditable` + adds our tenant_id column enforcement. Applied to policy rows but NOT to Audit rows themselves (audit rows don't audit themselves — that would recurse infinitely)."
       },
-      { "trait": "Academorix\\Foundation\\Concerns\\IsRetentionAware", "consumed_by": "Audit + AuditRetentionPolicy + AuditExport" },
-      { "trait": "Academorix\\Foundation\\Concerns\\Filterable", "consumed_by": "Audit + AuditRetentionPolicy + AuditExport" }
+      {
+        "trait": "Academorix\\Foundation\\Concerns\\IsRetentionAware",
+        "consumed_by": "Audit + AuditRetentionPolicy + AuditExport"
+      },
+      {
+        "trait": "Academorix\\Foundation\\Concerns\\Filterable",
+        "consumed_by": "Audit + AuditRetentionPolicy + AuditExport"
+      }
     ],
     "tenancy": [
       {
@@ -41,12 +56,7 @@
   },
   "composition": {
     "audit": {
-      "traits": [
-        "HasFactory",
-        "BelongsToTenant",
-        "IsRetentionAware",
-        "Filterable"
-      ],
+      "traits": ["HasFactory", "BelongsToTenant", "IsRetentionAware", "Filterable"],
       "notes": "NO HasUlids — primary key stays vendor's bigint auto-increment. NO HasUserstamps — the vendor's user_type + user_id polymorphic actor is the equivalent. NO HasAuditable — audit rows do not audit themselves (recursion). NO SoftDeletes — hard-purge at retention boundary. NO HasMetadata — the vendor's tags + old_values/new_values already serve as metadata."
     },
     "audit_retention_policy": {

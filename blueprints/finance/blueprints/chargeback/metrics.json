@@ -6,8 +6,26 @@
   "namespace": "academorix.chargeback",
   "labelConventions": {
     "always": [],
-    "commonlyAvailable": ["status", "network", "reason_category", "reason_code", "provider", "failure_reason_category", "error_category", "clawback_type"],
-    "forbiddenAsLabels": ["tenant_id", "chargeback_id", "payment_id", "invoice_id", "customer_id", "chargeback_number", "amount_cents", "provider_reference_id"]
+    "commonlyAvailable": [
+      "status",
+      "network",
+      "reason_category",
+      "reason_code",
+      "provider",
+      "failure_reason_category",
+      "error_category",
+      "clawback_type"
+    ],
+    "forbiddenAsLabels": [
+      "tenant_id",
+      "chargeback_id",
+      "payment_id",
+      "invoice_id",
+      "customer_id",
+      "chargeback_number",
+      "amount_cents",
+      "provider_reference_id"
+    ]
   },
   "metrics": [
     {

@@ -14,19 +14,31 @@
 
 ---
 
-Collision was created by, and is maintained by **[Nuno Maduro](https://github.com/nunomaduro)**, and is a package designed to give you beautiful error reporting when interacting with your app through the command line.
+Collision was created by, and is maintained by
+**[Nuno Maduro](https://github.com/nunomaduro)**, and is a package designed to
+give you beautiful error reporting when interacting with your app through the
+command line.
 
-* It's included on **[Laravel](https://laravel.com)**, the most popular free, open-source PHP framework in the world.
-* Built on top of the **[Whoops](https://github.com/filp/whoops)** error handler.
-* Supports [Laravel](https://github.com/laravel/laravel), [Symfony](https://symfony.com), [PHPUnit](https://github.com/sebastianbergmann/phpunit), and many other frameworks.
+- It's included on **[Laravel](https://laravel.com)**, the most popular free,
+  open-source PHP framework in the world.
+- Built on top of the **[Whoops](https://github.com/filp/whoops)** error
+  handler.
+- Supports [Laravel](https://github.com/laravel/laravel),
+  [Symfony](https://symfony.com),
+  [PHPUnit](https://github.com/sebastianbergmann/phpunit), and many other
+  frameworks.
 
-- Follow the creator Nuno Maduro:
-    - YouTube: **[youtube.com/@nunomaduro](https://youtube.com/@nunomaduro)** — Videos every week
-    - Twitch: **[twitch.tv/nunomaduro](https://twitch.tv/nunomaduro)** — Live coding on Mondays, Wednesdays, and Fridays at 9PM UTC
-    - Twitter / X: **[x.com/enunomaduro](https://x.com/enunomaduro)**
-    - LinkedIn: **[linkedin.com/in/nunomaduro](https://www.linkedin.com/in/nunomaduro)**
-    - Instagram: **[instagram.com/enunomaduro](https://www.instagram.com/enunomaduro)**
-    - Tiktok: **[tiktok.com/@enunomaduro](https://www.tiktok.com/@enunomaduro)**
+* Follow the creator Nuno Maduro:
+  - YouTube: **[youtube.com/@nunomaduro](https://youtube.com/@nunomaduro)** —
+    Videos every week
+  - Twitch: **[twitch.tv/nunomaduro](https://twitch.tv/nunomaduro)** — Live
+    coding on Mondays, Wednesdays, and Fridays at 9PM UTC
+  - Twitter / X: **[x.com/enunomaduro](https://x.com/enunomaduro)**
+  - LinkedIn:
+    **[linkedin.com/in/nunomaduro](https://www.linkedin.com/in/nunomaduro)**
+  - Instagram:
+    **[instagram.com/enunomaduro](https://www.instagram.com/enunomaduro)**
+  - Tiktok: **[tiktok.com/@enunomaduro](https://www.tiktok.com/@enunomaduro)**
 
 ## Installation & Usage
 
@@ -40,15 +52,15 @@ composer require nunomaduro/collision --dev
 
 ## Version Compatibility
 
- Laravel    | Collision | PHPUnit          | Pest          |
-:-----------|:----------|:-----------------|:--------------|
- 6.x        | 3.x       |                  |               |
- 7.x        | 4.x       |                  |               |
- 8.x        | 5.x       |                  |               |
- 9.x, 10.x  | 6.x       |                  |               |
- 10.x       | 6.x       | 9.x              | 1.x           |
- 10.x       | 7.x       | 10.x             | 2.x           |
- 11.x, 12.x | 8.x       | 10.x, 11.x, 12.x, 13.x | 2.x, 3.x, 4.x, 5.x |
+| Laravel    | Collision | PHPUnit                | Pest               |
+| :--------- | :-------- | :--------------------- | :----------------- |
+| 6.x        | 3.x       |                        |                    |
+| 7.x        | 4.x       |                        |                    |
+| 8.x        | 5.x       |                        |                    |
+| 9.x, 10.x  | 6.x       |                        |                    |
+| 10.x       | 6.x       | 9.x                    | 1.x                |
+| 10.x       | 7.x       | 10.x                   | 2.x                |
+| 11.x, 12.x | 8.x       | 10.x, 11.x, 12.x, 13.x | 2.x, 3.x, 4.x, 5.x |
 
 As an example, here is how to require Collision on Laravel 8.x:
 
@@ -66,12 +78,15 @@ You need to register the handler in your code:
 
 ## Contributing
 
-Thank you for considering to contribute to Collision. All the contribution guidelines are mentioned [here](CONTRIBUTING.md).
+Thank you for considering to contribute to Collision. All the contribution
+guidelines are mentioned [here](CONTRIBUTING.md).
 
-You can also follow the twitter account for latest announcements or just come say hi!: [@enunomaduro](https://twitter.com/enunomaduro)
+You can also follow the twitter account for latest announcements or just come
+say hi!: [@enunomaduro](https://twitter.com/enunomaduro)
 
 ## License
 
-Collision is an open-sourced software licensed under the [MIT license](LICENSE.md).
+Collision is an open-sourced software licensed under the
+[MIT license](LICENSE.md).
 
 Logo by [Caneco](https://twitter.com/caneco).

@@ -18,5 +18,5 @@ export function useBreadcrumb(): IBreadcrumbEntry | null {
   const crumbs = useBreadcrumbs();
   // The `useBreadcrumbs` implementation already flags the last entry
   // as `isCurrent`; short-circuit the lookup.
-  return crumbs.length > 0 ? crumbs[crumbs.length - 1] : null;
+  return crumbs.length > 0 ? (crumbs[crumbs.length - 1] ?? null) : null;
 }

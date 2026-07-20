@@ -10,38 +10,38 @@
  *   (Req 6.10 — spurious unregisters are no-ops).
  */
 
-import { describe, it } from 'vitest';
+import { describe, it } from "vitest";
 
-import { ToolRegistry } from '@/core/registries/tool.registry';
-import { forAll, type IPrng } from './property-test.helper';
+import { ToolRegistry } from "@/core/registries/tool.registry";
+import { forAll, type IPrng } from "./property-test.helper";
 
-const NAME = 'nav';
+const NAME = "nav";
 const noop = async (): Promise<void> => undefined;
 const asEntry = (): {
   definition: { name: string; description: string; parameters: unknown };
   handler: () => Promise<unknown>;
 } => ({
-  definition: { name: NAME, description: '', parameters: {} },
+  definition: { name: NAME, description: "", parameters: {} },
   handler: noop,
 });
 
 /** Generate an interleaving of N register/unregister operations. */
-function genOps(r: IPrng): Array<'reg' | 'unreg'> {
+function genOps(r: IPrng): Array<"reg" | "unreg"> {
   const n = r.int(1, 50);
-  const ops: Array<'reg' | 'unreg'> = [];
-  for (let i = 0; i < n; i++) ops.push(r.bool() ? 'reg' : 'unreg');
+  const ops: Array<"reg" | "unreg"> = [];
+  for (let i = 0; i < n; i++) ops.push(r.bool() ? "reg" : "unreg");
   return ops;
 }
 
-describe('Property 3: tool ref-count invariant (Req 6.10)', () => {
-  it('tool is present iff live registrations > 0', () => {
+describe("Property 3: tool ref-count invariant (Req 6.10)", () => {
+  it("tool is present iff live registrations > 0", () => {
     forAll(
       (r) => genOps(r),
       (ops) => {
         const registry = new ToolRegistry();
         let live = 0;
         for (const op of ops) {
-          if (op === 'reg') {
+          if (op === "reg") {
             registry.register(asEntry());
             live++;
           } else {
@@ -54,7 +54,7 @@ describe('Property 3: tool ref-count invariant (Req 6.10)', () => {
         }
         return true;
       },
-      { runs: 200 }
+      { runs: 200 },
     );
   });
 });

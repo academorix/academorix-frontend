@@ -1,1 +1,1 @@
-export { ActionRegistry } from './action.registry';
+export { ActionRegistry } from "./action.registry";

@@ -16,7 +16,10 @@
       "grantedBy": "super_admin only",
       "audit_severity": "critical",
       "requires_reason": true,
-      "typical_grantees": ["support agents on the platinum-support tier", "security incident responders"]
+      "typical_grantees": [
+        "support agents on the platinum-support tier",
+        "security incident responders"
+      ]
     },
     {
       "key": "platform.audit_read",
@@ -25,7 +28,11 @@
       "grantedBy": "super_admin + dpo",
       "audit_severity": "warn",
       "requires_reason": true,
-      "typical_grantees": ["dpo staff", "compliance auditors", "external SOC 2 assessors (via a time-bounded PlatformUser row)"]
+      "typical_grantees": [
+        "dpo staff",
+        "compliance auditors",
+        "external SOC 2 assessors (via a time-bounded PlatformUser row)"
+      ]
     },
     {
       "key": "platform.tenant_admin",
@@ -34,7 +41,10 @@
       "grantedBy": "super_admin only",
       "audit_severity": "critical",
       "requires_reason": true,
-      "typical_grantees": ["support agents handling data-subject-access-requests", "compliance officers"]
+      "typical_grantees": [
+        "support agents handling data-subject-access-requests",
+        "compliance officers"
+      ]
     },
     {
       "key": "platform.security_review",

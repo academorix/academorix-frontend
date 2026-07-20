@@ -29,8 +29,16 @@
           "returns": "PaginatedResource<ActivityData>",
           "description": "Tenant-wide feed. Default filter: entities the caller can access. Filters: filter[log_name], filter[causer_id], filter[subject_type], filter[event], filter[from], filter[to], filter[batched_only]. Sorted DESC by created_at by default; per_page capped at 100 (config.activity.feed.max_page_size).",
           "queryParams": [
-            { "name": "filter[log_name]", "type": "string", "description": "One of the registered log_names — 'default', 'bookings', 'auth', etc." },
-            { "name": "filter[causer_id]", "type": "string", "description": "Requires grants.audit_any or self." },
+            {
+              "name": "filter[log_name]",
+              "type": "string",
+              "description": "One of the registered log_names — 'default', 'bookings', 'auth', etc."
+            },
+            {
+              "name": "filter[causer_id]",
+              "type": "string",
+              "description": "Requires grants.audit_any or self."
+            },
             { "name": "filter[subject_type]", "type": "string" },
             { "name": "filter[event]", "type": "string" },
             { "name": "filter[from]", "type": "string", "format": "date-time" },

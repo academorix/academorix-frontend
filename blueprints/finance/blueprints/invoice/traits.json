@@ -45,16 +45,28 @@
       { "trait": "Academorix\\Foundation\\Concerns\\HasUserstamps" },
       { "trait": "Academorix\\Foundation\\Concerns\\HasMetadata" },
       { "trait": "Academorix\\Foundation\\Concerns\\Filterable" },
-      { "trait": "Academorix\\Foundation\\Concerns\\Searchable", "reason": "Invoice + CreditNote (searchable by invoice_number / credit_note_number / customer name via billing_address). InvoiceLine is not searchable (accessed via relation from Invoice)." }
+      {
+        "trait": "Academorix\\Foundation\\Concerns\\Searchable",
+        "reason": "Invoice + CreditNote (searchable by invoice_number / credit_note_number / customer name via billing_address). InvoiceLine is not searchable (accessed via relation from Invoice)."
+      }
     ],
     "tenants": [
-      { "trait": "Academorix\\Tenancy\\Concerns\\BelongsToTenant", "reason": "Every owned row carries tenant_id per tenancy-columns.md §3." }
+      {
+        "trait": "Academorix\\Tenancy\\Concerns\\BelongsToTenant",
+        "reason": "Every owned row carries tenant_id per tenancy-columns.md §3."
+      }
     ],
     "audit": [
-      { "trait": "Academorix\\Audit\\Concerns\\Auditable", "reason": "Every write to invoices / invoice_lines / credit_notes is compliance-relevant (SOX §404 + GAAP + IFRS + VAT Directive — financial retention 7 years, 10 for Enterprise)." }
+      {
+        "trait": "Academorix\\Audit\\Concerns\\Auditable",
+        "reason": "Every write to invoices / invoice_lines / credit_notes is compliance-relevant (SOX §404 + GAAP + IFRS + VAT Directive — financial retention 7 years, 10 for Enterprise)."
+      }
     ],
     "activity": [
-      { "trait": "Academorix\\Activity\\Concerns\\HasActivityLog", "reason": "Invoice + CreditNote — admin actions feed the staff-visible activity feed. NOT InvoiceLine — high-volume; already covered by the audit trail." }
+      {
+        "trait": "Academorix\\Activity\\Concerns\\HasActivityLog",
+        "reason": "Invoice + CreditNote — admin actions feed the staff-visible activity feed. NOT InvoiceLine — high-volume; already covered by the audit trail."
+      }
     ]
   },
   "composition": {

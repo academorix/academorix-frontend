@@ -23,8 +23,14 @@
     },
     {
       "entity": "ResourceBooking",
-      "hot": { "days": 365, "description": "Active + first year for dispute resolution + support queries" },
-      "cold": { "days": "2555 (7 years)", "description": "Financial-audit retention. Soft-deleted after 1 year; hard-purged after 7." },
+      "hot": {
+        "days": 365,
+        "description": "Active + first year for dispute resolution + support queries"
+      },
+      "cold": {
+        "days": "2555 (7 years)",
+        "description": "Financial-audit retention. Soft-deleted after 1 year; hard-purged after 7."
+      },
       "purge": {
         "trigger": "> 7 years past ends_at + status IN (completed / cancelled / no_show)",
         "action": "hard delete via retention pipeline",
@@ -43,7 +49,10 @@
     },
     {
       "entity": "DayPass — anonymous profile fields",
-      "hot": { "days": 90, "description": "issued_to_profile_name + issued_to_profile_phone + issued_to_profile_age_band" },
+      "hot": {
+        "days": 90,
+        "description": "issued_to_profile_name + issued_to_profile_phone + issued_to_profile_age_band"
+      },
       "purge": {
         "trigger": "consumed_at + 90 days",
         "action": "field-level redaction (replace with [REDACTED]) via RedactAnonymousDayPassProfileJob",

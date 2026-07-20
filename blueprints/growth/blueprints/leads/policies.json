@@ -8,13 +8,33 @@
       "model": "Lead",
       "class": "Academorix\\Growth\\Leads\\Policies\\LeadPolicy",
       "abilities": [
-        { "action": "viewAny", "permission": "leads.viewAny", "scope": "tenant member with reception / marketing / admin / owner / support role. Coach role passes viewAny but each list query is scoped to leads whose converted_athlete_ids intersect the coach's athletes." },
-        { "action": "view", "permission": "leads.view", "scope": "same scope narrowing as viewAny; coach-role sees only own-athlete leads." },
+        {
+          "action": "viewAny",
+          "permission": "leads.viewAny",
+          "scope": "tenant member with reception / marketing / admin / owner / support role. Coach role passes viewAny but each list query is scoped to leads whose converted_athlete_ids intersect the coach's athletes."
+        },
+        {
+          "action": "view",
+          "permission": "leads.view",
+          "scope": "same scope narrowing as viewAny; coach-role sees only own-athlete leads."
+        },
         { "action": "create", "permission": "leads.create" },
-        { "action": "update", "permission": "leads.update", "scope": "marketing role can update only leads they own; admin + owner + receptionist can update any tenant lead." },
-        { "action": "delete", "permission": "leads.delete", "scope": "admin + owner only; SoftDeletes trait means the row is preserved for audit." },
+        {
+          "action": "update",
+          "permission": "leads.update",
+          "scope": "marketing role can update only leads they own; admin + owner + receptionist can update any tenant lead."
+        },
+        {
+          "action": "delete",
+          "permission": "leads.delete",
+          "scope": "admin + owner only; SoftDeletes trait means the row is preserved for audit."
+        },
         { "action": "assign", "permission": "leads.assign", "scope": "admin + owner only." },
-        { "action": "convert", "permission": "leads.convert", "scope": "requires stage IN ('QUALIFIED', 'TRIAL'); refuses on WON / LOST." },
+        {
+          "action": "convert",
+          "permission": "leads.convert",
+          "scope": "requires stage IN ('QUALIFIED', 'TRIAL'); refuses on WON / LOST."
+        },
         { "action": "platformViewAny", "permission": "platform.leads.viewAny" },
         { "action": "platformView", "permission": "platform.leads.view" }
       ]
@@ -23,23 +43,55 @@
       "model": "LeadActivity",
       "class": "Academorix\\Growth\\Leads\\Policies\\LeadActivityPolicy",
       "abilities": [
-        { "action": "viewAny", "permission": "lead-activities.viewAny", "scope": "inherits the parent Lead's viewAny scope; coach role narrowed to own-athlete leads." },
+        {
+          "action": "viewAny",
+          "permission": "lead-activities.viewAny",
+          "scope": "inherits the parent Lead's viewAny scope; coach role narrowed to own-athlete leads."
+        },
         { "action": "view", "permission": "lead-activities.view" },
-        { "action": "create", "permission": "lead-activities.create", "scope": "manual touchpoints only; system-generated stage_change / assignment activities are inserted by observers + skip policy checks." },
-        { "action": "update", "permission": "NEVER", "scope": "activities are APPEND-ONLY (body / metadata polish handled via a dedicated `patchNote` action)." },
-        { "action": "delete", "permission": "NEVER", "scope": "activities cascade-delete only when the parent Lead is hard-deleted." }
+        {
+          "action": "create",
+          "permission": "lead-activities.create",
+          "scope": "manual touchpoints only; system-generated stage_change / assignment activities are inserted by observers + skip policy checks."
+        },
+        {
+          "action": "update",
+          "permission": "NEVER",
+          "scope": "activities are APPEND-ONLY (body / metadata polish handled via a dedicated `patchNote` action)."
+        },
+        {
+          "action": "delete",
+          "permission": "NEVER",
+          "scope": "activities cascade-delete only when the parent Lead is hard-deleted."
+        }
       ]
     },
     {
       "model": "LeadTask",
       "class": "Academorix\\Growth\\Leads\\Policies\\LeadTaskPolicy",
       "abilities": [
-        { "action": "viewAny", "permission": "lead-tasks.viewAny", "scope": "receptionist role narrowed to tasks assigned to them or unassigned; admin + owner + marketing see all tenant tasks." },
+        {
+          "action": "viewAny",
+          "permission": "lead-tasks.viewAny",
+          "scope": "receptionist role narrowed to tasks assigned to them or unassigned; admin + owner + marketing see all tenant tasks."
+        },
         { "action": "view", "permission": "lead-tasks.view" },
         { "action": "create", "permission": "lead-tasks.create" },
-        { "action": "update", "permission": "lead-tasks.update", "scope": "receptionist role can update only tasks assigned to them; admin + owner + marketing can update any tenant task." },
-        { "action": "delete", "permission": "lead-tasks.delete", "scope": "admin + owner only. Refuses when status='completed'." },
-        { "action": "complete", "permission": "lead-tasks.complete", "scope": "assignee only via policy; admin + owner + marketing override." }
+        {
+          "action": "update",
+          "permission": "lead-tasks.update",
+          "scope": "receptionist role can update only tasks assigned to them; admin + owner + marketing can update any tenant task."
+        },
+        {
+          "action": "delete",
+          "permission": "lead-tasks.delete",
+          "scope": "admin + owner only. Refuses when status='completed'."
+        },
+        {
+          "action": "complete",
+          "permission": "lead-tasks.complete",
+          "scope": "assignee only via policy; admin + owner + marketing override."
+        }
       ]
     }
   ]

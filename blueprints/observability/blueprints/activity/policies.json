@@ -35,9 +35,7 @@
         },
         {
           "name": "viewByUser",
-          "requires": [
-            "activity.audit_any OR (activity.viewAny AND {userId} === auth_user.id)"
-          ],
+          "requires": ["activity.audit_any OR (activity.viewAny AND {userId} === auth_user.id)"],
           "description": "Enumerate activities where a specific user is causer. Callers see their own; admins with `activity.audit_any` see any user in the tenant."
         },
         {
@@ -47,9 +45,7 @@
         },
         {
           "name": "export",
-          "requires": [
-            "activity.export AND tenant entitled to `activity_export` (medium plan+)"
-          ],
+          "requires": ["activity.export AND tenant entitled to `activity_export` (medium plan+)"],
           "description": "Trigger an asynchronous CSV export. Entitlement check runs alongside permission check."
         },
         {
@@ -97,9 +93,7 @@
         },
         {
           "name": "delete",
-          "requires": [
-            "activity.retention.manage AND policy.tenant_id === auth_user.tenant_id"
-          ],
+          "requires": ["activity.retention.manage AND policy.tenant_id === auth_user.tenant_id"],
           "description": "Soft-delete a policy. Reverts the (tenant, log_name) pair to the config default; a purge sweep may fire immediately if the default is more restrictive."
         }
       ]

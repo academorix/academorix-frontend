@@ -25,7 +25,7 @@
  *   ```
  */
 
-import { Injectable, Inject, Optional } from '@stackra/container';
+import { Injectable, Inject, Optional } from "@stackra/container";
 import {
   I18N_DIRECTION_SERVICE,
   I18N_LOCALE_STORAGE,
@@ -33,12 +33,12 @@ import {
   type ILocaleStorage,
   type OnApplicationBootstrap,
   type OnModuleInit,
-} from '@stackra/contracts';
+} from "@stackra/contracts";
 
-import { I18N_CONFIG } from '../constants';
-import type { II18nConfig, II18nStore } from '../interfaces';
-import { DirectionService } from './direction.service';
-import { I18nManager } from './i18n-manager.service';
+import { I18N_CONFIG } from "../constants";
+import type { II18nConfig, II18nStore } from "../interfaces";
+import { DirectionService } from "./direction.service";
+import { I18nManager } from "./i18n-manager.service";
 
 /**
  * Reactive locale orchestrator.
@@ -74,7 +74,7 @@ export class I18nLocaleService implements OnModuleInit, OnApplicationBootstrap {
     @Inject(I18N_CONFIG) config: II18nConfig,
     @Inject(I18N_DIRECTION_SERVICE) private readonly directionService: DirectionService,
     @Inject(I18N_MANAGER) private readonly manager: I18nManager,
-    @Optional() @Inject(I18N_LOCALE_STORAGE) private readonly storage?: ILocaleStorage
+    @Optional() @Inject(I18N_LOCALE_STORAGE) private readonly storage?: ILocaleStorage,
   ) {
     this.supportedLocales = config.supportedLocales;
     this.persist = config.persistLocale ?? true;
@@ -144,7 +144,7 @@ export class I18nLocaleService implements OnModuleInit, OnApplicationBootstrap {
   }
 
   /** Text direction for the current locale. */
-  public getDir(): 'ltr' | 'rtl' {
+  public getDir(): "ltr" | "rtl" {
     return this.directionService.getDirection(this.currentLocale);
   }
 
@@ -172,7 +172,7 @@ export class I18nLocaleService implements OnModuleInit, OnApplicationBootstrap {
     if (!this.supportedLocales.includes(locale)) {
       throw new Error(
         `[I18nLocaleService] Locale "${locale}" is not supported. ` +
-          `Supported: ${this.supportedLocales.join(', ')}`
+          `Supported: ${this.supportedLocales.join(", ")}`,
       );
     }
 

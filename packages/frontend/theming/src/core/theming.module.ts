@@ -5,22 +5,17 @@
  *   Provides forRoot(), forRootAsync(), and forFeature() static methods.
  */
 
-import { Module, type DynamicModule } from '@stackra/container';
-import type { ITheme } from '@stackra/contracts';
-import {
-  THEME_BINDINGS,
-  THEMING_CONFIG,
-  THEME_REGISTRY,
-  THEME_SERVICE,
-} from '@stackra/contracts';
-import { createSeedLoader, seedLoaderToken } from '@stackra/support';
-import type { IThemingModuleOptions } from './interfaces';
-import { THEME_TOKEN_STORE } from './tokens';
-import { NullThemeBindings } from './bindings';
-import { ThemeRegistry } from './registries';
-import { ThemeTokenStore } from './stores';
-import { ThemeService } from './services';
-import { ThemeApiService } from './services';
+import { Module, type DynamicModule } from "@stackra/container";
+import type { ITheme } from "@stackra/contracts";
+import { THEME_BINDINGS, THEMING_CONFIG, THEME_REGISTRY, THEME_SERVICE } from "@stackra/contracts";
+import { createSeedLoader, seedLoaderToken } from "@stackra/support";
+import type { IThemingModuleOptions } from "./interfaces";
+import { THEME_TOKEN_STORE } from "./tokens";
+import { NullThemeBindings } from "./bindings";
+import { ThemeRegistry } from "./registries";
+import { ThemeTokenStore } from "./stores";
+import { ThemeService } from "./services";
+import { ThemeApiService } from "./services";
 
 // ============================================================================
 // Module
@@ -115,7 +110,7 @@ export class ThemingModule {
           // Unique seed-loader token per `forFeature` call. The container is
           // last-wins per token, so a shared token would drop every contribution
           // but the last — `seedLoaderToken(...)` returns a fresh Symbol().
-          provide: seedLoaderToken('theming:forFeature'),
+          provide: seedLoaderToken("theming:forFeature"),
           useFactory: (registry: ThemeRegistry) =>
             createSeedLoader(() => {
               // Seeding happens at OnApplicationBootstrap (after every module's

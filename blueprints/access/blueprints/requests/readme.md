@@ -26,17 +26,17 @@ The request module is a **bridge**. It exposes the Google-Docs UX shape on top
 of these two systems and orchestrates the plumbing between them. Concretely it
 ships:
 
-- The `CreateAccessRequestAction` marked `#[AsApprovableAction('access.grants.create')]`
-  so the `approve` middleware in `workflow/approvals` picks it up and creates
-  the `approval_instance`.
+- The `CreateAccessRequestAction` marked
+  `#[AsApprovableAction('access.grants.create')]` so the `approve` middleware in
+  `workflow/approvals` picks it up and creates the `approval_instance`.
 - The `access.request_hint_on_denial` middleware that decorates 403 responses
   with the `request_url` + payload template the SPA needs.
 - The `AccessRequestGrantMaterializer` listener that reacts to
   `ApprovalExecuted` (from `workflow/approvals`) and calls
   `access/grants::GrantIssuer::issue(...)` to create the grant.
 - The `AccessRequest` DTO that projects the underlying `approval_instance` +
-  `context_json` + resulting `access_grant` (if any) into the shape SPAs and
-  CLI callers actually need — a single "access request" object instead of three
+  `context_json` + resulting `access_grant` (if any) into the shape SPAs and CLI
+  callers actually need — a single "access request" object instead of three
   cross-module joins.
 - The `AccessRequestableRegistry` boot-time discovery of `#[AccessRequestable]`
   models — the substrate the middleware + validation layer consult to decide
@@ -80,16 +80,16 @@ Authorization: Bearer <coach's PAT>
 The 403 is emitted by the RBAC `permission` middleware in `access/rbac`. THIS
 module contributes only the `access.request_hint_on_denial` **response**
 middleware — a post-response decorator that runs AFTER the RBAC middleware
-refused, notices the resource type is registered in
-`AccessRequestableRegistry`, and appends the four `request_*` fields to the
-existing 403 body. If the resource type isn't in the registry (e.g. platform
-admin surfaces, or explicitly-non-requestable rows), the 403 is left alone.
+refused, notices the resource type is registered in `AccessRequestableRegistry`,
+and appends the four `request_*` fields to the existing 403 body. If the
+resource type isn't in the registry (e.g. platform admin surfaces, or
+explicitly-non-requestable rows), the 403 is left alone.
 
 ### 2.2 The SPA renders the "Request access" affordance
 
-The SPA reads `code === 'access_denied.can_request'` from the 403 and renders
-a "Request access" button + a `TextArea` for `reason`. The user types a
-sentence explaining why they need it and submits.
+The SPA reads `code === 'access_denied.can_request'` from the 403 and renders a
+"Request access" button + a `TextArea` for `reason`. The user types a sentence
+explaining why they need it and submits.
 
 ### 2.3 The request is created
 
@@ -138,9 +138,10 @@ approval instance directly.
 ### 2.4 Approvers get notified
 
 `NotifyApproversJob` dispatches an `AccessRequestSubmittedNotification` (mail
-+ database + broadcast channels) to each approver in the resolved set. The
-notification's CTA link takes them to `/tenant/access-requests/{id}` where
-they see the request detail + approve/reject buttons.
+
+- database + broadcast channels) to each approver in the resolved set. The
+  notification's CTA link takes them to `/tenant/access-requests/{id}` where
+  they see the request detail + approve/reject buttons.
 
 ### 2.5 An approver decides
 
@@ -156,10 +157,10 @@ Content-Type: application/json
 → 200 OK { "data": { ..., "status": "approved" } }
 ```
 
-The endpoint delegates the decision to `workflow/approvals` (this module
-doesn't reimplement quorum, sequential-vs-parallel evaluation, or expiry —
-that's the approval engine's job). Once the requirement's quorum is satisfied
-and every requirement on the instance is satisfied, `ApprovalExecuted` fires.
+The endpoint delegates the decision to `workflow/approvals` (this module doesn't
+reimplement quorum, sequential-vs-parallel evaluation, or expiry — that's the
+approval engine's job). Once the requirement's quorum is satisfied and every
+requirement on the instance is satisfied, `ApprovalExecuted` fires.
 
 ### 2.6 The grant is materialised
 
@@ -184,9 +185,10 @@ $this->grantIssuer->issue(new IssueGrantData(
 ));
 ```
 
-`access/grants::GrantIssuer` writes the `access_grants` row. `AccessRequestApproved`
-and `AccessRequestGrantIssued` fire in sequence. `NotifyRequesterOfDecisionJob`
-delivers `AccessRequestApprovedNotification` to the coach.
+`access/grants::GrantIssuer` writes the `access_grants` row.
+`AccessRequestApproved` and `AccessRequestGrantIssued` fire in sequence.
+`NotifyRequesterOfDecisionJob` delivers `AccessRequestApprovedNotification` to
+the coach.
 
 ### 2.7 The coach retries — and now succeeds
 
@@ -197,11 +199,11 @@ Authorization: Bearer <coach's PAT>
 → 200 OK { "data": { ... invoice payload ... } }
 ```
 
-The RBAC gate now sees the `access_grant` row and lets the request through
-(D-A3 in `access-approvals/design.md`: RBAC ∪ grants − denies). The coach
-opens the invoice; no admin ever hand-created a role or hand-attached a
-permission. The whole loop was self-service, auditable, and expired
-automatically after 7 days by default.
+The RBAC gate now sees the `access_grant` row and lets the request through (D-A3
+in `access-approvals/design.md`: RBAC ∪ grants − denies). The coach opens the
+invoice; no admin ever hand-created a role or hand-attached a permission. The
+whole loop was self-service, auditable, and expired automatically after 7 days
+by default.
 
 ## 3. Approver resolution — how the approvers list is picked
 
@@ -212,8 +214,8 @@ automatically after 7 days by default.
 
 The resolver queries `workflow/approvals.approval_templates` for
 `action_key='access.grants.create'` in the caller's tenant + application,
-ordered by `priority` ascending. Each template's `when_expression` is
-evaluated against the request context:
+ordered by `priority` ascending. Each template's `when_expression` is evaluated
+against the request context:
 
 ```
 {
@@ -233,31 +235,31 @@ The first template whose `when_expression` returns `true` wins. Its
 If no template matches, the resolver falls back to
 `config('access.requests.default_approvers_selector')` — default value is
 `role(admin)`. The selector runs through the same
-`symfony/expression-language`-backed engine `workflow/approvals` uses (see
-§5 of the design spec). This gives every tenant a working access-request flow
-on day 1 — no template configuration required.
+`symfony/expression-language`-backed engine `workflow/approvals` uses (see §5 of
+the design spec). This gives every tenant a working access-request flow on day 1
+— no template configuration required.
 
 ### 3.3 Resource-owner fallback
 
 If steps 1 and 2 produce an empty set (config sets
 `fallback_to_resource_owner: true`), the resolver reaches for the resource's
 `created_by` user and adds them as a lone approver. This protects against a
-tenant where the admin role is empty (unusual but possible during migration).
-If that fallback ALSO produces nobody, the request is rejected at
-creation time with `INVALID_APPROVER_CONFIGURATION` (500 severity — this is
-platform-side misconfiguration that ops must fix).
+tenant where the admin role is empty (unusual but possible during migration). If
+that fallback ALSO produces nobody, the request is rejected at creation time
+with `INVALID_APPROVER_CONFIGURATION` (500 severity — this is platform-side
+misconfiguration that ops must fix).
 
 ### 3.4 OOF-awareness
 
-Delegated approvers (from `access/delegation`) flow through automatically —
-the approver-selector engine consults `role_delegations` at resolve time.
-See §7 of the design spec.
+Delegated approvers (from `access/delegation`) flow through automatically — the
+approver-selector engine consults `role_delegations` at resolve time. See §7 of
+the design spec.
 
 ## 4. Registering a requestable resource type
 
-For a resource type to appear in the 403-response enrichment (§2.1) AND be
-valid as `resource_type` in `POST /api/v1/access-requests` (§2.3), the
-owning model must be marked `#[AccessRequestable]`:
+For a resource type to appear in the 403-response enrichment (§2.1) AND be valid
+as `resource_type` in `POST /api/v1/access-requests` (§2.3), the owning model
+must be marked `#[AccessRequestable]`:
 
 ```php
 use Academorix\AccessRequest\Attributes\AccessRequestable;
@@ -290,103 +292,102 @@ The registry is snapshotted into a cache key
 refreshes it.
 
 **Optional `IsAccessRequestable` trait.** Some policy authors prefer marking
-requestability by trait composition rather than PHP attribute — the trait is
-a marker with no behaviour, and boot-time discovery accepts either signal.
+requestability by trait composition rather than PHP attribute — the trait is a
+marker with no behaviour, and boot-time discovery accepts either signal.
 Composition-example is documented in `traits.json`.
 
 ## 5. Public surface
 
 ### Tenant host (authenticated, `sanctum` guard)
 
-| Method + path                                            | Policy                             |
-| -------------------------------------------------------- | ---------------------------------- |
-| `POST /api/v1/access-requests`                           | `AccessRequestPolicy@create`       |
-| `GET /api/v1/access-requests`                            | `AccessRequestPolicy@viewAny`      |
-| `GET /api/v1/access-requests/{id}`                       | `AccessRequestPolicy@view`         |
-| `POST /api/v1/access-requests/{id}/withdraw`             | `AccessRequestPolicy@withdraw`     |
-| `GET /api/v1/access-requests/pending-my-review`          | `AccessRequestPolicy@viewAny`      |
-| `POST /api/v1/access-requests/{id}/approve`              | `AccessRequestPolicy@approve`      |
-| `POST /api/v1/access-requests/{id}/reject`               | `AccessRequestPolicy@reject`       |
+| Method + path                                   | Policy                         |
+| ----------------------------------------------- | ------------------------------ |
+| `POST /api/v1/access-requests`                  | `AccessRequestPolicy@create`   |
+| `GET /api/v1/access-requests`                   | `AccessRequestPolicy@viewAny`  |
+| `GET /api/v1/access-requests/{id}`              | `AccessRequestPolicy@view`     |
+| `POST /api/v1/access-requests/{id}/withdraw`    | `AccessRequestPolicy@withdraw` |
+| `GET /api/v1/access-requests/pending-my-review` | `AccessRequestPolicy@viewAny`  |
+| `POST /api/v1/access-requests/{id}/approve`     | `AccessRequestPolicy@approve`  |
+| `POST /api/v1/access-requests/{id}/reject`      | `AccessRequestPolicy@reject`   |
 
 ### Platform-admin host (`platform_admin` guard)
 
-Read-only cross-tenant compliance surface. Never approves or rejects — those
-are always tenant-plane decisions authored by tenant users, not Academorix
-staff.
+Read-only cross-tenant compliance surface. Never approves or rejects — those are
+always tenant-plane decisions authored by tenant users, not Academorix staff.
 
-| Method + path                                                     |
-| ----------------------------------------------------------------- |
-| `GET /api/v1/platform/access-requests`                            |
-| `GET /api/v1/platform/access-requests/{id}`                       |
-| `GET /api/v1/platform/access-requests/audit-report`               |
+| Method + path                                       |
+| --------------------------------------------------- |
+| `GET /api/v1/platform/access-requests`              |
+| `GET /api/v1/platform/access-requests/{id}`         |
+| `GET /api/v1/platform/access-requests/audit-report` |
 
 Full route table with query params + response shapes in `routes.json`.
 
 ## 6. Config vs settings vs entitlements — where does what live
 
-- **`config('access.requests.*')`** — developer / operator flags: default
-  grant TTL, default approver selector, resource-owner fallback toggle,
-  reminder cadence, expiration hours, UI flag. Mirrored from
+- **`config('access.requests.*')`** — developer / operator flags: default grant
+  TTL, default approver selector, resource-owner fallback toggle, reminder
+  cadence, expiration hours, UI flag. Mirrored from
   `config/access-requests.php`. Static per deploy. See `config.json`.
 - **Tenant settings** — this module does NOT ship a tenant-editable settings
-  screen of its own. Approver flow is configured via the
-  `workflow/approvals` template UI (the tenant admin writes an
-  `approval_template` for `action_key='access.grants.create'`, and that's it).
-  Grant TTL is configurable via `access/grants` tenant settings, not here.
+  screen of its own. Approver flow is configured via the `workflow/approvals`
+  template UI (the tenant admin writes an `approval_template` for
+  `action_key='access.grants.create'`, and that's it). Grant TTL is configurable
+  via `access/grants` tenant settings, not here.
 - **Entitlements** — three keys (`access_requests` boolean feature,
-  `access_request_reminders` medium+, `access_request_bulk_approve`
-  enterprise). See `entitlements.json`. Enforced at the write path.
+  `access_request_reminders` medium+, `access_request_bulk_approve` enterprise).
+  See `entitlements.json`. Enforced at the write path.
 
 ## 7. Non-goals
 
 - **No local state.** No tables. Every deleted-once-approved rowset is
-  materialised elsewhere (`workflow/approvals` for the request,
-  `access/grants` for the outcome).
+  materialised elsewhere (`workflow/approvals` for the request, `access/grants`
+  for the outcome).
 - **No approval template management here.** Belongs to `workflow/approvals`.
   This module registers `action_key='access.grants.create'` as an approvable
   action and stops there.
-- **No cross-tenant requests.** Resource must be in the caller's active
-  tenant. Enforced by the `resource_in_caller_tenant` rule at write time.
-- **No auto-approval.** Every request goes through an approver. A config
-  toggle exists (`access.requests.auto_approve_when_no_approvers=true`) but
-  defaults OFF — enabling it in production requires an explicit design
-  review because it silently bypasses the entire approval story.
+- **No cross-tenant requests.** Resource must be in the caller's active tenant.
+  Enforced by the `resource_in_caller_tenant` rule at write time.
+- **No auto-approval.** Every request goes through an approver. A config toggle
+  exists (`access.requests.auto_approve_when_no_approvers=true`) but defaults
+  OFF — enabling it in production requires an explicit design review because it
+  silently bypasses the entire approval story.
 - **No escalation flow in Wave 1b.** Reminders yes (nightly nudge to
-  pending-decision approvers), but "escalate to the requester's manager if
-  no answer in 48h" is deferred to Wave 2.
-- **No bulk-request UI.** One resource per POST. Bulk approve (approver-side)
-  is enterprise entitlement only.
+  pending-decision approvers), but "escalate to the requester's manager if no
+  answer in 48h" is deferred to Wave 2.
+- **No bulk-request UI.** One resource per POST. Bulk approve (approver-side) is
+  enterprise entitlement only.
 
 ## 8. Data model — no owned tables
 
-`relations.json` documents the cross-module relations this module reads +
-writes (never owns). Callers who need the "access request" object interact
-with the `AccessRequest` DTO which projects across `workflow/approvals` +
+`relations.json` documents the cross-module relations this module reads + writes
+(never owns). Callers who need the "access request" object interact with the
+`AccessRequest` DTO which projects across `workflow/approvals` +
 `access/grants`.
 
 ## 9. What this module DOES contribute
 
 Even without owning tables, the module is a substantial contributor:
 
-| Kind          | Count | Where                    |
-| ------------- | ----- | ------------------------ |
-| Actions       | 1     | `CreateAccessRequestAction` marked `#[AsApprovableAction]` |
-| Middleware    | 1     | `access.request_hint_on_denial` — response decorator       |
-| Attributes    | 2     | `#[AccessRequestable]`, `#[AsAccessRequestListener]`       |
-| Traits        | 1     | `IsAccessRequestable` (marker; optional alternative)       |
+| Kind          | Count | Where                                                                                 |
+| ------------- | ----- | ------------------------------------------------------------------------------------- |
+| Actions       | 1     | `CreateAccessRequestAction` marked `#[AsApprovableAction]`                            |
+| Middleware    | 1     | `access.request_hint_on_denial` — response decorator                                  |
+| Attributes    | 2     | `#[AccessRequestable]`, `#[AsAccessRequestListener]`                                  |
+| Traits        | 1     | `IsAccessRequestable` (marker; optional alternative)                                  |
 | Events        | 7     | Submit / approved / rejected / expired / cancelled / approver-notified / grant-issued |
-| Listeners     | 4     | Bridge to `workflow/approvals` lifecycle events            |
-| Jobs          | 3     | Approver notification, requester notification, orphan cleanup |
-| Notifications | 5     | Submitted, approved, rejected, expired, reminder           |
-| Rules         | 4     | resource validity + tenant scope + permission validity + reason length |
-| Commands      | 6     | list / describe / approve / reject / cleanup / audit-report |
-| DTOs          | ~7    | Request / Approve / Reject / Withdraw / Response shapes    |
-| Bindings      | 6     | Submitter / ApproverResolver / Registry / UrlBuilder / GrantMaterializer / Presenter |
+| Listeners     | 4     | Bridge to `workflow/approvals` lifecycle events                                       |
+| Jobs          | 3     | Approver notification, requester notification, orphan cleanup                         |
+| Notifications | 5     | Submitted, approved, rejected, expired, reminder                                      |
+| Rules         | 4     | resource validity + tenant scope + permission validity + reason length                |
+| Commands      | 6     | list / describe / approve / reject / cleanup / audit-report                           |
+| DTOs          | ~7    | Request / Approve / Reject / Withdraw / Response shapes                               |
+| Bindings      | 6     | Submitter / ApproverResolver / Registry / UrlBuilder / GrantMaterializer / Presenter  |
 
 ## 10. Flow map (cross-module event chain)
 
-Because this module is a bridge, the flow map is more important than the
-model diagram. Every arrow crosses a module boundary.
+Because this module is a bridge, the flow map is more important than the model
+diagram. Every arrow crosses a module boundary.
 
 ```
 User → 403 (RBAC, from access/rbac)
@@ -494,17 +495,17 @@ Scheduler → access-requests:cleanup-orphaned command
   `workflow/approvals.approval_instance` + `context_json` + the resulting
   `access_grant` when it exists.
 - **Approval instance** — the underlying row in
-  `workflow/approvals.approval_instances`. When you address an access
-  request by id, you're addressing the approval instance.
-- **Approver** — a User in the resolved set for a requirement on the
-  underlying approval instance.
-- **Requester** — the User whose `POST /access-requests` created the
-  approval instance. `approval_instance.requester_id`.
-- **Requestable resource** — a model marked `#[AccessRequestable]` (or
-  composing `IsAccessRequestable`) whose class + permissions are registered
-  in the `AccessRequestableRegistry`.
-- **Materialised grant** — the row in `access/grants.access_grants` that
-  results from the `ApprovalExecuted` listener.
+  `workflow/approvals.approval_instances`. When you address an access request by
+  id, you're addressing the approval instance.
+- **Approver** — a User in the resolved set for a requirement on the underlying
+  approval instance.
+- **Requester** — the User whose `POST /access-requests` created the approval
+  instance. `approval_instance.requester_id`.
+- **Requestable resource** — a model marked `#[AccessRequestable]` (or composing
+  `IsAccessRequestable`) whose class + permissions are registered in the
+  `AccessRequestableRegistry`.
+- **Materialised grant** — the row in `access/grants.access_grants` that results
+  from the `ApprovalExecuted` listener.
 - **Request URL** — the tenant-scoped URL the SPA POSTs to
   (`/api/v1/access-requests`). Advertised in every 403 body for requestable
   resource types.
@@ -516,8 +517,8 @@ Scheduler → access-requests:cleanup-orphaned command
 - `identity` — user identities + application resolution.
 - `user` — the User model that both requesters and approvers resolve to.
 - `application` — `X-Application-Id` middleware + hard-scoping.
-- `tenancy` — tenant resolution + `TenantMember` check that the requester
-  can even see the target resource's tenant.
+- `tenancy` — tenant resolution + `TenantMember` check that the requester can
+  even see the target resource's tenant.
 - `access/rbac` — the RBAC gate whose 403s we enrich.
 - `access/grants` — the module that owns the outcome. We call
   `GrantIssuer::issue()` on approval; we never write `access_grants` rows
@@ -538,8 +539,8 @@ Every module that decorates a `#[AccessRequestable]` class:
 - (Every future business domain that wants Google-Docs UX out of the box.)
 
 Modules do NOT re-declare or fork the access-request flow — they just add the
-attribute. This module's whole reason to exist is to keep that surface
-identical everywhere.
+attribute. This module's whole reason to exist is to keep that surface identical
+everywhere.
 
 ## 14. Blueprint layout (this folder)
 

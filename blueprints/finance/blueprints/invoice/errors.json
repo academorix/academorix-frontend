@@ -4,44 +4,343 @@
   "title": "invoice — error codes",
   "namespace": "invoice",
   "errors": [
-    { "code": "INVOICE_NOT_FOUND", "http": 404, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "invoice.errors.not_found" },
-    { "code": "INVOICE_FEATURE_NOT_ENTITLED", "http": 402, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "invoice.errors.feature_not_entitled", "description": "Tenant does not hold `invoice_capture` entitlement. Response includes upgrade CTA." },
-    { "code": "INVOICE_QUOTA_EXCEEDED", "http": 402, "retryable": false, "user_facing": true, "audit_severity": "warn", "i18n_key": "invoice.errors.quota_exceeded", "description": "Tenant reached invoice_slot_per_month cap (Small=100, Medium=1000, Enterprise=∞). Resets 1st of each month." },
-    { "code": "INVOICE_CUSTOM_SERIES_NOT_ENTITLED", "http": 402, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "invoice.errors.custom_series_not_entitled", "description": "Tenant used a non-default series without invoice_custom_series (Medium+)." },
-    { "code": "INVOICE_MULTI_CURRENCY_NOT_ENTITLED", "http": 402, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "invoice.errors.multi_currency_not_entitled" },
-    { "code": "INVOICE_INVALID_CUSTOM_TERMS", "http": 422, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "invoice.errors.invalid_custom_terms", "description": "payment_terms='custom' requires payment_terms_custom_days (1-365)." },
-    { "code": "INVOICE_FINALIZE_REQUIRES_LINES", "http": 422, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "invoice.errors.finalize_requires_lines", "description": "Cannot finalize an invoice with zero lines." },
-    { "code": "INVOICE_FINALIZE_REQUIRES_TAX_COMPUTED", "http": 409, "retryable": true, "user_facing": true, "audit_severity": "info", "i18n_key": "invoice.errors.finalize_requires_tax_computed", "description": "Some lines lack tax_calculation_id. Tax calculations dispatched; retry finalize in ~30 seconds." },
-    { "code": "INVOICE_FINALIZE_INSUFFICIENT_ROLE", "http": 403, "retryable": false, "user_facing": true, "audit_severity": "warn", "i18n_key": "invoice.errors.finalize_insufficient_role", "description": "Caller lacks admin + finance role required to finalize invoices." },
-    { "code": "INVOICE_PAID_REQUIRES_FULL_PAYMENT", "http": 409, "retryable": false, "user_facing": false, "audit_severity": "warn", "i18n_key": "invoice.errors.paid_requires_full_payment", "description": "Defense-in-depth check — status='paid' requires amount_paid_cents == total_cents. Firing this indicates transaction module drift; a P1 signal." },
-    { "code": "INVOICE_VOID_FORBIDDEN_AFTER_PAYMENT", "http": 409, "retryable": false, "user_facing": true, "audit_severity": "warn", "i18n_key": "invoice.errors.void_forbidden_after_payment", "description": "Paid/partially-paid invoices cannot be voided. Issue a credit note instead." },
-    { "code": "INVOICE_VOID_REASON_REQUIRED", "http": 422, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "invoice.errors.void_reason_required" },
-    { "code": "INVOICE_VOID_INSUFFICIENT_ROLE", "http": 403, "retryable": false, "user_facing": true, "audit_severity": "warn", "i18n_key": "invoice.errors.void_insufficient_role" },
-    { "code": "INVOICE_NOT_ENOUGH_DAYS_PAST_DUE", "http": 409, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "invoice.errors.not_enough_days_past_due", "description": "Cannot mark uncollectible before the configured minimum days past due (default 90)." },
-    { "code": "INVOICE_IMMUTABLE_AFTER_FINALIZE", "http": 409, "retryable": false, "user_facing": true, "audit_severity": "warn", "i18n_key": "invoice.errors.immutable_after_finalize", "description": "Finalized invoices cannot be mutated. Issue a credit note or a new invoice." },
-    { "code": "INVOICE_SNAPSHOT_IMMUTABLE", "http": 409, "retryable": false, "user_facing": false, "audit_severity": "warn", "i18n_key": "invoice.errors.snapshot_immutable", "description": "Attempted to mutate billing_address / shipping_address / customer_tax_id / currency after create. These fields are frozen at capture-time." },
-    { "code": "INVOICE_NUMBER_IMMUTABLE", "http": 409, "retryable": false, "user_facing": false, "audit_severity": "warn", "i18n_key": "invoice.errors.number_immutable", "description": "Sequential numbering is immutable per GAAP." },
-    { "code": "INVOICE_WRITE_OFF_TOO_EARLY", "http": 409, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "invoice.errors.write_off_too_early", "description": "Cannot write off before the configured minimum days past due (default 180)." },
-    { "code": "INVOICE_SOFT_DELETE_FORBIDDEN", "http": 409, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "invoice.errors.soft_delete_forbidden", "description": "Cannot soft-delete an invoice past draft/void status. Financial retention applies." },
-    { "code": "INVOICE_LINE_NOT_FOUND", "http": 404, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "invoice.errors.line_not_found" },
-    { "code": "INVOICE_LINE_PARENT_NOT_DRAFT", "http": 409, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "invoice.errors.line_parent_not_draft", "description": "Line CRUD is only allowed while parent invoice.status='draft'." },
-    { "code": "INVOICE_LINE_INVALID_QUANTITY", "http": 422, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "invoice.errors.line_invalid_quantity" },
-    { "code": "INVOICE_LINE_INVALID_UNIT_PRICE", "http": 422, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "invoice.errors.line_invalid_unit_price", "description": "unit_price_cents must be >= 0 for this item_type. Negative prices only for discount_line/adjustment." },
-    { "code": "INVOICE_LINE_CURRENCY_MISMATCH", "http": 422, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "invoice.errors.line_currency_mismatch", "description": "Line currency must match parent invoice currency. Multi-currency mixing within one invoice is forbidden." },
-    { "code": "INVOICE_LINE_COUPON_ALREADY_APPLIED", "http": 409, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "invoice.errors.line_coupon_already_applied" },
-    { "code": "CREDIT_NOTE_NOT_FOUND", "http": 404, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "invoice.errors.credit_note_not_found" },
-    { "code": "CREDIT_NOTE_FEATURE_NOT_ENTITLED", "http": 402, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "invoice.errors.credit_note_feature_not_entitled" },
-    { "code": "CREDIT_NOTE_REQUIRES_PAID_INVOICE", "http": 409, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "invoice.errors.credit_note_requires_paid_invoice", "description": "Cannot credit a draft/open/void invoice. Void it directly instead." },
-    { "code": "CREDIT_NOTE_CURRENCY_MISMATCH", "http": 422, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "invoice.errors.credit_note_currency_mismatch" },
-    { "code": "CREDIT_NOTE_INVALID_AMOUNT", "http": 422, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "invoice.errors.credit_note_invalid_amount", "description": "amount_cents must be > 0." },
-    { "code": "CREDIT_NOTE_AMOUNT_EXCEEDS_ORIGINAL", "http": 422, "retryable": false, "user_facing": true, "audit_severity": "warn", "i18n_key": "invoice.errors.credit_note_amount_exceeds_original", "description": "Sum of existing credits + new credit exceeds the original invoice total. Response body includes :remaining_cents." },
-    { "code": "CREDIT_NOTE_ISSUER_REQUIRED", "http": 422, "retryable": false, "user_facing": false, "audit_severity": "warn", "i18n_key": "invoice.errors.credit_note_issuer_required" },
-    { "code": "CREDIT_NOTE_INSUFFICIENT_ROLE", "http": 403, "retryable": false, "user_facing": true, "audit_severity": "warn", "i18n_key": "invoice.errors.credit_note_insufficient_role" },
-    { "code": "CREDIT_NOTE_REASON_NOTE_REQUIRED", "http": 422, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "invoice.errors.credit_note_reason_note_required", "description": "reason IN ('adjustment', 'customer_dispute_resolved', 'accounting_correction') requires reason_note." },
-    { "code": "CREDIT_NOTE_VOID_FORBIDDEN_AFTER_ISSUE", "http": 409, "retryable": false, "user_facing": true, "audit_severity": "warn", "i18n_key": "invoice.errors.credit_note_void_forbidden_after_issue", "description": "Issued/applied credit notes are IMMUTABLE financial records." },
-    { "code": "CREDIT_NOTE_FIELD_IMMUTABLE", "http": 409, "retryable": false, "user_facing": false, "audit_severity": "warn", "i18n_key": "invoice.errors.credit_note_field_immutable" },
-    { "code": "INVOICE_RECONCILE_DRIFT_DETECTED", "http": 500, "retryable": false, "user_facing": false, "audit_severity": "critical", "i18n_key": "invoice.errors.reconcile_drift_detected", "description": "ReconcileInvoicePaymentsJob found amount_paid_cents drift vs transactions module SUM. P1 signal." },
-    { "code": "INVOICE_PDF_GENERATION_FAILED", "http": 500, "retryable": true, "user_facing": false, "audit_severity": "warn", "i18n_key": "invoice.errors.pdf_generation_failed", "description": "DomPDF rendering failed. Job auto-retries with backoff." },
-    { "code": "INVOICE_ADDRESS_SNAPSHOT_INVALID", "http": 422, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "invoice.errors.address_snapshot_invalid", "description": "billing_address does not match the required shape. See schemas/address-snapshot.embed.json." }
+    {
+      "code": "INVOICE_NOT_FOUND",
+      "http": 404,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "invoice.errors.not_found"
+    },
+    {
+      "code": "INVOICE_FEATURE_NOT_ENTITLED",
+      "http": 402,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "invoice.errors.feature_not_entitled",
+      "description": "Tenant does not hold `invoice_capture` entitlement. Response includes upgrade CTA."
+    },
+    {
+      "code": "INVOICE_QUOTA_EXCEEDED",
+      "http": 402,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "warn",
+      "i18n_key": "invoice.errors.quota_exceeded",
+      "description": "Tenant reached invoice_slot_per_month cap (Small=100, Medium=1000, Enterprise=∞). Resets 1st of each month."
+    },
+    {
+      "code": "INVOICE_CUSTOM_SERIES_NOT_ENTITLED",
+      "http": 402,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "invoice.errors.custom_series_not_entitled",
+      "description": "Tenant used a non-default series without invoice_custom_series (Medium+)."
+    },
+    {
+      "code": "INVOICE_MULTI_CURRENCY_NOT_ENTITLED",
+      "http": 402,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "invoice.errors.multi_currency_not_entitled"
+    },
+    {
+      "code": "INVOICE_INVALID_CUSTOM_TERMS",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "invoice.errors.invalid_custom_terms",
+      "description": "payment_terms='custom' requires payment_terms_custom_days (1-365)."
+    },
+    {
+      "code": "INVOICE_FINALIZE_REQUIRES_LINES",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "invoice.errors.finalize_requires_lines",
+      "description": "Cannot finalize an invoice with zero lines."
+    },
+    {
+      "code": "INVOICE_FINALIZE_REQUIRES_TAX_COMPUTED",
+      "http": 409,
+      "retryable": true,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "invoice.errors.finalize_requires_tax_computed",
+      "description": "Some lines lack tax_calculation_id. Tax calculations dispatched; retry finalize in ~30 seconds."
+    },
+    {
+      "code": "INVOICE_FINALIZE_INSUFFICIENT_ROLE",
+      "http": 403,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "warn",
+      "i18n_key": "invoice.errors.finalize_insufficient_role",
+      "description": "Caller lacks admin + finance role required to finalize invoices."
+    },
+    {
+      "code": "INVOICE_PAID_REQUIRES_FULL_PAYMENT",
+      "http": 409,
+      "retryable": false,
+      "user_facing": false,
+      "audit_severity": "warn",
+      "i18n_key": "invoice.errors.paid_requires_full_payment",
+      "description": "Defense-in-depth check — status='paid' requires amount_paid_cents == total_cents. Firing this indicates transaction module drift; a P1 signal."
+    },
+    {
+      "code": "INVOICE_VOID_FORBIDDEN_AFTER_PAYMENT",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "warn",
+      "i18n_key": "invoice.errors.void_forbidden_after_payment",
+      "description": "Paid/partially-paid invoices cannot be voided. Issue a credit note instead."
+    },
+    {
+      "code": "INVOICE_VOID_REASON_REQUIRED",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "invoice.errors.void_reason_required"
+    },
+    {
+      "code": "INVOICE_VOID_INSUFFICIENT_ROLE",
+      "http": 403,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "warn",
+      "i18n_key": "invoice.errors.void_insufficient_role"
+    },
+    {
+      "code": "INVOICE_NOT_ENOUGH_DAYS_PAST_DUE",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "invoice.errors.not_enough_days_past_due",
+      "description": "Cannot mark uncollectible before the configured minimum days past due (default 90)."
+    },
+    {
+      "code": "INVOICE_IMMUTABLE_AFTER_FINALIZE",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "warn",
+      "i18n_key": "invoice.errors.immutable_after_finalize",
+      "description": "Finalized invoices cannot be mutated. Issue a credit note or a new invoice."
+    },
+    {
+      "code": "INVOICE_SNAPSHOT_IMMUTABLE",
+      "http": 409,
+      "retryable": false,
+      "user_facing": false,
+      "audit_severity": "warn",
+      "i18n_key": "invoice.errors.snapshot_immutable",
+      "description": "Attempted to mutate billing_address / shipping_address / customer_tax_id / currency after create. These fields are frozen at capture-time."
+    },
+    {
+      "code": "INVOICE_NUMBER_IMMUTABLE",
+      "http": 409,
+      "retryable": false,
+      "user_facing": false,
+      "audit_severity": "warn",
+      "i18n_key": "invoice.errors.number_immutable",
+      "description": "Sequential numbering is immutable per GAAP."
+    },
+    {
+      "code": "INVOICE_WRITE_OFF_TOO_EARLY",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "invoice.errors.write_off_too_early",
+      "description": "Cannot write off before the configured minimum days past due (default 180)."
+    },
+    {
+      "code": "INVOICE_SOFT_DELETE_FORBIDDEN",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "invoice.errors.soft_delete_forbidden",
+      "description": "Cannot soft-delete an invoice past draft/void status. Financial retention applies."
+    },
+    {
+      "code": "INVOICE_LINE_NOT_FOUND",
+      "http": 404,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "invoice.errors.line_not_found"
+    },
+    {
+      "code": "INVOICE_LINE_PARENT_NOT_DRAFT",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "invoice.errors.line_parent_not_draft",
+      "description": "Line CRUD is only allowed while parent invoice.status='draft'."
+    },
+    {
+      "code": "INVOICE_LINE_INVALID_QUANTITY",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "invoice.errors.line_invalid_quantity"
+    },
+    {
+      "code": "INVOICE_LINE_INVALID_UNIT_PRICE",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "invoice.errors.line_invalid_unit_price",
+      "description": "unit_price_cents must be >= 0 for this item_type. Negative prices only for discount_line/adjustment."
+    },
+    {
+      "code": "INVOICE_LINE_CURRENCY_MISMATCH",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "invoice.errors.line_currency_mismatch",
+      "description": "Line currency must match parent invoice currency. Multi-currency mixing within one invoice is forbidden."
+    },
+    {
+      "code": "INVOICE_LINE_COUPON_ALREADY_APPLIED",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "invoice.errors.line_coupon_already_applied"
+    },
+    {
+      "code": "CREDIT_NOTE_NOT_FOUND",
+      "http": 404,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "invoice.errors.credit_note_not_found"
+    },
+    {
+      "code": "CREDIT_NOTE_FEATURE_NOT_ENTITLED",
+      "http": 402,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "invoice.errors.credit_note_feature_not_entitled"
+    },
+    {
+      "code": "CREDIT_NOTE_REQUIRES_PAID_INVOICE",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "invoice.errors.credit_note_requires_paid_invoice",
+      "description": "Cannot credit a draft/open/void invoice. Void it directly instead."
+    },
+    {
+      "code": "CREDIT_NOTE_CURRENCY_MISMATCH",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "invoice.errors.credit_note_currency_mismatch"
+    },
+    {
+      "code": "CREDIT_NOTE_INVALID_AMOUNT",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "invoice.errors.credit_note_invalid_amount",
+      "description": "amount_cents must be > 0."
+    },
+    {
+      "code": "CREDIT_NOTE_AMOUNT_EXCEEDS_ORIGINAL",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "warn",
+      "i18n_key": "invoice.errors.credit_note_amount_exceeds_original",
+      "description": "Sum of existing credits + new credit exceeds the original invoice total. Response body includes :remaining_cents."
+    },
+    {
+      "code": "CREDIT_NOTE_ISSUER_REQUIRED",
+      "http": 422,
+      "retryable": false,
+      "user_facing": false,
+      "audit_severity": "warn",
+      "i18n_key": "invoice.errors.credit_note_issuer_required"
+    },
+    {
+      "code": "CREDIT_NOTE_INSUFFICIENT_ROLE",
+      "http": 403,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "warn",
+      "i18n_key": "invoice.errors.credit_note_insufficient_role"
+    },
+    {
+      "code": "CREDIT_NOTE_REASON_NOTE_REQUIRED",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "invoice.errors.credit_note_reason_note_required",
+      "description": "reason IN ('adjustment', 'customer_dispute_resolved', 'accounting_correction') requires reason_note."
+    },
+    {
+      "code": "CREDIT_NOTE_VOID_FORBIDDEN_AFTER_ISSUE",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "warn",
+      "i18n_key": "invoice.errors.credit_note_void_forbidden_after_issue",
+      "description": "Issued/applied credit notes are IMMUTABLE financial records."
+    },
+    {
+      "code": "CREDIT_NOTE_FIELD_IMMUTABLE",
+      "http": 409,
+      "retryable": false,
+      "user_facing": false,
+      "audit_severity": "warn",
+      "i18n_key": "invoice.errors.credit_note_field_immutable"
+    },
+    {
+      "code": "INVOICE_RECONCILE_DRIFT_DETECTED",
+      "http": 500,
+      "retryable": false,
+      "user_facing": false,
+      "audit_severity": "critical",
+      "i18n_key": "invoice.errors.reconcile_drift_detected",
+      "description": "ReconcileInvoicePaymentsJob found amount_paid_cents drift vs transactions module SUM. P1 signal."
+    },
+    {
+      "code": "INVOICE_PDF_GENERATION_FAILED",
+      "http": 500,
+      "retryable": true,
+      "user_facing": false,
+      "audit_severity": "warn",
+      "i18n_key": "invoice.errors.pdf_generation_failed",
+      "description": "DomPDF rendering failed. Job auto-retries with backoff."
+    },
+    {
+      "code": "INVOICE_ADDRESS_SNAPSHOT_INVALID",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "invoice.errors.address_snapshot_invalid",
+      "description": "billing_address does not match the required shape. See schemas/address-snapshot.embed.json."
+    }
   ]
 }

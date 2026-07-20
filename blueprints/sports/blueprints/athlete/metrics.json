@@ -6,8 +6,26 @@
   "namespace": "academorix.athlete",
   "labelConventions": {
     "always": [],
-    "commonlyAvailable": ["status", "age_bucket", "gender", "dominant_hand", "withdrawal_reason", "trigger"],
-    "forbiddenAsLabels": ["tenant_id", "athlete_id", "user_id", "first_name", "last_name", "emergency_contact_phone", "medical_conditions", "medical_allergies", "medical_medications", "medical_notes"]
+    "commonlyAvailable": [
+      "status",
+      "age_bucket",
+      "gender",
+      "dominant_hand",
+      "withdrawal_reason",
+      "trigger"
+    ],
+    "forbiddenAsLabels": [
+      "tenant_id",
+      "athlete_id",
+      "user_id",
+      "first_name",
+      "last_name",
+      "emergency_contact_phone",
+      "medical_conditions",
+      "medical_allergies",
+      "medical_medications",
+      "medical_notes"
+    ]
   },
   "metrics": [
     {

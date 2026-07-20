@@ -28,9 +28,7 @@
       "description": "Signed URL to the compiled CSS artifact in storage for one (tenant, mode). Served to the frontend via GET /themes/current.",
       "ttlSeconds": 3600,
       "tags": ["theme", "compiled"],
-      "invalidatedBy": [
-        "ThemeCacheInvalidated (fires post-RegenerateRenderedCssJob completion)"
-      ]
+      "invalidatedBy": ["ThemeCacheInvalidated (fires post-RegenerateRenderedCssJob completion)"]
     },
     {
       "pattern": "theme:presets:platform",
@@ -59,9 +57,7 @@
       "description": "The user's per-user preference row (mode + accessibility_overrides). Short TTL because users toggle preferences interactively.",
       "ttlSeconds": 600,
       "tags": ["theme", "user"],
-      "invalidatedBy": [
-        "UserThemePreferenceUpdated for this user_id"
-      ]
+      "invalidatedBy": ["UserThemePreferenceUpdated for this user_id"]
     },
     {
       "pattern": "theme:preset-thumbnail:{preset_id}",

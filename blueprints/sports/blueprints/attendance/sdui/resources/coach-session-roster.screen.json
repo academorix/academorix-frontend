@@ -9,8 +9,19 @@
   "resource": { "module": "attendance", "entity": "coach-session-roster", "action": "view" },
   "requiresPermission": "attendance.viewAny.coach",
   "dataSources": [
-    { "name": "session", "kind": "http.get", "urlTemplate": "/api/v1/sessions/{session}", "unwrap": "data" },
-    { "name": "roster", "kind": "http.get", "urlTemplate": "/api/v1/coaches/me/sessions/{session}/attendance", "unwrap": "data", "realtime": { "channel": "session.{session}.attendance" } }
+    {
+      "name": "session",
+      "kind": "http.get",
+      "urlTemplate": "/api/v1/sessions/{session}",
+      "unwrap": "data"
+    },
+    {
+      "name": "roster",
+      "kind": "http.get",
+      "urlTemplate": "/api/v1/coaches/me/sessions/{session}/attendance",
+      "unwrap": "data",
+      "realtime": { "channel": "session.{session}.attendance" }
+    }
   ],
   "nodes": [
     {
@@ -25,8 +36,16 @@
             {
               "kind": "View",
               "children": [
-                { "kind": "Text", "props": { "as": "h1", "className": "text-2xl font-semibold" }, "bindings": { "children": { "$ref": "session.name" } } },
-                { "kind": "Text", "props": { "className": "text-sm text-muted" }, "bindings": { "children": { "$ref": "session.starts_at" } } }
+                {
+                  "kind": "Text",
+                  "props": { "as": "h1", "className": "text-2xl font-semibold" },
+                  "bindings": { "children": { "$ref": "session.name" } }
+                },
+                {
+                  "kind": "Text",
+                  "props": { "className": "text-sm text-muted" },
+                  "bindings": { "children": { "$ref": "session.starts_at" } }
+                }
               ]
             },
             {
@@ -41,7 +60,12 @@
           "props": { "variant": "info" },
           "bindings": { "hidden": { "$expr": "session.status !== 'in_progress'" } },
           "children": [
-            { "kind": "Text", "props": { "children": "Live session. Every tap below verifies the athlete's attendance immediately." } }
+            {
+              "kind": "Text",
+              "props": {
+                "children": "Live session. Every tap below verifies the athlete's attendance immediately."
+              }
+            }
           ]
         },
         {
@@ -56,8 +80,16 @@
                 "kind": "View",
                 "props": { "className": "flex items-center gap-2" },
                 "children": [
-                  { "kind": "Text", "props": { "className": "font-medium" }, "bindings": { "children": { "$ref": "row.athlete_display_name" } } },
-                  { "kind": "Widget", "widget": "athlete.minor-badge", "bindings": { "hidden": { "$expr": "!row.athlete.is_minor" } } }
+                  {
+                    "kind": "Text",
+                    "props": { "className": "font-medium" },
+                    "bindings": { "children": { "$ref": "row.athlete_display_name" } }
+                  },
+                  {
+                    "kind": "Widget",
+                    "widget": "athlete.minor-badge",
+                    "bindings": { "hidden": { "$expr": "!row.athlete.is_minor" } }
+                  }
                 ]
               }
             },
@@ -94,7 +126,11 @@
                     "props": { "variant": "secondary", "size": "sm", "children": "Add note" },
                     "bindings": { "hidden": { "$expr": "row.status === 'not_yet_checked_in'" } },
                     "actions": {
-                      "onPress": { "kind": "modal.open", "modal": "attendance.add-session-note", "params": { "attendance_record_id": "row.id" } }
+                      "onPress": {
+                        "kind": "modal.open",
+                        "modal": "attendance.add-session-note",
+                        "params": { "attendance_record_id": "row.id" }
+                      }
                     }
                   }
                 ]

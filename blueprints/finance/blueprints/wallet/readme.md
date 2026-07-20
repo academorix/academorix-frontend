@@ -11,8 +11,8 @@ balances that live at the payment gateway (Stripe Connect Balance) OR are
 already-earned entitlements (credits, points). Money movement always transits
 the gateway; we ledger it locally for fast reads + off-line-tolerant UX.
 
-Rejected Model B (custodial): holding funds triggers money-transmitter
-licensing (state-by-state US, EMI in EU, DFSA in UAE). Not on the roadmap.
+Rejected Model B (custodial): holding funds triggers money-transmitter licensing
+(state-by-state US, EMI in EU, DFSA in UAE). Not on the roadmap.
 
 ## Three wallet kinds
 
@@ -31,8 +31,7 @@ licensing (state-by-state US, EMI in EU, DFSA in UAE). Not on the roadmap.
 - `wallet_transactions` — every debit/credit. Immutable. Composed reference to
   the source (order, refund, manual_adjustment).
 - `wallet_holds` — reserved balance during in-progress orders. Prevents
-  over-spending during checkout. Settled or released on order state
-  transition.
+  over-spending during checkout. Settled or released on order state transition.
 
 ## Cross-references
 

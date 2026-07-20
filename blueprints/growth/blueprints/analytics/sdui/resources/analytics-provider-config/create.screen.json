@@ -47,13 +47,45 @@
                     "kind": "RadioGroup",
                     "props": { "label": "Provider", "name": "provider" },
                     "options": [
-                      { "key": "posthog", "label": "PostHog", "description": "Product analytics + session recording + feature flags" },
-                      { "key": "amplitude", "label": "Amplitude", "description": "Behavioral cohort + funnel + retention" },
-                      { "key": "google_analytics_4", "label": "Google Analytics 4", "description": "Web + app analytics via measurement protocol" },
-                      { "key": "mixpanel", "label": "Mixpanel", "description": "Product analytics /import endpoint", "requiresEntitlement": "analytics_advanced_providers" },
-                      { "key": "segment", "label": "Segment", "description": "Upstream fan-out CDP", "requiresEntitlement": "analytics_advanced_providers" },
-                      { "key": "june", "label": "June", "description": "B2B product analytics", "requiresEntitlement": "analytics_advanced_providers" },
-                      { "key": "custom_webhook", "label": "Custom webhook", "description": "HMAC-signed JSON to your endpoint", "requiresEntitlement": "analytics_advanced_providers" }
+                      {
+                        "key": "posthog",
+                        "label": "PostHog",
+                        "description": "Product analytics + session recording + feature flags"
+                      },
+                      {
+                        "key": "amplitude",
+                        "label": "Amplitude",
+                        "description": "Behavioral cohort + funnel + retention"
+                      },
+                      {
+                        "key": "google_analytics_4",
+                        "label": "Google Analytics 4",
+                        "description": "Web + app analytics via measurement protocol"
+                      },
+                      {
+                        "key": "mixpanel",
+                        "label": "Mixpanel",
+                        "description": "Product analytics /import endpoint",
+                        "requiresEntitlement": "analytics_advanced_providers"
+                      },
+                      {
+                        "key": "segment",
+                        "label": "Segment",
+                        "description": "Upstream fan-out CDP",
+                        "requiresEntitlement": "analytics_advanced_providers"
+                      },
+                      {
+                        "key": "june",
+                        "label": "June",
+                        "description": "B2B product analytics",
+                        "requiresEntitlement": "analytics_advanced_providers"
+                      },
+                      {
+                        "key": "custom_webhook",
+                        "label": "Custom webhook",
+                        "description": "HMAC-signed JSON to your endpoint",
+                        "requiresEntitlement": "analytics_advanced_providers"
+                      }
                     ]
                   }
                 ]
@@ -67,7 +99,12 @@
                 "children": [
                   {
                     "kind": "TextField",
-                    "props": { "label": "Display name", "name": "name", "placeholder": "e.g. PostHog Production", "required": true }
+                    "props": {
+                      "label": "Display name",
+                      "name": "name",
+                      "placeholder": "e.g. PostHog Production",
+                      "required": true
+                    }
                   },
                   {
                     "kind": "DynamicForm",
@@ -148,7 +185,10 @@
                         "url": "/api/v1/analytics/providers",
                         "bodyFromState": true,
                         "onSuccess": [
-                          { "kind": "toast.success", "message": "Provider created \u2014 sending test event" },
+                          {
+                            "kind": "toast.success",
+                            "message": "Provider created \u2014 sending test event"
+                          },
                           {
                             "kind": "navigate",
                             "toExpr": "'/tenant/analytics/providers/' + response.data.id + '/test'"

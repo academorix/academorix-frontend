@@ -37,7 +37,12 @@
   "x-database": {
     "engine": "postgres",
     "columns": {
-      "id": { "type": "string", "length": 64, "primary": true, "description": "Prefixed ULID: `olg_<26>`." },
+      "id": {
+        "type": "string",
+        "length": 64,
+        "primary": true,
+        "description": "Prefixed ULID: `olg_<26>`."
+      },
       "tenant_id": {
         "type": "string",
         "length": 64,
@@ -87,12 +92,31 @@
       "updated_at": { "type": "timestamptz", "nullable": false }
     },
     "indexes": [
-      { "columns": ["tenant_id", "normalized_name"], "unique": true, "name": "opponent_logos_tenant_name_unique" },
-      { "columns": ["tenant_id", "search_frequency_count"], "name": "opponent_logos_frequency_idx" },
-      { "columns": ["tenant_id", "last_used_at"], "name": "opponent_logos_last_used_idx", "predicate": "last_used_at IS NOT NULL" }
+      {
+        "columns": ["tenant_id", "normalized_name"],
+        "unique": true,
+        "name": "opponent_logos_tenant_name_unique"
+      },
+      {
+        "columns": ["tenant_id", "search_frequency_count"],
+        "name": "opponent_logos_frequency_idx"
+      },
+      {
+        "columns": ["tenant_id", "last_used_at"],
+        "name": "opponent_logos_last_used_idx",
+        "predicate": "last_used_at IS NOT NULL"
+      }
     ]
   },
-  "required": ["id", "tenant_id", "normalized_name", "display_name", "search_frequency_count", "created_at", "updated_at"],
+  "required": [
+    "id",
+    "tenant_id",
+    "normalized_name",
+    "display_name",
+    "search_frequency_count",
+    "created_at",
+    "updated_at"
+  ],
   "properties": {
     "id": { "type": "string", "pattern": "^olg_[0-9A-HJKMNP-TV-Z]{26}$" },
     "tenant_id": { "type": "string", "pattern": "^ten_[0-9A-HJKMNP-TV-Z]{26}$" },

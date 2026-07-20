@@ -4,11 +4,55 @@
   "title": "payout — error codes",
   "namespace": "payout",
   "errors": [
-    { "code": "PAYOUT_NOT_FOUND", "http": 404, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "payout.errors.not_found" },
-    { "code": "PAYOUT_ALREADY_SYNCED", "http": 409, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "payout.errors.already_synced" },
-    { "code": "PAYOUT_PROVIDER_ERROR", "http": 502, "retryable": true, "user_facing": false, "audit_severity": "warn", "i18n_key": "payout.errors.provider_error", "description": "Upstream provider (Stripe) API failure. Retry with exponential backoff." },
-    { "code": "PAYOUT_ITEM_NOT_FOUND", "http": 404, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "payout.errors.item_not_found" },
-    { "code": "PAYOUT_RECONCILIATION_NOT_FOUND", "http": 404, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "payout.errors.reconciliation_not_found" },
-    { "code": "PAYOUT_RECONCILIATION_NOT_DRIFT", "http": 409, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "payout.errors.reconciliation_not_drift", "description": "resolve action only valid when status='drift'." }
+    {
+      "code": "PAYOUT_NOT_FOUND",
+      "http": 404,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "payout.errors.not_found"
+    },
+    {
+      "code": "PAYOUT_ALREADY_SYNCED",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "payout.errors.already_synced"
+    },
+    {
+      "code": "PAYOUT_PROVIDER_ERROR",
+      "http": 502,
+      "retryable": true,
+      "user_facing": false,
+      "audit_severity": "warn",
+      "i18n_key": "payout.errors.provider_error",
+      "description": "Upstream provider (Stripe) API failure. Retry with exponential backoff."
+    },
+    {
+      "code": "PAYOUT_ITEM_NOT_FOUND",
+      "http": 404,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "payout.errors.item_not_found"
+    },
+    {
+      "code": "PAYOUT_RECONCILIATION_NOT_FOUND",
+      "http": 404,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "payout.errors.reconciliation_not_found"
+    },
+    {
+      "code": "PAYOUT_RECONCILIATION_NOT_DRIFT",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "payout.errors.reconciliation_not_drift",
+      "description": "resolve action only valid when status='drift'."
+    }
   ]
 }

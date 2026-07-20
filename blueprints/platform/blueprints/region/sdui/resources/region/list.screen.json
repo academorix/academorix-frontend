@@ -254,7 +254,12 @@
               "header": "Default",
               "cell": {
                 "kind": "Chip",
-                "props": { "size": "xs", "variant": "accent", "leadingIcon": "star-solid", "children": "Default" },
+                "props": {
+                  "size": "xs",
+                  "variant": "accent",
+                  "leadingIcon": "star-solid",
+                  "children": "Default"
+                },
                 "bindings": { "hidden": { "$expr": "!row.is_default" } }
               }
             },
@@ -318,7 +323,10 @@
                     "kind": "MenuItem",
                     "props": { "children": "Edit" },
                     "actions": {
-                      "onPress": { "kind": "navigate", "toExpr": "'/settings/regions/' + row.id + '/edit'" }
+                      "onPress": {
+                        "kind": "navigate",
+                        "toExpr": "'/settings/regions/' + row.id + '/edit'"
+                      }
                     },
                     "requiresPermission": "regions.update"
                   },
@@ -326,7 +334,10 @@
                     "kind": "MenuItem",
                     "props": { "children": "Edit tax config" },
                     "actions": {
-                      "onPress": { "kind": "navigate", "toExpr": "'/settings/regions/' + row.id + '/tax'" }
+                      "onPress": {
+                        "kind": "navigate",
+                        "toExpr": "'/settings/regions/' + row.id + '/tax'"
+                      }
                     },
                     "requiresPermission": "regions.update.tax_config"
                   },

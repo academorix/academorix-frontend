@@ -7,8 +7,8 @@
 
 import "reflect-metadata";
 import { ConsoleOutput } from "../../src/services/console-output.service";
-import { renderBanner } from "../../src/utils/ascii-banner.util";
 import { setTheme, VIBRANT_THEME } from "../../src/services/theme.service";
+import { renderBanner } from "../../src/utils/ascii-banner.util";
 
 async function demo() {
   const output = new ConsoleOutput();

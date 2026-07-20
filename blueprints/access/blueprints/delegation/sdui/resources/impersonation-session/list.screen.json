@@ -84,7 +84,9 @@
                     "leadingIcon": "user-plus",
                     "children": "Start session"
                   },
-                  "actions": { "onPress": { "kind": "navigate", "to": "/platform/impersonation/start" } },
+                  "actions": {
+                    "onPress": { "kind": "navigate", "to": "/platform/impersonation/start" }
+                  },
                   "requiresPermission": "platform.impersonate"
                 }
               ]
@@ -100,7 +102,11 @@
             },
             {
               "kind": "Select",
-              "props": { "name": "filter[target_tenant_id]", "placeholder": "All tenants", "clearable": true },
+              "props": {
+                "name": "filter[target_tenant_id]",
+                "placeholder": "All tenants",
+                "clearable": true
+              },
               "requiresPermission": "platform.impersonation.viewAll",
               "optionsSource": {
                 "kind": "http.get",
@@ -112,7 +118,11 @@
             },
             {
               "kind": "Select",
-              "props": { "name": "filter[end_trigger]", "placeholder": "Any end trigger", "clearable": true },
+              "props": {
+                "name": "filter[end_trigger]",
+                "placeholder": "Any end trigger",
+                "clearable": true
+              },
               "options": [
                 { "key": "self_service", "label": "Ended by operator" },
                 { "key": "ttl_expired", "label": "TTL expired" },

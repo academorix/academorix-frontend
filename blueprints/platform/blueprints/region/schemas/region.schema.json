@@ -143,12 +143,53 @@
         "default": "'{}'",
         "description": "Tax configuration blob. Sub-shape: default_rate_percent + name + inclusive + rates[] + registration_number + notes. `rates[]` is gated by the `region_custom_tax_rules` entitlement. `registration_number` is confidential-tier (redacted unless the caller carries `regions.view.tax_registration`).",
         "sub_shape": {
-          "default_rate_percent": { "type": "number", "minimum": 0, "maximum": 100, "multipleOf": 0.001, "required": true, "description": "Default rate applied to any line item. DECIMAL(5,3) precision." },
-          "name": { "type": "string", "maxLength": 32, "required": true, "description": "Display name for the tax (e.g. `VAT`, `Sales Tax`, `GST`)." },
-          "inclusive": { "type": "boolean", "required": true, "description": "True = list prices include tax; false = tax added at checkout." },
-          "rates": { "type": "array", "description": "Multi-rate for jurisdictions with different rates per category. Enterprise-only via `region_custom_tax_rules` entitlement.", "items": { "type": "object", "properties": { "category": { "type": "string", "maxLength": 64 }, "rate_percent": { "type": "number", "minimum": 0, "maximum": 100, "multipleOf": 0.001 }, "notes": { "type": "string", "maxLength": 200 } }, "required": ["category", "rate_percent"] } },
-          "registration_number": { "type": "string", "maxLength": 64, "description": "Tenant's tax registration ID for this jurisdiction. Confidential-tier — redacted on egress unless the caller carries `regions.view.tax_registration`." },
-          "notes": { "type": "string", "maxLength": 500, "description": "Ops-only tax posture notes (e.g. 'Registered under UAE VAT effective 2018-01-01')." }
+          "default_rate_percent": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 100,
+            "multipleOf": 0.001,
+            "required": true,
+            "description": "Default rate applied to any line item. DECIMAL(5,3) precision."
+          },
+          "name": {
+            "type": "string",
+            "maxLength": 32,
+            "required": true,
+            "description": "Display name for the tax (e.g. `VAT`, `Sales Tax`, `GST`)."
+          },
+          "inclusive": {
+            "type": "boolean",
+            "required": true,
+            "description": "True = list prices include tax; false = tax added at checkout."
+          },
+          "rates": {
+            "type": "array",
+            "description": "Multi-rate for jurisdictions with different rates per category. Enterprise-only via `region_custom_tax_rules` entitlement.",
+            "items": {
+              "type": "object",
+              "properties": {
+                "category": { "type": "string", "maxLength": 64 },
+                "rate_percent": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 100,
+                  "multipleOf": 0.001
+                },
+                "notes": { "type": "string", "maxLength": 200 }
+              },
+              "required": ["category", "rate_percent"]
+            }
+          },
+          "registration_number": {
+            "type": "string",
+            "maxLength": 64,
+            "description": "Tenant's tax registration ID for this jurisdiction. Confidential-tier — redacted on egress unless the caller carries `regions.view.tax_registration`."
+          },
+          "notes": {
+            "type": "string",
+            "maxLength": 500,
+            "description": "Ops-only tax posture notes (e.g. 'Registered under UAE VAT effective 2018-01-01')."
+          }
         }
       },
       "fiscal_year_start_month": {
@@ -443,7 +484,12 @@
     "envelope": "spatie-data",
     "wrap": "data",
     "mapper": "SnakeCaseMapper",
-    "computed": ["display_label", "is_in_use", "inbound_reference_count", "tax_registration_redacted"],
+    "computed": [
+      "display_label",
+      "is_in_use",
+      "inbound_reference_count",
+      "tax_registration_redacted"
+    ],
     "hidden_from_tenant_plane": ["notes"],
     "redacted_without_permission": {
       "tax_config.registration_number": "regions.view.tax_registration"

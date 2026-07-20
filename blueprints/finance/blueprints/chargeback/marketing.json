@@ -34,8 +34,18 @@
         "decision_at"
       ],
       "provider_events": [
-        { "provider": "meta_capi", "event_name": "Purchase", "reversal": true, "fraud_flagged": "when_reason_category_is_fraud" },
-        { "provider": "google_ads_ec", "event_name": "purchase", "reversal": true, "fraud_flagged": "when_reason_category_is_fraud" },
+        {
+          "provider": "meta_capi",
+          "event_name": "Purchase",
+          "reversal": true,
+          "fraud_flagged": "when_reason_category_is_fraud"
+        },
+        {
+          "provider": "google_ads_ec",
+          "event_name": "purchase",
+          "reversal": true,
+          "fraud_flagged": "when_reason_category_is_fraud"
+        },
         { "provider": "tiktok_events_api", "event_name": "CompletePayment", "reversal": true },
         { "provider": "microsoft_uet", "event_name": "purchase", "reversal": true },
         { "provider": "snapchat_capi", "event_name": "PURCHASE", "reversal": true }

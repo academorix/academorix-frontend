@@ -16,7 +16,14 @@
     "model": "Academorix\\Finance\\Dunning\\Models\\DunningEvent",
     "interface": "Academorix\\Finance\\Dunning\\Contracts\\Data\\DunningEventInterface",
     "implements": ["Academorix\\Finance\\Dunning\\Contracts\\Data\\DunningEventInterface"],
-    "traits": ["HasFactory", "HasUlids", "BelongsToTenant", "HasMetadata", "HasUserstamps", "Auditable"],
+    "traits": [
+      "HasFactory",
+      "HasUlids",
+      "BelongsToTenant",
+      "HasMetadata",
+      "HasUserstamps",
+      "Auditable"
+    ],
     "casts": {
       "kind": "DunningEventKind",
       "step_index": "integer",
@@ -28,13 +35,42 @@
   "x-database": {
     "engine": "postgres",
     "columns": {
-      "id": { "type": "string", "length": 64, "primary": true, "description": "Prefixed ULID: `dev_<26>`." },
-      "tenant_id": { "type": "string", "length": 64, "nullable": false, "foreign": { "table": "tenants", "column": "id", "onDelete": "cascade" } },
-      "dunning_run_id": { "type": "string", "length": 64, "nullable": false, "foreign": { "table": "dunning_runs", "column": "id", "onDelete": "cascade" } },
-      "kind": { "type": "string", "length": 32, "nullable": false, "description": "Enum: run_started / step_reached / retry_attempted / retry_succeeded / retry_failed / notification_sent / escalated_step / run_paused / run_resumed / run_cancelled / run_exhausted / run_resolved." },
+      "id": {
+        "type": "string",
+        "length": 64,
+        "primary": true,
+        "description": "Prefixed ULID: `dev_<26>`."
+      },
+      "tenant_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "foreign": { "table": "tenants", "column": "id", "onDelete": "cascade" }
+      },
+      "dunning_run_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "foreign": { "table": "dunning_runs", "column": "id", "onDelete": "cascade" }
+      },
+      "kind": {
+        "type": "string",
+        "length": 32,
+        "nullable": false,
+        "description": "Enum: run_started / step_reached / retry_attempted / retry_succeeded / retry_failed / notification_sent / escalated_step / run_paused / run_resumed / run_cancelled / run_exhausted / run_resolved."
+      },
       "step_index": { "type": "integer", "nullable": true },
-      "message": { "type": "string", "length": 500, "nullable": false, "description": "Human-readable one-liner." },
-      "payload_json": { "type": "jsonb", "nullable": true, "description": "Kind-specific detail (retry response, notification template, escalation payload)." },
+      "message": {
+        "type": "string",
+        "length": 500,
+        "nullable": false,
+        "description": "Human-readable one-liner."
+      },
+      "payload_json": {
+        "type": "jsonb",
+        "nullable": true,
+        "description": "Kind-specific detail (retry response, notification template, escalation payload)."
+      },
       "metadata": { "type": "jsonb", "nullable": true },
       "created_by": { "type": "string", "length": 64, "nullable": true },
       "updated_by": { "type": "string", "length": 64, "nullable": true },
@@ -42,7 +78,10 @@
       "updated_at": { "type": "timestamptz", "nullable": false }
     },
     "indexes": [
-      { "columns": ["tenant_id", "dunning_run_id", "created_at"], "name": "dunning_events_run_time_idx" },
+      {
+        "columns": ["tenant_id", "dunning_run_id", "created_at"],
+        "name": "dunning_events_run_time_idx"
+      },
       { "columns": ["tenant_id", "kind", "created_at"], "name": "dunning_events_kind_time_idx" }
     ]
   },
@@ -51,7 +90,23 @@
     "id": { "type": "string", "pattern": "^dev_[0-9A-HJKMNP-TV-Z]{26}$" },
     "tenant_id": { "type": "string", "pattern": "^ten_[0-9A-HJKMNP-TV-Z]{26}$" },
     "dunning_run_id": { "type": "string", "pattern": "^drn_[0-9A-HJKMNP-TV-Z]{26}$" },
-    "kind": { "type": "string", "enum": ["run_started", "step_reached", "retry_attempted", "retry_succeeded", "retry_failed", "notification_sent", "escalated_step", "run_paused", "run_resumed", "run_cancelled", "run_exhausted", "run_resolved"] },
+    "kind": {
+      "type": "string",
+      "enum": [
+        "run_started",
+        "step_reached",
+        "retry_attempted",
+        "retry_succeeded",
+        "retry_failed",
+        "notification_sent",
+        "escalated_step",
+        "run_paused",
+        "run_resumed",
+        "run_cancelled",
+        "run_exhausted",
+        "run_resolved"
+      ]
+    },
     "message": { "type": "string", "maxLength": 500 },
     "created_at": { "type": "string", "format": "date-time" },
     "updated_at": { "type": "string", "format": "date-time" }

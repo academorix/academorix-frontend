@@ -8,7 +8,11 @@
     "provider": { "type": "string", "description": "Provider enum value." },
     "showLogo": { "type": "boolean", "default": true },
     "showLabel": { "type": "boolean", "default": true },
-    "showCircuitBreaker": { "type": "boolean", "default": false, "description": "Show a red dot when circuit is open." },
+    "showCircuitBreaker": {
+      "type": "boolean",
+      "default": false,
+      "description": "Show a red dot when circuit is open."
+    },
     "isCircuitOpen": { "type": "boolean", "default": false },
     "size": { "type": "string", "default": "sm", "enum": ["xs", "sm", "md", "lg"] }
   },
@@ -28,8 +32,12 @@
               "$expr": "'/icons/providers/' + props.provider + '.svg'"
             },
             "alt": { "$ref": "props.provider" },
-            "width": { "$expr": "props.size === 'xs' ? 12 : (props.size === 'sm' ? 16 : (props.size === 'md' ? 20 : 24))" },
-            "height": { "$expr": "props.size === 'xs' ? 12 : (props.size === 'sm' ? 16 : (props.size === 'md' ? 20 : 24))" }
+            "width": {
+              "$expr": "props.size === 'xs' ? 12 : (props.size === 'sm' ? 16 : (props.size === 'md' ? 20 : 24))"
+            },
+            "height": {
+              "$expr": "props.size === 'xs' ? 12 : (props.size === 'sm' ? 16 : (props.size === 'md' ? 20 : 24))"
+            }
           }
         },
         {

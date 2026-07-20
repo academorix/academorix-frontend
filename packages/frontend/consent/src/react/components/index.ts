@@ -1,2 +1,2 @@
-export { ConsentBanner } from './consent-banner';
-export type { ConsentBannerProps } from './consent-banner';
+export { ConsentBanner } from "./consent-banner";
+export type { ConsentBannerProps } from "./consent-banner";

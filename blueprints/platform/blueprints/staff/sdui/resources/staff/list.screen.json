@@ -52,11 +52,18 @@
               "children": [
                 {
                   "kind": "Text",
-                  "props": { "as": "h1", "className": "text-2xl font-semibold", "children": "Staff" }
+                  "props": {
+                    "as": "h1",
+                    "className": "text-2xl font-semibold",
+                    "children": "Staff"
+                  }
                 },
                 {
                   "kind": "Text",
-                  "props": { "className": "text-sm text-muted", "children": "Employed and engaged people across your branches." }
+                  "props": {
+                    "className": "text-sm text-muted",
+                    "children": "Employed and engaged people across your branches."
+                  }
                 }
               ]
             },
@@ -135,7 +142,11 @@
             },
             {
               "kind": "ComboBox",
-              "props": { "label": "Employment type", "menuTrigger": "focus", "className": "min-w-48" },
+              "props": {
+                "label": "Employment type",
+                "menuTrigger": "focus",
+                "className": "min-w-48"
+              },
               "props_items": [
                 { "id": "full_time", "label": "Full-time" },
                 { "id": "part_time", "label": "Part-time" },
@@ -176,9 +187,21 @@
             "kind": "View",
             "props": { "className": "text-center py-12" },
             "children": [
-              { "kind": "Icon", "props": { "name": "user-group", "className": "size-12 mx-auto text-muted" } },
-              { "kind": "Text", "props": { "className": "mt-4 text-lg font-medium", "children": "No staff yet" } },
-              { "kind": "Text", "props": { "className": "text-sm text-muted", "children": "Hire your first staff member to get started." } }
+              {
+                "kind": "Icon",
+                "props": { "name": "user-group", "className": "size-12 mx-auto text-muted" }
+              },
+              {
+                "kind": "Text",
+                "props": { "className": "mt-4 text-lg font-medium", "children": "No staff yet" }
+              },
+              {
+                "kind": "Text",
+                "props": {
+                  "className": "text-sm text-muted",
+                  "children": "Hire your first staff member to get started."
+                }
+              }
             ]
           },
           "columns": [
@@ -192,7 +215,10 @@
                   {
                     "kind": "Avatar",
                     "props": { "size": "sm" },
-                    "bindings": { "src": { "$ref": "row.avatar_url" }, "name": { "$ref": "row.full_name" } }
+                    "bindings": {
+                      "src": { "$ref": "row.avatar_url" },
+                      "name": { "$ref": "row.full_name" }
+                    }
                   },
                   {
                     "kind": "View",

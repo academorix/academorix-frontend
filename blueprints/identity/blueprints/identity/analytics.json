@@ -22,41 +22,28 @@
       "name": "Email Verified",
       "kind": "track",
       "consent_required": "functional",
-      "properties": [
-        "identity_fingerprint",
-        "elapsed_since_registration_hours"
-      ],
+      "properties": ["identity_fingerprint", "elapsed_since_registration_hours"],
       "description": "Identity holder confirmed email ownership. elapsed_since_registration_hours drives the activation-funnel dashboard."
     },
     {
       "name": "Password Changed",
       "kind": "track",
       "consent_required": "functional",
-      "properties": [
-        "identity_fingerprint",
-        "trigger",
-        "elapsed_since_last_change_days"
-      ],
+      "properties": ["identity_fingerprint", "trigger", "elapsed_since_last_change_days"],
       "description": "trigger = voluntary|forced_reset|admin_reset|breach_detected."
     },
     {
       "name": "MFA Enrolled",
       "kind": "track",
       "consent_required": "functional",
-      "properties": [
-        "identity_fingerprint",
-        "elapsed_since_registration_days"
-      ],
+      "properties": ["identity_fingerprint", "elapsed_since_registration_days"],
       "description": "Identity holder completed TOTP enrolment. Drives the MFA-adoption dashboard."
     },
     {
       "name": "MFA Disabled",
       "kind": "track",
       "consent_required": "functional",
-      "properties": [
-        "identity_fingerprint",
-        "trigger"
-      ],
+      "properties": ["identity_fingerprint", "trigger"],
       "description": "trigger = self_service|admin_action|account_recovery."
     },
     {
@@ -70,10 +57,7 @@
       "name": "Identity Erasure Requested",
       "kind": "track",
       "consent_required": "essential",
-      "properties": [
-        "identity_fingerprint",
-        "reason_category"
-      ],
+      "properties": ["identity_fingerprint", "reason_category"],
       "description": "GDPR Art. 17 erasure request received. reason_category = user_initiated|compliance_officer|end_of_retention. Essential-tier because compliance reporting relies on the count regardless of user consent state."
     }
   ],

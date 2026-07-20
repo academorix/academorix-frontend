@@ -1,7 +1,7 @@
 {
   "name": "@stackra/queue",
   "version": "0.1.0",
-  "description": "Client-side job queue for the Stackra framework — pluggable connectors (memory, localStorage, IndexedDB, BroadcastChannel, QStash), workers, decorators.",
+  "description": "Client-side job queue for the Stackra framework \u2014 pluggable connectors (memory, localStorage, IndexedDB, BroadcastChannel, QStash), workers, decorators.",
   "license": "MIT",
   "author": {
     "name": "Stackra L.L.C",
@@ -101,9 +101,12 @@
     }
   },
   "devDependencies": {
+    "@academorix/config-tsconfig": "workspace:*",
+    "@academorix/config-tsup": "workspace:*",
     "@stackra/config": "workspace:*",
     "@stackra/container": "workspace:*",
     "@stackra/contracts": "workspace:*",
+    "@stackra/coordinator": "workspace:*",
     "@stackra/decorators": "workspace:*",
     "@stackra/logger": "workspace:*",
     "@stackra/storage": "workspace:*",

@@ -1,14 +1,13 @@
 # `academorix/service-provider`
 
-Attribute-driven module service provider for Laravel — declarative
-resource loading, olvlvl-cached discovery, lifecycle hooks. The
-enterprise-grade replacement for hand-rolled `boot()` / `register()`
-methods.
+Attribute-driven module service provider for Laravel — declarative resource
+loading, olvlvl-cached discovery, lifecycle hooks. The enterprise-grade
+replacement for hand-rolled `boot()` / `register()` methods.
 
-Ported from the enterprise `academorix/laravel-service-provider` package
-with monorepo-friendly adaptations. See `MIGRATION.md` for what changed
-and where the remaining integration points (`academorix/routing`,
-`academorix/compiler`) plug in.
+Ported from the enterprise `academorix/laravel-service-provider` package with
+monorepo-friendly adaptations. See `MIGRATION.md` for what changed and where the
+remaining integration points (`academorix/routing`, `academorix/compiler`) plug
+in.
 
 ## Quick start
 
@@ -25,5 +24,5 @@ final class BlogServiceProvider extends ServiceProvider
 ```
 
 See `.examples/` for nine ready-made recipes covering API-only, deferred,
-full-featured, third-party base, custom boot logic, background jobs,
-vendor overrides, and lifecycle-event integration patterns.
+full-featured, third-party base, custom boot logic, background jobs, vendor
+overrides, and lifecycle-event integration patterns.

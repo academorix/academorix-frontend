@@ -8,12 +8,12 @@
  * @module @stackra/http/errors/http-module-options
  */
 
-import { HttpError } from './http.error';
+import { HttpError } from "./http.error";
 
 /**
  * Configuration validation error for the HTTP module.
  */
 export class HttpModuleOptionsError extends HttpError {
-  public override readonly name: string = 'HttpModuleOptionsError';
-  public override readonly code: string = 'HTTP_MODULE_OPTIONS_ERROR';
+  public override readonly name: string = "HttpModuleOptionsError";
+  public override readonly code: string = "HTTP_MODULE_OPTIONS_ERROR";
 }

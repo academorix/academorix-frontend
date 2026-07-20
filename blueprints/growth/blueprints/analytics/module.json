@@ -166,10 +166,7 @@
     "views": [],
     "lang": ["analytics"],
     "config": ["analytics"],
-    "macros": [
-      "Request::currentAnalyticsContext",
-      "Request::analyticsAnonymousId"
-    ],
+    "macros": ["Request::currentAnalyticsContext", "Request::analyticsAnonymousId"],
     "bindings": [
       "AnalyticsEventRepository",
       "AnalyticsDeliveryRepository",

@@ -5,18 +5,18 @@ feeder for marketing + analytics + referrals + finance + notifications.
 
 ## 1. What this module owns
 
-| Concern                          | Owned artefact                                                                                    |
-| -------------------------------- | ------------------------------------------------------------------------------------------------- |
-| Per-subject attribution profile  | `Attribution` — rolling profile with first/last-touch snapshots, session state, lifecycle stage.  |
-| Append-only touchpoint ledger    | `AttributionTouchpoint` — one row per attribution-bearing request. Never mutated after commit.    |
-| Request-boundary capture         | `AttributionMiddleware` — extracts UTM + click IDs + referrer + landing page at HTTP boundary.    |
-| Request-scoped context           | `AttributionContext` — bound per-request so domain code reads current attribution without a DB hop. |
-| Immutable snapshot builder       | `AttributionSnapshotBuilder` — freezes current attribution into a jsonb blob for downstream events. |
-| Click-ID extraction              | `ClickIdExtractor` — parses gclid / fbclid / ttclid / msclkid / sccid from cookies + query params.  |
-| UTM extraction                   | `UtmExtractor` — utm_source / medium / campaign / content / term from cookies + query params.       |
-| Cross-device merge               | `MergeStrategy` — merges anonymous profiles into an identified profile at signup/login time.        |
-| Campaign performance rollup      | `CampaignRollupAggregator` — hourly pre-aggregation into a rollup cache for dashboards.             |
-| PII protection                   | `IpHasher` (SHA-256), `DeviceParser` (UA parsing without raw storage).                              |
+| Concern                         | Owned artefact                                                                                      |
+| ------------------------------- | --------------------------------------------------------------------------------------------------- |
+| Per-subject attribution profile | `Attribution` — rolling profile with first/last-touch snapshots, session state, lifecycle stage.    |
+| Append-only touchpoint ledger   | `AttributionTouchpoint` — one row per attribution-bearing request. Never mutated after commit.      |
+| Request-boundary capture        | `AttributionMiddleware` — extracts UTM + click IDs + referrer + landing page at HTTP boundary.      |
+| Request-scoped context          | `AttributionContext` — bound per-request so domain code reads current attribution without a DB hop. |
+| Immutable snapshot builder      | `AttributionSnapshotBuilder` — freezes current attribution into a jsonb blob for downstream events. |
+| Click-ID extraction             | `ClickIdExtractor` — parses gclid / fbclid / ttclid / msclkid / sccid from cookies + query params.  |
+| UTM extraction                  | `UtmExtractor` — utm_source / medium / campaign / content / term from cookies + query params.       |
+| Cross-device merge              | `MergeStrategy` — merges anonymous profiles into an identified profile at signup/login time.        |
+| Campaign performance rollup     | `CampaignRollupAggregator` — hourly pre-aggregation into a rollup cache for dashboards.             |
+| PII protection                  | `IpHasher` (SHA-256), `DeviceParser` (UA parsing without raw storage).                              |
 
 ### 1.1 The two owned tables
 
@@ -28,20 +28,20 @@ feeder for marketing + analytics + referrals + finance + notifications.
   `Attribution`. Denormalises subject + campaign for direct index-driven
   queries. NO soft-delete (append-only).
 
-Neither carries `application_id`, `region_id`, `organization_id`,
-`branch_id`, or `scope_node_id` — all cascade through `tenant_id` per
-tenancy-columns.md §5. Attribution does NOT participate in the scope substrate
-— it's operational data, not configuration.
+Neither carries `application_id`, `region_id`, `organization_id`, `branch_id`,
+or `scope_node_id` — all cascade through `tenant_id` per tenancy-columns.md §5.
+Attribution does NOT participate in the scope substrate — it's operational data,
+not configuration.
 
 ## 2. Tier gating
 
 Attribution capture is the feature gate for the whole growth tier feeder. Every
-tier gets baseline capture; Enterprise unlocks cross-device merge + CSV
-import + extended retention.
+tier gets baseline capture; Enterprise unlocks cross-device merge + CSV import +
+extended retention.
 
 - **Small** — `attribution_capture` on. Only gclid + fbclid captured
-  (`attribution_click_ids_advanced` off). Campaign rollup off. 2-year
-  touchpoint retention.
+  (`attribution_click_ids_advanced` off). Campaign rollup off. 2-year touchpoint
+  retention.
 - **Medium** — Adds `attribution_click_ids_advanced` (msclkid + sccid) +
   `attribution_rollup` (campaign performance dashboards).
 - **Enterprise** — Adds `attribution_merge` (cross-device profile merging) +
@@ -51,7 +51,8 @@ import + extended retention.
 
 Entitlement keys are:
 
-- `attribution_capture` (boolean, all tiers) — master feature gate. Off = middleware becomes a no-op.
+- `attribution_capture` (boolean, all tiers) — master feature gate. Off =
+  middleware becomes a no-op.
 - `attribution_click_ids_advanced` (boolean, Medium+)
 - `attribution_rollup` (boolean, Medium+)
 - `attribution_merge` (boolean, Enterprise)
@@ -92,7 +93,7 @@ Request::attributionSnapshot() to freeze into event.attribution columns.
 
 Two invariants:
 
-1. **first_touch_* is IMMUTABLE post-create.** Refuses observer refuses any
+1. _\*first_touch_* is IMMUTABLE post-create._* Refuses observer refuses any
    update. Even a `reset` erases the row rather than mutating first-touch.
 2. **AttributionTouchpoint is append-only.** No updates permitted (except
    metadata JSON); no soft-delete; no destructive migrations.
@@ -101,22 +102,22 @@ Two invariants:
 
 The module supports every major ad-network click ID:
 
-| Provider           | Cookie name  | Query param | Notes                                                                       |
-| ------------------ | ------------ | ----------- | --------------------------------------------------------------------------- |
-| Google Ads         | `_gclid`     | `gclid`     | 90-day cookie lifetime by default; module respects the ad-network TTL.       |
-| Meta (Facebook)    | `_fbclid`    | `fbclid`    | 90-day cookie; also captures `fbc` (formatted click ID) + `fbp` (browser ID). |
-| TikTok             | `_ttclid`    | `ttclid`    | 30-day cookie by default.                                                    |
-| Microsoft (Bing)   | `_msclkid`   | `msclkid`   | 90-day cookie.                                                               |
-| Snapchat           | `_sccid`     | `ScCid`     | 30-day cookie.                                                               |
+| Provider         | Cookie name | Query param | Notes                                                                         |
+| ---------------- | ----------- | ----------- | ----------------------------------------------------------------------------- |
+| Google Ads       | `_gclid`    | `gclid`     | 90-day cookie lifetime by default; module respects the ad-network TTL.        |
+| Meta (Facebook)  | `_fbclid`   | `fbclid`    | 90-day cookie; also captures `fbc` (formatted click ID) + `fbp` (browser ID). |
+| TikTok           | `_ttclid`   | `ttclid`    | 30-day cookie by default.                                                     |
+| Microsoft (Bing) | `_msclkid`  | `msclkid`   | 90-day cookie.                                                                |
+| Snapchat         | `_sccid`    | `ScCid`     | 30-day cookie.                                                                |
 
 The `ClickIdExtractor` reads each source and packs them into a single jsonb
-blob: `{ gclid, fbclid, ttclid, msclkid, sccid, provider_hint }`. `provider_hint`
-is the first non-null click ID (Google > Meta > TikTok > Microsoft > Snapchat)
-— used by the marketing module to route the conversion event to the right
-ad-network.
+blob: `{ gclid, fbclid, ttclid, msclkid, sccid, provider_hint }`.
+`provider_hint` is the first non-null click ID (Google > Meta > TikTok >
+Microsoft > Snapchat) — used by the marketing module to route the conversion
+event to the right ad-network.
 
-Small tier captures only `gclid` + `fbclid`. Medium + Enterprise unlock the
-full five via `attribution_click_ids_advanced`.
+Small tier captures only `gclid` + `fbclid`. Medium + Enterprise unlock the full
+five via `attribution_click_ids_advanced`.
 
 ## 5. The four lifecycle states
 
@@ -124,12 +125,12 @@ An attribution profile transitions through four states. Only forward transitions
 are allowed (except `reset`, which erases the profile). Refused transitions are
 observer failures with `INVALID_LIFECYCLE_TRANSITION` (422).
 
-| State          | Meaning                                                                                       | Enters via                                                       |
-| -------------- | --------------------------------------------------------------------------------------------- | ---------------------------------------------------------------- |
-| `anonymous`    | Pre-signup. subject_type='anonymous_session'. subject_id is the session UUID.                 | AttributionCreated (first touch).                                |
-| `identified`   | User/athlete linked. subject_id points at a real domain row.                                  | AttributionSubjectIdentified — fires when subject_id populates.  |
-| `converted`    | First purchase / subscription / paid conversion.                                              | AttributionConverted — dispatched by marketing/finance listener.  |
-| `churned`      | 90-day inactive.                                                                              | MarkAttributionChurnedJob (nightly).                             |
+| State        | Meaning                                                                       | Enters via                                                       |
+| ------------ | ----------------------------------------------------------------------------- | ---------------------------------------------------------------- |
+| `anonymous`  | Pre-signup. subject_type='anonymous_session'. subject_id is the session UUID. | AttributionCreated (first touch).                                |
+| `identified` | User/athlete linked. subject_id points at a real domain row.                  | AttributionSubjectIdentified — fires when subject_id populates.  |
+| `converted`  | First purchase / subscription / paid conversion.                              | AttributionConverted — dispatched by marketing/finance listener. |
+| `churned`    | 90-day inactive.                                                              | MarkAttributionChurnedJob (nightly).                             |
 
 The lifecycle powers cohort analysis + re-engagement campaigns:
 
@@ -142,8 +143,8 @@ The lifecycle powers cohort analysis + re-engagement campaigns:
 
 ## 6. Cross-device merge
 
-When an anonymous browser session on device A signs up, then that same user
-logs in from device B, the module has TWO `attributions` rows:
+When an anonymous browser session on device A signs up, then that same user logs
+in from device B, the module has TWO `attributions` rows:
 
 - Anonymous (device A) — subject_type='anonymous_session', subject_id=session_A.
 - Identified (device B) — subject_type='user', subject_id=user_123.
@@ -156,8 +157,8 @@ fires. The merge strategy:
 2. For each match, replay every touchpoint of the anonymous profile as a
    touchpoint on the identified profile.
 3. If the anonymous profile's first_touch_at predates the identified profile's:
-   overwrite the identified profile's first_touch_* with the anonymous
-   profile's — the true first touch is the anonymous one.
+   overwrite the identified profile's first_touch_* with the anonymous profile's
+   — the true first touch is the anonymous one.
 4. Delete the anonymous profile (soft-delete + fire `AttributionMerged`).
 5. Emit `AttributionMergeCompletedNotification` to admin (ops audit).
 
@@ -177,14 +178,14 @@ persistence. Three outcomes:
    session_id + hashed_ip in-memory for the request only. NO DB WRITE. Fires
    `AttributionSuppressedByConsent` for compliance audit (batched daily via
    `AttributionSuppressedByConsentNotification`).
-3. **Consent revoked mid-session** — pending touchpoints in-flight suppress
-   at dispatch time (re-check at commit). Historical touchpoints are NOT
-   deleted (retained per legal-basis until user requests reset).
+3. **Consent revoked mid-session** — pending touchpoints in-flight suppress at
+   dispatch time (re-check at commit). Historical touchpoints are NOT deleted
+   (retained per legal-basis until user requests reset).
 
 The `consent_snapshot` jsonb captured on every touchpoint includes:
-`{ marketing, advertising, personalized_advertising, functional }` — the
-subset of categories relevant to attribution. Regulator queries can filter
-touchpoints by consent state without a JOIN.
+`{ marketing, advertising, personalized_advertising, functional }` — the subset
+of categories relevant to attribution. Regulator queries can filter touchpoints
+by consent state without a JOIN.
 
 ## 8. Attribution snapshot — the frozen contract with downstream
 
@@ -241,8 +242,8 @@ requests. Every force-reset writes an audit row + notifies the tenant admin.
 
 - Active attributions: retained forever while subject is active.
 - Churned attributions with no touchpoints for 730d: archive candidate.
-- Attribution touchpoints: **730 days default (2 years)**. Enterprise extends
-  to 7 years via `attribution_touchpoint_retention_extended` (aligns with
+- Attribution touchpoints: **730 days default (2 years)**. Enterprise extends to
+  7 years via `attribution_touchpoint_retention_extended` (aligns with
   financial-record retention downstream).
 - Reset attributions: profile redacted immediately; touchpoints purged 90 days
   later (audit hold).
@@ -256,9 +257,10 @@ requests. Every force-reset writes an audit row + notifies the tenant admin.
 - `UserErased` → `RedactAttributionOnUserErasure` → touchpoint device_snapshot +
   ip_hash redacted to `[REDACTED]`; attribution row transitions to lifecycle
   `churned` with subject_id nulled (row survives for aggregate metrics).
-- `AttributionSubjectIdentified` → `MergeAnonymousAttributionsOnSubjectIdentified`
-  → dispatches `MergeIdentifiedAttributionsJob` on Enterprise tenants; no-op
-  on non-Enterprise.
+- `AttributionSubjectIdentified` →
+  `MergeAnonymousAttributionsOnSubjectIdentified` → dispatches
+  `MergeIdentifiedAttributionsJob` on Enterprise tenants; no-op on
+  non-Enterprise.
 
 ## 12. What this module does NOT do
 
@@ -271,34 +273,34 @@ requests. Every force-reset writes an audit row + notifies the tenant admin.
   cascades through tenant. A Sports-app profile and Marketplace-app profile
   never merge.
 - **No IP geolocation.** `region_id` is NOT stored on touchpoints. Region
-  attribution (for ad-network geo-targeting) reads the tenant's region via
-  the tenant hierarchy.
+  attribution (for ad-network geo-targeting) reads the tenant's region via the
+  tenant hierarchy.
 - **No cross-device fingerprinting via device_hash.** The device_snapshot
   captures parsed UA fields (browser / OS / device_type) but NOT a raw
   fingerprint. Privacy-hostile fingerprinting is a non-goal.
 - **No email open pixel tracking.** Email attribution (open/click) is deferred
   to the notifications module; this module handles web + app attribution only.
-- **No fraud detection.** Attribution captures what happened; fraud analysis
-  is referrals module's job.
+- **No fraud detection.** Attribution captures what happened; fraud analysis is
+  referrals module's job.
 - **No `application_id` / `region_id` / `organization_id` / `branch_id` /
   `scope_node_id` on any owned row.** All cascade through tenant per
   tenancy-columns.md §5.
 
 ## 13. Cross-references
 
-- `growth-and-observability.md` — the growth-tier vocabulary. Attribution is
-  the feeder for marketing + analytics + referrals.
+- `growth-and-observability.md` — the growth-tier vocabulary. Attribution is the
+  feeder for marketing + analytics + referrals.
 - `hierarchy.md` §2 — where growth sits in the platform tree.
 - `hierarchy.md` §7 — tier matrix (attribution capture on all tiers, advanced
   features Medium+/Enterprise).
 - `tenancy-columns.md` §3 — every owned row carries `tenant_id`.
 - `tenancy-columns.md` §5 — forbidden columns (attribution never carries
   application_id / region_id / organization_id / branch_id / scope_node_id).
-- `modules/growth/blueprints/marketing/` — the primary downstream consumer
-  (Wave 5).
+- `modules/growth/blueprints/marketing/` — the primary downstream consumer (Wave
+  5).
 - `modules/growth/blueprints/analytics/` — the secondary downstream consumer
   (Wave 5).
-- `modules/growth/blueprints/referrals/` — the third downstream consumer
-  (Wave 5).
+- `modules/growth/blueprints/referrals/` — the third downstream consumer (Wave
+  5).
 - `modules/compliance/blueprints/consent/` — the consent registry this module
   gates through.

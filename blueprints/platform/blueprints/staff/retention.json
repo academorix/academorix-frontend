@@ -22,7 +22,10 @@
     },
     {
       "entity": "Staff — emergency_contact_* + tax_id_last4 (post-offboarding)",
-      "hot": { "days": 90, "description": "emergency_contact_name + emergency_contact_phone + emergency_contact_relationship + tax_id_last4" },
+      "hot": {
+        "days": 90,
+        "description": "emergency_contact_name + emergency_contact_phone + emergency_contact_relationship + tax_id_last4"
+      },
       "purge": {
         "trigger": "employment_status='offboarded' + ended_at + 90 days",
         "action": "field-level redaction (replace with [REDACTED]) via PurgeOffboardedStaffJob phase 1",

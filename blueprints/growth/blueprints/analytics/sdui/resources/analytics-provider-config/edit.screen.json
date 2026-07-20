@@ -25,7 +25,11 @@
       "children": [
         {
           "kind": "Link",
-          "props": { "leadingIcon": "arrow-left", "children": "Back to providers", "className": "text-sm text-muted" },
+          "props": {
+            "leadingIcon": "arrow-left",
+            "children": "Back to providers",
+            "className": "text-sm text-muted"
+          },
           "actions": { "onPress": { "kind": "navigate", "to": "/tenant/analytics/providers" } }
         },
         {
@@ -50,7 +54,11 @@
           "children": [
             {
               "kind": "Text",
-              "props": { "as": "h2", "className": "text-sm font-semibold text-muted uppercase tracking-wide mb-3", "children": "General" }
+              "props": {
+                "as": "h2",
+                "className": "text-sm font-semibold text-muted uppercase tracking-wide mb-3",
+                "children": "General"
+              }
             },
             {
               "kind": "TextField",
@@ -75,7 +83,11 @@
           "children": [
             {
               "kind": "Text",
-              "props": { "as": "h2", "className": "text-sm font-semibold text-muted uppercase tracking-wide mb-3", "children": "Sampling" }
+              "props": {
+                "as": "h2",
+                "className": "text-sm font-semibold text-muted uppercase tracking-wide mb-3",
+                "children": "Sampling"
+              }
             },
             {
               "kind": "Alert",
@@ -91,7 +103,13 @@
             },
             {
               "kind": "NumberField",
-              "props": { "label": "Sampling rate", "name": "sampling_rate", "min": 0, "max": 1, "step": 0.01 },
+              "props": {
+                "label": "Sampling rate",
+                "name": "sampling_rate",
+                "min": 0,
+                "max": 1,
+                "step": 0.01
+              },
               "bindings": {
                 "defaultValue": { "$ref": "provider.sampling_rate" },
                 "isDisabled": {
@@ -107,7 +125,11 @@
           "children": [
             {
               "kind": "Text",
-              "props": { "as": "h2", "className": "text-sm font-semibold text-muted uppercase tracking-wide mb-3", "children": "Enabled event types" }
+              "props": {
+                "as": "h2",
+                "className": "text-sm font-semibold text-muted uppercase tracking-wide mb-3",
+                "children": "Enabled event types"
+              }
             },
             {
               "kind": "TagField",
@@ -119,11 +141,17 @@
         {
           "kind": "Card",
           "props": { "className": "p-6" },
-          "bindings": { "hidden": { "$expr": "!identity.entitlements.analytics_batch_configuration" } },
+          "bindings": {
+            "hidden": { "$expr": "!identity.entitlements.analytics_batch_configuration" }
+          },
           "children": [
             {
               "kind": "Text",
-              "props": { "as": "h2", "className": "text-sm font-semibold text-muted uppercase tracking-wide mb-3", "children": "Batching (Enterprise)" }
+              "props": {
+                "as": "h2",
+                "className": "text-sm font-semibold text-muted uppercase tracking-wide mb-3",
+                "children": "Batching (Enterprise)"
+              }
             },
             {
               "kind": "NumberField",
@@ -132,7 +160,12 @@
             },
             {
               "kind": "NumberField",
-              "props": { "label": "Flush interval (ms)", "name": "batch_config.flush_interval_ms", "min": 100, "step": 100 },
+              "props": {
+                "label": "Flush interval (ms)",
+                "name": "batch_config.flush_interval_ms",
+                "min": 100,
+                "step": 100
+              },
               "bindings": { "defaultValue": { "$ref": "provider.batch_config.flush_interval_ms" } }
             }
           ]

@@ -38,8 +38,20 @@
             {
               "kind": "View",
               "children": [
-                { "kind": "Text", "props": { "as": "h1", "className": "text-2xl font-semibold" }, "bindings": { "children": { "$expr": "$ref('account.display_name') + ' — history'" } } },
-                { "kind": "Text", "props": { "className": "text-sm text-muted", "children": "Running balance history for this account." } }
+                {
+                  "kind": "Text",
+                  "props": { "as": "h1", "className": "text-2xl font-semibold" },
+                  "bindings": {
+                    "children": { "$expr": "$ref('account.display_name') + ' — history'" }
+                  }
+                },
+                {
+                  "kind": "Text",
+                  "props": {
+                    "className": "text-sm text-muted",
+                    "children": "Running balance history for this account."
+                  }
+                }
               ]
             },
             {
@@ -58,7 +70,14 @@
           "kind": "Card",
           "props": { "className": "p-6" },
           "children": [
-            { "kind": "Text", "props": { "as": "h2", "className": "text-lg font-medium mb-4", "children": "Running balance" } },
+            {
+              "kind": "Text",
+              "props": {
+                "as": "h2",
+                "className": "text-lg font-medium mb-4",
+                "children": "Running balance"
+              }
+            },
             {
               "kind": "LineChart",
               "bindings": {
@@ -77,19 +96,76 @@
           "kind": "Card",
           "props": { "className": "p-6" },
           "children": [
-            { "kind": "Text", "props": { "as": "h2", "className": "text-lg font-medium mb-4", "children": "Entries" } },
+            {
+              "kind": "Text",
+              "props": {
+                "as": "h2",
+                "className": "text-lg font-medium mb-4",
+                "children": "Entries"
+              }
+            },
             {
               "kind": "DataGrid",
               "bindings": { "items": { "$ref": "history" } },
               "props": {
                 "className": "w-full",
                 "columns": [
-                  { "field": "recorded_at", "label": "Recorded", "sortable": true, "defaultSort": "desc", "width": 180, "formatter": "datetime" },
-                  { "field": "transaction_number", "label": "Transaction", "width": 200, "renderer": { "kind": "Link", "toExpr": "'/tenant/finance/transactions/' + row.transaction_id", "className": "font-mono text-sm" } },
-                  { "field": "kind", "label": "Kind", "width": 160, "renderer": { "widget": "transaction.kind-chip" } },
-                  { "field": "debit_cents", "label": "Debit", "width": 140, "renderer": { "kind": "Text", "formatter": "currency", "className": "text-right font-mono", "conditionalHidden": { "$expr": "row.debit_cents === 0" } } },
-                  { "field": "credit_cents", "label": "Credit", "width": 140, "renderer": { "kind": "Text", "formatter": "currency", "className": "text-right font-mono", "conditionalHidden": { "$expr": "row.credit_cents === 0" } } },
-                  { "field": "running_balance_cents", "label": "Balance after", "width": 180, "renderer": { "kind": "Text", "formatter": "currency", "className": "text-right font-mono font-semibold" } },
+                  {
+                    "field": "recorded_at",
+                    "label": "Recorded",
+                    "sortable": true,
+                    "defaultSort": "desc",
+                    "width": 180,
+                    "formatter": "datetime"
+                  },
+                  {
+                    "field": "transaction_number",
+                    "label": "Transaction",
+                    "width": 200,
+                    "renderer": {
+                      "kind": "Link",
+                      "toExpr": "'/tenant/finance/transactions/' + row.transaction_id",
+                      "className": "font-mono text-sm"
+                    }
+                  },
+                  {
+                    "field": "kind",
+                    "label": "Kind",
+                    "width": 160,
+                    "renderer": { "widget": "transaction.kind-chip" }
+                  },
+                  {
+                    "field": "debit_cents",
+                    "label": "Debit",
+                    "width": 140,
+                    "renderer": {
+                      "kind": "Text",
+                      "formatter": "currency",
+                      "className": "text-right font-mono",
+                      "conditionalHidden": { "$expr": "row.debit_cents === 0" }
+                    }
+                  },
+                  {
+                    "field": "credit_cents",
+                    "label": "Credit",
+                    "width": 140,
+                    "renderer": {
+                      "kind": "Text",
+                      "formatter": "currency",
+                      "className": "text-right font-mono",
+                      "conditionalHidden": { "$expr": "row.credit_cents === 0" }
+                    }
+                  },
+                  {
+                    "field": "running_balance_cents",
+                    "label": "Balance after",
+                    "width": 180,
+                    "renderer": {
+                      "kind": "Text",
+                      "formatter": "currency",
+                      "className": "text-right font-mono font-semibold"
+                    }
+                  },
                   { "field": "description", "label": "Description" }
                 ]
               }

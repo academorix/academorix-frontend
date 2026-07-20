@@ -4,7 +4,7 @@
  * @description Props for the native language selector component.
  */
 
-import type { NativeLocaleItem } from './native-locale-item.interface';
+import type { NativeLocaleItem } from "./native-locale-item.interface";
 
 /**
  * Props for the `NativeLanguageSelector` component.

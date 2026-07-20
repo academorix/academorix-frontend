@@ -11,11 +11,11 @@
  *   records the failure through analytics.
  */
 
-import { Inject, Injectable, Optional } from '@stackra/container';
+import { Inject, Injectable, Optional } from "@stackra/container";
 
-import type { IPushSubscriptionAdapter, IPushSubscriptionResult } from '@/core/interfaces';
-import { EXPO_PUSH_CONFIG } from '../constants';
-import type { IExpoPushConfig, INativePushToken } from '../interfaces';
+import type { IPushSubscriptionAdapter, IPushSubscriptionResult } from "@/core/interfaces";
+import { EXPO_PUSH_CONFIG } from "../constants";
+import type { IExpoPushConfig, INativePushToken } from "../interfaces";
 
 /**
  * Minimal subset of `expo-notifications`'s public API — decoupled
@@ -40,10 +40,10 @@ interface IExpoNotificationsModule {
  */
 async function loadExpoNotifications(): Promise<IExpoNotificationsModule | null> {
   try {
-    const moduleName = 'expo-notifications';
+    const moduleName = "expo-notifications";
     const mod = (await import(/* @vite-ignore */ moduleName)) as
       { default?: IExpoNotificationsModule } | IExpoNotificationsModule;
-    return 'default' in mod && mod.default ? mod.default : (mod as IExpoNotificationsModule);
+    return "default" in mod && mod.default ? mod.default : (mod as IExpoNotificationsModule);
   } catch {
     // Peer not available (running outside Expo) — return null so the
     // caller can early-out.
@@ -55,15 +55,15 @@ async function loadExpoNotifications(): Promise<IExpoNotificationsModule | null>
  * Map an Expo permission status string to a `NotificationPermission`.
  */
 function mapExpoStatus(status: string, granted?: boolean): NotificationPermission {
-  if (granted === true) return 'granted';
-  if (granted === false) return 'denied';
+  if (granted === true) return "granted";
+  if (granted === false) return "denied";
   switch (status) {
-    case 'granted':
-      return 'granted';
-    case 'denied':
-      return 'denied';
+    case "granted":
+      return "granted";
+    case "denied":
+      return "denied";
     default:
-      return 'default';
+      return "default";
   }
 }
 
@@ -76,7 +76,7 @@ function mapExpoStatus(status: string, granted?: boolean): NotificationPermissio
 @Injectable()
 export class ExpoPushTokenAdapter implements IPushSubscriptionAdapter {
   /** Discriminator narrowed by {@link IPushSubscriptionResult}. */
-  public readonly platform = 'native' as const;
+  public readonly platform = "native" as const;
 
   /**
    * Test hook — override the module loader with a mock. Set to
@@ -88,7 +88,7 @@ export class ExpoPushTokenAdapter implements IPushSubscriptionAdapter {
   private cached: INativePushToken | null = null;
 
   public constructor(
-    @Optional() @Inject(EXPO_PUSH_CONFIG) private readonly config?: IExpoPushConfig
+    @Optional() @Inject(EXPO_PUSH_CONFIG) private readonly config?: IExpoPushConfig,
   ) {}
 
   // ── Reads ────────────────────────────────────────────────────────
@@ -100,7 +100,7 @@ export class ExpoPushTokenAdapter implements IPushSubscriptionAdapter {
    * is deliberately optimistic.
    */
   public isSupported(): boolean {
-    return typeof globalThis !== 'undefined';
+    return typeof globalThis !== "undefined";
   }
 
   /**
@@ -109,13 +109,13 @@ export class ExpoPushTokenAdapter implements IPushSubscriptionAdapter {
    */
   public async getPermissionState(): Promise<NotificationPermission> {
     const notifications = await this.load();
-    if (!notifications?.getPermissionsAsync) return 'denied';
+    if (!notifications?.getPermissionsAsync) return "denied";
     try {
       const result = await notifications.getPermissionsAsync();
       return mapExpoStatus(result.status, result.granted);
     } catch {
       // fail-soft — Metro can throw during a stale module load.
-      return 'denied';
+      return "denied";
     }
   }
 
@@ -125,7 +125,7 @@ export class ExpoPushTokenAdapter implements IPushSubscriptionAdapter {
    * a "read token without registering" API.
    */
   public async getSubscription(): Promise<IPushSubscriptionResult | null> {
-    return this.cached ? { kind: 'native', value: this.cached } : null;
+    return this.cached ? { kind: "native", value: this.cached } : null;
   }
 
   // ── Mutations ────────────────────────────────────────────────────
@@ -142,7 +142,7 @@ export class ExpoPushTokenAdapter implements IPushSubscriptionAdapter {
     const notifications = await this.load();
     if (!notifications) {
       throw new Error(
-        '`expo-notifications` is not installed — install the peer to use native push.'
+        "`expo-notifications` is not installed — install the peer to use native push.",
       );
     }
 
@@ -151,14 +151,14 @@ export class ExpoPushTokenAdapter implements IPushSubscriptionAdapter {
     if (notifications.requestPermissionsAsync) {
       try {
         const status = await notifications.requestPermissionsAsync();
-        if (status.granted === false || (status.status === 'denied' && status.granted !== true)) {
-          throw new Error('Notification permission denied.');
+        if (status.granted === false || (status.status === "denied" && status.granted !== true)) {
+          throw new Error("Notification permission denied.");
         }
       } catch (err) {
         // Non-permission failures (Metro race, missing native
         // module) propagate — the manager translates them into the
         // canonical `NATIVE_PUSH_TOKEN_FAILED` analytics event.
-        if (err instanceof Error && err.message === 'Notification permission denied.') {
+        if (err instanceof Error && err.message === "Notification permission denied.") {
           throw err;
         }
       }
@@ -184,11 +184,11 @@ export class ExpoPushTokenAdapter implements IPushSubscriptionAdapter {
       // or 'android' matters less than shipping the token itself.
       // The manager's dispatcher can override this from
       // `Platform.OS` at the callsite if precision matters.
-      platform: 'ios',
+      platform: "ios",
       token: response.data,
     };
     this.cached = token;
-    return { kind: 'native', value: token };
+    return { kind: "native", value: token };
   }
 
   /**

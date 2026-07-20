@@ -72,7 +72,10 @@
           "on_success": "{{props.on_success}}",
           "on_error": {
             "NotAllowedError": { "kind": "transition_to", "target": "select_method" },
-            "MFA_CHALLENGE_INVALID_ASSERTION": { "kind": "transition_to", "target": "webauthn_failed" },
+            "MFA_CHALLENGE_INVALID_ASSERTION": {
+              "kind": "transition_to",
+              "target": "webauthn_failed"
+            },
             "MFA_CHALLENGE_ATTEMPTS_EXHAUSTED": "{{props.on_max_attempts}}"
           }
         },
@@ -151,7 +154,10 @@
         "body": "Your authenticator didn't produce a valid response. Try again or use a different method.",
         "actions": [
           { "label": "Try again", "action": { "kind": "transition_to", "target": "webauthn" } },
-          { "label": "Different method", "action": { "kind": "transition_to", "target": "select_method" } }
+          {
+            "label": "Different method",
+            "action": { "kind": "transition_to", "target": "select_method" }
+          }
         ]
       }
     }

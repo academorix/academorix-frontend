@@ -10,7 +10,12 @@
   "requiresPermission": "monitoring.incidents.resolve",
   "requiresEntitlement": "monitoring_capture",
   "dataSources": [
-    { "name": "incident", "kind": "http.get", "url": "/api/v1/monitoring/incidents/{incident}", "unwrap": "data" }
+    {
+      "name": "incident",
+      "kind": "http.get",
+      "url": "/api/v1/monitoring/incidents/{incident}",
+      "unwrap": "data"
+    }
   ],
   "nodes": [
     {
@@ -18,21 +23,41 @@
       "kind": "Form",
       "props": { "className": "max-w-2xl mx-auto p-6 flex flex-col gap-4" },
       "children": [
-        { "kind": "Text", "props": { "as": "h1", "className": "text-2xl font-semibold", "children": "Resolve incident" } },
+        {
+          "kind": "Text",
+          "props": {
+            "as": "h1",
+            "className": "text-2xl font-semibold",
+            "children": "Resolve incident"
+          }
+        },
         {
           "kind": "Alert",
           "props": { "variant": "info", "title": "P1 postmortem required" },
-          "bindings": { "hidden": { "$expr": "incident.severity !== 'p1'" }, "description": { "$expr": "'This is a P1 incident. A postmortem doc is required within 5 business days. Provide the URL now or MonitoringPostmortemRequiredNotification will schedule the task.'" } }
+          "bindings": {
+            "hidden": { "$expr": "incident.severity !== 'p1'" },
+            "description": {
+              "$expr": "'This is a P1 incident. A postmortem doc is required within 5 business days. Provide the URL now or MonitoringPostmortemRequiredNotification will schedule the task.'"
+            }
+          }
         },
         {
           "kind": "TextArea",
-          "props": { "label": "Resolution note (required)", "placeholder": "Root cause: expired TLS cert. Mitigation: renewed via Let's Encrypt. Follow-up: automate cert renewal." },
+          "props": {
+            "label": "Resolution note (required)",
+            "placeholder": "Root cause: expired TLS cert. Mitigation: renewed via Let's Encrypt. Follow-up: automate cert renewal."
+          },
           "actions": { "onChange": { "kind": "form.set", "field": "note", "valueExpr": "$value" } }
         },
         {
           "kind": "Input",
-          "props": { "label": "Postmortem URL (optional; required for P1)", "placeholder": "https://docs.example.com/postmortems/2026-07-15-tls-expiry" },
-          "actions": { "onChange": { "kind": "form.set", "field": "postmortem_url", "valueExpr": "$value" } }
+          "props": {
+            "label": "Postmortem URL (optional; required for P1)",
+            "placeholder": "https://docs.example.com/postmortems/2026-07-15-tls-expiry"
+          },
+          "actions": {
+            "onChange": { "kind": "form.set", "field": "postmortem_url", "valueExpr": "$value" }
+          }
         },
         {
           "kind": "Button",
@@ -42,7 +67,10 @@
               "kind": "http.post",
               "url": "/api/v1/monitoring/incidents/{incident}/resolve",
               "body": "{{form}}",
-              "onSuccess": { "kind": "navigate", "toExpr": "'/tenant/monitoring/incidents/' + $routeParams.incident" }
+              "onSuccess": {
+                "kind": "navigate",
+                "toExpr": "'/tenant/monitoring/incidents/' + $routeParams.incident"
+              }
             }
           }
         }

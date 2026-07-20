@@ -6,7 +6,7 @@
  *   to seed sync reads before the underlying store has hydrated.
  */
 
-import type { ISettingDefinition } from '@stackra/contracts';
+import type { ISettingDefinition } from "@stackra/contracts";
 
 /**
  * Build a `{ [fieldKey]: defaultValue }` map from a resolved

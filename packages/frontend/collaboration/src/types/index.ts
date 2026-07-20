@@ -1,4 +1,4 @@
 /**
  * @module @stackra/collaboration/types
  */
-export type { ActivityEntry } from './activity-entry.type';
+export type { ActivityEntry } from "./activity-entry.type";

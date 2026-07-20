@@ -37,24 +37,14 @@
       "Academorix\\Observability\\Activity\\Contracts\\Data\\ActivityInterface",
       "Spatie\\Activitylog\\Contracts\\Activity"
     ],
-    "traits": [
-      "HasFactory",
-      "BelongsToTenant",
-      "Filterable",
-      "Searchable"
-    ],
+    "traits": ["HasFactory", "BelongsToTenant", "Filterable", "Searchable"],
     "casts": {
       "properties": "collection",
       "created_at": "datetime",
       "updated_at": "datetime"
     },
-    "appends": [
-      "human_time",
-      "is_batched"
-    ],
-    "observers": [
-      "ActivityObserver"
-    ],
+    "appends": ["human_time", "is_batched"],
+    "observers": ["ActivityObserver"],
     "hidden": [],
     "guarded": ["id"]
   },
@@ -163,36 +153,28 @@
         "columns": ["tenant_id", "created_at"],
         "unique": false,
         "name": "activity_log_tenant_created_at_index",
-        "order": [
-          { "column": "created_at", "direction": "desc" }
-        ],
+        "order": [{ "column": "created_at", "direction": "desc" }],
         "description": "The primary user feed read path — 'give me the most recent activity in this tenant'. Covers `/api/v1/activities` list + WHERE tenant_id = ? ORDER BY created_at DESC."
       },
       {
         "columns": ["tenant_id", "log_name", "created_at"],
         "unique": false,
         "name": "activity_log_tenant_log_created_at_index",
-        "order": [
-          { "column": "created_at", "direction": "desc" }
-        ],
+        "order": [{ "column": "created_at", "direction": "desc" }],
         "description": "Filter by feed name — 'give me the bookings feed for this tenant'. Powers filter[log_name]=bookings."
       },
       {
         "columns": ["subject_type", "subject_id", "created_at"],
         "unique": false,
         "name": "activity_log_subject_created_at_index",
-        "order": [
-          { "column": "created_at", "direction": "desc" }
-        ],
+        "order": [{ "column": "created_at", "direction": "desc" }],
         "description": "Per-entity activity stream — 'what happened on this booking'. Powers /api/v1/activities/by-entity/booking/123."
       },
       {
         "columns": ["causer_type", "causer_id", "created_at"],
         "unique": false,
         "name": "activity_log_causer_created_at_index",
-        "order": [
-          { "column": "created_at", "direction": "desc" }
-        ],
+        "order": [{ "column": "created_at", "direction": "desc" }],
         "description": "Per-actor 'my activity' — 'what did I do this week'. Powers /api/v1/activities/mine + /api/v1/activities/by-user/{user}."
       },
       {
@@ -206,21 +188,12 @@
         "columns": ["application_id", "tenant_id", "created_at"],
         "unique": false,
         "name": "activity_log_application_tenant_created_at_index",
-        "order": [
-          { "column": "created_at", "direction": "desc" }
-        ],
+        "order": [{ "column": "created_at", "direction": "desc" }],
         "description": "Cross-app rollup — 'give me every activity across every tenant in this Application'. Powers platform-admin cross-tenant search + per-Application feed splits."
       }
     ]
   },
-  "required": [
-    "id",
-    "description",
-    "properties",
-    "tenant_id",
-    "created_at",
-    "updated_at"
-  ],
+  "required": ["id", "description", "properties", "tenant_id", "created_at", "updated_at"],
   "properties": {
     "id": { "type": "integer", "minimum": 1 },
     "log_name": {

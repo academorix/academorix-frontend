@@ -6,8 +6,27 @@
   "namespace": "academorix.teams",
   "labelConventions": {
     "always": [],
-    "commonlyAvailable": ["team_type", "sport_key", "status", "member_type", "role_on_team", "left_reason", "trial_type", "participation_type"],
-    "forbiddenAsLabels": ["tenant_id", "team_id", "team_member_id", "trial_id", "event_team_id", "member_id", "trialist_id", "user_id", "coach_id"]
+    "commonlyAvailable": [
+      "team_type",
+      "sport_key",
+      "status",
+      "member_type",
+      "role_on_team",
+      "left_reason",
+      "trial_type",
+      "participation_type"
+    ],
+    "forbiddenAsLabels": [
+      "tenant_id",
+      "team_id",
+      "team_member_id",
+      "trial_id",
+      "event_team_id",
+      "member_id",
+      "trialist_id",
+      "user_id",
+      "coach_id"
+    ]
   },
   "metrics": [
     {

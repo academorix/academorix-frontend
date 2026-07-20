@@ -5,7 +5,7 @@
  *   file.
  */
 
-import type { IDevtoolsModuleOptions } from '../interfaces/devtools-module-options.interface';
+import type { IDevtoolsModuleOptions } from "../interfaces/devtools-module-options.interface";
 
 /**
  * Type-safe devtools configuration helper — identity pass-through

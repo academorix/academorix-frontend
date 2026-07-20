@@ -8,47 +8,172 @@
       "model": "Staff",
       "class": "Academorix\\Staff\\Policies\\StaffPolicy",
       "abilities": [
-        { "action": "viewAny", "permission": "staff.viewAny", "scope": "any tenant member with staff feature; narrows to caller's active branch scope when set" },
-        { "action": "view", "permission": "staff.view", "scope": "same as viewAny + self-view allowed via .own suffix (`staff.view.own` narrows to WHERE user_id = current_user_id)" },
-        { "action": "create", "permission": "staff.hire", "scope": "hr + branch_manager + admin + owner. Distinct from staff.create — the hire action includes slot consumption + welcome-notification cascade" },
-        { "action": "update", "permission": "staff.update", "scope": "hr + branch_manager (own branch) + admin + owner. Compensation + emergency contact fields additionally require the field-level permissions below" },
-        { "action": "delete", "permission": "staff.delete", "scope": "admin + owner only. Precondition: employment_status='offboarded'" },
-        { "action": "promoteToManager", "permission": "staff.promote-to-manager", "scope": "admin + owner only. Atomic route — demotes existing manager + promotes this staff in one transaction" },
-        { "action": "demoteFromManager", "permission": "staff.promote-to-manager", "scope": "same permission — promote and demote are one capability" },
-        { "action": "putOnLeave", "permission": "staff.put-on-leave", "scope": "hr + branch_manager (own branch) + admin + owner. Leave notes may be visible only to HR (leave_type not visible to peers)" },
+        {
+          "action": "viewAny",
+          "permission": "staff.viewAny",
+          "scope": "any tenant member with staff feature; narrows to caller's active branch scope when set"
+        },
+        {
+          "action": "view",
+          "permission": "staff.view",
+          "scope": "same as viewAny + self-view allowed via .own suffix (`staff.view.own` narrows to WHERE user_id = current_user_id)"
+        },
+        {
+          "action": "create",
+          "permission": "staff.hire",
+          "scope": "hr + branch_manager + admin + owner. Distinct from staff.create — the hire action includes slot consumption + welcome-notification cascade"
+        },
+        {
+          "action": "update",
+          "permission": "staff.update",
+          "scope": "hr + branch_manager (own branch) + admin + owner. Compensation + emergency contact fields additionally require the field-level permissions below"
+        },
+        {
+          "action": "delete",
+          "permission": "staff.delete",
+          "scope": "admin + owner only. Precondition: employment_status='offboarded'"
+        },
+        {
+          "action": "promoteToManager",
+          "permission": "staff.promote-to-manager",
+          "scope": "admin + owner only. Atomic route — demotes existing manager + promotes this staff in one transaction"
+        },
+        {
+          "action": "demoteFromManager",
+          "permission": "staff.promote-to-manager",
+          "scope": "same permission — promote and demote are one capability"
+        },
+        {
+          "action": "putOnLeave",
+          "permission": "staff.put-on-leave",
+          "scope": "hr + branch_manager (own branch) + admin + owner. Leave notes may be visible only to HR (leave_type not visible to peers)"
+        },
         { "action": "returnFromLeave", "permission": "staff.put-on-leave" },
-        { "action": "suspend", "permission": "staff.suspend", "scope": "hr + admin + owner only. Branch managers CANNOT unilaterally suspend — audit + compliance safeguard against retaliatory disciplinary use" },
+        {
+          "action": "suspend",
+          "permission": "staff.suspend",
+          "scope": "hr + admin + owner only. Branch managers CANNOT unilaterally suspend — audit + compliance safeguard against retaliatory disciplinary use"
+        },
         { "action": "reinstate", "permission": "staff.suspend" },
-        { "action": "offboard", "permission": "staff.offboard", "scope": "hr + admin + owner. The route supports `cascade=true` which archives the linked Coach + removes team memberships in the same transaction (requires additional `staff.offboard.cascade` permission)" },
-        { "action": "reactivate", "permission": "staff.hire", "scope": "same permission as hire — rehire is a hire path" },
-        { "action": "viewCompensation", "permission": "staff.view.compensation", "scope": "hr + owner. The redactor strips compensation_* fields when the caller lacks this. Additionally, a Staff can view their own compensation via `staff.view.compensation.own` (narrows to user_id = current_user_id)" },
-        { "action": "manageCompensation", "permission": "staff.manage.compensation", "scope": "hr + owner only. Distinct permission — the observer refuses writes without this even if caller has staff.update" },
-        { "action": "viewEmergencyContact", "permission": "staff.view.emergency_contact", "scope": "hr + branch_manager (own branch) + owner. Redactor strips fields for others. `staff.view.emergency_contact.own` allows self-view" },
-        { "action": "manageEmergencyContact", "permission": "staff.manage.emergency_contact", "scope": "hr + owner. Additionally, the staff themselves may update their OWN emergency contact via the /me/staff/emergency-contact route (permission `staff.manage.emergency_contact.own`)" },
-        { "action": "viewDirectReports", "permission": "staff.view.direct-reports", "scope": "requires staff_org_chart entitlement + own-report-only when caller isn't hr/owner (a manager sees their own tree; hr + owner see everyone)" },
-        { "action": "platformViewAny", "permission": "platform.staff.viewAny", "guard": "platform_admin" },
-        { "action": "platformView", "permission": "platform.staff.view", "guard": "platform_admin" },
-        { "action": "platformAuditCompensation", "permission": "platform.staff.audit-compensation", "guard": "platform_admin", "scope": "super_admin only. Emits a signed audit CSV over the last N compensation changes across all tenants. Every invocation is audit-critical + logged to compliance." }
+        {
+          "action": "offboard",
+          "permission": "staff.offboard",
+          "scope": "hr + admin + owner. The route supports `cascade=true` which archives the linked Coach + removes team memberships in the same transaction (requires additional `staff.offboard.cascade` permission)"
+        },
+        {
+          "action": "reactivate",
+          "permission": "staff.hire",
+          "scope": "same permission as hire — rehire is a hire path"
+        },
+        {
+          "action": "viewCompensation",
+          "permission": "staff.view.compensation",
+          "scope": "hr + owner. The redactor strips compensation_* fields when the caller lacks this. Additionally, a Staff can view their own compensation via `staff.view.compensation.own` (narrows to user_id = current_user_id)"
+        },
+        {
+          "action": "manageCompensation",
+          "permission": "staff.manage.compensation",
+          "scope": "hr + owner only. Distinct permission — the observer refuses writes without this even if caller has staff.update"
+        },
+        {
+          "action": "viewEmergencyContact",
+          "permission": "staff.view.emergency_contact",
+          "scope": "hr + branch_manager (own branch) + owner. Redactor strips fields for others. `staff.view.emergency_contact.own` allows self-view"
+        },
+        {
+          "action": "manageEmergencyContact",
+          "permission": "staff.manage.emergency_contact",
+          "scope": "hr + owner. Additionally, the staff themselves may update their OWN emergency contact via the /me/staff/emergency-contact route (permission `staff.manage.emergency_contact.own`)"
+        },
+        {
+          "action": "viewDirectReports",
+          "permission": "staff.view.direct-reports",
+          "scope": "requires staff_org_chart entitlement + own-report-only when caller isn't hr/owner (a manager sees their own tree; hr + owner see everyone)"
+        },
+        {
+          "action": "platformViewAny",
+          "permission": "platform.staff.viewAny",
+          "guard": "platform_admin"
+        },
+        {
+          "action": "platformView",
+          "permission": "platform.staff.view",
+          "guard": "platform_admin"
+        },
+        {
+          "action": "platformAuditCompensation",
+          "permission": "platform.staff.audit-compensation",
+          "guard": "platform_admin",
+          "scope": "super_admin only. Emits a signed audit CSV over the last N compensation changes across all tenants. Every invocation is audit-critical + logged to compliance."
+        }
       ]
     },
     {
       "model": "Coach",
       "class": "Academorix\\Staff\\Policies\\CoachPolicy",
       "abilities": [
-        { "action": "viewAny", "permission": "coach.viewAny", "scope": "any tenant member; narrows to active branch scope" },
+        {
+          "action": "viewAny",
+          "permission": "coach.viewAny",
+          "scope": "any tenant member; narrows to active branch scope"
+        },
         { "action": "view", "permission": "coach.view" },
-        { "action": "create", "permission": "coach.create", "scope": "hr + admin + owner + branch_manager (own branch). Consumes coach_slot entitlement" },
-        { "action": "update", "permission": "coach.update", "scope": "hr + branch_manager (own branch) + admin + owner. Self-update by the coach themselves is via /me/coach with a subset of fields (bio, avatar via user->profile, availability_pattern, public_email, public_phone, languages) — permission `coach.update.own`" },
-        { "action": "delete", "permission": "coach.delete", "scope": "admin + owner only. Precondition: status='archived'" },
-        { "action": "pause", "permission": "coach.pause", "scope": "coach.update permission is sufficient — pause is not a disciplinary action" },
+        {
+          "action": "create",
+          "permission": "coach.create",
+          "scope": "hr + admin + owner + branch_manager (own branch). Consumes coach_slot entitlement"
+        },
+        {
+          "action": "update",
+          "permission": "coach.update",
+          "scope": "hr + branch_manager (own branch) + admin + owner. Self-update by the coach themselves is via /me/coach with a subset of fields (bio, avatar via user->profile, availability_pattern, public_email, public_phone, languages) — permission `coach.update.own`"
+        },
+        {
+          "action": "delete",
+          "permission": "coach.delete",
+          "scope": "admin + owner only. Precondition: status='archived'"
+        },
+        {
+          "action": "pause",
+          "permission": "coach.pause",
+          "scope": "coach.update permission is sufficient — pause is not a disciplinary action"
+        },
         { "action": "resume", "permission": "coach.pause" },
-        { "action": "archive", "permission": "coach.archive", "scope": "hr + admin + owner. Archive is the pre-delete transition — coach loses team assignments" },
-        { "action": "manageCertifications", "permission": "coach.manage.certifications", "scope": "hr + coach themselves (`coach.manage.certifications.own`) + admin + owner. Coaches can add their own certifications; HR verifies them when coach_certifications_verified entitlement is on" },
-        { "action": "verifyCertification", "permission": "coach.verify.certifications", "scope": "hr + owner only. Requires coach_certifications_verified entitlement. Uploads a signed doc + promotes certification from pending_verification → verified" },
-        { "action": "setPrimarySport", "permission": "coach.set-primary-sport", "scope": "hr + admin + owner. The coach themselves cannot change their primary sport — that's an org-level classification decision" },
-        { "action": "manageAvailability", "permission": "coach.manage.availability", "scope": "hr + branch_manager + admin + owner. Coach themselves can manage OWN availability via `coach.manage.availability.own`" },
-        { "action": "viewPublicProfile", "permission": null, "scope": "PUBLIC — no auth required. Renders the coach's public profile (bio, avatar, primary sport, verified certifications, rating when coach_rating_display entitlement is on). Requires only that the parent tenant's public directory is enabled." },
-        { "action": "platformViewAny", "permission": "platform.coach.viewAny", "guard": "platform_admin" },
+        {
+          "action": "archive",
+          "permission": "coach.archive",
+          "scope": "hr + admin + owner. Archive is the pre-delete transition — coach loses team assignments"
+        },
+        {
+          "action": "manageCertifications",
+          "permission": "coach.manage.certifications",
+          "scope": "hr + coach themselves (`coach.manage.certifications.own`) + admin + owner. Coaches can add their own certifications; HR verifies them when coach_certifications_verified entitlement is on"
+        },
+        {
+          "action": "verifyCertification",
+          "permission": "coach.verify.certifications",
+          "scope": "hr + owner only. Requires coach_certifications_verified entitlement. Uploads a signed doc + promotes certification from pending_verification → verified"
+        },
+        {
+          "action": "setPrimarySport",
+          "permission": "coach.set-primary-sport",
+          "scope": "hr + admin + owner. The coach themselves cannot change their primary sport — that's an org-level classification decision"
+        },
+        {
+          "action": "manageAvailability",
+          "permission": "coach.manage.availability",
+          "scope": "hr + branch_manager + admin + owner. Coach themselves can manage OWN availability via `coach.manage.availability.own`"
+        },
+        {
+          "action": "viewPublicProfile",
+          "permission": null,
+          "scope": "PUBLIC — no auth required. Renders the coach's public profile (bio, avatar, primary sport, verified certifications, rating when coach_rating_display entitlement is on). Requires only that the parent tenant's public directory is enabled."
+        },
+        {
+          "action": "platformViewAny",
+          "permission": "platform.coach.viewAny",
+          "guard": "platform_admin"
+        },
         { "action": "platformView", "permission": "platform.coach.view", "guard": "platform_admin" }
       ]
     }

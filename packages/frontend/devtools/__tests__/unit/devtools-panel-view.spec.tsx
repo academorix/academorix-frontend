@@ -7,11 +7,11 @@
  *   affordance.
  */
 
-import { act, cleanup, fireEvent, render } from '@testing-library/react';
-import { afterEach, describe, expect, it, vi } from 'vitest';
-import type { ReactNode } from 'react';
+import { act, cleanup, fireEvent, render } from "@testing-library/react";
+import { afterEach, describe, expect, it, vi } from "vitest";
+import type { ReactNode } from "react";
 
-vi.mock('@stackra/ui/react', () => {
+vi.mock("@stackra/ui/react", () => {
   function ScrollShadow({ children }: { readonly children?: ReactNode }) {
     return <div data-testid="scroll-shadow">{children}</div>;
   }
@@ -78,13 +78,13 @@ vi.mock('@stackra/ui/react', () => {
   return { AlertDialog, Button, Card, ScrollShadow };
 });
 
-import { DevtoolsContext } from '@/react/contexts/devtools.context';
-import type { IDevtoolsContextValue } from '@/react/contexts/devtools-context-value.interface';
-import { DevtoolsPanelView } from '@/react/components/devtools-panel-view';
-import { createMockDevtoolsPanel } from '@/testing/create-mock-devtools-panel.util';
-import { mergeConfig } from '@/core/utils/merge-config.util';
-import { MockDevtoolsPanelsRegistry } from '@/testing/mock-devtools-panels-registry';
-import { DevtoolsFrameStateService } from '@/core/services/devtools-frame-state.service';
+import { DevtoolsContext } from "@/react/contexts/devtools.context";
+import type { IDevtoolsContextValue } from "@/react/contexts/devtools-context-value.interface";
+import { DevtoolsPanelView } from "@/react/components/devtools-panel-view";
+import { createMockDevtoolsPanel } from "@/testing/create-mock-devtools-panel.util";
+import { mergeConfig } from "@/core/utils/merge-config.util";
+import { MockDevtoolsPanelsRegistry } from "@/testing/mock-devtools-panels-registry";
+import { DevtoolsFrameStateService } from "@/core/services/devtools-frame-state.service";
 
 afterEach(() => {
   cleanup();
@@ -98,43 +98,43 @@ function wrapWithContext(children: ReactNode): React.JSX.Element {
   const value: IDevtoolsContextValue = {
     config: mergeConfig(),
     panels: new MockDevtoolsPanelsRegistry(),
-    inspector: null as unknown as IDevtoolsContextValue['inspector'],
+    inspector: null as unknown as IDevtoolsContextValue["inspector"],
     frameState,
-    analytics: analytics as IDevtoolsContextValue['analytics'],
+    analytics: analytics as IDevtoolsContextValue["analytics"],
     mountedAt: Date.now(),
   };
   return <DevtoolsContext.Provider value={value}>{children}</DevtoolsContext.Provider>;
 }
 
-describe('<DevtoolsPanelView />', () => {
-  it('renders component views', () => {
+describe("<DevtoolsPanelView />", () => {
+  it("renders component views", () => {
     const panel = createMockDevtoolsPanel({
-      id: 'ct',
+      id: "ct",
       view: {
-        type: 'component',
+        type: "component",
         render: () => <div data-testid="component-body">Hello!</div>,
       },
     });
     const { getByTestId } = render(wrapWithContext(<DevtoolsPanelView panel={panel} />));
-    expect(getByTestId('component-body').textContent).toBe('Hello!');
+    expect(getByTestId("component-body").textContent).toBe("Hello!");
   });
 
-  it('renders each action as a card + button', () => {
+  it("renders each action as a card + button", () => {
     const handle = vi.fn();
     const panel = createMockDevtoolsPanel({
-      id: 'act',
+      id: "act",
       view: {
-        type: 'action',
+        type: "action",
         actions: [
-          { id: 'reload', label: 'Reload', handle },
-          { id: 'reset', label: 'Reset', handle: () => undefined },
+          { id: "reload", label: "Reload", handle },
+          { id: "reset", label: "Reset", handle: () => undefined },
         ],
       },
     });
     const { getAllByTestId, container } = render(
-      wrapWithContext(<DevtoolsPanelView panel={panel} />)
+      wrapWithContext(<DevtoolsPanelView panel={panel} />),
     );
-    expect(getAllByTestId('card')).toHaveLength(2);
+    expect(getAllByTestId("card")).toHaveLength(2);
     // Reload button should fire immediately (no confirmation) —
     // target by `data-devtools-action` so the query is unambiguous.
     const reloadBtn = container.querySelector('[data-devtools-action="reload"]');
@@ -145,16 +145,16 @@ describe('<DevtoolsPanelView />', () => {
     expect(handle).toHaveBeenCalledOnce();
   });
 
-  it('opens the confirmation dialog for actions that require it', () => {
+  it("opens the confirmation dialog for actions that require it", () => {
     const handle = vi.fn();
     const panel = createMockDevtoolsPanel({
-      id: 'act',
+      id: "act",
       view: {
-        type: 'action',
+        type: "action",
         actions: [
           {
-            id: 'nuke',
-            label: 'Nuke',
+            id: "nuke",
+            label: "Nuke",
             requireConfirmation: true,
             handle,
           },
@@ -169,15 +169,15 @@ describe('<DevtoolsPanelView />', () => {
       fireEvent.click(nukeBtn as Element);
     });
     expect(handle).not.toHaveBeenCalled();
-    expect(getByTestId('alert-backdrop').getAttribute('data-open')).toBe('true');
+    expect(getByTestId("alert-backdrop").getAttribute("data-open")).toBe("true");
   });
 
-  it('renders an iframe for iframe views', () => {
+  it("renders an iframe for iframe views", () => {
     const panel = createMockDevtoolsPanel({
-      id: 'if',
-      view: { type: 'iframe', src: 'about:blank' },
+      id: "if",
+      view: { type: "iframe", src: "about:blank" },
     });
     const { getByTestId } = render(wrapWithContext(<DevtoolsPanelView panel={panel} />));
-    expect(getByTestId('devtools-panel-iframe').getAttribute('src')).toBe('about:blank');
+    expect(getByTestId("devtools-panel-iframe").getAttribute("src")).toBe("about:blank");
   });
 });

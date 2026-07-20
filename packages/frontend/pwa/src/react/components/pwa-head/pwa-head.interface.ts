@@ -56,7 +56,7 @@ export interface PwaHeadProps {
    *
    * @default 'default'
    */
-  readonly appleStatusBarStyle?: 'default' | 'black' | 'black-translucent';
+  readonly appleStatusBarStyle?: "default" | "black" | "black-translucent";
   /**
    * The "capable" flag iOS uses to decide whether the app can boot
    * standalone from the home screen.

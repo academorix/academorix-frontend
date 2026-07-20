@@ -12,13 +12,13 @@
  *   themselves.
  */
 
-import { Text } from 'react-native';
-import type { ReactElement } from 'react';
-import { PressableFeedback } from '@stackra/ui/native';
+import { Text } from "react-native";
+import type { ReactElement } from "react";
+import { PressableFeedback } from "@stackra/ui/native";
 
-import { NotificationBadge } from '../notification-badge';
-import { useInAppNotifications } from '../../hooks';
-import type { NotificationBellProps } from './notification-bell.interface';
+import { NotificationBadge } from "../notification-badge";
+import { useInAppNotifications } from "../../hooks";
+import type { NotificationBellProps } from "./notification-bell.interface";
 
 /**
  * Native notification bell.
@@ -41,7 +41,7 @@ export function NotificationBell({
   const hasUnread = unreadCount > 0;
   const label =
     accessibilityLabel ??
-    (hasUnread ? `Notifications, ${unreadCount} unread` : 'Notifications, no unread');
+    (hasUnread ? `Notifications, ${unreadCount} unread` : "Notifications, no unread");
 
   return (
     <NotificationBadge className={className}>

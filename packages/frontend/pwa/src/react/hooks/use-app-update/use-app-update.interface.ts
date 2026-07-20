@@ -4,7 +4,7 @@
  * @description Return shape for the {@link useAppUpdate} hook.
  */
 
-import type { IAppUpdateState } from '@/core/interfaces';
+import type { IAppUpdateState } from "@/core/interfaces";
 
 /**
  * Value returned by {@link useAppUpdate}.

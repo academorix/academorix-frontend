@@ -10,11 +10,11 @@
  */
 export enum CoordinatorMessageKind {
   /** Leader sends periodic heartbeats to prove liveness. */
-  HEARTBEAT = 'heartbeat',
+  HEARTBEAT = "heartbeat",
   /** A tab attempts to claim leadership. */
-  CLAIM = 'claim',
+  CLAIM = "claim",
   /** The current leader voluntarily resigns. */
-  RESIGNED = 'resigned',
+  RESIGNED = "resigned",
   /** A tab announces its presence (new tab joined). */
-  ANNOUNCE = 'announce',
+  ANNOUNCE = "announce",
 }

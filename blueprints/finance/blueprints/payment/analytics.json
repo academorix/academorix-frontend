@@ -17,13 +17,26 @@
       "name": "Payment Method Removed",
       "kind": "track",
       "consent_required": "functional",
-      "properties": ["tenant_id", "provider", "method_type", "deactivated_reason", "days_active_bucket"]
+      "properties": [
+        "tenant_id",
+        "provider",
+        "method_type",
+        "deactivated_reason",
+        "days_active_bucket"
+      ]
     },
     {
       "name": "Payment Intent Created",
       "kind": "track",
       "consent_required": "functional",
-      "properties": ["tenant_id", "provider", "capture_method", "confirmation_method", "amount_cents_bucket", "currency"],
+      "properties": [
+        "tenant_id",
+        "provider",
+        "capture_method",
+        "confirmation_method",
+        "amount_cents_bucket",
+        "currency"
+      ],
       "description": "amount_cents_bucket = 0 / 1-999 / 1000-9999 / 10000-99999 / 100000+ (prevents cross-tenant revenue inference)."
     },
     {
@@ -37,7 +50,15 @@
       "name": "Payment Captured",
       "kind": "track",
       "consent_required": "essential",
-      "properties": ["tenant_id", "provider", "method_type", "brand_bucket", "amount_cents_bucket", "currency", "3ds_result"],
+      "properties": [
+        "tenant_id",
+        "provider",
+        "method_type",
+        "brand_bucket",
+        "amount_cents_bucket",
+        "currency",
+        "3ds_result"
+      ],
       "description": "PRIMARY success signal. Consent tier: essential (financial-audit + business-critical)."
     },
     {

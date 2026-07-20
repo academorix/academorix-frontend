@@ -50,12 +50,23 @@
       "metadata": "array"
     },
     "observers": ["ChargebackObserver"],
-    "appends": ["is_terminal", "is_immutable", "days_since_filed", "days_until_evidence_deadline", "has_submitted_evidence"]
+    "appends": [
+      "is_terminal",
+      "is_immutable",
+      "days_since_filed",
+      "days_until_evidence_deadline",
+      "has_submitted_evidence"
+    ]
   },
   "x-database": {
     "engine": "postgres",
     "columns": {
-      "id": { "type": "string", "length": 64, "primary": true, "description": "Prefixed ULID: `cbk_<26>`." },
+      "id": {
+        "type": "string",
+        "length": 64,
+        "primary": true,
+        "description": "Prefixed ULID: `cbk_<26>`."
+      },
       "tenant_id": {
         "type": "string",
         "length": 64,
@@ -235,7 +246,11 @@
         "nullable": true,
         "description": "Internal ops summary on terminal state. Populated by admin via mark-lost CLI or manual review."
       },
-      "metadata": { "type": "jsonb", "nullable": true, "description": "Freeform tenant-writable metadata. Confidential portions (approval_notes, rdr_acceptance_notes) admin-only." },
+      "metadata": {
+        "type": "jsonb",
+        "nullable": true,
+        "description": "Freeform tenant-writable metadata. Confidential portions (approval_notes, rdr_acceptance_notes) admin-only."
+      },
       "created_by": { "type": "string", "length": 64, "nullable": true },
       "updated_by": { "type": "string", "length": 64, "nullable": true },
       "deleted_by": { "type": "string", "length": 64, "nullable": true },
@@ -252,11 +267,29 @@
       },
       { "columns": ["tenant_id", "payment_id"], "name": "chargebacks_tenant_payment_idx" },
       { "columns": ["tenant_id", "invoice_id"], "name": "chargebacks_tenant_invoice_idx" },
-      { "columns": ["tenant_id", "status", "evidence_due_by"], "name": "chargebacks_tenant_status_due_idx" },
-      { "columns": ["tenant_id", "network", "reason_code"], "name": "chargebacks_tenant_network_reason_idx" },
-      { "columns": ["tenant_id", "filed_at"], "name": "chargebacks_tenant_filed_idx", "order": "DESC" },
-      { "columns": ["provider_reference_id"], "unique": true, "name": "chargebacks_provider_reference_unique" },
-      { "columns": ["tenant_id", "rdr_eligible", "status"], "name": "chargebacks_tenant_rdr_eligible_idx", "predicate": "rdr_eligible = true AND status = 'pending_evidence' AND deleted_at IS NULL" }
+      {
+        "columns": ["tenant_id", "status", "evidence_due_by"],
+        "name": "chargebacks_tenant_status_due_idx"
+      },
+      {
+        "columns": ["tenant_id", "network", "reason_code"],
+        "name": "chargebacks_tenant_network_reason_idx"
+      },
+      {
+        "columns": ["tenant_id", "filed_at"],
+        "name": "chargebacks_tenant_filed_idx",
+        "order": "DESC"
+      },
+      {
+        "columns": ["provider_reference_id"],
+        "unique": true,
+        "name": "chargebacks_provider_reference_unique"
+      },
+      {
+        "columns": ["tenant_id", "rdr_eligible", "status"],
+        "name": "chargebacks_tenant_rdr_eligible_idx",
+        "predicate": "rdr_eligible = true AND status = 'pending_evidence' AND deleted_at IS NULL"
+      }
     ]
   },
   "required": [
@@ -285,7 +318,11 @@
   "properties": {
     "id": { "type": "string", "pattern": "^cbk_[0-9A-HJKMNP-TV-Z]{26}$" },
     "tenant_id": { "type": "string", "pattern": "^ten_[0-9A-HJKMNP-TV-Z]{26}$" },
-    "chargeback_number": { "type": "string", "pattern": "^CBK-[0-9]{4}-[0-9]{8}$", "maxLength": 32 },
+    "chargeback_number": {
+      "type": "string",
+      "pattern": "^CBK-[0-9]{4}-[0-9]{8}$",
+      "maxLength": 32
+    },
     "payment_id": { "type": "string", "pattern": "^pay_[0-9A-HJKMNP-TV-Z]{26}$" },
     "invoice_id": { "type": "string", "pattern": "^ivc_[0-9A-HJKMNP-TV-Z]{26}$" },
     "payment_dispute_id": { "type": ["string", "null"], "pattern": "^pdi_[0-9A-HJKMNP-TV-Z]{26}$" },
@@ -307,7 +344,15 @@
     "fee_cents": { "type": "integer", "minimum": 0 },
     "status": {
       "type": "string",
-      "enum": ["pending_evidence", "evidence_submitted", "under_bank_review", "won", "lost", "expired", "accepted_refund"]
+      "enum": [
+        "pending_evidence",
+        "evidence_submitted",
+        "under_bank_review",
+        "won",
+        "lost",
+        "expired",
+        "accepted_refund"
+      ]
     },
     "evidence_due_by": { "type": "string", "format": "date-time" },
     "evidence_submitted_at": { "type": ["string", "null"], "format": "date-time" },

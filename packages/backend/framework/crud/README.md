@@ -1,22 +1,20 @@
 # academorix/crud
 
-Attribute-driven repository layer for every Academorix module.
-Answers **"how the data is QUERIED and MANAGED"** — pair with
-`academorix/database` for **"what the data IS"**.
+Attribute-driven repository layer for every Academorix module. Answers **"how
+the data is QUERIED and MANAGED"** — pair with `academorix/database` for **"what
+the data IS"**.
 
-> **Services removed per ADR 0016.** The `Services/*` classes
-> (`BaseService`, `Service`), the `ServiceInterface` contract,
-> and the `#[UseService]` + `#[UseRepository]` attributes were
-> deleted in Phase 1 of the tenancy + access modernization sweep.
-> **Actions absorb business logic; the repository is the
+> **Services removed per ADR 0016.** The `Services/*` classes (`BaseService`,
+> `Service`), the `ServiceInterface` contract, and the `#[UseService]` +
+> `#[UseRepository]` attributes were deleted in Phase 1 of the tenancy + access
+> modernization sweep. **Actions absorb business logic; the repository is the
 > persistence boundary.** See
 > [`.kiro/steering/actions-only-full.md`](../../../.kiro/steering/actions-only-full.md)
 > for the full authoring contract and
 > [`docs/adr/0016-actions-only-no-services-no-controllers.md`](../../../docs/adr/0016-actions-only-no-services-no-controllers.md)
-> for the decision record. `CrudController` and its
-> `Concerns/Controller/*` traits are retained for the migration
-> window but marked `@deprecated`; they will be deleted in the
-> Phase 9 access-module rewrite.
+> for the decision record. `CrudController` and its `Concerns/Controller/*`
+> traits are retained for the migration window but marked `@deprecated`; they
+> will be deleted in the Phase 9 access-module rewrite.
 
 ## Package layout
 
@@ -98,9 +96,8 @@ src/
     └── VerifiedScope.php
 ```
 
-_`Services/` directory removed per ADR 0016 (Phase 1). Actions
-absorb business logic; the repository is the persistence
-boundary._
+_`Services/` directory removed per ADR 0016 (Phase 1). Actions absorb business
+logic; the repository is the persistence boundary._
 
 ## Public API
 
@@ -123,24 +120,22 @@ Class-level, all discovered at `composer dump-autoload` time:
 - `#[WithCount('reviews')]` — repeatable
 - `#[Cacheable(ttl: 3600)]`
 
-_`#[UseRepository]` and `#[UseService]` removed per ADR 0016
-(Phase 1). Actions inject their repository via constructor DI on
-the interface directly — no attribute indirection needed._
+_`#[UseRepository]` and `#[UseService]` removed per ADR 0016 (Phase 1). Actions
+inject their repository via constructor DI on the interface directly — no
+attribute indirection needed._
 
 ### Main classes
 
-- `Repository` — attribute-driven repository base class. Reads
-  its config from the pre-resolved
-  `RepositoryConfigRegistry`. Zero runtime reflection under
+- `Repository` — attribute-driven repository base class. Reads its config from
+  the pre-resolved `RepositoryConfigRegistry`. Zero runtime reflection under
   Octane.
-- `AbstractEloquentRepository<T>` — tenant-scoped, cache-tag
-  aware repository base for models with a companion
-  `<X>Interface` shipping `ATTR_*` + `TABLE` constants.
-- `BaseRepository<T>` — spatie/laravel-query-builder base for
-  request-driven filter/sort/include allow-lists.
-- `CrudController<T>` — **@deprecated per ADR 0016.** Retained
-  for the migration window; deleted in Phase 9. New endpoints
-  ship as Actions per
+- `AbstractEloquentRepository<T>` — tenant-scoped, cache-tag aware repository
+  base for models with a companion `<X>Interface` shipping `ATTR_*` + `TABLE`
+  constants.
+- `BaseRepository<T>` — spatie/laravel-query-builder base for request-driven
+  filter/sort/include allow-lists.
+- `CrudController<T>` — **@deprecated per ADR 0016.** Retained for the migration
+  window; deleted in Phase 9. New endpoints ship as Actions per
   [`.kiro/steering/actions-only-full.md`](../../../.kiro/steering/actions-only-full.md).
 
 ## Quick start
@@ -188,9 +183,9 @@ final class ProductRepository extends Repository
 
 ### 3. Author an endpoint (Action)
 
-Endpoints ship as single-invocation Action classes per ADR 0016 —
-no Service layer, no Controller. The repository is the persistence
-boundary; the Action orchestrates the request → response cycle.
+Endpoints ship as single-invocation Action classes per ADR 0016 — no Service
+layer, no Controller. The repository is the persistence boundary; the Action
+orchestrates the request → response cycle.
 
 ```php
 namespace Academorix\Products\Actions\Products;
@@ -222,9 +217,10 @@ final class PublishProduct
 }
 ```
 
-See [`.kiro/steering/actions-only-full.md`](../../../.kiro/steering/actions-only-full.md)
-for the full authoring contract (folder layout, naming rules,
-`Support/` vs `Services/` split, transaction-script boundaries).
+See
+[`.kiro/steering/actions-only-full.md`](../../../.kiro/steering/actions-only-full.md)
+for the full authoring contract (folder layout, naming rules, `Support/` vs
+`Services/` split, transaction-script boundaries).
 
 ## Discovery flow
 

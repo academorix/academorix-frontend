@@ -7,8 +7,8 @@
  *   through this function — no service merges defaults inline.
  */
 
-import type { IActionsConfig, IActionsModuleOptions } from '@stackra/contracts';
-import { DEFAULT_ACTIONS_CONFIG } from '../constants/default-actions-config.constant';
+import type { IActionsConfig, IActionsModuleOptions } from "@stackra/contracts";
+import { DEFAULT_ACTIONS_CONFIG } from "../constants/default-actions-config.constant";
 
 /**
  * Merge caller-supplied action options over {@link DEFAULT_ACTIONS_CONFIG}.

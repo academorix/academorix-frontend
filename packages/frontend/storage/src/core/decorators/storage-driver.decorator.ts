@@ -6,8 +6,8 @@
  *   the metadata key and register the class with the manager.
  */
 
-import { defineMetadata } from '@vivtel/metadata';
-import { Injectable } from '@stackra/container';
+import { defineMetadata } from "@vivtel/metadata";
+import { Injectable } from "@stackra/container";
 
 /**
  * Metadata key stamped by the `@StorageDriver()` decorator.
@@ -15,7 +15,7 @@ import { Injectable } from '@stackra/container';
  * @internal Discovery scanners read this key via
  *   `discovery.getProvidersByMetadata(STORAGE_DRIVER_METADATA_KEY)`.
  */
-export const STORAGE_DRIVER_METADATA_KEY = 'stackra:storage:driver';
+export const STORAGE_DRIVER_METADATA_KEY = "stackra:storage:driver";
 
 /**
  * Mark a class as a custom `IStorage` driver.

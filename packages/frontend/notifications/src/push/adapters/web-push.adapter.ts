@@ -13,13 +13,13 @@
  *   throws (private mode, no service worker) as `null` / `false`.
  */
 
-import { Inject, Injectable } from '@stackra/container';
+import { Inject, Injectable } from "@stackra/container";
 
-import { InvalidVapidKeyError, PushNotSupportedError } from '@/core/errors';
-import type { IPushSubscriptionAdapter, IPushSubscriptionResult } from '@/core/interfaces';
-import { WEB_PUSH_CONFIG } from '../constants';
-import type { IWebPushConfig, IWebPushSubscription } from '../interfaces';
-import { urlB64ToUint8Array } from '../utils';
+import { InvalidVapidKeyError, PushNotSupportedError } from "@/core/errors";
+import type { IPushSubscriptionAdapter, IPushSubscriptionResult } from "@/core/interfaces";
+import { WEB_PUSH_CONFIG } from "../constants";
+import type { IWebPushConfig, IWebPushSubscription } from "../interfaces";
+import { urlB64ToUint8Array } from "../utils";
 
 /**
  * Base64-encode an `ArrayBuffer` for wire transport.
@@ -30,12 +30,12 @@ import { urlB64ToUint8Array } from '../utils';
  */
 function arrayBufferToBase64(buffer: ArrayBuffer): string {
   const bytes = new Uint8Array(buffer);
-  let binary = '';
+  let binary = "";
   for (let i = 0; i < bytes.length; i += 1) {
     binary += String.fromCharCode(bytes[i] as number);
   }
   // `btoa` is universally available in browsers + jsdom.
-  return typeof btoa === 'function' ? btoa(binary) : '';
+  return typeof btoa === "function" ? btoa(binary) : "";
 }
 
 /**
@@ -43,14 +43,14 @@ function arrayBufferToBase64(buffer: ArrayBuffer): string {
  * {@link IWebPushSubscription} shape.
  */
 function serialise(subscription: PushSubscription): IWebPushSubscription {
-  const p256dh = subscription.getKey('p256dh');
-  const auth = subscription.getKey('auth');
+  const p256dh = subscription.getKey("p256dh");
+  const auth = subscription.getKey("auth");
   return {
     endpoint: subscription.endpoint,
     expirationTime: subscription.expirationTime,
     keys: {
-      p256dh: p256dh ? arrayBufferToBase64(p256dh) : '',
-      auth: auth ? arrayBufferToBase64(auth) : '',
+      p256dh: p256dh ? arrayBufferToBase64(p256dh) : "",
+      auth: auth ? arrayBufferToBase64(auth) : "",
     },
   };
 }
@@ -70,7 +70,7 @@ function serialise(subscription: PushSubscription): IWebPushSubscription {
 @Injectable()
 export class WebPushAdapter implements IPushSubscriptionAdapter {
   /** Discriminator narrowed by {@link IPushSubscriptionResult}. */
-  public readonly platform = 'web' as const;
+  public readonly platform = "web" as const;
 
   public constructor(@Inject(WEB_PUSH_CONFIG) private readonly config: IWebPushConfig) {}
 
@@ -82,11 +82,11 @@ export class WebPushAdapter implements IPushSubscriptionAdapter {
    * `Notification` / `PushManager` / `serviceWorker`.
    */
   public isSupported(): boolean {
-    if (typeof navigator === 'undefined') return false;
+    if (typeof navigator === "undefined") return false;
     return (
-      'serviceWorker' in navigator &&
-      'PushManager' in globalThis &&
-      typeof Notification !== 'undefined'
+      "serviceWorker" in navigator &&
+      "PushManager" in globalThis &&
+      typeof Notification !== "undefined"
     );
   }
 
@@ -95,7 +95,7 @@ export class WebPushAdapter implements IPushSubscriptionAdapter {
    * environments so callers can early-out on a single check.
    */
   public async getPermissionState(): Promise<NotificationPermission> {
-    if (!this.isSupported()) return 'denied';
+    if (!this.isSupported()) return "denied";
     return Notification.permission;
   }
 
@@ -110,7 +110,7 @@ export class WebPushAdapter implements IPushSubscriptionAdapter {
       const registration = await this.registration();
       if (!registration) return null;
       const sub = await registration.pushManager.getSubscription();
-      return sub ? { kind: 'web', value: serialise(sub) } : null;
+      return sub ? { kind: "web", value: serialise(sub) } : null;
     } catch {
       // fail-soft — a race between page load and SW registration
       // can throw; caller can retry after `serviceWorker.ready`.
@@ -132,27 +132,27 @@ export class WebPushAdapter implements IPushSubscriptionAdapter {
    */
   public async subscribe(config?: unknown): Promise<IPushSubscriptionResult> {
     if (!this.isSupported()) {
-      throw new PushNotSupportedError('Push is not supported in this browser.');
+      throw new PushNotSupportedError("Push is not supported in this browser.");
     }
 
     // The caller may pass a string override (per-call VAPID key) —
     // any other shape falls back to the module-level config.
-    const perCallKey = typeof config === 'string' ? config : undefined;
+    const perCallKey = typeof config === "string" ? config : undefined;
     const resolvedKey = perCallKey ?? this.config.vapidPublicKey;
-    if (typeof resolvedKey !== 'string' || resolvedKey.length === 0) {
+    if (typeof resolvedKey !== "string" || resolvedKey.length === 0) {
       throw new InvalidVapidKeyError(resolvedKey);
     }
 
     const registration = await this.registration();
     if (!registration) {
-      throw new PushNotSupportedError('No service-worker registration for the configured scope.');
+      throw new PushNotSupportedError("No service-worker registration for the configured scope.");
     }
 
     // Reuse an existing subscription if one is present — subscribing
     // a second time throws on Chromium.
     const existing = await registration.pushManager.getSubscription();
     if (existing) {
-      return { kind: 'web', value: serialise(existing) };
+      return { kind: "web", value: serialise(existing) };
     }
 
     const applicationServerKey = urlB64ToUint8Array(resolvedKey);
@@ -164,7 +164,7 @@ export class WebPushAdapter implements IPushSubscriptionAdapter {
       // without an explicit widen. Cast at the boundary.
       applicationServerKey: applicationServerKey as unknown as BufferSource,
     });
-    return { kind: 'web', value: serialise(subscription) };
+    return { kind: "web", value: serialise(subscription) };
   }
 
   /**
@@ -190,7 +190,7 @@ export class WebPushAdapter implements IPushSubscriptionAdapter {
    * present.
    */
   private async registration(): Promise<ServiceWorkerRegistration | null> {
-    if (typeof navigator === 'undefined' || !('serviceWorker' in navigator)) return null;
+    if (typeof navigator === "undefined" || !("serviceWorker" in navigator)) return null;
     try {
       const reg = await navigator.serviceWorker.getRegistration(this.config.serviceWorkerScope);
       return reg ?? null;

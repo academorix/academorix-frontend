@@ -11,12 +11,12 @@
  *   adapter on top of the core module.
  */
 
-import { Module, type DynamicModule } from '@stackra/container';
-import { I18N_DIRECTION_ADAPTER } from '@stackra/contracts';
+import { Module, type DynamicModule } from "@stackra/container";
+import { I18N_DIRECTION_ADAPTER } from "@stackra/contracts";
 
-import type { II18nConfig } from '../core/interfaces';
-import { I18nModule } from '../core/i18n.module';
-import { WebDirectionAdapter } from './adapters/web-direction.adapter';
+import type { II18nConfig } from "../core/interfaces";
+import { I18nModule } from "../core/i18n.module";
+import { WebDirectionAdapter } from "./adapters/web-direction.adapter";
 
 /**
  * Web i18n module.

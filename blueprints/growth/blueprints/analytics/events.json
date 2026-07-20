@@ -232,9 +232,7 @@
       "class": "Academorix\\Growth\\Analytics\\Events\\AnalyticsBatchFlushed",
       "trigger": "FlushBatchedProviderJob completed all deliveries in a batch.",
       "queue": "analytics",
-      "consumers": [
-        "monitoring::EmitBatchSizeMetricListener"
-      ],
+      "consumers": ["monitoring::EmitBatchSizeMetricListener"],
       "payload": {
         "batch_id": "ULID",
         "tenant_id": "ULID",
@@ -308,9 +306,7 @@
       "class": "Academorix\\Growth\\Analytics\\Events\\AnalyticsIdentitySplit",
       "trigger": "Deidentification \u2014 identified_user_id set back to null (typically GDPR erasure).",
       "queue": "analytics",
-      "consumers": [
-        "compliance::AuditDeidentificationListener (Wave 5)"
-      ],
+      "consumers": ["compliance::AuditDeidentificationListener (Wave 5)"],
       "payload": {
         "identity_id": "ULID",
         "tenant_id": "ULID",

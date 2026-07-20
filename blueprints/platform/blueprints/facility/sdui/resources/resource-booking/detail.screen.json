@@ -62,23 +62,15 @@
                 {
                   "kind": "View",
                   "children": [
-                    { "kind": "Text", "props": { "className": "text-xs text-muted uppercase", "children": "Date" } },
                     {
                       "kind": "Text",
-                      "props": { "className": "font-medium" },
-                      "bindings": { "children": { "$expr": "formatDate(booking.starts_at, 'long')" } }
-                    }
-                  ]
-                },
-                {
-                  "kind": "View",
-                  "children": [
-                    { "kind": "Text", "props": { "className": "text-xs text-muted uppercase", "children": "Time" } },
+                      "props": { "className": "text-xs text-muted uppercase", "children": "Date" }
+                    },
                     {
                       "kind": "Text",
                       "props": { "className": "font-medium" },
                       "bindings": {
-                        "children": { "$expr": "formatTimeRange(booking.starts_at, booking.ends_at)" }
+                        "children": { "$expr": "formatDate(booking.starts_at, 'long')" }
                       }
                     }
                   ]
@@ -86,7 +78,28 @@
                 {
                   "kind": "View",
                   "children": [
-                    { "kind": "Text", "props": { "className": "text-xs text-muted uppercase", "children": "For" } },
+                    {
+                      "kind": "Text",
+                      "props": { "className": "text-xs text-muted uppercase", "children": "Time" }
+                    },
+                    {
+                      "kind": "Text",
+                      "props": { "className": "font-medium" },
+                      "bindings": {
+                        "children": {
+                          "$expr": "formatTimeRange(booking.starts_at, booking.ends_at)"
+                        }
+                      }
+                    }
+                  ]
+                },
+                {
+                  "kind": "View",
+                  "children": [
+                    {
+                      "kind": "Text",
+                      "props": { "className": "text-xs text-muted uppercase", "children": "For" }
+                    },
                     {
                       "kind": "Text",
                       "props": { "className": "font-medium" },
@@ -101,7 +114,13 @@
                 {
                   "kind": "View",
                   "children": [
-                    { "kind": "Text", "props": { "className": "text-xs text-muted uppercase", "children": "Attendees" } },
+                    {
+                      "kind": "Text",
+                      "props": {
+                        "className": "text-xs text-muted uppercase",
+                        "children": "Attendees"
+                      }
+                    },
                     {
                       "kind": "Text",
                       "props": { "className": "font-medium" },
@@ -112,7 +131,10 @@
                 {
                   "kind": "View",
                   "children": [
-                    { "kind": "Text", "props": { "className": "text-xs text-muted uppercase", "children": "Price" } },
+                    {
+                      "kind": "Text",
+                      "props": { "className": "text-xs text-muted uppercase", "children": "Price" }
+                    },
                     {
                       "kind": "Text",
                       "props": { "className": "font-medium" },
@@ -127,7 +149,13 @@
                 {
                   "kind": "View",
                   "children": [
-                    { "kind": "Text", "props": { "className": "text-xs text-muted uppercase", "children": "Payment" } },
+                    {
+                      "kind": "Text",
+                      "props": {
+                        "className": "text-xs text-muted uppercase",
+                        "children": "Payment"
+                      }
+                    },
                     {
                       "kind": "Chip",
                       "props": { "size": "sm" },
@@ -144,7 +172,10 @@
           "props": { "className": "p-4" },
           "bindings": { "hidden": { "$expr": "!booking.purpose" } },
           "children": [
-            { "kind": "Text", "props": { "className": "text-xs text-muted uppercase", "children": "Purpose" } },
+            {
+              "kind": "Text",
+              "props": { "className": "text-xs text-muted uppercase", "children": "Purpose" }
+            },
             {
               "kind": "Text",
               "props": { "className": "mt-1" },
@@ -158,7 +189,11 @@
           "children": [
             {
               "kind": "Button",
-              "props": { "variant": "primary", "leadingIcon": "check-badge", "children": "Check in" },
+              "props": {
+                "variant": "primary",
+                "leadingIcon": "check-badge",
+                "children": "Check in"
+              },
               "bindings": {
                 "hidden": {
                   "$expr": "booking.status !== 'confirmed' || booking.checked_in_at"
@@ -177,7 +212,11 @@
             },
             {
               "kind": "Button",
-              "props": { "variant": "secondary", "leadingIcon": "calendar-days", "children": "Reschedule" },
+              "props": {
+                "variant": "secondary",
+                "leadingIcon": "calendar-days",
+                "children": "Reschedule"
+              },
               "bindings": {
                 "hidden": { "$expr": "!['pending', 'confirmed'].includes(booking.status)" }
               },
@@ -192,7 +231,11 @@
             },
             {
               "kind": "Button",
-              "props": { "variant": "danger", "leadingIcon": "x-circle", "children": "Cancel booking" },
+              "props": {
+                "variant": "danger",
+                "leadingIcon": "x-circle",
+                "children": "Cancel booking"
+              },
               "bindings": {
                 "hidden": { "$expr": "!['pending', 'confirmed'].includes(booking.status)" }
               },

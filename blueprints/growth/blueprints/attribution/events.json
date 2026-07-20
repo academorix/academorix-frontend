@@ -34,10 +34,7 @@
       "class": "Academorix\\Growth\\Attribution\\Events\\AttributionUpdated",
       "trigger": "Umbrella event for scalar-field mutations on the attributions row that are NOT covered by a more specific event (subject_id populate → AttributionSubjectIdentified; lifecycle_state → dedicated events; last_touch_* → AttributionLastTouchUpdated).",
       "queue": "attribution",
-      "consumers": [
-        "audit::WriteToAuditLog",
-        "activity::WriteToActivityLog"
-      ],
+      "consumers": ["audit::WriteToAuditLog", "activity::WriteToActivityLog"],
       "payload": {
         "attribution_id": "ULID",
         "tenant_id": "ULID",
@@ -76,10 +73,7 @@
       "class": "Academorix\\Growth\\Attribution\\Events\\AttributionLastTouchUpdated",
       "trigger": "attributions.last_touch_* fields mutated on an existing row. Fires on every attribution-bearing subsequent request (utm_* changed, new click ID, new referrer). Bookend to AttributionFirstTouchRecorded.",
       "queue": "attribution",
-      "consumers": [
-        "audit::WriteToAuditLog",
-        "cache::InvalidateAttributionCurrentSnapshot"
-      ],
+      "consumers": ["audit::WriteToAuditLog", "cache::InvalidateAttributionCurrentSnapshot"],
       "payload": {
         "attribution_id": "ULID",
         "tenant_id": "ULID",
@@ -205,9 +199,7 @@
       "class": "Academorix\\Growth\\Attribution\\Events\\AttributionSessionRefreshed",
       "trigger": "attributions.current_session_id changed. Fires when a new browser session begins (session cookie rotated / expired). Distinct from AttributionLastTouchUpdated (session refresh may happen without utm change).",
       "queue": "attribution",
-      "consumers": [
-        "cache::InvalidateAttributionSessionCache"
-      ],
+      "consumers": ["cache::InvalidateAttributionSessionCache"],
       "payload": {
         "attribution_id": "ULID",
         "tenant_id": "ULID",
@@ -221,9 +213,7 @@
       "class": "Academorix\\Growth\\Attribution\\Events\\AttributionCampaignRollupComputed",
       "trigger": "CampaignRollupAggregatorJob completed a rollup pass. Fires hourly per tenant with `attribution_rollup` entitlement.",
       "queue": "attribution",
-      "consumers": [
-        "cache::InvalidateCampaignRollupCache"
-      ],
+      "consumers": ["cache::InvalidateCampaignRollupCache"],
       "payload": {
         "tenant_id": "ULID",
         "rollup_window_starts_at": "ISO 8601",
@@ -298,10 +288,7 @@
       "class": "Academorix\\Growth\\Attribution\\Events\\AttributionDeleted",
       "trigger": "attributions.deleted_at set (soft-delete) OR row hard-deleted. Distinct from AttributionReset (reset is user-initiated erasure; delete is admin operational).",
       "queue": "attribution",
-      "consumers": [
-        "audit::WriteToAuditLog",
-        "activity::WriteToActivityLog"
-      ],
+      "consumers": ["audit::WriteToAuditLog", "activity::WriteToActivityLog"],
       "payload": {
         "attribution_id": "ULID",
         "tenant_id": "ULID",
@@ -315,10 +302,7 @@
       "class": "Academorix\\Growth\\Attribution\\Events\\AttributionConsentSnapshotUpdated",
       "trigger": "attributions.consent_at_capture jsonb mutated. Fires when a subject grants / revokes / adjusts marketing / advertising / personalized_advertising consent categories. Sourced from ConsentUpdated events in the compliance module.",
       "queue": "attribution",
-      "consumers": [
-        "audit::WriteToAuditLog",
-        "cache::InvalidateAttributionCurrentSnapshot"
-      ],
+      "consumers": ["audit::WriteToAuditLog", "cache::InvalidateAttributionCurrentSnapshot"],
       "payload": {
         "attribution_id": "ULID",
         "tenant_id": "ULID",

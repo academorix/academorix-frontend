@@ -37,14 +37,86 @@
           "session_duration_default_minutes": 90,
           "sort_order": 1,
           "positions": [
-            { "slug": "football_goalkeeper", "name": "Goalkeeper", "is_field_position": true, "is_offensive": false, "is_defensive": true, "typical_jersey_range_min": 1, "typical_jersey_range_max": 1, "sort_order": 1 },
-            { "slug": "football_center_back", "name": "Center Back", "is_field_position": true, "is_offensive": false, "is_defensive": true, "typical_jersey_range_min": 2, "typical_jersey_range_max": 6, "sort_order": 10 },
-            { "slug": "football_full_back", "name": "Full Back", "is_field_position": true, "is_offensive": false, "is_defensive": true, "typical_jersey_range_min": 2, "typical_jersey_range_max": 6, "sort_order": 20 },
-            { "slug": "football_defensive_midfielder", "name": "Defensive Midfielder", "is_field_position": true, "is_offensive": false, "is_defensive": true, "typical_jersey_range_min": 4, "typical_jersey_range_max": 8, "sort_order": 30 },
-            { "slug": "football_central_midfielder", "name": "Central Midfielder", "is_field_position": true, "is_offensive": null, "is_defensive": null, "typical_jersey_range_min": 6, "typical_jersey_range_max": 10, "sort_order": 40 },
-            { "slug": "football_attacking_midfielder", "name": "Attacking Midfielder", "is_field_position": true, "is_offensive": true, "is_defensive": false, "typical_jersey_range_min": 8, "typical_jersey_range_max": 11, "sort_order": 50 },
-            { "slug": "football_winger", "name": "Winger", "is_field_position": true, "is_offensive": true, "is_defensive": false, "typical_jersey_range_min": 7, "typical_jersey_range_max": 11, "sort_order": 60 },
-            { "slug": "football_striker", "name": "Striker", "is_field_position": true, "is_offensive": true, "is_defensive": false, "typical_jersey_range_min": 9, "typical_jersey_range_max": 11, "sort_order": 70 }
+            {
+              "slug": "football_goalkeeper",
+              "name": "Goalkeeper",
+              "is_field_position": true,
+              "is_offensive": false,
+              "is_defensive": true,
+              "typical_jersey_range_min": 1,
+              "typical_jersey_range_max": 1,
+              "sort_order": 1
+            },
+            {
+              "slug": "football_center_back",
+              "name": "Center Back",
+              "is_field_position": true,
+              "is_offensive": false,
+              "is_defensive": true,
+              "typical_jersey_range_min": 2,
+              "typical_jersey_range_max": 6,
+              "sort_order": 10
+            },
+            {
+              "slug": "football_full_back",
+              "name": "Full Back",
+              "is_field_position": true,
+              "is_offensive": false,
+              "is_defensive": true,
+              "typical_jersey_range_min": 2,
+              "typical_jersey_range_max": 6,
+              "sort_order": 20
+            },
+            {
+              "slug": "football_defensive_midfielder",
+              "name": "Defensive Midfielder",
+              "is_field_position": true,
+              "is_offensive": false,
+              "is_defensive": true,
+              "typical_jersey_range_min": 4,
+              "typical_jersey_range_max": 8,
+              "sort_order": 30
+            },
+            {
+              "slug": "football_central_midfielder",
+              "name": "Central Midfielder",
+              "is_field_position": true,
+              "is_offensive": null,
+              "is_defensive": null,
+              "typical_jersey_range_min": 6,
+              "typical_jersey_range_max": 10,
+              "sort_order": 40
+            },
+            {
+              "slug": "football_attacking_midfielder",
+              "name": "Attacking Midfielder",
+              "is_field_position": true,
+              "is_offensive": true,
+              "is_defensive": false,
+              "typical_jersey_range_min": 8,
+              "typical_jersey_range_max": 11,
+              "sort_order": 50
+            },
+            {
+              "slug": "football_winger",
+              "name": "Winger",
+              "is_field_position": true,
+              "is_offensive": true,
+              "is_defensive": false,
+              "typical_jersey_range_min": 7,
+              "typical_jersey_range_max": 11,
+              "sort_order": 60
+            },
+            {
+              "slug": "football_striker",
+              "name": "Striker",
+              "is_field_position": true,
+              "is_offensive": true,
+              "is_defensive": false,
+              "typical_jersey_range_min": 9,
+              "typical_jersey_range_max": 11,
+              "sort_order": 70
+            }
           ]
         },
         {
@@ -57,10 +129,38 @@
           "session_duration_default_minutes": 40,
           "sort_order": 2,
           "positions": [
-            { "slug": "football_futsal_goalkeeper", "name": "Futsal Goalkeeper", "is_field_position": true, "is_offensive": false, "is_defensive": true, "sort_order": 1 },
-            { "slug": "football_futsal_fixo", "name": "Fixo (Defender)", "is_field_position": true, "is_offensive": false, "is_defensive": true, "sort_order": 10 },
-            { "slug": "football_futsal_ala", "name": "Ala (Winger)", "is_field_position": true, "is_offensive": true, "is_defensive": false, "sort_order": 20 },
-            { "slug": "football_futsal_pivot", "name": "Pivot (Striker)", "is_field_position": true, "is_offensive": true, "is_defensive": false, "sort_order": 30 }
+            {
+              "slug": "football_futsal_goalkeeper",
+              "name": "Futsal Goalkeeper",
+              "is_field_position": true,
+              "is_offensive": false,
+              "is_defensive": true,
+              "sort_order": 1
+            },
+            {
+              "slug": "football_futsal_fixo",
+              "name": "Fixo (Defender)",
+              "is_field_position": true,
+              "is_offensive": false,
+              "is_defensive": true,
+              "sort_order": 10
+            },
+            {
+              "slug": "football_futsal_ala",
+              "name": "Ala (Winger)",
+              "is_field_position": true,
+              "is_offensive": true,
+              "is_defensive": false,
+              "sort_order": 20
+            },
+            {
+              "slug": "football_futsal_pivot",
+              "name": "Pivot (Striker)",
+              "is_field_position": true,
+              "is_offensive": true,
+              "is_defensive": false,
+              "sort_order": 30
+            }
           ]
         },
         {
@@ -73,10 +173,33 @@
           "session_duration_default_minutes": 40,
           "sort_order": 3,
           "positions": [
-            { "slug": "football_5v5_goalkeeper", "name": "Goalkeeper", "is_field_position": true, "is_defensive": true, "sort_order": 1 },
-            { "slug": "football_5v5_defender", "name": "Defender", "is_field_position": true, "is_defensive": true, "sort_order": 10 },
-            { "slug": "football_5v5_midfielder", "name": "Midfielder", "is_field_position": true, "sort_order": 20 },
-            { "slug": "football_5v5_forward", "name": "Forward", "is_field_position": true, "is_offensive": true, "sort_order": 30 }
+            {
+              "slug": "football_5v5_goalkeeper",
+              "name": "Goalkeeper",
+              "is_field_position": true,
+              "is_defensive": true,
+              "sort_order": 1
+            },
+            {
+              "slug": "football_5v5_defender",
+              "name": "Defender",
+              "is_field_position": true,
+              "is_defensive": true,
+              "sort_order": 10
+            },
+            {
+              "slug": "football_5v5_midfielder",
+              "name": "Midfielder",
+              "is_field_position": true,
+              "sort_order": 20
+            },
+            {
+              "slug": "football_5v5_forward",
+              "name": "Forward",
+              "is_field_position": true,
+              "is_offensive": true,
+              "sort_order": 30
+            }
           ]
         },
         {
@@ -115,11 +238,48 @@
           "session_duration_default_minutes": 48,
           "sort_order": 1,
           "positions": [
-            { "slug": "basketball_point_guard", "name": "Point Guard", "is_field_position": true, "is_offensive": true, "is_defensive": null, "typical_jersey_range_min": 1, "typical_jersey_range_max": 5, "sort_order": 1 },
-            { "slug": "basketball_shooting_guard", "name": "Shooting Guard", "is_field_position": true, "is_offensive": true, "is_defensive": null, "sort_order": 10 },
-            { "slug": "basketball_small_forward", "name": "Small Forward", "is_field_position": true, "is_offensive": true, "is_defensive": null, "sort_order": 20 },
-            { "slug": "basketball_power_forward", "name": "Power Forward", "is_field_position": true, "is_offensive": null, "is_defensive": true, "sort_order": 30 },
-            { "slug": "basketball_center", "name": "Center", "is_field_position": true, "is_offensive": null, "is_defensive": true, "sort_order": 40 }
+            {
+              "slug": "basketball_point_guard",
+              "name": "Point Guard",
+              "is_field_position": true,
+              "is_offensive": true,
+              "is_defensive": null,
+              "typical_jersey_range_min": 1,
+              "typical_jersey_range_max": 5,
+              "sort_order": 1
+            },
+            {
+              "slug": "basketball_shooting_guard",
+              "name": "Shooting Guard",
+              "is_field_position": true,
+              "is_offensive": true,
+              "is_defensive": null,
+              "sort_order": 10
+            },
+            {
+              "slug": "basketball_small_forward",
+              "name": "Small Forward",
+              "is_field_position": true,
+              "is_offensive": true,
+              "is_defensive": null,
+              "sort_order": 20
+            },
+            {
+              "slug": "basketball_power_forward",
+              "name": "Power Forward",
+              "is_field_position": true,
+              "is_offensive": null,
+              "is_defensive": true,
+              "sort_order": 30
+            },
+            {
+              "slug": "basketball_center",
+              "name": "Center",
+              "is_field_position": true,
+              "is_offensive": null,
+              "is_defensive": true,
+              "sort_order": 40
+            }
           ]
         },
         {
@@ -158,16 +318,65 @@
           "session_duration_default_minutes": 80,
           "sort_order": 1,
           "positions": [
-            { "slug": "rugby_prop", "name": "Prop", "is_field_position": true, "is_defensive": true, "sort_order": 1 },
-            { "slug": "rugby_hooker", "name": "Hooker", "is_field_position": true, "sort_order": 10 },
+            {
+              "slug": "rugby_prop",
+              "name": "Prop",
+              "is_field_position": true,
+              "is_defensive": true,
+              "sort_order": 1
+            },
+            {
+              "slug": "rugby_hooker",
+              "name": "Hooker",
+              "is_field_position": true,
+              "sort_order": 10
+            },
             { "slug": "rugby_lock", "name": "Lock", "is_field_position": true, "sort_order": 20 },
-            { "slug": "rugby_flanker", "name": "Flanker", "is_field_position": true, "sort_order": 30 },
-            { "slug": "rugby_number_8", "name": "Number 8", "is_field_position": true, "sort_order": 40 },
-            { "slug": "rugby_scrum_half", "name": "Scrum-half", "is_field_position": true, "sort_order": 50 },
-            { "slug": "rugby_fly_half", "name": "Fly-half", "is_field_position": true, "is_offensive": true, "sort_order": 60 },
-            { "slug": "rugby_center", "name": "Center", "is_field_position": true, "sort_order": 70 },
-            { "slug": "rugby_wing", "name": "Wing", "is_field_position": true, "is_offensive": true, "sort_order": 80 },
-            { "slug": "rugby_fullback", "name": "Fullback", "is_field_position": true, "is_defensive": true, "sort_order": 90 }
+            {
+              "slug": "rugby_flanker",
+              "name": "Flanker",
+              "is_field_position": true,
+              "sort_order": 30
+            },
+            {
+              "slug": "rugby_number_8",
+              "name": "Number 8",
+              "is_field_position": true,
+              "sort_order": 40
+            },
+            {
+              "slug": "rugby_scrum_half",
+              "name": "Scrum-half",
+              "is_field_position": true,
+              "sort_order": 50
+            },
+            {
+              "slug": "rugby_fly_half",
+              "name": "Fly-half",
+              "is_field_position": true,
+              "is_offensive": true,
+              "sort_order": 60
+            },
+            {
+              "slug": "rugby_center",
+              "name": "Center",
+              "is_field_position": true,
+              "sort_order": 70
+            },
+            {
+              "slug": "rugby_wing",
+              "name": "Wing",
+              "is_field_position": true,
+              "is_offensive": true,
+              "sort_order": 80
+            },
+            {
+              "slug": "rugby_fullback",
+              "name": "Fullback",
+              "is_field_position": true,
+              "is_defensive": true,
+              "sort_order": 90
+            }
           ]
         },
         {
@@ -205,14 +414,62 @@
           "session_duration_default_minutes": 60,
           "sort_order": 1,
           "positions": [
-            { "slug": "american_football_quarterback", "name": "Quarterback", "is_field_position": true, "is_offensive": true, "sort_order": 1 },
-            { "slug": "american_football_running_back", "name": "Running Back", "is_field_position": true, "is_offensive": true, "sort_order": 10 },
-            { "slug": "american_football_wide_receiver", "name": "Wide Receiver", "is_field_position": true, "is_offensive": true, "sort_order": 20 },
-            { "slug": "american_football_offensive_lineman", "name": "Offensive Lineman", "is_field_position": true, "is_offensive": true, "sort_order": 30 },
-            { "slug": "american_football_defensive_lineman", "name": "Defensive Lineman", "is_field_position": true, "is_defensive": true, "sort_order": 40 },
-            { "slug": "american_football_linebacker", "name": "Linebacker", "is_field_position": true, "is_defensive": true, "sort_order": 50 },
-            { "slug": "american_football_cornerback", "name": "Cornerback", "is_field_position": true, "is_defensive": true, "sort_order": 60 },
-            { "slug": "american_football_safety", "name": "Safety", "is_field_position": true, "is_defensive": true, "sort_order": 70 }
+            {
+              "slug": "american_football_quarterback",
+              "name": "Quarterback",
+              "is_field_position": true,
+              "is_offensive": true,
+              "sort_order": 1
+            },
+            {
+              "slug": "american_football_running_back",
+              "name": "Running Back",
+              "is_field_position": true,
+              "is_offensive": true,
+              "sort_order": 10
+            },
+            {
+              "slug": "american_football_wide_receiver",
+              "name": "Wide Receiver",
+              "is_field_position": true,
+              "is_offensive": true,
+              "sort_order": 20
+            },
+            {
+              "slug": "american_football_offensive_lineman",
+              "name": "Offensive Lineman",
+              "is_field_position": true,
+              "is_offensive": true,
+              "sort_order": 30
+            },
+            {
+              "slug": "american_football_defensive_lineman",
+              "name": "Defensive Lineman",
+              "is_field_position": true,
+              "is_defensive": true,
+              "sort_order": 40
+            },
+            {
+              "slug": "american_football_linebacker",
+              "name": "Linebacker",
+              "is_field_position": true,
+              "is_defensive": true,
+              "sort_order": 50
+            },
+            {
+              "slug": "american_football_cornerback",
+              "name": "Cornerback",
+              "is_field_position": true,
+              "is_defensive": true,
+              "sort_order": 60
+            },
+            {
+              "slug": "american_football_safety",
+              "name": "Safety",
+              "is_field_position": true,
+              "is_defensive": true,
+              "sort_order": 70
+            }
           ]
         },
         {
@@ -273,10 +530,33 @@
           "session_duration_default_minutes": 180,
           "sort_order": 3,
           "positions": [
-            { "slug": "cricket_batter", "name": "Batter", "is_field_position": true, "is_offensive": true, "sort_order": 1 },
-            { "slug": "cricket_bowler", "name": "Bowler", "is_field_position": true, "is_defensive": true, "sort_order": 10 },
-            { "slug": "cricket_wicketkeeper", "name": "Wicket-keeper", "is_field_position": true, "is_defensive": true, "sort_order": 20 },
-            { "slug": "cricket_all_rounder", "name": "All-rounder", "is_field_position": true, "sort_order": 30 }
+            {
+              "slug": "cricket_batter",
+              "name": "Batter",
+              "is_field_position": true,
+              "is_offensive": true,
+              "sort_order": 1
+            },
+            {
+              "slug": "cricket_bowler",
+              "name": "Bowler",
+              "is_field_position": true,
+              "is_defensive": true,
+              "sort_order": 10
+            },
+            {
+              "slug": "cricket_wicketkeeper",
+              "name": "Wicket-keeper",
+              "is_field_position": true,
+              "is_defensive": true,
+              "sort_order": 20
+            },
+            {
+              "slug": "cricket_all_rounder",
+              "name": "All-rounder",
+              "is_field_position": true,
+              "sort_order": 30
+            }
           ]
         }
       ]
@@ -303,11 +583,43 @@
           "session_duration_default_minutes": 180,
           "sort_order": 1,
           "positions": [
-            { "slug": "baseball_pitcher", "name": "Pitcher", "is_field_position": true, "is_defensive": true, "typical_jersey_range_min": 1, "typical_jersey_range_max": 99, "sort_order": 1 },
-            { "slug": "baseball_catcher", "name": "Catcher", "is_field_position": true, "is_defensive": true, "sort_order": 10 },
-            { "slug": "baseball_infielder", "name": "Infielder", "is_field_position": true, "is_defensive": true, "sort_order": 20 },
-            { "slug": "baseball_outfielder", "name": "Outfielder", "is_field_position": true, "is_defensive": true, "sort_order": 30 },
-            { "slug": "baseball_designated_hitter", "name": "Designated Hitter", "is_field_position": true, "is_offensive": true, "sort_order": 40 }
+            {
+              "slug": "baseball_pitcher",
+              "name": "Pitcher",
+              "is_field_position": true,
+              "is_defensive": true,
+              "typical_jersey_range_min": 1,
+              "typical_jersey_range_max": 99,
+              "sort_order": 1
+            },
+            {
+              "slug": "baseball_catcher",
+              "name": "Catcher",
+              "is_field_position": true,
+              "is_defensive": true,
+              "sort_order": 10
+            },
+            {
+              "slug": "baseball_infielder",
+              "name": "Infielder",
+              "is_field_position": true,
+              "is_defensive": true,
+              "sort_order": 20
+            },
+            {
+              "slug": "baseball_outfielder",
+              "name": "Outfielder",
+              "is_field_position": true,
+              "is_defensive": true,
+              "sort_order": 30
+            },
+            {
+              "slug": "baseball_designated_hitter",
+              "name": "Designated Hitter",
+              "is_field_position": true,
+              "is_offensive": true,
+              "sort_order": 40
+            }
           ]
         }
       ]
@@ -334,10 +646,33 @@
           "session_duration_default_minutes": 60,
           "sort_order": 1,
           "positions": [
-            { "slug": "hockey_goalkeeper", "name": "Goalkeeper", "is_field_position": true, "is_defensive": true, "sort_order": 1 },
-            { "slug": "hockey_defender", "name": "Defender", "is_field_position": true, "is_defensive": true, "sort_order": 10 },
-            { "slug": "hockey_midfielder", "name": "Midfielder", "is_field_position": true, "sort_order": 20 },
-            { "slug": "hockey_forward", "name": "Forward", "is_field_position": true, "is_offensive": true, "sort_order": 30 }
+            {
+              "slug": "hockey_goalkeeper",
+              "name": "Goalkeeper",
+              "is_field_position": true,
+              "is_defensive": true,
+              "sort_order": 1
+            },
+            {
+              "slug": "hockey_defender",
+              "name": "Defender",
+              "is_field_position": true,
+              "is_defensive": true,
+              "sort_order": 10
+            },
+            {
+              "slug": "hockey_midfielder",
+              "name": "Midfielder",
+              "is_field_position": true,
+              "sort_order": 20
+            },
+            {
+              "slug": "hockey_forward",
+              "name": "Forward",
+              "is_field_position": true,
+              "is_offensive": true,
+              "sort_order": 30
+            }
           ]
         }
       ]
@@ -364,10 +699,35 @@
           "session_duration_default_minutes": 60,
           "sort_order": 1,
           "positions": [
-            { "slug": "ice_hockey_goaltender", "name": "Goaltender", "is_field_position": true, "is_defensive": true, "typical_jersey_range_min": 30, "typical_jersey_range_max": 39, "sort_order": 1 },
-            { "slug": "ice_hockey_defenseman", "name": "Defenseman", "is_field_position": true, "is_defensive": true, "sort_order": 10 },
-            { "slug": "ice_hockey_center", "name": "Center", "is_field_position": true, "sort_order": 20 },
-            { "slug": "ice_hockey_winger", "name": "Winger", "is_field_position": true, "is_offensive": true, "sort_order": 30 }
+            {
+              "slug": "ice_hockey_goaltender",
+              "name": "Goaltender",
+              "is_field_position": true,
+              "is_defensive": true,
+              "typical_jersey_range_min": 30,
+              "typical_jersey_range_max": 39,
+              "sort_order": 1
+            },
+            {
+              "slug": "ice_hockey_defenseman",
+              "name": "Defenseman",
+              "is_field_position": true,
+              "is_defensive": true,
+              "sort_order": 10
+            },
+            {
+              "slug": "ice_hockey_center",
+              "name": "Center",
+              "is_field_position": true,
+              "sort_order": 20
+            },
+            {
+              "slug": "ice_hockey_winger",
+              "name": "Winger",
+              "is_field_position": true,
+              "is_offensive": true,
+              "sort_order": 30
+            }
           ]
         }
       ]
@@ -395,11 +755,40 @@
           "session_duration_default_minutes": 90,
           "sort_order": 1,
           "positions": [
-            { "slug": "volleyball_setter", "name": "Setter", "is_field_position": true, "sort_order": 1 },
-            { "slug": "volleyball_outside_hitter", "name": "Outside Hitter", "is_field_position": true, "is_offensive": true, "sort_order": 10 },
-            { "slug": "volleyball_opposite_hitter", "name": "Opposite Hitter", "is_field_position": true, "is_offensive": true, "sort_order": 20 },
-            { "slug": "volleyball_middle_blocker", "name": "Middle Blocker", "is_field_position": true, "is_defensive": true, "sort_order": 30 },
-            { "slug": "volleyball_libero", "name": "Libero", "is_field_position": true, "is_defensive": true, "sort_order": 40 }
+            {
+              "slug": "volleyball_setter",
+              "name": "Setter",
+              "is_field_position": true,
+              "sort_order": 1
+            },
+            {
+              "slug": "volleyball_outside_hitter",
+              "name": "Outside Hitter",
+              "is_field_position": true,
+              "is_offensive": true,
+              "sort_order": 10
+            },
+            {
+              "slug": "volleyball_opposite_hitter",
+              "name": "Opposite Hitter",
+              "is_field_position": true,
+              "is_offensive": true,
+              "sort_order": 20
+            },
+            {
+              "slug": "volleyball_middle_blocker",
+              "name": "Middle Blocker",
+              "is_field_position": true,
+              "is_defensive": true,
+              "sort_order": 30
+            },
+            {
+              "slug": "volleyball_libero",
+              "name": "Libero",
+              "is_field_position": true,
+              "is_defensive": true,
+              "sort_order": 40
+            }
           ]
         },
         {
@@ -437,11 +826,39 @@
           "session_duration_default_minutes": 60,
           "sort_order": 1,
           "positions": [
-            { "slug": "handball_goalkeeper", "name": "Goalkeeper", "is_field_position": true, "is_defensive": true, "sort_order": 1 },
-            { "slug": "handball_wing", "name": "Wing", "is_field_position": true, "is_offensive": true, "sort_order": 10 },
-            { "slug": "handball_back", "name": "Back", "is_field_position": true, "sort_order": 20 },
-            { "slug": "handball_center_back", "name": "Center Back", "is_field_position": true, "sort_order": 30 },
-            { "slug": "handball_line_player", "name": "Line Player (Pivot)", "is_field_position": true, "is_offensive": true, "sort_order": 40 }
+            {
+              "slug": "handball_goalkeeper",
+              "name": "Goalkeeper",
+              "is_field_position": true,
+              "is_defensive": true,
+              "sort_order": 1
+            },
+            {
+              "slug": "handball_wing",
+              "name": "Wing",
+              "is_field_position": true,
+              "is_offensive": true,
+              "sort_order": 10
+            },
+            {
+              "slug": "handball_back",
+              "name": "Back",
+              "is_field_position": true,
+              "sort_order": 20
+            },
+            {
+              "slug": "handball_center_back",
+              "name": "Center Back",
+              "is_field_position": true,
+              "sort_order": 30
+            },
+            {
+              "slug": "handball_line_player",
+              "name": "Line Player (Pivot)",
+              "is_field_position": true,
+              "is_offensive": true,
+              "sort_order": 40
+            }
           ]
         }
       ]
@@ -468,13 +885,54 @@
           "session_duration_default_minutes": 60,
           "sort_order": 1,
           "positions": [
-            { "slug": "netball_goal_shooter", "name": "Goal Shooter", "is_field_position": true, "is_offensive": true, "sort_order": 1 },
-            { "slug": "netball_goal_attack", "name": "Goal Attack", "is_field_position": true, "is_offensive": true, "sort_order": 10 },
-            { "slug": "netball_wing_attack", "name": "Wing Attack", "is_field_position": true, "is_offensive": true, "sort_order": 20 },
-            { "slug": "netball_centre", "name": "Centre", "is_field_position": true, "sort_order": 30 },
-            { "slug": "netball_wing_defence", "name": "Wing Defence", "is_field_position": true, "is_defensive": true, "sort_order": 40 },
-            { "slug": "netball_goal_defence", "name": "Goal Defence", "is_field_position": true, "is_defensive": true, "sort_order": 50 },
-            { "slug": "netball_goal_keeper", "name": "Goal Keeper", "is_field_position": true, "is_defensive": true, "sort_order": 60 }
+            {
+              "slug": "netball_goal_shooter",
+              "name": "Goal Shooter",
+              "is_field_position": true,
+              "is_offensive": true,
+              "sort_order": 1
+            },
+            {
+              "slug": "netball_goal_attack",
+              "name": "Goal Attack",
+              "is_field_position": true,
+              "is_offensive": true,
+              "sort_order": 10
+            },
+            {
+              "slug": "netball_wing_attack",
+              "name": "Wing Attack",
+              "is_field_position": true,
+              "is_offensive": true,
+              "sort_order": 20
+            },
+            {
+              "slug": "netball_centre",
+              "name": "Centre",
+              "is_field_position": true,
+              "sort_order": 30
+            },
+            {
+              "slug": "netball_wing_defence",
+              "name": "Wing Defence",
+              "is_field_position": true,
+              "is_defensive": true,
+              "sort_order": 40
+            },
+            {
+              "slug": "netball_goal_defence",
+              "name": "Goal Defence",
+              "is_field_position": true,
+              "is_defensive": true,
+              "sort_order": 50
+            },
+            {
+              "slug": "netball_goal_keeper",
+              "name": "Goal Keeper",
+              "is_field_position": true,
+              "is_defensive": true,
+              "sort_order": 60
+            }
           ]
         }
       ]
@@ -501,10 +959,33 @@
           "session_duration_default_minutes": 60,
           "sort_order": 1,
           "positions": [
-            { "slug": "lacrosse_goalie", "name": "Goalie", "is_field_position": true, "is_defensive": true, "sort_order": 1 },
-            { "slug": "lacrosse_defender", "name": "Defender", "is_field_position": true, "is_defensive": true, "sort_order": 10 },
-            { "slug": "lacrosse_midfielder", "name": "Midfielder", "is_field_position": true, "sort_order": 20 },
-            { "slug": "lacrosse_attacker", "name": "Attacker", "is_field_position": true, "is_offensive": true, "sort_order": 30 }
+            {
+              "slug": "lacrosse_goalie",
+              "name": "Goalie",
+              "is_field_position": true,
+              "is_defensive": true,
+              "sort_order": 1
+            },
+            {
+              "slug": "lacrosse_defender",
+              "name": "Defender",
+              "is_field_position": true,
+              "is_defensive": true,
+              "sort_order": 10
+            },
+            {
+              "slug": "lacrosse_midfielder",
+              "name": "Midfielder",
+              "is_field_position": true,
+              "sort_order": 20
+            },
+            {
+              "slug": "lacrosse_attacker",
+              "name": "Attacker",
+              "is_field_position": true,
+              "is_offensive": true,
+              "sort_order": 30
+            }
           ]
         }
       ]
@@ -532,7 +1013,12 @@
           "session_duration_default_minutes": 90,
           "sort_order": 1,
           "positions": [
-            { "slug": "swimming_freestyler", "name": "Freestyler", "is_field_position": true, "sort_order": 1 }
+            {
+              "slug": "swimming_freestyler",
+              "name": "Freestyler",
+              "is_field_position": true,
+              "sort_order": 1
+            }
           ]
         },
         {
@@ -543,7 +1029,12 @@
           "player_count_max": 1,
           "sort_order": 2,
           "positions": [
-            { "slug": "swimming_backstroker", "name": "Backstroker", "is_field_position": true, "sort_order": 1 }
+            {
+              "slug": "swimming_backstroker",
+              "name": "Backstroker",
+              "is_field_position": true,
+              "sort_order": 1
+            }
           ]
         },
         {
@@ -554,7 +1045,12 @@
           "player_count_max": 1,
           "sort_order": 3,
           "positions": [
-            { "slug": "swimming_breaststroker", "name": "Breaststroker", "is_field_position": true, "sort_order": 1 }
+            {
+              "slug": "swimming_breaststroker",
+              "name": "Breaststroker",
+              "is_field_position": true,
+              "sort_order": 1
+            }
           ]
         },
         {
@@ -565,7 +1061,12 @@
           "player_count_max": 1,
           "sort_order": 4,
           "positions": [
-            { "slug": "swimming_butterflier", "name": "Butterflier", "is_field_position": true, "sort_order": 1 }
+            {
+              "slug": "swimming_butterflier",
+              "name": "Butterflier",
+              "is_field_position": true,
+              "sort_order": 1
+            }
           ]
         },
         {
@@ -577,7 +1078,12 @@
           "player_count_max": 1,
           "sort_order": 5,
           "positions": [
-            { "slug": "swimming_medlist", "name": "Medlist", "is_field_position": true, "sort_order": 1 }
+            {
+              "slug": "swimming_medlist",
+              "name": "Medlist",
+              "is_field_position": true,
+              "sort_order": 1
+            }
           ]
         },
         {
@@ -589,8 +1095,18 @@
           "player_count_max": 4,
           "sort_order": 6,
           "positions": [
-            { "slug": "swimming_relay_lead", "name": "Lead-off Swimmer", "is_field_position": true, "sort_order": 1 },
-            { "slug": "swimming_relay_anchor", "name": "Anchor", "is_field_position": true, "sort_order": 10 }
+            {
+              "slug": "swimming_relay_lead",
+              "name": "Lead-off Swimmer",
+              "is_field_position": true,
+              "sort_order": 1
+            },
+            {
+              "slug": "swimming_relay_anchor",
+              "name": "Anchor",
+              "is_field_position": true,
+              "sort_order": 10
+            }
           ]
         }
       ]
@@ -617,11 +1133,40 @@
           "session_duration_default_minutes": 32,
           "sort_order": 1,
           "positions": [
-            { "slug": "water_polo_goalkeeper", "name": "Goalkeeper", "is_field_position": true, "is_defensive": true, "sort_order": 1 },
-            { "slug": "water_polo_defender", "name": "Defender", "is_field_position": true, "is_defensive": true, "sort_order": 10 },
-            { "slug": "water_polo_wing", "name": "Wing", "is_field_position": true, "sort_order": 20 },
-            { "slug": "water_polo_driver", "name": "Driver", "is_field_position": true, "is_offensive": true, "sort_order": 30 },
-            { "slug": "water_polo_center", "name": "Center Forward", "is_field_position": true, "is_offensive": true, "sort_order": 40 }
+            {
+              "slug": "water_polo_goalkeeper",
+              "name": "Goalkeeper",
+              "is_field_position": true,
+              "is_defensive": true,
+              "sort_order": 1
+            },
+            {
+              "slug": "water_polo_defender",
+              "name": "Defender",
+              "is_field_position": true,
+              "is_defensive": true,
+              "sort_order": 10
+            },
+            {
+              "slug": "water_polo_wing",
+              "name": "Wing",
+              "is_field_position": true,
+              "sort_order": 20
+            },
+            {
+              "slug": "water_polo_driver",
+              "name": "Driver",
+              "is_field_position": true,
+              "is_offensive": true,
+              "sort_order": 30
+            },
+            {
+              "slug": "water_polo_center",
+              "name": "Center Forward",
+              "is_field_position": true,
+              "is_offensive": true,
+              "sort_order": 40
+            }
           ]
         }
       ]
@@ -824,7 +1369,12 @@
           "session_duration_default_minutes": 60,
           "sort_order": 1,
           "positions": [
-            { "slug": "athletics_sprinter", "name": "Sprinter", "is_field_position": true, "sort_order": 1 }
+            {
+              "slug": "athletics_sprinter",
+              "name": "Sprinter",
+              "is_field_position": true,
+              "sort_order": 1
+            }
           ]
         },
         {
@@ -850,7 +1400,12 @@
           "format_type": "individual",
           "sort_order": 4,
           "positions": [
-            { "slug": "athletics_jumper", "name": "Jumper", "is_field_position": true, "sort_order": 1 }
+            {
+              "slug": "athletics_jumper",
+              "name": "Jumper",
+              "is_field_position": true,
+              "sort_order": 1
+            }
           ]
         },
         {
@@ -860,7 +1415,12 @@
           "format_type": "individual",
           "sort_order": 5,
           "positions": [
-            { "slug": "athletics_thrower", "name": "Thrower", "is_field_position": true, "sort_order": 1 }
+            {
+              "slug": "athletics_thrower",
+              "name": "Thrower",
+              "is_field_position": true,
+              "sort_order": 1
+            }
           ]
         },
         {

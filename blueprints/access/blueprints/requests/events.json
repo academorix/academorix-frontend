@@ -102,9 +102,7 @@
         "channel": "string \u2014 'mail' | 'database' | 'broadcast'",
         "deliveredAt": "datetime"
       },
-      "listeners": [
-        "analytics::TrackAccessRequestApproverNotifiedListener"
-      ]
+      "listeners": ["analytics::TrackAccessRequestApproverNotifiedListener"]
     },
     {
       "name": "AccessRequestGrantIssued",

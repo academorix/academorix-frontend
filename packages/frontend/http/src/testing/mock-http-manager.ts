@@ -15,9 +15,9 @@ import type {
   IHttpInterceptorRegistry,
   IHttpManager,
   IHttpMiddlewareRegistry,
-} from '@stackra/contracts';
+} from "@stackra/contracts";
 
-import { MockHttpClient } from './mock-http-client';
+import { MockHttpClient } from "./mock-http-client";
 
 /** Minimal in-memory registry backing the mock manager. */
 class MockRegistry {
@@ -58,7 +58,7 @@ export class MockHttpManager implements IHttpManager {
   private readonly configs = new Map<string, IHttpClientConfig>();
 
   /** Configurable default connection name. */
-  private defaultConnection = 'default';
+  private defaultConnection = "default";
 
   public async connection(name?: string): Promise<IHttpClient> {
     const key = name ?? this.defaultConnection;
@@ -147,9 +147,9 @@ export class MockHttpManager implements IHttpManager {
 
   public createClientFromConnector(
     _connector: IHttpConnector,
-    config: Record<string, unknown>
+    config: Record<string, unknown>,
   ): IHttpClient {
-    const name = (config['__connectionName'] as string | undefined) ?? this.defaultConnection;
+    const name = (config["__connectionName"] as string | undefined) ?? this.defaultConnection;
     return this.client(name);
   }
 

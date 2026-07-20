@@ -40,7 +40,11 @@
               "children": [
                 {
                   "kind": "Text",
-                  "props": { "as": "h1", "className": "text-2xl font-semibold", "children": "Passes" }
+                  "props": {
+                    "as": "h1",
+                    "className": "text-2xl font-semibold",
+                    "children": "Passes"
+                  }
                 },
                 {
                   "kind": "Text",
@@ -162,12 +166,16 @@
                       {
                         "kind": "Text",
                         "props": { "className": "text-sm" },
-                        "bindings": { "children": { "$expr": "formatDate(row.valid_from, 'short')" } }
+                        "bindings": {
+                          "children": { "$expr": "formatDate(row.valid_from, 'short')" }
+                        }
                       },
                       {
                         "kind": "Text",
                         "props": { "className": "text-xs text-muted" },
-                        "bindings": { "children": { "$expr": "'to ' + formatDate(row.valid_until, 'short')" } }
+                        "bindings": {
+                          "children": { "$expr": "'to ' + formatDate(row.valid_until, 'short')" }
+                        }
                       }
                     ]
                   }

@@ -7,18 +7,18 @@ in multiple Tenants within the same Application. Wave 1a of the identity tier
 
 ## 1. What this module owns
 
-| Concern                              | Owned artefact                                                                                          |
-| ------------------------------------ | ------------------------------------------------------------------------------------------------------- |
-| Per-Application principal            | `User` (`users.identity_id` \u00d7 `users.application_id` \u00d7 `users.tenant_id`)                     |
-| PII cluster                          | `Profile` (1:1 with User, redactor-gated)                                                               |
-| Multi-tenant membership              | `TenantMember` (pivot User \u2194 Tenant + role)                                                        |
-| Provisioning action                  | `ProvisionUser` (domain-agnostic; consumed by invitations, self-registration, admin creation, imports) |
-| Lifecycle transitions                | activate / suspend / restore / erase, plus the scheduled `PurgeErasedUsersJob`                          |
-| Self-service surface                 | `/me`, `/me/profile`, `/me/avatar`, `/me/tenants`, `/me/tenants/{tenant}/switch`                        |
-| Admin surface                        | Full CRUD on `users`, per-user membership management                                                    |
-| Platform-admin surface               | Cross-tenant read (`/api/v1/platform/users`) for support tooling                                        |
-| `.own` scope resolver                | Ships the substrate consumed by every base repository at query time                                     |
-| Compliance floors                    | Age gate at provisioning + PII redactor + GDPR erasure timeline                                         |
+| Concern                   | Owned artefact                                                                                         |
+| ------------------------- | ------------------------------------------------------------------------------------------------------ |
+| Per-Application principal | `User` (`users.identity_id` \u00d7 `users.application_id` \u00d7 `users.tenant_id`)                    |
+| PII cluster               | `Profile` (1:1 with User, redactor-gated)                                                              |
+| Multi-tenant membership   | `TenantMember` (pivot User \u2194 Tenant + role)                                                       |
+| Provisioning action       | `ProvisionUser` (domain-agnostic; consumed by invitations, self-registration, admin creation, imports) |
+| Lifecycle transitions     | activate / suspend / restore / erase, plus the scheduled `PurgeErasedUsersJob`                         |
+| Self-service surface      | `/me`, `/me/profile`, `/me/avatar`, `/me/tenants`, `/me/tenants/{tenant}/switch`                       |
+| Admin surface             | Full CRUD on `users`, per-user membership management                                                   |
+| Platform-admin surface    | Cross-tenant read (`/api/v1/platform/users`) for support tooling                                       |
+| `.own` scope resolver     | Ships the substrate consumed by every base repository at query time                                    |
+| Compliance floors         | Age gate at provisioning + PII redactor + GDPR erasure timeline                                        |
 
 ### 1.1 The Identity / User / TenantMember split
 
@@ -107,8 +107,8 @@ matching WHERE clause.
 The convention: a permission ending in `.own` implies
 `WHERE resource.user_id = current_user_id`. So a caller carrying
 `athletes.view.own` sees ONLY the Athlete rows they directly own via
-`athletes.user_id`. Same for `.tenant`, `.branch`, `.team`, `.child`,
-`.any` \u2014 each suffix maps to a filter pattern.
+`athletes.user_id`. Same for `.tenant`, `.branch`, `.team`, `.child`, `.any`
+\u2014 each suffix maps to a filter pattern.
 
 See `permissions.json` for the full suffix taxonomy + example seed lists per
 role.
@@ -141,8 +141,8 @@ Every Profile field except `id`, `display_name`, `avatar_url`, `locale`,
   they carry `profile.view.pii`.
 - **Minor subjects** \u2014 non-subject callers see the redacted response unless
   they carry `profile.view.pii.child` AND (a) they are the subject's guardian
-  via `AthleteGuardian`, OR (b) they are an admin with an explicit tenant
-  policy allowing the read.
+  via `AthleteGuardian`, OR (b) they are an admin with an explicit tenant policy
+  allowing the read.
 
 The subject always sees their own Profile unredacted.
 

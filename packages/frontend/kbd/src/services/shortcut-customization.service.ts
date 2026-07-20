@@ -12,12 +12,7 @@
  *   reload.
  */
 
-import {
-  Inject,
-  Injectable,
-  Optional,
-  type OnModuleInit,
-} from "@stackra/container";
+import { Inject, Injectable, Optional, type OnModuleInit } from "@stackra/container";
 import { STORAGE_MANAGER, type IStorageManager } from "@stackra/contracts";
 
 import { SHORTCUT_REGISTRY } from "../tokens";

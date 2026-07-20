@@ -13,13 +13,13 @@
  *   pass `ExpoTaskRunner` from `@stackra/scheduler/native`.
  */
 
-import { Module, type DynamicModule } from '@stackra/container';
-import { SCHEDULER_CONFIG, SCHEDULER_SERVICE, TASK_RUNNER } from '@stackra/contracts';
-import { SchedulerService } from './services/scheduler.service';
-import { DefaultTaskRunner } from './services/default-task-runner.service';
-import { ScheduledTaskLoader } from './services/scheduled-task-loader.service';
-import type { ISchedulerModuleOptions } from './interfaces/scheduler-module-options.interface';
-import { mergeConfig } from './utils/merge-config.util';
+import { Module, type DynamicModule } from "@stackra/container";
+import { SCHEDULER_CONFIG, SCHEDULER_SERVICE, TASK_RUNNER } from "@stackra/contracts";
+import { SchedulerService } from "./services/scheduler.service";
+import { DefaultTaskRunner } from "./services/default-task-runner.service";
+import { ScheduledTaskLoader } from "./services/scheduled-task-loader.service";
+import type { ISchedulerModuleOptions } from "./interfaces/scheduler-module-options.interface";
+import { mergeConfig } from "./utils/merge-config.util";
 
 // Module Options
 

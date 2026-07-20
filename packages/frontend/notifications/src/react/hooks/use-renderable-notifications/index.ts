@@ -5,5 +5,5 @@
  *   hook.
  */
 
-export { useRenderableNotifications } from './use-renderable-notifications.hook';
-export type { IUseRenderableNotificationsResult } from './use-renderable-notifications.interface';
+export { useRenderableNotifications } from "./use-renderable-notifications.hook";
+export type { IUseRenderableNotificationsResult } from "./use-renderable-notifications.interface";

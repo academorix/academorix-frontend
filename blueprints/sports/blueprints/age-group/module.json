@@ -21,9 +21,7 @@
     "rolling-from-birthday"
   ],
   "priority": 53,
-  "providers": [
-    "Academorix\\Sports\\AgeGroup\\Providers\\AgeGroupServiceProvider"
-  ],
+  "providers": ["Academorix\\Sports\\AgeGroup\\Providers\\AgeGroupServiceProvider"],
   "files": [],
   "dependencies": [
     "foundation",
@@ -34,21 +32,10 @@
     "entitlements"
   ],
   "extendedBy": [],
-  "planned_consumers": [
-    "athlete",
-    "athlete-enrollment",
-    "teams",
-    "event",
-    "notifications"
-  ],
+  "planned_consumers": ["athlete", "athlete-enrollment", "teams", "event", "notifications"],
   "contributes": {
-    "traits": [
-      "BelongsToAgeGroup",
-      "HasAgeGroupCatalog"
-    ],
-    "attributes": [
-      "AsAgeGroupListener"
-    ],
+    "traits": ["BelongsToAgeGroup", "HasAgeGroupCatalog"],
+    "attributes": ["AsAgeGroupListener"],
     "blueprints": [],
     "middleware": [],
     "events": [
@@ -63,13 +50,8 @@
       "AgeGroupDeleted",
       "AgeGroupCatalogSeeded"
     ],
-    "policies": [
-      "AgeGroupPolicy"
-    ],
-    "hooks": [
-      "SeedDefaultAgeGroupsOnTenantProvisioned",
-      "PreventAgeGroupOrphansOnTenantErased"
-    ],
+    "policies": ["AgeGroupPolicy"],
+    "hooks": ["SeedDefaultAgeGroupsOnTenantProvisioned", "PreventAgeGroupOrphansOnTenantErased"],
     "commands": [
       "age-group:list",
       "age-group:describe",
@@ -91,9 +73,7 @@
       "AgeGroupDefaultChangedNotification"
     ],
     "broadcasts": [],
-    "observers": [
-      "AgeGroupObserver"
-    ],
+    "observers": ["AgeGroupObserver"],
     "rules": [
       "valid_hex_color",
       "valid_age_bounds",
@@ -101,18 +81,10 @@
       "valid_sport_key",
       "age_group_slug_reserved"
     ],
-    "casts": [
-      "CutoffDateKind",
-      "GenderCategory",
-      "HexColor"
-    ],
+    "casts": ["CutoffDateKind", "GenderCategory", "HexColor"],
     "views": [],
-    "lang": [
-      "age-group"
-    ],
-    "config": [
-      "age_group"
-    ],
+    "lang": ["age-group"],
+    "config": ["age_group"],
     "macros": [],
     "bindings": [
       "AgeGroupRepository",
@@ -121,9 +93,7 @@
       "CutoffDateCalculator",
       "AgeGroupCatalogSeeder"
     ],
-    "resources": [
-      "age-group"
-    ]
+    "resources": ["age-group"]
   },
   "hosts": {
     "tenant": {
@@ -142,10 +112,7 @@
     },
     "platform-admin": {
       "description": "Cross-tenant read for support tooling.",
-      "routes": [
-        "GET /api/v1/platform/age-groups",
-        "GET /api/v1/platform/age-groups/{age_group}"
-      ]
+      "routes": ["GET /api/v1/platform/age-groups", "GET /api/v1/platform/age-groups/{age_group}"]
     }
   }
 }

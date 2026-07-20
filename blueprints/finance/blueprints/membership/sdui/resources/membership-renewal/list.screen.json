@@ -9,7 +9,13 @@
   "resource": { "module": "membership", "entity": "membership-renewal", "action": "list" },
   "requiresPermission": "membership_renewals.viewAny",
   "dataSources": [
-    { "name": "renewals", "kind": "http.get", "url": "/api/v1/membership-renewals", "unwrap": "data", "queryFromFilters": true }
+    {
+      "name": "renewals",
+      "kind": "http.get",
+      "url": "/api/v1/membership-renewals",
+      "unwrap": "data",
+      "queryFromFilters": true
+    }
   ],
   "nodes": [
     {
@@ -24,8 +30,21 @@
             {
               "kind": "View",
               "children": [
-                { "kind": "Text", "props": { "as": "h1", "className": "text-2xl font-semibold", "children": "Renewals" } },
-                { "kind": "Text", "props": { "className": "text-sm text-muted", "children": "Every billing attempt — successes, failures, retries, and terminal outcomes. Append-only audit log." } }
+                {
+                  "kind": "Text",
+                  "props": {
+                    "as": "h1",
+                    "className": "text-2xl font-semibold",
+                    "children": "Renewals"
+                  }
+                },
+                {
+                  "kind": "Text",
+                  "props": {
+                    "className": "text-sm text-muted",
+                    "children": "Every billing attempt — successes, failures, retries, and terminal outcomes. Append-only audit log."
+                  }
+                }
               ]
             }
           ]
@@ -45,7 +64,13 @@
                 { "id": "failed_permanent", "label": "Failed (terminal)" },
                 { "id": "cancelled", "label": "Cancelled" }
               ],
-              "actions": { "onSelectionChange": { "kind": "filter.set", "field": "status", "valueExpr": "$selectedKey" } }
+              "actions": {
+                "onSelectionChange": {
+                  "kind": "filter.set",
+                  "field": "status",
+                  "valueExpr": "$selectedKey"
+                }
+              }
             },
             {
               "kind": "ComboBox",
@@ -56,20 +81,35 @@
                 { "id": "3", "label": "Attempt 3 (retry)" },
                 { "id": "4", "label": "Attempt 4 (final)" }
               ],
-              "actions": { "onSelectionChange": { "kind": "filter.set", "field": "attempt_number", "valueExpr": "$selectedKey" } }
+              "actions": {
+                "onSelectionChange": {
+                  "kind": "filter.set",
+                  "field": "attempt_number",
+                  "valueExpr": "$selectedKey"
+                }
+              }
             }
           ]
         },
         {
           "kind": "Table",
           "props": { "aria-label": "Renewals table" },
-          "bindings": { "rows": { "$ref": "renewals" }, "isLoading": { "$ref": "renewals.isLoading" } },
+          "bindings": {
+            "rows": { "$ref": "renewals" },
+            "isLoading": { "$ref": "renewals.isLoading" }
+          },
           "emptyState": {
             "kind": "View",
             "props": { "className": "text-center py-12" },
             "children": [
-              { "kind": "Icon", "props": { "name": "arrow-path", "className": "size-12 mx-auto text-muted" } },
-              { "kind": "Text", "props": { "className": "mt-4 text-lg font-medium", "children": "No renewals" } }
+              {
+                "kind": "Icon",
+                "props": { "name": "arrow-path", "className": "size-12 mx-auto text-muted" }
+              },
+              {
+                "kind": "Text",
+                "props": { "className": "mt-4 text-lg font-medium", "children": "No renewals" }
+              }
             ]
           },
           "columns": [
@@ -80,7 +120,12 @@
                 "kind": "Link",
                 "propsExpr": "{ hrefExpr: '/tenant/memberships/' + row.membership_id }",
                 "children": [
-                  { "kind": "Text", "bindings": { "childrenExpr": "row.membership.athlete_display_name + ' — ' + row.membership.plan_display_name" } }
+                  {
+                    "kind": "Text",
+                    "bindings": {
+                      "childrenExpr": "row.membership.athlete_display_name + ' — ' + row.membership.plan_display_name"
+                    }
+                  }
                 ]
               }
             },
@@ -90,7 +135,9 @@
               "renderer": {
                 "kind": "Text",
                 "props": { "className": "tabular-nums text-sm" },
-                "bindings": { "childrenExpr": "$formatDate(row.period_starts_at, 'D MMM') + ' → ' + $formatDate(row.period_ends_at, 'D MMM YYYY')" }
+                "bindings": {
+                  "childrenExpr": "$formatDate(row.period_starts_at, 'D MMM') + ' → ' + $formatDate(row.period_ends_at, 'D MMM YYYY')"
+                }
               }
             },
             {
@@ -99,7 +146,9 @@
               "renderer": {
                 "kind": "Chip",
                 "propsExpr": "{ size: 'sm', variant: row.attempt_number === 1 ? 'info' : row.attempt_number === 4 ? 'danger' : 'warning' }",
-                "children": [{ "kind": "Text", "propsExpr": "{ children: '#' + row.attempt_number }" }]
+                "children": [
+                  { "kind": "Text", "propsExpr": "{ children: '#' + row.attempt_number }" }
+                ]
               }
             },
             {
@@ -108,7 +157,9 @@
               "renderer": {
                 "kind": "Chip",
                 "propsExpr": "{ size: 'sm', variant: row.status === 'succeeded' ? 'success' : row.status === 'failed_transient' ? 'warning' : row.status === 'failed_permanent' ? 'danger' : row.status === 'attempting' ? 'info' : 'neutral' }",
-                "children": [{ "kind": "Text", "propsExpr": "{ children: row.status.replace('_', ' ') }" }]
+                "children": [
+                  { "kind": "Text", "propsExpr": "{ children: row.status.replace('_', ' ') }" }
+                ]
               }
             },
             {
@@ -117,7 +168,9 @@
               "renderer": {
                 "kind": "Text",
                 "props": { "className": "tabular-nums font-semibold" },
-                "bindings": { "childrenExpr": "$formatCurrency(row.total_amount_cents, row.currency)" }
+                "bindings": {
+                  "childrenExpr": "$formatCurrency(row.total_amount_cents, row.currency)"
+                }
               }
             },
             {
@@ -137,7 +190,10 @@
               "renderer": {
                 "kind": "Text",
                 "props": { "className": "text-xs text-danger-500 max-w-64 truncate" },
-                "bindings": { "children": { "$ref": "row.failure_reason" }, "hidden": { "$expr": "!row.failure_reason" } }
+                "bindings": {
+                  "children": { "$ref": "row.failure_reason" },
+                  "hidden": { "$expr": "!row.failure_reason" }
+                }
               }
             }
           ]

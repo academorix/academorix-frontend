@@ -30,13 +30,7 @@
   "priority": 55,
   "providers": ["Academorix\\Growth\\Leads\\Providers\\LeadsServiceProvider"],
   "files": [],
-  "dependencies": [
-    "foundation",
-    "tenancy",
-    "application",
-    "attribution",
-    "notifications"
-  ],
+  "dependencies": ["foundation", "tenancy", "application", "attribution", "notifications"],
   "extendedBy": [],
   "planned_consumers": [
     "sports::registrations (Wave 6 — receives converted leads via LeadConversionService; creates athlete rows + attaches attribution snapshot)",
@@ -45,20 +39,9 @@
     "reporting (Wave 6 — funnel-conversion + source-attribution rollups over the lead + lead_activity ledger)"
   ],
   "contributes": {
-    "traits": [
-      "BelongsToLead",
-      "HasLeadActivities",
-      "HasLeadTasks"
-    ],
-    "attributes": [
-      "AsLeadStageTransition",
-      "AsLeadSource"
-    ],
-    "blueprints": [
-      "leads",
-      "lead_activities",
-      "lead_tasks"
-    ],
+    "traits": ["BelongsToLead", "HasLeadActivities", "HasLeadTasks"],
+    "attributes": ["AsLeadStageTransition", "AsLeadSource"],
+    "blueprints": ["leads", "lead_activities", "lead_tasks"],
     "middleware": ["leads.enforce_entitlement"],
     "events": [
       "LeadCaptured",
@@ -69,22 +52,13 @@
       "LeadLost",
       "LeadReassigned"
     ],
-    "policies": [
-      "LeadPolicy",
-      "LeadActivityPolicy",
-      "LeadTaskPolicy"
-    ],
+    "policies": ["LeadPolicy", "LeadActivityPolicy", "LeadTaskPolicy"],
     "hooks": [
       "PurgeLeadsForErasedTenant",
       "SnapshotAttributionOnLeadCapture",
       "MaterialiseAthletesOnLeadConverted"
     ],
-    "commands": [
-      "leads:list",
-      "leads:describe",
-      "leads:reassign-stale",
-      "leads:funnel-report"
-    ],
+    "commands": ["leads:list", "leads:describe", "leads:reassign-stale", "leads:funnel-report"],
     "jobs": [
       "ReassignStaleLeadsJob",
       "SendLeadFollowUpJob",
@@ -98,15 +72,8 @@
       "LeadStaleReassignedNotification",
       "LeadConvertedNotification"
     ],
-    "broadcasts": [
-      "tenant.{tenantId}.leads",
-      "tenant.{tenantId}.leads.tasks"
-    ],
-    "observers": [
-      "LeadObserver",
-      "LeadActivityObserver",
-      "LeadTaskObserver"
-    ],
+    "broadcasts": ["tenant.{tenantId}.leads", "tenant.{tenantId}.leads.tasks"],
+    "observers": ["LeadObserver", "LeadActivityObserver", "LeadTaskObserver"],
     "rules": [
       "valid_lead_stage",
       "valid_lead_source",
@@ -139,11 +106,7 @@
       "LeadStageTransitionValidator",
       "LeadFunnelReporter"
     ],
-    "resources": [
-      "lead",
-      "lead-activity",
-      "lead-task"
-    ]
+    "resources": ["lead", "lead-activity", "lead-task"]
   },
   "wraps": {
     "packages": [],
@@ -175,10 +138,7 @@
     },
     "platform-admin": {
       "description": "Cross-tenant support tooling. Ops + support can read (never mutate) tenant leads for support-ticket triage.",
-      "routes": [
-        "GET /api/v1/platform/leads",
-        "GET /api/v1/platform/leads/{lead}"
-      ]
+      "routes": ["GET /api/v1/platform/leads", "GET /api/v1/platform/leads/{lead}"]
     }
   }
 }

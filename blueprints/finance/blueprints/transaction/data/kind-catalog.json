@@ -10,7 +10,11 @@
       "trigger": "invoice::InvoicePaid",
       "reference_types": ["Invoice"],
       "expected_ledger_entries": [
-        { "account": "cash", "side": "debit", "description": "Money into the tenant's cash account" },
+        {
+          "account": "cash",
+          "side": "debit",
+          "description": "Money into the tenant's cash account"
+        },
         { "account": "accounts_receivable", "side": "credit", "description": "Receivable cleared" }
       ],
       "participates_in_reversal": true,
@@ -38,8 +42,16 @@
       "trigger": "chargeback::ChargebackFiled",
       "reference_types": ["Chargeback"],
       "expected_ledger_entries": [
-        { "account": "chargebacks_expense", "side": "debit", "description": "Chargeback recognized as expense" },
-        { "account": "cash", "side": "credit", "description": "Money removed from cash by the bank" }
+        {
+          "account": "chargebacks_expense",
+          "side": "debit",
+          "description": "Chargeback recognized as expense"
+        },
+        {
+          "account": "cash",
+          "side": "credit",
+          "description": "Money removed from cash by the bank"
+        }
       ],
       "participates_in_reversal": true,
       "reversal_reason_default": "chargeback"
@@ -51,8 +63,16 @@
       "trigger": "coupon::CouponRedeemed",
       "reference_types": ["CouponRedemption"],
       "expected_ledger_entries": [
-        { "account": "coupons_expense", "side": "debit", "description": "Coupon discount recognized as marketing expense" },
-        { "account": "revenue", "side": "credit", "description": "Revenue reduction (offsetting the invoice-payment credit that will follow)" }
+        {
+          "account": "coupons_expense",
+          "side": "debit",
+          "description": "Coupon discount recognized as marketing expense"
+        },
+        {
+          "account": "revenue",
+          "side": "credit",
+          "description": "Revenue reduction (offsetting the invoice-payment credit that will follow)"
+        }
       ],
       "participates_in_reversal": false,
       "note": "Coupon credits do NOT participate in reversal chains — a coupon can't be un-redeemed. If a coupon-redemption is voided, the associated invoice is refunded (fires refund_issued + adjustment transactions)."
@@ -65,7 +85,11 @@
       "reference_types": ["TaxRemittance"],
       "expected_ledger_entries": [
         { "account": "tax_payable", "side": "debit", "description": "Tax liability cleared" },
-        { "account": "cash", "side": "credit", "description": "Money out of cash to the tax authority" }
+        {
+          "account": "cash",
+          "side": "credit",
+          "description": "Money out of cash to the tax authority"
+        }
       ],
       "participates_in_reversal": false,
       "note": "Tax remittances are terminal — once paid to the regulator, they don't reverse. Errors in tax remittance handled via accounting_adjustment reversal manually authored by finance."
@@ -78,7 +102,11 @@
       "reference_types": ["Payment"],
       "expected_ledger_entries": [
         { "account": "gateway_fees", "side": "debit", "description": "Fee recognized as expense" },
-        { "account": "cash", "side": "credit", "description": "Money removed from cash by the gateway" }
+        {
+          "account": "cash",
+          "side": "credit",
+          "description": "Money removed from cash by the gateway"
+        }
       ],
       "participates_in_reversal": false,
       "note": "Fee refunds (rare — some gateways reverse fees when a payment is fully refunded) recorded as accounting_adjustment reversals of the original fee_charge."
@@ -141,8 +169,18 @@
       "trigger": "internal — TransactionRecorder::recordCurrencyConversion()",
       "reference_types": [null],
       "expected_ledger_entries": [
-        { "account": "cash", "side": "debit", "description": "Cash in target currency", "note": "account_currency = target" },
-        { "account": "cash", "side": "credit", "description": "Cash out of source currency", "note": "account_currency = source" }
+        {
+          "account": "cash",
+          "side": "debit",
+          "description": "Cash in target currency",
+          "note": "account_currency = target"
+        },
+        {
+          "account": "cash",
+          "side": "credit",
+          "description": "Cash out of source currency",
+          "note": "account_currency = source"
+        }
       ],
       "participates_in_reversal": true,
       "reversal_reason_default": "error_correction",

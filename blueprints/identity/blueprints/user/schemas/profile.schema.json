@@ -128,13 +128,7 @@
       }
     ]
   },
-  "required": [
-    "id",
-    "tenant_id",
-    "timezone",
-    "created_at",
-    "updated_at"
-  ],
+  "required": ["id", "tenant_id", "timezone", "created_at", "updated_at"],
   "properties": {
     "id": { "type": "string", "pattern": "^prf_[0-9A-HJKMNP-TV-Z]{26}$" },
     "tenant_id": { "type": "string", "pattern": "^ten_[0-9A-HJKMNP-TV-Z]{26}$" },
@@ -143,12 +137,22 @@
     "display_name": { "type": ["string", "null"], "maxLength": 100 },
     "avatar_url": { "type": ["string", "null"], "maxLength": 500, "format": "uri" },
     "phone_e164": { "type": ["string", "null"], "pattern": "^\\+[1-9]\\d{1,14}$", "maxLength": 20 },
-    "locale": { "type": ["string", "null"], "pattern": "^[a-z]{2,3}(-[A-Z][a-z]{3})?(-[A-Z]{2})?$", "maxLength": 12 },
+    "locale": {
+      "type": ["string", "null"],
+      "pattern": "^[a-z]{2,3}(-[A-Z][a-z]{3})?(-[A-Z]{2})?$",
+      "maxLength": 12
+    },
     "timezone": { "type": "string", "maxLength": 64 },
     "dob": { "type": ["string", "null"], "format": "date" },
     "metadata": { "type": ["object", "null"] },
-    "full_name": { "type": ["string", "null"], "description": "Computed. `first_name + ' ' + last_name`. Redactor-gated." },
-    "is_minor": { "type": "boolean", "description": "Computed. `dob !== null AND age(dob) < user.privacy.adult_transition_age`. Feeds redactor tier selection." },
+    "full_name": {
+      "type": ["string", "null"],
+      "description": "Computed. `first_name + ' ' + last_name`. Redactor-gated."
+    },
+    "is_minor": {
+      "type": "boolean",
+      "description": "Computed. `dob !== null AND age(dob) < user.privacy.adult_transition_age`. Feeds redactor tier selection."
+    },
     "created_by": { "type": ["string", "null"], "format": "uuid" },
     "updated_by": { "type": ["string", "null"], "format": "uuid" },
     "deleted_by": { "type": ["string", "null"], "format": "uuid" },

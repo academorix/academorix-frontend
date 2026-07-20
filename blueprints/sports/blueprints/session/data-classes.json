@@ -42,10 +42,7 @@
       "SessionAttendance.athlete_enrollment_id",
       "SessionAttendance.late_minutes"
     ],
-    "confidential": [
-      "Session.session_notes",
-      "SessionAttendance.notes"
-    ],
+    "confidential": ["Session.session_notes", "SessionAttendance.notes"],
     "restricted": [
       "Session.safeguarding_incident_flag (when true)",
       "Session.session_notes (when safeguarding_incident_flag=true — regulator-tier)"
@@ -57,9 +54,7 @@
       "SessionAttendance.notes (may contain minor's medical/behavioural details)",
       "Session.session_notes (when session includes minors)"
     ],
-    "regulated_health": [
-      "SessionAttendance.notes (may reference injuries, medical events)"
-    ],
+    "regulated_health": ["SessionAttendance.notes (may reference injuries, medical events)"],
     "regulated_financial": [
       "Session.session_type (drives per-lesson pricing when private_lesson/group_lesson)",
       "Session.cancellation_notice_at (drives refund policy — <24h notice may be non-refundable)"

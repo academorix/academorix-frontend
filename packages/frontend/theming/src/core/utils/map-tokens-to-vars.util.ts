@@ -4,7 +4,7 @@
  * @description Converts a token object to CSS variable entries.
  */
 
-import { tokenToCssVar } from './token-to-css-var.util';
+import { tokenToCssVar } from "./token-to-css-var.util";
 
 // ============================================================================
 // Utility
@@ -28,7 +28,7 @@ import { tokenToCssVar } from './token-to-css-var.util';
  * ```
  */
 export function mapTokensToVars(
-  tokens: Record<string, unknown>
+  tokens: Record<string, unknown>,
 ): Array<{ variable: string; value: string }> {
   const entries: Array<{ variable: string; value: string }> = [];
 

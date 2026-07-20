@@ -5,7 +5,14 @@
   "title": "Google Ads Enhanced Conversions provider config",
   "description": "Configuration shape for a Google Ads Enhanced Conversions Upload integration.",
   "type": "object",
-  "required": ["customer_id", "developer_token", "conversion_action_id", "refresh_token", "client_id", "client_secret"],
+  "required": [
+    "customer_id",
+    "developer_token",
+    "conversion_action_id",
+    "refresh_token",
+    "client_id",
+    "client_secret"
+  ],
   "additionalProperties": false,
   "properties": {
     "customer_id": {

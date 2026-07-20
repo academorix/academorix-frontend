@@ -9,9 +9,25 @@
   "resource": { "module": "staff", "entity": "coach", "action": "list" },
   "requiresPermission": "coach.viewAny",
   "dataSources": [
-    { "name": "coaches", "kind": "http.get", "url": "/api/v1/coaches", "unwrap": "data", "queryFromFilters": true },
-    { "name": "branches", "kind": "http.get", "url": "/api/v1/branches?filter[status]=active", "unwrap": "data" },
-    { "name": "slot_entitlement", "kind": "http.get", "url": "/api/v1/entitlements/coach_slot", "unwrap": "data" },
+    {
+      "name": "coaches",
+      "kind": "http.get",
+      "url": "/api/v1/coaches",
+      "unwrap": "data",
+      "queryFromFilters": true
+    },
+    {
+      "name": "branches",
+      "kind": "http.get",
+      "url": "/api/v1/branches?filter[status]=active",
+      "unwrap": "data"
+    },
+    {
+      "name": "slot_entitlement",
+      "kind": "http.get",
+      "url": "/api/v1/entitlements/coach_slot",
+      "unwrap": "data"
+    },
     { "name": "features", "kind": "http.get", "url": "/api/v1/features", "unwrap": "data" }
   ],
   "nodes": [
@@ -27,8 +43,21 @@
             {
               "kind": "View",
               "children": [
-                { "kind": "Text", "props": { "as": "h1", "className": "text-2xl font-semibold", "children": "Coaches" } },
-                { "kind": "Text", "props": { "className": "text-sm text-muted", "children": "Staff members with an active coaching profile." } }
+                {
+                  "kind": "Text",
+                  "props": {
+                    "as": "h1",
+                    "className": "text-2xl font-semibold",
+                    "children": "Coaches"
+                  }
+                },
+                {
+                  "kind": "Text",
+                  "props": {
+                    "className": "text-sm text-muted",
+                    "children": "Staff members with an active coaching profile."
+                  }
+                }
               ]
             },
             {
@@ -74,7 +103,11 @@
             },
             {
               "kind": "ComboBox",
-              "props": { "label": "Coaching level", "menuTrigger": "focus", "className": "min-w-48" },
+              "props": {
+                "label": "Coaching level",
+                "menuTrigger": "focus",
+                "className": "min-w-48"
+              },
               "props_items": [
                 { "id": "assistant", "label": "Assistant" },
                 { "id": "head", "label": "Head" },
@@ -119,15 +152,29 @@
             "kind": "View",
             "props": { "className": "col-span-full text-center py-12" },
             "children": [
-              { "kind": "Icon", "props": { "name": "megaphone", "className": "size-12 mx-auto text-muted" } },
-              { "kind": "Text", "props": { "className": "mt-4 text-lg font-medium", "children": "No coaches yet" } },
-              { "kind": "Text", "props": { "className": "text-sm text-muted", "children": "Add a coach profile to an active staff member to get started." } }
+              {
+                "kind": "Icon",
+                "props": { "name": "megaphone", "className": "size-12 mx-auto text-muted" }
+              },
+              {
+                "kind": "Text",
+                "props": { "className": "mt-4 text-lg font-medium", "children": "No coaches yet" }
+              },
+              {
+                "kind": "Text",
+                "props": {
+                  "className": "text-sm text-muted",
+                  "children": "Add a coach profile to an active staff member to get started."
+                }
+              }
             ]
           },
           "itemRenderer": {
             "kind": "Card",
             "props": { "className": "p-4 hover:shadow-md transition-shadow cursor-pointer" },
-            "actions": { "onPress": { "kind": "navigate", "toExpr": "'/tenant/coaches/' + row.id" } },
+            "actions": {
+              "onPress": { "kind": "navigate", "toExpr": "'/tenant/coaches/' + row.id" }
+            },
             "children": [
               {
                 "kind": "View",
@@ -136,7 +183,10 @@
                   {
                     "kind": "Avatar",
                     "props": { "size": "md" },
-                    "bindings": { "src": { "$ref": "row.avatar_url" }, "name": { "$ref": "row.full_name" } }
+                    "bindings": {
+                      "src": { "$ref": "row.avatar_url" },
+                      "name": { "$ref": "row.full_name" }
+                    }
                   },
                   {
                     "kind": "View",
@@ -196,7 +246,9 @@
                       { "kind": "Icon", "props": { "name": "check-badge", "className": "size-4" } },
                       {
                         "kind": "Text",
-                        "bindings": { "children": { "$expr": "row.certifications.length + ' certs'" } }
+                        "bindings": {
+                          "children": { "$expr": "row.certifications.length + ' certs'" }
+                        }
                       }
                     ]
                   }

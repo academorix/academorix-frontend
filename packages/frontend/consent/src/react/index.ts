@@ -14,16 +14,16 @@
  */
 
 // Module (backward-compat alias — new code imports ConsentModule from core)
-export { WebConsentModule } from './web-consent.module';
+export { WebConsentModule } from "./web-consent.module";
 
 // Hooks + result types
-export { useConsent, type UseConsentResult } from './hooks';
-export { useConsentGate, type UseConsentGateResult } from './hooks';
-export { useConsentBanner, type UseConsentBannerResult } from './hooks';
+export { useConsent, type UseConsentResult } from "./hooks";
+export { useConsentGate, type UseConsentGateResult } from "./hooks";
+export { useConsentBanner, type UseConsentBannerResult } from "./hooks";
 
 // Components
-export { ConsentBanner } from './components';
-export type { ConsentBannerProps } from './components';
+export { ConsentBanner } from "./components";
+export type { ConsentBannerProps } from "./components";
 
 // Re-exports from core (module, services, types, tokens)
-export * from '../core';
+export * from "../core";

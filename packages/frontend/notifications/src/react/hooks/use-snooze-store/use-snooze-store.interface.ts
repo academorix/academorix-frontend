@@ -4,7 +4,7 @@
  * @description Return shape for the {@link useSnoozeStore} hook.
  */
 
-import type { SnoozePreset } from '@/core/interfaces';
+import type { SnoozePreset } from "@/core/interfaces";
 
 /**
  * Value returned by {@link useSnoozeStore}.

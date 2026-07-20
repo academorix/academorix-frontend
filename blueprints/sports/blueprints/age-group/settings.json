@@ -70,8 +70,14 @@
               "defaultValue": "refuse",
               "options": [
                 { "key": "refuse", "label": "Refuse — force the caller to disambiguate (safest)" },
-                { "key": "first_match", "label": "First match — return the first row by sort_order" },
-                { "key": "oldest_group", "label": "Oldest group — return the row with the smallest min_age" }
+                {
+                  "key": "first_match",
+                  "label": "First match — return the first row by sort_order"
+                },
+                {
+                  "key": "oldest_group",
+                  "label": "Oldest group — return the row with the smallest min_age"
+                }
               ],
               "helpText": "How AgeGroupResolver::resolveFor(...) behaves when multiple candidates match.",
               "sortOrder": 1

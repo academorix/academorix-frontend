@@ -20,10 +20,10 @@
  *   keeps the test in-process and side-effect free.
  */
 
-import { act, cleanup, renderHook, waitFor } from '@testing-library/react';
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { act, cleanup, renderHook, waitFor } from "@testing-library/react";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-import { MockStorage } from '@stackra/storage/testing';
+import { MockStorage } from "@stackra/storage/testing";
 
 // ── Mock `@stackra/storage/react` ───────────────────────────────────────────
 //
@@ -35,28 +35,28 @@ const state = vi.hoisted(() => ({
   storage: null as MockStorage | null,
 }));
 
-vi.mock('@stackra/storage/react', () => ({
+vi.mock("@stackra/storage/react", () => ({
   useStorage: () => state.storage,
 }));
 
 // AFTER the mock — import the hook under test. Both this import and any
 // transitive `import { useStorage } from '@stackra/storage/react'` will
 // resolve through the mock above.
-import { useNotifications } from '@/hooks/use-notifications/use-notifications.hook';
-import type { CollaborationNotification } from '@/interfaces/notification.interface';
+import { useNotifications } from "@/hooks/use-notifications/use-notifications.hook";
+import type { CollaborationNotification } from "@/interfaces/notification.interface";
 
 // ── Helpers ─────────────────────────────────────────────────────────────────
 
 /** Build a notification skeleton for `addNotification()` inputs. */
 function notificationInput(
-  overrides: Partial<Omit<CollaborationNotification, 'id' | 'read' | 'createdAt'>> = {}
-): Omit<CollaborationNotification, 'id' | 'read' | 'createdAt'> {
+  overrides: Partial<Omit<CollaborationNotification, "id" | "read" | "createdAt">> = {},
+): Omit<CollaborationNotification, "id" | "read" | "createdAt"> {
   return {
-    type: overrides.type ?? 'mention',
-    roomId: overrides.roomId ?? 'room-1',
-    message: overrides.message ?? 'Alice mentioned you',
-    fromUserId: overrides.fromUserId ?? 'user-alice',
-    fromUserName: overrides.fromUserName ?? 'Alice',
+    type: overrides.type ?? "mention",
+    roomId: overrides.roomId ?? "room-1",
+    message: overrides.message ?? "Alice mentioned you",
+    fromUserId: overrides.fromUserId ?? "user-alice",
+    fromUserName: overrides.fromUserName ?? "Alice",
   };
 }
 
@@ -66,15 +66,15 @@ function notificationInput(
  * shape matches production.
  */
 function persistedNotification(
-  overrides: Partial<CollaborationNotification> = {}
+  overrides: Partial<CollaborationNotification> = {},
 ): CollaborationNotification {
   return {
-    id: overrides.id ?? 'persisted-1',
-    type: overrides.type ?? 'mention',
-    roomId: overrides.roomId ?? 'room-1',
-    message: overrides.message ?? 'Persisted notification',
-    fromUserId: overrides.fromUserId ?? 'user-persisted',
-    fromUserName: overrides.fromUserName ?? 'Persisted User',
+    id: overrides.id ?? "persisted-1",
+    type: overrides.type ?? "mention",
+    roomId: overrides.roomId ?? "room-1",
+    message: overrides.message ?? "Persisted notification",
+    fromUserId: overrides.fromUserId ?? "user-persisted",
+    fromUserName: overrides.fromUserName ?? "Persisted User",
     read: overrides.read ?? false,
     createdAt: overrides.createdAt ?? Date.now(),
   };
@@ -82,7 +82,7 @@ function persistedNotification(
 
 // ── Spec ────────────────────────────────────────────────────────────────────
 
-describe('useNotifications', () => {
+describe("useNotifications", () => {
   beforeEach(() => {
     // Fresh in-memory storage per test — no state bleeds between cases.
     state.storage = new MockStorage();
@@ -95,8 +95,8 @@ describe('useNotifications', () => {
 
   // ── Hydration ────────────────────────────────────────────────────────────
 
-  describe('hydration', () => {
-    it('starts empty when nothing is persisted', async () => {
+  describe("hydration", () => {
+    it("starts empty when nothing is persisted", async () => {
       const { result } = renderHook(() => useNotifications());
       // The hook always starts with `[]` — hydration runs in a
       // useEffect and is async. Assert the synchronous initial value.
@@ -104,10 +104,10 @@ describe('useNotifications', () => {
       expect(result.current.unreadCount).toBe(0);
     });
 
-    it('hydrates from storage when a persisted list exists', async () => {
+    it("hydrates from storage when a persisted list exists", async () => {
       // Seed BEFORE mount so the hydration effect reads it.
-      const persisted = [persistedNotification({ id: 'a' }), persistedNotification({ id: 'b' })];
-      await state.storage!.set('collab:notifications', persisted);
+      const persisted = [persistedNotification({ id: "a" }), persistedNotification({ id: "b" })];
+      await state.storage!.set("collab:notifications", persisted);
 
       const { result } = renderHook(() => useNotifications());
 
@@ -116,15 +116,15 @@ describe('useNotifications', () => {
       await waitFor(() => {
         expect(result.current.notifications).toHaveLength(2);
       });
-      expect(result.current.notifications[0]?.id).toBe('a');
-      expect(result.current.notifications[1]?.id).toBe('b');
+      expect(result.current.notifications[0]?.id).toBe("a");
+      expect(result.current.notifications[1]?.id).toBe("b");
     });
 
-    it('leaves the list empty when storage.get rejects (fail-soft)', async () => {
+    it("leaves the list empty when storage.get rejects (fail-soft)", async () => {
       // Swap in a rejecting `get` — the hook's `.catch` MUST swallow
       // the failure rather than surfacing it into React state.
       const rejecting = state.storage!;
-      rejecting.get = vi.fn().mockRejectedValue(new Error('boom'));
+      rejecting.get = vi.fn().mockRejectedValue(new Error("boom"));
 
       const { result } = renderHook(() => useNotifications());
 
@@ -141,13 +141,13 @@ describe('useNotifications', () => {
 
   // ── addNotification ──────────────────────────────────────────────────────
 
-  describe('addNotification', () => {
-    it('prepends a new entry with a generated id, `read: false`, and `createdAt`', () => {
+  describe("addNotification", () => {
+    it("prepends a new entry with a generated id, `read: false`, and `createdAt`", () => {
       const { result } = renderHook(() => useNotifications());
 
       act(() => {
         result.current.addNotification(
-          notificationInput({ message: 'first', fromUserName: 'Alice' })
+          notificationInput({ message: "first", fromUserName: "Alice" }),
         );
       });
 
@@ -157,29 +157,29 @@ describe('useNotifications', () => {
       // `Str.uuid()` produces v4 UUIDs — assert the format so we don't
       // accidentally regress to the old `Math.random` id-gen.
       expect(n?.id).toMatch(
-        /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i
+        /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i,
       );
       expect(n?.read).toBe(false);
       expect(n?.createdAt).toEqual(expect.any(Number));
-      expect(n?.message).toBe('first');
-      expect(n?.fromUserName).toBe('Alice');
+      expect(n?.message).toBe("first");
+      expect(n?.fromUserName).toBe("Alice");
     });
 
-    it('places newest entries at the head of the list', () => {
+    it("places newest entries at the head of the list", () => {
       const { result } = renderHook(() => useNotifications());
 
       act(() => {
-        result.current.addNotification(notificationInput({ message: 'first' }));
+        result.current.addNotification(notificationInput({ message: "first" }));
       });
       act(() => {
-        result.current.addNotification(notificationInput({ message: 'second' }));
+        result.current.addNotification(notificationInput({ message: "second" }));
       });
 
-      expect(result.current.notifications[0]?.message).toBe('second');
-      expect(result.current.notifications[1]?.message).toBe('first');
+      expect(result.current.notifications[0]?.message).toBe("second");
+      expect(result.current.notifications[1]?.message).toBe("first");
     });
 
-    it('caps the list at 50 entries', () => {
+    it("caps the list at 50 entries", () => {
       const { result } = renderHook(() => useNotifications());
 
       act(() => {
@@ -191,21 +191,21 @@ describe('useNotifications', () => {
 
       expect(result.current.notifications).toHaveLength(50);
       // Newest first — msg-59 leads.
-      expect(result.current.notifications[0]?.message).toBe('msg-59');
+      expect(result.current.notifications[0]?.message).toBe("msg-59");
       // Cap keeps the newest 50, so msg-10 is the oldest survivor.
-      expect(result.current.notifications[49]?.message).toBe('msg-10');
+      expect(result.current.notifications[49]?.message).toBe("msg-10");
     });
   });
 
   // ── markRead / markAllRead / unreadCount ────────────────────────────────
 
-  describe('mark actions and unreadCount', () => {
-    it('markRead(id) flips only the matching entry to read', () => {
+  describe("mark actions and unreadCount", () => {
+    it("markRead(id) flips only the matching entry to read", () => {
       const { result } = renderHook(() => useNotifications());
 
       act(() => {
-        result.current.addNotification(notificationInput({ message: 'a' }));
-        result.current.addNotification(notificationInput({ message: 'b' }));
+        result.current.addNotification(notificationInput({ message: "a" }));
+        result.current.addNotification(notificationInput({ message: "b" }));
       });
       const [, second] = result.current.notifications;
       const targetId = second!.id;
@@ -221,13 +221,13 @@ describe('useNotifications', () => {
       expect(other?.read).toBe(false);
     });
 
-    it('markAllRead() flips every entry to read', () => {
+    it("markAllRead() flips every entry to read", () => {
       const { result } = renderHook(() => useNotifications());
 
       act(() => {
-        result.current.addNotification(notificationInput({ message: 'a' }));
-        result.current.addNotification(notificationInput({ message: 'b' }));
-        result.current.addNotification(notificationInput({ message: 'c' }));
+        result.current.addNotification(notificationInput({ message: "a" }));
+        result.current.addNotification(notificationInput({ message: "b" }));
+        result.current.addNotification(notificationInput({ message: "c" }));
       });
 
       act(() => {
@@ -238,13 +238,13 @@ describe('useNotifications', () => {
       expect(result.current.unreadCount).toBe(0);
     });
 
-    it('unreadCount reflects the number of !read entries', () => {
+    it("unreadCount reflects the number of !read entries", () => {
       const { result } = renderHook(() => useNotifications());
 
       act(() => {
-        result.current.addNotification(notificationInput({ message: 'a' }));
-        result.current.addNotification(notificationInput({ message: 'b' }));
-        result.current.addNotification(notificationInput({ message: 'c' }));
+        result.current.addNotification(notificationInput({ message: "a" }));
+        result.current.addNotification(notificationInput({ message: "b" }));
+        result.current.addNotification(notificationInput({ message: "c" }));
       });
       expect(result.current.unreadCount).toBe(3);
 
@@ -258,29 +258,29 @@ describe('useNotifications', () => {
 
   // ── Storage mirroring ────────────────────────────────────────────────────
 
-  describe('storage mirror', () => {
-    it('writes the current list to storage on every state change', async () => {
+  describe("storage mirror", () => {
+    it("writes the current list to storage on every state change", async () => {
       const { result } = renderHook(() => useNotifications());
 
       act(() => {
-        result.current.addNotification(notificationInput({ message: 'first' }));
+        result.current.addNotification(notificationInput({ message: "first" }));
       });
 
       // The mirror effect fires on every commit — give the async
       // `set` a tick to settle before reading the map.
       await waitFor(async () => {
         const persisted =
-          await state.storage!.get<CollaborationNotification[]>('collab:notifications');
+          await state.storage!.get<CollaborationNotification[]>("collab:notifications");
         expect(persisted).toHaveLength(1);
-        expect(persisted?.[0]?.message).toBe('first');
+        expect(persisted?.[0]?.message).toBe("first");
       });
     });
 
-    it('mirrors markRead flips to storage', async () => {
+    it("mirrors markRead flips to storage", async () => {
       const { result } = renderHook(() => useNotifications());
 
       act(() => {
-        result.current.addNotification(notificationInput({ message: 'flip-me' }));
+        result.current.addNotification(notificationInput({ message: "flip-me" }));
       });
       const [entry] = result.current.notifications;
 
@@ -290,7 +290,7 @@ describe('useNotifications', () => {
 
       await waitFor(async () => {
         const persisted =
-          await state.storage!.get<CollaborationNotification[]>('collab:notifications');
+          await state.storage!.get<CollaborationNotification[]>("collab:notifications");
         expect(persisted?.[0]?.read).toBe(true);
       });
     });

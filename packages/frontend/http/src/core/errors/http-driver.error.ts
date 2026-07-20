@@ -8,12 +8,12 @@
  * @module @stackra/http/errors/http-driver
  */
 
-import { HttpError } from './http.error';
+import { HttpError } from "./http.error";
 
 /**
  * Driver resolution error.
  */
 export class HttpDriverError extends HttpError {
-  public override readonly name: string = 'HttpDriverError';
-  public override readonly code: string = 'HTTP_DRIVER_ERROR';
+  public override readonly name: string = "HttpDriverError";
+  public override readonly code: string = "HTTP_DRIVER_ERROR";
 }

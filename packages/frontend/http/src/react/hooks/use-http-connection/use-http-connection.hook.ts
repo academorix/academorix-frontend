@@ -8,8 +8,8 @@
  * @module @stackra/http/react/hooks/use-http-connection
  */
 
-import { useHttp } from '../use-http/use-http.hook';
-import type { IUseHttpResult } from '@/react/interfaces';
+import { useHttp } from "../use-http/use-http.hook";
+import type { IUseHttpResult } from "@/react/interfaces";
 
 /**
  * Read an `IHttpClient` for the given connection.

@@ -11,5 +11,5 @@
  * @module @stackra/http/react
  */
 
-export { useHttp, useHttpManager, useHttpConnection, useStream, useSse } from './hooks';
-export type { IUseHttpResult, IUseStreamResult, IUseSseResult } from './hooks';
+export { useHttp, useHttpManager, useHttpConnection, useStream, useSse } from "./hooks";
+export type { IUseHttpResult, IUseStreamResult, IUseSseResult } from "./hooks";

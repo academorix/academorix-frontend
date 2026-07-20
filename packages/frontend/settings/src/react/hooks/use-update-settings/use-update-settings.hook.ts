@@ -22,8 +22,8 @@
  *   peer.
  */
 
-import { useCallback, useMemo, useRef, useState } from 'react';
-import { useInject, useOptionalInject } from '@stackra/container/react';
+import { useCallback, useMemo, useRef, useState } from "react";
+import { useInject, useOptionalInject } from "@stackra/container/react";
 import {
   EVENT_EMITTER,
   SETTINGS_EVENTS,
@@ -34,13 +34,13 @@ import {
   type IUndoableQueue,
   type MutationMode,
   type Type,
-} from '@stackra/contracts';
+} from "@stackra/contracts";
 
 import type {
   IUseUpdateSettingsOptions,
   IUseUpdateSettingsResult,
   UpdateSettingsMutate,
-} from './use-update-settings.interface';
+} from "./use-update-settings.interface";
 
 /**
  * Update a settings group with pessimistic / optimistic / undoable
@@ -77,21 +77,21 @@ import type {
  */
 export function useUpdateSettings<T extends object>(
   dto: Type<T>,
-  options?: IUseUpdateSettingsOptions<T>
+  options?: IUseUpdateSettingsOptions<T>,
 ): IUseUpdateSettingsResult<T>;
 export function useUpdateSettings<T extends Record<string, unknown> = Record<string, unknown>>(
   groupKey: string,
-  options?: IUseUpdateSettingsOptions<T>
+  options?: IUseUpdateSettingsOptions<T>,
 ): IUseUpdateSettingsResult<T>;
 export function useUpdateSettings<T extends object>(
   dtoOrKey: Type<T> | string,
-  options: IUseUpdateSettingsOptions<T> = {}
+  options: IUseUpdateSettingsOptions<T> = {},
 ): IUseUpdateSettingsResult<T> {
   const service = useInject<ISettingsService>(SETTINGS_SERVICE);
   const events = useOptionalInject<IEventEmitter>(EVENT_EMITTER);
   const undoableQueue = useOptionalInject<IUndoableQueue>(UNDOABLE_QUEUE);
 
-  const mode: MutationMode = options.mutationMode ?? 'optimistic';
+  const mode: MutationMode = options.mutationMode ?? "optimistic";
   const undoableTimeout = options.undoableTimeout ?? 5000;
 
   // ══════════════════════════════════════════════════════════════════
@@ -113,7 +113,7 @@ export function useUpdateSettings<T extends object>(
   // Group-key resolution
   // ══════════════════════════════════════════════════════════════════
 
-  const groupKey = typeof dtoOrKey === 'string' ? dtoOrKey : resolveKeyForDto(service, dtoOrKey);
+  const groupKey = typeof dtoOrKey === "string" ? dtoOrKey : resolveKeyForDto(service, dtoOrKey);
 
   // ══════════════════════════════════════════════════════════════════
   // Rollback bookkeeping — a snapshot of the group's values BEFORE the
@@ -134,7 +134,7 @@ export function useUpdateSettings<T extends object>(
       writeToService(service, dtoOrKey, partial);
       return previous;
     },
-    [service, groupKey, dtoOrKey]
+    [service, groupKey, dtoOrKey],
   );
 
   /** Roll back to the last captured snapshot (if any). */
@@ -157,7 +157,7 @@ export function useUpdateSettings<T extends object>(
       setError(null);
 
       try {
-        if (mode === 'pessimistic') {
+        if (mode === "pessimistic") {
           await runPessimistic({
             service,
             groupKey,
@@ -166,7 +166,7 @@ export function useUpdateSettings<T extends object>(
             applyWithSnapshot,
             rollback,
           });
-        } else if (mode === 'undoable') {
+        } else if (mode === "undoable") {
           await runUndoable({
             service,
             groupKey,
@@ -219,7 +219,7 @@ export function useUpdateSettings<T extends object>(
       undoableTimeout,
       events,
       options,
-    ]
+    ],
   );
 
   // ══════════════════════════════════════════════════════════════════
@@ -227,7 +227,7 @@ export function useUpdateSettings<T extends object>(
   // ══════════════════════════════════════════════════════════════════
 
   const reset = useCallback((): void => {
-    if (typeof dtoOrKey === 'string') {
+    if (typeof dtoOrKey === "string") {
       service.resetByKey(dtoOrKey);
     } else {
       service.reset(dtoOrKey);
@@ -236,7 +236,7 @@ export function useUpdateSettings<T extends object>(
 
   return useMemo(
     () => ({ mutate, reset, isPending, isSuccess, error, resetState }),
-    [mutate, reset, isPending, isSuccess, error, resetState]
+    [mutate, reset, isPending, isSuccess, error, resetState],
   );
 }
 
@@ -338,9 +338,9 @@ async function runUndoable<T>(ctx: IUndoableContext<T>): Promise<void> {
     timeoutMs: ctx.undoableTimeout,
   });
 
-  if (resolution === 'cancel') {
+  if (resolution === "cancel") {
     ctx.rollback();
-    throw new Error('mutationCancelled');
+    throw new Error("mutationCancelled");
   }
   // On 'commit' the persist has ALREADY been scheduled by
   // `applyWithSnapshot`'s `service.setMany` call. Nothing more to do
@@ -355,9 +355,9 @@ async function runUndoable<T>(ctx: IUndoableContext<T>): Promise<void> {
 function writeToService<T>(
   service: ISettingsService,
   dtoOrKey: Type<T> | string,
-  partial: Partial<T>
+  partial: Partial<T>,
 ): void {
-  if (typeof dtoOrKey === 'string') {
+  if (typeof dtoOrKey === "string") {
     service.setManyByKey(dtoOrKey, partial as Record<string, unknown>);
   } else {
     service.setMany(dtoOrKey, partial);
@@ -370,7 +370,7 @@ function resolveKeyForDto<T>(service: ISettingsService, dto: Type<T>): string {
   if (!definition) {
     throw new Error(
       `[useUpdateSettings] "${dto.name}" is not registered. ` +
-        `Wrap it with SettingsModule.forFeature([${dto.name}]).`
+        `Wrap it with SettingsModule.forFeature([${dto.name}]).`,
     );
   }
   return definition.key;

@@ -26,7 +26,10 @@
       "children": [
         {
           "kind": "Step",
-          "props": { "title": "Choose provider", "description": "Pick the ad network you want to forward conversions to." },
+          "props": {
+            "title": "Choose provider",
+            "description": "Pick the ad network you want to forward conversions to."
+          },
           "children": [
             {
               "kind": "Widget",
@@ -43,7 +46,10 @@
         },
         {
           "kind": "Step",
-          "props": { "title": "Credentials", "description": "Enter your provider credentials. Encrypted at rest." },
+          "props": {
+            "title": "Credentials",
+            "description": "Enter your provider credentials. Encrypted at rest."
+          },
           "children": [
             {
               "kind": "DynamicForm",
@@ -55,14 +61,19 @@
         },
         {
           "kind": "Step",
-          "props": { "title": "Event types", "description": "Select which business milestones to forward to this provider." },
+          "props": {
+            "title": "Event types",
+            "description": "Select which business milestones to forward to this provider."
+          },
           "children": [
             {
               "kind": "Widget",
               "widget": "marketing.event-type-picker",
               "bindings": {
                 "provider": { "$ref": "form.provider" },
-                "supported_event_types": { "$expr": "provider_capabilities[form.provider].supports" }
+                "supported_event_types": {
+                  "$expr": "provider_capabilities[form.provider].supports"
+                }
               },
               "actions": {
                 "onSelectionChange": {
@@ -76,11 +87,17 @@
         },
         {
           "kind": "Step",
-          "props": { "title": "Test mode", "description": "Send a test event before going live. Recommended for first-time setup." },
+          "props": {
+            "title": "Test mode",
+            "description": "Send a test event before going live. Recommended for first-time setup."
+          },
           "children": [
             {
               "kind": "Switch",
-              "props": { "label": "Enable test mode", "description": "Test-mode events dispatch to the provider's sandbox endpoint. Excluded from ROAS aggregation." },
+              "props": {
+                "label": "Enable test mode",
+                "description": "Test-mode events dispatch to the provider's sandbox endpoint. Excluded from ROAS aggregation."
+              },
               "actions": {
                 "onChange": {
                   "kind": "form.set",

@@ -4,7 +4,7 @@
  * @description In-memory mock action registry for unit tests.
  */
 
-import type { IActionHandler } from '@stackra/contracts';
+import type { IActionHandler } from "@stackra/contracts";
 
 /**
  * Public surface of the mock action registry.

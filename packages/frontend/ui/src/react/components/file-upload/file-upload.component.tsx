@@ -171,7 +171,7 @@ function FileUploadRoot({
               />
             </svg>
           </div>
-          <p className="text-sm font-medium text-foreground">{label}</p>
+          <p className="text-foreground text-sm font-medium">{label}</p>
           {description && <p className="text-foreground-500 mt-1 text-xs">{description}</p>}
         </>
       )}
@@ -272,7 +272,7 @@ const FilePreviewItem = React.memo(function FilePreviewItem({
         <Button
           isIconOnly
           aria-label={`Remove ${uploadFile.name}`}
-          className="absolute top-1 right-1 size-6 min-w-0 bg-background/80 opacity-0 transition-opacity group-hover:opacity-100"
+          className="bg-background/80 absolute top-1 right-1 size-6 min-w-0 opacity-0 transition-opacity group-hover:opacity-100"
           size="sm"
           variant="ghost"
           onPress={handleRemove}

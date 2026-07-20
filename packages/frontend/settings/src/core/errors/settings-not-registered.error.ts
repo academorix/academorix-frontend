@@ -5,7 +5,7 @@
  *   that has not been registered in the `SettingsRegistry`.
  */
 
-import { SettingsError } from './settings.error';
+import { SettingsError } from "./settings.error";
 
 /**
  * Thrown when a caller references a settings group that is neither
@@ -25,9 +25,9 @@ export class SettingsNotRegisteredError extends SettingsError {
     super(
       `Settings group "${groupIdentifier}" is not registered. ` +
         `Register it via SettingsModule.forFeature([Dto]) or ` +
-        `SettingsRegistry.registerFromSchema(schema).`
+        `SettingsRegistry.registerFromSchema(schema).`,
     );
-    this.name = 'SettingsNotRegisteredError';
+    this.name = "SettingsNotRegisteredError";
     this.groupIdentifier = groupIdentifier;
   }
 }

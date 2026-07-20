@@ -5,7 +5,7 @@
  *   queued inside {@link InAppNotificationCentre}.
  */
 
-import type { INotificationPayload } from './notification-payload.interface';
+import type { INotificationPayload } from "./notification-payload.interface";
 
 /**
  * One entry in the in-app notification centre.

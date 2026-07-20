@@ -6,49 +6,249 @@
   "isSystem": true,
   "description": "Two audiences. Tenant plane (sanctum) — Staff + Coach CRUD by hr / owner / admin / branch_manager, self-service via .own scope suffix. Platform plane (platform_admin) — cross-tenant read + compensation-audit for compliance ops. All permissions carry the `staff.` or `coach.` prefix (or `platform.staff.` / `platform.coach.` on platform audience) to align with hierarchy.md §4 audience-boundary rules. Note: this module introduces the `hr` role via the RoleDefinition catalogue in the rbac module — the `hr` role gets most staff permissions but NOT `staff.hire` or `staff.suspend` by default (those stay owner/admin-only unless the tenant explicitly extends the hr role).",
   "permissions": [
-    { "name": "staff.viewAny", "guard": "sanctum", "seededOn": ["hr", "coach", "branch_manager", "admin", "owner"] },
-    { "name": "staff.view", "guard": "sanctum", "seededOn": ["hr", "coach", "branch_manager", "admin", "owner"] },
-    { "name": "staff.view.own", "guard": "sanctum", "description": "Self-view — narrows to WHERE user_id = current_user_id. Seeded to every role so staff can see their own record.", "seededOn": ["member", "coach", "reception", "hr", "branch_manager", "admin", "owner"] },
-    { "name": "staff.hire", "guard": "sanctum", "description": "Create + reactivate Staff. Consumes staff_slot; welcome notification; hire audit trail.", "seededOn": ["admin", "owner"] },
-    { "name": "staff.hire.retroactive", "guard": "sanctum", "description": "Allows started_at more than 90 days in the past. Bureaucratic legacy import cases only.", "seededOn": ["owner"] },
-    { "name": "staff.update", "guard": "sanctum", "seededOn": ["hr", "branch_manager", "admin", "owner"] },
-    { "name": "staff.update.own", "guard": "sanctum", "description": "Self-update — limited fields (position self-attest not allowed; only weekly_hours self-report + notes if HR opts in via config).", "seededOn": ["member", "coach", "reception", "hr", "branch_manager", "admin", "owner"] },
-    { "name": "staff.delete", "guard": "sanctum", "description": "Soft-delete a Staff row. Precondition: employment_status='offboarded'.", "seededOn": ["admin", "owner"] },
-    { "name": "staff.promote-to-manager", "guard": "sanctum", "description": "Atomic promote-and-demote route. Same permission covers both directions of the swap.", "seededOn": ["admin", "owner"] },
-    { "name": "staff.put-on-leave", "guard": "sanctum", "description": "Transition to on_leave + back. HR + branch_manager.", "seededOn": ["hr", "branch_manager", "admin", "owner"] },
-    { "name": "staff.suspend", "guard": "sanctum", "description": "Disciplinary suspend + reinstate. HR + admin + owner only. Branch managers CANNOT unilaterally suspend — audit safeguard.", "seededOn": ["hr", "admin", "owner"] },
-    { "name": "staff.offboard", "guard": "sanctum", "description": "Transition to offboarding + offboarded. HR + admin + owner.", "seededOn": ["hr", "admin", "owner"] },
-    { "name": "staff.offboard.cascade", "guard": "sanctum", "description": "Additional permission for cascade=true — archives linked Coach + removes team memberships in one transaction.", "seededOn": ["admin", "owner"] },
-    { "name": "staff.view.compensation", "guard": "sanctum", "description": "Read compensation_* fields on any staff row (subject to branch scope narrowing). Without this, the redactor strips compensation fields from egress.", "seededOn": ["hr", "owner"] },
-    { "name": "staff.view.compensation.own", "guard": "sanctum", "description": "Self-view — the caller sees their own compensation fields. Every role gets this so employees can check their own pay.", "seededOn": ["member", "coach", "reception", "hr", "branch_manager", "admin", "owner"] },
-    { "name": "staff.manage.compensation", "guard": "sanctum", "description": "Write compensation_* fields. Distinct from staff.update — the observer refuses writes without this even if the caller has staff.update.", "seededOn": ["hr", "owner"] },
-    { "name": "staff.manage.compensation.large-delta", "guard": "sanctum", "description": "Bypass the max-delta-percent guard (default 50%). Rare — for approved-large-adjustment cases.", "seededOn": ["owner"] },
-    { "name": "staff.view.emergency_contact", "guard": "sanctum", "description": "Read emergency_contact_* + tax_id_last4 fields. Without this, the redactor strips these fields.", "seededOn": ["hr", "branch_manager", "owner"] },
-    { "name": "staff.view.emergency_contact.own", "guard": "sanctum", "description": "Self-view.", "seededOn": ["member", "coach", "reception", "hr", "branch_manager", "admin", "owner"] },
-    { "name": "staff.manage.emergency_contact", "guard": "sanctum", "description": "Write emergency_contact_* + tax_id_last4. Admin + HR.", "seededOn": ["hr", "owner"] },
-    { "name": "staff.manage.emergency_contact.own", "guard": "sanctum", "description": "Self-manage — staff updating their own emergency contact via /me/staff/emergency-contact.", "seededOn": ["member", "coach", "reception", "hr", "branch_manager", "admin", "owner"] },
-    { "name": "staff.view.direct-reports", "guard": "sanctum", "description": "See the org-chart tree rooted at a given staff. Requires staff_org_chart entitlement.", "seededOn": ["hr", "branch_manager", "admin", "owner"] },
-    { "name": "staff.audit.compensation", "guard": "sanctum", "description": "Compliance export — read the compensation_history audit stream for a tenant. HR-only.", "seededOn": ["hr", "owner"] },
+    {
+      "name": "staff.viewAny",
+      "guard": "sanctum",
+      "seededOn": ["hr", "coach", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "staff.view",
+      "guard": "sanctum",
+      "seededOn": ["hr", "coach", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "staff.view.own",
+      "guard": "sanctum",
+      "description": "Self-view — narrows to WHERE user_id = current_user_id. Seeded to every role so staff can see their own record.",
+      "seededOn": ["member", "coach", "reception", "hr", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "staff.hire",
+      "guard": "sanctum",
+      "description": "Create + reactivate Staff. Consumes staff_slot; welcome notification; hire audit trail.",
+      "seededOn": ["admin", "owner"]
+    },
+    {
+      "name": "staff.hire.retroactive",
+      "guard": "sanctum",
+      "description": "Allows started_at more than 90 days in the past. Bureaucratic legacy import cases only.",
+      "seededOn": ["owner"]
+    },
+    {
+      "name": "staff.update",
+      "guard": "sanctum",
+      "seededOn": ["hr", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "staff.update.own",
+      "guard": "sanctum",
+      "description": "Self-update — limited fields (position self-attest not allowed; only weekly_hours self-report + notes if HR opts in via config).",
+      "seededOn": ["member", "coach", "reception", "hr", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "staff.delete",
+      "guard": "sanctum",
+      "description": "Soft-delete a Staff row. Precondition: employment_status='offboarded'.",
+      "seededOn": ["admin", "owner"]
+    },
+    {
+      "name": "staff.promote-to-manager",
+      "guard": "sanctum",
+      "description": "Atomic promote-and-demote route. Same permission covers both directions of the swap.",
+      "seededOn": ["admin", "owner"]
+    },
+    {
+      "name": "staff.put-on-leave",
+      "guard": "sanctum",
+      "description": "Transition to on_leave + back. HR + branch_manager.",
+      "seededOn": ["hr", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "staff.suspend",
+      "guard": "sanctum",
+      "description": "Disciplinary suspend + reinstate. HR + admin + owner only. Branch managers CANNOT unilaterally suspend — audit safeguard.",
+      "seededOn": ["hr", "admin", "owner"]
+    },
+    {
+      "name": "staff.offboard",
+      "guard": "sanctum",
+      "description": "Transition to offboarding + offboarded. HR + admin + owner.",
+      "seededOn": ["hr", "admin", "owner"]
+    },
+    {
+      "name": "staff.offboard.cascade",
+      "guard": "sanctum",
+      "description": "Additional permission for cascade=true — archives linked Coach + removes team memberships in one transaction.",
+      "seededOn": ["admin", "owner"]
+    },
+    {
+      "name": "staff.view.compensation",
+      "guard": "sanctum",
+      "description": "Read compensation_* fields on any staff row (subject to branch scope narrowing). Without this, the redactor strips compensation fields from egress.",
+      "seededOn": ["hr", "owner"]
+    },
+    {
+      "name": "staff.view.compensation.own",
+      "guard": "sanctum",
+      "description": "Self-view — the caller sees their own compensation fields. Every role gets this so employees can check their own pay.",
+      "seededOn": ["member", "coach", "reception", "hr", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "staff.manage.compensation",
+      "guard": "sanctum",
+      "description": "Write compensation_* fields. Distinct from staff.update — the observer refuses writes without this even if the caller has staff.update.",
+      "seededOn": ["hr", "owner"]
+    },
+    {
+      "name": "staff.manage.compensation.large-delta",
+      "guard": "sanctum",
+      "description": "Bypass the max-delta-percent guard (default 50%). Rare — for approved-large-adjustment cases.",
+      "seededOn": ["owner"]
+    },
+    {
+      "name": "staff.view.emergency_contact",
+      "guard": "sanctum",
+      "description": "Read emergency_contact_* + tax_id_last4 fields. Without this, the redactor strips these fields.",
+      "seededOn": ["hr", "branch_manager", "owner"]
+    },
+    {
+      "name": "staff.view.emergency_contact.own",
+      "guard": "sanctum",
+      "description": "Self-view.",
+      "seededOn": ["member", "coach", "reception", "hr", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "staff.manage.emergency_contact",
+      "guard": "sanctum",
+      "description": "Write emergency_contact_* + tax_id_last4. Admin + HR.",
+      "seededOn": ["hr", "owner"]
+    },
+    {
+      "name": "staff.manage.emergency_contact.own",
+      "guard": "sanctum",
+      "description": "Self-manage — staff updating their own emergency contact via /me/staff/emergency-contact.",
+      "seededOn": ["member", "coach", "reception", "hr", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "staff.view.direct-reports",
+      "guard": "sanctum",
+      "description": "See the org-chart tree rooted at a given staff. Requires staff_org_chart entitlement.",
+      "seededOn": ["hr", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "staff.audit.compensation",
+      "guard": "sanctum",
+      "description": "Compliance export — read the compensation_history audit stream for a tenant. HR-only.",
+      "seededOn": ["hr", "owner"]
+    },
 
-    { "name": "coach.viewAny", "guard": "sanctum", "seededOn": ["member", "coach", "reception", "hr", "branch_manager", "admin", "owner"] },
-    { "name": "coach.view", "guard": "sanctum", "seededOn": ["member", "coach", "reception", "hr", "branch_manager", "admin", "owner"] },
-    { "name": "coach.create", "guard": "sanctum", "description": "Create a Coach row (Staff assumes coaching role). Consumes coach_slot.", "seededOn": ["hr", "branch_manager", "admin", "owner"] },
-    { "name": "coach.update", "guard": "sanctum", "seededOn": ["hr", "branch_manager", "admin", "owner"] },
-    { "name": "coach.update.own", "guard": "sanctum", "description": "Self-update — coach edits their own bio, avatar (via User.profile), availability, public_email, public_phone, languages.", "seededOn": ["coach", "hr", "branch_manager", "admin", "owner"] },
-    { "name": "coach.delete", "guard": "sanctum", "description": "Soft-delete a Coach row. Precondition: status='archived'.", "seededOn": ["admin", "owner"] },
-    { "name": "coach.pause", "guard": "sanctum", "description": "Transition status active ↔ paused. Non-disciplinary; typical use is a coach taking a coaching hiatus while remaining on staff.", "seededOn": ["coach", "hr", "branch_manager", "admin", "owner"] },
-    { "name": "coach.archive", "guard": "sanctum", "description": "Terminal transition — coach loses team assignments. Precondition to soft-delete.", "seededOn": ["hr", "admin", "owner"] },
-    { "name": "coach.manage.certifications", "guard": "sanctum", "description": "Add + remove certifications from a coach's row.", "seededOn": ["hr", "admin", "owner"] },
-    { "name": "coach.manage.certifications.own", "guard": "sanctum", "description": "Self-manage — coaches add + remove their own certifications.", "seededOn": ["coach", "hr", "branch_manager", "admin", "owner"] },
-    { "name": "coach.verify.certifications", "guard": "sanctum", "description": "Verify a pending certification (Enterprise-only, requires coach_certifications_verified entitlement).", "seededOn": ["hr", "owner"] },
-    { "name": "coach.set-primary-sport", "guard": "sanctum", "description": "Change Coach.sport_key. HR + admin + owner. Coach themselves CANNOT self-reclassify.", "seededOn": ["hr", "admin", "owner"] },
-    { "name": "coach.manage.availability", "guard": "sanctum", "description": "Edit availability_pattern on any coach.", "seededOn": ["hr", "branch_manager", "admin", "owner"] },
-    { "name": "coach.manage.availability.own", "guard": "sanctum", "description": "Self-manage availability.", "seededOn": ["coach", "hr", "branch_manager", "admin", "owner"] },
+    {
+      "name": "coach.viewAny",
+      "guard": "sanctum",
+      "seededOn": ["member", "coach", "reception", "hr", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "coach.view",
+      "guard": "sanctum",
+      "seededOn": ["member", "coach", "reception", "hr", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "coach.create",
+      "guard": "sanctum",
+      "description": "Create a Coach row (Staff assumes coaching role). Consumes coach_slot.",
+      "seededOn": ["hr", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "coach.update",
+      "guard": "sanctum",
+      "seededOn": ["hr", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "coach.update.own",
+      "guard": "sanctum",
+      "description": "Self-update — coach edits their own bio, avatar (via User.profile), availability, public_email, public_phone, languages.",
+      "seededOn": ["coach", "hr", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "coach.delete",
+      "guard": "sanctum",
+      "description": "Soft-delete a Coach row. Precondition: status='archived'.",
+      "seededOn": ["admin", "owner"]
+    },
+    {
+      "name": "coach.pause",
+      "guard": "sanctum",
+      "description": "Transition status active ↔ paused. Non-disciplinary; typical use is a coach taking a coaching hiatus while remaining on staff.",
+      "seededOn": ["coach", "hr", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "coach.archive",
+      "guard": "sanctum",
+      "description": "Terminal transition — coach loses team assignments. Precondition to soft-delete.",
+      "seededOn": ["hr", "admin", "owner"]
+    },
+    {
+      "name": "coach.manage.certifications",
+      "guard": "sanctum",
+      "description": "Add + remove certifications from a coach's row.",
+      "seededOn": ["hr", "admin", "owner"]
+    },
+    {
+      "name": "coach.manage.certifications.own",
+      "guard": "sanctum",
+      "description": "Self-manage — coaches add + remove their own certifications.",
+      "seededOn": ["coach", "hr", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "coach.verify.certifications",
+      "guard": "sanctum",
+      "description": "Verify a pending certification (Enterprise-only, requires coach_certifications_verified entitlement).",
+      "seededOn": ["hr", "owner"]
+    },
+    {
+      "name": "coach.set-primary-sport",
+      "guard": "sanctum",
+      "description": "Change Coach.sport_key. HR + admin + owner. Coach themselves CANNOT self-reclassify.",
+      "seededOn": ["hr", "admin", "owner"]
+    },
+    {
+      "name": "coach.manage.availability",
+      "guard": "sanctum",
+      "description": "Edit availability_pattern on any coach.",
+      "seededOn": ["hr", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "coach.manage.availability.own",
+      "guard": "sanctum",
+      "description": "Self-manage availability.",
+      "seededOn": ["coach", "hr", "branch_manager", "admin", "owner"]
+    },
 
-    { "name": "platform.staff.viewAny", "guard": "platform_admin", "seededOn": ["super_admin", "ops", "support"] },
-    { "name": "platform.staff.view", "guard": "platform_admin", "seededOn": ["super_admin", "ops", "support"] },
-    { "name": "platform.staff.audit-compensation", "guard": "platform_admin", "description": "Support-tooling compensation audit. Emits signed CSV. Super_admin only.", "seededOn": ["super_admin"] },
-    { "name": "platform.coach.viewAny", "guard": "platform_admin", "seededOn": ["super_admin", "ops", "support"] },
-    { "name": "platform.coach.view", "guard": "platform_admin", "seededOn": ["super_admin", "ops", "support"] }
+    {
+      "name": "platform.staff.viewAny",
+      "guard": "platform_admin",
+      "seededOn": ["super_admin", "ops", "support"]
+    },
+    {
+      "name": "platform.staff.view",
+      "guard": "platform_admin",
+      "seededOn": ["super_admin", "ops", "support"]
+    },
+    {
+      "name": "platform.staff.audit-compensation",
+      "guard": "platform_admin",
+      "description": "Support-tooling compensation audit. Emits signed CSV. Super_admin only.",
+      "seededOn": ["super_admin"]
+    },
+    {
+      "name": "platform.coach.viewAny",
+      "guard": "platform_admin",
+      "seededOn": ["super_admin", "ops", "support"]
+    },
+    {
+      "name": "platform.coach.view",
+      "guard": "platform_admin",
+      "seededOn": ["super_admin", "ops", "support"]
+    }
   ]
 }

@@ -33,8 +33,19 @@
             "hidden": { "$expr": "refund.initiated_by_user_id !== auth.user.id" }
           },
           "children": [
-            { "kind": "Text", "props": { "className": "font-medium", "children": "You cannot approve your own refund request." } },
-            { "kind": "Text", "props": { "children": "Segregation of duties (SOX §404) requires another approver to review this refund. Please forward to a colleague." } }
+            {
+              "kind": "Text",
+              "props": {
+                "className": "font-medium",
+                "children": "You cannot approve your own refund request."
+              }
+            },
+            {
+              "kind": "Text",
+              "props": {
+                "children": "Segregation of duties (SOX §404) requires another approver to review this refund. Please forward to a colleague."
+              }
+            }
           ]
         },
         {
@@ -55,8 +66,13 @@
             },
             {
               "kind": "TextArea",
-              "props": { "label": "Internal approval notes (optional)", "placeholder": "Notes for the audit trail — not customer-visible." },
-              "actions": { "onChange": { "kind": "form.set", "field": "notes", "valueExpr": "$value" } }
+              "props": {
+                "label": "Internal approval notes (optional)",
+                "placeholder": "Notes for the audit trail — not customer-visible."
+              },
+              "actions": {
+                "onChange": { "kind": "form.set", "field": "notes", "valueExpr": "$value" }
+              }
             },
             {
               "kind": "View",
@@ -69,7 +85,11 @@
                 },
                 {
                   "kind": "Button",
-                  "props": { "variant": "primary", "leadingIcon": "check", "children": "Approve refund" },
+                  "props": {
+                    "variant": "primary",
+                    "leadingIcon": "check",
+                    "children": "Approve refund"
+                  },
                   "actions": {
                     "onPress": {
                       "kind": "http.post",

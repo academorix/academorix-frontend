@@ -181,8 +181,16 @@
     "indexes": [
       { "columns": ["tenant_id", "team_id", "starts_at"], "name": "team_trials_team_starts_idx" },
       { "columns": ["tenant_id", "status"], "name": "team_trials_status_idx" },
-      { "columns": ["tenant_id", "trialist_type", "trialist_id"], "name": "team_trials_trialist_idx", "predicate": "trialist_id IS NOT NULL" },
-      { "columns": ["tenant_id", "team_id", "status"], "name": "team_trials_pipeline_idx", "description": "Powers the trial-pipeline board." }
+      {
+        "columns": ["tenant_id", "trialist_type", "trialist_id"],
+        "name": "team_trials_trialist_idx",
+        "predicate": "trialist_id IS NOT NULL"
+      },
+      {
+        "columns": ["tenant_id", "team_id", "status"],
+        "name": "team_trials_pipeline_idx",
+        "description": "Powers the trial-pipeline board."
+      }
     ]
   },
   "required": [
@@ -226,12 +234,23 @@
     "ends_at": { "type": "string", "format": "date-time" },
     "status": {
       "type": "string",
-      "enum": ["scheduled", "in_progress", "completed", "converted", "rejected", "no_show", "cancelled"]
+      "enum": [
+        "scheduled",
+        "in_progress",
+        "completed",
+        "converted",
+        "rejected",
+        "no_show",
+        "cancelled"
+      ]
     },
     "started_at": { "type": ["string", "null"], "format": "date-time" },
     "completed_at": { "type": ["string", "null"], "format": "date-time" },
     "decided_at": { "type": ["string", "null"], "format": "date-time" },
-    "evaluated_by_user_id": { "type": ["string", "null"], "pattern": "^usr_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "evaluated_by_user_id": {
+      "type": ["string", "null"],
+      "pattern": "^usr_[0-9A-HJKMNP-TV-Z]{26}$"
+    },
     "evaluation_notes": { "type": ["string", "null"] },
     "decision_notes": { "type": ["string", "null"] },
     "price_amount_cents": { "type": "integer", "minimum": 0 },

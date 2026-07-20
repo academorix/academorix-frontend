@@ -18,17 +18,17 @@
  *   to the shell + provider + launcher + inspector overlay.
  */
 
-import { createPortal } from 'react-dom';
-import { type ReactElement, type ReactNode } from 'react';
-import { useOptionalInject } from '@stackra/container/react';
+import { createPortal } from "react-dom";
+import { type ReactElement, type ReactNode } from "react";
+import { useOptionalInject } from "@stackra/container/react";
 
-import { DEFAULT_DEVTOOLS_CONFIG, DEVTOOLS_CONFIG } from '@/core/constants';
-import type { IDevtoolsModuleOptions } from '@/core/interfaces';
-import { mergeConfig } from '@/core/utils';
-import { DevtoolsInspectorOverlay } from './components/devtools-inspector-overlay';
-import { DevtoolsLauncher } from './components/devtools-launcher';
-import { DevtoolsShell } from './components/devtools-shell';
-import { DevtoolsProvider } from './providers/devtools';
+import { DEFAULT_DEVTOOLS_CONFIG, DEVTOOLS_CONFIG } from "@/core/constants";
+import type { IDevtoolsModuleOptions } from "@/core/interfaces";
+import { mergeConfig } from "@/core/utils";
+import { DevtoolsInspectorOverlay } from "./components/devtools-inspector-overlay";
+import { DevtoolsLauncher } from "./components/devtools-launcher";
+import { DevtoolsShell } from "./components/devtools-shell";
+import { DevtoolsProvider } from "./providers/devtools";
 
 /** Props for {@link Devtools}. */
 export interface DevtoolsProps {
@@ -75,7 +75,7 @@ export function Devtools({ portalTarget, enabled }: DevtoolsProps = {}): ReactEl
 
   // SSR guard — we render into `document.body`, and there's no
   // document on the server.
-  if (typeof document === 'undefined') return null;
+  if (typeof document === "undefined") return null;
 
   const target = portalTarget ?? document.body;
   const tree: ReactNode = (

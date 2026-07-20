@@ -53,17 +53,33 @@
                   "kind": "View",
                   "props": { "className": "flex items-center gap-3" },
                   "children": [
-                    { "kind": "Text", "props": { "as": "h1", "className": "text-2xl font-semibold" }, "bindings": { "children": { "$ref": "invoice.invoice_number" } } },
-                    { "kind": "Widget", "widget": "invoice.invoice-status-chip", "bindings": { "status": { "$ref": "invoice.status" } } }
+                    {
+                      "kind": "Text",
+                      "props": { "as": "h1", "className": "text-2xl font-semibold" },
+                      "bindings": { "children": { "$ref": "invoice.invoice_number" } }
+                    },
+                    {
+                      "kind": "Widget",
+                      "widget": "invoice.invoice-status-chip",
+                      "bindings": { "status": { "$ref": "invoice.status" } }
+                    }
                   ]
                 },
                 {
                   "kind": "View",
                   "props": { "className": "flex items-center gap-4 mt-1 text-sm text-muted" },
                   "children": [
-                    { "kind": "Text", "props": { "children": "Issued " }, "children_ref": { "$ref": "invoice.issue_date" } },
+                    {
+                      "kind": "Text",
+                      "props": { "children": "Issued " },
+                      "children_ref": { "$ref": "invoice.issue_date" }
+                    },
                     { "kind": "Text", "props": { "children": " · " } },
-                    { "kind": "Widget", "widget": "invoice.payment-terms-badge", "bindings": { "invoice": { "$ref": "invoice" } } }
+                    {
+                      "kind": "Widget",
+                      "widget": "invoice.payment-terms-badge",
+                      "bindings": { "invoice": { "$ref": "invoice" } }
+                    }
                   ]
                 }
               ]
@@ -74,8 +90,18 @@
               "children": [
                 {
                   "kind": "Button",
-                  "props": { "variant": "secondary", "children": "View PDF", "icon": "document-arrow-down" },
-                  "actions": { "onPress": { "kind": "http.get", "urlExpr": "'/api/v1/invoices/' + $route.invoice_id + '/pdf'", "openInNewTab": true } }
+                  "props": {
+                    "variant": "secondary",
+                    "children": "View PDF",
+                    "icon": "document-arrow-down"
+                  },
+                  "actions": {
+                    "onPress": {
+                      "kind": "http.get",
+                      "urlExpr": "'/api/v1/invoices/' + $route.invoice_id + '/pdf'",
+                      "openInNewTab": true
+                    }
+                  }
                 },
                 {
                   "kind": "Button",
@@ -86,7 +112,10 @@
                     "onPress": {
                       "kind": "http.post",
                       "urlExpr": "'/api/v1/invoices/' + $route.invoice_id + '/finalize'",
-                      "confirm": { "title": "Finalize invoice?", "message": "This freezes totals + generates the PDF + sends to customer. Cannot be undone." }
+                      "confirm": {
+                        "title": "Finalize invoice?",
+                        "message": "This freezes totals + generates the PDF + sends to customer. Cannot be undone."
+                      }
                     }
                   }
                 },
@@ -96,7 +125,10 @@
                   "visibleWhen": "invoice.status == 'open' && !invoice.sent_at",
                   "requiresPermission": "invoice.invoices.send",
                   "actions": {
-                    "onPress": { "kind": "http.post", "urlExpr": "'/api/v1/invoices/' + $route.invoice_id + '/send'" }
+                    "onPress": {
+                      "kind": "http.post",
+                      "urlExpr": "'/api/v1/invoices/' + $route.invoice_id + '/send'"
+                    }
                   }
                 },
                 {
@@ -105,7 +137,10 @@
                   "visibleWhen": "invoice.status IN ['open', 'partially_paid', 'pastdue']",
                   "requiresPermission": "invoice.invoices.resend",
                   "actions": {
-                    "onPress": { "kind": "http.post", "urlExpr": "'/api/v1/invoices/' + $route.invoice_id + '/resend'" }
+                    "onPress": {
+                      "kind": "http.post",
+                      "urlExpr": "'/api/v1/invoices/' + $route.invoice_id + '/resend'"
+                    }
                   }
                 },
                 {
@@ -127,7 +162,10 @@
                   "visibleWhen": "invoice.status IN ['paid', 'partially_paid', 'refunded', 'disputed', 'written_off']",
                   "requiresPermission": "invoice.credit-notes.create",
                   "actions": {
-                    "onPress": { "kind": "navigate", "toExpr": "'/tenant/credit-notes/create?original_invoice_id=' + $route.invoice_id" }
+                    "onPress": {
+                      "kind": "navigate",
+                      "toExpr": "'/tenant/credit-notes/create?original_invoice_id=' + $route.invoice_id"
+                    }
                   }
                 }
               ]
@@ -142,24 +180,51 @@
               "kind": "Card",
               "props": { "title": "Bill to" },
               "children": [
-                { "kind": "Text", "props": { "className": "font-medium" }, "bindings": { "children": { "$ref": "invoice.billing_address.name" } } },
-                { "kind": "Text", "props": { "className": "text-sm" }, "bindings": { "children": { "$ref": "invoice.billing_address.street" } } },
-                { "kind": "Text", "props": { "className": "text-sm text-muted" }, "bindings": { "children": { "$expr": "invoice.billing_address.city + ', ' + invoice.billing_address.postal_code + ' ' + invoice.billing_address.country" } } },
-                { "kind": "Text", "props": { "className": "text-sm text-muted" }, "bindings": { "children": { "$ref": "invoice.billing_address.email" } } }
+                {
+                  "kind": "Text",
+                  "props": { "className": "font-medium" },
+                  "bindings": { "children": { "$ref": "invoice.billing_address.name" } }
+                },
+                {
+                  "kind": "Text",
+                  "props": { "className": "text-sm" },
+                  "bindings": { "children": { "$ref": "invoice.billing_address.street" } }
+                },
+                {
+                  "kind": "Text",
+                  "props": { "className": "text-sm text-muted" },
+                  "bindings": {
+                    "children": {
+                      "$expr": "invoice.billing_address.city + ', ' + invoice.billing_address.postal_code + ' ' + invoice.billing_address.country"
+                    }
+                  }
+                },
+                {
+                  "kind": "Text",
+                  "props": { "className": "text-sm text-muted" },
+                  "bindings": { "children": { "$ref": "invoice.billing_address.email" } }
+                }
               ]
             },
             {
               "kind": "Card",
               "props": { "title": "Invoice details" },
               "children": [
-                { "kind": "DefinitionList", "props": {
-                  "items": [
-                    { "label": "Series", "valueRef": "invoice.invoice_series" },
-                    { "label": "Payment terms", "valueRef": "invoice.payment_terms" },
-                    { "label": "Currency", "valueRef": "invoice.currency" },
-                    { "label": "Customer tax ID", "valueRef": "invoice.customer_tax_id", "visibleWhen": "invoice.customer_tax_id != null" }
-                  ]
-                } }
+                {
+                  "kind": "DefinitionList",
+                  "props": {
+                    "items": [
+                      { "label": "Series", "valueRef": "invoice.invoice_series" },
+                      { "label": "Payment terms", "valueRef": "invoice.payment_terms" },
+                      { "label": "Currency", "valueRef": "invoice.currency" },
+                      {
+                        "label": "Customer tax ID",
+                        "valueRef": "invoice.customer_tax_id",
+                        "visibleWhen": "invoice.customer_tax_id != null"
+                      }
+                    ]
+                  }
+                }
               ]
             }
           ]
@@ -181,9 +246,39 @@
                   { "field": "description", "label": "Description", "width": 380 },
                   { "field": "item_type", "label": "Type", "width": 140 },
                   { "field": "quantity", "label": "Qty", "width": 80, "align": "right" },
-                  { "field": "unit_price_cents", "label": "Unit price", "width": 120, "renderer": { "kind": "Text", "formatter": "currency", "currencyField": "unit_currency", "align": "right" } },
-                  { "field": "tax_amount_cents", "label": "Tax", "width": 100, "renderer": { "kind": "Text", "formatter": "currency", "currencyField": "unit_currency", "align": "right" } },
-                  { "field": "total_cents", "label": "Total", "width": 120, "renderer": { "kind": "Text", "formatter": "currency", "currencyField": "unit_currency", "align": "right" } }
+                  {
+                    "field": "unit_price_cents",
+                    "label": "Unit price",
+                    "width": 120,
+                    "renderer": {
+                      "kind": "Text",
+                      "formatter": "currency",
+                      "currencyField": "unit_currency",
+                      "align": "right"
+                    }
+                  },
+                  {
+                    "field": "tax_amount_cents",
+                    "label": "Tax",
+                    "width": 100,
+                    "renderer": {
+                      "kind": "Text",
+                      "formatter": "currency",
+                      "currencyField": "unit_currency",
+                      "align": "right"
+                    }
+                  },
+                  {
+                    "field": "total_cents",
+                    "label": "Total",
+                    "width": 120,
+                    "renderer": {
+                      "kind": "Text",
+                      "formatter": "currency",
+                      "currencyField": "unit_currency",
+                      "align": "right"
+                    }
+                  }
                 ]
               }
             },
@@ -196,12 +291,45 @@
                   "props": {
                     "align": "right",
                     "items": [
-                      { "label": "Subtotal", "valueRef": "invoice.subtotal_cents", "formatter": "currency", "currencyField": "invoice.currency" },
-                      { "label": "Discount", "valueRef": "invoice.discount_amount_cents", "formatter": "currency", "currencyField": "invoice.currency", "visibleWhen": "invoice.discount_amount_cents > 0" },
-                      { "label": "Tax", "valueRef": "invoice.tax_amount_cents", "formatter": "currency", "currencyField": "invoice.currency" },
-                      { "label": "Total", "valueRef": "invoice.total_cents", "formatter": "currency", "currencyField": "invoice.currency", "emphasized": true },
-                      { "label": "Amount paid", "valueRef": "invoice.amount_paid_cents", "formatter": "currency", "currencyField": "invoice.currency" },
-                      { "label": "Amount due", "valueRef": "invoice.amount_due_cents", "formatter": "currency", "currencyField": "invoice.currency", "emphasized": true }
+                      {
+                        "label": "Subtotal",
+                        "valueRef": "invoice.subtotal_cents",
+                        "formatter": "currency",
+                        "currencyField": "invoice.currency"
+                      },
+                      {
+                        "label": "Discount",
+                        "valueRef": "invoice.discount_amount_cents",
+                        "formatter": "currency",
+                        "currencyField": "invoice.currency",
+                        "visibleWhen": "invoice.discount_amount_cents > 0"
+                      },
+                      {
+                        "label": "Tax",
+                        "valueRef": "invoice.tax_amount_cents",
+                        "formatter": "currency",
+                        "currencyField": "invoice.currency"
+                      },
+                      {
+                        "label": "Total",
+                        "valueRef": "invoice.total_cents",
+                        "formatter": "currency",
+                        "currencyField": "invoice.currency",
+                        "emphasized": true
+                      },
+                      {
+                        "label": "Amount paid",
+                        "valueRef": "invoice.amount_paid_cents",
+                        "formatter": "currency",
+                        "currencyField": "invoice.currency"
+                      },
+                      {
+                        "label": "Amount due",
+                        "valueRef": "invoice.amount_due_cents",
+                        "formatter": "currency",
+                        "currencyField": "invoice.currency",
+                        "emphasized": true
+                      }
                     ]
                   }
                 }
@@ -221,7 +349,17 @@
                 "columns": [
                   { "field": "credit_note_number", "label": "Number", "width": 160 },
                   { "field": "reason", "label": "Reason", "width": 140 },
-                  { "field": "amount_cents", "label": "Amount", "width": 120, "renderer": { "kind": "Text", "formatter": "currency", "currencyField": "currency", "align": "right" } },
+                  {
+                    "field": "amount_cents",
+                    "label": "Amount",
+                    "width": 120,
+                    "renderer": {
+                      "kind": "Text",
+                      "formatter": "currency",
+                      "currencyField": "currency",
+                      "align": "right"
+                    }
+                  },
                   { "field": "status", "label": "Status", "width": 100 },
                   { "field": "issue_date", "label": "Issued", "width": 120, "formatter": "date" }
                 ],

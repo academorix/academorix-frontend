@@ -32,7 +32,12 @@
           "kind": "Alert",
           "props": { "variant": "info", "className": "text-sm" },
           "children": [
-            { "kind": "Text", "props": { "children": "The Sports Event module lands in Wave 3. Until then, event_id is optional — you can create placeholder participation rows and link them to events once available." } }
+            {
+              "kind": "Text",
+              "props": {
+                "children": "The Sports Event module lands in Wave 3. Until then, event_id is optional — you can create placeholder participation rows and link them to events once available."
+              }
+            }
           ]
         },
         {
@@ -64,7 +69,13 @@
                 },
                 {
                   "kind": "ComboBox",
-                  "props": { "name": "participation_type", "label": "Participation type", "required": true, "menuTrigger": "focus", "defaultValue": "participant" },
+                  "props": {
+                    "name": "participation_type",
+                    "label": "Participation type",
+                    "required": true,
+                    "menuTrigger": "focus",
+                    "defaultValue": "participant"
+                  },
                   "props_items": [
                     { "id": "home", "label": "Home (host)" },
                     { "id": "away", "label": "Away (visitor)" },
@@ -79,8 +90,20 @@
               "kind": "View",
               "props": { "className": "flex justify-end gap-2 pt-2" },
               "children": [
-                { "kind": "Button", "props": { "variant": "ghost", "children": "Cancel" }, "actions": { "onPress": { "kind": "navigate", "toExpr": "'/tenant/teams/' + team.id + '/event-teams'" } } },
-                { "kind": "Button", "props": { "type": "submit", "variant": "primary", "children": "Register" } }
+                {
+                  "kind": "Button",
+                  "props": { "variant": "ghost", "children": "Cancel" },
+                  "actions": {
+                    "onPress": {
+                      "kind": "navigate",
+                      "toExpr": "'/tenant/teams/' + team.id + '/event-teams'"
+                    }
+                  }
+                },
+                {
+                  "kind": "Button",
+                  "props": { "type": "submit", "variant": "primary", "children": "Register" }
+                }
               ]
             }
           ]

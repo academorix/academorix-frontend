@@ -6,7 +6,7 @@
  *   registration events without wiring the full container.
  */
 
-import { ToolRegistry, type IToolRegistration } from '../core/registries/tool.registry';
+import { ToolRegistry, type IToolRegistration } from "../core/registries/tool.registry";
 
 /** The tool-registry double + observation helpers. */
 export interface IMockToolRegistry extends ToolRegistry {

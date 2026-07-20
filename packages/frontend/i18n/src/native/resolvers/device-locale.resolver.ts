@@ -75,11 +75,11 @@ export class DeviceLocaleResolver {
       // Variable specifier keeps TS from statically requiring the
       // optional peer — the module resolves at runtime on Expo targets
       // where it's installed, and rejects (caught below) elsewhere.
-      const moduleName = 'expo-localization';
+      const moduleName = "expo-localization";
       const mod = (await import(/* @vite-ignore */ moduleName)) as
         { default?: IExpoLocalization } | IExpoLocalization;
       this.localization =
-        'default' in mod && mod.default ? mod.default : (mod as IExpoLocalization);
+        "default" in mod && mod.default ? mod.default : (mod as IExpoLocalization);
     } catch {
       // Peer not available (running outside Expo/RN) — leave the cache
       // null; resolve() will return undefined.

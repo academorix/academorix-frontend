@@ -10,7 +10,13 @@
   "requiresPermission": "monitoring.dashboard.view",
   "requiresEntitlement": "monitoring_capture",
   "dataSources": [
-    { "name": "dashboard", "kind": "http.get", "url": "/api/v1/monitoring/dashboard", "unwrap": "data", "refetchInterval": 60000 }
+    {
+      "name": "dashboard",
+      "kind": "http.get",
+      "url": "/api/v1/monitoring/dashboard",
+      "unwrap": "data",
+      "refetchInterval": 60000
+    }
   ],
   "nodes": [
     {
@@ -21,8 +27,21 @@
         {
           "kind": "View",
           "children": [
-            { "kind": "Text", "props": { "as": "h1", "className": "text-2xl font-semibold", "children": "Monitoring dashboard" } },
-            { "kind": "Text", "props": { "className": "text-sm text-muted", "children": "System health at a glance." } }
+            {
+              "kind": "Text",
+              "props": {
+                "as": "h1",
+                "className": "text-2xl font-semibold",
+                "children": "Monitoring dashboard"
+              }
+            },
+            {
+              "kind": "Text",
+              "props": {
+                "className": "text-sm text-muted",
+                "children": "System health at a glance."
+              }
+            }
           ]
         },
         {
@@ -33,32 +52,66 @@
               "kind": "Card",
               "props": { "className": "p-4" },
               "children": [
-                { "kind": "Text", "props": { "className": "text-sm text-muted", "children": "Healthy" } },
-                { "kind": "Text", "props": { "className": "text-3xl font-bold text-success" }, "bindings": { "children": { "$ref": "dashboard.health_checks_summary.healthy_count" } } }
+                {
+                  "kind": "Text",
+                  "props": { "className": "text-sm text-muted", "children": "Healthy" }
+                },
+                {
+                  "kind": "Text",
+                  "props": { "className": "text-3xl font-bold text-success" },
+                  "bindings": {
+                    "children": { "$ref": "dashboard.health_checks_summary.healthy_count" }
+                  }
+                }
               ]
             },
             {
               "kind": "Card",
               "props": { "className": "p-4" },
               "children": [
-                { "kind": "Text", "props": { "className": "text-sm text-muted", "children": "Degraded" } },
-                { "kind": "Text", "props": { "className": "text-3xl font-bold text-warning" }, "bindings": { "children": { "$ref": "dashboard.health_checks_summary.degraded_count" } } }
+                {
+                  "kind": "Text",
+                  "props": { "className": "text-sm text-muted", "children": "Degraded" }
+                },
+                {
+                  "kind": "Text",
+                  "props": { "className": "text-3xl font-bold text-warning" },
+                  "bindings": {
+                    "children": { "$ref": "dashboard.health_checks_summary.degraded_count" }
+                  }
+                }
               ]
             },
             {
               "kind": "Card",
               "props": { "className": "p-4" },
               "children": [
-                { "kind": "Text", "props": { "className": "text-sm text-muted", "children": "Unhealthy" } },
-                { "kind": "Text", "props": { "className": "text-3xl font-bold text-danger" }, "bindings": { "children": { "$ref": "dashboard.health_checks_summary.unhealthy_count" } } }
+                {
+                  "kind": "Text",
+                  "props": { "className": "text-sm text-muted", "children": "Unhealthy" }
+                },
+                {
+                  "kind": "Text",
+                  "props": { "className": "text-3xl font-bold text-danger" },
+                  "bindings": {
+                    "children": { "$ref": "dashboard.health_checks_summary.unhealthy_count" }
+                  }
+                }
               ]
             },
             {
               "kind": "Card",
               "props": { "className": "p-4" },
               "children": [
-                { "kind": "Text", "props": { "className": "text-sm text-muted", "children": "Open incidents" } },
-                { "kind": "Text", "props": { "className": "text-3xl font-bold" }, "bindings": { "children": { "$ref": "dashboard.open_incidents_count" } } }
+                {
+                  "kind": "Text",
+                  "props": { "className": "text-sm text-muted", "children": "Open incidents" }
+                },
+                {
+                  "kind": "Text",
+                  "props": { "className": "text-3xl font-bold" },
+                  "bindings": { "children": { "$ref": "dashboard.open_incidents_count" } }
+                }
               ]
             }
           ]
@@ -67,7 +120,14 @@
           "kind": "Card",
           "props": { "className": "p-4" },
           "children": [
-            { "kind": "Text", "props": { "as": "h2", "className": "text-lg font-semibold mb-3", "children": "Active alerts by severity" } },
+            {
+              "kind": "Text",
+              "props": {
+                "as": "h2",
+                "className": "text-lg font-semibold mb-3",
+                "children": "Active alerts by severity"
+              }
+            },
             {
               "kind": "BarChart",
               "bindings": {
@@ -88,7 +148,14 @@
               "kind": "Card",
               "props": { "className": "p-4" },
               "children": [
-                { "kind": "Text", "props": { "as": "h2", "className": "text-lg font-semibold mb-3", "children": "Top failing checks" } },
+                {
+                  "kind": "Text",
+                  "props": {
+                    "as": "h2",
+                    "className": "text-lg font-semibold mb-3",
+                    "children": "Top failing checks"
+                  }
+                },
                 {
                   "kind": "DataGrid",
                   "bindings": { "items": { "$ref": "dashboard.top_failing_checks" } },
@@ -105,7 +172,14 @@
               "kind": "Card",
               "props": { "className": "p-4" },
               "children": [
-                { "kind": "Text", "props": { "as": "h2", "className": "text-lg font-semibold mb-3", "children": "Provider health" } },
+                {
+                  "kind": "Text",
+                  "props": {
+                    "as": "h2",
+                    "className": "text-lg font-semibold mb-3",
+                    "children": "Provider health"
+                  }
+                },
                 {
                   "kind": "Grid",
                   "props": { "className": "grid grid-cols-1 gap-2" },
@@ -114,8 +188,16 @@
                     "kind": "View",
                     "props": { "className": "flex items-center justify-between p-2 border-b" },
                     "children": [
-                      { "kind": "Text", "props": { "className": "font-medium" }, "bindings": { "children": { "$ref": "row.provider" } } },
-                      { "kind": "Widget", "widget": "monitoring.provider-status-chip", "bindings": { "provider_config": { "$ref": "row" } } }
+                      {
+                        "kind": "Text",
+                        "props": { "className": "font-medium" },
+                        "bindings": { "children": { "$ref": "row.provider" } }
+                      },
+                      {
+                        "kind": "Widget",
+                        "widget": "monitoring.provider-status-chip",
+                        "bindings": { "provider_config": { "$ref": "row" } }
+                      }
                     ]
                   }
                 }

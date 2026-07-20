@@ -42,7 +42,13 @@
       "name": "User Theme Preference Updated",
       "kind": "track",
       "consent_required": "functional",
-      "properties": ["tenant_id", "preferred_mode", "high_contrast", "reduced_motion", "larger_text"],
+      "properties": [
+        "tenant_id",
+        "preferred_mode",
+        "high_contrast",
+        "reduced_motion",
+        "larger_text"
+      ],
       "notes": "Property values are booleans + enum; NO user_id passed to Segment (server-side identity resolution)."
     },
     {

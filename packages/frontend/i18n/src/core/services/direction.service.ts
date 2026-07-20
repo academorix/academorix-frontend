@@ -21,10 +21,10 @@
  *   DI token. If no adapter is provided, the service uses a no-op adapter (server-side).
  */
 
-import { Injectable, Inject, Optional } from '@stackra/container';
-import { I18N_DIRECTION_ADAPTER, type IDirectionAdapter } from '@stackra/contracts';
+import { Injectable, Inject, Optional } from "@stackra/container";
+import { I18N_DIRECTION_ADAPTER, type IDirectionAdapter } from "@stackra/contracts";
 
-import { isRtlLocale, getDirection } from '../utils/rtl.util';
+import { isRtlLocale, getDirection } from "../utils/rtl.util";
 
 // ============================================================================
 // No-op Adapter (default when no platform adapter is registered)
@@ -39,8 +39,8 @@ class NoopDirectionAdapter implements IDirectionAdapter {
     return false;
   }
 
-  public getCurrentDirection(): 'ltr' | 'rtl' {
-    return 'ltr';
+  public getCurrentDirection(): "ltr" | "rtl" {
+    return "ltr";
   }
 }
 
@@ -102,7 +102,7 @@ export class DirectionService {
    * @param locale - The locale code
    * @returns 'rtl' for Arabic, Hebrew, etc.; 'ltr' otherwise
    */
-  public getDirection(locale: string): 'ltr' | 'rtl' {
+  public getDirection(locale: string): "ltr" | "rtl" {
     return getDirection(locale);
   }
 
@@ -128,7 +128,7 @@ export class DirectionService {
    *
    * @returns The current direction as reported by the platform
    */
-  public getCurrentDirection(): 'ltr' | 'rtl' {
+  public getCurrentDirection(): "ltr" | "rtl" {
     return this.adapter.getCurrentDirection();
   }
 }

@@ -5,7 +5,7 @@
  * @category Interfaces
  */
 
-import type { RoomMember } from './room-member.interface';
+import type { RoomMember } from "./room-member.interface";
 
 /**
  * Abstraction over the communication layer used by collaboration features.
@@ -99,7 +99,7 @@ export interface CollaborationTransport {
   onBroadcast(
     roomId: string,
     event: string,
-    callback: (data: unknown, sender: RoomMember) => void
+    callback: (data: unknown, sender: RoomMember) => void,
   ): () => void;
 
   // ── Storage (persistent shared state) ────────────────────────────────────

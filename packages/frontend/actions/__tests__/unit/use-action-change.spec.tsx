@@ -7,11 +7,11 @@
  *   each `onChange` value.
  */
 
-import { act, cleanup, renderHook } from '@testing-library/react';
-import { afterEach, describe, expect, it, vi } from 'vitest';
-import type { IActionDescriptor, IActionResponse } from '@stackra/contracts';
+import { act, cleanup, renderHook } from "@testing-library/react";
+import { afterEach, describe, expect, it, vi } from "vitest";
+import type { IActionDescriptor, IActionResponse } from "@stackra/contracts";
 
-import { useActionChange } from '@/core/hooks/use-action-change';
+import { useActionChange } from "@/core/hooks/use-action-change";
 
 const { mockDispatch, setDispatch } = vi.hoisted(() => {
   let impl: (d: IActionDescriptor, ctx?: unknown) => Promise<IActionResponse> = async () => ({
@@ -25,7 +25,7 @@ const { mockDispatch, setDispatch } = vi.hoisted(() => {
   };
 });
 
-vi.mock('@stackra/container/react', () => ({
+vi.mock("@stackra/container/react", () => ({
   useInject: () => ({ dispatch: mockDispatch }),
 }));
 
@@ -35,39 +35,39 @@ afterEach(() => {
   setDispatch(async () => ({ success: true }));
 });
 
-interface ISetStateAction extends IActionDescriptor<'setState'> {
+interface ISetStateAction extends IActionDescriptor<"setState"> {
   readonly path: string;
   readonly value: unknown;
 }
 
-describe('useActionChange', () => {
-  it('dispatches the mapper output on onChange', async () => {
-    const base: ISetStateAction = { kind: 'setState', path: 'x.y', value: null };
+describe("useActionChange", () => {
+  it("dispatches the mapper output on onChange", async () => {
+    const base: ISetStateAction = { kind: "setState", path: "x.y", value: null };
     const { result } = renderHook(() =>
-      useActionChange<string, ISetStateAction>(base, (value, b) => ({ ...b, value }))
+      useActionChange<string, ISetStateAction>(base, (value, b) => ({ ...b, value })),
     );
 
     await act(async () => {
-      await result.current.onChange('hello');
+      await result.current.onChange("hello");
     });
 
     expect(mockDispatch.mock.calls[0]?.[0]).toEqual({
-      kind: 'setState',
-      path: 'x.y',
-      value: 'hello',
+      kind: "setState",
+      path: "x.y",
+      value: "hello",
     });
   });
 
-  it('passes the same base to every mapper invocation', async () => {
-    const base: ISetStateAction = { kind: 'setState', path: 'x.y', value: null };
+  it("passes the same base to every mapper invocation", async () => {
+    const base: ISetStateAction = { kind: "setState", path: "x.y", value: null };
     const mapper = vi.fn((value: string, b: ISetStateAction) => ({ ...b, value }));
     const { result } = renderHook(() => useActionChange<string, ISetStateAction>(base, mapper));
 
     await act(async () => {
-      await result.current.onChange('a');
+      await result.current.onChange("a");
     });
     await act(async () => {
-      await result.current.onChange('b');
+      await result.current.onChange("b");
     });
 
     expect(mapper).toHaveBeenCalledTimes(2);

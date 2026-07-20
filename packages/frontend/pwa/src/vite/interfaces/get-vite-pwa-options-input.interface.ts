@@ -4,8 +4,8 @@
  * @description Input shape for `getVitePwaOptions(input)`.
  */
 
-import type { IBuildManifestInput } from '../../manifest';
-import type { IRuntimeCachingOptions } from '../../workbox';
+import type { IBuildManifestInput } from "../../manifest";
+import type { IRuntimeCachingOptions } from "../../workbox";
 
 /**
  * Input passed to `getVitePwaOptions`.
@@ -26,7 +26,7 @@ export interface IGetVitePwaOptionsInput {
    *
    * @default 'prompt'
    */
-  readonly registerType?: 'prompt' | 'autoUpdate';
+  readonly registerType?: "prompt" | "autoUpdate";
   /**
    * Glob patterns for files to precache. Defaults to the shape a
    * standard Vite build emits (JS/CSS/HTML with content hashes).

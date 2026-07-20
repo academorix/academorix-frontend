@@ -5,8 +5,8 @@
  *   the React body of the `@stackra/devtools` query panel.
  */
 
-import type { QueryClient } from '@tanstack/query-core';
-import type { IUndoableQueue } from '@stackra/contracts';
+import type { QueryClient } from "@tanstack/query-core";
+import type { IUndoableQueue } from "@stackra/contracts";
 
 /**
  * Props accepted by {@link QueryDevtoolsPanelView}.

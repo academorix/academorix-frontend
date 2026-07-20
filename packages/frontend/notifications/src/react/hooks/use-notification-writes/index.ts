@@ -4,8 +4,8 @@
  * @description Barrel for the {@link useNotificationWrites} hook.
  */
 
-export { useNotificationWrites } from './use-notification-writes.hook';
+export { useNotificationWrites } from "./use-notification-writes.hook";
 export type {
   IUseNotificationWritesResult,
   NotificationWriter,
-} from './use-notification-writes.interface';
+} from "./use-notification-writes.interface";

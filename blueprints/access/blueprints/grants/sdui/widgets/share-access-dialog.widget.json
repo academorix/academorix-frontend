@@ -79,7 +79,9 @@
               "kind": "Text",
               "props": { "as": "h2", "className": "text-xl font-semibold" },
               "bindings": {
-                "children": { "$expr": "'Share ' + (props.resourceLabel || (props.resourceType + '#' + props.resourceId))" }
+                "children": {
+                  "$expr": "'Share ' + (props.resourceLabel || (props.resourceType + '#' + props.resourceId))"
+                }
               }
             },
             {
@@ -130,7 +132,9 @@
                     "kind": "Text",
                     "props": { "className": "flex-1 text-sm" },
                     "bindings": {
-                      "children": { "$expr": "row.subject.display_name + ' · ' + row.permissions.join(', ')" }
+                      "children": {
+                        "$expr": "row.subject.display_name + ' · ' + row.permissions.join(', ')"
+                      }
                     }
                   },
                   {

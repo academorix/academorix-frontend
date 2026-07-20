@@ -3,14 +3,24 @@
   "$version": 1,
   "title": "staff — cache keys + tags",
   "driver": "redis",
-  "ownedTags": ["staff", "staff.coaches", "staff.certifications", "staff.org_chart", "staff.branch_manager"],
+  "ownedTags": [
+    "staff",
+    "staff.coaches",
+    "staff.certifications",
+    "staff.org_chart",
+    "staff.branch_manager"
+  ],
   "keys": [
     {
       "pattern": "stf:roster:{tenant_id}:{branch_id}",
       "description": "Per-branch active staff roster. Read by SDUI list screens + the branch manager's dashboard.",
       "ttlSeconds": 300,
       "tags": ["staff", "tenant"],
-      "invalidatedBy": ["StaffObserver.created", "StaffObserver.updated (branch_id / employment_status / is_branch_manager changes)", "StaffObserver.deleted"]
+      "invalidatedBy": [
+        "StaffObserver.created",
+        "StaffObserver.updated (branch_id / employment_status / is_branch_manager changes)",
+        "StaffObserver.deleted"
+      ]
     },
     {
       "pattern": "stf:roster:{tenant_id}",
@@ -24,35 +34,55 @@
       "description": "The current active branch manager for a branch (id + display_name + avatar_url). Hot key — read on every branch-scoped route to render the sidebar's manager badge.",
       "ttlSeconds": 600,
       "tags": ["staff", "staff.branch_manager"],
-      "invalidatedBy": ["StaffPromotedToBranchManager", "StaffDemotedFromBranchManager", "StaffOffboarded (when the offboarded staff was the manager)"]
+      "invalidatedBy": [
+        "StaffPromotedToBranchManager",
+        "StaffDemotedFromBranchManager",
+        "StaffOffboarded (when the offboarded staff was the manager)"
+      ]
     },
     {
       "pattern": "stf:direct_reports:{staff_id}",
       "description": "The direct reports (Staff rows with reports_to_staff_id = this). Feeds the org-chart tree renderer. Only cached when staff_org_chart entitlement is on.",
       "ttlSeconds": 600,
       "tags": ["staff", "staff.org_chart"],
-      "invalidatedBy": ["StaffObserver.updated (reports_to_staff_id change on either side)", "StaffOffboarded (chain reshaped)"]
+      "invalidatedBy": [
+        "StaffObserver.updated (reports_to_staff_id change on either side)",
+        "StaffOffboarded (chain reshaped)"
+      ]
     },
     {
       "pattern": "stf:org_chart:{tenant_id}",
       "description": "Full org-chart tree for the tenant (all reports-to edges). Materialised weekly by the report cache warmer.",
       "ttlSeconds": 3600,
       "tags": ["staff", "staff.org_chart"],
-      "invalidatedBy": ["StaffObserver.updated (reports_to_staff_id)", "StaffPromotedToBranchManager", "StaffOffboarded"]
+      "invalidatedBy": [
+        "StaffObserver.updated (reports_to_staff_id)",
+        "StaffPromotedToBranchManager",
+        "StaffOffboarded"
+      ]
     },
     {
       "pattern": "stf:coaches:branch:{branch_id}",
       "description": "Per-branch active coach directory. Feeds the SDUI coach list + the public coach directory.",
       "ttlSeconds": 300,
       "tags": ["staff", "staff.coaches"],
-      "invalidatedBy": ["CoachObserver.created", "CoachObserver.updated (sport_key / status / rating changes)", "CoachObserver.deleted"]
+      "invalidatedBy": [
+        "CoachObserver.created",
+        "CoachObserver.updated (sport_key / status / rating changes)",
+        "CoachObserver.deleted"
+      ]
     },
     {
       "pattern": "stf:coaches:sport:{tenant_id}:{sport_key}",
       "description": "Per-sport coach directory for the tenant. Feeds cross-branch sport-specific searches.",
       "ttlSeconds": 300,
       "tags": ["staff", "staff.coaches"],
-      "invalidatedBy": ["CoachObserver.created", "CoachSportChanged", "CoachStatusChanged", "CoachObserver.deleted"]
+      "invalidatedBy": [
+        "CoachObserver.created",
+        "CoachSportChanged",
+        "CoachStatusChanged",
+        "CoachObserver.deleted"
+      ]
     },
     {
       "pattern": "stf:coach_availability:{coach_id}",
@@ -66,7 +96,11 @@
       "description": "Coach.certifications list. Feeds the public coach profile + the certification badge widget.",
       "ttlSeconds": 600,
       "tags": ["staff", "staff.certifications"],
-      "invalidatedBy": ["CoachCertificationAdded", "CoachCertificationRemoved", "CoachCertificationExpired"]
+      "invalidatedBy": [
+        "CoachCertificationAdded",
+        "CoachCertificationRemoved",
+        "CoachCertificationExpired"
+      ]
     },
     {
       "pattern": "stf:staff:by-user:{user_id}",

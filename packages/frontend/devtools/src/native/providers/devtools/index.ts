@@ -4,4 +4,4 @@
  * @description Barrel for the native `DevtoolsProvider` entity.
  */
 
-export { DevtoolsProvider, type DevtoolsProviderProps } from './devtools.provider';
+export { DevtoolsProvider, type DevtoolsProviderProps } from "./devtools.provider";

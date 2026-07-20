@@ -240,12 +240,7 @@ describe("MakeCommandCommand", () => {
     });
 
     it("handles simple single-word names", async () => {
-      const cmd = buildCommand(
-        stubs,
-        output,
-        { name: "greet" },
-        { description: "Say hello" },
-      );
+      const cmd = buildCommand(stubs, output, { name: "greet" }, { description: "Say hello" });
       await cmd.handle();
       const contents = await fs.readFile(
         path.join(sandbox.cwd, "src/commands/greet.command.ts"),

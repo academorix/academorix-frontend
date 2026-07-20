@@ -8,12 +8,32 @@
       "model": "HealthCheck",
       "class": "Academorix\\Observability\\Monitoring\\Policies\\HealthCheckPolicy",
       "abilities": [
-        { "action": "viewAny", "permission": "monitoring.health_checks.viewAny", "scope": "any tenant member with ops / admin / owner / support role" },
+        {
+          "action": "viewAny",
+          "permission": "monitoring.health_checks.viewAny",
+          "scope": "any tenant member with ops / admin / owner / support role"
+        },
         { "action": "view", "permission": "monitoring.health_checks.view" },
-        { "action": "create", "permission": "monitoring.health_checks.create", "scope": "admin + owner only — health checks probe infrastructure" },
-        { "action": "update", "permission": "monitoring.health_checks.update", "scope": "admin + owner" },
-        { "action": "delete", "permission": "monitoring.health_checks.delete", "scope": "admin + owner" },
-        { "action": "run", "permission": "monitoring.health_checks.run", "scope": "admin + owner + ops — rate-limited by monitoring.rate_limit middleware" },
+        {
+          "action": "create",
+          "permission": "monitoring.health_checks.create",
+          "scope": "admin + owner only — health checks probe infrastructure"
+        },
+        {
+          "action": "update",
+          "permission": "monitoring.health_checks.update",
+          "scope": "admin + owner"
+        },
+        {
+          "action": "delete",
+          "permission": "monitoring.health_checks.delete",
+          "scope": "admin + owner"
+        },
+        {
+          "action": "run",
+          "permission": "monitoring.health_checks.run",
+          "scope": "admin + owner + ops — rate-limited by monitoring.rate_limit middleware"
+        },
         { "action": "platformViewAny", "permission": "platform.monitoring.health_checks.viewAny" }
       ]
     },
@@ -21,36 +41,88 @@
       "model": "HealthCheckRun",
       "class": "Academorix\\Observability\\Monitoring\\Policies\\HealthCheckRunPolicy",
       "abilities": [
-        { "action": "viewAny", "permission": "monitoring.health_check_runs.viewAny", "scope": "ops + admin + owner + support — read-only" },
+        {
+          "action": "viewAny",
+          "permission": "monitoring.health_check_runs.viewAny",
+          "scope": "ops + admin + owner + support — read-only"
+        },
         { "action": "view", "permission": "monitoring.health_check_runs.view" },
-        { "action": "create", "permission": "NEVER", "scope": "runs are created by the RunHealthCheckJob path only" },
+        {
+          "action": "create",
+          "permission": "NEVER",
+          "scope": "runs are created by the RunHealthCheckJob path only"
+        },
         { "action": "update", "permission": "NEVER", "scope": "append-only" },
-        { "action": "delete", "permission": "NEVER", "scope": "purged by PurgeExpiredHealthCheckRunsJob only" }
+        {
+          "action": "delete",
+          "permission": "NEVER",
+          "scope": "purged by PurgeExpiredHealthCheckRunsJob only"
+        }
       ]
     },
     {
       "model": "MonitoringAlertPolicy",
       "class": "Academorix\\Observability\\Monitoring\\Policies\\MonitoringAlertPolicyPolicy",
       "abilities": [
-        { "action": "viewAny", "permission": "monitoring.alert_policies.viewAny", "scope": "ops + admin + owner + support" },
+        {
+          "action": "viewAny",
+          "permission": "monitoring.alert_policies.viewAny",
+          "scope": "ops + admin + owner + support"
+        },
         { "action": "view", "permission": "monitoring.alert_policies.view" },
-        { "action": "create", "permission": "monitoring.alert_policies.create", "scope": "admin + owner + ops" },
-        { "action": "update", "permission": "monitoring.alert_policies.update", "scope": "admin + owner + ops" },
-        { "action": "delete", "permission": "monitoring.alert_policies.delete", "scope": "admin + owner" },
-        { "action": "suppress", "permission": "monitoring.alert_policies.suppress", "scope": "admin + owner + ops — audit-trailed" }
+        {
+          "action": "create",
+          "permission": "monitoring.alert_policies.create",
+          "scope": "admin + owner + ops"
+        },
+        {
+          "action": "update",
+          "permission": "monitoring.alert_policies.update",
+          "scope": "admin + owner + ops"
+        },
+        {
+          "action": "delete",
+          "permission": "monitoring.alert_policies.delete",
+          "scope": "admin + owner"
+        },
+        {
+          "action": "suppress",
+          "permission": "monitoring.alert_policies.suppress",
+          "scope": "admin + owner + ops — audit-trailed"
+        }
       ]
     },
     {
       "model": "MonitoringAlert",
       "class": "Academorix\\Observability\\Monitoring\\Policies\\MonitoringAlertPolicy",
       "abilities": [
-        { "action": "viewAny", "permission": "monitoring.alerts.viewAny", "scope": "ops + admin + owner + support" },
+        {
+          "action": "viewAny",
+          "permission": "monitoring.alerts.viewAny",
+          "scope": "ops + admin + owner + support"
+        },
         { "action": "view", "permission": "monitoring.alerts.view" },
-        { "action": "create", "permission": "NEVER", "scope": "alerts are created by the FireAlertJob path only" },
-        { "action": "update", "permission": "NEVER", "scope": "attempt/severity/signal are immutable" },
+        {
+          "action": "create",
+          "permission": "NEVER",
+          "scope": "alerts are created by the FireAlertJob path only"
+        },
+        {
+          "action": "update",
+          "permission": "NEVER",
+          "scope": "attempt/severity/signal are immutable"
+        },
         { "action": "delete", "permission": "NEVER" },
-        { "action": "acknowledge", "permission": "monitoring.alerts.acknowledge", "scope": "ops + admin + owner + support" },
-        { "action": "resolve", "permission": "monitoring.alerts.resolve", "scope": "ops + admin + owner" },
+        {
+          "action": "acknowledge",
+          "permission": "monitoring.alerts.acknowledge",
+          "scope": "ops + admin + owner + support"
+        },
+        {
+          "action": "resolve",
+          "permission": "monitoring.alerts.resolve",
+          "scope": "ops + admin + owner"
+        },
         { "action": "platformViewAny", "permission": "platform.monitoring.alerts.viewAny" }
       ]
     },
@@ -58,28 +130,88 @@
       "model": "MonitoringIncident",
       "class": "Academorix\\Observability\\Monitoring\\Policies\\MonitoringIncidentPolicy",
       "abilities": [
-        { "action": "viewAny", "permission": "monitoring.incidents.viewAny", "scope": "ops + admin + owner + support" },
+        {
+          "action": "viewAny",
+          "permission": "monitoring.incidents.viewAny",
+          "scope": "ops + admin + owner + support"
+        },
         { "action": "view", "permission": "monitoring.incidents.view" },
-        { "action": "create", "permission": "NEVER", "scope": "incidents are created by the GroupAlertsIntoIncidentJob path only" },
-        { "action": "update", "permission": "monitoring.incidents.update", "scope": "ops + admin + owner — status transitions + title/description" },
-        { "action": "acknowledge", "permission": "monitoring.incidents.acknowledge", "scope": "ops + admin + owner + support" },
-        { "action": "resolve", "permission": "monitoring.incidents.resolve", "scope": "ops + admin + owner" },
-        { "action": "delete", "permission": "monitoring.incidents.delete", "scope": "admin + owner — soft-delete only, after resolve" },
-        { "action": "platformViewAny", "permission": "platform.monitoring.incidents.viewAny", "scope": "platform_ops + support cross-tenant P1 review" }
+        {
+          "action": "create",
+          "permission": "NEVER",
+          "scope": "incidents are created by the GroupAlertsIntoIncidentJob path only"
+        },
+        {
+          "action": "update",
+          "permission": "monitoring.incidents.update",
+          "scope": "ops + admin + owner — status transitions + title/description"
+        },
+        {
+          "action": "acknowledge",
+          "permission": "monitoring.incidents.acknowledge",
+          "scope": "ops + admin + owner + support"
+        },
+        {
+          "action": "resolve",
+          "permission": "monitoring.incidents.resolve",
+          "scope": "ops + admin + owner"
+        },
+        {
+          "action": "delete",
+          "permission": "monitoring.incidents.delete",
+          "scope": "admin + owner — soft-delete only, after resolve"
+        },
+        {
+          "action": "platformViewAny",
+          "permission": "platform.monitoring.incidents.viewAny",
+          "scope": "platform_ops + support cross-tenant P1 review"
+        }
       ]
     },
     {
       "model": "MonitoringProviderConfig",
       "class": "Academorix\\Observability\\Monitoring\\Policies\\MonitoringProviderConfigPolicy",
       "abilities": [
-        { "action": "viewAny", "permission": "monitoring.providers.viewAny", "scope": "admin + owner + ops. Support sees redacted view (no config credentials)." },
-        { "action": "view", "permission": "monitoring.providers.view", "scope": "config returned redacted; support role sees redacted view" },
-        { "action": "create", "permission": "monitoring.providers.create", "scope": "admin + owner only — provider credentials are financial-critical" },
-        { "action": "update", "permission": "monitoring.providers.update", "scope": "admin + owner" },
-        { "action": "delete", "permission": "monitoring.providers.delete", "scope": "admin + owner" },
-        { "action": "test", "permission": "monitoring.providers.test", "scope": "admin + owner + ops — rate-limited by monitoring.rate_limit middleware" },
-        { "action": "resetCircuitBreaker", "permission": "monitoring.providers.reset-circuit-breaker", "scope": "admin + owner + platform_ops. Every reset writes an audit row." },
-        { "action": "platformViewAny", "permission": "platform.monitoring.providers.viewAny", "scope": "platform_ops + support (redacted)" }
+        {
+          "action": "viewAny",
+          "permission": "monitoring.providers.viewAny",
+          "scope": "admin + owner + ops. Support sees redacted view (no config credentials)."
+        },
+        {
+          "action": "view",
+          "permission": "monitoring.providers.view",
+          "scope": "config returned redacted; support role sees redacted view"
+        },
+        {
+          "action": "create",
+          "permission": "monitoring.providers.create",
+          "scope": "admin + owner only — provider credentials are financial-critical"
+        },
+        {
+          "action": "update",
+          "permission": "monitoring.providers.update",
+          "scope": "admin + owner"
+        },
+        {
+          "action": "delete",
+          "permission": "monitoring.providers.delete",
+          "scope": "admin + owner"
+        },
+        {
+          "action": "test",
+          "permission": "monitoring.providers.test",
+          "scope": "admin + owner + ops — rate-limited by monitoring.rate_limit middleware"
+        },
+        {
+          "action": "resetCircuitBreaker",
+          "permission": "monitoring.providers.reset-circuit-breaker",
+          "scope": "admin + owner + platform_ops. Every reset writes an audit row."
+        },
+        {
+          "action": "platformViewAny",
+          "permission": "platform.monitoring.providers.viewAny",
+          "scope": "platform_ops + support (redacted)"
+        }
       ]
     }
   ]

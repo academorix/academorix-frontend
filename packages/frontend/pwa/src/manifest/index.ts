@@ -7,7 +7,7 @@
  *   `vite.config.ts`, a Next.js `manifest.ts`, or any Node script.
  */
 
-export { buildManifest } from './utils';
+export { buildManifest } from "./utils";
 export type {
   IManifestIcon,
   IManifestShortcut,
@@ -26,4 +26,4 @@ export type {
   IShareTargetParams,
   IShareTargetFile,
   IWidget,
-} from './interfaces';
+} from "./interfaces";

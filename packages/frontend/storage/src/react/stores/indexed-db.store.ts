@@ -7,14 +7,14 @@
  *   avoiding the JSON round-trip.
  */
 
-import type { IStorage, IStorageSetOptions } from '@stackra/contracts';
+import type { IStorage, IStorageSetOptions } from "@stackra/contracts";
 
-import { isExpired, type TtlEnvelope } from '@/core/utils/ttl-envelope.util';
+import { isExpired, type TtlEnvelope } from "@/core/utils/ttl-envelope.util";
 
 // Type-only import — Dexie is an OPTIONAL peer. The runtime import
 // below is dynamic so importing this file never pulls in Dexie unless
 // the caller actually constructs an `IndexedDbStore`.
-import type { Dexie, Table } from 'dexie';
+import type { Dexie, Table } from "dexie";
 
 /**
  * Constructor config for {@link IndexedDbStore}.
@@ -82,8 +82,8 @@ export class IndexedDbStore implements IStorage {
    * @param config - Optional overrides for database + table name.
    */
   public constructor(config: IndexedDbStoreConfig = {}) {
-    this.databaseName = config.database ?? 'stackra-storage';
-    this.tableName = config.tableName ?? 'kv';
+    this.databaseName = config.database ?? "stackra-storage";
+    this.tableName = config.tableName ?? "kv";
   }
 
   // ── IStorage ─────────────────────────────────────────────────────
@@ -184,21 +184,21 @@ export class IndexedDbStore implements IStorage {
     this.ready = (async () => {
       let DexieCtor: typeof Dexie;
       try {
-        const mod = await import('dexie');
+        const mod = await import("dexie");
         // Handle both ESM default and CJS module.exports shapes.
         DexieCtor = (mod.default ??
           (mod as unknown as { Dexie: typeof Dexie }).Dexie) as typeof Dexie;
       } catch (cause) {
         throw new Error(
-          '[@stackra/storage] IndexedDbStore requires the `dexie` peer. ' +
-            'Install it with `pnpm add dexie`.',
-          { cause: cause as Error }
+          "[@stackra/storage] IndexedDbStore requires the `dexie` peer. " +
+            "Install it with `pnpm add dexie`.",
+          { cause: cause as Error },
         );
       }
 
       const db = new DexieCtor(this.databaseName);
       // Single-version schema for v1 — `k` as the primary key.
-      db.version(1).stores({ [this.tableName]: 'k' });
+      db.version(1).stores({ [this.tableName]: "k" });
       // Cast is safe: we defined the schema above.
       return db.table<IndexedDbRow, string>(this.tableName);
     })();

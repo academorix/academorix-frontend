@@ -5,4 +5,4 @@
  *   (`SCHEDULER_SERVICE`, `SCHEDULER_CONFIG`, `SCHEDULED_METADATA_KEY`,
  *   `TASK_RUNNER`) are imported directly from `@stackra/contracts`.
  */
-export { DEFAULT_SCHEDULER_CONFIG } from './default-scheduler-config.constant';
+export { DEFAULT_SCHEDULER_CONFIG } from "./default-scheduler-config.constant";

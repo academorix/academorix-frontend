@@ -5,7 +5,7 @@
  *   wins.
  */
 
-import type { IConflict, IConflictResolverFn } from '@stackra/contracts';
+import type { IConflict, IConflictResolverFn } from "@stackra/contracts";
 
 /**
  * Remote-wins conflict resolution strategy.

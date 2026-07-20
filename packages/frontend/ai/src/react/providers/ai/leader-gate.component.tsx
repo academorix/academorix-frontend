@@ -11,16 +11,16 @@
  *   assumption from Design Decision 6.
  */
 
-import { useEffect } from 'react';
-import { useInject, useOptionalInject } from '@stackra/container/react';
-import { AI_CONTEXT_COLLECTOR, TAB_COORDINATOR } from '@stackra/contracts';
+import { useEffect } from "react";
+import { useInject, useOptionalInject } from "@stackra/container/react";
+import { AI_CONTEXT_COLLECTOR, TAB_COORDINATOR } from "@stackra/contracts";
 
-import { ContextCollector } from '@/core/services/context-collector.service';
+import { ContextCollector } from "@/core/services/context-collector.service";
 
 /** Minimal structural view of the coordinator's `TabCoordinator`. */
 interface ITabCoordinatorLike {
   isLeader(): boolean;
-  onRoleChange(cb: (role: 'leader' | 'follower') => void): () => void;
+  onRoleChange(cb: (role: "leader" | "follower") => void): () => void;
 }
 
 /**
@@ -38,7 +38,7 @@ export function LeaderGate(): null {
     if (!coordinator) return;
     collector.setLeader(coordinator.isLeader());
     return coordinator.onRoleChange((role) => {
-      collector.setLeader(role === 'leader');
+      collector.setLeader(role === "leader");
     });
   }, [collector, coordinator]);
 

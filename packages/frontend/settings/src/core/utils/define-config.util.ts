@@ -13,7 +13,7 @@
  *     `@stackra/config`.
  */
 
-import type { ISettingsModuleOptions } from '@stackra/contracts';
+import type { ISettingsModuleOptions } from "@stackra/contracts";
 
 /**
  * Type-safe configuration builder for the settings module.

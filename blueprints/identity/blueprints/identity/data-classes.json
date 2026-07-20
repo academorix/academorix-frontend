@@ -17,14 +17,8 @@
       "Identity.failed_attempts_count",
       "Identity.deleted_at"
     ],
-    "confidential": [
-      "Identity.last_failed_at",
-      "Identity.email_verification_expires_at"
-    ],
-    "restricted": [
-      "Identity.email",
-      "Identity.dob"
-    ],
+    "confidential": ["Identity.last_failed_at", "Identity.email_verification_expires_at"],
+    "restricted": ["Identity.email", "Identity.dob"],
     "regulated_minor": [
       "Identity.dob when dob resolves the caller to a minor under the applicable compliance floor (COPPA age_threshold OR GDPR per_country.minor_age)"
     ],

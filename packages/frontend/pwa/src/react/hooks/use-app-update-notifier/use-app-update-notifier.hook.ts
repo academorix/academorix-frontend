@@ -20,11 +20,11 @@
  *   the notification affordance, not the enforcement mechanism.
  */
 
-import { useEffect, useRef } from 'react';
-import { toast } from '@stackra/ui/react';
+import { useEffect, useRef } from "react";
+import { toast } from "@stackra/ui/react";
 
-import { useAppUpdate } from '../use-app-update/use-app-update.hook';
-import type { IUseAppUpdateNotifierOptions } from './use-app-update-notifier.interface';
+import { useAppUpdate } from "../use-app-update/use-app-update.hook";
+import type { IUseAppUpdateNotifierOptions } from "./use-app-update-notifier.interface";
 
 /**
  * Fire a HeroUI toast whenever the backend advertises a new app
@@ -74,31 +74,31 @@ export function useAppUpdateNotifier(options: IUseAppUpdateNotifierOptions = {})
     }
 
     // Same version we already toasted — do not spam.
-    const key = latest ?? '__unknown__';
+    const key = latest ?? "__unknown__";
     if (lastNotifiedRef.current === key) return;
     lastNotifiedRef.current = key;
 
     // Compute the message content.
     const resolvedTitle =
-      typeof options.title === 'function'
+      typeof options.title === "function"
         ? options.title(latest)
-        : (options.title ?? 'App update available');
+        : (options.title ?? "App update available");
 
     const resolvedDescription = resolveDescription(options.description, latest);
 
     // Mandatory updates: force persistent + danger variant.
     const timeout = mandatory ? 0 : (options.timeout ?? 0);
-    const variant: 'danger' | 'info' = mandatory ? 'danger' : 'info';
+    const variant: "danger" | "info" = mandatory ? "danger" : "info";
 
     // Dispatch. `toast` returns a key we could close on hasUpdate:false,
     // but the transition handling above already clears the ref so any
     // NEXT distinct version fires a fresh toast.
-    const dispatcher = variant === 'danger' ? toast.danger : toast.info;
+    const dispatcher = variant === "danger" ? toast.danger : toast.info;
     const id = dispatcher(resolvedTitle, {
       ...(resolvedDescription !== null ? { description: resolvedDescription } : {}),
       timeout,
       actionProps: {
-        children: options.updateLabel ?? 'Update now',
+        children: options.updateLabel ?? "Update now",
         onPress: () => {
           accept();
         },
@@ -123,17 +123,17 @@ export function useAppUpdateNotifier(options: IUseAppUpdateNotifierOptions = {})
 
 /** Resolve the description option into a final string or null. */
 function resolveDescription(
-  description: IUseAppUpdateNotifierOptions['description'],
-  latest: string | undefined
+  description: IUseAppUpdateNotifierOptions["description"],
+  latest: string | undefined,
 ): string | null {
   if (description === null) return null;
   if (description === undefined) {
     // Default copy.
     return latest
       ? `Version ${latest} is ready to install.`
-      : 'A newer version is ready to install.';
+      : "A newer version is ready to install.";
   }
-  if (typeof description === 'function') {
+  if (typeof description === "function") {
     return description(latest);
   }
   return description;

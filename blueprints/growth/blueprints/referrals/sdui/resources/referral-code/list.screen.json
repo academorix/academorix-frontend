@@ -31,13 +31,30 @@
             {
               "kind": "View",
               "children": [
-                { "kind": "Text", "props": { "as": "h1", "className": "text-2xl font-semibold", "children": "Referral codes" } },
-                { "kind": "Text", "props": { "className": "text-sm text-muted", "children": "User codes are auto-issued. Campaign + opaque codes are manually created." } }
+                {
+                  "kind": "Text",
+                  "props": {
+                    "as": "h1",
+                    "className": "text-2xl font-semibold",
+                    "children": "Referral codes"
+                  }
+                },
+                {
+                  "kind": "Text",
+                  "props": {
+                    "className": "text-sm text-muted",
+                    "children": "User codes are auto-issued. Campaign + opaque codes are manually created."
+                  }
+                }
               ]
             },
             {
               "kind": "Button",
-              "props": { "variant": "primary", "leadingIcon": "plus", "children": "New campaign code" },
+              "props": {
+                "variant": "primary",
+                "leadingIcon": "plus",
+                "children": "New campaign code"
+              },
               "actions": { "onPress": { "kind": "navigate", "to": "/tenant/referral-codes/new" } },
               "requiresPermission": "referral_codes.create"
             }
@@ -52,7 +69,11 @@
               "widget": "referrals.program-picker",
               "props": { "label": "Program", "onlyActive": false },
               "actions": {
-                "onSelectionChange": { "kind": "filter.set", "field": "program_id", "valueExpr": "$payload.program_id" }
+                "onSelectionChange": {
+                  "kind": "filter.set",
+                  "field": "program_id",
+                  "valueExpr": "$payload.program_id"
+                }
               }
             },
             {
@@ -63,7 +84,13 @@
                 { "id": "campaign", "label": "Campaign" },
                 { "id": "opaque", "label": "Opaque" }
               ],
-              "actions": { "onSelectionChange": { "kind": "filter.set", "field": "code_type", "valueExpr": "$selectedKey" } }
+              "actions": {
+                "onSelectionChange": {
+                  "kind": "filter.set",
+                  "field": "code_type",
+                  "valueExpr": "$selectedKey"
+                }
+              }
             },
             {
               "kind": "ComboBox",
@@ -72,7 +99,13 @@
                 { "id": "true", "label": "Active" },
                 { "id": "false", "label": "Inactive" }
               ],
-              "actions": { "onSelectionChange": { "kind": "filter.set", "field": "is_active", "valueExpr": "$selectedKey" } }
+              "actions": {
+                "onSelectionChange": {
+                  "kind": "filter.set",
+                  "field": "is_active",
+                  "valueExpr": "$selectedKey"
+                }
+              }
             }
           ]
         },
@@ -105,7 +138,12 @@
                   },
                   {
                     "kind": "Button",
-                    "props": { "variant": "ghost", "size": "xs", "leadingIcon": "no-symbol", "children": "Deactivate" },
+                    "props": {
+                      "variant": "ghost",
+                      "size": "xs",
+                      "leadingIcon": "no-symbol",
+                      "children": "Deactivate"
+                    },
                     "bindings": { "hidden": { "$expr": "!row.is_active" } },
                     "actions": {
                       "onPress": {

@@ -22,7 +22,11 @@
       "retention_days": 1825,
       "retention_note": "Longer retention by default \u2014 funnel windows > 1yr are useful for enterprise cohort analysis.",
       "consent_default": "analytics",
-      "consent_exceptions": ["payment_succeeded", "subscription_upgraded", "invoice_paid — use essential consent"]
+      "consent_exceptions": [
+        "payment_succeeded",
+        "subscription_upgraded",
+        "invoice_paid — use essential consent"
+      ]
     },
     {
       "key": "cta",

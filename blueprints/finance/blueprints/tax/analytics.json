@@ -10,7 +10,13 @@
       "name": "Tax Rate Created",
       "kind": "track",
       "consent_required": "functional",
-      "properties": ["tenant_id", "rate_type", "jurisdiction_country_code", "percentage_bucket", "source"],
+      "properties": [
+        "tenant_id",
+        "rate_type",
+        "jurisdiction_country_code",
+        "percentage_bucket",
+        "source"
+      ],
       "description": "Admin created a new tax rate. percentage_bucket = '0-5' | '5-10' | '10-20' | '20-30' | '30+' (bounded cardinality; raw percentage is confidential per data-classes.json)."
     },
     {

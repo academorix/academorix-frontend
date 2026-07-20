@@ -6,8 +6,23 @@
   "namespace": "academorix.transaction",
   "labelConventions": {
     "always": [],
-    "commonlyAvailable": ["kind", "account", "currency", "reversal_reason", "scope", "regulator_category"],
-    "forbiddenAsLabels": ["tenant_id", "transaction_id", "ledger_entry_id", "reference_id", "created_by_user_id", "amount_cents", "exchange_rate_to_base"]
+    "commonlyAvailable": [
+      "kind",
+      "account",
+      "currency",
+      "reversal_reason",
+      "scope",
+      "regulator_category"
+    ],
+    "forbiddenAsLabels": [
+      "tenant_id",
+      "transaction_id",
+      "ledger_entry_id",
+      "reference_id",
+      "created_by_user_id",
+      "amount_cents",
+      "exchange_rate_to_base"
+    ]
   },
   "metrics": [
     {

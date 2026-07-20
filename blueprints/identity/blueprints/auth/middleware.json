@@ -45,9 +45,7 @@
       "priority": 4,
       "description": "Strict CORS. Whitelist origins per Application via config('auth.cors.applications.<app_slug>'). No wildcard origins. No credentials-with-wildcard. No unlisted headers. On preflight failure returns 403 immediately \u2014 the browser fails the request.",
       "auto_applied": true,
-      "consumed_by": [
-        "every route in this module (tenant + platform + public JWKS)"
-      ]
+      "consumed_by": ["every route in this module (tenant + platform + public JWKS)"]
     },
     {
       "alias": "auth.detect_new_device",

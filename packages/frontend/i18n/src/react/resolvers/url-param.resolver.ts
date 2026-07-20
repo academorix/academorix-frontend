@@ -12,8 +12,8 @@
  *   Returns `undefined` when `window.location` is not available.
  */
 
-import type { II18nResolver } from '@/core/interfaces';
-import type { UrlParamResolverOptions } from '../interfaces';
+import type { II18nResolver } from "@/core/interfaces";
+import type { UrlParamResolverOptions } from "../interfaces";
 
 /**
  * Resolves locale from URL query parameters or path segments.
@@ -38,7 +38,7 @@ export class UrlParamResolver implements II18nResolver {
    * @param options - Configuration for query param names and path index
    */
   public constructor(options?: UrlParamResolverOptions) {
-    const qp = options?.queryParam ?? 'lang';
+    const qp = options?.queryParam ?? "lang";
     this.queryParams = Array.isArray(qp) ? qp : [qp];
     this.pathIndex = options?.pathIndex ?? -1;
   }
@@ -52,7 +52,7 @@ export class UrlParamResolver implements II18nResolver {
    */
   public resolve(): string | undefined {
     try {
-      if (typeof window === 'undefined') return undefined;
+      if (typeof window === "undefined") return undefined;
 
       const url = new URL(window.location.href);
 
@@ -64,7 +64,7 @@ export class UrlParamResolver implements II18nResolver {
 
       // Check path segment
       if (this.pathIndex >= 0) {
-        const segments = url.pathname.split('/').filter(Boolean);
+        const segments = url.pathname.split("/").filter(Boolean);
         const segment = segments[this.pathIndex];
         // Only return if it looks like a locale code (2-5 chars, letters/hyphens)
         if (segment && /^[a-z]{2}(-[a-zA-Z]{2,4})?$/.test(segment)) {

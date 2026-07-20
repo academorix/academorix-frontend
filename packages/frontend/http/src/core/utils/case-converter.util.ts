@@ -8,7 +8,7 @@
  * @module @stackra/http/utils/case-converter
  */
 
-import { Str } from '@stackra/support';
+import { Str } from "@stackra/support";
 
 /**
  * Recursive case conversion helpers.
@@ -33,7 +33,7 @@ export class CaseConverter {
    */
   public static toSnakeCase(input: unknown): unknown {
     if (input === null || input === undefined) return input;
-    if (typeof input !== 'object') return input;
+    if (typeof input !== "object") return input;
     if (input instanceof Date) return input;
 
     if (Array.isArray(input)) {
@@ -58,7 +58,7 @@ export class CaseConverter {
    */
   public static toCamelCase(input: unknown): unknown {
     if (input === null || input === undefined) return input;
-    if (typeof input !== 'object') return input;
+    if (typeof input !== "object") return input;
     if (input instanceof Date) return input;
 
     if (Array.isArray(input)) {

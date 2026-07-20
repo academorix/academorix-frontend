@@ -15,7 +15,14 @@
       "url": "/api/v1/audits/by-entity/{route.auditable_type}/{route.auditable_id}",
       "unwrap": "data",
       "paginated": true,
-      "queryParamsFromState": ["filter[event]", "filter[since]", "filter[until]", "sort", "page", "per_page"]
+      "queryParamsFromState": [
+        "filter[event]",
+        "filter[since]",
+        "filter[until]",
+        "sort",
+        "page",
+        "per_page"
+      ]
     }
   ],
   "nodes": [

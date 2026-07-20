@@ -8,4 +8,4 @@
  *   platform via `@stackra/storage`.
  */
 
-export { StorageBackedLocaleAdapter } from './storage-backed-locale.adapter';
+export { StorageBackedLocaleAdapter } from "./storage-backed-locale.adapter";

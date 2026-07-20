@@ -25,7 +25,11 @@
       "children": [
         {
           "kind": "Link",
-          "props": { "leadingIcon": "arrow-left", "children": "Back to providers", "className": "text-sm text-muted" },
+          "props": {
+            "leadingIcon": "arrow-left",
+            "children": "Back to providers",
+            "className": "text-sm text-muted"
+          },
           "actions": { "onPress": { "kind": "navigate", "to": "/tenant/analytics/providers" } }
         },
         {
@@ -67,9 +71,7 @@
                 { "kind": "toast.success", "message": "Test event dispatched" },
                 { "kind": "state.set", "path": "test_result", "valueFrom": "response.data" }
               ],
-              "onError": [
-                { "kind": "state.set", "path": "test_result", "valueFrom": "error" }
-              ]
+              "onError": [{ "kind": "state.set", "path": "test_result", "valueFrom": "error" }]
             }
           }
         },
@@ -80,7 +82,11 @@
           "children": [
             {
               "kind": "Text",
-              "props": { "as": "h2", "className": "text-sm font-semibold text-muted uppercase tracking-wide mb-3", "children": "Test result" }
+              "props": {
+                "as": "h2",
+                "className": "text-sm font-semibold text-muted uppercase tracking-wide mb-3",
+                "children": "Test result"
+              }
             },
             {
               "kind": "JsonViewer",

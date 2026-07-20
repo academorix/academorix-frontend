@@ -6,20 +6,60 @@
   "isSystem": true,
   "description": "Permissions split across two guards. `sanctum` guard covers tenant users (viewers + admins + approvers). `platform_admin` guard covers Academorix ops staff (cross-tenant read + registry management). Approval decisions themselves use `approvals.instances.approve` — one permission covers both approve + reject because they're two sides of the same decision-authority.",
   "permissions": [
-    { "name": "approvals.actions.viewAny", "guard": "sanctum", "seededOn": ["member", "admin", "owner"] },
-    { "name": "approvals.actions.view", "guard": "sanctum", "seededOn": ["member", "admin", "owner"] },
+    {
+      "name": "approvals.actions.viewAny",
+      "guard": "sanctum",
+      "seededOn": ["member", "admin", "owner"]
+    },
+    {
+      "name": "approvals.actions.view",
+      "guard": "sanctum",
+      "seededOn": ["member", "admin", "owner"]
+    },
     { "name": "approvals.templates.viewAny", "guard": "sanctum", "seededOn": ["admin", "owner"] },
     { "name": "approvals.templates.view", "guard": "sanctum", "seededOn": ["admin", "owner"] },
     { "name": "approvals.templates.create", "guard": "sanctum", "seededOn": ["admin", "owner"] },
     { "name": "approvals.templates.update", "guard": "sanctum", "seededOn": ["admin", "owner"] },
-    { "name": "approvals.templates.manage", "guard": "sanctum", "seededOn": ["admin", "owner"], "description": "Activate + deactivate templates." },
+    {
+      "name": "approvals.templates.manage",
+      "guard": "sanctum",
+      "seededOn": ["admin", "owner"],
+      "description": "Activate + deactivate templates."
+    },
     { "name": "approvals.templates.delete", "guard": "sanctum", "seededOn": ["admin", "owner"] },
-    { "name": "approvals.instances.viewAny", "guard": "sanctum", "seededOn": ["member", "admin", "owner"] },
-    { "name": "approvals.instances.view", "guard": "sanctum", "seededOn": ["member", "admin", "owner"] },
-    { "name": "approvals.instances.withdraw", "guard": "sanctum", "seededOn": ["member", "admin", "owner"], "description": "Withdraw a pending instance the caller submitted." },
-    { "name": "approvals.instances.approve", "guard": "sanctum", "seededOn": ["approver", "admin", "owner"], "description": "Approve or reject an instance the caller is an approver on. NOT enough on its own — caller MUST additionally be in the specific requirement's resolved_approvers (enforced by caller_is_approver rule + approvals.enforce_approver middleware + ApprovalDecisionObserver)." },
-    { "name": "approvals.decisions.view", "guard": "sanctum", "seededOn": ["member", "admin", "owner"] },
-    { "name": "approvals.decisions.view_comments", "guard": "sanctum", "seededOn": ["admin", "owner"], "description": "See the decision comments on the timeline. Members see decisions but comments are redacted to preserve reviewer discretion." },
+    {
+      "name": "approvals.instances.viewAny",
+      "guard": "sanctum",
+      "seededOn": ["member", "admin", "owner"]
+    },
+    {
+      "name": "approvals.instances.view",
+      "guard": "sanctum",
+      "seededOn": ["member", "admin", "owner"]
+    },
+    {
+      "name": "approvals.instances.withdraw",
+      "guard": "sanctum",
+      "seededOn": ["member", "admin", "owner"],
+      "description": "Withdraw a pending instance the caller submitted."
+    },
+    {
+      "name": "approvals.instances.approve",
+      "guard": "sanctum",
+      "seededOn": ["approver", "admin", "owner"],
+      "description": "Approve or reject an instance the caller is an approver on. NOT enough on its own — caller MUST additionally be in the specific requirement's resolved_approvers (enforced by caller_is_approver rule + approvals.enforce_approver middleware + ApprovalDecisionObserver)."
+    },
+    {
+      "name": "approvals.decisions.view",
+      "guard": "sanctum",
+      "seededOn": ["member", "admin", "owner"]
+    },
+    {
+      "name": "approvals.decisions.view_comments",
+      "guard": "sanctum",
+      "seededOn": ["admin", "owner"],
+      "description": "See the decision comments on the timeline. Members see decisions but comments are redacted to preserve reviewer discretion."
+    },
     {
       "name": "platform.approvals.actions.viewAny",
       "guard": "platform_admin",

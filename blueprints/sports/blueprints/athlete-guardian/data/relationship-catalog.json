@@ -5,16 +5,60 @@
   "relationships": [
     { "value": "mother", "label": "Mother", "bucket": "parent", "typical_legal_custody": true },
     { "value": "father", "label": "Father", "bucket": "parent", "typical_legal_custody": true },
-    { "value": "step_mother", "label": "Step-mother", "bucket": "step_parent", "typical_legal_custody": false },
-    { "value": "step_father", "label": "Step-father", "bucket": "step_parent", "typical_legal_custody": false },
-    { "value": "grandmother", "label": "Grandmother", "bucket": "grandparent", "typical_legal_custody": false },
-    { "value": "grandfather", "label": "Grandfather", "bucket": "grandparent", "typical_legal_custody": false },
+    {
+      "value": "step_mother",
+      "label": "Step-mother",
+      "bucket": "step_parent",
+      "typical_legal_custody": false
+    },
+    {
+      "value": "step_father",
+      "label": "Step-father",
+      "bucket": "step_parent",
+      "typical_legal_custody": false
+    },
+    {
+      "value": "grandmother",
+      "label": "Grandmother",
+      "bucket": "grandparent",
+      "typical_legal_custody": false
+    },
+    {
+      "value": "grandfather",
+      "label": "Grandfather",
+      "bucket": "grandparent",
+      "typical_legal_custody": false
+    },
     { "value": "aunt", "label": "Aunt", "bucket": "relative", "typical_legal_custody": false },
     { "value": "uncle", "label": "Uncle", "bucket": "relative", "typical_legal_custody": false },
-    { "value": "sibling", "label": "Sibling (adult)", "bucket": "relative", "typical_legal_custody": false, "note": "Adult sibling acting as guardian for a minor sibling. Requires explicit legal_guardian appointment." },
-    { "value": "legal_guardian", "label": "Legal guardian", "bucket": "legal", "typical_legal_custody": true, "note": "Court-appointed guardianship. Non-family or family with formal legal appointment." },
-    { "value": "foster_parent", "label": "Foster parent", "bucket": "legal", "typical_legal_custody": true, "note": "Foster placement — legal custody typically held by the state, but foster parent authorised for day-to-day decisions." },
-    { "value": "other", "label": "Other", "bucket": "other", "typical_legal_custody": false, "note": "Free-text catch-all. Enter details in the notes field." }
+    {
+      "value": "sibling",
+      "label": "Sibling (adult)",
+      "bucket": "relative",
+      "typical_legal_custody": false,
+      "note": "Adult sibling acting as guardian for a minor sibling. Requires explicit legal_guardian appointment."
+    },
+    {
+      "value": "legal_guardian",
+      "label": "Legal guardian",
+      "bucket": "legal",
+      "typical_legal_custody": true,
+      "note": "Court-appointed guardianship. Non-family or family with formal legal appointment."
+    },
+    {
+      "value": "foster_parent",
+      "label": "Foster parent",
+      "bucket": "legal",
+      "typical_legal_custody": true,
+      "note": "Foster placement — legal custody typically held by the state, but foster parent authorised for day-to-day decisions."
+    },
+    {
+      "value": "other",
+      "label": "Other",
+      "bucket": "other",
+      "typical_legal_custody": false,
+      "note": "Free-text catch-all. Enter details in the notes field."
+    }
   ],
   "notes": [
     "`typical_legal_custody` is a UI hint only — the actual has_legal_custody flag is set independently by the admin recording the guardianship. A step-parent may hold legal custody if legally appointed; a biological parent may not (custody stripped in some legal proceedings).",

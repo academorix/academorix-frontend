@@ -24,10 +24,10 @@
  * ```
  */
 
-import { defineMetadata } from '@vivtel/metadata';
+import { defineMetadata } from "@vivtel/metadata";
 
-import { CSP_POLICY_METADATA } from '../constants';
-import type { CspFeaturePolicy } from '../interfaces/csp-feature-policy.interface';
+import { CSP_POLICY_METADATA } from "../constants";
+import type { CspFeaturePolicy } from "../interfaces/csp-feature-policy.interface";
 
 /**
  * Marks a class as a CSP policy contributor for auto-discovery.

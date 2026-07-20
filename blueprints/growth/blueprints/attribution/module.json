@@ -41,14 +41,7 @@
   "priority": 63,
   "providers": ["Academorix\\Growth\\Attribution\\Providers\\AttributionServiceProvider"],
   "files": [],
-  "dependencies": [
-    "foundation",
-    "tenancy",
-    "application",
-    "user",
-    "entitlements",
-    "compliance"
-  ],
+  "dependencies": ["foundation", "tenancy", "application", "user", "entitlements", "compliance"],
   "extendedBy": [],
   "planned_consumers": [
     "marketing (Wave 5 — ad-network forwarder reads AttributionSnapshotBuilder output on every conversion event)",
@@ -114,10 +107,7 @@
       "AttributionSuppressedByConsentNotification",
       "AttributionChurnDetectedNotification"
     ],
-    "broadcasts": [
-      "tenant.{tenantId}.attribution",
-      "user.{userId}.attribution"
-    ],
+    "broadcasts": ["tenant.{tenantId}.attribution", "user.{userId}.attribution"],
     "observers": ["AttributionObserver", "AttributionTouchpointObserver"],
     "rules": [
       "valid_url",

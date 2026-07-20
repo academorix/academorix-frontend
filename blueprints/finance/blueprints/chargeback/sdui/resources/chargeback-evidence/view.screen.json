@@ -58,9 +58,27 @@
             "kind": "View",
             "props": { "className": "text-center py-12" },
             "children": [
-              { "kind": "Icon", "props": { "name": "document-magnifying-glass", "className": "size-12 mx-auto text-muted" } },
-              { "kind": "Text", "props": { "className": "mt-4 text-lg font-medium", "children": "No evidence submissions" } },
-              { "kind": "Text", "props": { "className": "text-sm text-muted", "children": "No evidence has been submitted for this chargeback yet." } }
+              {
+                "kind": "Icon",
+                "props": {
+                  "name": "document-magnifying-glass",
+                  "className": "size-12 mx-auto text-muted"
+                }
+              },
+              {
+                "kind": "Text",
+                "props": {
+                  "className": "mt-4 text-lg font-medium",
+                  "children": "No evidence submissions"
+                }
+              },
+              {
+                "kind": "Text",
+                "props": {
+                  "className": "text-sm text-muted",
+                  "children": "No evidence has been submitted for this chargeback yet."
+                }
+              }
             ]
           },
           "itemRenderer": {

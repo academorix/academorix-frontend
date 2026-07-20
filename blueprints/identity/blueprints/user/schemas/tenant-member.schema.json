@@ -155,8 +155,15 @@
     "invited_by": { "type": ["string", "null"], "pattern": "^usr_[0-9A-HJKMNP-TV-Z]{26}$" },
     "last_active_at": { "type": ["string", "null"], "format": "date-time" },
     "metadata": { "type": ["object", "null"] },
-    "user_email": { "type": "string", "format": "email", "description": "Computed. From user->identity->email." },
-    "user_display_name": { "type": "string", "description": "Computed. From user->profile->display_name." },
+    "user_email": {
+      "type": "string",
+      "format": "email",
+      "description": "Computed. From user->identity->email."
+    },
+    "user_display_name": {
+      "type": "string",
+      "description": "Computed. From user->profile->display_name."
+    },
     "role_name": { "type": "string", "description": "Computed. From role->name." },
     "tenant_name": { "type": "string", "description": "Computed. From tenant->name." },
     "created_by": { "type": ["string", "null"], "format": "uuid" },

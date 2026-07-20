@@ -4,4 +4,4 @@
  * @description Resolvers barrel export.
  */
 
-export { ConflictResolver } from './conflict.resolver';
+export { ConflictResolver } from "./conflict.resolver";

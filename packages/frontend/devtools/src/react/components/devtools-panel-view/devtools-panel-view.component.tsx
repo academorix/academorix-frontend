@@ -12,12 +12,12 @@
  *   - `iframe` → render a sandboxed `<iframe>`.
  */
 
-import { type ReactElement, type ReactNode, useCallback, useState } from 'react';
-import { AlertDialog, Button, Card, ScrollShadow } from '@stackra/ui/react';
-import type { IDevtoolsAction, IDevtoolsPanel } from '@stackra/contracts';
+import { type ReactElement, type ReactNode, useCallback, useState } from "react";
+import { AlertDialog, Button, Card, ScrollShadow } from "@stackra/ui/react";
+import type { IDevtoolsAction, IDevtoolsPanel } from "@stackra/contracts";
 
-import { useDevtoolsContext } from '../../hooks/use-devtools-context.hook';
-import type { DevtoolsPanelViewProps } from './devtools-panel-view.interface';
+import { useDevtoolsContext } from "../../hooks/use-devtools-context.hook";
+import type { DevtoolsPanelViewProps } from "./devtools-panel-view.interface";
 
 /**
  * A safe cast — the `render()` return type in the contract is
@@ -33,7 +33,7 @@ function asReactNode(value: unknown): ReactNode {
  */
 export function DevtoolsPanelView({ panel }: DevtoolsPanelViewProps): ReactElement {
   switch (panel.view.type) {
-    case 'component': {
+    case "component": {
       return (
         <ScrollShadow className="h-full w-full" hideScrollBar={false}>
           <div className="p-4" data-devtools-panel-view="component">
@@ -42,10 +42,10 @@ export function DevtoolsPanelView({ panel }: DevtoolsPanelViewProps): ReactEleme
         </ScrollShadow>
       );
     }
-    case 'action': {
+    case "action": {
       return <DevtoolsActionView actions={panel.view.actions} panel={panel} />;
     }
-    case 'iframe': {
+    case "iframe": {
       return (
         <div className="h-full w-full" data-devtools-panel-view="iframe">
           <iframe
@@ -103,7 +103,7 @@ function DevtoolsActionView({ actions, panel }: DevtoolsActionViewProps): ReactE
         // via the toast service; devtools doesn't wrap the call.
       }
     },
-    [analytics, panel.id]
+    [analytics, panel.id],
   );
 
   const handlePress = useCallback(
@@ -114,7 +114,7 @@ function DevtoolsActionView({ actions, panel }: DevtoolsActionViewProps): ReactE
         void runAction(action);
       }
     },
-    [runAction]
+    [runAction],
   );
 
   const handleConfirm = useCallback(() => {
@@ -138,7 +138,7 @@ function DevtoolsActionView({ actions, panel }: DevtoolsActionViewProps): ReactE
             <Card.Footer>
               <Button
                 variant={
-                  action.variant === 'danger' ? 'danger-soft' : (action.variant ?? 'primary')
+                  action.variant === "danger" ? "danger-soft" : (action.variant ?? "primary")
                 }
                 size="sm"
                 onPress={() => handlePress(action)}
@@ -161,11 +161,11 @@ function DevtoolsActionView({ actions, panel }: DevtoolsActionViewProps): ReactE
             <AlertDialog.Dialog>
               <AlertDialog.CloseTrigger />
               <AlertDialog.Header>
-                <AlertDialog.Heading>{pending?.label ?? ''}</AlertDialog.Heading>
+                <AlertDialog.Heading>{pending?.label ?? ""}</AlertDialog.Heading>
               </AlertDialog.Header>
               <AlertDialog.Body>
-                <p className="text-sm text-muted">
-                  {pending?.description ?? 'This action is irreversible. Continue?'}
+                <p className="text-muted text-sm">
+                  {pending?.description ?? "This action is irreversible. Continue?"}
                 </p>
               </AlertDialog.Body>
               <AlertDialog.Footer>
@@ -174,7 +174,7 @@ function DevtoolsActionView({ actions, panel }: DevtoolsActionViewProps): ReactE
                 </Button>
                 <Button
                   size="sm"
-                  variant={pending?.variant === 'danger' ? 'danger-soft' : 'primary'}
+                  variant={pending?.variant === "danger" ? "danger-soft" : "primary"}
                   onPress={handleConfirm}
                   data-devtools-action-confirm=""
                 >

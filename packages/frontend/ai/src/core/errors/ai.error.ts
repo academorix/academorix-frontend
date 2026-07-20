@@ -20,7 +20,7 @@ export class AiError extends Error {
    */
   public constructor(
     message: string,
-    public override readonly cause?: unknown
+    public override readonly cause?: unknown,
   ) {
     super(message);
     this.name = new.target.name;

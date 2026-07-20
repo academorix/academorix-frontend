@@ -52,8 +52,21 @@
         {
           "kind": "View",
           "children": [
-            { "kind": "Text", "props": { "as": "h1", "className": "text-2xl font-semibold", "children": "Issue credit note" } },
-            { "kind": "Text", "props": { "className": "text-sm text-muted", "children": "Reverse part or all of a paid invoice. The original invoice remains unchanged." } }
+            {
+              "kind": "Text",
+              "props": {
+                "as": "h1",
+                "className": "text-2xl font-semibold",
+                "children": "Issue credit note"
+              }
+            },
+            {
+              "kind": "Text",
+              "props": {
+                "className": "text-sm text-muted",
+                "children": "Reverse part or all of a paid invoice. The original invoice remains unchanged."
+              }
+            }
           ]
         },
         {
@@ -67,10 +80,31 @@
                 "items": [
                   { "label": "Invoice", "valueRef": "original_invoice.invoice_number" },
                   { "label": "Customer", "valueRef": "original_invoice.billing_address.name" },
-                  { "label": "Issued", "valueRef": "original_invoice.issue_date", "formatter": "date" },
-                  { "label": "Total", "valueRef": "original_invoice.total_cents", "formatter": "currency", "currencyField": "original_invoice.currency" },
-                  { "label": "Already credited", "valueRef": "computed.already_credited_cents", "formatter": "currency", "currencyField": "original_invoice.currency", "visibleWhen": "computed.already_credited_cents > 0" },
-                  { "label": "Remaining creditable", "valueRef": "computed.remaining_creditable_cents", "formatter": "currency", "currencyField": "original_invoice.currency", "emphasized": true }
+                  {
+                    "label": "Issued",
+                    "valueRef": "original_invoice.issue_date",
+                    "formatter": "date"
+                  },
+                  {
+                    "label": "Total",
+                    "valueRef": "original_invoice.total_cents",
+                    "formatter": "currency",
+                    "currencyField": "original_invoice.currency"
+                  },
+                  {
+                    "label": "Already credited",
+                    "valueRef": "computed.already_credited_cents",
+                    "formatter": "currency",
+                    "currencyField": "original_invoice.currency",
+                    "visibleWhen": "computed.already_credited_cents > 0"
+                  },
+                  {
+                    "label": "Remaining creditable",
+                    "valueRef": "computed.remaining_creditable_cents",
+                    "formatter": "currency",
+                    "currencyField": "original_invoice.currency",
+                    "emphasized": true
+                  }
                 ]
               }
             }
@@ -82,42 +116,90 @@
           "children": [
             {
               "kind": "InvoicePicker",
-              "props": { "label": "Original invoice", "helpText": "Only paid/partially-paid/refunded/disputed/written-off invoices can be credited." },
+              "props": {
+                "label": "Original invoice",
+                "helpText": "Only paid/partially-paid/refunded/disputed/written-off invoices can be credited."
+              },
               "visibleWhen": "state.original_invoice_id == null",
-              "filter": { "status": ["paid", "partially_paid", "refunded", "disputed", "written_off"] },
-              "actions": { "onChange": { "kind": "state.set", "field": "original_invoice_id", "valueExpr": "$value" } }
+              "filter": {
+                "status": ["paid", "partially_paid", "refunded", "disputed", "written_off"]
+              },
+              "actions": {
+                "onChange": {
+                  "kind": "state.set",
+                  "field": "original_invoice_id",
+                  "valueExpr": "$value"
+                }
+              }
             },
             {
               "kind": "CurrencyField",
-              "props": { "label": "Amount to credit", "helpText": "Positive amount. Cannot exceed the remaining creditable amount." },
+              "props": {
+                "label": "Amount to credit",
+                "helpText": "Positive amount. Cannot exceed the remaining creditable amount."
+              },
               "bindings": {
                 "value": { "$state": "amount_cents" },
                 "currency": { "$ref": "original_invoice.currency" },
                 "max": { "$ref": "computed.remaining_creditable_cents" }
               },
-              "actions": { "onChange": { "kind": "state.set", "field": "amount_cents", "valueExpr": "$value" } }
+              "actions": {
+                "onChange": { "kind": "state.set", "field": "amount_cents", "valueExpr": "$value" }
+              }
             },
             {
               "kind": "ComboBox",
               "props": { "label": "Reason", "menuTrigger": "focus" },
               "props_items": [
                 { "id": "refund", "label": "Refund", "description": "Money returned to customer" },
-                { "id": "adjustment", "label": "Adjustment", "description": "Post-payment adjustment (requires note)" },
-                { "id": "write_off", "label": "Write-off", "description": "Uncollectible or bad debt" },
-                { "id": "duplicate", "label": "Duplicate", "description": "Same invoice issued twice" },
-                { "id": "customer_dispute_resolved", "label": "Customer dispute resolved", "description": "Resolution of a dispute (requires note)" },
-                { "id": "accounting_correction", "label": "Accounting correction", "description": "Correct a bookkeeping error (requires note)" }
+                {
+                  "id": "adjustment",
+                  "label": "Adjustment",
+                  "description": "Post-payment adjustment (requires note)"
+                },
+                {
+                  "id": "write_off",
+                  "label": "Write-off",
+                  "description": "Uncollectible or bad debt"
+                },
+                {
+                  "id": "duplicate",
+                  "label": "Duplicate",
+                  "description": "Same invoice issued twice"
+                },
+                {
+                  "id": "customer_dispute_resolved",
+                  "label": "Customer dispute resolved",
+                  "description": "Resolution of a dispute (requires note)"
+                },
+                {
+                  "id": "accounting_correction",
+                  "label": "Accounting correction",
+                  "description": "Correct a bookkeeping error (requires note)"
+                }
               ],
               "bindings": { "selectedKey": { "$state": "reason" } },
-              "actions": { "onSelectionChange": { "kind": "state.set", "field": "reason", "valueExpr": "$selectedKey" } }
+              "actions": {
+                "onSelectionChange": {
+                  "kind": "state.set",
+                  "field": "reason",
+                  "valueExpr": "$selectedKey"
+                }
+              }
             },
             {
               "kind": "TextArea",
-              "props": { "label": "Reason note", "rows": 4, "helpText": "Required for adjustment, dispute-resolution, and accounting-correction." },
+              "props": {
+                "label": "Reason note",
+                "rows": 4,
+                "helpText": "Required for adjustment, dispute-resolution, and accounting-correction."
+              },
               "visibleWhen": "computed.requires_note",
               "required": "computed.requires_note",
               "bindings": { "value": { "$state": "reason_note" } },
-              "actions": { "onChange": { "kind": "state.set", "field": "reason_note", "valueExpr": "$value" } }
+              "actions": {
+                "onChange": { "kind": "state.set", "field": "reason_note", "valueExpr": "$value" }
+              }
             }
           ]
         },
@@ -125,7 +207,12 @@
           "kind": "Alert",
           "props": { "variant": "info" },
           "children": [
-            { "kind": "Text", "props": { "children": "Once issued, credit notes are IMMUTABLE. They can only be voided while still in 'draft' status. After applying (to a refund, next invoice, or customer balance), they cannot be modified." } }
+            {
+              "kind": "Text",
+              "props": {
+                "children": "Once issued, credit notes are IMMUTABLE. They can only be voided while still in 'draft' status. After applying (to a refund, next invoice, or customer balance), they cannot be modified."
+              }
+            }
           ]
         },
         {
@@ -151,7 +238,10 @@
                     "reason": "$state.reason",
                     "reason_note": "$state.reason_note"
                   },
-                  "confirm": { "title": "Issue credit note?", "message": "The credit note will be issued + a PDF generated + the customer notified. This is irreversible." },
+                  "confirm": {
+                    "title": "Issue credit note?",
+                    "message": "The credit note will be issued + a PDF generated + the customer notified. This is irreversible."
+                  },
                   "onSuccess": {
                     "kind": "navigate",
                     "toExpr": "'/tenant/credit-notes/' + $response.data.id"

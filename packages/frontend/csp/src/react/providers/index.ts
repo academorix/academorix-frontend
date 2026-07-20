@@ -4,4 +4,4 @@
  * @description Providers barrel export.
  */
 
-export { NonceProvider } from './nonce';
+export { NonceProvider } from "./nonce";

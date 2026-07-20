@@ -37,10 +37,7 @@
       "class": "Academorix\\Finance\\Transaction\\Broadcasts\\TenantLedgerReconciliationChannel",
       "description": "Reconciler activity + imbalance alerts. Powers the ops queue view showing nightly reconciler runs + any detected imbalances.",
       "authorization": "sanctum::authed AND tenant_matches AND (admin OR finance_role)",
-      "events": [
-        "LedgerReconciliationCompleted",
-        "LedgerImbalanceDetected"
-      ],
+      "events": ["LedgerReconciliationCompleted", "LedgerImbalanceDetected"],
       "throttle": "20 events/minute per channel",
       "notes": "Every LedgerImbalanceDetected fires a companion push notification via the notifications module (cannot-opt-out). The channel is for the UI live-update; the notification is for the human alert (pages on-call). Regulator-critical — every fire also writes to audits with 7-year retention."
     }

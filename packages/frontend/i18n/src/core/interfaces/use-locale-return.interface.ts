@@ -11,7 +11,7 @@ export interface UseLocaleReturn {
   /** Currently active locale code. */
   locale: string;
   /** Text direction for the current locale. */
-  dir: 'ltr' | 'rtl';
+  dir: "ltr" | "rtl";
   /** Whether the current locale is RTL. */
   isRTL: boolean;
   /** Switch to a different locale. */

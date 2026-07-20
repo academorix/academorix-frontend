@@ -105,9 +105,7 @@
     {
       "model": "per_hour",
       "currency": "USD",
-      "tiers": [
-        { "name": "Standard", "rate_cents": 2500 }
-      ]
+      "tiers": [{ "name": "Standard", "rate_cents": 2500 }]
     },
     {
       "model": "per_hour",

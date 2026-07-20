@@ -9,13 +9,13 @@
 // Module
 // ============================================================================
 
-export { WebI18nModule } from './web-i18n.module';
+export { WebI18nModule } from "./web-i18n.module";
 
 // ============================================================================
 // Hooks
 // ============================================================================
 
-export { useI18n, useLocale, useDirection, useFormat } from './hooks';
+export { useI18n, useLocale, useDirection, useFormat } from "./hooks";
 export type {
   IFormatDateOptions,
   IFormatNumberOptions,
@@ -28,7 +28,7 @@ export type {
   UseI18nReturn,
   UseLocaleReturn,
   UseDirectionReturn,
-} from './hooks';
+} from "./hooks";
 
 // ============================================================================
 // Resolvers (Web) — options interfaces live in the interfaces block below
@@ -40,21 +40,21 @@ export {
   UrlParamResolver,
   CookieResolver,
   SubdomainResolver,
-} from './resolvers';
+} from "./resolvers";
 
 // ============================================================================
 // Adapters (web-only). Locale storage is unified in `@stackra/i18n/core`
 // via `StorageBackedLocaleAdapter` — no separate web adapter shipped.
 // ============================================================================
 
-export { WebDirectionAdapter } from './adapters';
+export { WebDirectionAdapter } from "./adapters";
 
 // ============================================================================
 // Components (built on @stackra/ui/react)
 // ============================================================================
 
-export { LanguageSelector } from './components';
-export { LanguageToggle } from './components';
+export { LanguageSelector } from "./components";
+export { LanguageToggle } from "./components";
 
 // ============================================================================
 // Interfaces (component props, adapter options, hook return types)
@@ -69,17 +69,17 @@ export type {
   LocalStorageResolverOptions,
   SubdomainResolverOptions,
   UrlParamResolverOptions,
-} from './interfaces';
+} from "./interfaces";
 
 // ============================================================================
 // Non-hook helpers
 // ============================================================================
 
-export { __, setDefaultTranslator } from '../core/utils/translate.util';
+export { __, setDefaultTranslator } from "../core/utils/translate.util";
 
 // ============================================================================
 // Re-exports from core (convenience)
 // ============================================================================
 
-export { I18nModule } from '../core/i18n.module';
-export { I18nManager, I18nLocaleService, DirectionService } from '../core/services';
+export { I18nModule } from "../core/i18n.module";
+export { I18nManager, I18nLocaleService, DirectionService } from "../core/services";

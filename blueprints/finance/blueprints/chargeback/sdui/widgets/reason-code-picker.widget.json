@@ -5,9 +5,22 @@
   "kind": "SduiWidget",
   "description": "ComboBox for selecting or displaying a reason code. Filters by declared network (Visa reason codes only for Visa chargebacks, etc.). Tooltip on each option shows full description + category + dispute_time_limit. Loads from `data/reason-code-catalog.json`. Read-only in most surfaces (chargebacks are bank-initiated; reason_code is frozen at creation). Used primarily on report filters + admin educational surfaces.",
   "props": {
-    "network": { "type": "string", "required": false, "enum": ["visa", "mastercard", "amex", "discover", "jcb", "unionpay", "diners", "other"], "description": "When specified, filters the picker to reason codes valid for this network." },
-    "selectedCode": { "type": "string", "required": false, "description": "Currently selected reason code." },
-    "readonly": { "type": "boolean", "default": true, "description": "Default read-only — chargeback reason_code is frozen at creation. Only report filters use readonly=false." },
+    "network": {
+      "type": "string",
+      "required": false,
+      "enum": ["visa", "mastercard", "amex", "discover", "jcb", "unionpay", "diners", "other"],
+      "description": "When specified, filters the picker to reason codes valid for this network."
+    },
+    "selectedCode": {
+      "type": "string",
+      "required": false,
+      "description": "Currently selected reason code."
+    },
+    "readonly": {
+      "type": "boolean",
+      "default": true,
+      "description": "Default read-only — chargeback reason_code is frozen at creation. Only report filters use readonly=false."
+    },
     "label": { "type": "string", "default": "Reason code" }
   },
   "dataSources": [

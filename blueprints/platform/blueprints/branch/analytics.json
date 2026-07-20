@@ -9,14 +9,27 @@
       "name": "Branch Created",
       "kind": "track",
       "consent_required": "essential",
-      "properties": ["tenant_id", "organization_id", "region_id", "country_code", "is_default", "created_via"],
+      "properties": [
+        "tenant_id",
+        "organization_id",
+        "region_id",
+        "country_code",
+        "is_default",
+        "created_via"
+      ],
       "description": "New Branch provisioned. `created_via`: admin-ui / import / cli / provisioning-api."
     },
     {
       "name": "Branch Closed",
       "kind": "track",
       "consent_required": "essential",
-      "properties": ["tenant_id", "branch_id", "reason_kind", "successor_designated", "days_since_created"],
+      "properties": [
+        "tenant_id",
+        "branch_id",
+        "reason_kind",
+        "successor_designated",
+        "days_since_created"
+      ],
       "description": "reason_kind: relocation / consolidation / lease-ended / underperformance / other. Free-form reason text is NOT included — internal-tier."
     },
     {
@@ -42,7 +55,13 @@
       "name": "Branch Opening Hours Changed",
       "kind": "track",
       "consent_required": "functional",
-      "properties": ["tenant_id", "branch_id", "days_touched_count", "has_multi_period", "has_exceptions"],
+      "properties": [
+        "tenant_id",
+        "branch_id",
+        "days_touched_count",
+        "has_multi_period",
+        "has_exceptions"
+      ],
       "description": "Feeds the schedule-management funnel dashboard."
     },
     {

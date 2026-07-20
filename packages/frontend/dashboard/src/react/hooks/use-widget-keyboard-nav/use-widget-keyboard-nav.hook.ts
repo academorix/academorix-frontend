@@ -53,9 +53,7 @@ function neighbourIndex(
 ): number | null {
   if (widgets.length === 0) return null;
 
-  const currentIndex = selectedId
-    ? widgets.findIndex((widget) => widget.id === selectedId)
-    : -1;
+  const currentIndex = selectedId ? widgets.findIndex((widget) => widget.id === selectedId) : -1;
 
   if (currentIndex < 0) {
     // Nothing selected → Tab picks the first, Shift+Tab the last.

@@ -4,5 +4,5 @@
  * @description Barrel for the `DevtoolsSearch` entity.
  */
 
-export { DevtoolsSearch } from './devtools-search.component';
-export type { DevtoolsSearchProps } from './devtools-search.interface';
+export { DevtoolsSearch } from "./devtools-search.component";
+export type { DevtoolsSearchProps } from "./devtools-search.interface";

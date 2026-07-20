@@ -17,18 +17,18 @@
  */
 export function detectIosSafari(): boolean {
   // SSR guard — `navigator` doesn't exist in Node.
-  if (typeof navigator === 'undefined') return false;
+  if (typeof navigator === "undefined") return false;
 
   const ua = navigator.userAgent;
-  if (typeof ua !== 'string' || ua.length === 0) return false;
+  if (typeof ua !== "string" || ua.length === 0) return false;
 
   // iOS devices — iPhone / iPad / iPod, plus modern iPad Safari
   // that reports "MacIntel" on the platform string but still has
   // TouchEvents (the WebKit engine's tell).
   const isIos =
     /iPhone|iPad|iPod/.test(ua) ||
-    (navigator.platform === 'MacIntel' &&
-      typeof navigator.maxTouchPoints === 'number' &&
+    (navigator.platform === "MacIntel" &&
+      typeof navigator.maxTouchPoints === "number" &&
       navigator.maxTouchPoints > 1);
   if (!isIos) return false;
 

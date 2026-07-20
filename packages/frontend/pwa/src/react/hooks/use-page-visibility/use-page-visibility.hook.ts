@@ -8,7 +8,7 @@
  *   with the new state.
  */
 
-import { useEffect } from 'react';
+import { useEffect } from "react";
 
 /** Callback invoked on each `visibilitychange`. */
 export type PageVisibilityCallback = (state: DocumentVisibilityState) => void;
@@ -31,9 +31,9 @@ export type PageVisibilityCallback = (state: DocumentVisibilityState) => void;
 export function usePageVisibility(callback: PageVisibilityCallback): void {
   useEffect(() => {
     // SSR guard.
-    if (typeof document === 'undefined') return;
+    if (typeof document === "undefined") return;
     const onChange = (): void => callback(document.visibilityState);
-    document.addEventListener('visibilitychange', onChange);
-    return () => document.removeEventListener('visibilitychange', onChange);
+    document.addEventListener("visibilitychange", onChange);
+    return () => document.removeEventListener("visibilitychange", onChange);
   }, [callback]);
 }

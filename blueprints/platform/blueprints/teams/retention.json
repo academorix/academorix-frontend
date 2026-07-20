@@ -24,7 +24,10 @@
     {
       "entity": "TeamMember",
       "hot": { "days": "while status='active'" },
-      "cold": { "days": "unbounded — historic roster is compliance material", "description": "Terminal-state rows (inactive / graduated / suspended / injured) retained indefinitely as participation lineage. This is deliberate — reversing a hard-delete of a former-member row is impossible + destroys the historic roster." },
+      "cold": {
+        "days": "unbounded — historic roster is compliance material",
+        "description": "Terminal-state rows (inactive / graduated / suspended / injured) retained indefinitely as participation lineage. This is deliberate — reversing a hard-delete of a former-member row is impossible + destroys the historic roster."
+      },
       "purge": {
         "trigger": "personal-erasure request (user delete themselves) → REDACT in place (name/phone/email cleared to [REDACTED]) but preserve the structural fact",
         "action": "field-level redaction",

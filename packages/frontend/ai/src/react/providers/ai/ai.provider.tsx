@@ -36,10 +36,10 @@
  * ```
  */
 
-import type { JSX, ReactNode } from 'react';
-import { Fragment } from 'react';
+import type { JSX, ReactNode } from "react";
+import { Fragment } from "react";
 
-import { LeaderGate } from './leader-gate.component';
+import { LeaderGate } from "./leader-gate.component";
 
 /** Props accepted by {@link AiProvider}. */
 export interface IAiProviderProps {

@@ -5,11 +5,11 @@
  *   Uses `useSyncExternalStore` to subscribe to `ConsentManager` changes.
  */
 
-import { useCallback, useSyncExternalStore } from 'react';
-import { useInject } from '@stackra/container/react';
+import { useCallback, useSyncExternalStore } from "react";
+import { useInject } from "@stackra/container/react";
 
-import { CONSENT_MANAGER } from '@stackra/contracts';
-import type { ConsentManager } from '@/core/services/consent-manager.service';
+import { CONSENT_MANAGER } from "@stackra/contracts";
+import type { ConsentManager } from "@/core/services/consent-manager.service";
 
 /** Value returned by {@link useConsent}. */
 export interface UseConsentResult {
@@ -53,7 +53,7 @@ export function useConsent(): UseConsentResult {
 
   const subscribe = useCallback(
     (onStoreChange: () => void) => manager.subscribe(onStoreChange),
-    [manager]
+    [manager],
   );
   const getSnapshot = useCallback(() => manager.getSnapshot(), [manager]);
 
@@ -63,13 +63,13 @@ export function useConsent(): UseConsentResult {
   const grantConsent = useCallback((category: string) => manager.grantConsent(category), [manager]);
   const revokeConsent = useCallback(
     (category: string) => manager.revokeConsent(category),
-    [manager]
+    [manager],
   );
   const grantAll = useCallback(() => manager.grantAll(), [manager]);
   const revokeAll = useCallback(() => manager.revokeAll(), [manager]);
   const setPreferences = useCallback(
     (prefs: Record<string, boolean>) => manager.setPreferences(prefs),
-    [manager]
+    [manager],
   );
 
   return {

@@ -42,7 +42,11 @@
             "kind": "View",
             "props": { "className": "flex items-start justify-between gap-2 mb-1" },
             "children": [
-              { "kind": "Text", "props": { "className": "font-medium" }, "bindings": { "children": { "$ref": "item.label" } } },
+              {
+                "kind": "Text",
+                "props": { "className": "font-medium" },
+                "bindings": { "children": { "$ref": "item.label" } }
+              },
               {
                 "kind": "Chip",
                 "props": { "size": "xs", "variant": "warning" },
@@ -53,7 +57,11 @@
               }
             ]
           },
-          { "kind": "Text", "props": { "className": "text-xs text-muted" }, "bindings": { "children": { "$ref": "item.description" } } }
+          {
+            "kind": "Text",
+            "props": { "className": "text-xs text-muted" },
+            "bindings": { "children": { "$ref": "item.description" } }
+          }
         ]
       }
     }

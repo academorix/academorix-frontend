@@ -7,7 +7,7 @@
  *   entity exception in `code-standards.md`).
  */
 
-import type { IActionContext, IActionDescriptor, IActionResponse } from '@stackra/contracts';
+import type { IActionContext, IActionDescriptor, IActionResponse } from "@stackra/contracts";
 
 /**
  * Reactive state exposed by {@link useAction}.

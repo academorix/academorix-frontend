@@ -10,7 +10,7 @@
  *   present.
  */
 
-import type { IQuietHoursWindow } from '../interfaces';
+import type { IQuietHoursWindow } from "../interfaces";
 
 /**
  * Whether `value` structurally matches the quiet-hours window
@@ -21,14 +21,14 @@ import type { IQuietHoursWindow } from '../interfaces';
  *   fields, each a non-empty string.
  */
 export function isQuietHoursWindow(value: unknown): value is IQuietHoursWindow {
-  if (value == null || typeof value !== 'object') return false;
-  const candidate = value as Partial<Record<'start' | 'end' | 'timezone', unknown>>;
+  if (value == null || typeof value !== "object") return false;
+  const candidate = value as Partial<Record<"start" | "end" | "timezone", unknown>>;
   return (
-    typeof candidate.start === 'string' &&
+    typeof candidate.start === "string" &&
     candidate.start.length > 0 &&
-    typeof candidate.end === 'string' &&
+    typeof candidate.end === "string" &&
     candidate.end.length > 0 &&
-    typeof candidate.timezone === 'string' &&
+    typeof candidate.timezone === "string" &&
     candidate.timezone.length > 0
   );
 }

@@ -4,7 +4,7 @@
  * @description Return shape for {@link useNotificationActions}.
  */
 
-import type { IDeliveryReport, INotificationPayload } from '@/core/interfaces';
+import type { IDeliveryReport, INotificationPayload } from "@/core/interfaces";
 
 /**
  * Value returned by {@link useNotificationActions}.
@@ -16,7 +16,7 @@ export interface IUseNotificationActionsResult {
   /** Dispatch a notification through the manager. */
   readonly dispatch: (
     payload: INotificationPayload,
-    options?: { readonly channels?: readonly string[] }
+    options?: { readonly channels?: readonly string[] },
   ) => Promise<readonly IDeliveryReport[]>;
   /** Mark a single in-app entry as seen. */
   readonly markSeen: (id: string) => Promise<boolean>;

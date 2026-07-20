@@ -44,12 +44,20 @@
                 },
                 {
                   "kind": "Text",
-                  "props": { "as": "h1", "className": "text-xl font-semibold", "children": "Branches on map" }
+                  "props": {
+                    "as": "h1",
+                    "className": "text-xl font-semibold",
+                    "children": "Branches on map"
+                  }
                 },
                 {
                   "kind": "Text",
                   "props": { "className": "text-sm text-muted" },
-                  "bindings": { "children": { "$expr": "branches.filter(b => b.coordinates).length + ' pinned · ' + branches.filter(b => !b.coordinates).length + ' unpinned'" } }
+                  "bindings": {
+                    "children": {
+                      "$expr": "branches.filter(b => b.coordinates).length + ' pinned · ' + branches.filter(b => !b.coordinates).length + ' unpinned'"
+                    }
+                  }
                 }
               ]
             },
@@ -62,7 +70,11 @@
                   "props": { "name": "map_mode", "defaultValue": "view" },
                   "options": [
                     { "key": "view", "label": "View" },
-                    { "key": "pin", "label": "Pin mode", "requiresPermission": "branches.update_coordinates" }
+                    {
+                      "key": "pin",
+                      "label": "Pin mode",
+                      "requiresPermission": "branches.update_coordinates"
+                    }
                   ]
                 },
                 {

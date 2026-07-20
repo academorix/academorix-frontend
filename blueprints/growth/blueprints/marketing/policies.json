@@ -8,13 +8,37 @@
       "model": "MarketingEvent",
       "class": "Academorix\\Growth\\Marketing\\Policies\\MarketingEventPolicy",
       "abilities": [
-        { "action": "viewAny", "permission": "marketing.events.viewAny", "scope": "any tenant member with marketing_capture entitlement + owner/admin/marketing role" },
+        {
+          "action": "viewAny",
+          "permission": "marketing.events.viewAny",
+          "scope": "any tenant member with marketing_capture entitlement + owner/admin/marketing role"
+        },
         { "action": "view", "permission": "marketing.events.view" },
-        { "action": "create", "permission": "NEVER", "scope": "events are captured ONLY via the MarketingEventCapturer listener path — no direct API create. Attempted creates return 403 MARKETING_EVENT_MANUAL_CREATE_FORBIDDEN." },
-        { "action": "update", "permission": "NEVER", "scope": "events are append-only after capture" },
-        { "action": "delete", "permission": "NEVER", "scope": "financial retention; purged by PurgeExpiredMarketingDataJob only" },
-        { "action": "dispatch", "permission": "marketing.events.dispatch", "scope": "admin + owner + support only — re-dispatches an existing event through the fan-out (idempotent — the deduplication_key on marketing_deliveries prevents provider double-fires when the provider supports the event_id contract)" },
-        { "action": "viewDeliveries", "permission": "marketing.deliveries.view", "scope": "same as view" },
+        {
+          "action": "create",
+          "permission": "NEVER",
+          "scope": "events are captured ONLY via the MarketingEventCapturer listener path — no direct API create. Attempted creates return 403 MARKETING_EVENT_MANUAL_CREATE_FORBIDDEN."
+        },
+        {
+          "action": "update",
+          "permission": "NEVER",
+          "scope": "events are append-only after capture"
+        },
+        {
+          "action": "delete",
+          "permission": "NEVER",
+          "scope": "financial retention; purged by PurgeExpiredMarketingDataJob only"
+        },
+        {
+          "action": "dispatch",
+          "permission": "marketing.events.dispatch",
+          "scope": "admin + owner + support only — re-dispatches an existing event through the fan-out (idempotent — the deduplication_key on marketing_deliveries prevents provider double-fires when the provider supports the event_id contract)"
+        },
+        {
+          "action": "viewDeliveries",
+          "permission": "marketing.deliveries.view",
+          "scope": "same as view"
+        },
         { "action": "platformViewAny", "permission": "platform.marketing.events.viewAny" },
         { "action": "platformView", "permission": "platform.marketing.events.view" }
       ]
@@ -23,38 +47,106 @@
       "model": "MarketingDelivery",
       "class": "Academorix\\Growth\\Marketing\\Policies\\MarketingDeliveryPolicy",
       "abilities": [
-        { "action": "viewAny", "permission": "marketing.deliveries.viewAny", "scope": "ops + marketing role + support role. Members do NOT see delivery-level details (that's ops-visible)." },
+        {
+          "action": "viewAny",
+          "permission": "marketing.deliveries.viewAny",
+          "scope": "ops + marketing role + support role. Members do NOT see delivery-level details (that's ops-visible)."
+        },
         { "action": "view", "permission": "marketing.deliveries.view" },
-        { "action": "create", "permission": "NEVER", "scope": "deliveries are created by the DispatchToProviderJob path only" },
-        { "action": "update", "permission": "NEVER", "scope": "per-attempt-immutable after create" },
+        {
+          "action": "create",
+          "permission": "NEVER",
+          "scope": "deliveries are created by the DispatchToProviderJob path only"
+        },
+        {
+          "action": "update",
+          "permission": "NEVER",
+          "scope": "per-attempt-immutable after create"
+        },
         { "action": "delete", "permission": "NEVER" },
-        { "action": "platformViewAny", "permission": "platform.marketing.deliveries.viewAny", "scope": "cross-tenant support — every fire is audit-critical" }
+        {
+          "action": "platformViewAny",
+          "permission": "platform.marketing.deliveries.viewAny",
+          "scope": "cross-tenant support — every fire is audit-critical"
+        }
       ]
     },
     {
       "model": "MarketingProviderConfig",
       "class": "Academorix\\Growth\\Marketing\\Policies\\MarketingProviderConfigPolicy",
       "abilities": [
-        { "action": "viewAny", "permission": "marketing.providers.viewAny", "scope": "owner + admin + marketing role. Support role sees redacted view (no config credentials)." },
-        { "action": "view", "permission": "marketing.providers.view", "scope": "config field returned encrypted; support role sees redacted view" },
-        { "action": "create", "permission": "marketing.providers.create", "scope": "owner + admin only — provider credentials are financial-critical" },
-        { "action": "update", "permission": "marketing.providers.update", "scope": "owner + admin only" },
-        { "action": "delete", "permission": "marketing.providers.delete", "scope": "owner + admin only" },
-        { "action": "test", "permission": "marketing.providers.test", "scope": "owner + admin. Test mode dispatches to sandbox endpoints." },
-        { "action": "resetCircuitBreaker", "permission": "marketing.providers.reset-circuit-breaker", "scope": "owner + admin + platform_ops. Every reset writes an audit row + increments circuit_breaker_reset_count." },
-        { "action": "platformViewAny", "permission": "platform.marketing.providers.viewAny", "scope": "platform_ops + support (redacted config)" }
+        {
+          "action": "viewAny",
+          "permission": "marketing.providers.viewAny",
+          "scope": "owner + admin + marketing role. Support role sees redacted view (no config credentials)."
+        },
+        {
+          "action": "view",
+          "permission": "marketing.providers.view",
+          "scope": "config field returned encrypted; support role sees redacted view"
+        },
+        {
+          "action": "create",
+          "permission": "marketing.providers.create",
+          "scope": "owner + admin only — provider credentials are financial-critical"
+        },
+        {
+          "action": "update",
+          "permission": "marketing.providers.update",
+          "scope": "owner + admin only"
+        },
+        {
+          "action": "delete",
+          "permission": "marketing.providers.delete",
+          "scope": "owner + admin only"
+        },
+        {
+          "action": "test",
+          "permission": "marketing.providers.test",
+          "scope": "owner + admin. Test mode dispatches to sandbox endpoints."
+        },
+        {
+          "action": "resetCircuitBreaker",
+          "permission": "marketing.providers.reset-circuit-breaker",
+          "scope": "owner + admin + platform_ops. Every reset writes an audit row + increments circuit_breaker_reset_count."
+        },
+        {
+          "action": "platformViewAny",
+          "permission": "platform.marketing.providers.viewAny",
+          "scope": "platform_ops + support (redacted config)"
+        }
       ]
     },
     {
       "model": "MarketingDeadLetter",
       "class": "Academorix\\Growth\\Marketing\\Policies\\MarketingDeadLetterPolicy",
       "abilities": [
-        { "action": "viewAny", "permission": "marketing.dead_letters.viewAny", "scope": "owner + admin + marketing role. Support role sees cross-tenant view." },
+        {
+          "action": "viewAny",
+          "permission": "marketing.dead_letters.viewAny",
+          "scope": "owner + admin + marketing role. Support role sees cross-tenant view."
+        },
         { "action": "view", "permission": "marketing.dead_letters.view" },
-        { "action": "replay", "permission": "marketing.dead_letters.replay", "scope": "owner + admin + platform_ops. Requires `marketing_dead_letter_replay` entitlement (Enterprise-only)." },
-        { "action": "resolve", "permission": "marketing.dead_letters.resolve", "scope": "owner + admin + platform_ops. Mark as resolved without replay (ops decision — provider event was replayed manually or is intentionally lost)" },
-        { "action": "platformViewAny", "permission": "platform.marketing.dead_letters.viewAny", "scope": "platform_ops + support cross-tenant P1 review" },
-        { "action": "platformReplay", "permission": "platform.marketing.dead_letters.replay", "scope": "platform_ops only — cross-tenant replay for support intervention" }
+        {
+          "action": "replay",
+          "permission": "marketing.dead_letters.replay",
+          "scope": "owner + admin + platform_ops. Requires `marketing_dead_letter_replay` entitlement (Enterprise-only)."
+        },
+        {
+          "action": "resolve",
+          "permission": "marketing.dead_letters.resolve",
+          "scope": "owner + admin + platform_ops. Mark as resolved without replay (ops decision — provider event was replayed manually or is intentionally lost)"
+        },
+        {
+          "action": "platformViewAny",
+          "permission": "platform.marketing.dead_letters.viewAny",
+          "scope": "platform_ops + support cross-tenant P1 review"
+        },
+        {
+          "action": "platformReplay",
+          "permission": "platform.marketing.dead_letters.replay",
+          "scope": "platform_ops only — cross-tenant replay for support intervention"
+        }
       ]
     }
   ]

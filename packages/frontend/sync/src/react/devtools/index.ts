@@ -5,5 +5,5 @@
  *   contribution.
  */
 
-export { SyncDevtoolsPanel } from './sync.devtools-panel';
-export { SyncDevtoolsPanelView, type SyncDevtoolsPanelViewProps } from './sync-devtools-panel-view';
+export { SyncDevtoolsPanel } from "./sync.devtools-panel";
+export { SyncDevtoolsPanelView, type SyncDevtoolsPanelViewProps } from "./sync-devtools-panel-view";

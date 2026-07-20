@@ -68,7 +68,7 @@
 // ============================================================================
 // Module
 // ============================================================================
-export { HttpModule } from './http.module';
+export { HttpModule } from "./http.module";
 
 // ============================================================================
 // Services
@@ -82,18 +82,18 @@ export {
   CircuitBreakerService,
   MetricsCollectorService,
   UploadService,
-} from './services';
-export type { IHttpClientDeps } from './services';
+} from "./services";
+export type { IHttpClientDeps } from "./services";
 
 // ============================================================================
 // Connectors
 // ============================================================================
-export { AxiosConnector } from './connectors';
+export { AxiosConnector } from "./connectors";
 
 // ============================================================================
 // Registries
 // ============================================================================
-export { MiddlewareRegistry, InterceptorRegistry } from './registries';
+export { MiddlewareRegistry, InterceptorRegistry } from "./registries";
 
 // ============================================================================
 // Middleware (pre-handler)
@@ -104,7 +104,7 @@ export {
   CircuitBreakerMiddleware,
   DeduplicationMiddleware,
   ProgressMiddleware,
-} from './middleware';
+} from "./middleware";
 
 // ============================================================================
 // Interceptors (wrap-handler)
@@ -116,7 +116,7 @@ export {
   CacheInterceptor,
   TransformInterceptor,
   MetricsInterceptor,
-} from './interceptors';
+} from "./interceptors";
 
 // ============================================================================
 // Parsers (streaming)
@@ -128,8 +128,8 @@ export {
   TextStreamParser,
   BinaryStreamParser,
   createStreamParser,
-} from './parsers';
-export type { IStreamParser, ISseParserOptions } from './parsers';
+} from "./parsers";
+export type { IStreamParser, ISseParserOptions } from "./parsers";
 
 // ============================================================================
 // Decorators
@@ -141,7 +141,7 @@ export {
   InjectHttpManager,
   getHttpMiddlewareMetadata,
   getHttpInterceptorMetadata,
-} from './decorators';
+} from "./decorators";
 
 // ============================================================================
 // Constants (decorator metadata + defaults)
@@ -154,7 +154,7 @@ export {
   DEFAULT_MAX_RETRIES,
   DEFAULT_RETRY_BACKOFF,
   DEFAULT_TIMEOUT_MS,
-} from './constants';
+} from "./constants";
 
 // ============================================================================
 // Errors
@@ -168,9 +168,9 @@ export {
   HttpCacheError,
   HttpTransformError,
   HttpStreamError,
-} from './errors';
+} from "./errors";
 
 // ============================================================================
 // Utilities
 // ============================================================================
-export { CaseConverter, DateParser, composeBaseURL, defineConfig } from './utils';
+export { CaseConverter, DateParser, composeBaseURL, defineConfig } from "./utils";

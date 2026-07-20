@@ -9,27 +9,55 @@
       "name": "Sport Registry Custom Sport Created",
       "kind": "track",
       "consent_required": "essential",
-      "properties": ["tenant_id", "sport_id", "slug", "category", "gender_typical", "governing_body"],
+      "properties": [
+        "tenant_id",
+        "sport_id",
+        "slug",
+        "category",
+        "gender_typical",
+        "governing_body"
+      ],
       "description": "Tenant admin created a custom Sport. Feeds the sports-registry-adoption dashboard — Enterprise tenants adding customs signal programme diversity that platform admins may want to codify into the platform catalog."
     },
     {
       "name": "Sport Registry Custom Discipline Created",
       "kind": "track",
       "consent_required": "essential",
-      "properties": ["tenant_id", "discipline_id", "sport_id", "sport_is_platform_seeded", "slug", "format_type"],
+      "properties": [
+        "tenant_id",
+        "discipline_id",
+        "sport_id",
+        "sport_is_platform_seeded",
+        "slug",
+        "format_type"
+      ],
       "description": "Tenant admin created a custom Discipline. `sport_is_platform_seeded` distinguishes 'custom Discipline under platform Sport' (extending the taxonomy) from 'custom Discipline under custom Sport' (fully custom branch)."
     },
     {
       "name": "Sport Registry Custom Position Created",
       "kind": "track",
       "consent_required": "essential",
-      "properties": ["tenant_id", "position_id", "discipline_id", "discipline_is_platform_seeded", "slug", "is_field_position"]
+      "properties": [
+        "tenant_id",
+        "position_id",
+        "discipline_id",
+        "discipline_is_platform_seeded",
+        "slug",
+        "is_field_position"
+      ]
     },
     {
       "name": "Sport Registry Deactivated",
       "kind": "track",
       "consent_required": "essential",
-      "properties": ["tenant_id", "entity_kind", "entity_id", "slug", "was_platform_seeded", "downstream_reference_count"],
+      "properties": [
+        "tenant_id",
+        "entity_kind",
+        "entity_id",
+        "slug",
+        "was_platform_seeded",
+        "downstream_reference_count"
+      ],
       "description": "entity_kind: sport / discipline / position. Feeds the downstream-impact dashboard — deactivations with high downstream_reference_count signal breaking changes that need customer comms."
     },
     {
@@ -57,21 +85,40 @@
       "name": "Sport Registry Prefix Resolution Failed",
       "kind": "track",
       "consent_required": "essential",
-      "properties": ["tenant_id", "source_table", "source_column", "unresolved_value", "resolver_context"],
+      "properties": [
+        "tenant_id",
+        "source_table",
+        "source_column",
+        "unresolved_value",
+        "resolver_context"
+      ],
       "description": "The reconciler detected a dangling reference. `resolver_context`: read / write / reconciler — distinguishes runtime failures from batch scans. Feeds the drift dashboard."
     },
     {
       "name": "Sport Registry Catalog Seeded",
       "kind": "track",
       "consent_required": "essential",
-      "properties": ["seeded_by", "catalog_version", "sport_count", "discipline_count", "position_count", "duration_ms"],
+      "properties": [
+        "seeded_by",
+        "catalog_version",
+        "sport_count",
+        "discipline_count",
+        "position_count",
+        "duration_ms"
+      ],
       "description": "Platform seeder completed. seeded_by: platform_boot / admin_reseed / legacy_backfill_command."
     },
     {
       "name": "Sport Registry Catalog Updated",
       "kind": "track",
       "consent_required": "essential",
-      "properties": ["catalog_version_before", "catalog_version_after", "added_count", "updated_count", "deactivated_count"],
+      "properties": [
+        "catalog_version_before",
+        "catalog_version_after",
+        "added_count",
+        "updated_count",
+        "deactivated_count"
+      ],
       "description": "Platform admin ran a reseed that changed the catalog. Feeds the versioning dashboard."
     }
   ],

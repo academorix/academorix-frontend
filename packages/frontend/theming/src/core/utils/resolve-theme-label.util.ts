@@ -4,7 +4,7 @@
  * @description Resolves a theme's display label with i18n fallback chain.
  */
 
-import type { ITheme } from '@stackra/contracts';
+import type { ITheme } from "@stackra/contracts";
 
 // ============================================================================
 // Utility
@@ -23,10 +23,7 @@ import type { ITheme } from '@stackra/contracts';
  * @param translate - Optional i18n translate function (e.g., `t` from useI18n).
  * @returns Localised label string.
  */
-export function resolveThemeLabel(
-  theme: ITheme,
-  translate?: (key: string) => string
-): string {
+export function resolveThemeLabel(theme: ITheme, translate?: (key: string) => string): string {
   if (theme.labelKey && translate) {
     const translated = translate(theme.labelKey);
     if (translated && translated !== theme.labelKey) {

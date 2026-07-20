@@ -25,5 +25,5 @@ export const collaborationConfig = {
   | `reverb` requires @stackra/realtime + a running websocket server.
   |
   */
-  transport: 'broadcast' as 'broadcast' | 'reverb',
+  transport: "broadcast" as "broadcast" | "reverb",
 };

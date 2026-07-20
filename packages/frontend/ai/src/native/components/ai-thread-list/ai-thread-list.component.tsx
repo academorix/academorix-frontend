@@ -7,11 +7,11 @@
  *   (Req 17.3, 17.4).
  */
 
-import type { JSX } from 'react';
-import { ScrollView, View } from 'react-native';
-import { Card, PressableFeedback, Typography } from '@stackra/ui/native';
+import type { JSX } from "react";
+import { ScrollView, View } from "react-native";
+import { Card, PressableFeedback, Typography } from "@stackra/ui/native";
 
-import { useAiThreads } from '@/core/hooks/use-ai-threads';
+import { useAiThreads } from "@/core/hooks/use-ai-threads";
 
 /** Props accepted by {@link AiThreadList}. */
 export interface IAiThreadListProps {
@@ -25,13 +25,13 @@ export interface IAiThreadListProps {
 
 /** A sidebar-friendly list of conversation threads. */
 export function AiThreadList(props: IAiThreadListProps): JSX.Element {
-  const { compact = false, ariaLabel = 'Recent conversations', className } = props;
+  const { compact = false, ariaLabel = "Recent conversations", className } = props;
   const { threads, activeId, select } = useAiThreads();
 
   return (
     <ScrollView
-      className={`flex-1${className ? ` ${className}` : ''}`}
-      contentContainerClassName={compact ? 'py-2 gap-1' : 'py-2 gap-2'}
+      className={`flex-1${className ? ` ${className}` : ""}`}
+      contentContainerClassName={compact ? "py-2 gap-1" : "py-2 gap-2"}
       accessibilityLabel={ariaLabel}
     >
       {threads.map((thread) => {
@@ -44,7 +44,7 @@ export function AiThreadList(props: IAiThreadListProps): JSX.Element {
             accessibilityLabel={`${thread.title}. ${thread.preview}`}
             accessibilityState={{ selected: isActive }}
           >
-            <Card variant={isActive ? 'secondary' : 'transparent'}>
+            <Card variant={isActive ? "secondary" : "transparent"}>
               <Card.Body>
                 <View className="flex-row items-center justify-between gap-2">
                   <Typography type="body-sm" weight="semibold" truncate className="flex-1">
@@ -72,10 +72,10 @@ export function AiThreadList(props: IAiThreadListProps): JSX.Element {
 }
 
 function formatMeta(timestamp: number): string {
-  if (!timestamp) return '';
+  if (!timestamp) return "";
   const date = new Date(timestamp);
   const now = new Date();
   const isToday = date.toDateString() === now.toDateString();
-  if (isToday) return date.toLocaleTimeString(undefined, { hour: 'numeric', minute: '2-digit' });
-  return date.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+  if (isToday) return date.toLocaleTimeString(undefined, { hour: "numeric", minute: "2-digit" });
+  return date.toLocaleDateString(undefined, { month: "short", day: "numeric" });
 }

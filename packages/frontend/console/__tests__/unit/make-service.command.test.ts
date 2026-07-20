@@ -182,7 +182,7 @@ describe("MakeServiceCommand", () => {
   it("derives PascalCase class names regardless of input casing", async () => {
     // Str.studly should convert kebab, snake, and space-separated
     // inputs into the same PascalCase output.
-    const cases: Array<[string, string]> = [
+    const cases: [string, string][] = [
       ["snake_case_service", "SnakeCaseServiceService"],
       ["route-registry", "RouteRegistryService"],
       ["metric_reporter", "MetricReporterService"],

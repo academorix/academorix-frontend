@@ -11,14 +11,14 @@
  *   matching heading.
  */
 
-import { defineMetadata, getMetadata } from '@vivtel/metadata';
+import { defineMetadata, getMetadata } from "@vivtel/metadata";
 import {
   FIELD_METADATA_KEY,
   SECTION_METADATA_KEY,
   type ISettingField,
   type ISettingSection,
   type Type,
-} from '@stackra/contracts';
+} from "@stackra/contracts";
 
 /**
  * Options accepted by the `@Section()` property decorator.

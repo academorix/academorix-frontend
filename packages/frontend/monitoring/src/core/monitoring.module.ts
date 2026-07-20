@@ -11,17 +11,17 @@
  *     manager during `onApplicationBootstrap` (no factory side effects).
  */
 
-import { Module, type DynamicModule } from '@stackra/container';
-import type { IAsyncModuleOptions } from '@stackra/contracts';
-import { MONITORING_CONFIG, MONITORING_MANAGER } from '@stackra/contracts';
-import type { IMonitoringManager, IMonitoringProvider, Type } from '@stackra/contracts';
+import { Module, type DynamicModule } from "@stackra/container";
+import type { IAsyncModuleOptions } from "@stackra/contracts";
+import { MONITORING_CONFIG, MONITORING_MANAGER } from "@stackra/contracts";
+import type { IMonitoringManager, IMonitoringProvider, Type } from "@stackra/contracts";
 
-import type { IMonitoringModuleOptions } from './interfaces';
-import { createSeedLoader, seedLoaderToken } from '@stackra/support';
+import type { IMonitoringModuleOptions } from "./interfaces";
+import { createSeedLoader, seedLoaderToken } from "@stackra/support";
 
-import { mergeConfig } from './utils/merge-config.util';
-import { MonitoringManager } from './services/monitoring-manager.service';
-import { MonitoringProviderLoader } from './services/monitoring-provider-loader.service';
+import { mergeConfig } from "./utils/merge-config.util";
+import { MonitoringManager } from "./services/monitoring-manager.service";
+import { MonitoringProviderLoader } from "./services/monitoring-provider-loader.service";
 
 /**
  * Monitoring DI module.
@@ -68,7 +68,7 @@ export class MonitoringModule {
    * @returns Dynamic module definition.
    */
   public static forRootAsync(
-    options: IAsyncModuleOptions<Partial<IMonitoringModuleOptions>>
+    options: IAsyncModuleOptions<Partial<IMonitoringModuleOptions>>,
   ): DynamicModule {
     return {
       module: MonitoringModule,
@@ -99,7 +99,7 @@ export class MonitoringModule {
    * @returns Dynamic module definition.
    */
   public static forFeature(
-    provider: Type<IMonitoringProvider> | Type<IMonitoringProvider>[]
+    provider: Type<IMonitoringProvider> | Type<IMonitoringProvider>[],
   ): DynamicModule {
     const classes = Array.isArray(provider) ? provider : [provider];
     return {

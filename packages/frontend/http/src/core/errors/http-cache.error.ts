@@ -9,12 +9,12 @@
  * @module @stackra/http/errors/http-cache
  */
 
-import { HttpError } from './http.error';
+import { HttpError } from "./http.error";
 
 /**
  * Cache operation error.
  */
 export class HttpCacheError extends HttpError {
-  public override readonly name: string = 'HttpCacheError';
-  public override readonly code: string = 'HTTP_CACHE_ERROR';
+  public override readonly name: string = "HttpCacheError";
+  public override readonly code: string = "HTTP_CACHE_ERROR";
 }

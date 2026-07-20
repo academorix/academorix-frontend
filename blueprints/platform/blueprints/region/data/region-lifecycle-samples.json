@@ -45,7 +45,7 @@
             "rtl": false,
             "weekend_days": ["saturday", "sunday"],
             "tax_config": {
-              "default_rate_percent": 0.000,
+              "default_rate_percent": 0.0,
               "name": "Sales Tax",
               "inclusive": false,
               "notes": "US federal has no sales tax..."
@@ -102,7 +102,7 @@
           "slug": "uae",
           "country_code": "AE",
           "tax_config": {
-            "default_rate_percent": 5.000,
+            "default_rate_percent": 5.0,
             "name": "VAT",
             "inclusive": false,
             "registration_number": "TRN-100234567890003"
@@ -161,9 +161,7 @@
         },
         {
           "step": "Post-commit events",
-          "events": [
-            "RegionCreated (source='admin_created')"
-          ]
+          "events": ["RegionCreated (source='admin_created')"]
         }
       ],
       "outcome": {
@@ -179,7 +177,7 @@
             "rtl": true,
             "weekend_days": ["saturday", "sunday"],
             "tax_config": {
-              "default_rate_percent": 5.000,
+              "default_rate_percent": 5.0,
               "name": "VAT",
               "inclusive": false,
               "registration_number": "TRN-100234567890003"
@@ -242,13 +240,21 @@
           "slug": "uk",
           "country_code": "GB",
           "tax_config": {
-            "default_rate_percent": 20.000,
+            "default_rate_percent": 20.0,
             "name": "VAT",
             "inclusive": true,
             "rates": [
-              { "category": "youth_programme", "rate_percent": 0.000, "notes": "VAT-exempt for programmes serving under-18s (schedule 8, group 6)" },
-              { "category": "adult_gym_membership", "rate_percent": 20.000 },
-              { "category": "food_service", "rate_percent": 20.000, "notes": "Hot food only; cold takeaway is 0% but that's out of scope for the SDK" }
+              {
+                "category": "youth_programme",
+                "rate_percent": 0.0,
+                "notes": "VAT-exempt for programmes serving under-18s (schedule 8, group 6)"
+              },
+              { "category": "adult_gym_membership", "rate_percent": 20.0 },
+              {
+                "category": "food_service",
+                "rate_percent": 20.0,
+                "notes": "Hot food only; cold takeaway is 0% but that's out of scope for the SDK"
+              }
             ],
             "registration_number": "GB123456789"
           }
@@ -358,7 +364,10 @@
       "scenario": "Pause — block new bookings",
       "input": {
         "route": "POST /api/v1/regions/reg_01H3333UAEXXXXXXXXXXXXX0/pause",
-        "body": { "reason": "Regulatory review pending — pausing new memberships in AE until Q3.", "expected_resume_at": "2026-10-01T00:00:00Z" }
+        "body": {
+          "reason": "Regulatory review pending — pausing new memberships in AE until Q3.",
+          "expected_resume_at": "2026-10-01T00:00:00Z"
+        }
       },
       "trace": [
         {
@@ -491,7 +500,7 @@
         },
         "body": {
           "tax_config": {
-            "default_rate_percent": 5.000,
+            "default_rate_percent": 5.0,
             "name": "VAT",
             "inclusive": false,
             "apply_retroactively": true,

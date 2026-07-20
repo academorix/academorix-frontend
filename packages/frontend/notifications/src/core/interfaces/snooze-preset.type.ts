@@ -17,4 +17,4 @@
  * - `tomorrow` — 24 hours (next day).
  * - `nextWeek` — 7 days.
  */
-export type SnoozePreset = 'hour' | 'threeHours' | 'tomorrow' | 'nextWeek';
+export type SnoozePreset = "hour" | "threeHours" | "tomorrow" | "nextWeek";

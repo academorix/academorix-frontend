@@ -11,10 +11,10 @@
  *   the package.
  */
 
-import { useEffect, useRef, useState, type ReactElement } from 'react';
-import { Card } from '@stackra/ui/react';
+import { useEffect, useRef, useState, type ReactElement } from "react";
+import { Card } from "@stackra/ui/react";
 
-import type { InstallQrCodeProps } from './install-qr-code.interface';
+import type { InstallQrCodeProps } from "./install-qr-code.interface";
 
 /**
  * Install QR code.
@@ -37,7 +37,7 @@ import type { InstallQrCodeProps } from './install-qr-code.interface';
 export function InstallQrCode({
   url,
   size = 200,
-  errorCorrection = 'M',
+  errorCorrection = "M",
   className,
   title,
   description,
@@ -52,7 +52,7 @@ export function InstallQrCode({
     // rely on the `@vite-ignore` hint so the bundler doesn't try to
     // resolve `qrcode` statically. The specifier is deliberately a
     // dynamic string so tsc doesn't ambient-resolve it either.
-    const moduleName = 'qrcode';
+    const moduleName = "qrcode";
     void (async () => {
       try {
         // Cast to a structural interface — the `qrcode` peer isn't
@@ -62,7 +62,7 @@ export function InstallQrCode({
           readonly toCanvas: (
             canvas: HTMLCanvasElement,
             text: string,
-            options: { readonly width: number; readonly errorCorrectionLevel: string }
+            options: { readonly width: number; readonly errorCorrectionLevel: string },
           ) => Promise<void>;
         };
         if (cancelled) return;
@@ -93,7 +93,7 @@ export function InstallQrCode({
       ) : null}
       <Card.Content className="flex items-center justify-center p-4">
         {error ? (
-          <span className="text-sm text-danger">{error}</span>
+          <span className="text-danger text-sm">{error}</span>
         ) : (
           <canvas ref={canvasRef} width={size} height={size} aria-label={`QR code for ${url}`} />
         )}

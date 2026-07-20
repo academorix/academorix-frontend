@@ -15,7 +15,12 @@
         "no_show_fee_currency": "USD",
         "max_unexcused_absences_per_period": 3,
         "absence_freeze_period_days": 30,
-        "auto_excuse_reasons": ["medical_documented", "bereavement", "school_conflict", "religious_observance"],
+        "auto_excuse_reasons": [
+          "medical_documented",
+          "bereavement",
+          "school_conflict",
+          "religious_observance"
+        ],
         "notification_config": {
           "notify_athlete_on_first_absence": true,
           "notify_guardian_on_second": true,
@@ -36,7 +41,15 @@
         "no_show_fee_currency": null,
         "max_unexcused_absences_per_period": 10,
         "absence_freeze_period_days": 60,
-        "auto_excuse_reasons": ["medical_documented", "medical_undocumented", "family_emergency_notified", "family_emergency_unnotified", "vacation_notified", "transportation", "weather"],
+        "auto_excuse_reasons": [
+          "medical_documented",
+          "medical_undocumented",
+          "family_emergency_notified",
+          "family_emergency_unnotified",
+          "vacation_notified",
+          "transportation",
+          "weather"
+        ],
         "notification_config": {
           "notify_athlete_on_first_absence": false,
           "notify_guardian_on_second": false,
@@ -78,7 +91,13 @@
         "no_show_fee_currency": null,
         "max_unexcused_absences_per_period": 100,
         "absence_freeze_period_days": 365,
-        "auto_excuse_reasons": ["medical_documented", "family_emergency_notified", "vacation_notified", "weather", "transportation"],
+        "auto_excuse_reasons": [
+          "medical_documented",
+          "family_emergency_notified",
+          "vacation_notified",
+          "weather",
+          "transportation"
+        ],
         "notification_config": {
           "notify_athlete_on_first_absence": false,
           "notify_guardian_on_second": true,
@@ -99,7 +118,12 @@
         "no_show_fee_currency": "USD",
         "max_unexcused_absences_per_period": 5,
         "absence_freeze_period_days": 45,
-        "auto_excuse_reasons": ["medical_documented", "medical_undocumented", "family_emergency_notified", "school_conflict"],
+        "auto_excuse_reasons": [
+          "medical_documented",
+          "medical_undocumented",
+          "family_emergency_notified",
+          "school_conflict"
+        ],
         "notification_config": {
           "notify_athlete_on_first_absence": true,
           "notify_guardian_on_second": true,

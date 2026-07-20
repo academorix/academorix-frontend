@@ -7,7 +7,7 @@
  *   merged with the root configuration.
  */
 
-import type { CspSource } from '../types/csp-source.type';
+import type { CspSource } from "../types/csp-source.type";
 
 /**
  * Feature-scoped CSP contribution.

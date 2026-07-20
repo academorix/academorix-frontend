@@ -19,9 +19,9 @@
  *   14.2 (persona seeding via lifecycle hooks).
  */
 
-import { Global, Module, type DynamicModule, type Provider } from '@stackra/container';
-import { createSeedLoader, seedLoaderToken } from '@stackra/support';
-import { DevtoolsModule } from '@stackra/devtools';
+import { Global, Module, type DynamicModule, type Provider } from "@stackra/container";
+import { createSeedLoader, seedLoaderToken } from "@stackra/support";
+import { DevtoolsModule } from "@stackra/devtools";
 import {
   AI_AGENT_REGISTRY,
   AI_AUTH_PROVIDER,
@@ -41,24 +41,24 @@ import {
   type IAiModuleAsyncOptions,
   type IAiModuleOptions,
   type IPersona,
-} from '@stackra/contracts';
+} from "@stackra/contracts";
 
-import { StreamDecoder } from './decoder/stream-decoder';
-import { AgentRegistry } from './registries/agent.registry';
-import { ContextRegistry } from './registries/context.registry';
-import { ToolRegistry } from './registries/tool.registry';
-import { AiClientService } from './services/ai-client.service';
-import { ChatOrchestrator } from './services/chat-orchestrator.service';
-import { ConnectionManager } from './services/connection-manager.service';
-import { ContextCollector } from './services/context-collector.service';
-import { ConversationStore } from './services/conversation-store.service';
-import { DraftService } from './services/draft.service';
-import { PersonaDiscovery } from './services/persona-discovery.service';
-import { PiiRedactor } from './services/pii-redactor.service';
-import { ToolConverter } from './services/tool-converter.service';
-import { ToolExecutor } from './services/tool-executor.service';
-import { mergeConfig } from './utils/merge-config.util';
-import { AiDevtoolsPanel } from '../react/devtools/ai.devtools-panel';
+import { StreamDecoder } from "./decoder/stream-decoder";
+import { AgentRegistry } from "./registries/agent.registry";
+import { ContextRegistry } from "./registries/context.registry";
+import { ToolRegistry } from "./registries/tool.registry";
+import { AiClientService } from "./services/ai-client.service";
+import { ChatOrchestrator } from "./services/chat-orchestrator.service";
+import { ConnectionManager } from "./services/connection-manager.service";
+import { ContextCollector } from "./services/context-collector.service";
+import { ConversationStore } from "./services/conversation-store.service";
+import { DraftService } from "./services/draft.service";
+import { PersonaDiscovery } from "./services/persona-discovery.service";
+import { PiiRedactor } from "./services/pii-redactor.service";
+import { ToolConverter } from "./services/tool-converter.service";
+import { ToolExecutor } from "./services/tool-executor.service";
+import { mergeConfig } from "./utils/merge-config.util";
+import { AiDevtoolsPanel } from "../react/devtools/ai.devtools-panel";
 
 /**
  * The `@stackra/ai` module.
@@ -178,7 +178,7 @@ export class AiModule {
    */
   public static forFeature(options: { personas?: IPersona[]; name?: string }): DynamicModule {
     const personas = options.personas ?? [];
-    const label = options.name ?? 'personas';
+    const label = options.name ?? "personas";
     return {
       module: AiModule,
       providers: [

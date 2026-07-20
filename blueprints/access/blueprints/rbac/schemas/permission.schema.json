@@ -143,15 +143,7 @@
       }
     ]
   },
-  "required": [
-    "id",
-    "name",
-    "guard_name",
-    "is_system",
-    "sort_order",
-    "created_at",
-    "updated_at"
-  ],
+  "required": ["id", "name", "guard_name", "is_system", "sort_order", "created_at", "updated_at"],
   "properties": {
     "id": { "type": "string", "pattern": "^per_[0-9A-HJKMNP-TV-Z]{26}$" },
     "application_id": { "type": ["string", "null"], "pattern": "^app_[0-9A-HJKMNP-TV-Z]{26}$" },

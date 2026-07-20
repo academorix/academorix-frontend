@@ -5,18 +5,18 @@
  *   and merging of registry sources.
  */
 
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect, beforeEach } from "vitest";
 
-import { CspService } from '@/core/services/csp.service';
-import { NonceGenerator } from '@/core/services/nonce-generator.service';
-import { CspRegistry } from '@/core/registries/csp.registry';
-import type { CspModuleOptions } from '@/core/interfaces/csp-module-options.interface';
+import { CspService } from "@/core/services/csp.service";
+import { NonceGenerator } from "@/core/services/nonce-generator.service";
+import { CspRegistry } from "@/core/registries/csp.registry";
+import type { CspModuleOptions } from "@/core/interfaces/csp-module-options.interface";
 
 function makeService(config: CspModuleOptions, registry = new CspRegistry()): CspService {
   return new CspService(config, new NonceGenerator(), registry);
 }
 
-describe('CspService', () => {
+describe("CspService", () => {
   let registry: CspRegistry;
 
   beforeEach(() => {
@@ -32,38 +32,38 @@ describe('CspService', () => {
     expect(policy.header).not.toContain("'nonce'");
   });
 
-  it('drops nonce placeholders when nonce generation is disabled', () => {
+  it("drops nonce placeholders when nonce generation is disabled", () => {
     const svc = makeService({ scriptSrc: ["'self'", "'nonce'"], nonce: false }, registry);
     const policy = svc.generatePolicy();
 
-    expect(policy.nonce).toBe('');
+    expect(policy.nonce).toBe("");
     expect(policy.header).not.toContain("'nonce'");
     expect(policy.header).toContain("script-src 'self'");
   });
 
-  it('sets the report-only header name when configured', () => {
+  it("sets the report-only header name when configured", () => {
     expect(makeService({ reportOnly: true }, registry).generatePolicy().headerName).toBe(
-      'Content-Security-Policy-Report-Only'
+      "Content-Security-Policy-Report-Only",
     );
-    expect(makeService({}, registry).generatePolicy().headerName).toBe('Content-Security-Policy');
+    expect(makeService({}, registry).generatePolicy().headerName).toBe("Content-Security-Policy");
   });
 
-  it('merges registry sources into the generated directives', () => {
+  it("merges registry sources into the generated directives", () => {
     registry.registerPolicy({
-      name: 'stripe',
-      scriptSrc: ['https://js.stripe.com'],
-      frameSrc: ['https://hooks.stripe.com'],
+      name: "stripe",
+      scriptSrc: ["https://js.stripe.com"],
+      frameSrc: ["https://hooks.stripe.com"],
     });
     const svc = makeService({ scriptSrc: ["'self'"] }, registry);
     const policy = svc.generatePolicy();
 
-    expect(policy.header).toContain('script-src');
-    expect(policy.header).toContain('https://js.stripe.com');
+    expect(policy.header).toContain("script-src");
+    expect(policy.header).toContain("https://js.stripe.com");
     // frame-src merges the config default ('none') with the feature source.
-    expect(policy.header).toContain('https://hooks.stripe.com');
+    expect(policy.header).toContain("https://hooks.stripe.com");
   });
 
-  it('caches the policy via getPolicy and regenerates after reset', () => {
+  it("caches the policy via getPolicy and regenerates after reset", () => {
     const svc = makeService({ scriptSrc: ["'self'", "'nonce'"] }, registry);
     const first = svc.getPolicy();
     expect(svc.getPolicy()).toBe(first);

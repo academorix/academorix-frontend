@@ -7,18 +7,18 @@
  *   write `mock.$.wasCalledWith('translate', ...)` assertions.
  */
 
-import { createAssertableProxy, type AssertableProxy } from '@stackra/testing';
+import { createAssertableProxy, type AssertableProxy } from "@stackra/testing";
 
-import { MockI18nManager } from './mock-i18n-manager';
-import { MockLocaleService } from './mock-locale-service';
+import { MockI18nManager } from "./mock-i18n-manager";
+import { MockLocaleService } from "./mock-locale-service";
 import {
   MockDirectionAdapter,
   MockDirectionService,
   MockLocaleStorage,
   MockTranslationProvider,
   MockI18nLoader,
-} from './mocks';
-import type { I18nTranslation } from '@stackra/contracts';
+} from "./mocks";
+import type { I18nTranslation } from "@stackra/contracts";
 
 // ── Managers / services ──────────────────────────────────────────────────
 
@@ -84,7 +84,7 @@ export function createMockTranslationProvider(): AssertableProxy<MockTranslation
  * Create an assertable `MockI18nLoader`.
  */
 export function createMockI18nLoader(
-  translations: Record<string, I18nTranslation>
+  translations: Record<string, I18nTranslation>,
 ): AssertableProxy<MockI18nLoader> {
   return createAssertableProxy(new MockI18nLoader(translations));
 }

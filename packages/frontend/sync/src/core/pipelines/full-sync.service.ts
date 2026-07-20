@@ -5,18 +5,18 @@
  *   every requested collection through `@stackra/pipeline`.
  */
 
-import { Pipeline } from '@stackra/pipeline';
+import { Pipeline } from "@stackra/pipeline";
 import type {
   IFullSyncPipelineContext,
   IPullOptions,
   IPushOptions,
   ISyncResult,
-} from '@stackra/contracts';
-import { SyncDirection, SyncStatus } from '@stackra/contracts';
+} from "@stackra/contracts";
+import { SyncDirection, SyncStatus } from "@stackra/contracts";
 
-import type { CheckpointService } from '../services/checkpoint.service';
-import type { PullService } from '../services/pull.service';
-import type { PushService } from '../services/push.service';
+import type { CheckpointService } from "../services/checkpoint.service";
+import type { PullService } from "../services/pull.service";
+import type { PushService } from "../services/push.service";
 
 /**
  * Execute a full bidirectional sync (push then pull) through the pipeline.
@@ -27,7 +27,7 @@ export async function executeFullSyncPipeline(
   checkpointService: CheckpointService,
   collections: string[],
   pullOptionsFactory: (collection: string) => IPullOptions,
-  pushOptionsFactory: (collection: string) => IPushOptions
+  pushOptionsFactory: (collection: string) => IPushOptions,
 ): Promise<ISyncResult> {
   const context: IFullSyncPipelineContext = {
     collections,
@@ -51,7 +51,7 @@ export async function executeFullSyncPipeline(
     .through([
       async (
         ctx: IFullSyncPipelineContext,
-        next: (c: IFullSyncPipelineContext) => Promise<IFullSyncPipelineContext>
+        next: (c: IFullSyncPipelineContext) => Promise<IFullSyncPipelineContext>,
       ) => {
         for (const collection of ctx.collections) {
           const pushResult = await pushService.push(collection, ctx.pushOptionsFactory(collection));
@@ -73,7 +73,7 @@ export async function executeFullSyncPipeline(
       },
       async (
         ctx: IFullSyncPipelineContext,
-        next: (c: IFullSyncPipelineContext) => Promise<IFullSyncPipelineContext>
+        next: (c: IFullSyncPipelineContext) => Promise<IFullSyncPipelineContext>,
       ) => {
         for (const collection of ctx.collections) {
           const pullResult = await pullService.pull(collection, ctx.pullOptionsFactory(collection));
@@ -94,7 +94,7 @@ export async function executeFullSyncPipeline(
       },
       async (
         ctx: IFullSyncPipelineContext,
-        next: (c: IFullSyncPipelineContext) => Promise<IFullSyncPipelineContext>
+        next: (c: IFullSyncPipelineContext) => Promise<IFullSyncPipelineContext>,
       ) => {
         ctx.result.duration = Date.now() - ctx.startTime;
         ctx.result.timestamp = new Date();

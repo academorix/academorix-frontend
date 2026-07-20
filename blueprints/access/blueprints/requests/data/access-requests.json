@@ -120,10 +120,30 @@
     "template_id": "apt_riverside_medical_view_template",
     "reminders_sent": 0,
     "audit_trail": [
-      { "event": "submitted", "occurred_at": "2026-08-02T08:12:04Z", "actor_id": "usr_riverside_physio_01", "note": null },
-      { "event": "approver_notified", "occurred_at": "2026-08-02T08:12:07Z", "actor_id": null, "note": "Delivered to Marcus Bell via mail + database" },
-      { "event": "approved", "occurred_at": "2026-08-02T09:34:12Z", "actor_id": "usr_riverside_head_coach_01", "note": null },
-      { "event": "grant_materialised", "occurred_at": "2026-08-02T09:34:13Z", "actor_id": null, "note": "Grant agr_01K3R7V3A4N7D6Q8K5B2C9AGR01 created with 28-day TTL" }
+      {
+        "event": "submitted",
+        "occurred_at": "2026-08-02T08:12:04Z",
+        "actor_id": "usr_riverside_physio_01",
+        "note": null
+      },
+      {
+        "event": "approver_notified",
+        "occurred_at": "2026-08-02T08:12:07Z",
+        "actor_id": null,
+        "note": "Delivered to Marcus Bell via mail + database"
+      },
+      {
+        "event": "approved",
+        "occurred_at": "2026-08-02T09:34:12Z",
+        "actor_id": "usr_riverside_head_coach_01",
+        "note": null
+      },
+      {
+        "event": "grant_materialised",
+        "occurred_at": "2026-08-02T09:34:13Z",
+        "actor_id": null,
+        "note": "Grant agr_01K3R7V3A4N7D6Q8K5B2C9AGR01 created with 28-day TTL"
+      }
     ]
   },
   {
@@ -174,9 +194,24 @@
     "template_id": "apt_northgate_invoice_edit_template",
     "reminders_sent": 0,
     "audit_trail": [
-      { "event": "submitted", "occurred_at": "2026-07-25T09:45:12Z", "actor_id": "usr_northgate_bookkeeper_01", "note": null },
-      { "event": "approver_notified", "occurred_at": "2026-07-25T09:45:15Z", "actor_id": null, "note": "Delivered to Sara Kim via mail + database" },
-      { "event": "rejected", "occurred_at": "2026-07-25T14:22:03Z", "actor_id": "usr_northgate_cfo_01", "note": null }
+      {
+        "event": "submitted",
+        "occurred_at": "2026-07-25T09:45:12Z",
+        "actor_id": "usr_northgate_bookkeeper_01",
+        "note": null
+      },
+      {
+        "event": "approver_notified",
+        "occurred_at": "2026-07-25T09:45:15Z",
+        "actor_id": null,
+        "note": "Delivered to Sara Kim via mail + database"
+      },
+      {
+        "event": "rejected",
+        "occurred_at": "2026-07-25T14:22:03Z",
+        "actor_id": "usr_northgate_cfo_01",
+        "note": null
+      }
     ]
   },
   {
@@ -219,12 +254,42 @@
     "template_id": null,
     "reminders_sent": 3,
     "audit_trail": [
-      { "event": "submitted", "occurred_at": "2026-07-20T08:00:00Z", "actor_id": "usr_riverside_parent_01", "note": null },
-      { "event": "approver_notified", "occurred_at": "2026-07-20T08:00:04Z", "actor_id": null, "note": "Delivered to Rachel Simmons via mail" },
-      { "event": "reminded", "occurred_at": "2026-07-21T08:00:00Z", "actor_id": null, "note": "First reminder" },
-      { "event": "reminded", "occurred_at": "2026-07-23T08:00:00Z", "actor_id": null, "note": "Second reminder" },
-      { "event": "reminded", "occurred_at": "2026-07-26T08:00:00Z", "actor_id": null, "note": "Final reminder" },
-      { "event": "expired", "occurred_at": "2026-07-27T08:00:12Z", "actor_id": null, "note": "Auto-expired after 168 hours with no decision" }
+      {
+        "event": "submitted",
+        "occurred_at": "2026-07-20T08:00:00Z",
+        "actor_id": "usr_riverside_parent_01",
+        "note": null
+      },
+      {
+        "event": "approver_notified",
+        "occurred_at": "2026-07-20T08:00:04Z",
+        "actor_id": null,
+        "note": "Delivered to Rachel Simmons via mail"
+      },
+      {
+        "event": "reminded",
+        "occurred_at": "2026-07-21T08:00:00Z",
+        "actor_id": null,
+        "note": "First reminder"
+      },
+      {
+        "event": "reminded",
+        "occurred_at": "2026-07-23T08:00:00Z",
+        "actor_id": null,
+        "note": "Second reminder"
+      },
+      {
+        "event": "reminded",
+        "occurred_at": "2026-07-26T08:00:00Z",
+        "actor_id": null,
+        "note": "Final reminder"
+      },
+      {
+        "event": "expired",
+        "occurred_at": "2026-07-27T08:00:12Z",
+        "actor_id": null,
+        "note": "Auto-expired after 168 hours with no decision"
+      }
     ]
   },
   {
@@ -267,9 +332,24 @@
     "template_id": null,
     "reminders_sent": 0,
     "audit_trail": [
-      { "event": "submitted", "occurred_at": "2026-07-30T14:03:11Z", "actor_id": "usr_riverside_coach_02", "note": null },
-      { "event": "approver_notified", "occurred_at": "2026-07-30T14:03:14Z", "actor_id": null, "note": "Delivered to Grace Wu via mail + database" },
-      { "event": "cancelled", "occurred_at": "2026-07-30T14:06:22Z", "actor_id": "usr_riverside_coach_02", "note": "Withdrawn by requester" }
+      {
+        "event": "submitted",
+        "occurred_at": "2026-07-30T14:03:11Z",
+        "actor_id": "usr_riverside_coach_02",
+        "note": null
+      },
+      {
+        "event": "approver_notified",
+        "occurred_at": "2026-07-30T14:03:14Z",
+        "actor_id": null,
+        "note": "Delivered to Grace Wu via mail + database"
+      },
+      {
+        "event": "cancelled",
+        "occurred_at": "2026-07-30T14:06:22Z",
+        "actor_id": "usr_riverside_coach_02",
+        "note": "Withdrawn by requester"
+      }
     ]
   }
 ]

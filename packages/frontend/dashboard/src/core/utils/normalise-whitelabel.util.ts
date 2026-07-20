@@ -29,7 +29,9 @@ export interface WhitelabelInput {
  * @param input - Raw whitelabel payload.
  * @returns Trimmed payload, or `undefined` when nothing survives.
  */
-export function normaliseWhitelabel(input: WhitelabelInput | undefined): WhitelabelInput | undefined {
+export function normaliseWhitelabel(
+  input: WhitelabelInput | undefined,
+): WhitelabelInput | undefined {
   if (!input) return undefined;
 
   const logoUrl = input.logoUrl?.trim() || undefined;

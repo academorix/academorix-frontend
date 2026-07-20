@@ -9,7 +9,13 @@
   "resource": { "module": "attendance", "entity": "late-arrival", "action": "list" },
   "requiresPermission": "late-arrivals.viewAny",
   "dataSources": [
-    { "name": "late_arrivals", "kind": "http.get", "url": "/api/v1/late-arrivals", "unwrap": "data", "queryFromFilters": true }
+    {
+      "name": "late_arrivals",
+      "kind": "http.get",
+      "url": "/api/v1/late-arrivals",
+      "unwrap": "data",
+      "queryFromFilters": true
+    }
   ],
   "nodes": [
     {
@@ -20,8 +26,21 @@
         {
           "kind": "View",
           "children": [
-            { "kind": "Text", "props": { "as": "h1", "className": "text-2xl font-semibold", "children": "Late arrivals" } },
-            { "kind": "Text", "props": { "className": "text-sm text-muted", "children": "Every 'late' attendance record has a corresponding LateArrival satellite tracking exactly how late." } }
+            {
+              "kind": "Text",
+              "props": {
+                "as": "h1",
+                "className": "text-2xl font-semibold",
+                "children": "Late arrivals"
+              }
+            },
+            {
+              "kind": "Text",
+              "props": {
+                "className": "text-sm text-muted",
+                "children": "Every 'late' attendance record has a corresponding LateArrival satellite tracking exactly how late."
+              }
+            }
           ]
         },
         {
@@ -36,11 +55,22 @@
                 "kind": "View",
                 "props": { "className": "flex items-center gap-2" },
                 "children": [
-                  { "kind": "Text", "props": { "className": "font-medium" }, "bindings": { "children": { "$ref": "row.athlete_display_name" } } }
+                  {
+                    "kind": "Text",
+                    "props": { "className": "font-medium" },
+                    "bindings": { "children": { "$ref": "row.athlete_display_name" } }
+                  }
                 ]
               }
             },
-            { "key": "session_id", "label": "Session", "renderer": { "kind": "Text", "bindings": { "children": { "$ref": "row.session_display_name" } } } },
+            {
+              "key": "session_id",
+              "label": "Session",
+              "renderer": {
+                "kind": "Text",
+                "bindings": { "children": { "$ref": "row.session_display_name" } }
+              }
+            },
             {
               "key": "minutes_late",
               "label": "Late by",
@@ -56,12 +86,20 @@
               "renderer": {
                 "kind": "Chip",
                 "propsExpr": "{ variant: row.penalty_applied === 'consume_pass_anyway' ? 'warning' : row.penalty_applied === 'fractional_consume' ? 'primary' : 'neutral', size: 'sm', className: 'capitalize' }",
-                "children": [{ "kind": "Text", "propsExpr": "{ children: row.penalty_applied ? row.penalty_applied.replace(/_/g, ' ') : 'None' }" }]
+                "children": [
+                  {
+                    "kind": "Text",
+                    "propsExpr": "{ children: row.penalty_applied ? row.penalty_applied.replace(/_/g, ' ') : 'None' }"
+                  }
+                ]
               }
             }
           ],
           "rowActions": {
-            "onPress": { "kind": "navigate", "toExpr": "'/tenant/attendance/' + row.attendance_record_id" }
+            "onPress": {
+              "kind": "navigate",
+              "toExpr": "'/tenant/attendance/' + row.attendance_record_id"
+            }
           }
         }
       ]

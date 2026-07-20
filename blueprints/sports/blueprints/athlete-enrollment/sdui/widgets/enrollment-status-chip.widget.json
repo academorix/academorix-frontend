@@ -6,7 +6,22 @@
   "widget": "athlete_enrollment.enrollment-status-chip",
   "description": "Status chip with color variant per state. Used in enrollment list rows + athlete detail pages.",
   "params": {
-    "status": { "type": "string", "required": true, "enum": ["submitted", "payment_pending", "consent_pending", "confirmed", "active", "completed", "withdrawn", "expelled", "expired", "waitlisted"] },
+    "status": {
+      "type": "string",
+      "required": true,
+      "enum": [
+        "submitted",
+        "payment_pending",
+        "consent_pending",
+        "confirmed",
+        "active",
+        "completed",
+        "withdrawn",
+        "expelled",
+        "expired",
+        "waitlisted"
+      ]
+    },
     "size": { "type": "string", "required": false, "default": "sm" }
   },
   "nodes": [

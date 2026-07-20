@@ -36,8 +36,21 @@
             {
               "kind": "View",
               "children": [
-                { "kind": "Text", "props": { "as": "h1", "className": "text-2xl font-semibold", "children": "Tax collected" } },
-                { "kind": "Text", "props": { "className": "text-sm text-muted", "children": "Tax collected per jurisdiction. Feeds VAT / GST / sales-tax return preparation. Use --format=csv from the CLI for Excel-ready export." } }
+                {
+                  "kind": "Text",
+                  "props": {
+                    "as": "h1",
+                    "className": "text-2xl font-semibold",
+                    "children": "Tax collected"
+                  }
+                },
+                {
+                  "kind": "Text",
+                  "props": {
+                    "className": "text-sm text-muted",
+                    "children": "Tax collected per jurisdiction. Feeds VAT / GST / sales-tax return preparation. Use --format=csv from the CLI for Excel-ready export."
+                  }
+                }
               ]
             },
             {
@@ -60,7 +73,11 @@
             {
               "kind": "StatCard",
               "bindings": { "value": { "$ref": "tax.summary.total_tax_cents" } },
-              "props": { "label": "Total tax collected", "formatter": "currency", "variant": "primary" }
+              "props": {
+                "label": "Total tax collected",
+                "formatter": "currency",
+                "variant": "primary"
+              }
             },
             {
               "kind": "StatCard",
@@ -84,18 +101,45 @@
               "props": {
                 "columns": [
                   { "field": "jurisdiction", "label": "Jurisdiction", "width": 200 },
-                  { "field": "tax_type", "label": "Tax type", "width": 140, "description": "VAT / GST / Sales tax / etc." },
+                  {
+                    "field": "tax_type",
+                    "label": "Tax type",
+                    "width": 140,
+                    "description": "VAT / GST / Sales tax / etc."
+                  },
                   { "field": "invoice_count", "label": "Invoices", "width": 100, "align": "right" },
-                  { "field": "taxable_amount_cents", "label": "Taxable base", "width": 160, "renderer": { "kind": "Text", "formatter": "currency", "align": "right" } },
-                  { "field": "tax_amount_cents", "label": "Tax", "width": 160, "renderer": { "kind": "Text", "formatter": "currency", "align": "right" } },
-                  { "field": "effective_rate", "label": "Effective %", "width": 120, "align": "right", "formatter": "percent-2dp" }
+                  {
+                    "field": "taxable_amount_cents",
+                    "label": "Taxable base",
+                    "width": 160,
+                    "renderer": { "kind": "Text", "formatter": "currency", "align": "right" }
+                  },
+                  {
+                    "field": "tax_amount_cents",
+                    "label": "Tax",
+                    "width": 160,
+                    "renderer": { "kind": "Text", "formatter": "currency", "align": "right" }
+                  },
+                  {
+                    "field": "effective_rate",
+                    "label": "Effective %",
+                    "width": 120,
+                    "align": "right",
+                    "formatter": "percent-2dp"
+                  }
                 ]
               },
               "emptyState": {
                 "kind": "View",
                 "props": { "className": "text-center py-8" },
                 "children": [
-                  { "kind": "Text", "props": { "className": "text-sm text-muted", "children": "No tax collected in the selected range." } }
+                  {
+                    "kind": "Text",
+                    "props": {
+                      "className": "text-sm text-muted",
+                      "children": "No tax collected in the selected range."
+                    }
+                  }
                 ]
               }
             }

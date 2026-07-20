@@ -4,7 +4,7 @@
  * @description Return shape for the `useUpdatePrompt()` hook.
  */
 
-import type { IPwaUpdateState } from '@/core/interfaces';
+import type { IPwaUpdateState } from "@/core/interfaces";
 
 /**
  * Value returned by {@link useUpdatePrompt}.

@@ -6,47 +6,151 @@
   "note": "This is a CATALOG (opt-in registry), not an ENUM (closed set). event_name column accepts anything matching the pattern regex; unknown names still capture. The catalog is what the funnel + experiment reporters can suggest as pre-registered names in autocompletes.",
   "events_by_category": {
     "feature_use": [
-      { "name": "feature_viewed", "description": "A feature surface was rendered.", "properties": ["feature_key", "surface"] },
-      { "name": "feature_used", "description": "A feature was actively used (button click, form submit, ...).", "properties": ["feature_key", "surface", "context"] },
-      { "name": "feature_dismissed", "description": "A feature surface was dismissed / closed.", "properties": ["feature_key", "surface"] },
-      { "name": "screen_time_recorded", "description": "Time spent on a specific screen.", "properties": ["screen_name", "duration_ms"] }
+      {
+        "name": "feature_viewed",
+        "description": "A feature surface was rendered.",
+        "properties": ["feature_key", "surface"]
+      },
+      {
+        "name": "feature_used",
+        "description": "A feature was actively used (button click, form submit, ...).",
+        "properties": ["feature_key", "surface", "context"]
+      },
+      {
+        "name": "feature_dismissed",
+        "description": "A feature surface was dismissed / closed.",
+        "properties": ["feature_key", "surface"]
+      },
+      {
+        "name": "screen_time_recorded",
+        "description": "Time spent on a specific screen.",
+        "properties": ["screen_name", "duration_ms"]
+      }
     ],
     "funnel_step": [
-      { "name": "funnel_step_reached", "description": "A step in a funnel was reached.", "properties": ["funnel_key", "step_key", "step_index"] },
-      { "name": "onboarding_step_completed", "description": "Onboarding step completed.", "properties": ["step_key", "step_index"] },
-      { "name": "checkout_step_completed", "description": "Checkout step completed.", "properties": ["step_key", "step_index"] },
-      { "name": "signup_step_completed", "description": "Signup step completed.", "properties": ["step_key"] },
-      { "name": "payment_succeeded", "description": "Payment succeeded \u2014 essential-consent (bypasses analytics consent).", "properties": ["amount", "currency", "product_key"] }
+      {
+        "name": "funnel_step_reached",
+        "description": "A step in a funnel was reached.",
+        "properties": ["funnel_key", "step_key", "step_index"]
+      },
+      {
+        "name": "onboarding_step_completed",
+        "description": "Onboarding step completed.",
+        "properties": ["step_key", "step_index"]
+      },
+      {
+        "name": "checkout_step_completed",
+        "description": "Checkout step completed.",
+        "properties": ["step_key", "step_index"]
+      },
+      {
+        "name": "signup_step_completed",
+        "description": "Signup step completed.",
+        "properties": ["step_key"]
+      },
+      {
+        "name": "payment_succeeded",
+        "description": "Payment succeeded \u2014 essential-consent (bypasses analytics consent).",
+        "properties": ["amount", "currency", "product_key"]
+      }
     ],
     "cta": [
-      { "name": "cta_clicked", "description": "A call-to-action button was clicked.", "properties": ["cta_key", "surface", "destination"] },
-      { "name": "form_submitted", "description": "A form was submitted.", "properties": ["form_key", "surface"] },
-      { "name": "link_clicked", "description": "An outbound or internal link was clicked.", "properties": ["href_domain", "href_path"] }
+      {
+        "name": "cta_clicked",
+        "description": "A call-to-action button was clicked.",
+        "properties": ["cta_key", "surface", "destination"]
+      },
+      {
+        "name": "form_submitted",
+        "description": "A form was submitted.",
+        "properties": ["form_key", "surface"]
+      },
+      {
+        "name": "link_clicked",
+        "description": "An outbound or internal link was clicked.",
+        "properties": ["href_domain", "href_path"]
+      }
     ],
     "error": [
-      { "name": "error_encountered", "description": "The user hit a client-side or server-side error.", "properties": ["error_code", "error_message_hash", "surface"] },
-      { "name": "validation_failed", "description": "Form or input validation failed.", "properties": ["field", "rule"] },
-      { "name": "rate_limit_hit", "description": "User hit a rate limit.", "properties": ["endpoint", "limit"] }
+      {
+        "name": "error_encountered",
+        "description": "The user hit a client-side or server-side error.",
+        "properties": ["error_code", "error_message_hash", "surface"]
+      },
+      {
+        "name": "validation_failed",
+        "description": "Form or input validation failed.",
+        "properties": ["field", "rule"]
+      },
+      {
+        "name": "rate_limit_hit",
+        "description": "User hit a rate limit.",
+        "properties": ["endpoint", "limit"]
+      }
     ],
     "performance": [
-      { "name": "screen_load_recorded", "description": "Time to first content paint on a screen.", "properties": ["screen_name", "duration_ms", "connection_type"] },
-      { "name": "api_call_recorded", "description": "Server-side API call duration.", "properties": ["endpoint", "duration_ms", "outcome"] }
+      {
+        "name": "screen_load_recorded",
+        "description": "Time to first content paint on a screen.",
+        "properties": ["screen_name", "duration_ms", "connection_type"]
+      },
+      {
+        "name": "api_call_recorded",
+        "description": "Server-side API call duration.",
+        "properties": ["endpoint", "duration_ms", "outcome"]
+      }
     ],
     "experiment": [
-      { "name": "experiment_variant_assigned", "description": "Subject was assigned to a variant of an A/B experiment. Records the assignment for the ExperimentAssignmentReportBuilder.", "properties": ["experiment_key", "variant"] },
-      { "name": "experiment_exposed", "description": "The subject was actually EXPOSED to the variant (assignment vs exposure gap matters).", "properties": ["experiment_key", "variant"] }
+      {
+        "name": "experiment_variant_assigned",
+        "description": "Subject was assigned to a variant of an A/B experiment. Records the assignment for the ExperimentAssignmentReportBuilder.",
+        "properties": ["experiment_key", "variant"]
+      },
+      {
+        "name": "experiment_exposed",
+        "description": "The subject was actually EXPOSED to the variant (assignment vs exposure gap matters).",
+        "properties": ["experiment_key", "variant"]
+      }
     ],
     "lifecycle": [
-      { "name": "user_registered", "description": "New user completed registration.", "properties": ["signup_method"] },
-      { "name": "user_activated", "description": "User completed first meaningful action (activation event).", "properties": ["days_since_signup"] },
-      { "name": "user_upgraded", "description": "Free user upgraded to paid.", "properties": ["from_plan", "to_plan"] },
-      { "name": "user_churned", "description": "User's subscription ended without renewal.", "properties": ["from_plan", "reason"] },
-      { "name": "subscription_upgraded", "description": "Subscription tier changed up.", "properties": ["from_plan", "to_plan", "amount_delta"] },
-      { "name": "subscription_downgraded", "description": "Subscription tier changed down.", "properties": ["from_plan", "to_plan"] }
+      {
+        "name": "user_registered",
+        "description": "New user completed registration.",
+        "properties": ["signup_method"]
+      },
+      {
+        "name": "user_activated",
+        "description": "User completed first meaningful action (activation event).",
+        "properties": ["days_since_signup"]
+      },
+      {
+        "name": "user_upgraded",
+        "description": "Free user upgraded to paid.",
+        "properties": ["from_plan", "to_plan"]
+      },
+      {
+        "name": "user_churned",
+        "description": "User's subscription ended without renewal.",
+        "properties": ["from_plan", "reason"]
+      },
+      {
+        "name": "subscription_upgraded",
+        "description": "Subscription tier changed up.",
+        "properties": ["from_plan", "to_plan", "amount_delta"]
+      },
+      {
+        "name": "subscription_downgraded",
+        "description": "Subscription tier changed down.",
+        "properties": ["from_plan", "to_plan"]
+      }
     ],
     "session": [
       { "name": "session_started", "description": "New session began.", "properties": ["source"] },
-      { "name": "session_ended", "description": "Session ended.", "properties": ["duration_ms", "screen_count"] }
+      {
+        "name": "session_ended",
+        "description": "Session ended.",
+        "properties": ["duration_ms", "screen_count"]
+      }
     ]
   }
 }

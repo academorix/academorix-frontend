@@ -35,7 +35,10 @@
         {
           "kind": "Breadcrumb",
           "children": [
-            { "kind": "BreadcrumbItem", "props": { "to": "/platform/service-accounts", "children": "Service accounts" } },
+            {
+              "kind": "BreadcrumbItem",
+              "props": { "to": "/platform/service-accounts", "children": "Service accounts" }
+            },
             {
               "kind": "BreadcrumbItem",
               "bindings": { "children": { "$ref": "serviceAccount.name" } }
@@ -67,27 +70,55 @@
               "children": [
                 {
                   "kind": "Button",
-                  "props": { "variant": "secondary", "leadingIcon": "refresh", "children": "Rotate secret" },
-                  "actions": { "onPress": { "kind": "navigate", "to": "/platform/service-accounts/{id}/rotate" } },
+                  "props": {
+                    "variant": "secondary",
+                    "leadingIcon": "refresh",
+                    "children": "Rotate secret"
+                  },
+                  "actions": {
+                    "onPress": {
+                      "kind": "navigate",
+                      "to": "/platform/service-accounts/{id}/rotate"
+                    }
+                  },
                   "requiresPermission": "platform.service_accounts.rotate"
                 },
                 {
                   "kind": "Button",
-                  "props": { "variant": "secondary", "leadingIcon": "beaker", "children": "Issue test JWT" },
+                  "props": {
+                    "variant": "secondary",
+                    "leadingIcon": "beaker",
+                    "children": "Issue test JWT"
+                  },
                   "actions": { "onPress": { "kind": "modal.open", "modal": "issue-test-jwt" } },
                   "requiresPermission": "platform.service_accounts.issue_test_jwt"
                 },
                 {
                   "kind": "Button",
-                  "props": { "variant": "danger-outline", "leadingIcon": "no-symbol", "children": "Disable" },
-                  "actions": { "onPress": { "kind": "modal.open", "modal": "disable-service-account" } },
+                  "props": {
+                    "variant": "danger-outline",
+                    "leadingIcon": "no-symbol",
+                    "children": "Disable"
+                  },
+                  "actions": {
+                    "onPress": { "kind": "modal.open", "modal": "disable-service-account" }
+                  },
                   "requiresPermission": "platform.service_accounts.disable",
                   "bindings": { "hidden": { "$expr": "!serviceAccount.is_enabled" } }
                 },
                 {
                   "kind": "Button",
-                  "props": { "variant": "primary", "leadingIcon": "check-circle", "children": "Enable" },
-                  "actions": { "onPress": { "kind": "http.post", "url": "/api/v1/platform/service-accounts/{id}/enable" } },
+                  "props": {
+                    "variant": "primary",
+                    "leadingIcon": "check-circle",
+                    "children": "Enable"
+                  },
+                  "actions": {
+                    "onPress": {
+                      "kind": "http.post",
+                      "url": "/api/v1/platform/service-accounts/{id}/enable"
+                    }
+                  },
                   "requiresPermission": "platform.service_accounts.enable",
                   "bindings": {
                     "hidden": {
@@ -98,7 +129,9 @@
                 {
                   "kind": "Button",
                   "props": { "variant": "danger", "leadingIcon": "trash", "children": "Delete" },
-                  "actions": { "onPress": { "kind": "modal.open", "modal": "delete-service-account" } },
+                  "actions": {
+                    "onPress": { "kind": "modal.open", "modal": "delete-service-account" }
+                  },
                   "requiresPermission": "platform.service_accounts.delete"
                 }
               ]
@@ -200,7 +233,10 @@
                 {
                   "kind": "View",
                   "children": [
-                    { "kind": "Text", "props": { "className": "text-xs text-muted", "children": "Application" } },
+                    {
+                      "kind": "Text",
+                      "props": { "className": "text-xs text-muted", "children": "Application" }
+                    },
                     {
                       "kind": "Chip",
                       "props": { "size": "sm", "variant": "neutral" },
@@ -211,7 +247,10 @@
                 {
                   "kind": "View",
                   "children": [
-                    { "kind": "Text", "props": { "className": "text-xs text-muted", "children": "Tenant" } },
+                    {
+                      "kind": "Text",
+                      "props": { "className": "text-xs text-muted", "children": "Tenant" }
+                    },
                     {
                       "kind": "Chip",
                       "props": { "size": "sm", "variant": "info" },
@@ -222,7 +261,10 @@
                     },
                     {
                       "kind": "Text",
-                      "props": { "className": "text-xs text-muted italic", "children": "\u2014 platform-plane (cross-tenant)" },
+                      "props": {
+                        "className": "text-xs text-muted italic",
+                        "children": "\u2014 platform-plane (cross-tenant)"
+                      },
                       "bindings": { "hidden": { "$expr": "serviceAccount.tenant_id != null" } }
                     }
                   ]

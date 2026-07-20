@@ -20,8 +20,8 @@
  * ```
  */
 
-import 'reflect-metadata';
-import { AI_AGENT_METADATA, type IPersona } from '@stackra/contracts';
+import "reflect-metadata";
+import { AI_AGENT_METADATA, type IPersona } from "@stackra/contracts";
 
 /**
  * Marks a class as a discoverable AI persona.

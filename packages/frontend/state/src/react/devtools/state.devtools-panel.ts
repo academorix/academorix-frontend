@@ -11,20 +11,20 @@
  *   `DevtoolsModule.forFeature([...])`.
  */
 
-import { createElement, type ReactNode } from 'react';
-import { ChartBarSquareIcon } from '@stackra/ui/icons/heroicon/outline';
-import { Inject, Injectable, Optional } from '@stackra/container';
+import { createElement, type ReactNode } from "react";
+import { ChartBarSquareIcon } from "@stackra/ui/icons/heroicon/outline";
+import { Inject, Injectable, Optional } from "@stackra/container";
 import {
   STATE_REGISTRY,
   type DevtoolsCategory,
   type IDevtoolsPanel,
   type IDevtoolsView,
-} from '@stackra/contracts';
+} from "@stackra/contracts";
 
-import { DevtoolsPanel } from '@stackra/devtools';
+import { DevtoolsPanel } from "@stackra/devtools";
 
-import type { StateRegistry } from '@/core/registries/state.registry';
-import { StateDevtoolsPanelView } from './state-devtools-panel-view';
+import type { StateRegistry } from "@/core/registries/state.registry";
+import { StateDevtoolsPanelView } from "./state-devtools-panel-view";
 
 /**
  * The devtools state panel.
@@ -45,23 +45,23 @@ import { StateDevtoolsPanelView } from './state-devtools-panel-view';
  */
 @Injectable()
 @DevtoolsPanel({
-  id: 'state',
-  title: 'State',
-  category: 'data',
+  id: "state",
+  title: "State",
+  category: "data",
   order: 40,
 })
 export class StateDevtoolsPanel implements IDevtoolsPanel {
   /** @inheritdoc */
-  public readonly id = 'state';
+  public readonly id = "state";
   /** @inheritdoc */
-  public readonly title = 'State';
+  public readonly title = "State";
   /** @inheritdoc */
-  public readonly category: DevtoolsCategory = 'data';
+  public readonly category: DevtoolsCategory = "data";
   /** @inheritdoc */
   public readonly order = 40;
   /** @inheritdoc */
   public readonly icon: ReactNode = createElement(ChartBarSquareIcon, {
-    className: 'size-4',
+    className: "size-4",
   });
   /** @inheritdoc */
   public readonly view: IDevtoolsView;
@@ -73,10 +73,10 @@ export class StateDevtoolsPanel implements IDevtoolsPanel {
    *   renders an empty-state card.
    */
   public constructor(
-    @Optional() @Inject(STATE_REGISTRY) private readonly registry?: StateRegistry
+    @Optional() @Inject(STATE_REGISTRY) private readonly registry?: StateRegistry,
   ) {
     this.view = {
-      type: 'component',
+      type: "component",
       render: (): ReactNode => createElement(StateDevtoolsPanelView, { registry: this.registry }),
     };
   }

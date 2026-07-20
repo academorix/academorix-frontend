@@ -48,7 +48,9 @@
           "size": { "$ref": "props.size" },
           "clearable": { "$ref": "props.clearable" },
           "isRequired": { "$ref": "props.required" },
-          "selectedKey": { "$expr": "props.defaultValue || (props.defaultToCurrent ? (seasons.find(s => s.is_current) || {}).id : null)" }
+          "selectedKey": {
+            "$expr": "props.defaultValue || (props.defaultToCurrent ? (seasons.find(s => s.is_current) || {}).id : null)"
+          }
         }
       },
       "children": [
@@ -56,7 +58,10 @@
         {
           "kind": "ComboBox.InputGroup",
           "children": [
-            { "kind": "Input", "bindings": { "props": { "placeholder": { "$ref": "props.placeholder" } } } },
+            {
+              "kind": "Input",
+              "bindings": { "props": { "placeholder": { "$ref": "props.placeholder" } } }
+            },
             { "kind": "ComboBox.Trigger" }
           ]
         },
@@ -97,13 +102,20 @@
                               },
                               {
                                 "kind": "Chip",
-                                "props": { "size": "xs", "variant": "accent", "leadingIcon": "star-solid", "children": "Current" },
+                                "props": {
+                                  "size": "xs",
+                                  "variant": "accent",
+                                  "leadingIcon": "star-solid",
+                                  "children": "Current"
+                                },
                                 "bindings": { "hidden": { "$expr": "!item.is_current" } }
                               },
                               {
                                 "kind": "Widget",
                                 "props": { "id": "season.season-status-chip" },
-                                "bindings": { "props": { "status": { "$ref": "item.status" }, "size": "xs" } }
+                                "bindings": {
+                                  "props": { "status": { "$ref": "item.status" }, "size": "xs" }
+                                }
                               }
                             ]
                           },
@@ -118,7 +130,10 @@
                           }
                         ]
                       },
-                      { "kind": "ListBox.ItemIndicator", "props": { "className": "size-4 text-accent" } }
+                      {
+                        "kind": "ListBox.ItemIndicator",
+                        "props": { "className": "size-4 text-accent" }
+                      }
                     ]
                   }
                 ]

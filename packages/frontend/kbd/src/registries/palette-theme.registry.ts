@@ -26,7 +26,10 @@ import { BUILTIN_PALETTE_THEMES, defaultTheme } from "../themes";
  * 3. The built-in `default` theme.
  */
 @Injectable()
-export class PaletteThemeRegistry extends BaseRegistry<string, PaletteTheme> implements OnModuleInit {
+export class PaletteThemeRegistry
+  extends BaseRegistry<string, PaletteTheme>
+  implements OnModuleInit
+{
   /**
    * Wire the registry.
    */

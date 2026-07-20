@@ -20,8 +20,13 @@
   "retention": [
     {
       "entity": "Refund",
-      "hot": { "days": 365, "description": "Active + first year — dispute resolution + regulator inquiry response window." },
-      "cold": { "days": "2555 (7 years) post-processed_at; 3650 (10 years) with `refund_extended_retention` (Enterprise)" },
+      "hot": {
+        "days": 365,
+        "description": "Active + first year — dispute resolution + regulator inquiry response window."
+      },
+      "cold": {
+        "days": "2555 (7 years) post-processed_at; 3650 (10 years) with `refund_extended_retention` (Enterprise)"
+      },
       "purge": {
         "trigger": "> 7 (or 10) years past processed_at",
         "action": "hard delete via PurgeExpiredRefundDataJob; invoice-linked refunds migrate to compliance_archive.refunds",
@@ -31,7 +36,9 @@
     {
       "entity": "RefundLine",
       "hot": { "days": 365, "description": "Active + first year — dispute resolution." },
-      "cold": { "days": "2555 (7 years) post-parent-refund.processed_at; 3650 (10 years) with `refund_extended_retention`" },
+      "cold": {
+        "days": "2555 (7 years) post-parent-refund.processed_at; 3650 (10 years) with `refund_extended_retention`"
+      },
       "purge": {
         "trigger": "co-terminous with parent refund purge (FK CASCADE)",
         "action": "hard delete when parent refund purges; migrate to compliance_archive.refund_lines when parent migrates",

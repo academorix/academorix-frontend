@@ -36,8 +36,18 @@
             {
               "kind": "View",
               "children": [
-                { "kind": "Text", "props": { "as": "h1", "className": "text-2xl font-semibold" }, "bindings": { "children": { "$expr": "'Edit ' + coupon.code" } } },
-                { "kind": "Text", "props": { "className": "text-sm text-muted", "children": "Discount config becomes locked once redemptions commit." } }
+                {
+                  "kind": "Text",
+                  "props": { "as": "h1", "className": "text-2xl font-semibold" },
+                  "bindings": { "children": { "$expr": "'Edit ' + coupon.code" } }
+                },
+                {
+                  "kind": "Text",
+                  "props": {
+                    "className": "text-sm text-muted",
+                    "children": "Discount config becomes locked once redemptions commit."
+                  }
+                }
               ]
             },
             {
@@ -78,7 +88,12 @@
                 },
                 {
                   "kind": "TextField",
-                  "props": { "name": "name", "label": "Display name", "isRequired": true, "maxLength": 128 },
+                  "props": {
+                    "name": "name",
+                    "label": "Display name",
+                    "isRequired": true,
+                    "maxLength": 128
+                  },
                   "bindings": { "defaultValue": { "$ref": "coupon.name" } }
                 },
                 {
@@ -107,7 +122,11 @@
                 },
                 {
                   "kind": "NumberField",
-                  "props": { "name": "discount_amount", "label": "Amount", "leadingIcon": "lock-closed" },
+                  "props": {
+                    "name": "discount_amount",
+                    "label": "Amount",
+                    "leadingIcon": "lock-closed"
+                  },
                   "bindings": {
                     "value": { "$ref": "coupon.discount_amount" },
                     "isReadOnly": { "$expr": "redemption_count > 0" }
@@ -134,12 +153,20 @@
                 },
                 {
                   "kind": "NumberField",
-                  "props": { "name": "per_customer_limit", "label": "Per-customer limit", "minValue": 1 },
+                  "props": {
+                    "name": "per_customer_limit",
+                    "label": "Per-customer limit",
+                    "minValue": 1
+                  },
                   "bindings": { "defaultValue": { "$ref": "coupon.per_customer_limit" } }
                 },
                 {
                   "kind": "DatePicker",
-                  "props": { "name": "valid_until", "label": "Valid until", "helpText": "Cannot be moved earlier than NOW()." },
+                  "props": {
+                    "name": "valid_until",
+                    "label": "Valid until",
+                    "helpText": "Cannot be moved earlier than NOW()."
+                  },
                   "bindings": { "defaultValue": { "$ref": "coupon.valid_until" } }
                 }
               ]

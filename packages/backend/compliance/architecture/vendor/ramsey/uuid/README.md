@@ -16,9 +16,9 @@
 ramsey/uuid is a PHP library for generating and working with universally unique
 identifiers (UUIDs).
 
-This project adheres to a [code of conduct](CODE_OF_CONDUCT.md).
-By participating in this project and its community, you are expected to
-uphold this code.
+This project adheres to a [code of conduct](CODE_OF_CONDUCT.md). By
+participating in this project and its community, you are expected to uphold this
+code.
 
 Much inspiration for this library came from the [Java][javauuid] and
 [Python][pyuuid] UUID libraries.
@@ -37,7 +37,7 @@ composer require ramsey/uuid
 
 See the documentation for a thorough upgrade guide:
 
-* [Upgrading ramsey/uuid Version 3 to 4](https://uuid.ramsey.dev/en/stable/upgrading/3-to-4.html)
+- [Upgrading ramsey/uuid Version 3 to 4](https://uuid.ramsey.dev/en/stable/upgrading/3-to-4.html)
 
 ## Documentation
 

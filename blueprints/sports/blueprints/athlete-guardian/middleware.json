@@ -9,9 +9,7 @@
       "priority": 44,
       "description": "Refuses actions that require a verified guardianship. Applied to routes that touch a guardian who must be verified (e.g. set-primary — only verified guardians can be promoted). Returns 422 `PRIMARY_GUARDIAN_MUST_BE_VERIFIED` on unverified target. Distinct from the observer refusal — the middleware fails fast at the route boundary.",
       "auto_applied": false,
-      "auto_applied_to": [
-        "POST /athletes/{athlete}/guardians/{guardian}/set-primary"
-      ]
+      "auto_applied_to": ["POST /athletes/{athlete}/guardians/{guardian}/set-primary"]
     }
   ],
   "consumed": [

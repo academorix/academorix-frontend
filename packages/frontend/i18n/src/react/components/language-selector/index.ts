@@ -1,1 +1,1 @@
-export { LanguageSelector } from './language-selector.component';
+export { LanguageSelector } from "./language-selector.component";

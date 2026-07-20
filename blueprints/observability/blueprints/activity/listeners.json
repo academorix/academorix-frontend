@@ -45,9 +45,7 @@
       "queue": "notifications",
       "purpose": "For every user who has opted into digest email AND follows this activity's subject (or matches the log_name's default recipient rule), enqueue the activity row on their pending-digest set. The daily/weekly digest scheduler reads pending sets + fires ActivityDigestEmailNotification. Gated by `activity_digest_email` entitlement (Medium+).",
       "shouldQueue": true,
-      "conditions": [
-        "tenant.entitlements.activity_digest_email === true"
-      ]
+      "conditions": ["tenant.entitlements.activity_digest_email === true"]
     },
     {
       "event": "activity::ActivityRetentionPolicyCreated",

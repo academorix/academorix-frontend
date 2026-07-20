@@ -7,4 +7,4 @@
  *   in `@stackra/contracts` and are imported from there.
  */
 
-export { DEFAULT_STORAGE_CONFIG } from './default-storage-config.constant';
+export { DEFAULT_STORAGE_CONFIG } from "./default-storage-config.constant";

@@ -5,5 +5,5 @@
  *   its owned props interface.
  */
 
-export { InboxPage } from './inbox-page.component';
-export type { InboxPageProps } from './inbox-page.interface';
+export { InboxPage } from "./inbox-page.component";
+export type { InboxPageProps } from "./inbox-page.interface";

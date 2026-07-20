@@ -6,8 +6,8 @@
  *   suitable for streaming updates (Req 20.1, 20.2).
  */
 
-import type { JSX } from 'react';
-import { Markdown } from '@stackra/ui/react';
+import type { JSX } from "react";
+import { Markdown } from "@stackra/ui/react";
 
 /** Props accepted by {@link AiMarkdown}. */
 export interface IAiMarkdownProps {

@@ -6,15 +6,15 @@
  *   flushes to the backing store.
  */
 
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from "react";
 
-import { useStorage } from '@/react/hooks/use-storage/use-storage.hook';
+import { useStorage } from "@/react/hooks/use-storage/use-storage.hook";
 
 import type {
   UseStorageValueMeta,
   UseStorageValueOptions,
   UseStorageValueResult,
-} from './use-storage-value.interface';
+} from "./use-storage-value.interface";
 
 /**
  * Bind a React component's state to a storage key.
@@ -48,7 +48,7 @@ import type {
  */
 export function useStorageValue<T>(
   key: string,
-  options: UseStorageValueOptions<T> = {}
+  options: UseStorageValueOptions<T> = {},
 ): UseStorageValueResult<T> {
   const storage = useStorage(options.instance);
   const initialValue = (options.initialValue ?? null) as T | null;
@@ -115,7 +115,7 @@ export function useStorageValue<T>(
           });
         });
     },
-    [storage, key]
+    [storage, key],
   );
 
   return [value, write, meta] as const;

@@ -4,7 +4,18 @@
   "alias": "tasks",
   "namespace": "Academorix\\Workflow\\Tasks",
   "description": "Human-in-loop work queue. Wraps a domain event (a lead needs a follow-up call, a payment failed and someone should call the parent, a coach didn't submit attendance) in a Task with an assignee + due date + status. Complements workflow/approvals (formal approve/deny cycles) — tasks are the lightweight side. Owns three tables: tasks (the work item with polymorphic subject_type/subject_id — Athlete / Order / Payment / Lead), task_assignments (N-to-N users with role: assignee / collaborator / watcher), task_comments (chronological comment thread with @-mentions + file attachments via platform/storage). Cross-integrates with growth/leads (auto-creates follow-up tasks), finance/payment (failed-charge tasks), sports/coaching (staff task queue), notifications/notifications (TaskAssignedNotification + TaskCommentMentionedNotification + TaskDueSoonNotification). Includes TaskAutomationRule engine (per-tenant configurable — 'when a lead sits >48h, create a follow-up task for its owner') via #[AsTaskAutomation] attribute.",
-  "keywords": ["tasks", "todo", "assignment", "comment", "reminder", "queue", "human-in-loop", "workflow", "automation-rule", "task-subject"],
+  "keywords": [
+    "tasks",
+    "todo",
+    "assignment",
+    "comment",
+    "reminder",
+    "queue",
+    "human-in-loop",
+    "workflow",
+    "automation-rule",
+    "task-subject"
+  ],
   "priority": 42,
   "providers": ["Academorix\\Workflow\\Tasks\\Providers\\TasksServiceProvider"],
   "dependencies": ["foundation", "tenancy", "application", "storage", "notifications"],
@@ -34,18 +45,44 @@
     ],
     "policies": ["TaskPolicy", "TaskAssignmentPolicy", "TaskCommentPolicy"],
     "hooks": ["PurgeTasksForErasedTenant", "CancelOpenTasksOnUserErased"],
-    "commands": ["tasks:list", "tasks:create", "tasks:assign", "tasks:complete", "tasks:cancel", "tasks:remind-due", "tasks:automate-tick"],
+    "commands": [
+      "tasks:list",
+      "tasks:create",
+      "tasks:assign",
+      "tasks:complete",
+      "tasks:cancel",
+      "tasks:remind-due",
+      "tasks:automate-tick"
+    ],
     "jobs": ["FireDueSoonRemindersJob", "MarkOverdueTasksJob", "RunTaskAutomationJob"],
-    "notifications": ["TaskAssignedNotification", "TaskCommentMentionedNotification", "TaskDueSoonNotification", "TaskOverdueNotification", "TaskCompletedNotification"],
+    "notifications": [
+      "TaskAssignedNotification",
+      "TaskCommentMentionedNotification",
+      "TaskDueSoonNotification",
+      "TaskOverdueNotification",
+      "TaskCompletedNotification"
+    ],
     "broadcasts": ["tenant.{tenantId}.tasks", "user.{userId}.tasks"],
     "observers": ["TaskObserver", "TaskAssignmentObserver", "TaskCommentObserver"],
-    "rules": ["valid_task_status", "valid_task_priority", "valid_assignment_role", "future_due_date_or_null"],
+    "rules": [
+      "valid_task_status",
+      "valid_task_priority",
+      "valid_assignment_role",
+      "future_due_date_or_null"
+    ],
     "casts": ["TaskStatus", "TaskPriority", "TaskAssignmentRole"],
     "views": [],
     "lang": ["tasks"],
     "config": ["tasks"],
     "macros": [],
-    "bindings": ["TaskRepository", "TaskAssignmentRepository", "TaskCommentRepository", "TaskSubjectResolver", "TaskAutomationEngine", "TaskInterface"],
+    "bindings": [
+      "TaskRepository",
+      "TaskAssignmentRepository",
+      "TaskCommentRepository",
+      "TaskSubjectResolver",
+      "TaskAutomationEngine",
+      "TaskInterface"
+    ],
     "resources": ["task", "task-assignment", "task-comment"]
   },
   "wraps": {

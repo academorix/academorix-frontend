@@ -24,10 +24,7 @@
       "name": "Mapbox Geocoding",
       "role": "geocoding",
       "purpose": "Alternative geocoding provider. Moderate quality, developer-friendly rate limits, competitive pricing.",
-      "data_processed": [
-        "The tenant's structured address",
-        "The Branch ULID as metadata"
-      ],
+      "data_processed": ["The tenant's structured address", "The Branch ULID as metadata"],
       "location": "US default (Mapbox); EU-region processing available via a separate endpoint config",
       "legal_basis": "contract + tenant opt-in",
       "dpa_url": "https://www.mapbox.com/legal/dpa",

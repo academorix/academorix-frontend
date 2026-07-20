@@ -33,12 +33,7 @@
       "class": "Academorix\\Finance\\Refund\\Broadcasts\\TenantRefundsPendingApprovalsChannel",
       "description": "Approval-workflow queue stream. Powers the real-time pending-approvals dashboard for approvers. Fires when a refund enters awaiting_approval + when it leaves (approved / rejected / cancelled). Enables live queue updates without polling.",
       "authorization": "sanctum::authed AND tenant_matches AND has_permission('refunds.approve')",
-      "events": [
-        "RefundApprovalRequired",
-        "RefundApproved",
-        "RefundRejected",
-        "RefundCancelled"
-      ],
+      "events": ["RefundApprovalRequired", "RefundApproved", "RefundRejected", "RefundCancelled"],
       "throttle": "60 events/minute per channel",
       "notes": "Higher-signal-to-noise than the tenant.{id}.refunds channel because it only carries approval-workflow events. Approvers subscribe to this channel + not the full stream."
     },

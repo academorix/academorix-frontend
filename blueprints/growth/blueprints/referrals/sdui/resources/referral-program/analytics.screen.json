@@ -49,40 +49,75 @@
               "kind": "Card",
               "props": { "className": "p-4" },
               "children": [
-                { "kind": "Text", "props": { "className": "text-xs text-muted uppercase", "children": "Claims" } },
-                { "kind": "Text", "props": { "className": "text-2xl font-bold mt-1" }, "bindings": { "children": { "$ref": "rollup.claims_count" } } }
+                {
+                  "kind": "Text",
+                  "props": { "className": "text-xs text-muted uppercase", "children": "Claims" }
+                },
+                {
+                  "kind": "Text",
+                  "props": { "className": "text-2xl font-bold mt-1" },
+                  "bindings": { "children": { "$ref": "rollup.claims_count" } }
+                }
               ]
             },
             {
               "kind": "Card",
               "props": { "className": "p-4" },
               "children": [
-                { "kind": "Text", "props": { "className": "text-xs text-muted uppercase", "children": "Signups" } },
-                { "kind": "Text", "props": { "className": "text-2xl font-bold mt-1" }, "bindings": { "children": { "$ref": "rollup.signups_count" } } }
+                {
+                  "kind": "Text",
+                  "props": { "className": "text-xs text-muted uppercase", "children": "Signups" }
+                },
+                {
+                  "kind": "Text",
+                  "props": { "className": "text-2xl font-bold mt-1" },
+                  "bindings": { "children": { "$ref": "rollup.signups_count" } }
+                }
               ]
             },
             {
               "kind": "Card",
               "props": { "className": "p-4" },
               "children": [
-                { "kind": "Text", "props": { "className": "text-xs text-muted uppercase", "children": "Vested" } },
-                { "kind": "Text", "props": { "className": "text-2xl font-bold mt-1" }, "bindings": { "children": { "$ref": "rollup.vested_count" } } }
+                {
+                  "kind": "Text",
+                  "props": { "className": "text-xs text-muted uppercase", "children": "Vested" }
+                },
+                {
+                  "kind": "Text",
+                  "props": { "className": "text-2xl font-bold mt-1" },
+                  "bindings": { "children": { "$ref": "rollup.vested_count" } }
+                }
               ]
             },
             {
               "kind": "Card",
               "props": { "className": "p-4" },
               "children": [
-                { "kind": "Text", "props": { "className": "text-xs text-muted uppercase", "children": "Rewarded" } },
-                { "kind": "Text", "props": { "className": "text-2xl font-bold mt-1" }, "bindings": { "children": { "$ref": "rollup.rewarded_count" } } }
+                {
+                  "kind": "Text",
+                  "props": { "className": "text-xs text-muted uppercase", "children": "Rewarded" }
+                },
+                {
+                  "kind": "Text",
+                  "props": { "className": "text-2xl font-bold mt-1" },
+                  "bindings": { "children": { "$ref": "rollup.rewarded_count" } }
+                }
               ]
             },
             {
               "kind": "Card",
               "props": { "className": "p-4" },
               "children": [
-                { "kind": "Text", "props": { "className": "text-xs text-muted uppercase", "children": "Clawback" } },
-                { "kind": "Text", "props": { "className": "text-2xl font-bold mt-1 text-danger" }, "bindings": { "children": { "$ref": "rollup.clawback_count" } } }
+                {
+                  "kind": "Text",
+                  "props": { "className": "text-xs text-muted uppercase", "children": "Clawback" }
+                },
+                {
+                  "kind": "Text",
+                  "props": { "className": "text-2xl font-bold mt-1 text-danger" },
+                  "bindings": { "children": { "$ref": "rollup.clawback_count" } }
+                }
               ]
             }
           ]
@@ -92,7 +127,14 @@
           "props": { "className": "p-4" },
           "bindings": { "hidden": { "$expr": "!program.max_rewards_per_program" } },
           "children": [
-            { "kind": "Text", "props": { "as": "h3", "className": "font-semibold mb-3", "children": "Budget consumed" } },
+            {
+              "kind": "Text",
+              "props": {
+                "as": "h3",
+                "className": "font-semibold mb-3",
+                "children": "Budget consumed"
+              }
+            },
             {
               "kind": "ProgressBar",
               "bindings": {
@@ -120,7 +162,10 @@
           "kind": "Card",
           "props": { "className": "p-4" },
           "children": [
-            { "kind": "Text", "props": { "as": "h3", "className": "font-semibold mb-3", "children": "Top codes" } },
+            {
+              "kind": "Text",
+              "props": { "as": "h3", "className": "font-semibold mb-3", "children": "Top codes" }
+            },
             {
               "kind": "Table",
               "bindings": { "items": { "$ref": "topCodes" } },

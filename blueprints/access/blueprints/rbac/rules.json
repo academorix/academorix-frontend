@@ -31,7 +31,11 @@
       "signature": "permission_belongs_to_role_guard:<role_id>",
       "description": "Cross-check on write. Enforces role.guard_name === permission.guard_name. Applied on AttachPermissionToRoleAction. Distinct from the observer's GuardMismatch enforcement \u2014 this rule surfaces the error inline in the FormRequest so the client sees a validation error, not a 500.",
       "params": [
-        { "name": "role_id", "type": "string", "description": "ULID of the target role (fetched from the URL segment)." }
+        {
+          "name": "role_id",
+          "type": "string",
+          "description": "ULID of the target role (fetched from the URL segment)."
+        }
       ],
       "example_field_rule": "permission_id: [required, permission_belongs_to_role_guard:{role}]",
       "error_message_key": "rbac::validation.permission_belongs_to_role_guard",
@@ -42,9 +46,7 @@
       "class": "Academorix\\Rbac\\Rules\\PermissionBelongsToRoleApplication",
       "signature": "permission_belongs_to_role_application:<role_id>",
       "description": "Same shape as permission_belongs_to_role_guard, for the application_id column. Both non-null => must match. Either NULL => allowed (platform-scoped bindings).",
-      "params": [
-        { "name": "role_id", "type": "string" }
-      ],
+      "params": [{ "name": "role_id", "type": "string" }],
       "example_field_rule": "permission_id: [required, permission_belongs_to_role_application:{role}]",
       "error_message_key": "rbac::validation.permission_belongs_to_role_application",
       "default_message": "The permission's application does not match the role's application."

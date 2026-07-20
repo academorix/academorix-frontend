@@ -6,8 +6,26 @@
   "namespace": "academorix.refund",
   "labelConventions": {
     "always": [],
-    "commonlyAvailable": ["status", "reason", "refund_type", "refunded_to", "provider", "failure_reason_category", "error_category", "clawback_type"],
-    "forbiddenAsLabels": ["tenant_id", "refund_id", "payment_id", "invoice_id", "customer_id", "refund_number", "amount_cents", "provider_reference_id"]
+    "commonlyAvailable": [
+      "status",
+      "reason",
+      "refund_type",
+      "refunded_to",
+      "provider",
+      "failure_reason_category",
+      "error_category",
+      "clawback_type"
+    ],
+    "forbiddenAsLabels": [
+      "tenant_id",
+      "refund_id",
+      "payment_id",
+      "invoice_id",
+      "customer_id",
+      "refund_number",
+      "amount_cents",
+      "provider_reference_id"
+    ]
   },
   "metrics": [
     {

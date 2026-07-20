@@ -24,6 +24,6 @@
  * ```
  */
 export function tokenToCssVar(token: string): string {
-  const kebab = token.replace(/_/g, '-');
+  const kebab = token.replace(/_/g, "-");
   return `--${kebab}`;
 }

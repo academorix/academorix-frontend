@@ -315,7 +315,9 @@
                     "type": "submit",
                     "children": "Create organization"
                   },
-                  "bindings": { "disabled": { "$ref": "entitlements.organization_slot.is_exceeded" } }
+                  "bindings": {
+                    "disabled": { "$ref": "entitlements.organization_slot.is_exceeded" }
+                  }
                 }
               ]
             }

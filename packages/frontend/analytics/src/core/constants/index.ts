@@ -5,13 +5,13 @@
  *   manager token.
  */
 
-import type { IAnalyticsModuleOptions } from '../interfaces';
+import type { IAnalyticsModuleOptions } from "../interfaces";
 
 /** Default analytics configuration — a console instance, consent enforced + buffered. */
 export const DEFAULT_ANALYTICS_CONFIG: IAnalyticsModuleOptions = {
-  default: 'console',
+  default: "console",
   providers: {
-    console: { driver: 'console' },
+    console: { driver: "console" },
   },
   requireConsent: true,
   bufferUntilConsent: true,
@@ -26,17 +26,17 @@ export const DEFAULT_ANALYTICS_CONFIG: IAnalyticsModuleOptions = {
  * `enabled: false`).
  */
 export const ANALYTICS_REQUIRED_FIELDS: Record<string, string[]> = {
-  ga4: ['measurementId'],
-  'meta-pixel': ['pixelId'],
-  'tiktok-pixel': ['pixelId'],
-  'snapchat-pixel': ['pixelId'],
+  ga4: ["measurementId"],
+  "meta-pixel": ["pixelId"],
+  "tiktok-pixel": ["pixelId"],
+  "snapchat-pixel": ["pixelId"],
 };
 
 /** Consent category slug used by product-analytics destinations (GA4). */
-export const CONSENT_CATEGORY_ANALYTICS = 'analytics';
+export const CONSENT_CATEGORY_ANALYTICS = "analytics";
 
 /** Consent category slug used by marketing pixels (Meta / TikTok / Snapchat). */
-export const CONSENT_CATEGORY_MARKETING = 'marketing';
+export const CONSENT_CATEGORY_MARKETING = "marketing";
 
 /**
  * Global token for `@stackra/consent`'s manager, reconstructed via
@@ -44,4 +44,4 @@ export const CONSENT_CATEGORY_MARKETING = 'marketing';
  * the consent package. `Symbol.for('CONSENT_MANAGER')` is identical to the
  * symbol consent registers under.
  */
-export const CONSENT_MANAGER_TOKEN = Symbol.for('CONSENT_MANAGER');
+export const CONSENT_MANAGER_TOKEN = Symbol.for("CONSENT_MANAGER");

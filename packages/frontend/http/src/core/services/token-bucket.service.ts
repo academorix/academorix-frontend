@@ -9,9 +9,9 @@
  * @module @stackra/http/services/token-bucket
  */
 
-import { Injectable } from '@stackra/container';
+import { Injectable } from "@stackra/container";
 
-import type { IHttpRateLimitEndpointConfig } from '@stackra/contracts';
+import type { IHttpRateLimitEndpointConfig } from "@stackra/contracts";
 
 /**
  * Single bucket — one per `(connection, method, url)`.

@@ -52,7 +52,12 @@
   "x-database": {
     "engine": "postgres",
     "columns": {
-      "id": { "type": "string", "length": 64, "primary": true, "description": "Prefixed ULID: `rfd_<26>`." },
+      "id": {
+        "type": "string",
+        "length": 64,
+        "primary": true,
+        "description": "Prefixed ULID: `rfd_<26>`."
+      },
       "tenant_id": {
         "type": "string",
         "length": 64,
@@ -148,7 +153,12 @@
         "foreign": { "table": "users", "column": "id", "onDelete": "restrict" }
       },
       "rejected_at": { "type": "timestamptz", "nullable": true },
-      "rejection_reason": { "type": "string", "length": 256, "nullable": true, "description": "Customer-visible rejection explanation. Required when transitioning to rejected." },
+      "rejection_reason": {
+        "type": "string",
+        "length": 256,
+        "nullable": true,
+        "description": "Customer-visible rejection explanation. Required when transitioning to rejected."
+      },
       "provider": {
         "type": "string",
         "length": 32,
@@ -202,7 +212,11 @@
         "foreign": { "table": "users", "column": "id", "onDelete": "restrict" },
         "description": "Admin or customer who initiated the refund. Required."
       },
-      "metadata": { "type": "jsonb", "nullable": true, "description": "Freeform tenant-writable metadata. Confidential portions (bank_transfer_details, check_details, approval_notes) are encrypted at rest via TokenEncryptor." },
+      "metadata": {
+        "type": "jsonb",
+        "nullable": true,
+        "description": "Freeform tenant-writable metadata. Confidential portions (bank_transfer_details, check_details, approval_notes) are encrypted at rest via TokenEncryptor."
+      },
       "created_by": { "type": "string", "length": 64, "nullable": true },
       "updated_by": { "type": "string", "length": 64, "nullable": true },
       "deleted_by": { "type": "string", "length": 64, "nullable": true },
@@ -219,11 +233,19 @@
       },
       { "columns": ["tenant_id", "payment_id"], "name": "refunds_tenant_payment_idx" },
       { "columns": ["tenant_id", "invoice_id"], "name": "refunds_tenant_invoice_idx" },
-      { "columns": ["tenant_id", "status", "initiated_at"], "name": "refunds_tenant_status_initiated_idx", "order": "DESC" },
+      {
+        "columns": ["tenant_id", "status", "initiated_at"],
+        "name": "refunds_tenant_status_initiated_idx",
+        "order": "DESC"
+      },
       { "columns": ["tenant_id", "reason"], "name": "refunds_tenant_reason_idx" },
       { "columns": ["tenant_id", "provider"], "name": "refunds_tenant_provider_idx" },
       { "columns": ["tenant_id", "initiated_by_user_id"], "name": "refunds_tenant_initiator_idx" },
-      { "columns": ["tenant_id", "requires_approval", "status"], "name": "refunds_tenant_pending_approvals_idx", "predicate": "requires_approval = true AND status = 'awaiting_approval' AND deleted_at IS NULL" }
+      {
+        "columns": ["tenant_id", "requires_approval", "status"],
+        "name": "refunds_tenant_pending_approvals_idx",
+        "predicate": "requires_approval = true AND status = 'awaiting_approval' AND deleted_at IS NULL"
+      }
     ]
   },
   "required": [
@@ -278,12 +300,28 @@
     },
     "status": {
       "type": "string",
-      "enum": ["pending", "awaiting_approval", "approved", "processing", "succeeded", "failed", "cancelled", "provider_error", "rejected"]
+      "enum": [
+        "pending",
+        "awaiting_approval",
+        "approved",
+        "processing",
+        "succeeded",
+        "failed",
+        "cancelled",
+        "provider_error",
+        "rejected"
+      ]
     },
     "requires_approval": { "type": "boolean" },
-    "approved_by_user_id": { "type": ["string", "null"], "pattern": "^usr_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "approved_by_user_id": {
+      "type": ["string", "null"],
+      "pattern": "^usr_[0-9A-HJKMNP-TV-Z]{26}$"
+    },
     "approved_at": { "type": ["string", "null"], "format": "date-time" },
-    "rejected_by_user_id": { "type": ["string", "null"], "pattern": "^usr_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "rejected_by_user_id": {
+      "type": ["string", "null"],
+      "pattern": "^usr_[0-9A-HJKMNP-TV-Z]{26}$"
+    },
     "rejected_at": { "type": ["string", "null"], "format": "date-time" },
     "rejection_reason": { "type": ["string", "null"], "maxLength": 256 },
     "provider": {

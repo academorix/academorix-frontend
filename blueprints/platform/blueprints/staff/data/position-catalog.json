@@ -4,13 +4,25 @@
   "description": "Reference catalog of common staff positions. The `staff.position` column is FREE-TEXT (any string up to 128 chars), but this catalog is offered as auto-complete suggestions in the SDUI hire flow + used by the platform-side pay-equity signal to bucket positions for cross-tenant benchmarking. Tenants are free to author their own position titles — this catalog is a starting library, not a validation whitelist.",
   "bucket_mapping_note": "Analytics events use `position_bucket` (coaching / reception / management / support / other) instead of the raw position string to keep label cardinality bounded. Every entry here maps to exactly one bucket.",
   "positions": [
-    { "position": "Head Coach", "bucket": "coaching", "description": "Primary coach for a team or sport program." },
+    {
+      "position": "Head Coach",
+      "bucket": "coaching",
+      "description": "Primary coach for a team or sport program."
+    },
     { "position": "Assistant Coach", "bucket": "coaching" },
     { "position": "Senior Coach", "bucket": "coaching" },
-    { "position": "Coaching Director", "bucket": "coaching", "description": "Sport-line lead; oversees other coaches." },
+    {
+      "position": "Coaching Director",
+      "bucket": "coaching",
+      "description": "Sport-line lead; oversees other coaches."
+    },
     { "position": "Athletic Trainer", "bucket": "coaching" },
     { "position": "Strength & Conditioning Coach", "bucket": "coaching" },
-    { "position": "Team Physiotherapist", "bucket": "coaching", "description": "Cross-tenant: some tenants classify this as support (medical); this catalog defaults to coaching-adjacent." },
+    {
+      "position": "Team Physiotherapist",
+      "bucket": "coaching",
+      "description": "Cross-tenant: some tenants classify this as support (medical); this catalog defaults to coaching-adjacent."
+    },
     { "position": "Swim Coach", "bucket": "coaching" },
     { "position": "Yoga Instructor", "bucket": "coaching" },
     { "position": "Pilates Instructor", "bucket": "coaching" },
@@ -27,7 +39,11 @@
 
     { "position": "Owner", "bucket": "management" },
     { "position": "Managing Director", "bucket": "management" },
-    { "position": "Branch Manager", "bucket": "management", "description": "Typically paired with is_branch_manager=true, though the two are independent — is_branch_manager is a role flag, position is a job title." },
+    {
+      "position": "Branch Manager",
+      "bucket": "management",
+      "description": "Typically paired with is_branch_manager=true, though the two are independent — is_branch_manager is a role flag, position is a job title."
+    },
     { "position": "Operations Manager", "bucket": "management" },
     { "position": "General Manager", "bucket": "management" },
     { "position": "Program Manager", "bucket": "management" },
@@ -35,7 +51,11 @@
     { "position": "Finance Manager", "bucket": "management" },
     { "position": "Marketing Manager", "bucket": "management" },
     { "position": "Facilities Manager", "bucket": "management" },
-    { "position": "Head of Coaching", "bucket": "management", "description": "Cross-cutting — some tenants put this under coaching bucket. Defaults to management (oversight function)." },
+    {
+      "position": "Head of Coaching",
+      "bucket": "management",
+      "description": "Cross-cutting — some tenants put this under coaching bucket. Defaults to management (oversight function)."
+    },
     { "position": "Team Lead", "bucket": "management" },
     { "position": "Supervisor", "bucket": "management" },
 
@@ -52,7 +72,11 @@
     { "position": "Cafeteria Worker", "bucket": "support" },
     { "position": "Nutritionist", "bucket": "support" },
     { "position": "Sports Nutritionist", "bucket": "support" },
-    { "position": "Team Manager", "bucket": "support", "description": "Non-coaching team logistics (transport, kit, meals). Distinct from Program Manager." },
+    {
+      "position": "Team Manager",
+      "bucket": "support",
+      "description": "Non-coaching team logistics (transport, kit, meals). Distinct from Program Manager."
+    },
 
     { "position": "Intern", "bucket": "other" },
     { "position": "Volunteer", "bucket": "other" },

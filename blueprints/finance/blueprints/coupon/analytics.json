@@ -10,7 +10,16 @@
       "name": "Coupon Created",
       "kind": "track",
       "consent_required": "functional",
-      "properties": ["tenant_id", "coupon_id", "discount_type", "applicability", "issuance_source", "campaign_name", "has_usage_cap", "has_expiry"],
+      "properties": [
+        "tenant_id",
+        "coupon_id",
+        "discount_type",
+        "applicability",
+        "issuance_source",
+        "campaign_name",
+        "has_usage_cap",
+        "has_expiry"
+      ],
       "description": "Admin created a coupon. Powers issuance-mix insight (referral vs manual vs campaign) + discount-type distribution."
     },
     {
@@ -29,19 +38,41 @@
       "name": "Coupon Expired",
       "kind": "track",
       "consent_required": "functional",
-      "properties": ["tenant_id", "coupon_id", "usage_count_at_expiry_bucket", "usage_cap_at_expiry"]
+      "properties": [
+        "tenant_id",
+        "coupon_id",
+        "usage_count_at_expiry_bucket",
+        "usage_cap_at_expiry"
+      ]
     },
     {
       "name": "Coupon Usage Cap Reached",
       "kind": "track",
       "consent_required": "functional",
-      "properties": ["tenant_id", "coupon_id", "usage_cap", "issuance_source", "days_since_created_bucket"]
+      "properties": [
+        "tenant_id",
+        "coupon_id",
+        "usage_cap",
+        "issuance_source",
+        "days_since_created_bucket"
+      ]
     },
     {
       "name": "Coupon Redeemed",
       "kind": "track",
       "consent_required": "functional",
-      "properties": ["tenant_id", "coupon_id", "discount_type", "applicability", "issuance_source", "campaign_name", "recipient_role", "source_amount_bucket", "discount_amount_bucket", "applied_to_type"],
+      "properties": [
+        "tenant_id",
+        "coupon_id",
+        "discount_type",
+        "applicability",
+        "issuance_source",
+        "campaign_name",
+        "recipient_role",
+        "source_amount_bucket",
+        "discount_amount_bucket",
+        "applied_to_type"
+      ],
       "description": "The core conversion event. source_amount_bucket + discount_amount_bucket are pre-computed bins (0-999 / 1000-2999 / 3000-9999 / 10000+). Never raw amounts."
     },
     {
@@ -55,7 +86,13 @@
       "name": "Coupon Issued By Referral",
       "kind": "track",
       "consent_required": "functional",
-      "properties": ["tenant_id", "coupon_id", "referral_program_id", "recipient_role", "discount_type"]
+      "properties": [
+        "tenant_id",
+        "coupon_id",
+        "referral_program_id",
+        "recipient_role",
+        "discount_type"
+      ]
     },
     {
       "name": "Coupon Issued Manually",
@@ -93,7 +130,13 @@
       "name": "Coupon Report Generated",
       "kind": "track",
       "consent_required": "functional",
-      "properties": ["tenant_id", "report_id", "period_days", "coupon_count_bucket", "redemption_count_bucket"]
+      "properties": [
+        "tenant_id",
+        "report_id",
+        "period_days",
+        "coupon_count_bucket",
+        "redemption_count_bucket"
+      ]
     }
   ],
   "notes": [

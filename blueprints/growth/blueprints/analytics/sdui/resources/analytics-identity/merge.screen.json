@@ -35,7 +35,11 @@
         },
         {
           "kind": "Text",
-          "props": { "as": "h1", "className": "text-2xl font-semibold", "children": "Merge identities" }
+          "props": {
+            "as": "h1",
+            "className": "text-2xl font-semibold",
+            "children": "Merge identities"
+          }
         },
         {
           "kind": "Alert",
@@ -138,7 +142,10 @@
                     "description": "This will soft-delete the selected identities and rewrite their historical events to point at the survivor. You cannot undo this."
                   },
                   "onSuccess": [
-                    { "kind": "toast.success", "message": "Merge queued \u2014 you'll receive a notification when it completes" },
+                    {
+                      "kind": "toast.success",
+                      "message": "Merge queued \u2014 you'll receive a notification when it completes"
+                    },
                     { "kind": "navigate", "to": "/tenant/analytics/identities" }
                   ]
                 }

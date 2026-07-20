@@ -4,51 +4,409 @@
   "title": "event — error codes",
   "namespace": "event",
   "errors": [
-    { "code": "EVENT_NOT_FOUND", "http": 404, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "event.errors.event_not_found" },
-    { "code": "EVENT_FEATURE_NOT_ENTITLED", "http": 402, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "event.errors.feature_not_entitled", "description": "Tenant does not hold `sports_events` entitlement." },
-    { "code": "EVENT_QUOTA_EXCEEDED", "http": 402, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "event.errors.quota_exceeded", "description": "Reached the `event_slot` per-calendar-year cap (Small=12/year, Medium=60/year, Enterprise=unlimited)." },
-    { "code": "EVENT_PUBLIC_VISIBILITY_NOT_ENTITLED", "http": 402, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "event.errors.public_visibility_not_entitled", "description": "visibility='public' attempted without event_public_visibility entitlement (Medium+)." },
-    { "code": "EVENT_LIVESTREAM_NOT_ENTITLED", "http": 402, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "event.errors.livestream_not_entitled", "description": "livestream_url set without event_livestream entitlement (Medium+)." },
-    { "code": "EVENT_PRIZE_POOL_NOT_ENTITLED", "http": 402, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "event.errors.prize_pool_not_entitled", "description": "prize_pool_cents set without event_prize_pool entitlement (Enterprise-only)." },
-    { "code": "EVENT_MULTI_FACILITY_NOT_ENTITLED", "http": 402, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "event.errors.multi_facility_not_entitled", "description": "Second event_facilities row attempted without event_multi_facility entitlement (Enterprise-only)." },
-    { "code": "EVENT_SPONSORS_NOT_ENTITLED", "http": 402, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "event.errors.sponsors_not_entitled", "description": "sponsors JSONB set without event_sponsors entitlement (Enterprise-only)." },
-    { "code": "EVENT_INVALID_DATE_RANGE", "http": 422, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "event.errors.invalid_date_range", "description": "ends_at < starts_at." },
-    { "code": "EVENT_STARTS_IN_PAST", "http": 422, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "event.errors.starts_in_past", "description": "starts_at <= now() at create time. Existing events editing to a past time are allowed for admin backfill." },
-    { "code": "EVENT_INVALID_REGISTRATION_WINDOW", "http": 422, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "event.errors.invalid_registration_window", "description": "registration_opens_at >= registration_closes_at OR registration_closes_at > starts_at." },
-    { "code": "EVENT_LATE_REGISTRATION_FEE_REQUIRED", "http": 422, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "event.errors.late_registration_fee_required", "description": "allow_late_registration=true supplied without late_registration_fee_cents > 0." },
-    { "code": "EVENT_INVALID_AGE_RANGE", "http": 422, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "event.errors.invalid_age_range", "description": "min_age > max_age OR min_age/max_age outside [3, 100]." },
-    { "code": "EVENT_ENTRY_FEE_CURRENCY_REQUIRED", "http": 422, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "event.errors.entry_fee_currency_required", "description": "entry_fee_cents > 0 supplied without entry_fee_currency." },
-    { "code": "EVENT_PRIZE_POOL_CURRENCY_REQUIRED", "http": 422, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "event.errors.prize_pool_currency_required" },
-    { "code": "EVENT_BRANCH_ORGANIZATION_MISMATCH", "http": 422, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "event.errors.branch_organization_mismatch", "description": "branch_id belongs to a different organization than the event's organization_id." },
-    { "code": "EVENT_ORGANIZATION_TENANT_MISMATCH", "http": 422, "retryable": false, "user_facing": false, "audit_severity": "warn", "i18n_key": "event.errors.organization_tenant_mismatch", "description": "Cross-tenant FK smuggling." },
-    { "code": "EVENT_BRANCH_TENANT_MISMATCH", "http": 422, "retryable": false, "user_facing": false, "audit_severity": "warn", "i18n_key": "event.errors.branch_tenant_mismatch" },
-    { "code": "EVENT_SEASON_TENANT_MISMATCH", "http": 422, "retryable": false, "user_facing": false, "audit_severity": "warn", "i18n_key": "event.errors.season_tenant_mismatch" },
-    { "code": "EVENT_ORGANIZATION_ARCHIVED", "http": 409, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "event.errors.organization_archived" },
-    { "code": "EVENT_BRANCH_NOT_ACTIVE", "http": 409, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "event.errors.branch_not_active" },
-    { "code": "EVENT_SEASON_ARCHIVED", "http": 409, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "event.errors.season_archived", "description": "Cannot attach an archived season to a new event." },
-    { "code": "EVENT_INITIAL_STATUS_INVALID", "http": 422, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "event.errors.initial_status_invalid", "description": "Attempted to create Event directly with status IN (registration_open, in_progress, completed, cancelled, archived). Only draft + announced are valid initial states." },
-    { "code": "EVENT_STATUS_TRANSITION_INVALID", "http": 422, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "event.errors.status_transition_invalid", "description": "Attempted a status transition outside the state machine. Response includes the valid transitions." },
-    { "code": "EVENT_CANCELLATION_REASON_REQUIRED", "http": 422, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "event.errors.cancellation_reason_required", "description": "Status transition to cancelled without cancellation_reason." },
-    { "code": "EVENT_ARCHIVE_REQUIRES_TERMINAL", "http": 422, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "event.errors.archive_requires_terminal", "description": "Attempted to archive an Event that hasn't reached completed or cancelled." },
-    { "code": "EVENT_HAS_ACTIVE_REGISTRATIONS", "http": 409, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "event.errors.has_active_registrations", "description": "Cannot archive an Event while active registrations reference it. Complete or cancel first." },
-    { "code": "EVENT_DATES_LOCKED_AFTER_START", "http": 409, "retryable": false, "user_facing": true, "audit_severity": "warn", "i18n_key": "event.errors.dates_locked_after_start", "description": "Cannot change starts_at / ends_at post-in_progress without the `events.dates.shift` permission." },
-    { "code": "EVENT_DATES_LOCKED_AFTER_COMPLETION", "http": 409, "retryable": false, "user_facing": true, "audit_severity": "warn", "i18n_key": "event.errors.dates_locked_after_completion", "description": "Cannot change dates on a completed Event — corrupts historical calendar attribution." },
-    { "code": "EVENT_VENUE_LOCKED_POST_REGISTRATION", "http": 409, "retryable": false, "user_facing": true, "audit_severity": "warn", "i18n_key": "event.errors.venue_locked_post_registration", "description": "Cannot change branch_id / primary facility post-registration_open without events.venue.change permission." },
-    { "code": "EVENT_PRICING_LOCKED_POST_REGISTRATION", "http": 409, "retryable": false, "user_facing": true, "audit_severity": "critical", "i18n_key": "event.errors.pricing_locked_post_registration", "description": "Cannot change entry_fee_cents / late_registration_fee_cents / prize_pool_cents post-registration_open without events.pricing.change permission. Critical-severity — post-registration price shifts create refund liability." },
-    { "code": "EVENT_ELIGIBILITY_NARROWING_LOCKED", "http": 409, "retryable": false, "user_facing": true, "audit_severity": "critical", "i18n_key": "event.errors.eligibility_narrowing_locked", "description": "Cannot narrow min_age / max_age / age_group_ids post-registration_open without events.eligibility.narrow permission. Excludes existing registrants." },
-    { "code": "EVENT_TENANT_IMMUTABLE", "http": 422, "retryable": false, "user_facing": false, "audit_severity": "warn", "i18n_key": "event.errors.tenant_immutable" },
-    { "code": "EVENT_ORGANIZATION_IMMUTABLE", "http": 422, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "event.errors.organization_immutable" },
-    { "code": "EVENT_PUBLIC_VISIBILITY_INVALID_STATUS", "http": 409, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "event.errors.public_visibility_invalid_status", "description": "Attempted visibility='public' when status IN (draft, cancelled, archived). Only announced/registration_open/registration_closed/in_progress/completed can be public." },
-    { "code": "EVENT_FACILITY_TENANT_MISMATCH", "http": 422, "retryable": false, "user_facing": false, "audit_severity": "warn", "i18n_key": "event.errors.facility_tenant_mismatch", "description": "Attempted to attach a facility from a different tenant." },
-    { "code": "EVENT_FACILITY_ORGANIZATION_MISMATCH", "http": 422, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "event.errors.facility_organization_mismatch", "description": "Facility's branch belongs to a different organization than event.organization_id." },
-    { "code": "EVENT_FACILITY_ALREADY_ATTACHED", "http": 409, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "event.errors.facility_already_attached", "description": "This facility is already attached to this event (active row)." },
-    { "code": "EVENT_FACILITY_LAST_PRIMARY", "http": 409, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "event.errors.facility_last_primary", "description": "Cannot detach the primary facility from an in-progress event without designating another primary first." },
-    { "code": "EVENT_REGISTRATION_NOT_OPEN", "http": 409, "retryable": true, "user_facing": true, "audit_severity": "info", "i18n_key": "event.errors.registration_not_open", "description": "The `event.enforce_registration_open` middleware refused an enrollment-adjacent request." },
-    { "code": "EVENT_REGISTRATION_CLOSED", "http": 409, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "event.errors.registration_closed" },
-    { "code": "EVENT_LATE_REGISTRATION_REQUIRES_PERMISSION", "http": 403, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "event.errors.late_registration_requires_permission" },
-    { "code": "EVENT_CAPACITY_EXCEEDED", "http": 409, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "event.errors.capacity_exceeded", "description": "Registration surface refused because max_participants (or max_teams) reached. Wave 3+ enforcement." },
-    { "code": "EVENT_ELIGIBILITY_MISMATCH", "http": 409, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "event.errors.eligibility_mismatch", "description": "Athlete registering does not match min_age/max_age/age_group_ids/gender_category. Wave 3+." },
-    { "code": "EVENT_CROSS_TENANT", "http": 403, "retryable": false, "user_facing": false, "audit_severity": "warn", "i18n_key": "event.errors.cross_tenant", "description": "The `X-Event-Id` header points at an Event in a different tenant. Security-relevant." },
-    { "code": "EVENT_PUBLIC_HARD_DELETE_FORBIDDEN", "http": 403, "retryable": false, "user_facing": true, "audit_severity": "warn", "i18n_key": "event.errors.public_hard_delete_forbidden", "description": "Public API never hard-deletes; the audit trail must survive. Hard-delete happens only via platform-support two-person CLI path OR via PurgeArchivedEventsJob after retention window." }
+    {
+      "code": "EVENT_NOT_FOUND",
+      "http": 404,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "event.errors.event_not_found"
+    },
+    {
+      "code": "EVENT_FEATURE_NOT_ENTITLED",
+      "http": 402,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "event.errors.feature_not_entitled",
+      "description": "Tenant does not hold `sports_events` entitlement."
+    },
+    {
+      "code": "EVENT_QUOTA_EXCEEDED",
+      "http": 402,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "event.errors.quota_exceeded",
+      "description": "Reached the `event_slot` per-calendar-year cap (Small=12/year, Medium=60/year, Enterprise=unlimited)."
+    },
+    {
+      "code": "EVENT_PUBLIC_VISIBILITY_NOT_ENTITLED",
+      "http": 402,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "event.errors.public_visibility_not_entitled",
+      "description": "visibility='public' attempted without event_public_visibility entitlement (Medium+)."
+    },
+    {
+      "code": "EVENT_LIVESTREAM_NOT_ENTITLED",
+      "http": 402,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "event.errors.livestream_not_entitled",
+      "description": "livestream_url set without event_livestream entitlement (Medium+)."
+    },
+    {
+      "code": "EVENT_PRIZE_POOL_NOT_ENTITLED",
+      "http": 402,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "event.errors.prize_pool_not_entitled",
+      "description": "prize_pool_cents set without event_prize_pool entitlement (Enterprise-only)."
+    },
+    {
+      "code": "EVENT_MULTI_FACILITY_NOT_ENTITLED",
+      "http": 402,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "event.errors.multi_facility_not_entitled",
+      "description": "Second event_facilities row attempted without event_multi_facility entitlement (Enterprise-only)."
+    },
+    {
+      "code": "EVENT_SPONSORS_NOT_ENTITLED",
+      "http": 402,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "event.errors.sponsors_not_entitled",
+      "description": "sponsors JSONB set without event_sponsors entitlement (Enterprise-only)."
+    },
+    {
+      "code": "EVENT_INVALID_DATE_RANGE",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "event.errors.invalid_date_range",
+      "description": "ends_at < starts_at."
+    },
+    {
+      "code": "EVENT_STARTS_IN_PAST",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "event.errors.starts_in_past",
+      "description": "starts_at <= now() at create time. Existing events editing to a past time are allowed for admin backfill."
+    },
+    {
+      "code": "EVENT_INVALID_REGISTRATION_WINDOW",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "event.errors.invalid_registration_window",
+      "description": "registration_opens_at >= registration_closes_at OR registration_closes_at > starts_at."
+    },
+    {
+      "code": "EVENT_LATE_REGISTRATION_FEE_REQUIRED",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "event.errors.late_registration_fee_required",
+      "description": "allow_late_registration=true supplied without late_registration_fee_cents > 0."
+    },
+    {
+      "code": "EVENT_INVALID_AGE_RANGE",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "event.errors.invalid_age_range",
+      "description": "min_age > max_age OR min_age/max_age outside [3, 100]."
+    },
+    {
+      "code": "EVENT_ENTRY_FEE_CURRENCY_REQUIRED",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "event.errors.entry_fee_currency_required",
+      "description": "entry_fee_cents > 0 supplied without entry_fee_currency."
+    },
+    {
+      "code": "EVENT_PRIZE_POOL_CURRENCY_REQUIRED",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "event.errors.prize_pool_currency_required"
+    },
+    {
+      "code": "EVENT_BRANCH_ORGANIZATION_MISMATCH",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "event.errors.branch_organization_mismatch",
+      "description": "branch_id belongs to a different organization than the event's organization_id."
+    },
+    {
+      "code": "EVENT_ORGANIZATION_TENANT_MISMATCH",
+      "http": 422,
+      "retryable": false,
+      "user_facing": false,
+      "audit_severity": "warn",
+      "i18n_key": "event.errors.organization_tenant_mismatch",
+      "description": "Cross-tenant FK smuggling."
+    },
+    {
+      "code": "EVENT_BRANCH_TENANT_MISMATCH",
+      "http": 422,
+      "retryable": false,
+      "user_facing": false,
+      "audit_severity": "warn",
+      "i18n_key": "event.errors.branch_tenant_mismatch"
+    },
+    {
+      "code": "EVENT_SEASON_TENANT_MISMATCH",
+      "http": 422,
+      "retryable": false,
+      "user_facing": false,
+      "audit_severity": "warn",
+      "i18n_key": "event.errors.season_tenant_mismatch"
+    },
+    {
+      "code": "EVENT_ORGANIZATION_ARCHIVED",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "event.errors.organization_archived"
+    },
+    {
+      "code": "EVENT_BRANCH_NOT_ACTIVE",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "event.errors.branch_not_active"
+    },
+    {
+      "code": "EVENT_SEASON_ARCHIVED",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "event.errors.season_archived",
+      "description": "Cannot attach an archived season to a new event."
+    },
+    {
+      "code": "EVENT_INITIAL_STATUS_INVALID",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "event.errors.initial_status_invalid",
+      "description": "Attempted to create Event directly with status IN (registration_open, in_progress, completed, cancelled, archived). Only draft + announced are valid initial states."
+    },
+    {
+      "code": "EVENT_STATUS_TRANSITION_INVALID",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "event.errors.status_transition_invalid",
+      "description": "Attempted a status transition outside the state machine. Response includes the valid transitions."
+    },
+    {
+      "code": "EVENT_CANCELLATION_REASON_REQUIRED",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "event.errors.cancellation_reason_required",
+      "description": "Status transition to cancelled without cancellation_reason."
+    },
+    {
+      "code": "EVENT_ARCHIVE_REQUIRES_TERMINAL",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "event.errors.archive_requires_terminal",
+      "description": "Attempted to archive an Event that hasn't reached completed or cancelled."
+    },
+    {
+      "code": "EVENT_HAS_ACTIVE_REGISTRATIONS",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "event.errors.has_active_registrations",
+      "description": "Cannot archive an Event while active registrations reference it. Complete or cancel first."
+    },
+    {
+      "code": "EVENT_DATES_LOCKED_AFTER_START",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "warn",
+      "i18n_key": "event.errors.dates_locked_after_start",
+      "description": "Cannot change starts_at / ends_at post-in_progress without the `events.dates.shift` permission."
+    },
+    {
+      "code": "EVENT_DATES_LOCKED_AFTER_COMPLETION",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "warn",
+      "i18n_key": "event.errors.dates_locked_after_completion",
+      "description": "Cannot change dates on a completed Event — corrupts historical calendar attribution."
+    },
+    {
+      "code": "EVENT_VENUE_LOCKED_POST_REGISTRATION",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "warn",
+      "i18n_key": "event.errors.venue_locked_post_registration",
+      "description": "Cannot change branch_id / primary facility post-registration_open without events.venue.change permission."
+    },
+    {
+      "code": "EVENT_PRICING_LOCKED_POST_REGISTRATION",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "critical",
+      "i18n_key": "event.errors.pricing_locked_post_registration",
+      "description": "Cannot change entry_fee_cents / late_registration_fee_cents / prize_pool_cents post-registration_open without events.pricing.change permission. Critical-severity — post-registration price shifts create refund liability."
+    },
+    {
+      "code": "EVENT_ELIGIBILITY_NARROWING_LOCKED",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "critical",
+      "i18n_key": "event.errors.eligibility_narrowing_locked",
+      "description": "Cannot narrow min_age / max_age / age_group_ids post-registration_open without events.eligibility.narrow permission. Excludes existing registrants."
+    },
+    {
+      "code": "EVENT_TENANT_IMMUTABLE",
+      "http": 422,
+      "retryable": false,
+      "user_facing": false,
+      "audit_severity": "warn",
+      "i18n_key": "event.errors.tenant_immutable"
+    },
+    {
+      "code": "EVENT_ORGANIZATION_IMMUTABLE",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "event.errors.organization_immutable"
+    },
+    {
+      "code": "EVENT_PUBLIC_VISIBILITY_INVALID_STATUS",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "event.errors.public_visibility_invalid_status",
+      "description": "Attempted visibility='public' when status IN (draft, cancelled, archived). Only announced/registration_open/registration_closed/in_progress/completed can be public."
+    },
+    {
+      "code": "EVENT_FACILITY_TENANT_MISMATCH",
+      "http": 422,
+      "retryable": false,
+      "user_facing": false,
+      "audit_severity": "warn",
+      "i18n_key": "event.errors.facility_tenant_mismatch",
+      "description": "Attempted to attach a facility from a different tenant."
+    },
+    {
+      "code": "EVENT_FACILITY_ORGANIZATION_MISMATCH",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "event.errors.facility_organization_mismatch",
+      "description": "Facility's branch belongs to a different organization than event.organization_id."
+    },
+    {
+      "code": "EVENT_FACILITY_ALREADY_ATTACHED",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "event.errors.facility_already_attached",
+      "description": "This facility is already attached to this event (active row)."
+    },
+    {
+      "code": "EVENT_FACILITY_LAST_PRIMARY",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "event.errors.facility_last_primary",
+      "description": "Cannot detach the primary facility from an in-progress event without designating another primary first."
+    },
+    {
+      "code": "EVENT_REGISTRATION_NOT_OPEN",
+      "http": 409,
+      "retryable": true,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "event.errors.registration_not_open",
+      "description": "The `event.enforce_registration_open` middleware refused an enrollment-adjacent request."
+    },
+    {
+      "code": "EVENT_REGISTRATION_CLOSED",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "event.errors.registration_closed"
+    },
+    {
+      "code": "EVENT_LATE_REGISTRATION_REQUIRES_PERMISSION",
+      "http": 403,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "event.errors.late_registration_requires_permission"
+    },
+    {
+      "code": "EVENT_CAPACITY_EXCEEDED",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "event.errors.capacity_exceeded",
+      "description": "Registration surface refused because max_participants (or max_teams) reached. Wave 3+ enforcement."
+    },
+    {
+      "code": "EVENT_ELIGIBILITY_MISMATCH",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "event.errors.eligibility_mismatch",
+      "description": "Athlete registering does not match min_age/max_age/age_group_ids/gender_category. Wave 3+."
+    },
+    {
+      "code": "EVENT_CROSS_TENANT",
+      "http": 403,
+      "retryable": false,
+      "user_facing": false,
+      "audit_severity": "warn",
+      "i18n_key": "event.errors.cross_tenant",
+      "description": "The `X-Event-Id` header points at an Event in a different tenant. Security-relevant."
+    },
+    {
+      "code": "EVENT_PUBLIC_HARD_DELETE_FORBIDDEN",
+      "http": 403,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "warn",
+      "i18n_key": "event.errors.public_hard_delete_forbidden",
+      "description": "Public API never hard-deletes; the audit trail must survive. Hard-delete happens only via platform-support two-person CLI path OR via PurgeArchivedEventsJob after retention window."
+    }
   ]
 }

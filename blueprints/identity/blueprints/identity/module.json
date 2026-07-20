@@ -23,35 +23,15 @@
     "breach-check"
   ],
   "priority": 15,
-  "providers": [
-    "Academorix\\Identity\\Providers\\IdentityServiceProvider"
-  ],
+  "providers": ["Academorix\\Identity\\Providers\\IdentityServiceProvider"],
   "files": [],
-  "dependencies": [
-    "foundation"
-  ],
-  "extendedBy": [
-    "user",
-    "platform-user",
-    "mfa",
-    "auth",
-    "service-accounts"
-  ],
+  "dependencies": ["foundation"],
+  "extendedBy": ["user", "platform-user", "mfa", "auth", "service-accounts"],
   "contributes": {
-    "traits": [
-      "IsIdentity",
-      "HasCredentialLifecycle"
-    ],
-    "attributes": [
-      "AsCredentialListener"
-    ],
-    "blueprints": [
-      "identity"
-    ],
-    "middleware": [
-      "identity.rate_limit_login",
-      "identity.check_lockout"
-    ],
+    "traits": ["IsIdentity", "HasCredentialLifecycle"],
+    "attributes": ["AsCredentialListener"],
+    "blueprints": ["identity"],
+    "middleware": ["identity.rate_limit_login", "identity.check_lockout"],
     "events": [
       "IdentityRegistered",
       "IdentityEmailVerified",
@@ -66,9 +46,7 @@
       "RecoveryCodesRegenerated",
       "IdentityErased"
     ],
-    "policies": [
-      "IdentityPolicy"
-    ],
+    "policies": ["IdentityPolicy"],
     "hooks": [],
     "commands": [
       "identity:list",
@@ -92,30 +70,13 @@
       "SuspiciousLoginNotification"
     ],
     "broadcasts": [],
-    "observers": [
-      "IdentityObserver"
-    ],
-    "rules": [
-      "strong_password",
-      "bcp47_locale",
-      "valid_recovery_code",
-      "not_in_password_history"
-    ],
-    "casts": [
-      "EncryptedMfaSecret",
-      "HashedRecoveryCodes"
-    ],
+    "observers": ["IdentityObserver"],
+    "rules": ["strong_password", "bcp47_locale", "valid_recovery_code", "not_in_password_history"],
+    "casts": ["EncryptedMfaSecret", "HashedRecoveryCodes"],
     "views": [],
-    "lang": [
-      "identity"
-    ],
-    "config": [
-      "identity"
-    ],
-    "macros": [
-      "Str::password_strength",
-      "Blueprint::identity_fields"
-    ],
+    "lang": ["identity"],
+    "config": ["identity"],
+    "macros": ["Str::password_strength", "Blueprint::identity_fields"],
     "bindings": [
       "IdentityRepository",
       "CredentialHasher",
@@ -126,9 +87,7 @@
       "PasswordHistoryChecker",
       "BreachedPasswordChecker"
     ],
-    "resources": [
-      "identity"
-    ]
+    "resources": ["identity"]
   },
   "wraps": {
     "packages": [

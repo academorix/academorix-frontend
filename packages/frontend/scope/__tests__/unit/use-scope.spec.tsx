@@ -9,12 +9,12 @@
  *   unmount.
  */
 
-import { act, cleanup, renderHook, waitFor } from '@testing-library/react';
-import { afterEach, describe, expect, it, vi } from 'vitest';
+import { act, cleanup, renderHook, waitFor } from "@testing-library/react";
+import { afterEach, describe, expect, it, vi } from "vitest";
 
-import { useScope } from '@/react/hooks/use-scope.hook';
-import { MockScopeService } from '@/testing/mock-scope-service';
-import type { IScopeContext, IScopeNodeTreeNode } from '@/core/interfaces';
+import { useScope } from "@/react/hooks/use-scope.hook";
+import { MockScopeService } from "@/testing/mock-scope-service";
+import type { IScopeContext, IScopeNodeTreeNode } from "@/core/interfaces";
 
 /** Hoisted service reference the mock factory closes over. */
 const { serviceRef } = vi.hoisted(() => ({
@@ -24,15 +24,15 @@ const { serviceRef } = vi.hoisted(() => ({
 // Replace @stackra/container/react so useInject returns whatever the
 // current test wired up in `serviceRef.current`. Same pattern as
 // the actions package's hook tests.
-vi.mock('@stackra/container/react', () => ({
+vi.mock("@stackra/container/react", () => ({
   useInject: <T,>() => serviceRef.current as unknown as T,
 }));
 
 function ctx(nodeId: string, emulated = false): IScopeContext {
   return {
-    ownerId: 'org-1',
+    ownerId: "org-1",
     nodeId,
-    level: 'venue',
+    level: "venue",
     entityId: nodeId,
     path: [nodeId],
     ancestors: { venue: nodeId },
@@ -43,11 +43,11 @@ function ctx(nodeId: string, emulated = false): IScopeContext {
 function nodeTree(): IScopeNodeTreeNode[] {
   return [
     {
-      id: 'node-a',
-      ownerId: 'org-1',
-      level: 'venue',
-      entityId: 'venue-a',
-      label: 'Alpha',
+      id: "node-a",
+      ownerId: "org-1",
+      level: "venue",
+      entityId: "venue-a",
+      label: "Alpha",
       children: [],
     },
   ];
@@ -58,32 +58,32 @@ afterEach(() => {
   serviceRef.current = null;
 });
 
-describe('useScope', () => {
-  it('reads the initial snapshot', () => {
+describe("useScope", () => {
+  it("reads the initial snapshot", () => {
     serviceRef.current = new MockScopeService({
-      scope: ctx('node-a'),
+      scope: ctx("node-a"),
       tree: nodeTree(),
     });
     const { result } = renderHook(() => useScope());
-    expect(result.current.scope?.nodeId).toBe('node-a');
+    expect(result.current.scope?.nodeId).toBe("node-a");
     expect(result.current.tree).toHaveLength(1);
     expect(result.current.isLoading).toBe(false);
     expect(result.current.isEmulating).toBe(false);
   });
 
-  it('re-renders when the service emits', async () => {
-    const service = new MockScopeService({ scope: ctx('node-a') });
+  it("re-renders when the service emits", async () => {
+    const service = new MockScopeService({ scope: ctx("node-a") });
     serviceRef.current = service;
     const { result } = renderHook(() => useScope());
-    expect(result.current.scope?.nodeId).toBe('node-a');
+    expect(result.current.scope?.nodeId).toBe("node-a");
 
     act(() => {
-      service.simulateScope(ctx('node-b'));
+      service.simulateScope(ctx("node-b"));
     });
-    await waitFor(() => expect(result.current.scope?.nodeId).toBe('node-b'));
+    await waitFor(() => expect(result.current.scope?.nodeId).toBe("node-b"));
   });
 
-  it('re-renders when the tree changes', async () => {
+  it("re-renders when the tree changes", async () => {
     const service = new MockScopeService({ tree: [] });
     serviceRef.current = service;
     const { result } = renderHook(() => useScope());
@@ -95,42 +95,42 @@ describe('useScope', () => {
     await waitFor(() => expect(result.current.tree).toHaveLength(1));
   });
 
-  it('exposes setScope which routes to the service', async () => {
+  it("exposes setScope which routes to the service", async () => {
     const service = new MockScopeService({
-      scope: ctx('node-a'),
+      scope: ctx("node-a"),
       resolveScope: (id) => ctx(id),
     });
     serviceRef.current = service;
     const { result } = renderHook(() => useScope());
 
     await act(async () => {
-      await result.current.setScope('node-b');
+      await result.current.setScope("node-b");
     });
-    expect(result.current.scope?.nodeId).toBe('node-b');
+    expect(result.current.scope?.nodeId).toBe("node-b");
     expect(result.current.isEmulating).toBe(false);
   });
 
-  it('exposes emulate + restore round-trip', async () => {
+  it("exposes emulate + restore round-trip", async () => {
     const service = new MockScopeService({
-      scope: ctx('node-a'),
+      scope: ctx("node-a"),
       resolveScope: (id) => ctx(id),
     });
     serviceRef.current = service;
     const { result } = renderHook(() => useScope());
 
     await act(async () => {
-      await result.current.emulate('node-x');
+      await result.current.emulate("node-x");
     });
     expect(result.current.isEmulating).toBe(true);
-    expect(result.current.scope?.nodeId).toBe('node-x');
+    expect(result.current.scope?.nodeId).toBe("node-x");
 
     act(() => result.current.restore());
     expect(result.current.isEmulating).toBe(false);
-    expect(result.current.scope?.nodeId).toBe('node-a');
+    expect(result.current.scope?.nodeId).toBe("node-a");
   });
 
-  it('unsubscribes on unmount', () => {
-    const service = new MockScopeService({ scope: ctx('node-a') });
+  it("unsubscribes on unmount", () => {
+    const service = new MockScopeService({ scope: ctx("node-a") });
     serviceRef.current = service;
     const { unmount } = renderHook(() => useScope());
     const before = subscriberCount(service);
@@ -139,12 +139,12 @@ describe('useScope', () => {
     expect(after).toBeLessThan(before);
   });
 
-  it('returns a stable snapshot identity across renders when nothing changes', () => {
+  it("returns a stable snapshot identity across renders when nothing changes", () => {
     // useSyncExternalStore requires referential stability from
     // getSnapshot; without it, React warns and can bail on updates.
     // Two consecutive `getSnapshot` reads on the service must return
     // the same object — this test locks that in through the mock.
-    const service = new MockScopeService({ scope: ctx('node-a') });
+    const service = new MockScopeService({ scope: ctx("node-a") });
     serviceRef.current = service;
     expect(service.getSnapshot()).toBe(service.getSnapshot());
   });

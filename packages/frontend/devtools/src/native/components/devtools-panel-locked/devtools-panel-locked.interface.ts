@@ -5,10 +5,10 @@
  *   state.
  */
 
-import type { IDevtoolsAuthGate } from '@stackra/contracts';
+import type { IDevtoolsAuthGate } from "@stackra/contracts";
 
 /** Deny reason mirrored from the web guard. */
-export type DevtoolsAuthDenyReason = 'unauthenticated' | 'forbidden';
+export type DevtoolsAuthDenyReason = "unauthenticated" | "forbidden";
 
 /** Props for the native {@link DevtoolsPanelLocked}. */
 export interface DevtoolsPanelLockedProps {

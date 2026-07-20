@@ -4,8 +4,8 @@
  * @description Props accepted by `<SettingsForm>`.
  */
 
-import type { ReactNode } from 'react';
-import type { ISettingDefinition, ISettingField, Type } from '@stackra/contracts';
+import type { ReactNode } from "react";
+import type { ISettingDefinition, ISettingField, Type } from "@stackra/contracts";
 
 /** Props accepted by `<SettingsForm>`. */
 export interface ISettingsFormProps {

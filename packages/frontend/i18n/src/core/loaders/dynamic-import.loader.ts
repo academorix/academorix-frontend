@@ -5,9 +5,9 @@
  *   Each locale becomes a separate chunk — only the active locale is loaded.
  */
 
-import type { II18nLoader, I18nTranslation } from '@stackra/contracts';
+import type { II18nLoader, I18nTranslation } from "@stackra/contracts";
 
-import type { DynamicImportLoaderOptions } from '../interfaces';
+import type { DynamicImportLoaderOptions } from "../interfaces";
 
 /**
  * Loads translations via dynamic import() for code-splitting.
@@ -32,7 +32,7 @@ export class DynamicImportLoader implements II18nLoader {
     try {
       const module = await this.importFn(locale);
       const translations =
-        module && typeof module === 'object' && 'default' in module
+        module && typeof module === "object" && "default" in module
           ? (module as { default: I18nTranslation }).default
           : (module as I18nTranslation);
 

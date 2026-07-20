@@ -14,8 +14,8 @@ Admin-facing user roster CRUD.
 - `create.screen.json` \u2014 admin-triggered creation. Fields: email + role +
   is_default + optional pre-verify toggle (admin only).
 - `edit.screen.json` \u2014 update status / default_role_id / preferred_locale.
-  Profile-shaped fields require the caller to switch to the `edit-profile`
-  modal (separate permission).
+  Profile-shaped fields require the caller to switch to the `edit-profile` modal
+  (separate permission).
 
 ### `resources/profile/`
 
@@ -25,8 +25,8 @@ Self-service + admin PII surface.
   layouts. Avatar upload widget with drag-and-drop.
 - `show-redacted.screen.json` \u2014 non-subject read of another User's profile
   when the caller lacks `profile.view.pii`. Shows display_name + avatar +
-  locale + timezone only; PII cluster replaced with `\u2500\u2500 redacted \u2500\u2500`
-  chips.
+  locale + timezone only; PII cluster replaced with
+  `\u2500\u2500 redacted \u2500\u2500` chips.
 
 ### `resources/tenant-member/`
 
@@ -45,5 +45,5 @@ Multi-tenant management.
   `/me/tenants/{tenant}/switch`.
 - `user-status-chip.widget.json` \u2014 colour-coded chip for the four terminal
   User.status values.
-- `me-card.widget.json` \u2014 header card with avatar + display_name + role
-  in the current tenant + a "manage account" link. Consumed by the top nav bar.
+- `me-card.widget.json` \u2014 header card with avatar + display_name + role in
+  the current tenant + a "manage account" link. Consumed by the top nav bar.

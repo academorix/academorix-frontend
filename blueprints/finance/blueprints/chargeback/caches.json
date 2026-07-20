@@ -31,14 +31,21 @@
       "description": "Pending-evidence queue for a tenant. Feeds the SDUI pending-evidence screen + the tenant.{id}.chargebacks.pending-evidence broadcast channel's initial payload.",
       "ttlSeconds": 30,
       "tags": ["chargebacks", "chargebacks.pending_evidence"],
-      "invalidatedBy": ["ChargebackObserver.created (pending_evidence)", "ChargebackObserver.updated (leaving pending_evidence)"]
+      "invalidatedBy": [
+        "ChargebackObserver.created (pending_evidence)",
+        "ChargebackObserver.updated (leaving pending_evidence)"
+      ]
     },
     {
       "pattern": "cbk:defenders:{tenant_id}",
       "description": "List of user_ids holding chargebacks.submit-evidence permission for a tenant. Read by NotifyChargebackEvidenceOverdueJob to seed reminder notifications. Invalidated on permission changes.",
       "ttlSeconds": 600,
       "tags": ["chargebacks"],
-      "invalidatedBy": ["user::RolePermissionChanged", "user::UserRoleAssigned", "user::UserRoleRevoked"]
+      "invalidatedBy": [
+        "user::RolePermissionChanged",
+        "user::UserRoleAssigned",
+        "user::UserRoleRevoked"
+      ]
     },
     {
       "pattern": "cbk:evidence:{chargeback_id}",
@@ -66,7 +73,10 @@
       "description": "Cached chargeback-rate report response. period_key = period_start-period_end in ISO 8601. Powers the /reports/chargeback-rate endpoint's non-hot path.",
       "ttlSeconds": 3600,
       "tags": ["chargebacks", "chargebacks.rate_reports"],
-      "invalidatedBy": ["hourly boundary (natural expiry)", "manual purge by admin (ChargebackRateReportController@invalidate)"]
+      "invalidatedBy": [
+        "hourly boundary (natural expiry)",
+        "manual purge by admin (ChargebackRateReportController@invalidate)"
+      ]
     },
     {
       "pattern": "cbk:reason-catalog",

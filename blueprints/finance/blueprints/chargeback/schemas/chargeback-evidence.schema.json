@@ -47,7 +47,12 @@
   "x-database": {
     "engine": "postgres",
     "columns": {
-      "id": { "type": "string", "length": 64, "primary": true, "description": "Prefixed ULID: `cev_<26>`." },
+      "id": {
+        "type": "string",
+        "length": 64,
+        "primary": true,
+        "description": "Prefixed ULID: `cev_<26>`."
+      },
       "tenant_id": {
         "type": "string",
         "length": 64,
@@ -123,7 +128,11 @@
         "nullable": true,
         "description": "{ submission_id, status, next_action }. Populated after EvidenceSubmitter dispatches to provider. Encrypted at rest. Confidential."
       },
-      "metadata": { "type": "jsonb", "nullable": true, "description": "Freeform metadata. May include ce3_bundle when parent chargeback.ce3_eligible=true." },
+      "metadata": {
+        "type": "jsonb",
+        "nullable": true,
+        "description": "Freeform metadata. May include ce3_bundle when parent chargeback.ce3_eligible=true."
+      },
       "created_by": { "type": "string", "length": 64, "nullable": true },
       "updated_by": { "type": "string", "length": 64, "nullable": true },
       "created_at": { "type": "timestamptz", "nullable": false },
@@ -136,8 +145,15 @@
         "name": "chargeback_evidence_attempt_unique"
       },
       { "columns": ["tenant_id", "chargeback_id"], "name": "chargeback_evidence_chargeback_idx" },
-      { "columns": ["tenant_id", "submitted_by_user_id"], "name": "chargeback_evidence_submitter_idx" },
-      { "columns": ["submitted_at"], "name": "chargeback_evidence_submitted_at_idx", "order": "DESC" }
+      {
+        "columns": ["tenant_id", "submitted_by_user_id"],
+        "name": "chargeback_evidence_submitter_idx"
+      },
+      {
+        "columns": ["submitted_at"],
+        "name": "chargeback_evidence_submitted_at_idx",
+        "order": "DESC"
+      }
     ]
   },
   "required": [
@@ -228,7 +244,10 @@
       "required": ["policy_url", "policy_snapshot_at_purchase", "cooling_off_days"],
       "properties": {
         "policy_url": { "type": "string", "format": "uri" },
-        "policy_snapshot_at_purchase": { "type": "string", "description": "Frozen text of the refund policy at purchase time." },
+        "policy_snapshot_at_purchase": {
+          "type": "string",
+          "description": "Frozen text of the refund policy at purchase time."
+        },
         "cooling_off_days": { "type": "integer", "minimum": 0 }
       }
     },
@@ -253,9 +272,16 @@
       "required": ["signature_url", "ip_address", "timestamp", "device_fingerprint_hash"],
       "properties": {
         "signature_url": { "type": "string", "format": "uri" },
-        "ip_address": { "type": "string", "description": "Customer's IP at checkout. Anonymized to /24 for GDPR minimisation." },
+        "ip_address": {
+          "type": "string",
+          "description": "Customer's IP at checkout. Anonymized to /24 for GDPR minimisation."
+        },
         "timestamp": { "type": "string", "format": "date-time" },
-        "device_fingerprint_hash": { "type": "string", "description": "SHA-256 hex of device fingerprint. NEVER raw fingerprint content.", "pattern": "^[a-f0-9]{64}$" }
+        "device_fingerprint_hash": {
+          "type": "string",
+          "description": "SHA-256 hex of device fingerprint. NEVER raw fingerprint content.",
+          "pattern": "^[a-f0-9]{64}$"
+        }
       }
     },
     "uncategorized_text": { "type": ["string", "null"] },
@@ -268,7 +294,12 @@
         "ce3_bundle": {
           "type": ["object", "null"],
           "description": "Compelling Evidence 3.0 bundle when parent chargeback.ce3_eligible=true.",
-          "required": ["prior_purchase_1", "prior_purchase_2", "matching_identifiers", "evidence_category"],
+          "required": [
+            "prior_purchase_1",
+            "prior_purchase_2",
+            "matching_identifiers",
+            "evidence_category"
+          ],
           "properties": {
             "prior_purchase_1": {
               "type": "object",

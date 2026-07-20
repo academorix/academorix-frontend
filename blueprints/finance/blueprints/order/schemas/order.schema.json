@@ -16,7 +16,17 @@
     "model": "Academorix\\Finance\\Order\\Models\\Order",
     "interface": "Academorix\\Finance\\Order\\Contracts\\Data\\OrderInterface",
     "implements": ["Academorix\\Finance\\Order\\Contracts\\Data\\OrderInterface"],
-    "traits": ["HasFactory", "HasUlids", "BelongsToTenant", "BelongsToBranch", "HasStates", "HasMetadata", "HasUserstamps", "Auditable", "SoftDeletes"],
+    "traits": [
+      "HasFactory",
+      "HasUlids",
+      "BelongsToTenant",
+      "BelongsToBranch",
+      "HasStates",
+      "HasMetadata",
+      "HasUserstamps",
+      "Auditable",
+      "SoftDeletes"
+    ],
     "casts": {
       "status": "OrderStatus",
       "channel": "OrderChannel",
@@ -38,28 +48,114 @@
   "x-database": {
     "engine": "postgres",
     "columns": {
-      "id": { "type": "string", "length": 64, "primary": true, "description": "Prefixed ULID: `ord_<26>`." },
-      "tenant_id": { "type": "string", "length": 64, "nullable": false, "foreign": { "table": "tenants", "column": "id", "onDelete": "cascade" } },
-      "branch_id": { "type": "string", "length": 64, "nullable": true, "foreign": { "table": "branches", "column": "id", "onDelete": "restrict" } },
-      "region_id": { "type": "string", "length": 64, "nullable": true, "foreign": { "table": "regions", "column": "id", "onDelete": "restrict" }, "description": "Determines tax jurisdiction + currency." },
-      "buyer_type": { "type": "string", "length": 32, "nullable": false, "description": "Polymorphic buyer type: guardian / tenant / user / walk_in." },
-      "buyer_id": { "type": "string", "length": 64, "nullable": false, "description": "Polymorphic buyer ID. For walk-in orders, may reference a lightweight guest record." },
-      "reference_number": { "type": "string", "length": 32, "nullable": false, "description": "Human-readable order number (e.g. ORD-000123). Unique per tenant." },
-      "status": { "type": "string", "length": 24, "nullable": false, "default": "'draft'", "description": "Enum: draft / pending / partially_paid / paid / abandoned / cancelled / refunded / fulfilled." },
-      "channel": { "type": "string", "length": 16, "nullable": false, "default": "'web'", "description": "Enum: web / mobile / pos / staff / api. Affects tax + fee rules." },
+      "id": {
+        "type": "string",
+        "length": 64,
+        "primary": true,
+        "description": "Prefixed ULID: `ord_<26>`."
+      },
+      "tenant_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "foreign": { "table": "tenants", "column": "id", "onDelete": "cascade" }
+      },
+      "branch_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": true,
+        "foreign": { "table": "branches", "column": "id", "onDelete": "restrict" }
+      },
+      "region_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": true,
+        "foreign": { "table": "regions", "column": "id", "onDelete": "restrict" },
+        "description": "Determines tax jurisdiction + currency."
+      },
+      "buyer_type": {
+        "type": "string",
+        "length": 32,
+        "nullable": false,
+        "description": "Polymorphic buyer type: guardian / tenant / user / walk_in."
+      },
+      "buyer_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "description": "Polymorphic buyer ID. For walk-in orders, may reference a lightweight guest record."
+      },
+      "reference_number": {
+        "type": "string",
+        "length": 32,
+        "nullable": false,
+        "description": "Human-readable order number (e.g. ORD-000123). Unique per tenant."
+      },
+      "status": {
+        "type": "string",
+        "length": 24,
+        "nullable": false,
+        "default": "'draft'",
+        "description": "Enum: draft / pending / partially_paid / paid / abandoned / cancelled / refunded / fulfilled."
+      },
+      "channel": {
+        "type": "string",
+        "length": 16,
+        "nullable": false,
+        "default": "'web'",
+        "description": "Enum: web / mobile / pos / staff / api. Affects tax + fee rules."
+      },
       "currency": { "type": "string", "length": 3, "nullable": false, "description": "ISO 4217." },
-      "subtotal_minor": { "type": "integer", "nullable": false, "default": 0, "description": "Sum of order_lines.total_minor before adjustments + tax. Minor units (cents)." },
-      "adjustments_minor": { "type": "integer", "nullable": false, "default": 0, "description": "Sum of order_adjustments.amount_minor (signed). Positive = fee; negative = discount." },
-      "tax_minor": { "type": "integer", "nullable": false, "default": 0, "description": "Total tax minor units. Computed from region rules." },
-      "total_minor": { "type": "integer", "nullable": false, "default": 0, "description": "subtotal + adjustments + tax. Never negative." },
-      "amount_paid_minor": { "type": "integer", "nullable": false, "default": 0, "description": "Sum of successful payment_transactions.amount_minor for this order." },
-      "amount_refunded_minor": { "type": "integer", "nullable": false, "default": 0, "description": "Sum of refunds.amount_minor for this order." },
-      "expires_at": { "type": "timestamptz", "nullable": true, "description": "TTL for abandoned-order sweeper. Typically 24h from creation." },
+      "subtotal_minor": {
+        "type": "integer",
+        "nullable": false,
+        "default": 0,
+        "description": "Sum of order_lines.total_minor before adjustments + tax. Minor units (cents)."
+      },
+      "adjustments_minor": {
+        "type": "integer",
+        "nullable": false,
+        "default": 0,
+        "description": "Sum of order_adjustments.amount_minor (signed). Positive = fee; negative = discount."
+      },
+      "tax_minor": {
+        "type": "integer",
+        "nullable": false,
+        "default": 0,
+        "description": "Total tax minor units. Computed from region rules."
+      },
+      "total_minor": {
+        "type": "integer",
+        "nullable": false,
+        "default": 0,
+        "description": "subtotal + adjustments + tax. Never negative."
+      },
+      "amount_paid_minor": {
+        "type": "integer",
+        "nullable": false,
+        "default": 0,
+        "description": "Sum of successful payment_transactions.amount_minor for this order."
+      },
+      "amount_refunded_minor": {
+        "type": "integer",
+        "nullable": false,
+        "default": 0,
+        "description": "Sum of refunds.amount_minor for this order."
+      },
+      "expires_at": {
+        "type": "timestamptz",
+        "nullable": true,
+        "description": "TTL for abandoned-order sweeper. Typically 24h from creation."
+      },
       "paid_at": { "type": "timestamptz", "nullable": true },
       "cancelled_at": { "type": "timestamptz", "nullable": true },
       "refunded_at": { "type": "timestamptz", "nullable": true },
       "fulfilled_at": { "type": "timestamptz", "nullable": true },
-      "notes": { "type": "text", "nullable": true, "description": "Staff-facing notes. Never surfaced to buyer." },
+      "notes": {
+        "type": "text",
+        "nullable": true,
+        "description": "Staff-facing notes. Never surfaced to buyer."
+      },
       "metadata": { "type": "jsonb", "nullable": true },
       "created_by": { "type": "string", "length": 64, "nullable": true },
       "updated_by": { "type": "string", "length": 64, "nullable": true },
@@ -69,13 +165,41 @@
       "updated_at": { "type": "timestamptz", "nullable": false }
     },
     "indexes": [
-      { "columns": ["tenant_id", "reference_number"], "unique": true, "name": "orders_tenant_reference_unique" },
-      { "columns": ["tenant_id", "buyer_type", "buyer_id", "status"], "name": "orders_buyer_status_idx" },
-      { "columns": ["tenant_id", "status", "expires_at"], "name": "orders_expiry_sweeper_idx", "predicate": "status IN ('draft', 'pending')" },
+      {
+        "columns": ["tenant_id", "reference_number"],
+        "unique": true,
+        "name": "orders_tenant_reference_unique"
+      },
+      {
+        "columns": ["tenant_id", "buyer_type", "buyer_id", "status"],
+        "name": "orders_buyer_status_idx"
+      },
+      {
+        "columns": ["tenant_id", "status", "expires_at"],
+        "name": "orders_expiry_sweeper_idx",
+        "predicate": "status IN ('draft', 'pending')"
+      },
       { "columns": ["tenant_id", "branch_id", "created_at"], "name": "orders_branch_time_idx" }
     ]
   },
-  "required": ["id", "tenant_id", "buyer_type", "buyer_id", "reference_number", "status", "channel", "currency", "subtotal_minor", "adjustments_minor", "tax_minor", "total_minor", "amount_paid_minor", "amount_refunded_minor", "created_at", "updated_at"],
+  "required": [
+    "id",
+    "tenant_id",
+    "buyer_type",
+    "buyer_id",
+    "reference_number",
+    "status",
+    "channel",
+    "currency",
+    "subtotal_minor",
+    "adjustments_minor",
+    "tax_minor",
+    "total_minor",
+    "amount_paid_minor",
+    "amount_refunded_minor",
+    "created_at",
+    "updated_at"
+  ],
   "properties": {
     "id": { "type": "string", "pattern": "^ord_[0-9A-HJKMNP-TV-Z]{26}$" },
     "tenant_id": { "type": "string", "pattern": "^ten_[0-9A-HJKMNP-TV-Z]{26}$" },
@@ -84,7 +208,19 @@
     "buyer_type": { "type": "string", "enum": ["guardian", "tenant", "user", "walk_in"] },
     "buyer_id": { "type": "string" },
     "reference_number": { "type": "string", "maxLength": 32 },
-    "status": { "type": "string", "enum": ["draft", "pending", "partially_paid", "paid", "abandoned", "cancelled", "refunded", "fulfilled"] },
+    "status": {
+      "type": "string",
+      "enum": [
+        "draft",
+        "pending",
+        "partially_paid",
+        "paid",
+        "abandoned",
+        "cancelled",
+        "refunded",
+        "fulfilled"
+      ]
+    },
     "channel": { "type": "string", "enum": ["web", "mobile", "pos", "staff", "api"] },
     "currency": { "type": "string", "pattern": "^[A-Z]{3}$" },
     "subtotal_minor": { "type": "integer", "minimum": 0 },

@@ -5,10 +5,10 @@
  *   guard so the splash doesn't flash on fast loads.
  */
 
-import { useEffect, useRef, useState, type ReactElement } from 'react';
-import { Spinner } from '@stackra/ui/react';
+import { useEffect, useRef, useState, type ReactElement } from "react";
+import { Spinner } from "@stackra/ui/react";
 
-import type { SplashScreenProps } from './splash-screen.interface';
+import type { SplashScreenProps } from "./splash-screen.interface";
 
 /**
  * Splash screen.
@@ -33,7 +33,7 @@ export function SplashScreen({
   isVisible,
   minDurationMs = 800,
   logo,
-  message = 'Loading...',
+  message = "Loading...",
   progress,
   className,
 }: SplashScreenProps): ReactElement | null {
@@ -66,7 +66,7 @@ export function SplashScreen({
 
   // Determinate progress branch — render a bar. Otherwise the
   // indeterminate spinner. Both variants share the outer overlay.
-  const showProgress = typeof progress === 'number' && progress >= 0;
+  const showProgress = typeof progress === "number" && progress >= 0;
   const clamped = showProgress ? Math.min(100, Math.max(0, progress ?? 0)) : 0;
 
   return (
@@ -74,25 +74,25 @@ export function SplashScreen({
       role="status"
       aria-live="polite"
       className={`fixed inset-0 z-50 flex flex-col items-center justify-center gap-4 bg-background${
-        className ? ` ${className}` : ''
+        className ? ` ${className}` : ""
       }`}
-      data-pwa-splash={showProgress ? 'progress' : 'default'}
+      data-pwa-splash={showProgress ? "progress" : "default"}
     >
       {logo ? <div className="mb-2">{logo}</div> : null}
       {showProgress ? (
         <div className="flex w-64 flex-col items-center gap-2" aria-label={message}>
-          <div className="h-1 w-full overflow-hidden rounded-full bg-default-200">
+          <div className="bg-default-200 h-1 w-full overflow-hidden rounded-full">
             <div
-              className="h-full rounded-full bg-primary transition-[width] duration-300 ease-out"
+              className="bg-primary h-full rounded-full transition-[width] duration-300 ease-out"
               style={{ width: `${clamped}%` }}
             />
           </div>
-          <span className="text-sm text-default-500">{message}</span>
+          <span className="text-default-500 text-sm">{message}</span>
         </div>
       ) : (
         <div className="flex flex-col items-center gap-2">
           <Spinner size="lg" aria-label={message} />
-          <span className="text-sm text-default-500">{message}</span>
+          <span className="text-default-500 text-sm">{message}</span>
         </div>
       )}
     </div>

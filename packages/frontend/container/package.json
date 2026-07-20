@@ -1,7 +1,7 @@
 {
   "name": "@stackra/container",
   "version": "2.1.0",
-  "description": "Client-side dependency injection container for browser and React — decorators, modules, lifecycle hooks, and discovery.",
+  "description": "Client-side dependency injection container for browser and React \u2014 decorators, modules, lifecycle hooks, and discovery.",
   "license": "MIT",
   "author": {
     "name": "Stackra L.L.C",
@@ -89,6 +89,8 @@
     }
   },
   "devDependencies": {
+    "@academorix/config-tsconfig": "workspace:*",
+    "@academorix/config-tsup": "workspace:*",
     "@stackra/contracts": "workspace:*",
     "@stackra/support": "workspace:*",
     "@stackra/testing": "workspace:*",

@@ -48,7 +48,10 @@
           "path": "/{attribution}/merge",
           "controller": "Academorix\\Growth\\Attribution\\Http\\Controllers\\Tenant\\AttributionMergeController@store",
           "permission": "attribution.merge",
-          "middleware_add": ["attribution.resolve_subject", "entitlement.enforce:attribution_merge"],
+          "middleware_add": [
+            "attribution.resolve_subject",
+            "entitlement.enforce:attribution_merge"
+          ],
           "description": "Body: { from_attribution_ids: string[], reason? }. Enterprise-only (attribution_merge entitlement). Dispatches MergeIdentifiedAttributionsJob synchronously + returns 202 with the job ID for polling."
         },
         {

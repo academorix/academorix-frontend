@@ -6,15 +6,15 @@
  *   Caches values in memory after initialization since AsyncStorage is async.
  */
 
-import { Injectable } from '@stackra/container';
+import { Injectable } from "@stackra/container";
 import type {
   IThemeBindings,
   ColorMode,
   ResolvedMode,
   IDesignTokenMap,
   ISSRScriptOptions,
-} from '@stackra/contracts';
-import { DEFAULT_MODE_STORAGE_KEY, DEFAULT_THEME_STORAGE_KEY } from '../../core/constants';
+} from "@stackra/contracts";
+import { DEFAULT_MODE_STORAGE_KEY, DEFAULT_THEME_STORAGE_KEY } from "../../core/constants";
 
 // ============================================================================
 // Native Bindings
@@ -86,10 +86,10 @@ export class NativeThemeBindings implements IThemeBindings {
   public getSystemColorScheme(): ResolvedMode {
     try {
       // Dynamic import to avoid errors in non-RN environments
-      const { Appearance } = require('react-native');
-      return Appearance.getColorScheme() === 'dark' ? 'dark' : 'light';
+      const { Appearance } = require("react-native");
+      return Appearance.getColorScheme() === "dark" ? "dark" : "light";
     } catch {
-      return 'light';
+      return "light";
     }
   }
 
@@ -101,11 +101,11 @@ export class NativeThemeBindings implements IThemeBindings {
    */
   public subscribeToSystemChanges(listener: (mode: ResolvedMode) => void): () => void {
     try {
-      const { Appearance } = require('react-native');
+      const { Appearance } = require("react-native");
       const subscription = Appearance.addChangeListener(
         ({ colorScheme }: { colorScheme: string | null | undefined }) => {
-          listener(colorScheme === 'dark' ? 'dark' : 'light');
-        }
+          listener(colorScheme === "dark" ? "dark" : "light");
+        },
       );
       return () => subscription.remove();
     } catch {
@@ -141,7 +141,7 @@ export class NativeThemeBindings implements IThemeBindings {
    * @returns Empty string.
    */
   public getSSRScript(_options: ISSRScriptOptions): string {
-    return '';
+    return "";
   }
 
   // ── Private Helpers ───────────────────────────────────────────────────────
@@ -154,7 +154,7 @@ export class NativeThemeBindings implements IThemeBindings {
    */
   private asyncSetItem(key: string, value: string): void {
     try {
-      const AsyncStorage = require('@react-native-async-storage/async-storage').default;
+      const AsyncStorage = require("@react-native-async-storage/async-storage").default;
       AsyncStorage.setItem(key, value).catch(() => {});
     } catch {
       // AsyncStorage not available

@@ -4,5 +4,5 @@
  * @description Barrel for React components.
  */
 
-export { SettingField, type ISettingFieldProps } from './setting-field';
-export { SettingsForm, type ISettingsFormProps } from './settings-form';
+export { SettingField, type ISettingFieldProps } from "./setting-field";
+export { SettingsForm, type ISettingsFormProps } from "./settings-form";

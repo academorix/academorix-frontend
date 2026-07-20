@@ -5,7 +5,7 @@
  *   React tree. Consumed by `useNonce()` and the `<Script>` component.
  */
 
-import { createContext } from 'react';
+import { createContext } from "react";
 
 /**
  * React context holding the current CSP nonce.
@@ -13,6 +13,6 @@ import { createContext } from 'react';
  * Default value is an empty string (no nonce — a safe fallback).
  * Populated by `<NonceProvider>`.
  */
-export const NonceContext = createContext<string>('');
+export const NonceContext = createContext<string>("");
 
-NonceContext.displayName = 'NonceContext';
+NonceContext.displayName = "NonceContext";

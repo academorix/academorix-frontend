@@ -14,7 +14,7 @@ import type {
   IHttpInterceptor,
   IHttpNextFunction,
   IHttpResponse,
-} from '@stackra/contracts';
+} from "@stackra/contracts";
 
 /**
  * Stateless interceptor chain executor.
@@ -33,13 +33,13 @@ export class InterceptorPipeline {
   public async execute(
     interceptors: IHttpInterceptor[],
     context: IHttpContext,
-    terminal: IHttpNextFunction
+    terminal: IHttpNextFunction,
   ): Promise<IHttpResponse> {
     let index = -1;
 
     const dispatch = async (i: number): Promise<IHttpResponse> => {
       if (i <= index) {
-        throw new Error('next() called multiple times');
+        throw new Error("next() called multiple times");
       }
       index = i;
 

@@ -1,5 +1,5 @@
 {
-  "extends": "../../tsconfig.base.json",
+  "extends": "@academorix/config-tsconfig/base",
   "compilerOptions": {
     "types": ["node"],
     "rootDir": ".",

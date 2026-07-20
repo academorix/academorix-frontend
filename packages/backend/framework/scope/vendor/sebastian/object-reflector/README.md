@@ -4,17 +4,20 @@
 
 # sebastian/object-reflector
 
-Allows reflection of object properties, including inherited and private as well as protected ones.
+Allows reflection of object properties, including inherited and private as well
+as protected ones.
 
 ## Installation
 
-You can add this library as a local, per-project dependency to your project using [Composer](https://getcomposer.org/):
+You can add this library as a local, per-project dependency to your project
+using [Composer](https://getcomposer.org/):
 
 ```
 composer require sebastian/object-reflector
 ```
 
-If you only need this library during development, for instance to run your project's test suite, then you should add it as a development-time dependency:
+If you only need this library during development, for instance to run your
+project's test suite, then you should add it as a development-time dependency:
 
 ```
 composer require --dev sebastian/object-reflector

@@ -9,8 +9,8 @@
  *   field.
  */
 
-import { getMetadata } from '@vivtel/metadata';
-import type { IDiscoveryProvider, IDiscoveryService } from '@stackra/contracts';
+import { getMetadata } from "@vivtel/metadata";
+import type { IDiscoveryProvider, IDiscoveryService } from "@stackra/contracts";
 
 /**
  * Adds a discoverable class instance to the fake discovery graph.

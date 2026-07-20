@@ -7,4 +7,4 @@
 /**
  * Export format options.
  */
-export type ExportFormat = 'json' | 'csv';
+export type ExportFormat = "json" | "csv";

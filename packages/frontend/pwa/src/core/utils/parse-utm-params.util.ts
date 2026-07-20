@@ -4,15 +4,15 @@
  * @description Parse UTM parameters out of a URL search string.
  */
 
-import type { IPwaUtmParams } from '../interfaces';
+import type { IPwaUtmParams } from "../interfaces";
 
 /** UTM keys and the field they map to on {@link IPwaUtmParams}. */
 const UTM_KEYS: ReadonlyArray<readonly [string, keyof IPwaUtmParams]> = [
-  ['utm_source', 'source'],
-  ['utm_medium', 'medium'],
-  ['utm_campaign', 'campaign'],
-  ['utm_term', 'term'],
-  ['utm_content', 'content'],
+  ["utm_source", "source"],
+  ["utm_medium", "medium"],
+  ["utm_campaign", "campaign"],
+  ["utm_term", "term"],
+  ["utm_content", "content"],
 ];
 
 /**
@@ -30,11 +30,11 @@ const UTM_KEYS: ReadonlyArray<readonly [string, keyof IPwaUtmParams]> = [
  */
 export function parseUtmParams(search?: string): IPwaUtmParams {
   const raw =
-    search ?? (typeof window !== 'undefined' && window.location ? window.location.search : '');
+    search ?? (typeof window !== "undefined" && window.location ? window.location.search : "");
   if (!raw) return {};
 
   // URLSearchParams tolerates a missing '?' but not `null`.
-  const normalised = raw.startsWith('?') ? raw : `?${raw}`;
+  const normalised = raw.startsWith("?") ? raw : `?${raw}`;
   const params = new URLSearchParams(normalised);
 
   const result: Record<string, string> = {};

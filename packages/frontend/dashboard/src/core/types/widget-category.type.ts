@@ -12,10 +12,4 @@
  * Category groups a widget definition belongs to in the picker dialog.
  */
 export type WidgetCategory =
-  | "onboarding"
-  | "numbers"
-  | "charts"
-  | "calendar"
-  | "people"
-  | "money"
-  | "compliance";
+  "onboarding" | "numbers" | "charts" | "calendar" | "people" | "money" | "compliance";

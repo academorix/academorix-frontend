@@ -35,9 +35,7 @@
     "approvable-actions-registry"
   ],
   "priority": 34,
-  "providers": [
-    "Academorix\\Approval\\Providers\\ApprovalServiceProvider"
-  ],
+  "providers": ["Academorix\\Approval\\Providers\\ApprovalServiceProvider"],
   "files": [],
   "dependencies": [
     "foundation",
@@ -51,10 +49,7 @@
     "delegation",
     "entitlements"
   ],
-  "extendedBy": [
-    "requests",
-    "grants"
-  ],
+  "extendedBy": ["requests", "grants"],
   "consumedIndirectlyBy": {
     "description": "Every module that has an action requiring multi-party approval decorates the action with `#[AsApprovableAction('<action_key>')]`. The `approve` middleware intercepts, resolves a template, and defers execution. Consumers NEVER inject this module's services directly — they compose via the attribute + middleware seam.",
     "modules": [
@@ -70,15 +65,8 @@
     ]
   },
   "contributes": {
-    "traits": [
-      "HasApprovalHistory",
-      "IsApprovable"
-    ],
-    "attributes": [
-      "AsApprovableAction",
-      "AsApprovalListener",
-      "RegistersApprovableAction"
-    ],
+    "traits": ["HasApprovalHistory", "IsApprovable"],
+    "attributes": ["AsApprovableAction", "AsApprovalListener", "RegistersApprovableAction"],
     "blueprints": [
       "approvable_actions",
       "approval_templates",
@@ -88,11 +76,7 @@
       "approval_decisions",
       "approval_reminders"
     ],
-    "middleware": [
-      "approve",
-      "approvals.enforce_approver",
-      "approvals.throttle_reminders"
-    ],
+    "middleware": ["approve", "approvals.enforce_approver", "approvals.throttle_reminders"],
     "events": [
       "ApprovableActionRegistered",
       "ApprovalTemplateCreated",
@@ -191,12 +175,8 @@
       "ExpressionAst"
     ],
     "views": [],
-    "lang": [
-      "approvals"
-    ],
-    "config": [
-      "approvals"
-    ],
+    "lang": ["approvals"],
+    "config": ["approvals"],
     "macros": [],
     "bindings": [
       "ApprovableActionRegistry",
@@ -264,7 +244,5 @@
       ]
     }
   },
-  "planned_consumers": [
-    "every domain module decorating an action with #[AsApprovableAction]"
-  ]
+  "planned_consumers": ["every domain module decorating an action with #[AsApprovableAction]"]
 }

@@ -6,7 +6,11 @@
   "description": "Filterable team select. Loads /api/v1/teams filtered by the caller's active branch scope. Renders as a HeroUI ComboBox for a11y + keyboard nav (per ui-components.md — always ComboBox over Select). Emits onSelectionChange with the resolved team_id.",
   "props": {
     "selectedTeamId": { "type": "string", "required": false },
-    "branchId": { "type": "string", "required": false, "description": "Filter narrowing. When omitted, uses the caller's active branch scope." },
+    "branchId": {
+      "type": "string",
+      "required": false,
+      "description": "Filter narrowing. When omitted, uses the caller's active branch scope."
+    },
     "statuses": {
       "type": "array",
       "required": false,

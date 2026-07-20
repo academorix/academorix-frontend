@@ -16,7 +16,15 @@
     "model": "Academorix\\Finance\\Gateway\\Models\\PaymentMethod",
     "interface": "Academorix\\Finance\\Gateway\\Contracts\\Data\\PaymentMethodInterface",
     "implements": ["Academorix\\Finance\\Gateway\\Contracts\\Data\\PaymentMethodInterface"],
-    "traits": ["HasFactory", "HasUlids", "BelongsToTenant", "HasMetadata", "HasUserstamps", "Auditable", "SoftDeletes"],
+    "traits": [
+      "HasFactory",
+      "HasUlids",
+      "BelongsToTenant",
+      "HasMetadata",
+      "HasUserstamps",
+      "Auditable",
+      "SoftDeletes"
+    ],
     "casts": {
       "is_default": "boolean",
       "verified_at": "datetime",
@@ -27,18 +35,67 @@
   "x-database": {
     "engine": "postgres",
     "columns": {
-      "id": { "type": "string", "length": 64, "primary": true, "description": "Prefixed ULID: `pm_<26>`." },
-      "tenant_id": { "type": "string", "length": 64, "nullable": false, "foreign": { "table": "tenants", "column": "id", "onDelete": "cascade" } },
-      "gateway_config_id": { "type": "string", "length": 64, "nullable": false, "foreign": { "table": "payment_gateway_configs", "column": "id", "onDelete": "restrict" } },
-      "owner_type": { "type": "string", "length": 32, "nullable": false, "description": "Polymorphic: guardian / tenant." },
-      "owner_id": { "type": "string", "length": 64, "nullable": false, "description": "Polymorphic ID: usr_<26> for guardian, ten_<26> for tenant." },
-      "provider_token": { "type": "string", "length": 255, "nullable": false, "description": "The gateway's token for this method (Stripe pm_*, Paddle pmt_*, etc.). Never a raw card number." },
-      "card_brand": { "type": "string", "length": 32, "nullable": true, "description": "visa / mastercard / amex / discover / apple_pay / google_pay. NULL for non-card methods." },
-      "card_last4": { "type": "string", "length": 4, "nullable": true, "description": "Last four digits for display only." },
+      "id": {
+        "type": "string",
+        "length": 64,
+        "primary": true,
+        "description": "Prefixed ULID: `pm_<26>`."
+      },
+      "tenant_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "foreign": { "table": "tenants", "column": "id", "onDelete": "cascade" }
+      },
+      "gateway_config_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "foreign": { "table": "payment_gateway_configs", "column": "id", "onDelete": "restrict" }
+      },
+      "owner_type": {
+        "type": "string",
+        "length": 32,
+        "nullable": false,
+        "description": "Polymorphic: guardian / tenant."
+      },
+      "owner_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "description": "Polymorphic ID: usr_<26> for guardian, ten_<26> for tenant."
+      },
+      "provider_token": {
+        "type": "string",
+        "length": 255,
+        "nullable": false,
+        "description": "The gateway's token for this method (Stripe pm_*, Paddle pmt_*, etc.). Never a raw card number."
+      },
+      "card_brand": {
+        "type": "string",
+        "length": 32,
+        "nullable": true,
+        "description": "visa / mastercard / amex / discover / apple_pay / google_pay. NULL for non-card methods."
+      },
+      "card_last4": {
+        "type": "string",
+        "length": 4,
+        "nullable": true,
+        "description": "Last four digits for display only."
+      },
       "card_exp_month": { "type": "integer", "nullable": true },
       "card_exp_year": { "type": "integer", "nullable": true },
-      "is_default": { "type": "boolean", "nullable": false, "default": false, "description": "One default per (owner_type, owner_id) enforced at policy level." },
-      "verified_at": { "type": "timestamptz", "nullable": true, "description": "When the method was verified (setup intent completed / small-amount charge succeeded)." },
+      "is_default": {
+        "type": "boolean",
+        "nullable": false,
+        "default": false,
+        "description": "One default per (owner_type, owner_id) enforced at policy level."
+      },
+      "verified_at": {
+        "type": "timestamptz",
+        "nullable": true,
+        "description": "When the method was verified (setup intent completed / small-amount charge succeeded)."
+      },
       "metadata": { "type": "jsonb", "nullable": true },
       "created_by": { "type": "string", "length": 64, "nullable": true },
       "updated_by": { "type": "string", "length": 64, "nullable": true },
@@ -48,12 +105,29 @@
       "updated_at": { "type": "timestamptz", "nullable": false }
     },
     "indexes": [
-      { "columns": ["tenant_id", "owner_type", "owner_id", "is_default"], "name": "payment_methods_owner_default_idx" },
+      {
+        "columns": ["tenant_id", "owner_type", "owner_id", "is_default"],
+        "name": "payment_methods_owner_default_idx"
+      },
       { "columns": ["tenant_id", "gateway_config_id"], "name": "payment_methods_gateway_idx" },
-      { "columns": ["gateway_config_id", "provider_token"], "unique": true, "name": "payment_methods_provider_token_unique" }
+      {
+        "columns": ["gateway_config_id", "provider_token"],
+        "unique": true,
+        "name": "payment_methods_provider_token_unique"
+      }
     ]
   },
-  "required": ["id", "tenant_id", "gateway_config_id", "owner_type", "owner_id", "provider_token", "is_default", "created_at", "updated_at"],
+  "required": [
+    "id",
+    "tenant_id",
+    "gateway_config_id",
+    "owner_type",
+    "owner_id",
+    "provider_token",
+    "is_default",
+    "created_at",
+    "updated_at"
+  ],
   "properties": {
     "id": { "type": "string", "pattern": "^pm_[0-9A-HJKMNP-TV-Z]{26}$" },
     "tenant_id": { "type": "string", "pattern": "^ten_[0-9A-HJKMNP-TV-Z]{26}$" },

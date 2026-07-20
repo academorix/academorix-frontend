@@ -45,7 +45,10 @@
       "kind": "http.post",
       "url": "/api/v1/coach-skill-ratings",
       "body": "$form",
-      "onSuccess": { "kind": "navigate", "toExpr": "'/tenant/coach-skill-ratings/' + $response.data.id" },
+      "onSuccess": {
+        "kind": "navigate",
+        "toExpr": "'/tenant/coach-skill-ratings/' + $response.data.id"
+      },
       "onError": { "kind": "toast.error", "message": "Could not record rating." }
     }
   },
@@ -55,7 +58,14 @@
       "kind": "View",
       "props": { "className": "flex flex-col gap-4 p-6 max-w-2xl mx-auto" },
       "children": [
-        { "kind": "Text", "props": { "as": "h1", "className": "text-2xl font-semibold", "children": "Record coach skill rating" } },
+        {
+          "kind": "Text",
+          "props": {
+            "as": "h1",
+            "className": "text-2xl font-semibold",
+            "children": "Record coach skill rating"
+          }
+        },
         {
           "kind": "Card",
           "children": [
@@ -67,11 +77,33 @@
                   "props": { "name": "coaching_profile_id", "menuTrigger": "focus" },
                   "children": [
                     { "kind": "Label", "propsExpr": "{ children: 'Coach' }" },
-                    { "kind": "ComboBox.InputGroup", "children": [{ "kind": "Input", "props": { "placeholder": "Search coach..." } }, { "kind": "ComboBox.Trigger" }] },
+                    {
+                      "kind": "ComboBox.InputGroup",
+                      "children": [
+                        { "kind": "Input", "props": { "placeholder": "Search coach..." } },
+                        { "kind": "ComboBox.Trigger" }
+                      ]
+                    },
                     {
                       "kind": "ComboBox.Popover",
                       "children": [
-                        { "kind": "ListBox", "bindings": { "items": { "$ref": "coaches" } }, "children": [{ "kind": "ListBox.Item", "propsExpr": "{ id: $item.id, textValue: $item.display_name }", "children": [{ "kind": "Text", "bindings": { "children": { "$ref": "$item.display_name" } } }, { "kind": "ListBox.ItemIndicator" }] }] }
+                        {
+                          "kind": "ListBox",
+                          "bindings": { "items": { "$ref": "coaches" } },
+                          "children": [
+                            {
+                              "kind": "ListBox.Item",
+                              "propsExpr": "{ id: $item.id, textValue: $item.display_name }",
+                              "children": [
+                                {
+                                  "kind": "Text",
+                                  "bindings": { "children": { "$ref": "$item.display_name" } }
+                                },
+                                { "kind": "ListBox.ItemIndicator" }
+                              ]
+                            }
+                          ]
+                        }
                       ]
                     }
                   ]
@@ -81,8 +113,14 @@
                   "props": { "name": "ratable_type", "aria-label": "Ratable type" },
                   "children": [
                     { "kind": "ToggleButton", "props": { "value": "Sport", "children": "Sport" } },
-                    { "kind": "ToggleButton", "props": { "value": "Discipline", "children": "Discipline" } },
-                    { "kind": "ToggleButton", "props": { "value": "Position", "children": "Position" } }
+                    {
+                      "kind": "ToggleButton",
+                      "props": { "value": "Discipline", "children": "Discipline" }
+                    },
+                    {
+                      "kind": "ToggleButton",
+                      "props": { "value": "Position", "children": "Position" }
+                    }
                   ]
                 },
                 {
@@ -91,14 +129,36 @@
                   "bindings": { "hidden": { "$expr": "!$form.ratable_type" } },
                   "children": [
                     { "kind": "Label", "propsExpr": "{ children: 'Ratable' }" },
-                    { "kind": "ComboBox.InputGroup", "children": [{ "kind": "Input", "props": { "placeholder": "Search..." } }, { "kind": "ComboBox.Trigger" }] },
+                    {
+                      "kind": "ComboBox.InputGroup",
+                      "children": [
+                        { "kind": "Input", "props": { "placeholder": "Search..." } },
+                        { "kind": "ComboBox.Trigger" }
+                      ]
+                    },
                     {
                       "kind": "ComboBox.Popover",
                       "children": [
                         {
                           "kind": "ListBox",
-                          "bindings": { "items": { "$expr": "$form.ratable_type === 'Sport' ? $ref('sports') : ($form.ratable_type === 'Discipline' ? $ref('disciplines') : $ref('positions'))" } },
-                          "children": [{ "kind": "ListBox.Item", "propsExpr": "{ id: $item.id, textValue: $item.name }", "children": [{ "kind": "Text", "bindings": { "children": { "$ref": "$item.name" } } }, { "kind": "ListBox.ItemIndicator" }] }]
+                          "bindings": {
+                            "items": {
+                              "$expr": "$form.ratable_type === 'Sport' ? $ref('sports') : ($form.ratable_type === 'Discipline' ? $ref('disciplines') : $ref('positions'))"
+                            }
+                          },
+                          "children": [
+                            {
+                              "kind": "ListBox.Item",
+                              "propsExpr": "{ id: $item.id, textValue: $item.name }",
+                              "children": [
+                                {
+                                  "kind": "Text",
+                                  "bindings": { "children": { "$ref": "$item.name" } }
+                                },
+                                { "kind": "ListBox.ItemIndicator" }
+                              ]
+                            }
+                          ]
                         }
                       ]
                     }
@@ -115,10 +175,27 @@
                 },
                 {
                   "kind": "Slider",
-                  "props": { "name": "rating_value", "label": "Rating value (1-5)", "minValue": 1, "maxValue": 5, "step": 1, "defaultValue": 3 }
+                  "props": {
+                    "name": "rating_value",
+                    "label": "Rating value (1-5)",
+                    "minValue": 1,
+                    "maxValue": 5,
+                    "step": 1,
+                    "defaultValue": 3
+                  }
                 },
-                { "kind": "TextArea", "props": { "name": "notes", "label": "Notes (optional; admin-visible only)", "rows": 3 } },
-                { "kind": "DateField", "props": { "name": "expires_at", "label": "Expires date (default: 2 years)" } }
+                {
+                  "kind": "TextArea",
+                  "props": {
+                    "name": "notes",
+                    "label": "Notes (optional; admin-visible only)",
+                    "rows": 3
+                  }
+                },
+                {
+                  "kind": "DateField",
+                  "props": { "name": "expires_at", "label": "Expires date (default: 2 years)" }
+                }
               ]
             }
           ]
@@ -127,8 +204,17 @@
           "kind": "View",
           "props": { "className": "flex justify-end gap-2" },
           "children": [
-            { "kind": "Button", "props": { "variant": "flat", "children": "Cancel" }, "actions": { "onPress": { "kind": "navigate", "toExpr": "'/tenant/coach-skill-ratings'" } } },
-            { "kind": "Button", "props": { "variant": "primary", "type": "submit", "children": "Record rating" } }
+            {
+              "kind": "Button",
+              "props": { "variant": "flat", "children": "Cancel" },
+              "actions": {
+                "onPress": { "kind": "navigate", "toExpr": "'/tenant/coach-skill-ratings'" }
+              }
+            },
+            {
+              "kind": "Button",
+              "props": { "variant": "primary", "type": "submit", "children": "Record rating" }
+            }
           ]
         }
       ]

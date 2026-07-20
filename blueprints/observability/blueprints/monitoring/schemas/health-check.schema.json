@@ -130,26 +130,61 @@
         "name": "health_checks_tenant_slug_unique",
         "predicate": "deleted_at IS NULL"
       },
-      { "columns": ["tenant_id", "is_enabled", "last_run_status"], "name": "health_checks_status_idx" },
+      {
+        "columns": ["tenant_id", "is_enabled", "last_run_status"],
+        "name": "health_checks_status_idx"
+      },
       { "columns": ["tenant_id", "check_type"], "name": "health_checks_type_idx" }
     ]
   },
-  "required": ["id", "tenant_id", "name", "slug", "check_type", "target", "interval_seconds", "timeout_seconds", "is_enabled", "consecutive_failure_count", "created_at", "updated_at"],
+  "required": [
+    "id",
+    "tenant_id",
+    "name",
+    "slug",
+    "check_type",
+    "target",
+    "interval_seconds",
+    "timeout_seconds",
+    "is_enabled",
+    "consecutive_failure_count",
+    "created_at",
+    "updated_at"
+  ],
   "properties": {
     "id": { "type": "string", "pattern": "^hck_[0-9A-HJKMNP-TV-Z]{26}$" },
     "tenant_id": { "type": "string", "pattern": "^ten_[0-9A-HJKMNP-TV-Z]{26}$" },
     "name": { "type": "string", "minLength": 1, "maxLength": 128 },
-    "slug": { "type": "string", "minLength": 1, "maxLength": 64, "pattern": "^[a-z0-9][a-z0-9-]*$" },
+    "slug": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 64,
+      "pattern": "^[a-z0-9][a-z0-9-]*$"
+    },
     "check_type": {
       "type": "string",
-      "enum": ["db_ping", "redis_ping", "queue_depth", "memory_usage", "cpu_usage", "disk_usage", "http_endpoint", "dns_lookup", "tls_expiry", "custom_script"]
+      "enum": [
+        "db_ping",
+        "redis_ping",
+        "queue_depth",
+        "memory_usage",
+        "cpu_usage",
+        "disk_usage",
+        "http_endpoint",
+        "dns_lookup",
+        "tls_expiry",
+        "custom_script"
+      ]
     },
     "target": { "type": "object", "additionalProperties": true },
     "interval_seconds": { "type": "integer", "minimum": 15, "maximum": 86400 },
     "timeout_seconds": { "type": "integer", "minimum": 1 },
     "is_enabled": { "type": "boolean" },
     "last_run_at": { "type": ["string", "null"], "format": "date-time" },
-    "last_run_status": { "type": ["string", "null"], "enum": ["healthy", "degraded", "unhealthy", "timeout", "error", "unknown", null] },
+    "last_run_status": {
+      "type": ["string", "null"],
+      "enum": ["healthy", "degraded", "unhealthy", "timeout", "error", "unknown", null]
+    },
     "consecutive_failure_count": { "type": "integer", "minimum": 0 },
     "metadata": { "type": ["object", "null"] },
     "created_at": { "type": "string", "format": "date-time" },

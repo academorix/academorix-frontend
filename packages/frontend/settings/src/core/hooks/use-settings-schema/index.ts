@@ -4,4 +4,4 @@
  * @description Barrel export for the useSettingsSchema hook.
  */
 
-export { useSettingsSchema } from './use-settings-schema.hook';
+export { useSettingsSchema } from "./use-settings-schema.hook";

@@ -16,7 +16,14 @@
     "model": "Academorix\\Finance\\MarketplaceFee\\Models\\FeeApplication",
     "interface": "Academorix\\Finance\\MarketplaceFee\\Contracts\\Data\\FeeApplicationInterface",
     "implements": ["Academorix\\Finance\\MarketplaceFee\\Contracts\\Data\\FeeApplicationInterface"],
-    "traits": ["HasFactory", "HasUlids", "BelongsToTenant", "HasMetadata", "HasUserstamps", "Auditable"],
+    "traits": [
+      "HasFactory",
+      "HasUlids",
+      "BelongsToTenant",
+      "HasMetadata",
+      "HasUserstamps",
+      "Auditable"
+    ],
     "casts": {
       "status": "FeeApplicationStatus",
       "gross_amount_minor": "bigint",
@@ -33,21 +40,77 @@
   "x-database": {
     "engine": "postgres",
     "columns": {
-      "id": { "type": "string", "length": 64, "primary": true, "description": "Prefixed ULID: `fap_<26>`." },
-      "tenant_id": { "type": "string", "length": 64, "nullable": false, "foreign": { "table": "tenants", "column": "id", "onDelete": "cascade" } },
-      "fee_schedule_id": { "type": "string", "length": 64, "nullable": false, "foreign": { "table": "fee_schedules", "column": "id", "onDelete": "restrict" }, "description": "Which schedule version was in effect at applied_at." },
-      "payment_id": { "type": "string", "length": 64, "nullable": false, "foreign": { "table": "payments", "column": "id", "onDelete": "restrict" } },
-      "status": { "type": "string", "length": 16, "nullable": false, "default": "'applied'", "description": "Enum: applied / reversed / disputed." },
+      "id": {
+        "type": "string",
+        "length": 64,
+        "primary": true,
+        "description": "Prefixed ULID: `fap_<26>`."
+      },
+      "tenant_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "foreign": { "table": "tenants", "column": "id", "onDelete": "cascade" }
+      },
+      "fee_schedule_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "foreign": { "table": "fee_schedules", "column": "id", "onDelete": "restrict" },
+        "description": "Which schedule version was in effect at applied_at."
+      },
+      "payment_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "foreign": { "table": "payments", "column": "id", "onDelete": "restrict" }
+      },
+      "status": {
+        "type": "string",
+        "length": 16,
+        "nullable": false,
+        "default": "'applied'",
+        "description": "Enum: applied / reversed / disputed."
+      },
       "currency": { "type": "string", "length": 3, "nullable": false },
-      "gross_amount_minor": { "type": "bigint", "nullable": false, "description": "Original transaction gross." },
-      "fee_rate_applied": { "type": "decimal", "precision": 6, "scale": 4, "nullable": false, "description": "Actual rate applied (may reflect tier resolution)." },
-      "fee_amount_minor": { "type": "bigint", "nullable": false, "description": "Total fee = rate * gross + flat_fee." },
+      "gross_amount_minor": {
+        "type": "bigint",
+        "nullable": false,
+        "description": "Original transaction gross."
+      },
+      "fee_rate_applied": {
+        "type": "decimal",
+        "precision": 6,
+        "scale": 4,
+        "nullable": false,
+        "description": "Actual rate applied (may reflect tier resolution)."
+      },
+      "fee_amount_minor": {
+        "type": "bigint",
+        "nullable": false,
+        "description": "Total fee = rate * gross + flat_fee."
+      },
       "flat_fee_minor": { "type": "integer", "nullable": false, "default": 0 },
-      "stripe_application_fee_id": { "type": "string", "length": 255, "nullable": true, "description": "Stripe fee_* id from application_fee.created webhook." },
+      "stripe_application_fee_id": {
+        "type": "string",
+        "length": 255,
+        "nullable": true,
+        "description": "Stripe fee_* id from application_fee.created webhook."
+      },
       "applied_at": { "type": "timestamptz", "nullable": false },
-      "reversed_at": { "type": "timestamptz", "nullable": true, "description": "When fee was reversed (refund / chargeback / disputed)." },
+      "reversed_at": {
+        "type": "timestamptz",
+        "nullable": true,
+        "description": "When fee was reversed (refund / chargeback / disputed)."
+      },
       "reversal_reason": { "type": "string", "length": 128, "nullable": true },
-      "fee_payout_id": { "type": "string", "length": 64, "nullable": true, "foreign": { "table": "fee_payouts", "column": "id", "onDelete": "set null" }, "description": "Set when included in a roll-up payout to Academorix." },
+      "fee_payout_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": true,
+        "foreign": { "table": "fee_payouts", "column": "id", "onDelete": "set null" },
+        "description": "Set when included in a roll-up payout to Academorix."
+      },
       "schedule_snapshot": { "type": "jsonb", "nullable": true },
       "metadata": { "type": "jsonb", "nullable": true },
       "created_by": { "type": "string", "length": 64, "nullable": true },
@@ -56,12 +119,37 @@
       "updated_at": { "type": "timestamptz", "nullable": false }
     },
     "indexes": [
-      { "columns": ["tenant_id", "payment_id"], "unique": true, "name": "fee_applications_payment_unique" },
-      { "columns": ["tenant_id", "fee_schedule_id", "applied_at"], "name": "fee_applications_schedule_idx" },
-      { "columns": ["tenant_id", "status", "fee_payout_id"], "name": "fee_applications_pending_payout_idx", "predicate": "status = 'applied' AND fee_payout_id IS NULL" }
+      {
+        "columns": ["tenant_id", "payment_id"],
+        "unique": true,
+        "name": "fee_applications_payment_unique"
+      },
+      {
+        "columns": ["tenant_id", "fee_schedule_id", "applied_at"],
+        "name": "fee_applications_schedule_idx"
+      },
+      {
+        "columns": ["tenant_id", "status", "fee_payout_id"],
+        "name": "fee_applications_pending_payout_idx",
+        "predicate": "status = 'applied' AND fee_payout_id IS NULL"
+      }
     ]
   },
-  "required": ["id", "tenant_id", "fee_schedule_id", "payment_id", "status", "currency", "gross_amount_minor", "fee_rate_applied", "fee_amount_minor", "flat_fee_minor", "applied_at", "created_at", "updated_at"],
+  "required": [
+    "id",
+    "tenant_id",
+    "fee_schedule_id",
+    "payment_id",
+    "status",
+    "currency",
+    "gross_amount_minor",
+    "fee_rate_applied",
+    "fee_amount_minor",
+    "flat_fee_minor",
+    "applied_at",
+    "created_at",
+    "updated_at"
+  ],
   "properties": {
     "id": { "type": "string", "pattern": "^fap_[0-9A-HJKMNP-TV-Z]{26}$" },
     "tenant_id": { "type": "string", "pattern": "^ten_[0-9A-HJKMNP-TV-Z]{26}$" },

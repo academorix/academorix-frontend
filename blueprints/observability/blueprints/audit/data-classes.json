@@ -47,10 +47,7 @@
       "AuditExport.s3_key",
       "AuditExport.manifest_sha256"
     ],
-    "restricted": [
-      "Audit.old_values",
-      "Audit.new_values"
-    ],
+    "restricted": ["Audit.old_values", "Audit.new_values"],
     "regulated_minor": [
       "Audit.old_values (when auditable_type IN minor-affecting types: Athlete, AthleteGuardian, Consent) — treated with COPPA/parental-consent minimization on export",
       "Audit.new_values (same)"

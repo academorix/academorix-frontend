@@ -5,7 +5,7 @@
  *   `useActionSelection` hook.
  */
 
-import type { IActionDescriptor } from '@stackra/contracts';
+import type { IActionDescriptor } from "@stackra/contracts";
 
 /**
  * Selection value emitted by HeroUI's `Select` / `ListBox` /
@@ -14,7 +14,7 @@ import type { IActionDescriptor } from '@stackra/contracts';
  * @typeParam K - Key type. Defaults to `string | number`, matching HeroUI's
  *   `Selection`.
  */
-export type ActionSelection<K extends string | number = string | number> = 'all' | ReadonlySet<K>;
+export type ActionSelection<K extends string | number = string | number> = "all" | ReadonlySet<K>;
 
 /**
  * Function invoked on every `onSelectionChange` event to produce the

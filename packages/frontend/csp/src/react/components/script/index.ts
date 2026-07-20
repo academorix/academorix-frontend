@@ -1,1 +1,1 @@
-export { Script } from './script.component';
+export { Script } from "./script.component";

@@ -25,11 +25,11 @@ import path from "node:path";
 
 import { describe, expect, it, beforeEach } from "vitest";
 
+import type { IPublishableRegistryEntry } from "@stackra/contracts";
+
 import { DuplicatePublishableTagError } from "@/publishing/errors/duplicate-tag.error";
 import { InvalidPublishableEntryError } from "@/publishing/errors/invalid-publishable-entry.error";
 import { PublishableRegistry } from "@/publishing/registries/publishable.registry";
-
-import type { IPublishableRegistryEntry } from "@stackra/contracts";
 
 /**
  * Named test-module classes — reused across cases to make error
@@ -205,9 +205,7 @@ describe("PublishableRegistry", () => {
       // (test fixture, direct programmatic use). The registry falls
       // back to a generic "an-unnamed-source" phrase so the error is
       // still actionable.
-      const err = tryRegister(() =>
-        registry.register(makeEntry({ packageRoot: "" }), null),
-      );
+      const err = tryRegister(() => registry.register(makeEntry({ packageRoot: "" }), null));
       expect(err).toBeInstanceOf(InvalidPublishableEntryError);
       expect(err.message).toContain("an-unnamed-source");
     });
@@ -331,9 +329,7 @@ describe("PublishableRegistry", () => {
       registry.register(makeEntry({ tag: "tag-2" }), TestModuleB);
       // Now trigger a duplicate on tag-1 with a third source.
       class TestModuleC {}
-      const err = tryRegister(() =>
-        registry.register(makeEntry({ tag: "tag-1" }), TestModuleC),
-      );
+      const err = tryRegister(() => registry.register(makeEntry({ tag: "tag-1" }), TestModuleC));
       expect(err).toBeInstanceOf(DuplicatePublishableTagError);
       const dup = err as DuplicatePublishableTagError;
       expect(dup.firstSource).toBe("TestModuleA");

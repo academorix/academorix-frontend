@@ -9,7 +9,7 @@
  *   `ChatOrchestrator` without a network round-trip.
  */
 
-import { AiConnectionState, type IAiTransport } from '@stackra/contracts';
+import { AiConnectionState, type IAiTransport } from "@stackra/contracts";
 
 /** A scripted stream episode. */
 export interface IMockStreamEpisode {
@@ -96,7 +96,7 @@ export function createMockTransport(options: IMockTransportOptions = {}): IMockT
     stream(req): AsyncIterable<string> {
       streamCalls.push(req);
       const episode = streamQueue.shift();
-      if (!episode) throw new Error('[createMockTransport] no stream episode queued');
+      if (!episode) throw new Error("[createMockTransport] no stream episode queued");
       const frames = episode.frames;
       async function* iterate(): AsyncIterable<string> {
         setState(AiConnectionState.Connecting);
@@ -112,7 +112,7 @@ export function createMockTransport(options: IMockTransportOptions = {}): IMockT
     async request<T>(spec: unknown): Promise<T> {
       requestCalls.push(spec);
       const responder = requestQueue.shift();
-      if (!responder) throw new Error('[createMockTransport] no request responder queued');
+      if (!responder) throw new Error("[createMockTransport] no request responder queued");
       const result = await responder(spec);
       return result as T;
     },

@@ -22,10 +22,10 @@
  * ```
  */
 
-import type { ReactElement, ReactNode } from 'react';
-import { useInject } from '@stackra/container/react';
-import { QueryClient } from '@tanstack/query-core';
-import { QueryClientProvider } from '@tanstack/react-query';
+import type { ReactElement, ReactNode } from "react";
+import { useInject } from "@stackra/container/react";
+import { QueryClient } from "@tanstack/query-core";
+import { QueryClientProvider } from "@tanstack/react-query";
 
 /**
  * Props for `<StackraQueryProvider>`.

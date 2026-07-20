@@ -5,14 +5,15 @@
 [![Stable Version](https://img.shields.io/packagist/v/phpdocumentor/reflection-docblock.svg?label=stable)](https://packagist.org/packages/phpdocumentor/reflection-docblock)
 [![Unstable Version](https://img.shields.io/packagist/v/phpdocumentor/reflection-docblock.svg?include_prereleases&label=unstable)](https://packagist.org/packages/phpdocumentor/reflection-docblock)
 
-ReflectionDocBlock 
+ReflectionDocBlock
 ==================
 
 Introduction
 ------------
 
 The ReflectionDocBlock component of phpDocumentor provides a DocBlock parser
-that is 100% compatible with the [PHPDoc standard](http://phpdoc.org/docs/latest).
+that is 100% compatible with the
+[PHPDoc standard](http://phpdoc.org/docs/latest).
 
 With this component, a library can provide support for annotations via DocBlocks
 or otherwise retrieve information that is embedded in a DocBlock.
@@ -54,8 +55,8 @@ DOCCOMMENT;
 $docblock = $factory->create($docComment);
 ```
 
-The `create` method will yield an object of type `\phpDocumentor\Reflection\DocBlock`
-whose methods can be queried:
+The `create` method will yield an object of type
+`\phpDocumentor\Reflection\DocBlock` whose methods can be queried:
 
 ```php
 // Contains the summary for this DocBlock
@@ -71,4 +72,5 @@ $description = (string) $docblock->getDescription();
 $description = $docblock->getDescription()->render();
 ```
 
-> For more examples it would be best to review the scripts in the [`/docs/examples` folder](/docs/examples).
+> For more examples it would be best to review the scripts in the
+> [`/docs/examples` folder](/docs/examples).

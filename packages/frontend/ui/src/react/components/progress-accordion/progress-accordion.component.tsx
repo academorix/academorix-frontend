@@ -159,7 +159,7 @@ const ProgressAccordionItem = React.memo(function ProgressAccordionItem({
       <div className="flex items-center gap-3">
         <StatusDot status={status} />
         <div className="flex flex-col gap-0.5">
-          <span className="text-sm font-medium text-foreground">{title}</span>
+          <span className="text-foreground text-sm font-medium">{title}</span>
           {description && <span className="text-foreground-500 text-xs">{description}</span>}
         </div>
       </div>

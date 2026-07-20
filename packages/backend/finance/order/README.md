@@ -1,11 +1,12 @@
 # academorix/order
 
-Server-side Laravel package for the `order` module. Auto-generated from
-the blueprint at `modules/finance/blueprints/order/`.
+Server-side Laravel package for the `order` module. Auto-generated from the
+blueprint at `modules/finance/blueprints/order/`.
 
 ## Entities
 
-- **OrderAdjustment** (`adj_...`) — Signed adjustment on an Order: coupon / credit / manual-discount / tax / fee.
+- **OrderAdjustment** (`adj_...`) — Signed adjustment on an Order: coupon /
+  credit / manual-discount / tax / fee.
 - **OrderLine** (`orl_...`) — One line on an Order.
 - **Order** (`ord_...`) — Checkout aggregate.
 
@@ -39,11 +40,12 @@ python3 modules/shared/blueprints/foundation/scripts/generate-module.py \
     finance order --force
 ```
 
-Files carrying the `AUTO-GENERATED` header are safe to regenerate; every
-other file is a hand-tuned override that survives regeneration.
+Files carrying the `AUTO-GENERATED` header are safe to regenerate; every other
+file is a hand-tuned override that survives regeneration.
 
 ## Companion wire SDK
 
-The wire-visible Saloon + Spatie Data package lives at `academorix-finance/order-sdk`
-under `sdk/finance-order-sdk/`. Consumers cross the service boundary
-through the SDK; this package is the SERVER-side owner of the domain.
+The wire-visible Saloon + Spatie Data package lives at
+`academorix-finance/order-sdk` under `sdk/finance-order-sdk/`. Consumers cross
+the service boundary through the SDK; this package is the SERVER-side owner of
+the domain.

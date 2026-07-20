@@ -176,11 +176,36 @@
           "permission": "positions.create",
           "description": "Create a tenant custom Position. Body: { discipline_id (required), name (required), slug (required), description, is_field_position (required), is_offensive, is_defensive, typical_jersey_range_min, typical_jersey_range_max, sort_order }. Enterprise-only."
         },
-        { "method": "GET", "path": "/{position}", "controller": "Academorix\\Sports\\Registry\\Http\\Controllers\\Tenant\\PositionController@show", "permission": "positions.view" },
-        { "method": "PATCH", "path": "/{position}", "controller": "Academorix\\Sports\\Registry\\Http\\Controllers\\Tenant\\PositionController@update", "permission": "positions.update" },
-        { "method": "DELETE", "path": "/{position}", "controller": "Academorix\\Sports\\Registry\\Http\\Controllers\\Tenant\\PositionController@destroy", "permission": "positions.delete" },
-        { "method": "POST", "path": "/{position}/deactivate", "controller": "Academorix\\Sports\\Registry\\Http\\Controllers\\Tenant\\PositionController@deactivate", "permission": "positions.deactivate" },
-        { "method": "POST", "path": "/{position}/reactivate", "controller": "Academorix\\Sports\\Registry\\Http\\Controllers\\Tenant\\PositionController@reactivate", "permission": "positions.reactivate" }
+        {
+          "method": "GET",
+          "path": "/{position}",
+          "controller": "Academorix\\Sports\\Registry\\Http\\Controllers\\Tenant\\PositionController@show",
+          "permission": "positions.view"
+        },
+        {
+          "method": "PATCH",
+          "path": "/{position}",
+          "controller": "Academorix\\Sports\\Registry\\Http\\Controllers\\Tenant\\PositionController@update",
+          "permission": "positions.update"
+        },
+        {
+          "method": "DELETE",
+          "path": "/{position}",
+          "controller": "Academorix\\Sports\\Registry\\Http\\Controllers\\Tenant\\PositionController@destroy",
+          "permission": "positions.delete"
+        },
+        {
+          "method": "POST",
+          "path": "/{position}/deactivate",
+          "controller": "Academorix\\Sports\\Registry\\Http\\Controllers\\Tenant\\PositionController@deactivate",
+          "permission": "positions.deactivate"
+        },
+        {
+          "method": "POST",
+          "path": "/{position}/reactivate",
+          "controller": "Academorix\\Sports\\Registry\\Http\\Controllers\\Tenant\\PositionController@reactivate",
+          "permission": "positions.reactivate"
+        }
       ]
     },
     {
@@ -197,12 +222,46 @@
       "hosts": ["platform-admin"],
       "description": "Platform-admin cross-tenant catalog administration. Adding a platform Sport makes it visible to every tenant immediately (cache invalidation is automatic).",
       "routes": [
-        { "method": "GET", "path": "/", "controller": "Academorix\\Sports\\Registry\\Http\\Controllers\\Platform\\SportController@index", "permission": "platform.sports.viewAny", "description": "Cross-tenant list. filter[tenant_id] to slice per tenant, filter[is_platform_seeded]=true for platform-only view." },
-        { "method": "POST", "path": "/", "controller": "Academorix\\Sports\\Registry\\Http\\Controllers\\Platform\\SportController@store", "permission": "platform.sports.create", "description": "Create a platform-seeded Sport (is_platform_seeded auto-forced to true, tenant_id auto-forced to NULL). Consumes no entitlement." },
-        { "method": "GET", "path": "/{sport}", "controller": "Academorix\\Sports\\Registry\\Http\\Controllers\\Platform\\SportController@show", "permission": "platform.sports.view" },
-        { "method": "PATCH", "path": "/{sport}", "controller": "Academorix\\Sports\\Registry\\Http\\Controllers\\Platform\\SportController@update", "permission": "platform.sports.update" },
-        { "method": "DELETE", "path": "/{sport}", "controller": "Academorix\\Sports\\Registry\\Http\\Controllers\\Platform\\SportController@destroy", "permission": "platform.sports.deactivate", "description": "Platform-seeded rows never hard-delete; DELETE is aliased to deactivation (is_active=false)." },
-        { "method": "POST", "path": "/reseed", "controller": "Academorix\\Sports\\Registry\\Http\\Controllers\\Platform\\SportController@reseed", "permission": "platform.sports.reseed", "description": "Re-run SportCatalogSeeder against the shipped data/platform-sports-catalog.json. Body: { force: boolean }. Without force, no-ops when the catalog is already fully seeded. With force, upserts every row (adds new, updates existing, deactivates removed). Refused when SeedPlatformSportsCatalogJob or ReconcileSportReferencesJob is already running (RESEED_LOCKED_IN_USE)." }
+        {
+          "method": "GET",
+          "path": "/",
+          "controller": "Academorix\\Sports\\Registry\\Http\\Controllers\\Platform\\SportController@index",
+          "permission": "platform.sports.viewAny",
+          "description": "Cross-tenant list. filter[tenant_id] to slice per tenant, filter[is_platform_seeded]=true for platform-only view."
+        },
+        {
+          "method": "POST",
+          "path": "/",
+          "controller": "Academorix\\Sports\\Registry\\Http\\Controllers\\Platform\\SportController@store",
+          "permission": "platform.sports.create",
+          "description": "Create a platform-seeded Sport (is_platform_seeded auto-forced to true, tenant_id auto-forced to NULL). Consumes no entitlement."
+        },
+        {
+          "method": "GET",
+          "path": "/{sport}",
+          "controller": "Academorix\\Sports\\Registry\\Http\\Controllers\\Platform\\SportController@show",
+          "permission": "platform.sports.view"
+        },
+        {
+          "method": "PATCH",
+          "path": "/{sport}",
+          "controller": "Academorix\\Sports\\Registry\\Http\\Controllers\\Platform\\SportController@update",
+          "permission": "platform.sports.update"
+        },
+        {
+          "method": "DELETE",
+          "path": "/{sport}",
+          "controller": "Academorix\\Sports\\Registry\\Http\\Controllers\\Platform\\SportController@destroy",
+          "permission": "platform.sports.deactivate",
+          "description": "Platform-seeded rows never hard-delete; DELETE is aliased to deactivation (is_active=false)."
+        },
+        {
+          "method": "POST",
+          "path": "/reseed",
+          "controller": "Academorix\\Sports\\Registry\\Http\\Controllers\\Platform\\SportController@reseed",
+          "permission": "platform.sports.reseed",
+          "description": "Re-run SportCatalogSeeder against the shipped data/platform-sports-catalog.json. Body: { force: boolean }. Without force, no-ops when the catalog is already fully seeded. With force, upserts every row (adds new, updates existing, deactivates removed). Refused when SeedPlatformSportsCatalogJob or ReconcileSportReferencesJob is already running (RESEED_LOCKED_IN_USE)."
+        }
       ]
     },
     {
@@ -218,8 +277,19 @@
       ],
       "hosts": ["platform-admin"],
       "routes": [
-        { "method": "GET", "path": "/", "controller": "Academorix\\Sports\\Registry\\Http\\Controllers\\Platform\\DisciplineController@index", "permission": "platform.disciplines.viewAny" },
-        { "method": "POST", "path": "/", "controller": "Academorix\\Sports\\Registry\\Http\\Controllers\\Platform\\DisciplineController@store", "permission": "platform.disciplines.create", "description": "Create a platform Discipline under a platform Sport (parent Sport must be platform-seeded — a platform Discipline hanging off a tenant custom Sport is nonsensical)." }
+        {
+          "method": "GET",
+          "path": "/",
+          "controller": "Academorix\\Sports\\Registry\\Http\\Controllers\\Platform\\DisciplineController@index",
+          "permission": "platform.disciplines.viewAny"
+        },
+        {
+          "method": "POST",
+          "path": "/",
+          "controller": "Academorix\\Sports\\Registry\\Http\\Controllers\\Platform\\DisciplineController@store",
+          "permission": "platform.disciplines.create",
+          "description": "Create a platform Discipline under a platform Sport (parent Sport must be platform-seeded — a platform Discipline hanging off a tenant custom Sport is nonsensical)."
+        }
       ]
     },
     {
@@ -235,8 +305,18 @@
       ],
       "hosts": ["platform-admin"],
       "routes": [
-        { "method": "GET", "path": "/", "controller": "Academorix\\Sports\\Registry\\Http\\Controllers\\Platform\\PositionController@index", "permission": "platform.positions.viewAny" },
-        { "method": "POST", "path": "/", "controller": "Academorix\\Sports\\Registry\\Http\\Controllers\\Platform\\PositionController@store", "permission": "platform.positions.create" }
+        {
+          "method": "GET",
+          "path": "/",
+          "controller": "Academorix\\Sports\\Registry\\Http\\Controllers\\Platform\\PositionController@index",
+          "permission": "platform.positions.viewAny"
+        },
+        {
+          "method": "POST",
+          "path": "/",
+          "controller": "Academorix\\Sports\\Registry\\Http\\Controllers\\Platform\\PositionController@store",
+          "permission": "platform.positions.create"
+        }
       ]
     }
   ]

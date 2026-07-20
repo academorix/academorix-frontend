@@ -30,8 +30,21 @@
             {
               "kind": "View",
               "children": [
-                { "kind": "Text", "props": { "as": "h1", "className": "text-2xl font-semibold", "children": "Payment providers" } },
-                { "kind": "Text", "props": { "className": "text-sm text-muted", "children": "Configure Stripe, Paddle, Adyen, Square, PayPal, or a custom gateway." } }
+                {
+                  "kind": "Text",
+                  "props": {
+                    "as": "h1",
+                    "className": "text-2xl font-semibold",
+                    "children": "Payment providers"
+                  }
+                },
+                {
+                  "kind": "Text",
+                  "props": {
+                    "className": "text-sm text-muted",
+                    "children": "Configure Stripe, Paddle, Adyen, Square, PayPal, or a custom gateway."
+                  }
+                }
               ]
             },
             {
@@ -52,10 +65,30 @@
           "props": {
             "className": "w-full",
             "columns": [
-              { "field": "provider", "label": "Provider", "width": 140, "renderer": { "kind": "Text", "formatter": "titlecase" } },
-              { "field": "is_active", "label": "Status", "width": 100, "renderer": { "widget": "payment.payment-status-chip" } },
-              { "field": "circuit_breaker_open_until", "label": "Circuit", "width": 120, "renderer": { "widget": "payment.circuit-breaker-badge" } },
-              { "field": "last_success_at", "label": "Last success", "width": 160, "formatter": "datetime-relative" }
+              {
+                "field": "provider",
+                "label": "Provider",
+                "width": 140,
+                "renderer": { "kind": "Text", "formatter": "titlecase" }
+              },
+              {
+                "field": "is_active",
+                "label": "Status",
+                "width": 100,
+                "renderer": { "widget": "payment.payment-status-chip" }
+              },
+              {
+                "field": "circuit_breaker_open_until",
+                "label": "Circuit",
+                "width": 120,
+                "renderer": { "widget": "payment.circuit-breaker-badge" }
+              },
+              {
+                "field": "last_success_at",
+                "label": "Last success",
+                "width": 160,
+                "formatter": "datetime-relative"
+              }
             ],
             "onRowPress": {
               "kind": "navigate",
@@ -64,11 +97,17 @@
             "rowActions": [
               {
                 "label": "Test",
-                "onPress": { "kind": "navigate", "toExpr": "'/tenant/payment-providers/' + row.provider + '/test'" }
+                "onPress": {
+                  "kind": "navigate",
+                  "toExpr": "'/tenant/payment-providers/' + row.provider + '/test'"
+                }
               },
               {
                 "label": "Reconcile",
-                "onPress": { "kind": "navigate", "toExpr": "'/tenant/payment-providers/' + row.provider + '/reconcile'" }
+                "onPress": {
+                  "kind": "navigate",
+                  "toExpr": "'/tenant/payment-providers/' + row.provider + '/reconcile'"
+                }
               }
             ]
           }

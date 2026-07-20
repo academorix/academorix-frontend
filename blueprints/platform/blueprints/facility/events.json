@@ -33,10 +33,7 @@
       "class": "Academorix\\Facility\\Events\\FacilityUpdated",
       "trigger": "Any Facility scalar field mutated except status (FacilityStatusChanged), pricing_json (FacilityPricingUpdated), availability_json (FacilityAvailabilityChanged), and blackout_dates (FacilityBlackoutAdded / FacilityBlackoutRemoved). Umbrella event for renames, capacity changes, sport_category changes, min/max duration tweaks, advance_booking_window_days edits.",
       "queue": "notifications",
-      "consumers": [
-        "audit::WriteToAuditLog",
-        "activity::WriteToActivityLog"
-      ],
+      "consumers": ["audit::WriteToAuditLog", "activity::WriteToActivityLog"],
       "payload": {
         "facility_id": "ULID",
         "tenant_id": "ULID",
@@ -110,10 +107,7 @@
       "class": "Academorix\\Facility\\Events\\FacilityBlackoutRemoved",
       "trigger": "A blackout window was removed from Facility.blackout_dates. Does NOT restore cancelled bookings — those are gone.",
       "queue": "notifications",
-      "consumers": [
-        "audit::WriteToAuditLog",
-        "activity::WriteToActivityLog"
-      ],
+      "consumers": ["audit::WriteToAuditLog", "activity::WriteToActivityLog"],
       "payload": {
         "facility_id": "ULID",
         "tenant_id": "ULID",
@@ -320,9 +314,7 @@
       "class": "Academorix\\Facility\\Events\\BookingCheckedIn",
       "trigger": "Booker or receptionist called the check-in action. Sets checked_in_at on the booking. Distinct from BookingCompleted (check-in is at start-time; completion is at end-time + 15 min).",
       "queue": "notifications",
-      "consumers": [
-        "activity::WriteToActivityLog"
-      ],
+      "consumers": ["activity::WriteToActivityLog"],
       "payload": {
         "booking_id": "ULID",
         "tenant_id": "ULID",
@@ -359,10 +351,7 @@
       "class": "Academorix\\Facility\\Events\\DayPassConsumed",
       "trigger": "DayPass.consumed_at set from null → now(). Fires on turnstile scan or receptionist manual confirmation.",
       "queue": "notifications",
-      "consumers": [
-        "audit::WriteToAuditLog",
-        "activity::WriteToActivityLog"
-      ],
+      "consumers": ["audit::WriteToAuditLog", "activity::WriteToActivityLog"],
       "payload": {
         "day_pass_id": "ULID",
         "tenant_id": "ULID",
@@ -376,10 +365,7 @@
       "class": "Academorix\\Facility\\Events\\DayPassExpired",
       "trigger": "ExpireDayPassesJob transitioned a DayPass past valid_on_date without consumption. No refund flow triggered — day-pass revenue was already recognised on purchase.",
       "queue": "notifications",
-      "consumers": [
-        "audit::WriteToAuditLog",
-        "activity::WriteToActivityLog"
-      ],
+      "consumers": ["audit::WriteToAuditLog", "activity::WriteToActivityLog"],
       "payload": {
         "day_pass_id": "ULID",
         "tenant_id": "ULID",
@@ -491,10 +477,7 @@
       "class": "Academorix\\Facility\\Events\\PassTransferred",
       "trigger": "Pass.assignable_user_ids mutated OR the primary owner-of-record on the pass changed. Refused when pass.is_transferable=false.",
       "queue": "notifications",
-      "consumers": [
-        "audit::WriteToAuditLog",
-        "activity::WriteToActivityLog"
-      ],
+      "consumers": ["audit::WriteToAuditLog", "activity::WriteToActivityLog"],
       "payload": {
         "pass_id": "ULID",
         "tenant_id": "ULID",

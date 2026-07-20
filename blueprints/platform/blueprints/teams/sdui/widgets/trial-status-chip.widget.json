@@ -7,7 +7,15 @@
   "props": {
     "status": {
       "type": "string",
-      "enum": ["scheduled", "in_progress", "completed", "converted", "rejected", "no_show", "cancelled"],
+      "enum": [
+        "scheduled",
+        "in_progress",
+        "completed",
+        "converted",
+        "rejected",
+        "no_show",
+        "cancelled"
+      ],
       "required": true
     },
     "size": { "type": "string", "default": "sm", "enum": ["xs", "sm", "md", "lg"] },

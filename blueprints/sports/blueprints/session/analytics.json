@@ -5,23 +5,151 @@
   "sink": "segment",
   "consentTiers": ["essential", "functional", "analytics", "marketing"],
   "events": [
-    { "name": "Session Scheduled", "kind": "track", "consent_required": "essential", "properties": ["tenant_id", "session_id", "session_type", "team_id", "days_until_start", "has_head_coach", "capacity_set"] },
-    { "name": "Session Confirmed", "kind": "track", "consent_required": "essential", "properties": ["tenant_id", "session_id", "days_before_start"] },
-    { "name": "Session Rescheduled", "kind": "track", "consent_required": "essential", "properties": ["tenant_id", "session_id", "notice_hours_before_original", "affected_athletes_count", "delta_hours"] },
-    { "name": "Session Cancelled", "kind": "track", "consent_required": "essential", "properties": ["tenant_id", "session_id", "notice_hours_before_start", "affected_athletes_count", "trigger", "cancellation_category"], "description": "cancellation_category derived from cancellation_reason keyword classifier (weather / injury / coach_unavailable / low_attendance / facility_conflict / other). Raw reason NEVER sent." },
-    { "name": "Session Started", "kind": "track", "consent_required": "essential", "properties": ["tenant_id", "session_id", "checked_in_count_at_start"] },
-    { "name": "Session Completed", "kind": "track", "consent_required": "essential", "properties": ["tenant_id", "session_id", "final_checked_in_count", "final_absent_count", "attendance_rate", "duration_minutes"] },
-    { "name": "Session Coach Assigned", "kind": "track", "consent_required": "essential", "properties": ["tenant_id", "session_id", "role"] },
-    { "name": "Session Coach Reassigned", "kind": "track", "consent_required": "essential", "properties": ["tenant_id", "session_id", "notice_hours_before_start", "audit_severity", "minors_present"] },
-    { "name": "Session Athlete Checked In", "kind": "track", "consent_required": "essential", "properties": ["tenant_id", "session_id", "on_time", "was_registered"], "description": "on_time = checked_in_at <= session.starts_at + grace. Feeds punctuality analytics." },
-    { "name": "Session Athlete Marked Absent", "kind": "track", "consent_required": "essential", "properties": ["tenant_id", "session_id"] },
-    { "name": "Session Athlete Marked Late", "kind": "track", "consent_required": "essential", "properties": ["tenant_id", "session_id", "late_minutes"] },
-    { "name": "Session Attendance Below Minimum", "kind": "track", "consent_required": "essential", "properties": ["tenant_id", "session_id", "attendance_min", "checked_in_count", "session_type"] },
-    { "name": "Session Rating Received", "kind": "track", "consent_required": "essential", "properties": ["tenant_id", "session_id", "rating"] },
-    { "name": "Session Rating Aggregated", "kind": "track", "consent_required": "analytics", "properties": ["tenant_id", "session_id", "session_rating", "session_rating_count"] },
-    { "name": "Session Curriculum Updated", "kind": "track", "consent_required": "analytics", "properties": ["tenant_id", "session_id", "has_lesson_plan_url"] },
-    { "name": "Session Safeguarding Incident Flagged", "kind": "track", "consent_required": "essential", "properties": ["tenant_id", "session_id", "minor_athletes_present_count"], "description": "Regulator-facing signal. Feeds a dedicated safeguarding-incident dashboard for platform ops." },
-    { "name": "Session Slot Exceeded", "kind": "track", "consent_required": "essential", "properties": ["tenant_id", "tier", "iso_week", "attempted_session_type"] }
+    {
+      "name": "Session Scheduled",
+      "kind": "track",
+      "consent_required": "essential",
+      "properties": [
+        "tenant_id",
+        "session_id",
+        "session_type",
+        "team_id",
+        "days_until_start",
+        "has_head_coach",
+        "capacity_set"
+      ]
+    },
+    {
+      "name": "Session Confirmed",
+      "kind": "track",
+      "consent_required": "essential",
+      "properties": ["tenant_id", "session_id", "days_before_start"]
+    },
+    {
+      "name": "Session Rescheduled",
+      "kind": "track",
+      "consent_required": "essential",
+      "properties": [
+        "tenant_id",
+        "session_id",
+        "notice_hours_before_original",
+        "affected_athletes_count",
+        "delta_hours"
+      ]
+    },
+    {
+      "name": "Session Cancelled",
+      "kind": "track",
+      "consent_required": "essential",
+      "properties": [
+        "tenant_id",
+        "session_id",
+        "notice_hours_before_start",
+        "affected_athletes_count",
+        "trigger",
+        "cancellation_category"
+      ],
+      "description": "cancellation_category derived from cancellation_reason keyword classifier (weather / injury / coach_unavailable / low_attendance / facility_conflict / other). Raw reason NEVER sent."
+    },
+    {
+      "name": "Session Started",
+      "kind": "track",
+      "consent_required": "essential",
+      "properties": ["tenant_id", "session_id", "checked_in_count_at_start"]
+    },
+    {
+      "name": "Session Completed",
+      "kind": "track",
+      "consent_required": "essential",
+      "properties": [
+        "tenant_id",
+        "session_id",
+        "final_checked_in_count",
+        "final_absent_count",
+        "attendance_rate",
+        "duration_minutes"
+      ]
+    },
+    {
+      "name": "Session Coach Assigned",
+      "kind": "track",
+      "consent_required": "essential",
+      "properties": ["tenant_id", "session_id", "role"]
+    },
+    {
+      "name": "Session Coach Reassigned",
+      "kind": "track",
+      "consent_required": "essential",
+      "properties": [
+        "tenant_id",
+        "session_id",
+        "notice_hours_before_start",
+        "audit_severity",
+        "minors_present"
+      ]
+    },
+    {
+      "name": "Session Athlete Checked In",
+      "kind": "track",
+      "consent_required": "essential",
+      "properties": ["tenant_id", "session_id", "on_time", "was_registered"],
+      "description": "on_time = checked_in_at <= session.starts_at + grace. Feeds punctuality analytics."
+    },
+    {
+      "name": "Session Athlete Marked Absent",
+      "kind": "track",
+      "consent_required": "essential",
+      "properties": ["tenant_id", "session_id"]
+    },
+    {
+      "name": "Session Athlete Marked Late",
+      "kind": "track",
+      "consent_required": "essential",
+      "properties": ["tenant_id", "session_id", "late_minutes"]
+    },
+    {
+      "name": "Session Attendance Below Minimum",
+      "kind": "track",
+      "consent_required": "essential",
+      "properties": [
+        "tenant_id",
+        "session_id",
+        "attendance_min",
+        "checked_in_count",
+        "session_type"
+      ]
+    },
+    {
+      "name": "Session Rating Received",
+      "kind": "track",
+      "consent_required": "essential",
+      "properties": ["tenant_id", "session_id", "rating"]
+    },
+    {
+      "name": "Session Rating Aggregated",
+      "kind": "track",
+      "consent_required": "analytics",
+      "properties": ["tenant_id", "session_id", "session_rating", "session_rating_count"]
+    },
+    {
+      "name": "Session Curriculum Updated",
+      "kind": "track",
+      "consent_required": "analytics",
+      "properties": ["tenant_id", "session_id", "has_lesson_plan_url"]
+    },
+    {
+      "name": "Session Safeguarding Incident Flagged",
+      "kind": "track",
+      "consent_required": "essential",
+      "properties": ["tenant_id", "session_id", "minor_athletes_present_count"],
+      "description": "Regulator-facing signal. Feeds a dedicated safeguarding-incident dashboard for platform ops."
+    },
+    {
+      "name": "Session Slot Exceeded",
+      "kind": "track",
+      "consent_required": "essential",
+      "properties": ["tenant_id", "tier", "iso_week", "attempted_session_type"]
+    }
   ],
   "notes": [
     "session_notes NEVER sent to Segment — may contain PII + safeguarding narrative.",

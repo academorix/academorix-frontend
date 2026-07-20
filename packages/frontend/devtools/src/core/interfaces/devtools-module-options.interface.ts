@@ -11,9 +11,9 @@
  *   members of the outer options contract.
  */
 
-import type { DevtoolsCategory } from '@stackra/contracts';
+import type { DevtoolsCategory } from "@stackra/contracts";
 
-import type { DevtoolsShellPosition } from '../types/devtools-shell-position.type';
+import type { DevtoolsShellPosition } from "../types/devtools-shell-position.type";
 
 // ════════════════════════════════════════════════════════════════════
 // Shortcut — keyboard combo the shell listens for

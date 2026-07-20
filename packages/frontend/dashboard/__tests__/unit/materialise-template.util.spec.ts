@@ -47,11 +47,7 @@ describe("materialiseTemplate", () => {
   });
 
   it("returns empty arrays for a template with no keys", () => {
-    const { widgets, layouts } = materialiseTemplate(
-      { ...template, keys: [] },
-      "user-1",
-      spanFor,
-    );
+    const { widgets, layouts } = materialiseTemplate({ ...template, keys: [] }, "user-1", spanFor);
 
     expect(widgets).toEqual([]);
     expect(layouts.lg).toEqual([]);

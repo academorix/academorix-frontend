@@ -7,10 +7,10 @@
  *   so it is exempt from the HeroUI UI rule.
  */
 
-import { type ReactElement } from 'react';
-import { useInject } from '@stackra/container/react';
-import { CSP_SERVICE } from '@stackra/contracts';
-import type { ICspService } from '@stackra/contracts';
+import { type ReactElement } from "react";
+import { useInject } from "@stackra/container/react";
+import { CSP_SERVICE } from "@stackra/contracts";
+import type { ICspService } from "@stackra/contracts";
 
 /**
  * Renders the CSP policy as a `<meta http-equiv="Content-Security-Policy">`
@@ -41,4 +41,4 @@ export function CspMeta(): ReactElement {
   return <meta httpEquiv={policy.headerName} content={policy.header} />;
 }
 
-CspMeta.displayName = 'CspMeta';
+CspMeta.displayName = "CspMeta";

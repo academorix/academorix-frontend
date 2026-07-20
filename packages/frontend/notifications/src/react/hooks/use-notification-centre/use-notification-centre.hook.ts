@@ -8,12 +8,12 @@
  *   concurrent React.
  */
 
-import { useCallback, useSyncExternalStore } from 'react';
-import { useInject } from '@stackra/container/react';
+import { useCallback, useSyncExternalStore } from "react";
+import { useInject } from "@stackra/container/react";
 
-import { NOTIFICATION_MANAGER } from '@/core/constants';
-import type { INotificationManager } from '@/core/interfaces';
-import type { IUseNotificationCentreResult } from './use-notification-centre.interface';
+import { NOTIFICATION_MANAGER } from "@/core/constants";
+import type { INotificationManager } from "@/core/interfaces";
+import type { IUseNotificationCentreResult } from "./use-notification-centre.interface";
 
 /**
  * Subscribe to the notification manager's snapshot — permission

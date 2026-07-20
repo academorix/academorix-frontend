@@ -10,13 +10,13 @@
 // ══════════════════════════════════════════════════════════════════════
 // Web platform module
 // ══════════════════════════════════════════════════════════════════════
-export { WebAiModule } from './web-ai.module';
+export { WebAiModule } from "./web-ai.module";
 
 // ══════════════════════════════════════════════════════════════════════
 // Providers
 // ══════════════════════════════════════════════════════════════════════
-export { AiProvider } from './providers';
-export type { IAiProviderProps } from './providers';
+export { AiProvider } from "./providers";
+export type { IAiProviderProps } from "./providers";
 
 // ══════════════════════════════════════════════════════════════════════
 // Wired HeroUI Pro components (web only — task 12)
@@ -33,7 +33,7 @@ export {
   AiSuggestions,
   AiThreadList,
   AiToolCall,
-} from './components';
+} from "./components";
 export type {
   AiLoaderVariant,
   IAiChatProps,
@@ -49,7 +49,7 @@ export type {
   IAiSuggestionsProps,
   IAiThreadListProps,
   IAiToolCallProps,
-} from './components';
+} from "./components";
 
 // ══════════════════════════════════════════════════════════════════════
 // Hooks (cross-platform — re-exported from core so the native subpath
@@ -67,7 +67,7 @@ export {
   useAiThreads,
   useAiTool,
   useAiTools,
-} from '@/core/hooks';
+} from "@/core/hooks";
 export type {
   AiToolHook,
   IAiToolDefinitionWithHandler,
@@ -81,15 +81,15 @@ export type {
   IUseAiDraftsResult,
   IUseAiThreadsResult,
   IUseAiToolsResult,
-} from '@/core/hooks';
+} from "@/core/hooks";
 
 // ══════════════════════════════════════════════════════════════════════
 // Authoring helpers re-exported for the web subpath's DX
 // ══════════════════════════════════════════════════════════════════════
-export { defineAiTool } from '@/core/utils';
-export type { IAiToolDefinition } from '@/core/utils';
+export { defineAiTool } from "@/core/utils";
+export type { IAiToolDefinition } from "@/core/utils";
 
 // ══════════════════════════════════════════════════════════════════════
 // Devtools contribution — wired into `DevtoolsModule` by `AiModule.forRoot`.
 // ══════════════════════════════════════════════════════════════════════
-export { AiDevtoolsPanel, AiDevtoolsPanelView, type AiDevtoolsPanelViewProps } from './devtools';
+export { AiDevtoolsPanel, AiDevtoolsPanelView, type AiDevtoolsPanelViewProps } from "./devtools";

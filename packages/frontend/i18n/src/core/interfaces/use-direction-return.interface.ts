@@ -9,7 +9,7 @@
  */
 export interface UseDirectionReturn {
   /** Current text direction ('ltr' or 'rtl'). */
-  dir: 'ltr' | 'rtl';
+  dir: "ltr" | "rtl";
   /** Whether the current locale is right-to-left. */
   isRTL: boolean;
   /** The current locale code. */
