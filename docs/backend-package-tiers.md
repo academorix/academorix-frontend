@@ -238,22 +238,32 @@ Include `react` surface (some also `native`):
 ## Verification
 
 ```sh
-# Backend catalog counts (in-scope only)
+# Backend catalog counts (Tier 1+2+3 that stayed under packages/backend/**)
 find packages/backend -name catalog.json 2>/dev/null | wc -l
-# → 108 expected
+# → 89 expected
 
 # Frontend catalog counts
 find packages/frontend -name catalog.json 2>/dev/null | wc -l
-# → 42 expected
+# → 43 expected
 
 # Total
 find packages -name catalog.json 2>/dev/null | wc -l
-# → 150 expected
+# → 132 expected
 
 # Every catalog.json validates against the v1 schema
 python3 scripts/add-catalog-schema.py --dry-run --quiet
-# → 150 updated OR 150 skipped (all already carry $schema)
+# → 132 skipped (all already carry $schema)
 ```
+
+## Note on migration state
+
+The 14 `finance/*`, 5 `growth/*`, 21 `sports/*`, and 1 `products/*` packages
+that used to live under `packages/backend/` moved to
+`apps/academorix/src/modules/` (commit `6eb4096df` — 2026-07-XX). They are
+Tier 4 (domain/vertical) and correctly SKIPPED per this taxonomy — no
+`catalog.json` is authored for them regardless of location. If the vertical
+packages ever come back into the SaaS-primitive slot, this doc plus their
+`catalog.json` files can be regenerated in one pass.
 
 ---
 

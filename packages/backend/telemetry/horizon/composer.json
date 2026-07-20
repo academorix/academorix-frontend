@@ -65,14 +65,5 @@
         "Academorix\\Horizon\\Providers\\HorizonServiceProvider"
       ]
     }
-  },
-  "repositories": [
-    {
-      "type": "path",
-      "url": "../../../framework/src/support",
-      "options": {
-        "symlink": true
-      }
-    }
-  ]
+  }
 }
