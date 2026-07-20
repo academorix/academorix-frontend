@@ -2,10 +2,10 @@
 inclusion: auto
 ---
 
-# Foundation Package (`academorix/laravel-foundation`)
+# Foundation Package (`academorix/foundation`)
 
 **Namespace:** `Academorix\Console\` **Location:** `modules/ab/foundation/`
-**Composer:** `academorix/laravel-foundation` **PHP:** ^8.4|^8.5
+**Composer:** `academorix/foundation` **PHP:** ^8.4|^8.5
 
 ## Purpose
 
@@ -26,7 +26,7 @@ headless API backends.
 | `pixielity/stub-generator`       | ^1.0    | Code generation            |
 | `spatie/backtrace`               | ^1.6    | Stack trace analysis       |
 | `spatie/laravel-error-solutions` | ^1.1    | Error solution suggestions |
-| `academorix/laravel-framework`   | @dev    | Core framework             |
+| `academorix/framework`           | @dev    | Core framework             |
 
 ## Key Components
 

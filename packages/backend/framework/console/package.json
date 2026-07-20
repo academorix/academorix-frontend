@@ -1,5 +1,5 @@
 {
-  "name": "@academorix/laravel-foundation",
+  "name": "@academorix/foundation",
   "version": "0.1.0",
   "description": "Academorix Foundation module \u2014 custom Application class, base API structure, and core providers.",
   "homepage": "https://github.com/academorix-inc/php-monorepo/tree/main/modules/foundation",

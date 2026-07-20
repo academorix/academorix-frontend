@@ -12,13 +12,13 @@ declare(strict_types=1);
  *
  * @since    1.0.0
  */
-namespace Academorix\Console\Console\Commands;
+namespace Academorix\Console\Commands;
 
 use Exception;
 use Illuminate\Support\Facades\File;
 use Override;
 use Academorix\Exceptions\RuntimeException;
-use Academorix\StubGenerator\StubGenerator;
+use Academorix\Console\StubGenerator;
 use Academorix\Support\Str;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;

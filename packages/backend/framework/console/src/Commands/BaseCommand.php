@@ -14,11 +14,11 @@ declare(strict_types=1);
  * @since    2.0.0
  */
 
-namespace Academorix\Console\Console\Commands;
+namespace Academorix\Console\Commands;
 
+use Academorix\Console\Concerns\UsesOmniTerm;
 use Illuminate\Console\Command;
-use Academorix\Console\Console\Registry\CommandExtensionRegistry;
-use Academorix\OmniTerm\Concerns\HasOmniTerm;
+use Academorix\Console\Registry\CommandExtensionRegistry;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
@@ -47,7 +47,17 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 abstract class BaseCommand extends Command
 {
-    use HasOmniTerm;
+    // The trait chain (UsesOmniTerm -> HasOmniTerm) contributes an
+    // `initialize()` method that sets `$this->omni`. Because we also
+    // override `initialize()` on this class, the trait's method would
+    // be shadowed and `$this->omni` would never be set. Aliasing the
+    // trait method as `bootOmniTerm()` keeps it callable so our
+    // override can delegate to it explicitly. `parent::` does NOT
+    // reach a trait — traits are stitched into the class at compile
+    // time, they are not part of the parent chain.
+    use UsesOmniTerm {
+        initialize as bootOmniTerm;
+    }
 
     /**
      * Command start time for duration tracking.
@@ -60,16 +70,18 @@ abstract class BaseCommand extends Command
     protected ?CommandExtensionRegistry $extensionRegistry = null;
 
     /**
-     * Initialize the command — sets up OmniTerm and starts the timer.
+     * Initialize the command — starts the duration timer, then
+     * delegates to the aliased trait method which sets `$this->omni`
+     * and calls `parent::initialize(...)` for us.
      *
-     * The HasOmniTerm trait's initialize() creates $this->omni.
-     * We override to also start the duration timer.
+     * Symfony Console invokes this hook automatically before
+     * `execute()` runs, so every `handle()` body can call
+     * `$this->omni->…` safely.
      */
     protected function initialize(InputInterface $input, OutputInterface $output): void
     {
-        $this->omni = new \Academorix\OmniTerm\OmniTerm();
         $this->commandStartTime = hrtime(true);
-        parent::initialize($input, $output);
+        $this->bootOmniTerm($input, $output);
     }
 
     /**

@@ -20,7 +20,7 @@
   ],
   "require": {
     "php": "^8.3|^8.4|^8.5",
-    "academorix/omniterm": "@dev",
+    "pdphilip/omniterm": "^3.0",
     "illuminate/console": "^13.0",
     "illuminate/contracts": "^13.0",
     "illuminate/support": "^13.0",
@@ -42,15 +42,6 @@
       "Academorix\\Console\\Tests\\": "tests/"
     }
   },
-  "repositories": [
-    {
-      "type": "path",
-      "url": "../omniterm",
-      "options": {
-        "symlink": true
-      }
-    }
-  ],
   "extra": {
     "branch-alias": {
       "dev-main": "0.1.x-dev"
