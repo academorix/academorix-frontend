@@ -1,0 +1,15 @@
+{
+  "version": "v1",
+  "hooks": [
+    {
+      "name": "ADR Save — Steering Sync Reminder",
+      "trigger": "PostFileSave",
+      "description": "Reminds to update .kiro/steering/*.md if the saved ADR changes an architectural rule.",
+      "matcher": "docs/adr/.*\\.md$",
+      "action": {
+        "type": "agent",
+        "prompt": "An ADR under `docs/adr/` was just saved. If the ADR introduces or changes an architectural rule, the corresponding `.kiro/steering/*.md` file must reflect the same rule in the same PR:\n\n1. **Determine whether the ADR is rule-changing.** Rules-changing ADRs mutate one of the workspace's steering files (`hierarchy.md`, `tenancy-columns.md`, `code-standards.md`, `module-lifecycle.md`, `events-authoring.md`, `communication-patterns.md`, `package-conventions.md`, `documentation.md`, etc.). Documentation-only ADRs (superseding an old ADR, recording a rejected option) do not touch steering.\n\n2. **If rule-changing, edit the affected steering file** to point at the ADR:\n   - Add an \"ADR anchor\" line at the top of the affected steering section.\n   - Update the enforcement list if the rule enforcement changes.\n   - Add a cross-reference in the ADR's `## References` section to the steering file.\n\n3. **If the ADR supersedes a prior ADR**, update the prior ADR's `Status` to \"superseded by ADR-<new>\" in the same PR.\n\n4. **Verify the ADR number is monotonically increasing.** The next number is one greater than the highest current ADR under `docs/adr/`.\n\n5. **Every ADR has at least three alternatives considered.** Verify before commit.\n\n6. **`docs-adr-steward` is named as co-reviewer** on the PR that lands the ADR (per `.kiro/agents/README.md §Adding new agents`).\n\nRoute the follow-up steering edit to `docs-adr-steward` if you cannot make it yourself."
+      }
+    }
+  ]
+}

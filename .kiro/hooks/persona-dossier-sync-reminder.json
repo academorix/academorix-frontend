@@ -1,0 +1,15 @@
+{
+  "version": "v1",
+  "hooks": [
+    {
+      "name": "Persona Dossier Save — Org Chart Sync",
+      "trigger": "PostFileSave",
+      "description": "Cross-doc consistency check between the persona dossier org chart and AGENT_ROSTER.md.",
+      "matcher": "\\.kiro/product/agent-personas\\.md$",
+      "action": {
+        "type": "agent",
+        "prompt": "The persona dossier `.kiro/product/agent-personas.md` was just saved. Cross-check the org chart in the dossier against `AGENT_ROSTER.md §Part III` and `§Part IV`:\n\n1. Every persona slug in the dossier must exist in `AGENT_ROSTER.md §Part IV` under some phase.\n\n2. Every persona's `Reports to` line must match the org chart at `AGENT_ROSTER.md §III.5` (Chief -> four team leads -> reports; three advisory leads sitting off to the side).\n\n3. Every persona's `Manages` line (for leads) must match the roster's phase distribution:\n   - Ifeoma manages the Product + Discovery agents (Phase 0 + Phase 1).\n   - Yuki manages the Design agents (Phase 3).\n   - Priya manages the Build agents (Phase 4 across four lanes).\n   - Idris manages the Verify agents (Phase 5).\n   - Fatima, Kwame, Inês are advisory leads with a small direct roster each.\n\n4. The lightweight directory counts (2 / 6 / 8 / 11 / 2 / 7 + nested cross-cutting = 36 total) must reconcile with the 15 full personas so the total is 51.\n\n5. The two renamed personas (Ifeoma Adekunle, Rahel Mekonnen) must never revert to \"Adaeze Okonkwo\" or \"Selam Tesfaye\". Run a grep before commit:\n   `grep -nE 'Adaeze Okonkwo|Selam Tesfaye' .kiro/product/agent-personas.md AGENT_ROSTER.md .kiro/agents/*.md` — zero hits required.\n\nIf any check fails, update the failing file in the same PR before committing."
+      }
+    }
+  ]
+}

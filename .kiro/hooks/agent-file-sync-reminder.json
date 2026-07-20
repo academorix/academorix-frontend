@@ -1,0 +1,15 @@
+{
+  "version": "v1",
+  "hooks": [
+    {
+      "name": "Agent Charter Save — Sync Reminder",
+      "trigger": "PostFileSave",
+      "description": "Reminds to update the roster + dossier + README table when a charter is added or renamed.",
+      "matcher": "\\.kiro/agents/.*\\.md$",
+      "action": {
+        "type": "agent",
+        "prompt": "A charter under `.kiro/agents/` was just saved. If the change is a NEW charter or a RENAME, three companion files must be updated in the same commit — the workspace does not allow orphan charters:\n\n1. **`AGENT_ROSTER.md`** — append the new slug to `§Part IV` under the correct phase. Rename edits touch the same table.\n\n2. **`.kiro/product/agent-personas.md`** — append the persona entry. Leadership / flagship / marquee slugs need a full persona; other slugs get a lightweight directory entry under the correct manager section. Increment the manager's count in the table of contents.\n\n3. **`.kiro/agents/README.md`** — append a row to the correct tier table (Executive / Vertical leads / Product+Discovery / Design / Backend build lane / Frontend web build lane / Frontend native build lane / AI service build lane / Cross-cutting stewards / Verify / Ship / Operate).\n\nIf the save was a small edit to an existing charter (fixing a typo, updating an orient list), the three companions do not need touching.\n\nAlso verify:\n\n- The charter's frontmatter carries `description` + `tools`.\n- The charter's `Orient first` list points at real paths.\n- The charter's `Explicitly out of scope` names other agents that own the excluded concerns.\n\nRenames + splits require an ADR per `AGENT_ROSTER.md §VI.4`. If you renamed or split, add a numbered ADR under `docs/adr/` in the same commit."
+      }
+    }
+  ]
+}
