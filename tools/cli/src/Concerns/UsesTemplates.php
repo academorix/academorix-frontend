@@ -1,0 +1,35 @@
+<?php
+
+/**
+ * @file UsesTemplates.php
+ * @module Academorix\Cli\Concerns
+ * @description Delegates to {@see \Academorix\Cli\Templates\TemplateManager}.
+ *   Commands clone a template directory (backend-app / web-app / mobile-app)
+ *   into a destination and hydrate every text file with tokens.
+ */
+
+declare(strict_types=1);
+
+namespace Academorix\Cli\Concerns;
+
+use Academorix\Cli\Templates\TemplateManager;
+
+/**
+ * Composed by every command through {@see \Academorix\Cli\Commands\AbstractCommand}.
+ *
+ * @property \Academorix\Cli\Container $container populated by {@see \Academorix\Cli\Commands\AbstractCommand}
+ */
+trait UsesTemplates
+{
+    /**
+     * Clone a template into `$destination` and hydrate every text file with
+     * `$tokens`. Optional `$onPostInstall` closure runs after hydration.
+     *
+     * @param  array<string, mixed>  $tokens
+     */
+    public function cloneTemplate(string $kind, string $destination, array $tokens, ?callable $onPostInstall = null): void
+    {
+        $this->container->resolve(TemplateManager::class)
+            ->clone($kind, $destination, $tokens, $onPostInstall);
+    }
+}

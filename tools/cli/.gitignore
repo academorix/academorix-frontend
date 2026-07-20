@@ -1,0 +1,9 @@
+# Composer artifacts — resolved at install time.
+/vendor/
+
+# Test-tool caches.
+/.phpunit.cache/
+/.phpunit.result.cache
+
+# PHPStan cache.
+/tmp/
