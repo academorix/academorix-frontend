@@ -1,0 +1,16 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "{{ requestSchemaId }}",
+  "title": "{{ modelName }}Request",
+  "description": "Request payload for {{ endpointMethod }} {{ endpointPath }}.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["tenantId"],
+  "properties": {
+    "tenantId": {
+      "type": "string",
+      "description": "The tenant this request is scoped to.",
+      "format": "uuid"
+    }
+  }
+}

@@ -1,0 +1,16 @@
+/**
+ * @file tsup.config.ts
+ * @module {{ packageName }}
+ * @description tsup build config. Imports the shared preset from
+ *   `@academorix/config-tsup` and passes the package's per-subpath
+ *   entries.
+ */
+
+import { defineBaseConfig } from "@academorix/config-tsup";
+
+export default defineBaseConfig({
+  index: "{{ srcDir }}/core/index.ts",
+  react: "{{ srcDir }}/react/index.ts",
+  native: "{{ srcDir }}/native/index.ts",
+  testing: "{{ srcDir }}/testing/index.ts",
+});

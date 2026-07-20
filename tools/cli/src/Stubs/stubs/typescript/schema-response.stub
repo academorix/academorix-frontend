@@ -1,0 +1,21 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "{{ responseSchemaId }}",
+  "title": "{{ modelName }}Response",
+  "description": "Response payload for {{ endpointMethod }} {{ endpointPath }}.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["data"],
+  "properties": {
+    "data": {
+      "type": "object",
+      "required": ["id"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "The record's primary key."
+        }
+      }
+    }
+  }
+}

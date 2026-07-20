@@ -1,0 +1,32 @@
+{
+  "{{ endpointPath }}": {
+    "{{ endpointMethod }}": {
+      "operationId": "{{ modelName }}.{{ endpointMethod }}",
+      "summary": "{{ description }}",
+      "tags": ["{{ modelName }}"],
+      "security": [{ "bearerAuth": [] }],
+      "requestBody": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "{{ requestSchemaId }}"
+            }
+          }
+        }
+      },
+      "responses": {
+        "200": {
+          "description": "Successful response.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "{{ responseSchemaId }}"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

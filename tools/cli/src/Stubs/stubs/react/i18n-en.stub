@@ -1,0 +1,16 @@
+{
+  "{{ domain }}": {
+    "title": "{{ label }}",
+    "empty": {
+      "headline": "Nothing here yet.",
+      "body": "When you create your first {{ label }} it will appear here."
+    },
+    "actions": {
+      "create": "Create",
+      "edit": "Edit",
+      "delete": "Delete",
+      "cancel": "Cancel",
+      "save": "Save"
+    }
+  }
+}

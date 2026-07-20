@@ -1,0 +1,19 @@
+/**
+ * @file vitest.config.ts
+ * @module {{ packageName }}
+ * @description Vitest config. Merges the shared preset from
+ *   `@stackra/testing/preset` and lets per-package overrides go in the
+ *   second argument.
+ */
+
+import { defineConfig, mergeConfig } from "vitest/config";
+import { preset } from "@stackra/testing/preset";
+
+export default mergeConfig(
+  preset,
+  defineConfig({
+    test: {
+      // Per-package overrides go here.
+    },
+  }),
+);

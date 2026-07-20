@@ -1,0 +1,17 @@
+{
+  "$note": "Machine-generated Arabic. A native-Arabic-speaking reviewer pass is required before shipping to production.",
+  "{{ domain }}": {
+    "title": "{{ label }}",
+    "empty": {
+      "headline": "لا يوجد شيء هنا بعد.",
+      "body": "عند إنشاء أول {{ label }} ، سيظهر هنا."
+    },
+    "actions": {
+      "create": "إنشاء",
+      "edit": "تعديل",
+      "delete": "حذف",
+      "cancel": "إلغاء",
+      "save": "حفظ"
+    }
+  }
+}

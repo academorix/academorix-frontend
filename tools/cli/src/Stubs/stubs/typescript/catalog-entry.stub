@@ -1,0 +1,13 @@
+{
+  "$schema": "../../../.ref/schemas/catalog.v1.json",
+  "name": "{{ packageName }}",
+  "tier": "{{ tier }}",
+  "surfaces": {{ surfaces }},
+  "kind": "feature",
+  "purpose": "{{ description }}",
+  "capabilities": [],
+  "peerDeps": [],
+  "sizeGzipKb": {},
+  "maturity": "alpha",
+  "docs": ["README.md"]
+}
