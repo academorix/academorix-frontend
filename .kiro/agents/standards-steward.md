@@ -203,7 +203,7 @@ Enforce the LOCKED per-folder table. Blocker-level violations:
 - No `protected $signature` / `$description` on commands — must be the
   Academorix `#[AsCommand]` attribute (NOT Symfony's).
 - No `Illuminate\Console\Command` extension — must extend
-  `Academorix\Console\Console\Commands\BaseCommand`.
+  `Academorix\Console\Commands\BaseCommand`.
 - No `protected $tries` / `$backoff` / `$timeout` / `$queue` on jobs — must be
   `#[Tries]` / `#[Backoff]` / `#[Timeout]` / `#[Queue]`.
 - No `$this->app->bind(...)` / `->singleton(...)` inside providers for domain
@@ -255,6 +255,12 @@ Enforce the LOCKED per-folder table. Blocker-level violations:
 
 - `use Symfony\Component\Console\Attribute\AsCommand;` — must be the Academorix
   `AsCommand`.
+- `use Academorix\Console\Console\Commands\BaseCommand;` (legacy doubled
+  namespace) — must be the flat `use Academorix\Console\Commands\BaseCommand;`.
+- `extends Command` on a command class — must be `extends BaseCommand`.
+- `src/Console/Commands/*Command.php` layout in a domain package — must be flat
+  `src/Console/*Command.php`. Namespace declaration must match — no trailing
+  `\Commands` segment.
 - `$this->info(...)` / `->error(...)` / `->warn(...)` / `->line(...)` for
   anything except stopgap output — must be `$this->omni->...`.
 - Constructor injection of runtime dependencies — must move to `handle()` method
@@ -264,6 +270,26 @@ Enforce the LOCKED per-folder table. Blocker-level violations:
 - Kept `$description` property on the class — redundant with the attribute; must
   be removed.
 - `sprintf(...)` unqualified in a namespaced file — must be `\sprintf(...)`.
+- **Trait / `initialize()` lifecycle gotcha** — command class overriding
+  `initialize()` and calling `parent::initialize(...)` when it composes a trait
+  (via `UsesOmniTerm` / `HasOmniTerm`) that also defines `initialize()`.
+  `parent::` does NOT reach traits — the trait's method is silently bypassed,
+  `$this->omni` never gets set, first `$this->omni->…` call fatals with "Typed
+  property must not be accessed before initialization". Fix: alias the trait
+  method (`use UsesOmniTerm { initialize as bootOmniTerm; }`) + delegate from
+  override, OR drop the override entirely. Applies equally to Eloquent model
+  `boot()` / `booted()`, service-provider `register()`, Symfony-command
+  `configure()`, factory `newFactory()` — any lifecycle method a trait can
+  contribute.
+- **Error-handler pre-boot safety** — any `renderFatalError` / `report` /
+  error-recovery path on a command base class that unconditionally accesses a
+  trait-owned property (`$this->omni`, `$this->prompts`, ...) without an
+  `isset(...)` guard. Symptom: a real fatal that fires before `initialize()`
+  produces a SECONDARY fatal ("Typed property must not be accessed before
+  initialization"), which masks the real root cause and wastes hours of
+  debugging. Fix: `$hasOmni = isset($this->omni);` + plain
+  `$output->writeln(...)` fallback. Same rule for any pre-boot listener /
+  observer / Octane-worker-startup code path.
 
 ### Testing layout (from `testing.md` + `domain-patterns.md`)
 

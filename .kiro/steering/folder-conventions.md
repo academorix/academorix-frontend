@@ -117,10 +117,19 @@ here; those live in `Support/`.
 
 ### `Console/`
 
-Artisan commands. Every command carries `#[AsCommand]` and, when scheduled,
-`#[Cron]` + `#[WithoutOverlapping]` + `#[OnOneServer]`
+Artisan commands, flat under `src/Console/*Command.php` — one file per command,
+no nested `Commands/` subfolder. Namespace mirrors the path:
+`Academorix\<Package>\Console\<Name>Command`. Every command carries
+`#[AsCommand]` and, when scheduled, `#[Cron]` + `#[WithoutOverlapping]` +
+`#[OnOneServer]` + `#[ScheduleName]` per the scheduling package.
 
-- `#[ScheduleName]` per the scheduling package.
+`Console/` IS the primitive folder — nesting a `Commands/` layer inside it
+repeats the concept (every file in `Console/` IS a command class, and the
+filename already carries the `Command` suffix). Same reasoning as `Actions/` not
+nesting `Action/` or `Models/` not nesting `Model/`. See
+`.kiro/steering/console-commands.md` §"Where commands live" for the full rule
+and the framework-`console`-package exception (which uses flat `src/Commands/`
+because the whole package IS the console concern).
 
 ### `Contracts/`
 
@@ -258,6 +267,16 @@ Every entry here was a real bug before Phase 2.D shipped this convention:
 - ❌ **Middleware in `Http/Middleware/`.** Historical vestige from
   `nwidart/laravel-modules`. **Fix**: rename to flat `Middleware/` per
   `package-architecture.md` §2.
+- ❌ **Commands in `Console/Commands/`.** Same-shape vestige. `Console/` is the
+  primitive folder; a nested `Commands/` repeats the concept. **Fix**: flatten
+  to `src/Console/*Command.php`. 864 files already follow the flat shape; 12
+  stragglers (SMS / Push / Products / geofencing) need the housekeep move. See
+  `.kiro/steering/console-commands.md` §"Where commands live".
+- ❌ **Doubled-namespace `Academorix\Console\Console\Commands\BaseCommand`.**
+  Legacy autoload accident — the base class lives at
+  `Academorix\Console\Commands\BaseCommand` (flat, single `Console`). Every
+  consumer import that uses the doubled form is stale. **Fix**: mechanical
+  find/replace across the workspace.
 - ❌ **Contracts in top-level `Contracts/` when they should be under
   `Contracts/Data/` or `Contracts/Repositories/`.** Table-shape interfaces
   belong under `Contracts/Data/`; repository interfaces under

@@ -13,8 +13,9 @@ every consumer package.
 
 Every command:
 
-1. Extends `Academorix\Console\Console\Commands\BaseCommand` — **never**
-   Laravel's `Illuminate\Console\Command` directly.
+1. Extends `Academorix\Console\Commands\BaseCommand` — **never** Laravel's
+   `Illuminate\Console\Command` directly. See "Where commands live" below for
+   the file layout every command lands at.
 2. Carries a `#[Academorix\Console\Attributes\AsCommand(...)]` attribute —
    **never** Symfony's `Symfony\Component\Console\Attribute\AsCommand`. The
    Academorix one is a superset that supports the extension registry
@@ -28,6 +29,206 @@ Every command:
    and resolves every type-hinted parameter automatically. Constructor DI works
    too but is wrong here (see the "Dependency injection" section below).
 
+## Where commands live
+
+Two layouts, one per context:
+
+**Framework `console` package** (`packages/backend/framework/console/`) — flat
+under `src/`. The package IS the console concern; there is nothing to
+disambiguate FROM. The internal shape is:
+
+```
+packages/backend/framework/console/src/
+├── Attributes/      Academorix\Console\Attributes\        (#[AsCommand], siblings)
+├── Commands/        Academorix\Console\Commands\          (BaseCommand, GeneratorCommand — abstract bases)
+├── Concerns/        Academorix\Console\Concerns\          (UsesOmniTerm trait)
+└── Registry/        Academorix\Console\Registry\          (CommandExtensionRegistry)
+```
+
+Never `src/Console/Commands/…` — the doubled `Console\Console\Commands\`
+namespace is a bug, never a feature. Same reasoning as `academorix/exceptions`
+carrying `src/Renderers/` (not `src/Exceptions/Renderers/`), or
+`academorix/routing` carrying `src/Attributes/` (not `src/Routing/Attributes/`).
+
+**Domain packages** (every `packages/backend/<domain>/` and every
+`apps/academorix/src/modules/<domain>/`) — commands live at `src/Console/` FLAT,
+no nested `Commands/`:
+
+```
+packages/backend/notifications/notifications-sms/src/
+├── Actions/        Academorix\Notifications\Sms\Actions\
+├── Console/        Academorix\Notifications\Sms\Console\   ← commands here, one per file, no subfolders
+│   ├── OptOutAddCommand.php
+│   ├── CostReportCommand.php
+│   └── TestCommand.php
+├── Data/
+├── Models/
+└── ...
+```
+
+`Console/` is the primitive folder from `folder-conventions.md`. Nesting a
+`Commands/` inside it repeats the concept — every file in `Console/` IS a
+command class, and the filename already carries the `Command` suffix. Matches
+how every other primitive folder in the same package sits (`Actions/`,
+`Models/`, `Data/` — all flat, one primitive per folder).
+
+The workspace has already voted: 864 commands sit at `src/Console/*.php` versus
+12 stragglers at `src/Console/Commands/*.php` — the 12 are non-canonical and
+land in the housekeeper's fix queue.
+
+## Trait composition + `initialize()` lifecycle
+
+This is a PHP-language gotcha with real teeth — we hit it in production and lost
+several hours to it before writing this section down.
+
+`BaseCommand` composes `UsesOmniTerm`, which composes `OmniTerm\HasOmniTerm`.
+The vendored `HasOmniTerm` trait declares:
+
+```php
+trait HasOmniTerm
+{
+    public OmniTerm $omni;
+
+    protected function initialize(InputInterface $input, OutputInterface $output): void
+    {
+        $this->omni = new OmniTerm;
+        parent::initialize($input, $output);
+    }
+}
+```
+
+Symfony Console invokes `initialize()` on the command BEFORE `execute()`. That's
+where `$this->omni` gets its instance.
+
+**The gotcha:** if a subclass overrides `initialize()` and calls
+`parent::initialize(...)`, that `parent::` reference **does NOT reach the
+trait**. Traits are stitched into the class at compile time — they are NOT part
+of the parent chain. `parent::` from an override skips straight to
+`Illuminate\Console\Command::initialize()` (Symfony's no-op), and the trait's
+setup is silently bypassed. `$this->omni` stays uninitialised. The first
+`$this->omni->…` call in `handle()` fatals with:
+
+```
+Typed property Academorix\...\BaseCommand::$omni must not be accessed before initialization
+```
+
+### Correct pattern — trait aliasing
+
+When `BaseCommand` needs its OWN `initialize()` logic (e.g. duration timer),
+alias the trait method and delegate to it explicitly:
+
+```php
+abstract class BaseCommand extends Command
+{
+    // Alias the trait's initialize() so our override can call it.
+    // parent:: does NOT reach traits — this is the ONLY way to
+    // preserve the trait's behaviour when we override initialize().
+    use UsesOmniTerm {
+        initialize as bootOmniTerm;
+    }
+
+    protected float $commandStartTime;
+
+    protected function initialize(InputInterface $input, OutputInterface $output): void
+    {
+        $this->commandStartTime = hrtime(true);
+        $this->bootOmniTerm($input, $output);   // sets $this->omni + calls parent::initialize()
+    }
+}
+```
+
+`bootOmniTerm()` internally calls `parent::initialize(...)` (which resolves to
+`Illuminate\Console\Command::initialize()` — Symfony's no-op), so we don't
+double-call. Consumers of `BaseCommand` (concrete commands under `src/Console/`)
+inherit both the override AND the trait's setup transparently.
+
+### The simpler alternative
+
+If `BaseCommand`'s override has no other business, just drop the override
+entirely — the trait's `initialize()` becomes the class's `initialize()` by
+inheritance:
+
+```php
+abstract class BaseCommand extends Command
+{
+    use UsesOmniTerm;   // no override — Symfony calls the trait's initialize()
+}
+```
+
+Only override when you have real work to interleave (timer capture, custom
+argument parsing, an environment guard). Otherwise let the trait own the method.
+
+### Rule for anyone writing / overriding `initialize()`
+
+- **Before writing an `initialize()` override, check the class's composed
+  traits** for one that defines `initialize()`. If one exists, choose:
+  1. Drop your override (trait's method wins by inheritance), OR
+  2. Alias the trait method + delegate.
+- **Never assume `parent::` reaches a trait.** It doesn't, ever, for any PHP
+  version.
+- **The same rule applies to any other method a trait can define** — `boot()` on
+  Eloquent models, `booted()` on models, `register()` on providers,
+  `configure()` on commands, `newFactory()` on models. When the class + trait
+  both define the method, the class wins and the trait's version is dropped
+  unless aliased.
+
+## Error handling pre-boot safety
+
+Companion rule to the trait-initialize gotcha. When `BaseCommand::execute()`
+wraps `handle()` in a try/catch and the catch handler calls
+`$this->omni->statusError(...)`, that handler will itself fatal if the error
+happened BEFORE `initialize()` ran — because `$this->omni` is not yet set. The
+secondary fatal then masks the ACTUAL root cause, and the operator sees only:
+
+```
+Typed property Academorix\...\BaseCommand::$omni must not be accessed before initialization
+```
+
+instead of the real problem. Debugging becomes archaeology.
+
+### Correct pattern — isset guard + plain-output fallback
+
+Any error handler / observer / listener that runs across the boundary of trait
+initialisation MUST null-safe the trait-owned property:
+
+```php
+public function renderFatalError(Throwable $e, OutputInterface $output): int
+{
+    // OmniTerm is initialised by HasOmniTerm::initialize() (which Symfony
+    // Console dispatches before execute()). If a fatal happens BEFORE
+    // that hook fires — command-construction errors, argument-parse
+    // errors thrown by Symfony itself, container-resolution errors on a
+    // handle() parameter — fall back to plain output so the operator
+    // sees the actual root cause instead of a secondary "property not
+    // initialised" fatal.
+    $hasOmni = isset($this->omni);
+
+    if ($hasOmni) {
+        $this->omni->statusError($e->headline(), $e->getMessage(), $e->remediation());
+    } else {
+        $output->writeln('<error>'.$e->getMessage().'</error>');
+    }
+
+    return $e->exitCode();
+}
+```
+
+`isset()` on an uninitialised typed property is SAFE — it returns `false`
+without throwing. That's the property PHP 7.4+ gives us specifically for this
+case. Use it whenever the code path might execute before the composed trait's
+`initialize()` fires.
+
+### Rule for anyone writing an error handler / recovery path
+
+- **`isset($this->omni)` before every `$this->omni->…` access in an error
+  path.** Otherwise the operator loses visibility into the real failure.
+- **Same rule for every trait-owned property that gets set inside a lifecycle
+  hook.** If a listener or observer might run pre-boot (Octane worker startup,
+  scheduler discovery, `php artisan list`), assume the property is not yet set.
+- **The plain-output fallback goes to the `OutputInterface` passed into the
+  handler.** Never `echo` or `error_log()` — those bypass Symfony's stream
+  routing and confuse CI log capture.
+
 ## Skeleton
 
 ```php
@@ -38,7 +239,7 @@ declare(strict_types=1);
 namespace App\Console;
 
 use Academorix\Console\Attributes\AsCommand;
-use Academorix\Console\Console\Commands\BaseCommand;
+use Academorix\Console\Commands\BaseCommand;
 
 #[AsCommand(
     name: 'domain:do-thing',
@@ -141,7 +342,7 @@ declare(strict_types=1);
 namespace App\Console;
 
 use Academorix\Console\Attributes\AsCommand;
-use Academorix\Console\Console\Commands\BaseCommand;
+use Academorix\Console\Commands\BaseCommand;
 use App\Contracts\TenantRepositoryInterface;
 
 #[AsCommand(
@@ -323,6 +524,13 @@ $this->omni->render(
 ## Anti-patterns
 
 - ❌ `extends Command` — must be `extends BaseCommand`.
+- ❌ `use Illuminate\Console\Command;` on a class that extends `BaseCommand` —
+  drop the import (dead code, misleading).
+- ❌ `use Academorix\Console\Console\Commands\BaseCommand;` (doubled namespace)
+  — the class lives at `Academorix\Console\Commands\BaseCommand` (single
+  `Console`). The doubled path is a legacy accident.
+- ❌ `src/Console/Commands/*Command.php` in a domain package — flatten to
+  `src/Console/*Command.php`. `Console/` IS the primitive folder.
 - ❌ `use Symfony\Component\Console\Attribute\AsCommand;` — must be
   `use Academorix\Console\Attributes\AsCommand;`.
 - ❌ Constructor injection of runtime dependencies. Deps go on `handle()`'s
@@ -334,6 +542,13 @@ $this->omni->render(
   Delete it.
 - ❌ Setting `name` in `$signature` but forgetting the attribute — the extension
   registry never sees it and Symfony's discovery may lag.
+- ❌ Overriding `initialize()` and calling `parent::initialize(...)` expecting
+  the composed trait's setup to run. `parent::` does NOT reach traits — see
+  "Trait composition + `initialize()` lifecycle" above. Use trait aliasing OR
+  drop the override.
+- ❌ Accessing `$this->omni` inside an error handler / observer / pre-boot
+  listener without an `isset($this->omni)` guard. The secondary fatal masks the
+  real error. See "Error handling pre-boot safety" above.
 - ❌ Duplicating logic between `handle()` and a service. Commands are thin —
   they orchestrate. Business logic lives in `src/<Domain>/Application/*`.
 - ❌ Building queries or persisting Eloquent inside a command. Same rule as

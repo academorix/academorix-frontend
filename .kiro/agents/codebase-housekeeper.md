@@ -237,7 +237,12 @@ context. Flag it as a finding for the user; do not auto-move.
 ### Console-command contract (`.kiro/steering/console-commands.md`)
 
 - Change `extends Command` to `extends BaseCommand` (import
-  `Academorix\Console\Console\Commands\BaseCommand`).
+  `Academorix\Console\Commands\BaseCommand` — SINGLE `Console`, not the legacy
+  doubled `Academorix\Console\Console\Commands\BaseCommand`).
+- Fix any doubled-namespace import
+  (`Academorix\Console\Console\Commands\BaseCommand`) to the flat
+  `Academorix\Console\Commands\BaseCommand` — the base class was moved when the
+  doubled autoload path was retired.
 - Change `use Symfony\Component\Console\Attribute\AsCommand;` to
   `use Academorix\Console\Attributes\AsCommand;`.
 - Move constructor-injected dependencies to `handle()` method-injection. Update
@@ -250,6 +255,47 @@ context. Flag it as a finding for the user; do not auto-move.
 - Add `$this->omni->titleBar('<Command Name>', 'sky');` at the top of `handle()`
   if missing.
 - Add `$this->showDuration();` before the return if missing.
+- Move commands out of `src/Console/Commands/` up to `src/Console/*Command.php`
+  (flat) with `smart_relocate`. The 12 files under SMS / Push / Products /
+  geofencing that still use the doubled folder go here. Update the file's own
+  namespace declaration to drop the trailing `\Commands` segment
+  (`Academorix\Notifications\Sms\Console\Commands\OptOutAddCommand` →
+  `Academorix\Notifications\Sms\Console\OptOutAddCommand`).
+
+### Trait / lifecycle-hook safety (`.kiro/steering/console-commands.md` §"Trait composition + `initialize()` lifecycle")
+
+Rare but load-bearing — trait initialisation gotchas silently break commands and
+produce misleading fatal errors. When you touch a class that composes a trait
+defining a lifecycle method (`initialize()`, `boot()`, `booted()`, `register()`,
+`configure()`, `newFactory()`, ...):
+
+- **Before writing an override**, check the composed traits for one that defines
+  the same method. Grep the trait's source.
+- **Never assume `parent::method()` reaches a trait** — traits are stitched into
+  the class at compile time; `parent::` skips them.
+- **Two fixes**: (1) drop the override entirely if the class has no other
+  business (trait's method wins by inheritance), OR (2) alias the trait method
+  (`use TraitName { method as bootMethod; }`) and delegate to the aliased name
+  from the override.
+- **The canonical example** is `HasOmniTerm::initialize()` on Symfony Console
+  commands — see the steering section for the full write-up + the concrete
+  `BaseCommand` fix.
+
+### Error-handler pre-boot safety (`.kiro/steering/console-commands.md` §"Error handling pre-boot safety")
+
+Any error handler / observer / pre-boot listener that touches a trait-owned
+property must guard with `isset(...)`:
+
+- `renderFatalError()` / `report()` / equivalent recovery paths in a command
+  base class must guard every `$this->omni->…` access with `isset($this->omni)`
+  and fall back to plain `$output->writeln(...)` when false. Otherwise a fatal
+  that happens BEFORE trait initialisation produces a secondary fatal that masks
+  the real error.
+- Same rule for every listener / observer that MIGHT run pre-boot (Octane worker
+  startup, scheduler discovery, `php artisan list`, container resolution errors
+  on `handle()` parameters).
+- `isset()` on an uninitialised typed property is safe — returns `false` without
+  throwing (PHP 7.4+).
 
 ### Testing layout (`.kiro/steering/testing.md`)
 
