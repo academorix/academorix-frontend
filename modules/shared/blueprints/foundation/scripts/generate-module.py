@@ -3577,14 +3577,33 @@ def write_module(m: Module, out_root: Path, *, force: bool, dry_run: bool) -> tu
         files.append((path, body))
 
     # Actions from routes (audience-split, dedupe by class name).
+    #
+    # Routes whose aggregate doesn't match any of the module's real
+    # entities (e.g. `business-types` in `platform/application` — the
+    # BusinessType schema is a VO catalogue, not a database table, per
+    # ADR-0018) mean the aggregate is hand-owned outside the generator's
+    # emission scope. In that case the hand-tuned Actions live in a
+    # domain folder (e.g. `Actions/BusinessTypes/`) and the auto-emitter
+    # would just produce duplicate stubs under `Actions/Platform/` /
+    # `Actions/Tenant/` that shadow the real code. Skip the emit
+    # entirely — the RouteRegistrar picks up the hand-tuned Action's
+    # `#[Post(...)]` / `#[Get(...)]` attribute directly.
+    aggregate_to_entity = {e.aggregate: e for e in m.entities}
+    aggregate_to_entity.update({e.name: e for e in m.entities})
     seen_actions: set[str] = set()
     for route in m.routes:
-        if route.op == "custom" or route.op in ("create", "update", "delete", "list", "show"):
-            path, body = emit_action(m, route)
-            if path in seen_actions:
-                continue
-            seen_actions.add(path)
-            files.append((path, body))
+        if route.op not in ("custom", "create", "update", "delete", "list", "show"):
+            continue
+        # Only emit CRUD actions when a real entity backs the aggregate.
+        # Custom-verb actions still go through the stub path so their
+        # route registration surface stays complete.
+        if route.op != "custom" and route.aggregate not in aggregate_to_entity:
+            continue
+        path, body = emit_action(m, route)
+        if path in seen_actions:
+            continue
+        seen_actions.add(path)
+        files.append((path, body))
 
     # Enums — one per closed-set column across every entity.
     for e in m.entities:
