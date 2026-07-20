@@ -1,7 +1,7 @@
 {
   "name": "academorix/people",
   "type": "library",
-  "description": "Academorix People module \u2014 server-side Laravel package emitted from the module blueprint at `modules/identity/blueprints/people/`. Complements the wire SDK at `academorix-identity/people-sdk`.",
+  "description": "Academorix People module — server-side Laravel package emitted from the module blueprint at `modules/identity/blueprints/people/`. Complements the wire SDK at `academorix-identity/people-sdk`.",
   "license": "proprietary",
   "keywords": [
     "academorix",
@@ -64,5 +64,49 @@
     }
   },
   "minimum-stability": "stable",
-  "prefer-stable": true
+  "prefer-stable": true,
+  "repositories": [
+    {
+      "type": "path",
+      "url": "../../../../apps/academorix/src/sdks/identity-people-sdk",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../framework/crud",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../foundation",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../framework/routing",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../framework/service-provider",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../framework/support",
+      "options": {
+        "symlink": true
+      }
+    }
+  ]
 }

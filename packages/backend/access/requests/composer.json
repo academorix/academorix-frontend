@@ -1,7 +1,7 @@
 {
   "name": "academorix/requests",
   "type": "library",
-  "description": "Academorix Requests module \u2014 server-side Laravel package emitted from the module blueprint at `modules/access/blueprints/requests/`. Complements the wire SDK at `academorix-access/requests-sdk`.",
+  "description": "Academorix Requests module — server-side Laravel package emitted from the module blueprint at `modules/access/blueprints/requests/`. Complements the wire SDK at `academorix-access/requests-sdk`.",
   "license": "proprietary",
   "keywords": [
     "academorix",
@@ -64,5 +64,42 @@
     }
   },
   "minimum-stability": "stable",
-  "prefer-stable": true
+  "prefer-stable": true,
+  "repositories": [
+    {
+      "type": "path",
+      "url": "../../framework/crud",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../foundation",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../framework/routing",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../framework/service-provider",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../framework/support",
+      "options": {
+        "symlink": true
+      }
+    }
+  ]
 }

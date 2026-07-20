@@ -1,7 +1,7 @@
 {
   "name": "academorix-observability/activity",
   "type": "library",
-  "description": "Academorix Activity module \u2014 server-side Laravel package emitted from the module blueprint at `modules/observability/blueprints/activity/`. Tier-scoped composer name (`academorix-observability/activity`) to disambiguate from the hand-tuned `academorix/activity` under `backend-packages/shared/activity/` which owns the vendor `spatie/laravel-activitylog` wrapper + retention. This module owns the storage schema adaptation (tenant_id + application_id columns) + query surface + retention scheduling on top of it. Complements the wire SDK at `academorix-observability/activity-sdk`.",
+  "description": "Academorix Activity module — server-side Laravel package emitted from the module blueprint at `modules/observability/blueprints/activity/`. Tier-scoped composer name (`academorix-observability/activity`) to disambiguate from the hand-tuned `academorix/activity` under `backend-packages/shared/activity/` which owns the vendor `spatie/laravel-activitylog` wrapper + retention. This module owns the storage schema adaptation (tenant_id + application_id columns) + query surface + retention scheduling on top of it. Complements the wire SDK at `academorix-observability/activity-sdk`.",
   "license": "proprietary",
   "keywords": [
     "academorix",
@@ -64,5 +64,42 @@
     }
   },
   "minimum-stability": "stable",
-  "prefer-stable": true
+  "prefer-stable": true,
+  "repositories": [
+    {
+      "type": "path",
+      "url": "../../framework/crud",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../foundation",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../framework/routing",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../framework/service-provider",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../framework/support",
+      "options": {
+        "symlink": true
+      }
+    }
+  ]
 }

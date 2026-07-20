@@ -1,7 +1,7 @@
 {
   "name": "academorix/theme",
   "type": "library",
-  "description": "Academorix Theme module \u2014 server-side Laravel package emitted from the module blueprint at `modules/platform/blueprints/theme/`. Complements the wire SDK at `academorix-platform/theme-sdk`.",
+  "description": "Academorix Theme module — server-side Laravel package emitted from the module blueprint at `modules/platform/blueprints/theme/`. Complements the wire SDK at `academorix-platform/theme-sdk`.",
   "license": "proprietary",
   "keywords": [
     "academorix",
@@ -72,5 +72,70 @@
     }
   },
   "minimum-stability": "stable",
-  "prefer-stable": true
+  "prefer-stable": true,
+  "repositories": [
+    {
+      "type": "path",
+      "url": "../../framework/crud",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../framework/enum",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../framework/exceptions",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../foundation",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../framework/routing",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../framework/service-provider",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../framework/support",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../tenancy",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../identity/user",
+      "options": {
+        "symlink": true
+      }
+    }
+  ]
 }

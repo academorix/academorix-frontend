@@ -1,7 +1,7 @@
 {
   "name": "academorix/approvals",
   "type": "library",
-  "description": "Academorix Approvals module \u2014 server-side Laravel package emitted from the module blueprint at `modules/workflow/blueprints/approvals/`. Complements the wire SDK at `academorix-workflow/approvals-sdk`.",
+  "description": "Academorix Approvals module — server-side Laravel package emitted from the module blueprint at `modules/workflow/blueprints/approvals/`. Complements the wire SDK at `academorix-workflow/approvals-sdk`.",
   "license": "proprietary",
   "keywords": [
     "academorix",
@@ -67,5 +67,56 @@
     }
   },
   "minimum-stability": "stable",
-  "prefer-stable": true
+  "prefer-stable": true,
+  "repositories": [
+    {
+      "type": "path",
+      "url": "../../framework/crud",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../framework/enum",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../framework/exceptions",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../foundation",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../framework/routing",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../framework/service-provider",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../framework/support",
+      "options": {
+        "symlink": true
+      }
+    }
+  ]
 }

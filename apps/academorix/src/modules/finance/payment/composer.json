@@ -1,7 +1,7 @@
 {
   "name": "academorix/payment",
   "type": "library",
-  "description": "Academorix Payment module \u2014 server-side Laravel package emitted from the module blueprint at `modules/finance/blueprints/payment/`. Complements the wire SDK at `academorix-finance/payment-sdk`.",
+  "description": "Academorix Payment module — server-side Laravel package emitted from the module blueprint at `modules/finance/blueprints/payment/`. Complements the wire SDK at `academorix-finance/payment-sdk`.",
   "license": "proprietary",
   "keywords": [
     "academorix",
@@ -64,5 +64,42 @@
     }
   },
   "minimum-stability": "stable",
-  "prefer-stable": true
+  "prefer-stable": true,
+  "repositories": [
+    {
+      "type": "path",
+      "url": "../../../../../../packages/backend/framework/crud",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../../../../../packages/backend/foundation",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../../../../../packages/backend/framework/routing",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../../../../../packages/backend/framework/service-provider",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../../../../../packages/backend/framework/support",
+      "options": {
+        "symlink": true
+      }
+    }
+  ]
 }

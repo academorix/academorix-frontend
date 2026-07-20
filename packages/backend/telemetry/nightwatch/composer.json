@@ -59,14 +59,5 @@
         "Nightwatch": "Academorix\\Nightwatch\\Facades\\Nightwatch"
       }
     }
-  },
-  "repositories": [
-    {
-      "type": "path",
-      "url": "../../../framework/src/support",
-      "options": {
-        "symlink": true
-      }
-    }
-  ]
+  }
 }

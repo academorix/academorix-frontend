@@ -30,8 +30,8 @@
     "phpstan/phpstan": "^2.0"
   },
   "suggest": {
-    "academorix/database": "Required by SeedsPermissionEnum \u2014 provides the underlying Enumable trait.",
-    "spatie/laravel-permission": "Required by SeedsPermissionEnum \u2014 the permissions-table schema this trait writes to. Only needed by modules that project a PermissionEnum into the DB."
+    "academorix/database": "Required by SeedsPermissionEnum — provides the underlying Enumable trait.",
+    "spatie/laravel-permission": "Required by SeedsPermissionEnum — the permissions-table schema this trait writes to. Only needed by modules that project a PermissionEnum into the DB."
   },
   "autoload": {
     "psr-4": {
@@ -57,5 +57,35 @@
     }
   },
   "minimum-stability": "stable",
-  "prefer-stable": true
+  "prefer-stable": true,
+  "repositories": [
+    {
+      "type": "path",
+      "url": "../framework/exceptions",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../foundation",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../framework/service-provider",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../framework/support",
+      "options": {
+        "symlink": true
+      }
+    }
+  ]
 }

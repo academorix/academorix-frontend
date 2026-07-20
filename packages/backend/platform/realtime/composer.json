@@ -1,7 +1,7 @@
 {
   "name": "academorix/realtime",
   "type": "library",
-  "description": "Academorix Realtime module \u2014 server-side Laravel package emitted from the module blueprint at `modules/platform/blueprints/realtime/`. Complements the wire SDK at `academorix-platform/realtime-sdk`.",
+  "description": "Academorix Realtime module — server-side Laravel package emitted from the module blueprint at `modules/platform/blueprints/realtime/`. Complements the wire SDK at `academorix-platform/realtime-sdk`.",
   "license": "proprietary",
   "keywords": [
     "academorix",
@@ -64,5 +64,49 @@
     }
   },
   "minimum-stability": "stable",
-  "prefer-stable": true
+  "prefer-stable": true,
+  "repositories": [
+    {
+      "type": "path",
+      "url": "../../../../apps/academorix/src/sdks/platform-realtime-sdk",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../framework/crud",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../foundation",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../framework/routing",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../framework/service-provider",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../framework/support",
+      "options": {
+        "symlink": true
+      }
+    }
+  ]
 }

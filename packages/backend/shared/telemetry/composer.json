@@ -1,7 +1,7 @@
 {
   "name": "academorix/telemetry",
   "type": "library",
-  "description": "Academorix Telemetry module \u2014 server-side Laravel package emitted from the module blueprint at `modules/shared/blueprints/telemetry/`. Complements the wire SDK at `academorix-shared/telemetry-sdk`.",
+  "description": "Academorix Telemetry module — server-side Laravel package emitted from the module blueprint at `modules/shared/blueprints/telemetry/`. Complements the wire SDK at `academorix-shared/telemetry-sdk`.",
   "license": "proprietary",
   "keywords": [
     "academorix",
@@ -64,5 +64,42 @@
     }
   },
   "minimum-stability": "stable",
-  "prefer-stable": true
+  "prefer-stable": true,
+  "repositories": [
+    {
+      "type": "path",
+      "url": "../../framework/crud",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../foundation",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../framework/routing",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../framework/service-provider",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../framework/support",
+      "options": {
+        "symlink": true
+      }
+    }
+  ]
 }

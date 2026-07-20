@@ -62,14 +62,5 @@
         "Academorix\\Debugbar\\Providers\\DebugbarServiceProvider"
       ]
     }
-  },
-  "repositories": [
-    {
-      "type": "path",
-      "url": "../../../framework/src/support",
-      "options": {
-        "symlink": true
-      }
-    }
-  ]
+  }
 }

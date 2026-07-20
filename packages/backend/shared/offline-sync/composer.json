@@ -1,7 +1,7 @@
 {
   "name": "academorix/offline-sync",
   "type": "library",
-  "description": "Academorix OfflineSync module \u2014 server-side Laravel package emitted from the module blueprint at `modules/shared/blueprints/offline-sync/`. Complements the wire SDK at `academorix-shared/offline-sync-sdk`.",
+  "description": "Academorix OfflineSync module — server-side Laravel package emitted from the module blueprint at `modules/shared/blueprints/offline-sync/`. Complements the wire SDK at `academorix-shared/offline-sync-sdk`.",
   "license": "proprietary",
   "keywords": [
     "academorix",
@@ -64,5 +64,49 @@
     }
   },
   "minimum-stability": "stable",
-  "prefer-stable": true
+  "prefer-stable": true,
+  "repositories": [
+    {
+      "type": "path",
+      "url": "../../../sdk/shared-offline-sync-sdk",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../framework/crud",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../foundation",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../framework/routing",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../framework/service-provider",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../framework/support",
+      "options": {
+        "symlink": true
+      }
+    }
+  ]
 }

@@ -55,14 +55,35 @@
   "repositories": [
     {
       "type": "path",
-      "url": "../../*",
+      "url": "../caching",
       "options": {
         "symlink": true
       }
     },
     {
       "type": "path",
-      "url": "../*",
+      "url": "../database",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../exceptions",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../foundation",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../service-provider",
       "options": {
         "symlink": true
       }

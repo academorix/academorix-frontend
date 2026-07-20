@@ -1,7 +1,7 @@
 {
   "name": "academorix/attribution",
   "type": "library",
-  "description": "Academorix Attribution module \u2014 server-side Laravel package emitted from the module blueprint at `modules/growth/blueprints/attribution/`. Complements the wire SDK at `academorix-growth/attribution-sdk`.",
+  "description": "Academorix Attribution module — server-side Laravel package emitted from the module blueprint at `modules/growth/blueprints/attribution/`. Complements the wire SDK at `academorix-growth/attribution-sdk`.",
   "license": "proprietary",
   "keywords": [
     "academorix",
@@ -64,5 +64,42 @@
     }
   },
   "minimum-stability": "stable",
-  "prefer-stable": true
+  "prefer-stable": true,
+  "repositories": [
+    {
+      "type": "path",
+      "url": "../../../../../../packages/backend/framework/crud",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../../../../../packages/backend/foundation",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../../../../../packages/backend/framework/routing",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../../../../../packages/backend/framework/service-provider",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../../../../../packages/backend/framework/support",
+      "options": {
+        "symlink": true
+      }
+    }
+  ]
 }

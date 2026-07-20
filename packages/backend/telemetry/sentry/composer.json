@@ -59,14 +59,5 @@
         "Academorix\\Sentry\\Providers\\SentryServiceProvider"
       ]
     }
-  },
-  "repositories": [
-    {
-      "type": "path",
-      "url": "../../../framework/src/support",
-      "options": {
-        "symlink": true
-      }
-    }
-  ]
+  }
 }

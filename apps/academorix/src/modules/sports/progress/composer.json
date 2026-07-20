@@ -1,7 +1,7 @@
 {
   "name": "academorix/progress",
   "type": "library",
-  "description": "Academorix Progress module \u2014 server-side Laravel package emitted from the module blueprint at `modules/sports/blueprints/progress/`. Complements the wire SDK at `academorix-sports/progress-sdk`.",
+  "description": "Academorix Progress module — server-side Laravel package emitted from the module blueprint at `modules/sports/blueprints/progress/`. Complements the wire SDK at `academorix-sports/progress-sdk`.",
   "license": "proprietary",
   "keywords": [
     "academorix",
@@ -64,5 +64,49 @@
     }
   },
   "minimum-stability": "stable",
-  "prefer-stable": true
+  "prefer-stable": true,
+  "repositories": [
+    {
+      "type": "path",
+      "url": "../../../sdks/sports-progress-sdk",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../../../../../packages/backend/framework/crud",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../../../../../packages/backend/foundation",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../../../../../packages/backend/framework/routing",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../../../../../packages/backend/framework/service-provider",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../../../../../packages/backend/framework/support",
+      "options": {
+        "symlink": true
+      }
+    }
+  ]
 }

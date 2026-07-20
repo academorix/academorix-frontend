@@ -33,7 +33,28 @@
   "repositories": [
     {
       "type": "path",
-      "url": "../*",
+      "url": "../../framework/console",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../framework/exceptions",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../foundation",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../framework/service-provider",
       "options": {
         "symlink": true
       }

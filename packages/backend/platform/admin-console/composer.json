@@ -1,7 +1,7 @@
 {
   "name": "academorix/admin-console",
   "type": "library",
-  "description": "Academorix AdminConsole module \u2014 server-side Laravel package emitted from the module blueprint at `modules/platform/blueprints/admin-console/`. Complements the wire SDK at `academorix-platform/admin-console-sdk`.",
+  "description": "Academorix AdminConsole module — server-side Laravel package emitted from the module blueprint at `modules/platform/blueprints/admin-console/`. Complements the wire SDK at `academorix-platform/admin-console-sdk`.",
   "license": "proprietary",
   "keywords": [
     "academorix",
@@ -64,5 +64,49 @@
     }
   },
   "minimum-stability": "stable",
-  "prefer-stable": true
+  "prefer-stable": true,
+  "repositories": [
+    {
+      "type": "path",
+      "url": "../../../../apps/academorix/src/sdks/platform-admin-console-sdk",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../framework/crud",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../foundation",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../framework/routing",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../framework/service-provider",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../framework/support",
+      "options": {
+        "symlink": true
+      }
+    }
+  ]
 }

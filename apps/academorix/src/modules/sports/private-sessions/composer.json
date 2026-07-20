@@ -1,7 +1,7 @@
 {
   "name": "academorix/private-sessions",
   "type": "library",
-  "description": "Academorix PrivateSessions module \u2014 server-side Laravel package emitted from the module blueprint at `modules/sports/blueprints/private-sessions/`. Complements the wire SDK at `academorix-sports/private-sessions-sdk`.",
+  "description": "Academorix PrivateSessions module — server-side Laravel package emitted from the module blueprint at `modules/sports/blueprints/private-sessions/`. Complements the wire SDK at `academorix-sports/private-sessions-sdk`.",
   "license": "proprietary",
   "keywords": [
     "academorix",
@@ -64,5 +64,49 @@
     }
   },
   "minimum-stability": "stable",
-  "prefer-stable": true
+  "prefer-stable": true,
+  "repositories": [
+    {
+      "type": "path",
+      "url": "../../../sdks/sports-private-sessions-sdk",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../../../../../packages/backend/framework/crud",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../../../../../packages/backend/foundation",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../../../../../packages/backend/framework/routing",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../../../../../packages/backend/framework/service-provider",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../../../../../packages/backend/framework/support",
+      "options": {
+        "symlink": true
+      }
+    }
+  ]
 }

@@ -1,7 +1,7 @@
 {
   "name": "academorix/reception",
   "type": "library",
-  "description": "Academorix Reception module \u2014 server-side Laravel package emitted from the module blueprint at `modules/platform/blueprints/reception/`. Complements the wire SDK at `academorix-platform/reception-sdk`.",
+  "description": "Academorix Reception module — server-side Laravel package emitted from the module blueprint at `modules/platform/blueprints/reception/`. Complements the wire SDK at `academorix-platform/reception-sdk`.",
   "license": "proprietary",
   "keywords": [
     "academorix",
@@ -64,5 +64,49 @@
     }
   },
   "minimum-stability": "stable",
-  "prefer-stable": true
+  "prefer-stable": true,
+  "repositories": [
+    {
+      "type": "path",
+      "url": "../../../../apps/academorix/src/sdks/platform-reception-sdk",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../framework/crud",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../foundation",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../framework/routing",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../framework/service-provider",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../framework/support",
+      "options": {
+        "symlink": true
+      }
+    }
+  ]
 }
