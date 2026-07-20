@@ -6,6 +6,7 @@ namespace Academorix\Notifications\Push\Events;
 
 use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
 
+use Academorix\Events\Attributes\AsEvent;
 /**
  * SendPushJob completed — provider accepted the payload and returned a
  * message id.
@@ -14,6 +15,7 @@ use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
  *
  * @since    0.1.0
  */
+#[AsEvent]
 final readonly class PushSent implements ShouldDispatchAfterCommit
 {
     public function __construct(

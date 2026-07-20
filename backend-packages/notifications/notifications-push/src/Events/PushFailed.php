@@ -6,6 +6,7 @@ namespace Academorix\Notifications\Push\Events;
 
 use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
 
+use Academorix\Events\Attributes\AsEvent;
 /**
  * SendPushJob's provider call failed with a non-invalid-token error.
  *
@@ -16,6 +17,7 @@ use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
  *
  * @since    0.1.0
  */
+#[AsEvent]
 final readonly class PushFailed implements ShouldDispatchAfterCommit
 {
     public function __construct(

@@ -6,6 +6,7 @@ namespace Academorix\Geofencing\Events;
 
 use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
 
+use Academorix\Events\Attributes\AsEvent;
 /**
  * A new override row was minted — supersedes the original OUTSIDE / ERROR
  * check with an admin-approved INSIDE row.
@@ -14,6 +15,7 @@ use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
  *
  * @since    0.1.0
  */
+#[AsEvent]
 final readonly class GeofenceOverrideApplied implements ShouldDispatchAfterCommit
 {
     public function __construct(

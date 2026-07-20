@@ -6,6 +6,7 @@ namespace Academorix\Geography\Events;
 
 use Illuminate\Foundation\Events\Dispatchable;
 
+use Academorix\Events\Attributes\AsEvent;
 /**
  * Fired when neither MaxMind nor ip-api.com could resolve an IP.
  *
@@ -13,6 +14,7 @@ use Illuminate\Foundation\Events\Dispatchable;
  *
  * @since    0.1.0
  */
+#[AsEvent]
 final readonly class GeolocationFailed
 {
     use Dispatchable;

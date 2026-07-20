@@ -7,6 +7,7 @@ namespace Academorix\Notifications\Sms\Events;
 use Academorix\Notifications\Sms\Models\SmsOptOut;
 use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
 
+use Academorix\Events\Attributes\AsEvent;
 /**
  * An SMS opt-out was created (either STOP-keyword or admin manual).
  *
@@ -18,6 +19,7 @@ use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
  *
  * @since    0.1.0
  */
+#[AsEvent]
 final readonly class SmsOptedOut implements ShouldDispatchAfterCommit
 {
     public function __construct(

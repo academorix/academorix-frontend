@@ -6,6 +6,7 @@ namespace Academorix\Notifications\Sms\Events;
 
 use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
 
+use Academorix\Events\Attributes\AsEvent;
 /**
  * Provider webhook returned final cost data for a delivered SMS.
  *
@@ -13,6 +14,7 @@ use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
  *
  * @since    0.1.0
  */
+#[AsEvent]
 final readonly class SmsCostRecorded implements ShouldDispatchAfterCommit
 {
     public function __construct(

@@ -7,6 +7,7 @@ namespace Academorix\Notifications\Push\Events;
 use Academorix\Notifications\Push\Enums\PushSubscriptionExpiredReason;
 use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
 
+use Academorix\Events\Attributes\AsEvent;
 /**
  * Provider reported a device token is no longer valid.
  *
@@ -19,6 +20,7 @@ use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
  *
  * @since    0.1.0
  */
+#[AsEvent]
 final readonly class PushInvalidToken implements ShouldDispatchAfterCommit
 {
     public function __construct(

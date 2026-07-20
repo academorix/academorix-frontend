@@ -6,6 +6,7 @@ namespace Academorix\Geography\Events;
 
 use Illuminate\Foundation\Events\Dispatchable;
 
+use Academorix\Events\Attributes\AsEvent;
 /**
  * Fired when the health probe detects the local GeoLite2-City.mmdb
  * is older than `config('geography.maxmind.stale_days')`.
@@ -17,6 +18,7 @@ use Illuminate\Foundation\Events\Dispatchable;
  *
  * @since    0.1.0
  */
+#[AsEvent]
 final readonly class MaxMindDatabaseStale
 {
     use Dispatchable;

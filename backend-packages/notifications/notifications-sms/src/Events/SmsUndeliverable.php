@@ -6,6 +6,7 @@ namespace Academorix\Notifications\Sms\Events;
 
 use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
 
+use Academorix\Events\Attributes\AsEvent;
 /**
  * Permanent carrier failure — invalid number, unreachable carrier.
  *
@@ -16,6 +17,7 @@ use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
  *
  * @since    0.1.0
  */
+#[AsEvent]
 final readonly class SmsUndeliverable implements ShouldDispatchAfterCommit
 {
     public function __construct(

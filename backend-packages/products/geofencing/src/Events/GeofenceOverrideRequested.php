@@ -6,6 +6,7 @@ namespace Academorix\Geofencing\Events;
 
 use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
 
+use Academorix\Events\Attributes\AsEvent;
 /**
  * A caller requested an admin override on a rejected geofence check.
  *
@@ -17,6 +18,7 @@ use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
  *
  * @since    0.1.0
  */
+#[AsEvent]
 final readonly class GeofenceOverrideRequested implements ShouldDispatchAfterCommit
 {
     public function __construct(

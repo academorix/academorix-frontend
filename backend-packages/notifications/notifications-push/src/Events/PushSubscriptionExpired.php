@@ -8,6 +8,7 @@ use Academorix\Notifications\Push\Enums\PushSubscriptionExpiredReason;
 use Academorix\Notifications\Push\Models\PushSubscription;
 use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
 
+use Academorix\Events\Attributes\AsEvent;
 /**
  * A {@see PushSubscription} became inactive.
  *
@@ -19,6 +20,7 @@ use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
  *
  * @since    0.1.0
  */
+#[AsEvent]
 final readonly class PushSubscriptionExpired implements ShouldDispatchAfterCommit
 {
     public function __construct(

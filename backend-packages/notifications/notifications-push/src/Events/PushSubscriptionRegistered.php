@@ -7,6 +7,7 @@ namespace Academorix\Notifications\Push\Events;
 use Academorix\Notifications\Push\Models\PushSubscription;
 use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
 
+use Academorix\Events\Attributes\AsEvent;
 /**
  * A new {@see PushSubscription} was persisted.
  *
@@ -17,6 +18,7 @@ use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
  *
  * @since    0.1.0
  */
+#[AsEvent]
 final readonly class PushSubscriptionRegistered implements ShouldDispatchAfterCommit
 {
     public function __construct(

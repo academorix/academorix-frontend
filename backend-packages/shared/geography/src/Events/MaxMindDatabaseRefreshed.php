@@ -6,6 +6,7 @@ namespace Academorix\Geography\Events;
 
 use Illuminate\Foundation\Events\Dispatchable;
 
+use Academorix\Events\Attributes\AsEvent;
 /**
  * Fired after `RefreshMaxMindDatabaseJob` successfully replaces the
  * local GeoLite2-City.mmdb.
@@ -14,6 +15,7 @@ use Illuminate\Foundation\Events\Dispatchable;
  *
  * @since    0.1.0
  */
+#[AsEvent]
 final readonly class MaxMindDatabaseRefreshed
 {
     use Dispatchable;

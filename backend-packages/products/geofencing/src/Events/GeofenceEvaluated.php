@@ -7,6 +7,7 @@ namespace Academorix\Geofencing\Events;
 use Academorix\Geofencing\Data\EvaluateGeofenceData;
 use Academorix\Geofencing\Models\GeofenceCheck;
 
+use Academorix\Events\Attributes\AsEvent;
 /**
  * Fired synchronously by {@see \Academorix\Geofencing\Services\GeofenceService::evaluate()}
  * immediately after the row is persisted.
@@ -24,6 +25,7 @@ use Academorix\Geofencing\Models\GeofenceCheck;
  *
  * @since    0.1.0
  */
+#[AsEvent]
 final readonly class GeofenceEvaluated
 {
     public function __construct(

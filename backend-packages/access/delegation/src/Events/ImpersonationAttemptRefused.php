@@ -6,6 +6,7 @@ declare(strict_types=1);
 
 namespace Academorix\Delegation\Events;
 
+use Academorix\Events\Attributes\AsEvent;
 use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
 
 /**
@@ -22,6 +23,7 @@ use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
  *
  * @since    0.1.0
  */
+#[AsEvent]
 final readonly class ImpersonationAttemptRefused implements ShouldDispatchAfterCommit
 {
     /**

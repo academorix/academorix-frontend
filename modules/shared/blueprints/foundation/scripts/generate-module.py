@@ -1588,6 +1588,10 @@ def emit_event(m: Module, event_spec: dict[str, Any]) -> tuple[str, str]:
     ctor_doc = _php_docblock(ctor_doc_lines, indent="    ") if ctor_doc_lines else ""
     props_block = "\n".join(prop_lines) if prop_lines else ""
 
+    # `#[AsEvent]` marks the class for discovery by `academorix/events`'s
+    # `EventDiscovery` per ADR-0010. Without it, listeners registered via
+    # `#[OnEvent(Class::class)]` cannot resolve the fully-qualified name
+    # from a reflection scan — the class ships but nobody hears it fire.
     body = f"""<?php
 
 // {AUTOGEN_HEADER.format(tier=m.tier, name=m.name)}
@@ -1596,9 +1600,11 @@ declare(strict_types=1);
 
 namespace {ns};
 
+use Academorix\\Events\\Attributes\\AsEvent;
 use Illuminate\\Contracts\\Events\\ShouldDispatchAfterCommit;
 
 {_php_docblock(doc_lines)}
+#[AsEvent]
 final readonly class {class_name} implements ShouldDispatchAfterCommit
 {{
 {ctor_doc}

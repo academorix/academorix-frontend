@@ -7,6 +7,7 @@ namespace Academorix\Geography\Events\Domain;
 use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
 use Illuminate\Foundation\Events\Dispatchable;
 
+use Academorix\Events\Attributes\AsEvent;
 /**
  * Fired after a country row is persisted.
  *
@@ -17,6 +18,7 @@ use Illuminate\Foundation\Events\Dispatchable;
  *
  * @since    0.1.0
  */
+#[AsEvent]
 final readonly class CountryCreated implements ShouldDispatchAfterCommit
 {
     use Dispatchable;

@@ -7,6 +7,7 @@ namespace Academorix\Geography\Events\Domain;
 use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
 use Illuminate\Foundation\Events\Dispatchable;
 
+use Academorix\Events\Attributes\AsEvent;
 /**
  * Fired after a timezone row is updated.
  *
@@ -14,6 +15,7 @@ use Illuminate\Foundation\Events\Dispatchable;
  *
  * @since    0.1.0
  */
+#[AsEvent]
 final readonly class TimezoneUpdated implements ShouldDispatchAfterCommit
 {
     use Dispatchable;
