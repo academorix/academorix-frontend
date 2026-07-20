@@ -1,0 +1,32 @@
+{
+  "$schema": "https://gist.githubusercontent.com/academorix-user/073a1ab687cd93ede7ae927b96a025ea/raw/catalog.v1.json",
+  "name": "academorix/marketplace-fee",
+  "tier": "saas",
+  "surfaces": ["core"],
+  "kind": "feature",
+  "purpose": "Marketplace fee capture — FeeSchedule + FeeApplication + FeePayout aggregates for platform-fee take-rate on tenant transactions.",
+  "capabilities": [
+    "FeeSchedule aggregate (fsc_ prefix) — per-tenant fee config",
+    "FeeApplication (fap_ prefix) — one row per fee-charged transaction",
+    "FeePayout (fpo_ prefix) — Academorix-facing platform payout",
+    "Percentage + flat fee formulas",
+    "Attribute-first CRUD, Actions, Policies, Events",
+    "Wire SDK companion at academorix-finance/marketplace-fee-sdk"
+  ],
+  "when_to_use": "Academorix operates as a marketplace platform and takes a fee on tenant-processed transactions.",
+  "when_not_to_use": "For payouts to third-party sellers, use academorix/payout. For subscription revenue, use academorix/subscription.",
+  "peer_deps": [
+    "academorix-finance/marketplace-fee-sdk",
+    "academorix/crud",
+    "academorix/foundation",
+    "academorix/routing",
+    "academorix/service-provider",
+    "academorix/support",
+    "spatie/laravel-data"
+  ],
+  "backend_pair": null,
+  "size_gzip_kb": {},
+  "maturity": "alpha",
+  "owning_agent": "laravel-feature-builder",
+  "docs": ["apps/academorix/src/modules/finance/marketplace-fee/README.md"]
+}

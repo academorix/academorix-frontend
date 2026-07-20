@@ -347,9 +347,10 @@ this phase. Non-negotiable outcomes:
   classes — top-level `<Module>SdkResource` AND every peer Resource).
 - **No `SubResources/`, no `Saloon/`.** See the anti-patterns table in
   `sdk-authoring.md`.
-- **Reference implementation:** `packages/sdk/platform-application-sdk/` is the
-  pilot; every subsequent module SDK matches its shape byte-for-byte, and the
-  Stage 3 generator emits into the same shape.
+- **Reference implementation:**
+  `apps/academorix/src/sdks/platform-application-sdk/` is the pilot; every
+  subsequent module SDK matches its shape byte-for-byte, and the Stage 3
+  generator emits into the same shape.
 
 ### 5.1 Scaffold command
 

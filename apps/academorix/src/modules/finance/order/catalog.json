@@ -1,0 +1,32 @@
+{
+  "$schema": "https://gist.githubusercontent.com/academorix-user/073a1ab687cd93ede7ae927b96a025ea/raw/catalog.v1.json",
+  "name": "academorix/order",
+  "tier": "saas",
+  "surfaces": ["core"],
+  "kind": "feature",
+  "purpose": "Checkout aggregate — Order + OrderLine + OrderAdjustment for cart lifecycle plus signed adjustments (coupon, credit, discount, tax, fee).",
+  "capabilities": [
+    "Order aggregate (ord_ prefix) — checkout root record",
+    "OrderLine aggregate (orl_ prefix) — line items",
+    "OrderAdjustment aggregate (adj_ prefix) — signed adjustments",
+    "State machine (cart, submitted, paid, cancelled)",
+    "Attribute-first CRUD, Actions, Policies, Events",
+    "Wire SDK companion at academorix-finance/order-sdk"
+  ],
+  "when_to_use": "A tenant runs a checkout flow with cart, line items, and applied adjustments (discounts, taxes, fees).",
+  "when_not_to_use": "For post-checkout money movement, use academorix/transaction. For issued invoices, use academorix/invoice.",
+  "peer_deps": [
+    "academorix-finance/order-sdk",
+    "academorix/crud",
+    "academorix/foundation",
+    "academorix/routing",
+    "academorix/service-provider",
+    "academorix/support",
+    "spatie/laravel-data"
+  ],
+  "backend_pair": null,
+  "size_gzip_kb": {},
+  "maturity": "alpha",
+  "owning_agent": "laravel-feature-builder",
+  "docs": ["apps/academorix/src/modules/finance/order/README.md"]
+}

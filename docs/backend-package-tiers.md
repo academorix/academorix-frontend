@@ -74,14 +74,19 @@ observability, and the plumbing around them. Vertical-agnostic.
 
 `compliance/architecture` is Tier 2 — see above.
 
-### `packages/backend/finance/*` (14 packages, skipping domain-shape)
+### `apps/academorix/src/modules/finance/*` (14 packages, skipping domain-shape)
+
+**Moved out of Stackra base.** Every finance module is now under the Academorix
+app tree. Reason: the whole payments surface (chargeback → wallet) is
+`parent-pays-academy`, which is Academorix product domain, not Stackra framework
+primitives.
 
 **In-scope:** `chargeback`, `coupon`, `dunning`, `expenses`, `gateway`,
 `invoice`, `marketplace-fee`, `order`, `payment`, `payout`, `refund`, `tax`,
 `transaction`, `wallet`
 
-**Skipped (Tier 4):** `membership`, `digital-passes` — these are
-sport/product-specific.
+**Also under `apps/academorix/src/modules/finance/`:** `membership`,
+`digital-passes` — these are sport/product-specific (Tier 4 shape below).
 
 ### `packages/backend/notifications/*` (8 packages)
 
@@ -102,7 +107,10 @@ sport/product-specific.
 
 `auth`, `identity`, `mfa`, `people`, `platform-user`, `service-accounts`, `user`
 
-### `packages/backend/growth/*` (5 packages)
+### `apps/academorix/src/modules/growth/*` (5 packages)
+
+**Moved out of Stackra base.** Marketing / attribution / referral surface is
+Academorix product domain.
 
 `analytics`, `attribution`, `leads`, `marketing`, `referrals`
 
@@ -131,11 +139,13 @@ remain authoritative for their domain.
 
 ### Sports vertical (21 packages)
 
-`packages/backend/sports/*`
+`apps/academorix/src/modules/sports/*` (moved out of `packages/backend/` — pure
+Academorix domain).
 
 ### Products (1 package)
 
-`packages/backend/products/*`
+`apps/academorix/src/modules/products/*` (moved out of `packages/backend/` —
+`geofencing` currently, product-specific).
 
 ### Workflow (2 packages)
 
@@ -151,8 +161,8 @@ remain authoritative for their domain.
 
 ### Domain-shape finance (2 packages)
 
-- `packages/backend/finance/membership`
-- `packages/backend/finance/digital-passes`
+- `apps/academorix/src/modules/finance/membership`
+- `apps/academorix/src/modules/finance/digital-passes`
 
 ---
 

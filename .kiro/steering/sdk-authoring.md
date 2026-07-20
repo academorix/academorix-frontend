@@ -313,5 +313,8 @@ the drift check.
 - `.kiro/steering/testing.md` — Pest v4 test layout.
 - `.kiro/specs/platform-service-implementation/README.md` — the phased build
   plan that consumes this standard.
-- `packages/sdk/api-sdk/src/` — the kernel that every module SDK builds on.
-- `packages/sdk/platform-application-sdk/` — the pilot reference implementation.
+- `packages/sdk/api-sdk/src/` — the kernel that every module SDK builds on
+  (Stackra core, stays in `packages/sdk/`).
+- `apps/academorix/src/sdks/platform-application-sdk/` — the pilot reference
+  implementation (moved out of `packages/sdk/` since it's Academorix product
+  surface).
