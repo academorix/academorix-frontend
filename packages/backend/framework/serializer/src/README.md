@@ -73,7 +73,7 @@ Installation
 
 1.  Add the module to your project using composer:
 
-composer require academorix/laravel-serializer
+composer require academorix/serializer
 
 2.  Register the module in your application bootstrap file if necessary.
 

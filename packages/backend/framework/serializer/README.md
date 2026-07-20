@@ -43,7 +43,7 @@ features.
 The Serializer package is part of the Framework package:
 
 ```bash
-composer require academorix/laravel-serializer
+composer require academorix/serializer
 ```
 
 The service provider is automatically registered via Laravel's package

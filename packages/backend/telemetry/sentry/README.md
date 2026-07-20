@@ -24,11 +24,11 @@ enriched with user data, tags, and extra context using PHP 8 attributes.
 
 ## 📦 Installation
 
-This package is included with the main `academorix/laravel-telemetry` package.
-To install separately:
+This package is included with the main `academorix/telemetry` package. To
+install separately:
 
 ```bash
-composer require academorix/laravel-telemetry-sentry
+composer require academorix/telemetry-sentry
 ```
 
 ## ✨ Features

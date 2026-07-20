@@ -159,6 +159,13 @@
     },
     {
       "type": "path",
+      "url": "../../framework/serializer",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
       "url": "../../framework/service-provider",
       "options": {
         "symlink": true

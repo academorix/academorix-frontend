@@ -25,11 +25,11 @@ define metrics and tags directly on your classes using PHP 8 attributes.
 
 ## 📦 Installation
 
-This package is included with the main `academorix/laravel-telemetry` package.
-To install separately:
+This package is included with the main `academorix/telemetry` package. To
+install separately:
 
 ```bash
-composer require academorix/laravel-telemetry-horizon
+composer require academorix/telemetry-horizon
 ```
 
 ## ✨ Features

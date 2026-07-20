@@ -64,7 +64,7 @@ SKIP_DIR_NAMES = {"node_modules", "vendor", "tools"}
 def _closest_name(target: str, candidates: List[str], cutoff: float = 0.65) -> Optional[str]:
     """Return the closest candidate to `target` above `cutoff` similarity,
     or None. Uses SequenceMatcher on the part AFTER the vendor slash so
-    `academorix/laravel-support` matches `academorix/support`.
+    `academorix/support` matches `academorix/support`.
     """
     from difflib import SequenceMatcher
 

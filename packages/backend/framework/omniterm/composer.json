@@ -1,5 +1,5 @@
 {
-  "name": "academorix/laravel-omniterm",
+  "name": "academorix/omniterm",
   "description": "Full-fledged terminal UI toolkit — live rendering, async tasks, spinners, browser navigation, and rich HTML-to-ANSI output for Laravel Artisan commands.",
   "type": "library",
   "license": "MIT",

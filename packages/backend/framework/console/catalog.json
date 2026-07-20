@@ -13,8 +13,8 @@
     "Per-command extension discovery"
   ],
   "when_to_use": "Every Academorix Artisan command extends the shipped BaseCommand for uniform rendering and lifecycle hooks.",
-  "when_not_to_use": "For raw terminal rendering primitives without the BaseCommand contract, use academorix/laravel-omniterm directly.",
-  "peer_deps": ["academorix/laravel-omniterm"],
+  "when_not_to_use": "For raw terminal rendering primitives without the BaseCommand contract, use academorix/omniterm directly.",
+  "peer_deps": ["academorix/omniterm"],
   "backend_pair": null,
   "size_gzip_kb": {},
   "maturity": "alpha",

@@ -1,5 +1,5 @@
 {
-  "name": "academorix/laravel-serializer",
+  "name": "academorix/serializer",
   "description": "Data serialization and transformation utilities",
   "type": "library",
   "license": "MIT",

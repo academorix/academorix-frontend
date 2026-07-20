@@ -1,5 +1,5 @@
 {
-  "name": "academorix/laravel-debugbar",
+  "name": "academorix/debugbar",
   "description": "Laravel Debugbar integration with automatic collector discovery for Academorix applications",
   "type": "library",
   "license": "MIT",
@@ -36,7 +36,7 @@
   "require": {
     "barryvdh/laravel-debugbar": "^3.13",
     "php": "^8.4|^8.5",
-    "academorix/laravel-support": "@dev"
+    "academorix/support": "@dev"
   },
   "require-dev": {
     "mockery/mockery": "^1.6",
@@ -44,7 +44,7 @@
     "phpunit/phpunit": "^11.0"
   },
   "suggest": {
-    "academorix/laravel-telemetry-sentry": "For error tracking and monitoring"
+    "academorix/telemetry-sentry": "For error tracking and monitoring"
   },
   "autoload": {
     "psr-4": {
@@ -62,5 +62,14 @@
         "Academorix\\Debugbar\\Providers\\DebugbarServiceProvider"
       ]
     }
-  }
+  },
+  "repositories": [
+    {
+      "type": "path",
+      "url": "../../framework/support",
+      "options": {
+        "symlink": true
+      }
+    }
+  ]
 }

@@ -1,5 +1,5 @@
 {
-  "name": "academorix/laravel-horizon",
+  "name": "academorix/horizon",
   "description": "Laravel Horizon queue monitoring with automatic supervisor and metric discovery for Academorix applications",
   "type": "library",
   "license": "MIT",
@@ -37,7 +37,7 @@
   "require": {
     "laravel/horizon": "^5.0",
     "php": "^8.4|^8.5",
-    "academorix/laravel-support": "@dev"
+    "academorix/support": "@dev"
   },
   "require-dev": {
     "mockery/mockery": "^1.6",
@@ -45,8 +45,8 @@
     "phpunit/phpunit": "^11.0"
   },
   "suggest": {
-    "academorix/laravel-telemetry-pulse": "For real-time application monitoring",
-    "academorix/laravel-telemetry-telescope": "For application debugging",
+    "academorix/telemetry-pulse": "For real-time application monitoring",
+    "academorix/telemetry-telescope": "For application debugging",
     "predis/predis": "Required for Redis queue driver"
   },
   "autoload": {
@@ -65,5 +65,14 @@
         "Academorix\\Horizon\\Providers\\HorizonServiceProvider"
       ]
     }
-  }
+  },
+  "repositories": [
+    {
+      "type": "path",
+      "url": "../../framework/support",
+      "options": {
+        "symlink": true
+      }
+    }
+  ]
 }
