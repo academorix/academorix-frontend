@@ -47,7 +47,7 @@ use Academorix\Crud\Contracts\RepositoryInterface;
 use Academorix\Crud\Events\EntityCreated;
 use Academorix\Crud\Events\EntityDeleted;
 use Academorix\Crud\Events\EntityUpdated;
-// TODO: RoutesToIndex trait is provided by academorix/laravel-indexer in the old
+// TODO: RoutesToIndex trait is provided by academorix/indexer in the old
 // codebase. That package has not been ported into the new monorepo yet — see
 // MIGRATION.md. Uncomment both the import + the `use RoutesToIndex;` line
 // below once an `academorix/indexer` (or equivalent) package ships the trait.
@@ -122,8 +122,8 @@ abstract class Repository implements RepositoryInterface
             );
         }
 
-        /** 
- * @var UseModel $useModel 
+        /**
+ * @var UseModel $useModel
  */
         $useModel = $attrs[0]->newInstance();
         $this->resolvedModelClass = $useModel->interface;
@@ -240,40 +240,40 @@ abstract class Repository implements RepositoryInterface
     // Read Operations
     // =========================================================================
 
-    /** 
- * {@inheritDoc} 
+    /**
+ * {@inheritDoc}
  */
     public function all(array $columns = ['*']): Collection
     {
         return $this->query()->get($columns);
     }
 
-    /** 
- * {@inheritDoc} 
+    /**
+ * {@inheritDoc}
  */
     public function find(int|string $id, array $columns = ['*']): ?Model
     {
         return $this->query()->find($id, $columns);
     }
 
-    /** 
- * {@inheritDoc} 
+    /**
+ * {@inheritDoc}
  */
     public function findOrFail(int|string $id, array $columns = ['*']): Model
     {
         return $this->query()->findOrFail($id, $columns);
     }
 
-    /** 
- * {@inheritDoc} 
+    /**
+ * {@inheritDoc}
  */
     public function findByField(string $field, mixed $value, array $columns = ['*']): Collection
     {
         return $this->query()->where($field, $value)->get($columns);
     }
 
-    /** 
- * {@inheritDoc} 
+    /**
+ * {@inheritDoc}
  */
     public function findWhere(array $conditions, array $columns = ['*']): Collection
     {
@@ -286,48 +286,48 @@ abstract class Repository implements RepositoryInterface
         return $query->get($columns);
     }
 
-    /** 
- * {@inheritDoc} 
+    /**
+ * {@inheritDoc}
  */
     public function findWhereIn(string $field, array $values, array $columns = ['*']): Collection
     {
         return $this->query()->whereIn($field, $values)->get($columns);
     }
 
-    /** 
- * {@inheritDoc} 
+    /**
+ * {@inheritDoc}
  */
     public function first(array $columns = ['*']): ?Model
     {
         return $this->query()->first($columns);
     }
 
-    /** 
- * {@inheritDoc} 
+    /**
+ * {@inheritDoc}
  */
     public function firstOrFail(array $columns = ['*']): Model
     {
         return $this->query()->firstOrFail($columns);
     }
 
-    /** 
- * {@inheritDoc} 
+    /**
+ * {@inheritDoc}
  */
     public function firstOrCreate(array $attributes): Model
     {
         return $this->modelInstance->newQuery()->firstOrCreate($attributes);
     }
 
-    /** 
- * {@inheritDoc} 
+    /**
+ * {@inheritDoc}
  */
     public function pluck(string $column, ?string $key = null): Collection
     {
         return $this->query()->pluck($column, $key);
     }
 
-    /** 
- * {@inheritDoc} 
+    /**
+ * {@inheritDoc}
  */
     public function count(array $conditions = []): int
     {
@@ -340,8 +340,8 @@ abstract class Repository implements RepositoryInterface
         return $query->count();
     }
 
-    /** 
- * {@inheritDoc} 
+    /**
+ * {@inheritDoc}
  */
     public function exists(int|string $id): bool
     {
@@ -354,8 +354,8 @@ abstract class Repository implements RepositoryInterface
     // Write Operations
     // =========================================================================
 
-    /** 
- * {@inheritDoc} 
+    /**
+ * {@inheritDoc}
  */
     public function create(array $attributes): Model
     {
@@ -366,8 +366,8 @@ abstract class Repository implements RepositoryInterface
         return $model;
     }
 
-    /** 
- * {@inheritDoc} 
+    /**
+ * {@inheritDoc}
  */
     public function update(int|string $id, array $attributes): Model
     {
@@ -380,8 +380,8 @@ abstract class Repository implements RepositoryInterface
         return $model;
     }
 
-    /** 
- * {@inheritDoc} 
+    /**
+ * {@inheritDoc}
  */
     public function updateOrCreate(array $attributes, array $values = []): Model
     {
@@ -390,8 +390,8 @@ abstract class Repository implements RepositoryInterface
         return $result;
     }
 
-    /** 
- * {@inheritDoc} 
+    /**
+ * {@inheritDoc}
  */
     public function delete(int|string $id): bool
     {
@@ -406,8 +406,8 @@ abstract class Repository implements RepositoryInterface
         return $result;
     }
 
-    /** 
- * {@inheritDoc} 
+    /**
+ * {@inheritDoc}
  */
     public function deleteWhere(array $conditions): int
     {
@@ -426,16 +426,16 @@ abstract class Repository implements RepositoryInterface
     // Pagination
     // =========================================================================
 
-    /** 
- * {@inheritDoc} 
+    /**
+ * {@inheritDoc}
  */
     public function paginate(?int $perPage = null, array $columns = ['*']): LengthAwarePaginator
     {
         return $this->query()->paginate($perPage ?? 15, $columns);
     }
 
-    /** 
- * {@inheritDoc} 
+    /**
+ * {@inheritDoc}
  */
     public function simplePaginate(?int $perPage = null, array $columns = ['*']): Paginator
     {

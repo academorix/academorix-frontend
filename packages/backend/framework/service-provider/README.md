@@ -4,7 +4,7 @@ Attribute-driven module service provider for Laravel — declarative resource
 loading, olvlvl-cached discovery, lifecycle hooks. The enterprise-grade
 replacement for hand-rolled `boot()` / `register()` methods.
 
-Ported from the enterprise `academorix/laravel-service-provider` package with
+Ported from the enterprise `academorix/service-provider` package with
 monorepo-friendly adaptations. See `MIGRATION.md` for what changed and where the
 remaining integration points (`academorix/routing`, `academorix/compiler`) plug
 in.

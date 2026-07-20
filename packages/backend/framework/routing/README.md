@@ -29,7 +29,7 @@ The package is already installed as part of the monorepo. If installing
 separately:
 
 ```bash
-composer require academorix/laravel-routing
+composer require academorix/routing
 ```
 
 ## Quick Start

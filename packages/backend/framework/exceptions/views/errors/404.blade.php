@@ -67,7 +67,7 @@
 * - May indicate broken internal links to fix
 *
 * ## Related Files:
-* @see src/academorix/laravel-Common/resources/views/errors/404.blade.php - Published/customizable version
+* @see src/academorix/Common/resources/views/errors/404.blade.php - Published/customizable version
 *
 * @extends foundation::layouts.app
 * @section title - Page title for browser tab

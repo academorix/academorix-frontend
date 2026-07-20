@@ -1,9 +1,9 @@
 # Migration notes — academorix/crud
 
-Origin package split from `academorix/laravel-crud` per the "Model = what the
-data IS, Repository = how the data is QUERIED" rule documented in
-`old/crud/ARCHITECTURE.md`. The `academorix/laravel-crud`'s data-shape half is
-now `academorix/database`; this package receives the query surface.
+Origin package split from `academorix/crud` per the "Model = what the data IS,
+Repository = how the data is QUERIED" rule documented in
+`old/crud/ARCHITECTURE.md`. The `academorix/crud`'s data-shape half is now
+`academorix/database`; this package receives the query surface.
 
 ## Source → destination map
 
@@ -79,9 +79,9 @@ now `academorix/database`; this package receives the query surface.
 
 ## Discovery mechanism change
 
-- **Old**: `academorix/laravel-discovery` / `pixielity/laravel-discovery`
-  runtime facade — cached class map exposed via
-  `Discovery::attribute(X::class)->get()` and `Discovery::forClass($class)`.
+- **Old**: `academorix/discovery` / `pixielity/laravel-discovery` runtime facade
+  — cached class map exposed via `Discovery::attribute(X::class)->get()` and
+  `Discovery::forClass($class)`.
 - **New**: `olvlvl/composer-attribute-collector`. `vendor/attributes.php` is
   written at `composer dump-autoload` time and consulted via
   `Attributes::findTargetClasses(X::class)`. The service provider requires the
@@ -89,12 +89,12 @@ now `academorix/database`; this package receives the query surface.
 
 ## Duplicate contracts
 
-Both the old `academorix/laravel-crud` and the old Foundation module shipped
-their own `RepositoryInterface` / `ServiceInterface`. The two contracts have
-DIFFERENT method signatures (see the `Services/BaseService.php` "Two
-repository-contract families" docblock for the split rationale):
+Both the old `academorix/crud` and the old Foundation module shipped their own
+`RepositoryInterface` / `ServiceInterface`. The two contracts have DIFFERENT
+method signatures (see the `Services/BaseService.php` "Two repository-contract
+families" docblock for the split rationale):
 
-- **Nested / rich** contract shipped by `academorix/laravel-crud` —
+- **Nested / rich** contract shipped by `academorix/crud` —
   `update(int|string $id, array $attrs)`, `findByAttribute`, `restore`, etc.
 - **Flat** contract shipped by Foundation — `update(Model $m, array $attrs)`,
   spatie/laravel-query-builder integration.
@@ -112,7 +112,7 @@ one contract during the port. Consumers previously depending on
 
 - **`Repositories/Repository.php`** — the `use RoutesToIndex;` line and its
   `use Academorix\Indexer\Concerns\RoutesToIndex;` import are commented out. The
-  `academorix/laravel-indexer` package has not been ported. When an equivalent
+  `academorix/indexer` package has not been ported. When an equivalent
   `academorix/indexer` ships, uncomment both lines; the file is otherwise
   intact.
 
@@ -124,10 +124,9 @@ one contract during the port. Consumers previously depending on
 - **`Events/{EntityCreated,EntityUpdated,EntityDeleted}.php`** — the class-level
   `#[AsEvent(...)]` marker and its import
   (`use Academorix\Event\Attributes\AsEvent;`) have been stripped because the
-  `academorix/laravel-event` marker attribute has no equivalent in
-  `academorix/events` yet. The events themselves dispatch via Laravel's
-  dispatcher as usual — no functional change; only the (now-unused) discovery
-  marker is missing.
+  `academorix/event` marker attribute has no equivalent in `academorix/events`
+  yet. The events themselves dispatch via Laravel's dispatcher as usual — no
+  functional change; only the (now-unused) discovery marker is missing.
 
 ## What did NOT get ported
 

@@ -1,7 +1,7 @@
 # Migration notes — academorix/database
 
-Origin package split from `academorix/laravel-crud` per the "Model = what the
-data IS, Repository = how the data is QUERIED" rule documented in
+Origin package split from `academorix/crud` per the "Model = what the data IS,
+Repository = how the data is QUERIED" rule documented in
 `old/crud/ARCHITECTURE.md`.
 
 ## Source → destination map
@@ -49,7 +49,7 @@ data IS, Repository = how the data is QUERIED" rule documented in
 
 | File                                        | Reason                                                                                                                                               |
 | ------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `src/Attributes/AsDatabaseBlueprint.php`    | Local port of the marker previously in `academorix/laravel-database`. Consumed by `DatabaseServiceProvider` for Blueprint macro auto-registration.   |
+| `src/Attributes/AsDatabaseBlueprint.php`    | Local port of the marker previously in `academorix/database`. Consumed by `DatabaseServiceProvider` for Blueprint macro auto-registration.           |
 | `src/Providers/DatabaseServiceProvider.php` | New — Laravel service provider that runs the macro-registration pass.                                                                                |
 | `src/Support/AttributeReader.php`           | Runtime attribute-reader shim replacing `Pixielity\Discovery\Facades\Discovery::forClass()`. Uses `ReflectionClass::getAttributes()` under the hood. |
 | `src/Support/ClassAttributeView.php`        | Value object returned by `AttributeReader::forClass()`.                                                                                              |
@@ -67,10 +67,9 @@ data IS, Repository = how the data is QUERIED" rule documented in
 
 ## Discovery mechanism change
 
-- **Old**: `academorix/laravel-discovery` / `pixielity/laravel-discovery`
-  runtime facade (`Discovery::attribute(X::class)->get()`,
-  `Discovery::forClass($class)`). Cached class map with dot-shorthand facade
-  access.
+- **Old**: `academorix/discovery` / `pixielity/laravel-discovery` runtime facade
+  (`Discovery::attribute(X::class)->get()`, `Discovery::forClass($class)`).
+  Cached class map with dot-shorthand facade access.
 - **New**: `olvlvl/composer-attribute-collector`. Attribute targets are compiled
   to `vendor/attributes.php` at `composer dump-autoload` time and exposed via
   `Attributes::findTargetClasses(X::class)`. The class-keyed reverse lookup used

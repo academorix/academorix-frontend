@@ -1,8 +1,8 @@
 # Migration notes — `academorix/service-provider`
 
-Mechanical port of the `academorix/laravel-service-provider` package with a few
-known adaptations captured below. Every TODO in the source tree maps to an entry
-in this document. The goal is that when the missing integration points land, the
+Mechanical port of the `academorix/service-provider` package with a few known
+adaptations captured below. Every TODO in the source tree maps to an entry in
+this document. The goal is that when the missing integration points land, the
 resolution is textual — search for the `TODO(...)` marker and follow the shape
 sketched inline.
 

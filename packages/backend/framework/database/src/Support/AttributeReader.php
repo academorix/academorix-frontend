@@ -17,7 +17,7 @@
  * `academorix/database` attribute surface (`#[Sluggable]`,
  * `#[Taggable]`, `#[StatusColumn]`, …).
  *
- * The old codebase used `academorix/laravel-discovery` /
+ * The old codebase used `academorix/discovery` /
  * `pixielity/laravel-discovery` for this so the read hit a cached
  * attribute map and cost O(1). The new monorepo has moved to
  * `olvlvl/composer-attribute-collector` which exposes attribute

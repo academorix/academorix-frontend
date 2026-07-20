@@ -22,7 +22,7 @@ use Academorix\Crud\Concerns\Discovery\HasDiscoverableScopes;
  * HasDiscovery Trait.
  *
  * Composite trait that provides automatic discovery and registration of
- * Criteria, Scopes, and Repository configurations via academorix/laravel-discovery.
+ * Criteria, Scopes, and Repository configurations via academorix/discovery.
  *
  * Delegates to focused sub-traits:
  * - HasDiscoverableCriteria: discovers #[AsCriteria] classes
