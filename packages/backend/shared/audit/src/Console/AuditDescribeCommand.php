@@ -6,7 +6,7 @@ namespace Academorix\Audit\Console;
 
 use Academorix\Audit\Contracts\Services\AuditRegistryInterface;
 use Academorix\Console\Attributes\AsCommand;
-use Academorix\Console\Console\Commands\BaseCommand;
+use Academorix\Console\Commands\BaseCommand;
 
 /**
  * `php artisan audit:describe` — render the {@see AuditRegistryInterface}

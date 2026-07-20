@@ -6,7 +6,7 @@ namespace Academorix\Activity\Console;
 
 use Academorix\Activity\Jobs\PruneActivityLogJob;
 use Academorix\Console\Attributes\AsCommand;
-use Academorix\Console\Console\Commands\BaseCommand;
+use Academorix\Console\Commands\BaseCommand;
 
 /**
  * `php artisan activity:prune` — dispatch {@see PruneActivityLogJob}

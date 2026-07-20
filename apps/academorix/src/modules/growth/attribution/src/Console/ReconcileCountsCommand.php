@@ -7,7 +7,7 @@ declare(strict_types=1);
 namespace Academorix\Attribution\Console;
 
 use Academorix\Console\Attributes\AsCommand;
-use Academorix\Console\Console\Commands\BaseCommand;
+use Academorix\Console\Commands\BaseCommand;
 
 /**
  * `php artisan attribution:reconcile-counts` — Reconcile counts — attribution command.

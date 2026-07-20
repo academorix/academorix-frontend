@@ -7,7 +7,7 @@ declare(strict_types=1);
 namespace Academorix\Entitlements\Console;
 
 use Academorix\Console\Attributes\AsCommand;
-use Academorix\Console\Console\Commands\BaseCommand;
+use Academorix\Console\Commands\BaseCommand;
 
 /**
  * `php artisan entitlements:sync-plan` — Sync plan — entitlements command.

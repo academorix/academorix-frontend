@@ -7,7 +7,7 @@ declare(strict_types=1);
 namespace Academorix\Invoice\Console;
 
 use Academorix\Console\Attributes\AsCommand;
-use Academorix\Console\Console\Commands\BaseCommand;
+use Academorix\Console\Commands\BaseCommand;
 
 /**
  * `php artisan credit-note:apply` — Apply — credit note command.

@@ -7,7 +7,7 @@ declare(strict_types=1);
 namespace Academorix\Storage\Console;
 
 use Academorix\Console\Attributes\AsCommand;
-use Academorix\Console\Console\Commands\BaseCommand;
+use Academorix\Console\Commands\BaseCommand;
 
 /**
  * `php artisan storage:signed-url-revoke-all` — Signed url revoke all — storage command.

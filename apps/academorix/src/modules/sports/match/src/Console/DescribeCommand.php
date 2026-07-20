@@ -7,7 +7,7 @@ declare(strict_types=1);
 namespace Academorix\Match\Console;
 
 use Academorix\Console\Attributes\AsCommand;
-use Academorix\Console\Console\Commands\BaseCommand;
+use Academorix\Console\Commands\BaseCommand;
 
 /**
  * `php artisan matches:describe` — Describe the matches surface.

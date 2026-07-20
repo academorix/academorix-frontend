@@ -19,7 +19,7 @@ declare(strict_types=1);
 namespace Academorix\ServiceProvider\Console;
 
 use Academorix\Console\Attributes\AsCommand;
-use Academorix\Console\Console\Commands\BaseCommand;
+use Academorix\Console\Commands\BaseCommand;
 use Academorix\ServiceProvider\Bootstrappers\AbstractBootstrapper;
 use Academorix\ServiceProvider\Contracts\BootstrapperInterface;
 use Academorix\ServiceProvider\Registry\BootstrapperRegistry;

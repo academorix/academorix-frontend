@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Academorix\Tenancy\Console;
 
 use Academorix\Console\Attributes\AsCommand;
-use Academorix\Console\Console\Commands\BaseCommand;
+use Academorix\Console\Commands\BaseCommand;
 use Academorix\Tenancy\Contracts\Repositories\TenantRepositoryInterface;
 use Academorix\Tenancy\Jobs\HardDeleteArchivedTenantJob;
 use Carbon\CarbonImmutable;

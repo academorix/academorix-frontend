@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Academorix\Geography\Console;
 
 use Academorix\Console\Attributes\AsCommand;
-use Academorix\Console\Console\Commands\BaseCommand;
+use Academorix\Console\Commands\BaseCommand;
 use Academorix\Geography\Contracts\Repositories\CityRepositoryInterface;
 use Academorix\Geography\Contracts\Repositories\CountryRepositoryInterface;
 use Academorix\Geography\Contracts\Repositories\CurrencyRepositoryInterface;

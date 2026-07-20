@@ -7,7 +7,7 @@ declare(strict_types=1);
 namespace Academorix\Registry\Console;
 
 use Academorix\Console\Attributes\AsCommand;
-use Academorix\Console\Console\Commands\BaseCommand;
+use Academorix\Console\Commands\BaseCommand;
 
 /**
  * `php artisan sports:registry:create-custom-discipline` — Registry:create custom discipline — sports command.

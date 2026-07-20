@@ -7,7 +7,7 @@ declare(strict_types=1);
 namespace Academorix\Audit\Console;
 
 use Academorix\Console\Attributes\AsCommand;
-use Academorix\Console\Console\Commands\BaseCommand;
+use Academorix\Console\Commands\BaseCommand;
 
 /**
  * `php artisan audit:backfill-tenant-id` — Backfill tenant id — audit command.

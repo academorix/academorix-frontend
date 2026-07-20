@@ -6,7 +6,7 @@ namespace Academorix\Activity\Console;
 
 use Academorix\Activity\Models\Activity;
 use Academorix\Console\Attributes\AsCommand;
-use Academorix\Console\Console\Commands\BaseCommand;
+use Academorix\Console\Commands\BaseCommand;
 use Illuminate\Contracts\Foundation\Application;
 
 /**

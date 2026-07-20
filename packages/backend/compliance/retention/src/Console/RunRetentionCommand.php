@@ -40,7 +40,7 @@ declare(strict_types=1);
 namespace Academorix\Retention\Console;
 
 use Academorix\Console\Attributes\AsCommand;
-use Academorix\Console\Console\Commands\BaseCommand;
+use Academorix\Console\Commands\BaseCommand;
 use Academorix\Retention\Enums\RetentionAction;
 use Academorix\Retention\Registry\RetentionPolicyRegistry;
 use Academorix\Retention\Runner\RetentionRunner;

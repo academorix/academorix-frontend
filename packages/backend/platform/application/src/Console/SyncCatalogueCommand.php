@@ -6,7 +6,7 @@ namespace Academorix\Application\Console;
 
 use Academorix\Application\Database\Seeders\BusinessTypeSeeder;
 use Academorix\Console\Attributes\AsCommand;
-use Academorix\Console\Console\Commands\BaseCommand;
+use Academorix\Console\Commands\BaseCommand;
 
 /**
  * `php artisan application:sync-catalogue` — idempotent mirror of

@@ -6,7 +6,7 @@ namespace Academorix\Audit\Console;
 
 use Academorix\Audit\Jobs\VerifyAuditChainJob;
 use Academorix\Console\Attributes\AsCommand;
-use Academorix\Console\Console\Commands\BaseCommand;
+use Academorix\Console\Commands\BaseCommand;
 
 /**
  * `php artisan audit:verify-chain` — dispatch

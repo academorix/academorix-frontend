@@ -7,7 +7,7 @@ declare(strict_types=1);
 namespace Academorix\NotificationsSms\Console;
 
 use Academorix\Console\Attributes\AsCommand;
-use Academorix\Console\Console\Commands\BaseCommand;
+use Academorix\Console\Commands\BaseCommand;
 
 /**
  * `php artisan notifications:sms:opt-out-add` — Sms:opt out add — notifications command.

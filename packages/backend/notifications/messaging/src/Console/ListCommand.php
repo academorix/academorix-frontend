@@ -7,7 +7,7 @@ declare(strict_types=1);
 namespace Academorix\Messaging\Console;
 
 use Academorix\Console\Attributes\AsCommand;
-use Academorix\Console\Console\Commands\BaseCommand;
+use Academorix\Console\Commands\BaseCommand;
 
 /**
  * `php artisan messaging:list` — List every messaging row.

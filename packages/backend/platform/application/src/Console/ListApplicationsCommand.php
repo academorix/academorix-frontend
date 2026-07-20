@@ -7,7 +7,7 @@ namespace Academorix\Application\Console;
 use Academorix\Application\Contracts\Data\ApplicationInterface;
 use Academorix\Application\Contracts\Repositories\ApplicationRepositoryInterface;
 use Academorix\Console\Attributes\AsCommand;
-use Academorix\Console\Console\Commands\BaseCommand;
+use Academorix\Console\Commands\BaseCommand;
 
 /**
  * `php artisan application:list` — dump every Application row as a

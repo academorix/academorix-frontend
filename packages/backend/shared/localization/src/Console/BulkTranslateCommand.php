@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Academorix\Localization\Console;
 
 use Academorix\Console\Attributes\AsCommand;
-use Academorix\Console\Console\Commands\BaseCommand;
+use Academorix\Console\Commands\BaseCommand;
 use Academorix\Localization\Contracts\Data\TranslationJobInterface;
 use Academorix\Localization\Contracts\Repositories\TranslationJobRepositoryInterface;
 use Academorix\Localization\Enums\TranslationJobKind;

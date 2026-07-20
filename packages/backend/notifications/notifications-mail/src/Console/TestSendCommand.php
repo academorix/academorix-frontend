@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Academorix\Notifications\Mail\Console;
 
 use Academorix\Console\Attributes\AsCommand;
-use Academorix\Console\Console\Commands\BaseCommand;
+use Academorix\Console\Commands\BaseCommand;
 use Illuminate\Contracts\Mail\Factory as MailFactory;
 use Illuminate\Mail\Message;
 

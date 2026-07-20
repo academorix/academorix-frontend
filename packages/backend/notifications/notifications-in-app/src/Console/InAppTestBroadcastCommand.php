@@ -7,7 +7,7 @@ declare(strict_types=1);
 namespace Academorix\NotificationsInApp\Console;
 
 use Academorix\Console\Attributes\AsCommand;
-use Academorix\Console\Console\Commands\BaseCommand;
+use Academorix\Console\Commands\BaseCommand;
 
 /**
  * `php artisan notifications:in-app:test-broadcast` — In app:test broadcast — notifications command.

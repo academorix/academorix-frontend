@@ -7,7 +7,7 @@ declare(strict_types=1);
 namespace Academorix\AgeGroup\Console;
 
 use Academorix\Console\Attributes\AsCommand;
-use Academorix\Console\Console\Commands\BaseCommand;
+use Academorix\Console\Commands\BaseCommand;
 
 /**
  * `php artisan age-group:reconcile-defaults` — Reconcile defaults — age group command.

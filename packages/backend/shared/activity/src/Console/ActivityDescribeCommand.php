@@ -6,7 +6,7 @@ namespace Academorix\Activity\Console;
 
 use Academorix\Activity\Contracts\Services\ActivityRegistryInterface;
 use Academorix\Console\Attributes\AsCommand;
-use Academorix\Console\Console\Commands\BaseCommand;
+use Academorix\Console\Commands\BaseCommand;
 
 /**
  * `php artisan activity:describe` — print the compile-time inventory of

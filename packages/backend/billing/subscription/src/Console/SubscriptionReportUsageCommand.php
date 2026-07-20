@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Academorix\Subscription\Console;
 
 use Academorix\Console\Attributes\AsCommand;
-use Academorix\Console\Console\Commands\BaseCommand;
+use Academorix\Console\Commands\BaseCommand;
 use Academorix\Subscription\Contracts\Repositories\SubscriptionRepositoryInterface;
 use Academorix\Subscription\Jobs\ReportMeteredUsageJob;
 

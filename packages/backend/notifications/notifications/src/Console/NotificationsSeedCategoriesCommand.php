@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Academorix\Notifications\Console;
 
 use Academorix\Console\Attributes\AsCommand;
-use Academorix\Console\Console\Commands\BaseCommand;
+use Academorix\Console\Commands\BaseCommand;
 
 /**
  * `php artisan notifications:seed-categories` — walk every module's

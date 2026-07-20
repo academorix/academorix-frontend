@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Academorix\Newsletter\Console;
 
 use Academorix\Console\Attributes\AsCommand;
-use Academorix\Console\Console\Commands\BaseCommand;
+use Academorix\Console\Commands\BaseCommand;
 use Academorix\Newsletter\Contracts\Repositories\NewsletterRepositoryInterface;
 use Academorix\Newsletter\Contracts\Services\ReputationMonitorInterface;
 use Academorix\Newsletter\Jobs\GenerateReputationReportJob;

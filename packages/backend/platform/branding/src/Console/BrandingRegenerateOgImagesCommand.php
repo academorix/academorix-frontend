@@ -7,7 +7,7 @@ namespace Academorix\Branding\Console;
 use Academorix\Branding\Contracts\Repositories\BrandingRepositoryInterface;
 use Academorix\Branding\Jobs\RegenerateOgImageJob;
 use Academorix\Console\Attributes\AsCommand;
-use Academorix\Console\Console\Commands\BaseCommand;
+use Academorix\Console\Commands\BaseCommand;
 
 /**
  * `php artisan branding:regenerate-og-images` — dispatch

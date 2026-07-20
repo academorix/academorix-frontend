@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Academorix\Transfer\Console;
 
 use Academorix\Console\Attributes\AsCommand;
-use Academorix\Console\Console\Commands\BaseCommand;
+use Academorix\Console\Commands\BaseCommand;
 use Academorix\Transfer\Contracts\Data\XferJobInterface;
 use Academorix\Transfer\Contracts\Repositories\XferJobRepositoryInterface;
 use Academorix\Transfer\Enums\XferKind;

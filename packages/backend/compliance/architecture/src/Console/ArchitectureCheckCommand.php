@@ -46,7 +46,7 @@ use Academorix\Architecture\Support\SourceFileParser;
 use Academorix\Architecture\Violations\Severity;
 use Academorix\Architecture\Violations\Violation;
 use Academorix\Console\Attributes\AsCommand;
-use Academorix\Console\Console\Commands\BaseCommand;
+use Academorix\Console\Commands\BaseCommand;
 use Throwable;
 
 #[AsCommand(

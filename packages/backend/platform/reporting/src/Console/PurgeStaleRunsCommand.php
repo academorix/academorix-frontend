@@ -7,7 +7,7 @@ declare(strict_types=1);
 namespace Academorix\Reporting\Console;
 
 use Academorix\Console\Attributes\AsCommand;
-use Academorix\Console\Console\Commands\BaseCommand;
+use Academorix\Console\Commands\BaseCommand;
 
 /**
  * `php artisan reporting:purge-stale-runs` — Purge stale runs — reporting command.

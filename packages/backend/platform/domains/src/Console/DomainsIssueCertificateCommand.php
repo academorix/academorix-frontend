@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Academorix\Domains\Console;
 
 use Academorix\Console\Attributes\AsCommand;
-use Academorix\Console\Console\Commands\BaseCommand;
+use Academorix\Console\Commands\BaseCommand;
 use Academorix\Domains\Contracts\Data\DomainInterface;
 use Academorix\Domains\Contracts\Repositories\DomainRepositoryInterface;
 use Academorix\Domains\Jobs\IssueCertificateJob;

@@ -7,7 +7,7 @@ declare(strict_types=1);
 namespace Academorix\Chargeback\Console;
 
 use Academorix\Console\Attributes\AsCommand;
-use Academorix\Console\Console\Commands\BaseCommand;
+use Academorix\Console\Commands\BaseCommand;
 
 /**
  * `php artisan chargeback:preview-evidence` — Preview evidence — chargeback command.

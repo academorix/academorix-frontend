@@ -7,7 +7,7 @@ declare(strict_types=1);
 namespace Academorix\Safeguarding\Console;
 
 use Academorix\Console\Attributes\AsCommand;
-use Academorix\Console\Console\Commands\BaseCommand;
+use Academorix\Console\Commands\BaseCommand;
 
 /**
  * `php artisan safeguarding:audit-checks` — Audit checks — safeguarding command.

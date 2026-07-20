@@ -6,7 +6,7 @@ namespace Academorix\Branding\Console;
 
 use Academorix\Branding\Database\Seeders\BrandingPermissionSeeder;
 use Academorix\Console\Attributes\AsCommand;
-use Academorix\Console\Console\Commands\BaseCommand;
+use Academorix\Console\Commands\BaseCommand;
 use Illuminate\Contracts\Foundation\Application;
 
 /**

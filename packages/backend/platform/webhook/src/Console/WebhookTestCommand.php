@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Academorix\Webhook\Console;
 
 use Academorix\Console\Attributes\AsCommand;
-use Academorix\Console\Console\Commands\BaseCommand;
+use Academorix\Console\Commands\BaseCommand;
 use Academorix\Webhook\Contracts\Data\WebhookSubscriptionInterface;
 use Academorix\Webhook\Contracts\Repositories\WebhookSubscriptionRepositoryInterface;
 use Academorix\Webhook\Contracts\Services\WebhookSenderInterface;
