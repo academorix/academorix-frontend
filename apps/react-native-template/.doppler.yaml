@@ -1,0 +1,3 @@
+setup:
+  project: academorix-react-native-template
+  config: dev_react_native_template

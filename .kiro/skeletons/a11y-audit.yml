@@ -1,0 +1,81 @@
+# Accessibility audit GitHub Action skeleton.
+#
+# Copy to: .github/workflows/a11y-audit.yml
+# Owning agent: accessibility-audit-lead
+#
+# Runs axe-core + Lighthouse a11y audit against a preview build on every PR
+# and posts a summary comment. Fails the check when scores drop below the
+# defined thresholds.
+
+name: Accessibility audit
+
+on:
+  pull_request:
+    # TODO(accessibility-audit-lead): scope to app paths so the workflow only
+    # runs when relevant code changes.
+    paths:
+      - 'apps/**'
+      - 'packages/frontend/ui/**'
+      - '.github/workflows/a11y-audit.yml'
+  workflow_dispatch:
+
+concurrency:
+  group: a11y-audit-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      # TODO(accessibility-audit-lead): choose which app to audit and how
+      # to boot it. Vite preview / Laravel dev server / Next dev — each app
+      # gets its own boot step.
+      - name: Build audited app
+        run: pnpm --filter vite-template build
+
+      - name: Start preview server
+        run: pnpm --filter vite-template preview --port 4173 &
+
+      - name: Wait for preview to be ready
+        run: npx wait-on http://localhost:4173 --timeout 60000
+
+      - name: Run axe-core audit
+        run: |
+          # TODO(accessibility-audit-lead): swap for @axe-core/cli or Playwright
+          # + @axe-core/playwright depending on which stack the app uses.
+          npx @axe-core/cli http://localhost:4173/ \
+            --exit \
+            --save axe-report.json
+
+      - name: Run Lighthouse accessibility audit
+        run: |
+          npx @lhci/cli autorun \
+            --collect.url=http://localhost:4173/ \
+            --collect.numberOfRuns=1 \
+            --assert.assertions.categories:accessibility=0.95
+
+      - name: Comment PR with a11y summary
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            // TODO(accessibility-audit-lead): parse axe-report.json + LHCI
+            // output and post a summary to the PR conversation.
+            core.notice('Accessibility audit complete — see workflow logs.');

@@ -1,0 +1,3 @@
+setup:
+  project: academorix-vite-template
+  config: dev_vite_template

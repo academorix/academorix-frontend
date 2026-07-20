@@ -1,0 +1,88 @@
+# Sentry project + alert rules skeleton.
+#
+# Copy to: <app-root>/observability/sentry.yaml
+# Owning agent: observability-engineer
+#
+# Consumed by: `sentry-cli` (see https://docs.sentry.io/product/cli/)
+# and the observability-engineer's provisioning scripts.
+#
+# TODO(observability-engineer): create matching projects in the Sentry
+# organization before applying this config. Populate:
+#   - SENTRY_ORG          — organization slug
+#   - SENTRY_PROJECT      — project slug matching this file's `project.slug`
+#   - SENTRY_AUTH_TOKEN   — Doppler-managed secret
+
+project:
+  # TODO(observability-engineer): set the Sentry project slug.
+  slug: academorix-app
+  platform: javascript-react
+  team: engineering
+
+environments:
+  production:
+    dsn: '$SENTRY_DSN_PRODUCTION'      # Doppler-managed
+    release_stage: production
+    sample_rate: 1.0
+  staging:
+    dsn: '$SENTRY_DSN_STAGING'          # Doppler-managed
+    release_stage: staging
+    sample_rate: 1.0
+  development:
+    dsn: '$SENTRY_DSN_DEVELOPMENT'      # Doppler-managed
+    release_stage: development
+    sample_rate: 0.1
+
+# ────────────────────────────────────────────────────────────────
+# Alerts — two starter rules. Add per-service alerts as needed.
+# ────────────────────────────────────────────────────────────────
+alerts:
+  # Error rate — pages on-call when a service errors above threshold.
+  - name: 'High error rate'
+    conditions:
+      - id: 'sentry.rules.conditions.event_frequency.EventFrequencyCondition'
+        interval: '1m'
+        # TODO(observability-engineer): tune the threshold to the service's
+        # real traffic volume. Baseline is very conservative.
+        value: 10
+    filters:
+      - id: 'sentry.rules.filters.level.LevelFilter'
+        match: 'gte'
+        level: 'error'
+    actions:
+      - id: 'sentry.integrations.pagerduty.notify_action.PagerDutyNotifyServiceAction'
+        service: 'placeholder-pagerduty-service'
+    action_match: 'all'
+    frequency: 60
+
+  # New issue — non-paging, notifies Slack.
+  - name: 'New issue in production'
+    conditions:
+      - id: 'sentry.rules.conditions.first_seen_event.FirstSeenEventCondition'
+    filters:
+      - id: 'sentry.rules.filters.tagged_event.TaggedEventFilter'
+        key: 'environment'
+        match: 'eq'
+        value: 'production'
+    actions:
+      - id: 'sentry.integrations.slack.notify_action.SlackNotifyServiceAction'
+        # TODO(observability-engineer): set to the real workspace + channel.
+        workspace: 'academorix'
+        channel: '#alerts-production'
+    action_match: 'all'
+    frequency: 30
+
+# ────────────────────────────────────────────────────────────────
+# Data scrubbing — never send PII to Sentry.
+# ────────────────────────────────────────────────────────────────
+data_scrubbing:
+  scrub_defaults: true
+  scrub_ip_addresses: true
+  additional_sensitive_fields:
+    - api_key
+    - password
+    - authorization
+    - cookie
+    - session_id
+    - phone_number
+    - date_of_birth
+    - email               # comment out if downstream needs email for correlation

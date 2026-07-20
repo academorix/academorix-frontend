@@ -1,0 +1,25 @@
+[
+  {
+    "_comment": "Size-limit budget skeleton — promote to root .size-limit.json when an app has real bundle enforcement to run. Owning agent: performance-engineer.",
+    "_todo_ownership": "TODO(performance-engineer): populate with real entries once an app has publishable bundles. Empty array is a valid config — size-limit passes with nothing to check.",
+    "_example_entry_web_app": {
+      "name": "Vite app — initial JS chunk",
+      "path": "apps/vite-template/dist/assets/index-*.js",
+      "limit": "150 KB",
+      "gzip": true,
+      "brotli": false
+    },
+    "_example_entry_framework_package": {
+      "name": "@stackra/network — core ESM entry",
+      "path": "packages/frontend/network/dist/index.js",
+      "limit": "10 KB",
+      "gzip": true
+    },
+    "_example_entry_native_bundle": {
+      "name": "Hermes bytecode — RN Android release",
+      "path": "apps/react-native-template/android/app/build/generated/assets/react/release/index.android.bundle",
+      "limit": "3 MB",
+      "gzip": false
+    }
+  }
+]

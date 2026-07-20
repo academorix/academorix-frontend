@@ -12,6 +12,14 @@ dist
 dist-ssr
 *.local
 
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Doppler local state
+.doppler/
+
 # Editor directories and files
 !.vscode/extensions.json
 .idea

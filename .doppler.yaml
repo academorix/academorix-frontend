@@ -1,0 +1,18 @@
+setup:
+  project: academorix-monorepo
+  config: dev_monorepo
+
+# This file pins the workspace root to Doppler's academorix-monorepo project.
+# Doppler CLI: `doppler run -- pnpm turbo run build` — all scripts wrapped at
+# root pull secrets from THIS project's dev_monorepo config.
+#
+# What belongs here (workspace-wide):
+#   - TURBO_TOKEN, TURBO_TEAM        (remote cache)
+#   - HEROUI_AUTH_TOKEN              (HeroUI Pro postinstall)
+#   - HEROUI_PERSONAL_TOKEN          (HeroUI Pro CLI)
+#   - CHANGESET_GITHUB_TOKEN         (release automation)
+#
+# What does NOT belong here (per-app):
+#   - App-specific API keys           (see apps/<name>/.doppler.yaml)
+#   - Database URLs                   (per-app)
+#   - Third-party integration keys    (per-app)

@@ -3,12 +3,12 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "android": "react-native run-android",
-    "ios": "react-native run-ios",
+    "android": "doppler run -- react-native run-android",
+    "ios": "doppler run -- react-native run-ios",
+    "start": "doppler run -- react-native start",
+    "test": "doppler run -- jest",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
-    "start": "react-native start",
-    "test": "jest",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {

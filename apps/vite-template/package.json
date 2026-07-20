@@ -4,10 +4,11 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "tsc && vite build",
-    "lint": "eslint --fix",
-    "preview": "vite preview"
+    "dev": "doppler run -- vite",
+    "build": "tsc && doppler run -- vite build",
+    "preview": "doppler run -- vite preview",
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@heroui/react": "3.2.2",

@@ -3,8 +3,10 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "dev": "doppler run -- vite",
     "build": "vite build",
-    "dev": "vite"
+    "lint": "eslint resources/",
+    "format": "prettier --write ."
   },
   "devDependencies": {
     "@tailwindcss/vite": "^4.0.0",

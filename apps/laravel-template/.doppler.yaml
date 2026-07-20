@@ -1,0 +1,3 @@
+setup:
+  project: academorix-laravel-template
+  config: dev_laravel_template

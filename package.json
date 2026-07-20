@@ -37,6 +37,9 @@
     "heroui:setup": "pnpm dlx heroui-pro@latest install react --yes",
     "heroui:update": "pnpm dlx heroui-pro@latest update --yes",
     "heroui:status": "pnpm dlx heroui-pro@latest status",
+    "doppler:login": "doppler login",
+    "doppler:setup": "doppler setup --no-interactive",
+    "doppler:me": "doppler me",
     "clean": "turbo run clean && rimraf node_modules .turbo",
     "reset": "pnpm clean && pnpm install",
     "prepare": "husky || true"
