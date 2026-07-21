@@ -233,12 +233,12 @@ abstract class GeneratorCommand extends BaseCommand
             $this->handle($arguments);
 
             // Report success to the user
-            $this->info(Str::format('Successfully created %s!', $arguments['name']));
+            $this->omni->success(Str::format('Successfully created %s!', $arguments['name']));
 
             return self::SUCCESS;
         } catch (Exception $exception) {
             // Display the error message without a full stack trace
-            $this->error('Generation failed: '.$exception->getMessage());
+            $this->omni->error('Generation failed: '.$exception->getMessage());
 
             return self::FAILURE;
         }

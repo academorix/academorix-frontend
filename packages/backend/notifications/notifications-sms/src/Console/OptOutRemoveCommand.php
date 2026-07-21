@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Notifications\Sms\Console\Commands;
+namespace Stackra\Notifications\Sms\Console;
 
 use Stackra\Console\Commands\BaseCommand;
 use Stackra\Notifications\Sms\Contracts\Data\SmsOptOutInterface;
 use Stackra\Notifications\Sms\Contracts\Repositories\SmsOptOutRepositoryInterface;
 use Stackra\Notifications\Sms\Enums\SmsOptOutReason;
-use Symfony\Component\Console\Attribute\AsCommand;
+use Stackra\Console\Attributes\AsCommand;
 
 /**
  * `notifications:sms:opt-out-remove` — revoke an SMS opt-out.
@@ -32,11 +32,6 @@ final class OptOutRemoveCommand extends BaseCommand
      */
     protected $signature = 'notifications:sms:opt-out-remove {phone} {--tenant=} {--force}';
 
-    /**
-     * @var string
-     */
-    protected $description = 'Revoke an SMS opt-out.';
-
     public function handle(SmsOptOutRepositoryInterface $optOuts): int
     {
         $phone    = (string) $this->argument('phone');
@@ -49,7 +44,7 @@ final class OptOutRemoveCommand extends BaseCommand
         );
 
         if ($optOut === null) {
-            $this->info("No active opt-out found for {$phone}.");
+            $this->omni->success("No active opt-out found for {$phone}.");
 
             return self::SUCCESS;
         }
@@ -60,7 +55,7 @@ final class OptOutRemoveCommand extends BaseCommand
             ? $reason
             : SmsOptOutReason::tryFrom((string) $reason);
         if ($reasonValue === SmsOptOutReason::StopKeyword && ! $force) {
-            $this->error('Refusing to revoke a stop_keyword opt-out without --force + re-consent evidence.');
+            $this->omni->error('Refusing to revoke a stop_keyword opt-out without --force + re-consent evidence.');
 
             return self::FAILURE;
         }
@@ -75,7 +70,7 @@ final class OptOutRemoveCommand extends BaseCommand
         }
 
         $optOut->delete();
-        $this->info("Opt-out revoked for {$phone}.");
+        $this->omni->success("Opt-out revoked for {$phone}.");
 
         return self::SUCCESS;
     }

@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Notifications\Push\Console\Commands;
+namespace Stackra\Notifications\Push\Console;
 
 use Stackra\Console\Commands\BaseCommand;
 use Stackra\Notifications\Push\Jobs\SendPushJob;
 use Illuminate\Support\Str;
-use Symfony\Component\Console\Attribute\AsCommand;
+use Stackra\Console\Attributes\AsCommand;
 
 /**
  * `notifications:push:test` — send a synthetic push to a user's registered
@@ -31,18 +31,13 @@ final class TestCommand extends BaseCommand
      */
     protected $signature = 'notifications:push:test {recipient_user_id} {--application-id=} {--title=Test} {--body=Hello from notifications:push:test}';
 
-    /**
-     * @var string
-     */
-    protected $description = 'Send a synthetic push to a user\'s registered subscriptions.';
-
     public function handle(): int
     {
         $userId        = (string) $this->argument('recipient_user_id');
         $applicationId = (string) $this->option('application-id');
 
         if ($applicationId === '') {
-            $this->error('--application-id is required.');
+            $this->omni->error('--application-id is required.');
 
             return self::FAILURE;
         }
@@ -56,7 +51,7 @@ final class TestCommand extends BaseCommand
             body: (string) $this->option('body'),
         );
 
-        $this->info('Test push dispatched.');
+        $this->omni->success('Test push dispatched.');
 
         return self::SUCCESS;
     }

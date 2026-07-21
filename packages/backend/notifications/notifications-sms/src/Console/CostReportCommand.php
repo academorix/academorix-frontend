@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Notifications\Sms\Console\Commands;
+namespace Stackra\Notifications\Sms\Console;
 
 use Stackra\Console\Commands\BaseCommand;
 use Stackra\Notifications\Sms\Jobs\GenerateSmsCostReportJob;
-use Symfony\Component\Console\Attribute\AsCommand;
+use Stackra\Console\Attributes\AsCommand;
 
 /**
  * `notifications:sms:cost-report` — enqueue the monthly SMS cost report.
@@ -26,16 +26,11 @@ final class CostReportCommand extends BaseCommand
      */
     protected $signature = 'notifications:sms:cost-report {--tenant=} {--month=previous}';
 
-    /**
-     * @var string
-     */
-    protected $description = 'Enqueue the monthly SMS cost report.';
-
     public function handle(): int
     {
         $tenantId = $this->option('tenant');
         if ($tenantId === null) {
-            $this->error('--tenant is required.');
+            $this->omni->error('--tenant is required.');
 
             return self::FAILURE;
         }
@@ -46,7 +41,7 @@ final class CostReportCommand extends BaseCommand
         }
 
         GenerateSmsCostReportJob::dispatch((string) $tenantId, $month);
-        $this->info("Cost report job dispatched for tenant={$tenantId} month={$month}.");
+        $this->omni->success("Cost report job dispatched for tenant={$tenantId} month={$month}.");
 
         return self::SUCCESS;
     }

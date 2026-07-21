@@ -119,7 +119,7 @@ final class RunRetentionCommand extends BaseCommand
 
         if ($descriptors === []) {
             if ($keyFilter !== null) {
-                $this->error(\sprintf(
+                $this->omni->error(\sprintf(
                     'No retention policy registered under key "%s". Run without --key to list every registered policy.',
                     $keyFilter,
                 ));

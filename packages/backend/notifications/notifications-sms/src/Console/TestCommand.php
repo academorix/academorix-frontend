@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Notifications\Sms\Console\Commands;
+namespace Stackra\Notifications\Sms\Console;
 
 use Stackra\Console\Commands\BaseCommand;
 use Stackra\Notifications\Sms\Jobs\SendSmsJob;
 use Illuminate\Support\Str;
-use Symfony\Component\Console\Attribute\AsCommand;
+use Stackra\Console\Attributes\AsCommand;
 
 /**
  * `notifications:sms:test` — send a synthetic SMS.
@@ -30,15 +30,10 @@ final class TestCommand extends BaseCommand
      */
     protected $signature = 'notifications:sms:test {phone} {--tenant=} {--provider=twilio} {--body=Hello from notifications:sms:test} {--allow-production}';
 
-    /**
-     * @var string
-     */
-    protected $description = 'Send a synthetic SMS via the configured provider.';
-
     public function handle(): int
     {
         if (\app()->environment('production') && ! (bool) $this->option('allow-production')) {
-            $this->error('Refusing to run in production without --allow-production.');
+            $this->omni->error('Refusing to run in production without --allow-production.');
 
             return self::FAILURE;
         }
@@ -57,7 +52,7 @@ final class TestCommand extends BaseCommand
             body: $body,
         );
 
-        $this->info('Test SMS dispatched.');
+        $this->omni->success('Test SMS dispatched.');
 
         return self::SUCCESS;
     }

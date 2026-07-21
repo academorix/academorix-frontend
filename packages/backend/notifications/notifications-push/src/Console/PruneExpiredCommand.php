@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Notifications\Push\Console\Commands;
+namespace Stackra\Notifications\Push\Console;
 
 use Stackra\Console\Commands\BaseCommand;
 use Stackra\Notifications\Push\Jobs\PruneExpiredSubscriptionsJob;
-use Symfony\Component\Console\Attribute\AsCommand;
+use Stackra\Console\Attributes\AsCommand;
 
 /**
  * `notifications:push:prune-expired` — enqueue the idle-prune job.
@@ -30,21 +30,16 @@ final class PruneExpiredCommand extends BaseCommand
      */
     protected $signature = 'notifications:push:prune-expired {--dry-run}';
 
-    /**
-     * @var string
-     */
-    protected $description = 'Prune idle push subscriptions past the retention window.';
-
     public function handle(): int
     {
         if ($this->option('dry-run')) {
-            $this->info('Dry-run — no prune enqueued.');
+            $this->omni->success('Dry-run — no prune enqueued.');
 
             return self::SUCCESS;
         }
 
         PruneExpiredSubscriptionsJob::dispatch();
-        $this->info('Prune job dispatched to the notifications queue.');
+        $this->omni->success('Prune job dispatched to the notifications queue.');
 
         return self::SUCCESS;
     }

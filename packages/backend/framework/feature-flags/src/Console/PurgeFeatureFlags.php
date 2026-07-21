@@ -4,10 +4,9 @@ declare(strict_types=1);
 
 namespace Stackra\FeatureFlags\Console;
 
-use Illuminate\Console\Attributes\Description;
-use Illuminate\Console\Attributes\Signature;
-use Illuminate\Console\Command;
 use Illuminate\Contracts\Cache\Repository as CacheRepository;
+use Stackra\Console\Attributes\AsCommand;
+use Stackra\Console\Commands\BaseCommand;
 
 /**
  * `feature-flags:purge` — flush the platform-wide feature-flag cache.
@@ -19,36 +18,40 @@ use Illuminate\Contracts\Cache\Repository as CacheRepository;
  *
  * @since    0.1.0
  */
-#[Signature('feature-flags:purge')]
-#[Description('Flush the platform-wide feature-flag cache.')]
-final class PurgeFeatureFlags extends Command
+#[AsCommand(
+    name: 'feature-flags:purge',
+    description: 'Flush the platform-wide feature-flag cache.',
+)]
+final class PurgeFeatureFlags extends BaseCommand
 {
-    /**
-     * @param  CacheRepository  $cache  Cache store used for resolution caching.
-     */
-    public function __construct(
-        private readonly CacheRepository $cache,
-    ) {
-        parent::__construct();
-    }
-
     /**
      * Handle the command.
      *
-     * @return int
+     * @param  CacheRepository  $cache  Cache store used for resolution caching.
      */
-    public function handle(): int
+    public function handle(CacheRepository $cache): int
     {
-        $store = $this->cache->getStore();
+        $this->omni->titleBar('Purge Feature Flags Cache', 'sky');
+
+        $store = $cache->getStore();
         if (\method_exists($store, 'tags')) {
-            $this->cache->tags(['feature_flags'])->flush();
-            $this->info('Flushed the feature_flags cache tag.');
+            $cache->tags(['feature_flags'])->flush();
+            $this->omni->statusSuccess('Cache tag flushed', 'the `feature_flags` cache tag was invalidated');
+            $this->showDuration();
 
             return self::SUCCESS;
         }
 
-        $this->cache->forever('feature_flags:version:global', (int) (microtime(true) * 1000));
-        $this->info('Bumped the platform-wide feature-flag cache version.');
+        // Non-taggable stores (file, database, memcached without tags):
+        // bump a version key that every cache read prefixes into its key.
+        // Effectively invalidates every cached resolution by making the
+        // old keys unreachable.
+        $cache->forever('feature_flags:version:global', (int) (\microtime(true) * 1000));
+        $this->omni->statusSuccess(
+            'Cache version bumped',
+            'store does not support tags — bumped `feature_flags:version:global`',
+        );
+        $this->showDuration();
 
         return self::SUCCESS;
     }

@@ -4,16 +4,15 @@ declare(strict_types=1);
 
 namespace Stackra\FeatureFlags\Console;
 
+use Illuminate\Support\Carbon;
+use Stackra\Console\Attributes\AsCommand;
+use Stackra\Console\Commands\BaseCommand;
 use Stackra\FeatureFlags\Contracts\Data\FeatureKillSwitchInterface;
 use Stackra\FeatureFlags\Contracts\Data\FeatureOverrideInterface;
 use Stackra\FeatureFlags\Contracts\Repositories\FeatureKillSwitchRepositoryInterface;
 use Stackra\FeatureFlags\Contracts\Repositories\FeatureOverrideRepositoryInterface;
 use Stackra\FeatureFlags\Enums\OverrideDecision;
 use Stackra\FeatureFlags\Registry\FeatureFlagRegistry;
-use Illuminate\Console\Attributes\Description;
-use Illuminate\Console\Attributes\Signature;
-use Illuminate\Console\Command;
-use Illuminate\Support\Carbon;
 
 /**
  * `feature-flags:disable {flag} {--tenant=} {--user=}` — flip a flag off.
@@ -25,49 +24,56 @@ use Illuminate\Support\Carbon;
  *
  * @since    0.1.0
  */
-#[Signature('feature-flags:disable {flag} {--tenant=} {--user=}')]
-#[Description('Disable a feature flag via a deny override or a global kill switch.')]
-final class DisableFeatureFlag extends Command
+#[AsCommand(
+    name: 'feature-flags:disable',
+    description: 'Disable a feature flag via a deny override or a global kill switch.',
+)]
+final class DisableFeatureFlag extends BaseCommand
 {
+    // The AsCommand attribute above owns the name + description; the
+    // `{flag} {--tenant=} {--user=}` DSL below still lives on the
+    // property because Laravel's input definition is parsed from
+    // `$signature`, not from the attribute. Command names in both
+    // sources of truth MUST agree.
+    protected $signature = 'feature-flags:disable {flag} {--tenant=} {--user=}';
+
     /**
+     * Handle the command. Repositories arrive via method injection —
+     * Laravel's container resolves each type-hinted parameter through
+     * `Container::call()` at invoke time.
+     *
      * @param  FeatureFlagRegistry                    $registry      Flag registry.
      * @param  FeatureOverrideRepositoryInterface     $overrides     Override persistence boundary.
      * @param  FeatureKillSwitchRepositoryInterface   $killSwitches  Kill-switch persistence boundary.
      */
-    public function __construct(
-        private readonly FeatureFlagRegistry $registry,
-        private readonly FeatureOverrideRepositoryInterface $overrides,
-        private readonly FeatureKillSwitchRepositoryInterface $killSwitches,
-    ) {
-        parent::__construct();
-    }
+    public function handle(
+        FeatureFlagRegistry $registry,
+        FeatureOverrideRepositoryInterface $overrides,
+        FeatureKillSwitchRepositoryInterface $killSwitches,
+    ): int {
+        $this->omni->titleBar('Disable Feature Flag', 'sky');
 
-    /**
-     * Handle the command.
-     *
-     * @return int
-     */
-    public function handle(): int
-    {
         $flag   = (string) $this->argument('flag');
         $tenant = $this->option('tenant');
         $user   = $this->option('user');
 
-        if (! $this->registry->has($flag)) {
-            $this->error(\sprintf('Unknown feature flag: %s', $flag));
+        if (! $registry->has($flag)) {
+            $this->omni->statusError('Unknown flag', \sprintf('feature flag "%s" is not registered', $flag));
+            $this->showDuration();
 
             return self::FAILURE;
         }
 
         if ($tenant === null && $user === null) {
-            $this->killSwitches->create([
+            $killSwitches->create([
                 FeatureKillSwitchInterface::ATTR_FLAG        => $flag,
                 FeatureKillSwitchInterface::ATTR_SCOPE_LEVEL => 'global',
                 FeatureKillSwitchInterface::ATTR_SCOPE_VALUE => null,
                 FeatureKillSwitchInterface::ATTR_ENABLED_AT  => Carbon::now(),
             ]);
 
-            $this->info(\sprintf('Activated global kill switch for "%s".', $flag));
+            $this->omni->statusSuccess('Kill switch activated', \sprintf('global kill switch for "%s"', $flag));
+            $this->showDuration();
 
             return self::SUCCESS;
         }
@@ -75,7 +81,7 @@ final class DisableFeatureFlag extends Command
         $scopeLevel = $user !== null ? 'user' : 'tenant';
         $scopeValue = (string) ($user ?? $tenant);
 
-        $this->overrides->create([
+        $overrides->create([
             FeatureOverrideInterface::ATTR_TENANT_ID   => (string) $tenant,
             FeatureOverrideInterface::ATTR_FLAG        => $flag,
             FeatureOverrideInterface::ATTR_SCOPE_LEVEL => $scopeLevel,
@@ -83,7 +89,11 @@ final class DisableFeatureFlag extends Command
             FeatureOverrideInterface::ATTR_DECISION    => OverrideDecision::Deny->value,
         ]);
 
-        $this->info(\sprintf('Disabled "%s" for %s = %s.', $flag, $scopeLevel, $scopeValue));
+        $this->omni->statusSuccess(
+            'Flag disabled',
+            \sprintf('"%s" for %s = %s', $flag, $scopeLevel, $scopeValue),
+        );
+        $this->showDuration();
 
         return self::SUCCESS;
     }

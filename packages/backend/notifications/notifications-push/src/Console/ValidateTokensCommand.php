@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Notifications\Push\Console\Commands;
+namespace Stackra\Notifications\Push\Console;
 
 use Stackra\Console\Commands\BaseCommand;
 use Stackra\Notifications\Push\Contracts\Data\PushSubscriptionInterface;
 use Stackra\Notifications\Push\Contracts\Repositories\PushSubscriptionRepositoryInterface;
 use Stackra\Notifications\Push\Jobs\ValidatePushTokenJob;
-use Symfony\Component\Console\Attribute\AsCommand;
+use Stackra\Console\Attributes\AsCommand;
 
 /**
  * `notifications:push:validate-tokens` — batch-validate stale subscriptions.
@@ -30,11 +30,6 @@ final class ValidateTokensCommand extends BaseCommand
      * @var string
      */
     protected $signature = 'notifications:push:validate-tokens {--stale-days=30} {--sample-rate=0.05}';
-
-    /**
-     * @var string
-     */
-    protected $description = 'Batch-validate a sample of stale push tokens against the provider.';
 
     public function handle(PushSubscriptionRepositoryInterface $subscriptions): int
     {
@@ -61,7 +56,7 @@ final class ValidateTokensCommand extends BaseCommand
             $count++;
         }
 
-        $this->info("Dispatched {$count} validate-token job(s).");
+        $this->omni->success("Dispatched {$count} validate-token job(s).");
 
         return self::SUCCESS;
     }

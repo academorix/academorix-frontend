@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Notifications\Sms\Console\Commands;
+namespace Stackra\Notifications\Sms\Console;
 
 use Stackra\Console\Commands\BaseCommand;
 use Stackra\Notifications\Sms\Enums\SmsOptOutReason;
 use Stackra\Notifications\Sms\Jobs\RecordSmsOptOutJob;
-use Symfony\Component\Console\Attribute\AsCommand;
+use Stackra\Console\Attributes\AsCommand;
 
 /**
  * `notifications:sms:opt-out-add` — add a phone to the SMS opt-out list.
@@ -27,11 +27,6 @@ final class OptOutAddCommand extends BaseCommand
      */
     protected $signature = 'notifications:sms:opt-out-add {phone} {--tenant=} {--reason=admin} {--provider=twilio}';
 
-    /**
-     * @var string
-     */
-    protected $description = 'Add a phone to the SMS opt-out list.';
-
     public function handle(): int
     {
         $phone    = (string) $this->argument('phone');
@@ -46,7 +41,7 @@ final class OptOutAddCommand extends BaseCommand
             provider: $provider,
         );
 
-        $this->info("Opt-out job dispatched for {$phone}.");
+        $this->omni->success("Opt-out job dispatched for {$phone}.");
 
         return self::SUCCESS;
     }
