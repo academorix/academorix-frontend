@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Academorix\Attendance\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Cannot delete an active policy.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class AttendancePolicyActiveCannotDeleteException extends StackraException
+final class AttendancePolicyActiveCannotDeleteException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

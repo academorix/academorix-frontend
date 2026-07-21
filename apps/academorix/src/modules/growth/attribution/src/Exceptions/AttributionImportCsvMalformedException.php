@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Academorix\Attribution\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * CSV import file failed schema validation (missing required columns, header mismatch, unsupported column types).
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class AttributionImportCsvMalformedException extends StackraException
+final class AttributionImportCsvMalformedException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

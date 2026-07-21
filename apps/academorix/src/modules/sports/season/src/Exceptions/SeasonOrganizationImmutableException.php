@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Academorix\Season\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Attempted to change organization_id on an existing Season.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class SeasonOrganizationImmutableException extends StackraException
+final class SeasonOrganizationImmutableException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

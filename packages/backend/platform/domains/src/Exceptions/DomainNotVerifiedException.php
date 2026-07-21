@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Stackra\Domains\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Raised when a caller attempts to promote an unverified Domain to
@@ -14,7 +14,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class DomainNotVerifiedException extends StackraException
+final class DomainNotVerifiedException extends Exception
 {
     public const CODE = 'domains.not_verified';
 

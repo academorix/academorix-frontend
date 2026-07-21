@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Stackra\Notifications\Mail\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Raised by
@@ -25,7 +25,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class MailWebhookSignatureFailedException extends StackraException
+final class MailWebhookSignatureFailedException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

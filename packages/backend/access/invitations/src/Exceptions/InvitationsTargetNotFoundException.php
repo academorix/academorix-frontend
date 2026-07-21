@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Invitations\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * target_id does not resolve to a row of target_type.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class InvitationsTargetNotFoundException extends StackraException
+final class InvitationsTargetNotFoundException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

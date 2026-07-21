@@ -89,11 +89,11 @@ the whole ADR index, and every top-level doc.
 31. Key ADRs the steering codifies (cite these in findings):
     - ADR-0001 — monorepo layout.
     - ADR-0002 — exception handling (every domain exception extends
-      `StackraException`).
+      `Exception`).
     - ADR-0003 — attribute discovery vs request-time middleware reflection.
     - ADR-0004 — cache-tag resolvers via attribute (new `caching` package).
     - ADR-0005 — database `Concerns/` directory split.
-    - ADR-0006 — no manual `bindings()`; exceptions extend `StackraException`
+    - ADR-0006 — no manual `bindings()`; exceptions extend `Exception`
       (PHPStan rules `NoManualBindingsRule` +
       `ExceptionsExtendStackraExceptionRule`).
     - ADR-0007 — blueprint attribute discovery: `__invoke()` vs `register()`.
@@ -377,7 +377,7 @@ Enforce the LOCKED per-folder table. Blocker-level violations:
 
 - **ADR-0002 + ADR-0006** — Exception classes extending `\Exception`,
   `\RuntimeException`, `\LogicException` directly (must go through
-  `Stackra\Exceptions\StackraException`). Exempt only:
+  `Stackra\Exceptions\Exception`). Exempt only:
   `packages/framework/exceptions/` itself + test fixtures under `tests/`.
 - **ADR-0006** — Provider carrying a `public function bindings(): void` method
   OR `$this->app->bind/singleton/scoped(...)` closures. Preferred:

@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Rbac\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Actor tried to assign a role holding permissions the actor doesn't themselves hold.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class RoleAssignmentNotAllowedException extends StackraException
+final class RoleAssignmentNotAllowedException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

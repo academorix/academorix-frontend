@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Stackra\Newsletter\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Raised when a confirmation or unsubscribe token is invalid,
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class InvalidUnsubscribeTokenException extends StackraException
+final class InvalidUnsubscribeTokenException extends Exception
 {
     public const CODE = 'newsletter.token_invalid';
 

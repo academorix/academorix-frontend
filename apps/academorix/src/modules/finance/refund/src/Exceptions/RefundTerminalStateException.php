@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Academorix\Refund\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Cannot modify a refund in terminal state (failed / rejected / cancelled).
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class RefundTerminalStateException extends StackraException
+final class RefundTerminalStateException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

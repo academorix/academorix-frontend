@@ -43,7 +43,7 @@
     ],
     "policies": ["PersonIdentityPolicy", "TenantLinkRequestPolicy", "PersonGuardianLinkPolicy"],
     "hooks": [
-      "AssignStackraIdOnCreate",
+      "AssignIdOnCreate",
       "PurgeLookupAttemptsOnLockout",
       "RevokeLinkOnPersonErased",
       "RefuseCrossTenantMerge"
@@ -87,7 +87,7 @@
     "config": ["people"],
     "macros": [],
     "bindings": [
-      "StackraIdIssuer",
+      "IdIssuer",
       "PersonLookupService",
       "LinkRequestOrchestrator",
       "LookupAttemptLogger",

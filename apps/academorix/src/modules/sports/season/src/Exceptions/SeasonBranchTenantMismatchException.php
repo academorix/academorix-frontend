@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Academorix\Season\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Cross-tenant FK smuggling attempt — the supplied branch_id belongs to a different tenant.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class SeasonBranchTenantMismatchException extends StackraException
+final class SeasonBranchTenantMismatchException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

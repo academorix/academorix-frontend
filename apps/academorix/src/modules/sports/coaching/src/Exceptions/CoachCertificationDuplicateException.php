@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Academorix\Coaching\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * This certification (issuing_body + certification_name + issued_at) already exists for this coach.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class CoachCertificationDuplicateException extends StackraException
+final class CoachCertificationDuplicateException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Academorix\Attribution\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * utm_source / utm_medium / utm_campaign / utm_content / utm_term exceeded max length (see config.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class AttributionUtmTooLongException extends StackraException
+final class AttributionUtmTooLongException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

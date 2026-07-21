@@ -32,7 +32,7 @@ use Symfony\Component\HttpKernel\Exception\TooManyRequestsHttpException;
 // Pass-through / fallback
 // -----------------------------------------------------------------
 
-it('passes StackraException through unchanged', function (): void {
+it('passes Exception through unchanged', function (): void {
     $mapper = new ExceptionMapper;
     $original = ForbiddenException::missingRole('admin');
 

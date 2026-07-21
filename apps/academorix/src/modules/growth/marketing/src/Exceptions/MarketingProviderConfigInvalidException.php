@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Academorix\Marketing\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Config jsonb does not match the per-provider JSON Schema.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class MarketingProviderConfigInvalidException extends StackraException
+final class MarketingProviderConfigInvalidException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

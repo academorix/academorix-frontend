@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\User\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Attempted to remove the User's only default TenantMember.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class TenantMembershipLastDefaultException extends StackraException
+final class TenantMembershipLastDefaultException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

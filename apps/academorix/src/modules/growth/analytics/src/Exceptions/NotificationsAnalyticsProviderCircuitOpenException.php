@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Academorix\Analytics\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Circuit breaker open for this provider — dispatch suppressed until half-open probe recovers.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class NotificationsAnalyticsProviderCircuitOpenException extends StackraException
+final class NotificationsAnalyticsProviderCircuitOpenException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

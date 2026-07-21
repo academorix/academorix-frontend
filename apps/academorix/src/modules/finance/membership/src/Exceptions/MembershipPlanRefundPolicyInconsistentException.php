@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Academorix\Membership\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Raised when the domain rule `MEMBERSHIP_PLAN_REFUND_POLICY_INCONSISTENT` fires.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class MembershipPlanRefundPolicyInconsistentException extends StackraException
+final class MembershipPlanRefundPolicyInconsistentException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

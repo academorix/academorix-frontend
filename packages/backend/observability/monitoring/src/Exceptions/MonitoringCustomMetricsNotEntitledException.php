@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Monitoring\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * check_type = 'custom_script' OR signal_type = 'custom_metric' requires Enterprise tier via monitoring_custom_metrics entitlement.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class MonitoringCustomMetricsNotEntitledException extends StackraException
+final class MonitoringCustomMetricsNotEntitledException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Academorix\Coaching\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * rating_scale must be one of: stars_1_5 / level_5_stage.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class CoachSkillRatingInvalidScaleException extends StackraException
+final class CoachSkillRatingInvalidScaleException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

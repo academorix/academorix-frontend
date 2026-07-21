@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Stackra\Invitations\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Raised when the caller supplies a `target_type` string that no
@@ -16,7 +16,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class InvitationTargetNotRegisteredException extends StackraException
+final class InvitationTargetNotRegisteredException extends Exception
 {
     public const string CODE = 'INVITATIONS_TARGET_NOT_REGISTERED';
 

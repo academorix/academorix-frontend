@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Theme\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Attempted to activate a theme that is already the active theme for its (tenant, mode).
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class ThemeAlreadyActiveException extends StackraException
+final class ThemeAlreadyActiveException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

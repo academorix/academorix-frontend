@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Academorix\Coaching\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * This coach already has a live rating on this ratable.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class CoachSkillRatingDuplicateException extends StackraException
+final class CoachSkillRatingDuplicateException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

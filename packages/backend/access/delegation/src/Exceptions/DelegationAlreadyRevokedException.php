@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Delegation\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Attempted to revoke a delegation that was already revoked.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class DelegationAlreadyRevokedException extends StackraException
+final class DelegationAlreadyRevokedException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

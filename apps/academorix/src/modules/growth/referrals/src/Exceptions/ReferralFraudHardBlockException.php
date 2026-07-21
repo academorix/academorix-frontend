@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Academorix\Referrals\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * FraudDetector fraud_score exceeded program.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class ReferralFraudHardBlockException extends StackraException
+final class ReferralFraudHardBlockException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

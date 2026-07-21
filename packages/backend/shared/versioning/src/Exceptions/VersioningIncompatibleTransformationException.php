@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Versioning\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Transformer chain resolved but a transformer threw an exception (bad payload shape, unknown field).
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class VersioningIncompatibleTransformationException extends StackraException
+final class VersioningIncompatibleTransformationException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

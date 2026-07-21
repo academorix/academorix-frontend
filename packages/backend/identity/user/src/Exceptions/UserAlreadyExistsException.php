@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\User\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Attempted to provision a User for an (identity_id, application_id) triple that already exists.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class UserAlreadyExistsException extends StackraException
+final class UserAlreadyExistsException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

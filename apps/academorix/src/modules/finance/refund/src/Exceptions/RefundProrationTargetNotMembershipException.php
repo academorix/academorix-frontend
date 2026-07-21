@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Academorix\Refund\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * refund_type='prorated' requires the parent invoice.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class RefundProrationTargetNotMembershipException extends StackraException
+final class RefundProrationTargetNotMembershipException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

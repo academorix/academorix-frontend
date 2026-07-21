@@ -210,10 +210,10 @@ line per exception:
 
 Two providers registered when Ignition is installed:
 
-- **`StackraSolutionsProvider`** — deterministic hints for our own exception
+- **`SolutionsProvider`** — deterministic hints for our own exception
   types (`ConfigurationException` → "check Doppler", `IntegrationException` →
   "check upstream status page", ...)
-- **`StackraAiSolutionsProvider`** — delegates to the first-party
+- **`AiSolutionsProvider`** — delegates to the first-party
   [Laravel AI SDK](https://laravel.com/docs/13.x/ai-sdk). Provider, model, and
   API keys come from `config/ai.php` — the SDK's own config — so switching from
   OpenAI to Anthropic to Ollama is a single-line change.
@@ -230,7 +230,7 @@ Then set your provider in `config/ai.php` per the SDK docs.
 
 | Namespace                                                        | Purpose                                                                     |
 | ---------------------------------------------------------------- | --------------------------------------------------------------------------- |
-| `Stackra\Exceptions\StackraException`                      | Base class. Provides `::make()`, translation, masking hook, fluent setters. |
+| `Stackra\Exceptions\Exception`                      | Base class. Provides `::make()`, translation, masking hook, fluent setters. |
 | `Stackra\Exceptions\Enums\ErrorSeverity`                      | PSR-3 aligned severity.                                                     |
 | `Stackra\Exceptions\Enums\ErrorCategory`                      | Coarse bucket for dashboards.                                               |
 | `Stackra\Exceptions\Support\ExceptionsBootstrap::configure()` | Single-call wiring for `bootstrap/app.php`.                                 |
@@ -240,8 +240,8 @@ Then set your provider in `config/ai.php` per the SDK docs.
 | `Stackra\Exceptions\Middleware\CaptureExceptionContext`       | Snapshots request metadata for reporters.                                   |
 | `Stackra\Exceptions\Reporting\LogReporter`                    | Structured, masked, PSR-3-aware log writer.                                 |
 | `Stackra\Exceptions\Reporting\SentryContextEnricher`          | Sentry scope enrichment.                                                    |
-| `Stackra\Exceptions\Ignition\StackraSolutionsProvider`     | Deterministic Ignition solutions.                                           |
-| `Stackra\Exceptions\Ignition\StackraAiSolutionsProvider`   | AI-powered Ignition solutions via `laravel/ai`.                             |
+| `Stackra\Exceptions\Ignition\SolutionsProvider`     | Deterministic Ignition solutions.                                           |
+| `Stackra\Exceptions\Ignition\AiSolutionsProvider`   | AI-powered Ignition solutions via `laravel/ai`.                             |
 
 ## Testing
 

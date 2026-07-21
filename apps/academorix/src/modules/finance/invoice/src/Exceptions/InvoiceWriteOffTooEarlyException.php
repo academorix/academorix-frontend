@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Academorix\Invoice\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Cannot write off before the configured minimum days past due (default 180).
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class InvoiceWriteOffTooEarlyException extends StackraException
+final class InvoiceWriteOffTooEarlyException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

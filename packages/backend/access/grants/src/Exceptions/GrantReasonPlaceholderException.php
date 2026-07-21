@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Grants\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * reason matches a placeholder pattern (`test`, `temp`, `TODO`, `because`, single word without whitespace).
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class GrantReasonPlaceholderException extends StackraException
+final class GrantReasonPlaceholderException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

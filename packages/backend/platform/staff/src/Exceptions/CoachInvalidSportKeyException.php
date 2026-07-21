@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Staff\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * sport_key not in the sports registry (soft-warn in Wave 2b, hard-fail in Wave 3).
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class CoachInvalidSportKeyException extends StackraException
+final class CoachInvalidSportKeyException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

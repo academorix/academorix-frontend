@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Monitoring\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Manual /test endpoint invoked too frequently.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class MonitoringProviderTestRateLimitedException extends StackraException
+final class MonitoringProviderTestRateLimitedException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\NotificationsPush\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Provider rejected the token on dry-run at registration.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class NotificationsPushTokenValidationFailedException extends StackraException
+final class NotificationsPushTokenValidationFailedException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

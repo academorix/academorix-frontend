@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Academorix\Coupon\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Advanced discount types (free_period / first_month_free / bogo) require Medium+ tier (`coupon_advanced_discount_types`).
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class CouponAdvancedDiscountNotEntitledException extends StackraException
+final class CouponAdvancedDiscountNotEntitledException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

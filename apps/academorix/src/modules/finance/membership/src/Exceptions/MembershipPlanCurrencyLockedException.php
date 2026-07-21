@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Academorix\Membership\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Cannot change currency while active memberships reference the plan.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class MembershipPlanCurrencyLockedException extends StackraException
+final class MembershipPlanCurrencyLockedException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

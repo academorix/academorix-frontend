@@ -129,7 +129,7 @@ per-folder contract lives in `.kiro/steering/folder-conventions.md`.
 | `Dispatchers/`            | Runtime dispatcher              | ✅                | Iterate a `Registry/`, fire the referenced primitive.                                          |
 | `Enums/`                  | Backed enum                     | ✅                | Composes `Stackra\Enum\Enum`.                                                               |
 | `Events/` / `Listeners/`  | Domain event + listener         | ✅                | `#[AsEvent]` / `#[OnEvent]` attributed.                                                        |
-| `Exceptions/`             | Package exception               | ✅                | Extends `StackraException`.                                                                 |
+| `Exceptions/`             | Package exception               | ✅                | Extends `Exception`.                                                                 |
 | `Jobs/`                   | Queued job                      | ✅                | Tenant-aware.                                                                                  |
 | `Middleware/`             | HTTP middleware                 | ✅                | Flat namespace — no `Http/` nesting. `#[AsMiddleware]`-attributed.                             |
 | `Models/`                 | Eloquent model                  | ✅                | Attribute-first — `#[Table]`, `#[Fillable]`, `#[UseFactory]`, `#[UsePolicy]`, `#[ObservedBy]`. |

@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\NotificationsPush\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Provider reports device token is no longer valid.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class NotificationsPushInvalidTokenException extends StackraException
+final class NotificationsPushInvalidTokenException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Academorix\Payment\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Tenant does not hold `payment_dispute_management` entitlement.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class PaymentDisputeManagementNotEntitledException extends StackraException
+final class PaymentDisputeManagementNotEntitledException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

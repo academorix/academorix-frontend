@@ -36,7 +36,7 @@
  *   exceptions::http.conflict_optimistic_lock     ({@see optimisticLock()})
  *   exceptions::http.conflict_invalid_transition  ({@see invalidTransition()})
  *
- * @see \Stackra\Exceptions\StackraException  Base class.
+ * @see \Stackra\Exceptions\Exception  Base class.
  * @see \Stackra\Exceptions\Concerns\TranslatesMessages  Trait powering the translation setters.
  */
 
@@ -44,12 +44,12 @@ declare(strict_types=1);
 
 namespace Stackra\Exceptions\Http;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 use Stackra\Exceptions\Enums\ErrorCategory;
 use Stackra\Exceptions\Enums\ErrorSeverity;
 use Symfony\Component\HttpFoundation\Response;
 
-class ConflictException extends StackraException
+class ConflictException extends Exception
 {
     /**
      * Stable machine-readable code exposed on the wire as

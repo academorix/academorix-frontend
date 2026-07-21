@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Academorix\Coupon\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * 10 attempts/IP/hour on preview/validate.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class CouponRateLimitException extends StackraException
+final class CouponRateLimitException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

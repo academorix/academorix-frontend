@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Stackra\Transfer\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Raised when a mapping-profile lookup returns nothing.
@@ -13,7 +13,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class TransferMappingProfileNotFoundException extends StackraException
+final class TransferMappingProfileNotFoundException extends Exception
 {
     public const CODE = 'TRANSFER_MAPPING_PROFILE_NOT_FOUND';
 

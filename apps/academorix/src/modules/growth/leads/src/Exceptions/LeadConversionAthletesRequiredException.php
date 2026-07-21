@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Academorix\Leads\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * LeadConversionService refuses when athlete_names is empty AND the caller did not supply an existing athletes payload.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class LeadConversionAthletesRequiredException extends StackraException
+final class LeadConversionAthletesRequiredException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

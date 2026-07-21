@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Monitoring\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * notify_provider_configs must be a non-empty array of active MonitoringProviderConfig ULIDs in the same tenant.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class MonitoringInvalidNotifyProvidersException extends StackraException
+final class MonitoringInvalidNotifyProvidersException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

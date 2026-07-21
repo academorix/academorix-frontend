@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Academorix\Attribution\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Attempted mutation of first_touch_* fields.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class AttributionFirstTouchImmutableException extends StackraException
+final class AttributionFirstTouchImmutableException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

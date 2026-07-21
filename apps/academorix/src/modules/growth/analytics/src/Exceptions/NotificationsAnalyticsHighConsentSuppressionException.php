@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Academorix\Analytics\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Funnel/experiment report query would exclude >20% of the sample due to consent withdrawal.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class NotificationsAnalyticsHighConsentSuppressionException extends StackraException
+final class NotificationsAnalyticsHighConsentSuppressionException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Approvals\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Attempted to approve/reject a specific requirement not in status='pending' (already satisfied, failed, or still blocked by a sort_order predecessor).
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class RequirementNotPendingException extends StackraException
+final class RequirementNotPendingException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

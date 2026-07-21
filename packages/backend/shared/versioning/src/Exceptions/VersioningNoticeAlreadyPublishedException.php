@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Versioning\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Attempted publish on a notice already in state=published.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class VersioningNoticeAlreadyPublishedException extends StackraException
+final class VersioningNoticeAlreadyPublishedException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

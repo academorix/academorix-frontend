@@ -5,7 +5,7 @@
  *
  * @description
  * Converts framework / Symfony / SPL throwables into the equivalent
- * {@see \Stackra\Exceptions\StackraException} so downstream
+ * {@see \Stackra\Exceptions\Exception} so downstream
  * renderers, reporters, and dashboards only ever have to reason
  * about one hierarchy.
  *
@@ -21,7 +21,7 @@
  *
  * ## Precedence
  *
- *   1. `StackraException` instances pass through unchanged.
+ *   1. `Exception` instances pass through unchanged.
  *   2. Explicit `class-string => factory` entries registered on the
  *      instance win in the order they were declared (custom wins
  *      over default because `register()` prepends).
@@ -48,7 +48,7 @@ declare(strict_types=1);
 
 namespace Stackra\Exceptions\Support;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 use Stackra\Exceptions\Auth\AuthenticationException as StackraAuthenticationException;
 use Stackra\Exceptions\Auth\ForbiddenException;
 use Stackra\Exceptions\Http\ConflictException;
@@ -81,7 +81,7 @@ use Throwable;
 
 final class ExceptionMapper
 {
-    /** @var array<class-string<Throwable>, Closure(Throwable): StackraException> */
+    /** @var array<class-string<Throwable>, Closure(Throwable): Exception> */
     private array $mappings = [];
 
     public function __construct()
@@ -91,12 +91,12 @@ final class ExceptionMapper
 
     /**
      * Convert any throwable into the corresponding
-     * {@see StackraException}. Deterministic — same input always
+     * {@see Exception}. Deterministic — same input always
      * yields the same output class.
      */
-    public function map(Throwable $e): StackraException
+    public function map(Throwable $e): Exception
     {
-        if ($e instanceof StackraException) {
+        if ($e instanceof Exception) {
             return $e;
         }
 
@@ -121,7 +121,7 @@ final class ExceptionMapper
      * defaults.
      *
      * @param class-string<Throwable> $class
-     * @param Closure(Throwable): StackraException $factory
+     * @param Closure(Throwable): Exception $factory
      */
     public function register(string $class, Closure $factory): void
     {
@@ -143,13 +143,13 @@ final class ExceptionMapper
         $this->mappings = [
             // ---- Laravel-specific ----
 
-            LaravelValidationException::class => static function (Throwable $e): StackraException {
+            LaravelValidationException::class => static function (Throwable $e): Exception {
                 /** @var LaravelValidationException $e */
                 return ValidationException::withErrors($e->errors(), $e->getMessage())
                     ->withHttpStatus($e->status);
             },
 
-            AuthenticationException::class => static function (Throwable $e): StackraException {
+            AuthenticationException::class => static function (Throwable $e): Exception {
                 /** @var AuthenticationException $e */
                 $guards = method_exists($e, 'guards') ? $e->guards() : [];
 
@@ -157,11 +157,11 @@ final class ExceptionMapper
                     ->withContextValue('guards', $guards);
             },
 
-            AuthorizationException::class => static fn (Throwable $e): StackraException => ForbiddenException::make(
+            AuthorizationException::class => static fn (Throwable $e): Exception => ForbiddenException::make(
                 $e->getMessage() !== '' ? $e->getMessage() : 'This action is unauthorized.'
             ),
 
-            ModelNotFoundException::class => static function (Throwable $e): StackraException {
+            ModelNotFoundException::class => static function (Throwable $e): Exception {
                 /** @var ModelNotFoundException<\Illuminate\Database\Eloquent\Model> $e */
                 $model = method_exists($e, 'getModel') ? $e->getModel() : null;
                 $ids = method_exists($e, 'getIds') ? $e->getIds() : [];
@@ -176,11 +176,11 @@ final class ExceptionMapper
                 );
             },
 
-            RecordsNotFoundException::class => static fn (Throwable $e): StackraException => NotFoundException::make(
+            RecordsNotFoundException::class => static fn (Throwable $e): Exception => NotFoundException::make(
                 $e->getMessage() !== '' ? $e->getMessage() : 'No records found.'
             ),
 
-            ThrottleRequestsException::class => static function (Throwable $e): StackraException {
+            ThrottleRequestsException::class => static function (Throwable $e): Exception {
                 /** @var ThrottleRequestsException $e */
                 $retryAfter = (int) ($e->getHeaders()['Retry-After'] ?? 0);
 
@@ -189,11 +189,11 @@ final class ExceptionMapper
 
             // ---- Symfony HTTP layer ----
 
-            NotFoundHttpException::class => static fn (Throwable $e): StackraException => NotFoundException::make(
+            NotFoundHttpException::class => static fn (Throwable $e): Exception => NotFoundException::make(
                 $e->getMessage() !== '' ? $e->getMessage() : 'Not found.'
             ),
 
-            MethodNotAllowedHttpException::class => static function (Throwable $e): StackraException {
+            MethodNotAllowedHttpException::class => static function (Throwable $e): Exception {
                 /** @var MethodNotAllowedHttpException $e */
                 $allow = (string) ($e->getHeaders()['Allow'] ?? '');
                 $allowed = $allow === '' ? [] : array_values(array_map('trim', explode(',', $allow)));
@@ -201,28 +201,28 @@ final class ExceptionMapper
                 return MethodNotAllowedException::with($allowed);
             },
 
-            UnauthorizedHttpException::class => static fn (Throwable $e): StackraException => StackraAuthenticationException::make(
+            UnauthorizedHttpException::class => static fn (Throwable $e): Exception => StackraAuthenticationException::make(
                 $e->getMessage() !== '' ? $e->getMessage() : 'Unauthorized.'
             ),
 
-            AccessDeniedHttpException::class => static fn (Throwable $e): StackraException => ForbiddenException::make(
+            AccessDeniedHttpException::class => static fn (Throwable $e): Exception => ForbiddenException::make(
                 $e->getMessage() !== '' ? $e->getMessage() : 'Forbidden.'
             ),
 
-            ConflictHttpException::class => static fn (Throwable $e): StackraException => ConflictException::make(
+            ConflictHttpException::class => static fn (Throwable $e): Exception => ConflictException::make(
                 $e->getMessage() !== '' ? $e->getMessage() : 'Conflict.'
             ),
 
-            UnsupportedMediaTypeHttpException::class => static fn (Throwable $e): StackraException => UnsupportedMediaTypeException::accepted([]),
+            UnsupportedMediaTypeHttpException::class => static fn (Throwable $e): Exception => UnsupportedMediaTypeException::accepted([]),
 
-            TooManyRequestsHttpException::class => static function (Throwable $e): StackraException {
+            TooManyRequestsHttpException::class => static function (Throwable $e): Exception {
                 /** @var TooManyRequestsHttpException $e */
                 $retryAfter = (int) ($e->getHeaders()['Retry-After'] ?? 0);
 
                 return TooManyRequestsException::exceeded($retryAfter);
             },
 
-            ServiceUnavailableHttpException::class => static function (Throwable $e): StackraException {
+            ServiceUnavailableHttpException::class => static function (Throwable $e): Exception {
                 /** @var ServiceUnavailableHttpException $e */
                 $retryAfter = (int) ($e->getHeaders()['Retry-After'] ?? 0);
 
@@ -245,7 +245,7 @@ final class ExceptionMapper
      * by class. Uses the status code to pick the closest
      * Stackra equivalent.
      */
-    private function fromHttpException(HttpExceptionInterface $e): StackraException
+    private function fromHttpException(HttpExceptionInterface $e): Exception
     {
         $status = $e->getStatusCode();
         $message = $e->getMessage() !== '' ? $e->getMessage() : "HTTP {$status}";

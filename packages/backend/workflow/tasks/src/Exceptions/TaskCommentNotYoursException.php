@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Tasks\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Only the author can edit or delete their own comment.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class TaskCommentNotYoursException extends StackraException
+final class TaskCommentNotYoursException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

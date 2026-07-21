@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Rbac\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Attempted to hard-delete a permission still attached to at least one role or principal.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class PermissionInUseException extends StackraException
+final class PermissionInUseException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

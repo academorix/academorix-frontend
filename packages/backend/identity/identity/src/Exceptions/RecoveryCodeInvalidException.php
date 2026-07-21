@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Identity\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * valid_recovery_code rule failed.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class RecoveryCodeInvalidException extends StackraException
+final class RecoveryCodeInvalidException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

@@ -26,19 +26,19 @@
  *
  * @see EntityNotFoundException  Preferred when a specific Eloquent
  *                               model + id is what's missing.
- * @see \Stackra\Exceptions\StackraException  Base class.
+ * @see \Stackra\Exceptions\Exception  Base class.
  */
 
 declare(strict_types=1);
 
 namespace Stackra\Exceptions\Http;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 use Stackra\Exceptions\Enums\ErrorCategory;
 use Stackra\Exceptions\Enums\ErrorSeverity;
 use Symfony\Component\HttpFoundation\Response;
 
-class NotFoundException extends StackraException
+class NotFoundException extends Exception
 {
     /**
      * Stable machine-readable code exposed as `error.code` on the

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Stackra\Newsletter\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Raised when a caller attempts to confirm a subscription that has
@@ -14,7 +14,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class SubscriberAlreadyConfirmedException extends StackraException
+final class SubscriberAlreadyConfirmedException extends Exception
 {
     public const CODE = 'newsletter.already_confirmed';
 

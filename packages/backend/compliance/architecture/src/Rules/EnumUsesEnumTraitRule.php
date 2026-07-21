@@ -1,7 +1,7 @@
 <?php
 
 /**
- * @file packages/architecture/src/Rules/EnumUsesStackraEnumTraitRule.php
+ * @file packages/architecture/src/Rules/EnumUsesEnumTraitRule.php
  *
  * @description
  * Source rule: every PHP enum in the monorepo must `use Enum;`
@@ -57,7 +57,7 @@ use Stackra\Architecture\Violations\Violation;
  *
  * @final
  */
-final class EnumUsesStackraEnumTraitRule extends AbstractRule
+final class EnumUsesEnumTraitRule extends AbstractRule
 {
     private const string ENUM_TRAIT_FQCN = 'Stackra\\Enum\\Enum';
 

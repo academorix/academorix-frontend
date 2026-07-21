@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Academorix\Payment\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Attempted to deactivate a payment method currently referenced by an in-flight PaymentIntent.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class PaymentMethodInUseException extends StackraException
+final class PaymentMethodInUseException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

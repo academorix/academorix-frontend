@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Mfa\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Round-2 confirm: the submitted TOTP code did not match the ephemeral preview secret.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class MfaEnrolmentConfirmationInvalidException extends StackraException
+final class MfaEnrolmentConfirmationInvalidException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Stackra\Audit\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Raised when the tamper-evident chain verifier detects a mismatch
@@ -21,7 +21,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class AuditChainBrokenException extends StackraException
+final class AuditChainBrokenException extends Exception
 {
     public const CODE = 'audit.chain_broken';
 

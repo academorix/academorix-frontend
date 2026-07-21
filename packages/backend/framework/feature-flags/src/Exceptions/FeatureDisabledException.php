@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Stackra\FeatureFlags\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 use Stackra\FeatureFlags\Enums\ResolutionSource;
 use Stackra\FeatureFlags\Resolver\FeatureResolution;
 
@@ -22,7 +22,7 @@ use Stackra\FeatureFlags\Resolver\FeatureResolution;
  *
  * @since    0.1.0
  */
-final class FeatureDisabledException extends StackraException
+final class FeatureDisabledException extends Exception
 {
     /**
      * Default machine-readable error code — used for `kill_switch`, `rollout`, `default` sources.

@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Academorix\Transaction\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * reversal_reason set but source_transaction_id missing.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class TransactionReversalReasonOrphanException extends StackraException
+final class TransactionReversalReasonOrphanException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

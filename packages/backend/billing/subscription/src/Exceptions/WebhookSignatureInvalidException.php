@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Stackra\Subscription\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Raised when a Cashier webhook signature fails verification. HTTP
@@ -14,7 +14,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class WebhookSignatureInvalidException extends StackraException
+final class WebhookSignatureInvalidException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

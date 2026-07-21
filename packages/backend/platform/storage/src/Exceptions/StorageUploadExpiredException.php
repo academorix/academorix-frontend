@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Storage\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * ChunkedUpload past its expires_at; the resource is gone.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class StorageUploadExpiredException extends StackraException
+final class StorageUploadExpiredException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

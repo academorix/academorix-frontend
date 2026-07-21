@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Stackra\Geography\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Raised (or attached as context) when both MaxMind AND ip-api.com
@@ -16,7 +16,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class GeographyGeolocateUnresolvableException extends StackraException
+final class GeographyGeolocateUnresolvableException extends Exception
 {
     public const CODE = 'GEOGRAPHY_GEOLOCATE_UNRESOLVABLE';
 

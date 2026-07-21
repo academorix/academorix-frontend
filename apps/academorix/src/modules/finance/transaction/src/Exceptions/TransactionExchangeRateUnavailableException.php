@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Academorix\Transaction\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * The configured exchange-rate provider is unreachable + all fallbacks (ecb_daily) also failed.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class TransactionExchangeRateUnavailableException extends StackraException
+final class TransactionExchangeRateUnavailableException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

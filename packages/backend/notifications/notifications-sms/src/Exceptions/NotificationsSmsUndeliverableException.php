@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\NotificationsSms\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Carrier reported permanent failure.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class NotificationsSmsUndeliverableException extends StackraException
+final class NotificationsSmsUndeliverableException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

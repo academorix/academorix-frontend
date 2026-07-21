@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Stackra\Tenancy\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Raised when a caller attempts to register a tenant with a reserved
@@ -19,7 +19,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class SlugReservedException extends StackraException
+final class SlugReservedException extends Exception
 {
     public const CODE = 'tenancy.slug_reserved';
 

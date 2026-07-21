@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Academorix\Gateway\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Base exception for provider-side errors that don't map onto one of the
@@ -18,7 +18,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-class PaymentGatewayException extends StackraException
+class PaymentGatewayException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

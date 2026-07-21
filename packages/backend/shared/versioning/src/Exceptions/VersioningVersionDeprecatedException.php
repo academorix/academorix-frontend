@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Versioning\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Not surfaced as an error — request succeeds.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class VersioningVersionDeprecatedException extends StackraException
+final class VersioningVersionDeprecatedException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

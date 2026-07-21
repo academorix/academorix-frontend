@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Academorix\Analytics\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * event_name failed the pattern validator (snake_case with optional colon-scoped subresource).
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class NotificationsAnalyticsInvalidEventNameException extends StackraException
+final class NotificationsAnalyticsInvalidEventNameException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Auth\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * DELETE /auth/sessions/{session} refuses to revoke the session that IS the current request's Sanctum PAT.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class SessionRevokeCurrentRefusedException extends StackraException
+final class SessionRevokeCurrentRefusedException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

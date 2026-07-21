@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Auth\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * No active signing key found for the requested Application.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class JwtSigningKeyUnavailableException extends StackraException
+final class JwtSigningKeyUnavailableException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

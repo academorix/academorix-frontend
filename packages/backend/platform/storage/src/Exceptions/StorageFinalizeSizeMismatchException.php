@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Storage\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Reconstructed byte count != declared total_size_bytes on finalize.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class StorageFinalizeSizeMismatchException extends StackraException
+final class StorageFinalizeSizeMismatchException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Academorix\Event\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * The `X-Event-Id` header points at an Event in a different tenant.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class EventCrossTenantException extends StackraException
+final class EventCrossTenantException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

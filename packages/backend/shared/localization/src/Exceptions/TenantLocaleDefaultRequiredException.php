@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Stackra\Localization\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Raised when a caller tries to disable / delete the tenant's
@@ -14,7 +14,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class TenantLocaleDefaultRequiredException extends StackraException
+final class TenantLocaleDefaultRequiredException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

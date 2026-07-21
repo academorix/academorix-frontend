@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Stackra\Storage\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Raised when a File referenced by id or signature does not exist.
@@ -13,7 +13,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class FileNotFoundException extends StackraException
+final class FileNotFoundException extends Exception
 {
     public const CODE = 'storage.not_found';
 

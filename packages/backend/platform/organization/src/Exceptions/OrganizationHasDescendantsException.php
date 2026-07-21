@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Organization\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Attempted to delete an Organization while at least one descendant Organization still exists.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class OrganizationHasDescendantsException extends StackraException
+final class OrganizationHasDescendantsException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

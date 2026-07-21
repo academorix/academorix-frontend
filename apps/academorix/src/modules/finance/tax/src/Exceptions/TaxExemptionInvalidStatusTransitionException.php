@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Academorix\Tax\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * verification_status transition is forbidden.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class TaxExemptionInvalidStatusTransitionException extends StackraException
+final class TaxExemptionInvalidStatusTransitionException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

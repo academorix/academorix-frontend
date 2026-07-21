@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Academorix\Tax\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * state_code is not a valid ISO 3166-2 subdivision for the given country_code.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class TaxJurisdictionInvalidStateException extends StackraException
+final class TaxJurisdictionInvalidStateException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

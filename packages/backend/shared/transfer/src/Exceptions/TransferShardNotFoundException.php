@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Stackra\Transfer\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Raised when a lookup expects an xfer_shards row but none is visible.
@@ -13,7 +13,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class TransferShardNotFoundException extends StackraException
+final class TransferShardNotFoundException extends Exception
 {
     public const CODE = 'TRANSFER_SHARD_NOT_FOUND';
 

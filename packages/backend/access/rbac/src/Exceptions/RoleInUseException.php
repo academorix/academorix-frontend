@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Rbac\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Attempted to hard-delete a role that still has active assignments.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class RoleInUseException extends StackraException
+final class RoleInUseException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

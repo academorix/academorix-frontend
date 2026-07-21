@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Invitations\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * The requested channel (sms/slack) is not in the tenant's entitlement grant.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class InvitationsChannelNotEnabledException extends StackraException
+final class InvitationsChannelNotEnabledException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

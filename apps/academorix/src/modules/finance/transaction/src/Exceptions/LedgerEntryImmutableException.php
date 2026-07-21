@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Academorix\Transaction\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Attempted to UPDATE or DELETE a ledger entry.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class LedgerEntryImmutableException extends StackraException
+final class LedgerEntryImmutableException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Stackra\Exceptions\Reporters;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 use Stackra\Exceptions\Contracts\ExceptionReporterInterface;
 use Stackra\Exceptions\Enums\ErrorCategory;
 use Stackra\Exceptions\Support\ExceptionMapper;
@@ -77,7 +77,7 @@ final class LogReporter implements ExceptionReporterInterface
         // Framework `dontReport` handles the coarse skip list; we
         // still respect per-exception opt-outs where a subclass
         // returns `false` from its `report()` hook.
-        if ($throwable instanceof StackraException) {
+        if ($throwable instanceof Exception) {
             return $throwable->report() !== false;
         }
 
@@ -111,7 +111,7 @@ final class LogReporter implements ExceptionReporterInterface
      * back to the manager's default channel when the configured
      * channel isn't declared in the host app.
      */
-    private function resolveLogger(StackraException $e): LoggerInterface
+    private function resolveLogger(Exception $e): LoggerInterface
     {
         /** @var LogManager $manager */
         $manager = $this->container->make('log');
@@ -135,7 +135,7 @@ final class LogReporter implements ExceptionReporterInterface
      *
      * @return array<string, mixed>
      */
-    private function buildContext(StackraException $mapped, Throwable $original): array
+    private function buildContext(Exception $mapped, Throwable $original): array
     {
         return [
             'error_code' => $mapped->errorCode(),

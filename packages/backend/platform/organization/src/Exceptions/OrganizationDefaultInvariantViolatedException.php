@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Organization\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * The tenant has zero or 2+ is_default=true rows.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class OrganizationDefaultInvariantViolatedException extends StackraException
+final class OrganizationDefaultInvariantViolatedException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

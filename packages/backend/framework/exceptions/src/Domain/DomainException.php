@@ -16,7 +16,7 @@
  * analysers treat as "programmer bug" and encourage silencing. Our
  * domain exceptions are recoverable, expected control flow — the
  * subclass tree here is intentionally rooted at
- * {@see \Stackra\Exceptions\StackraException} (a
+ * {@see \Stackra\Exceptions\Exception} (a
  * `RuntimeException`) so that signal isn't confused.
  *
  * ## Translation key
@@ -39,12 +39,12 @@ declare(strict_types=1);
 
 namespace Stackra\Exceptions\Domain;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 use Stackra\Exceptions\Enums\ErrorCategory;
 use Stackra\Exceptions\Enums\ErrorSeverity;
 use Symfony\Component\HttpFoundation\Response;
 
-class DomainException extends StackraException
+class DomainException extends Exception
 {
     /**
      * Machine-readable code — the generic fallback for domain rule

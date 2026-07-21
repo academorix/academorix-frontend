@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Tenancy\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Attempt to read or write across tenant boundaries.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class TenancyCrossTenantAccessException extends StackraException
+final class TenancyCrossTenantAccessException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

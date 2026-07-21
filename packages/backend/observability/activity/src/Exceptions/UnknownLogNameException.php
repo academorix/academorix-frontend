@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Activity\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Referenced log_name is not in data/log-names-catalog.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class UnknownLogNameException extends StackraException
+final class UnknownLogNameException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

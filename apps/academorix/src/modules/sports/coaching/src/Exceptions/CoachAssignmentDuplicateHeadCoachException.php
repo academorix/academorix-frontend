@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Academorix\Coaching\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Another coach is already the head_coach for this Session / Team / Event.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class CoachAssignmentDuplicateHeadCoachException extends StackraException
+final class CoachAssignmentDuplicateHeadCoachException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

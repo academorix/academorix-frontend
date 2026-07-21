@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Academorix\Referrals\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Raised when the domain rule `REFERRAL_DOUBLE_SIDED_NOT_ENTITLED` fires.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class ReferralDoubleSidedNotEntitledException extends StackraException
+final class ReferralDoubleSidedNotEntitledException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

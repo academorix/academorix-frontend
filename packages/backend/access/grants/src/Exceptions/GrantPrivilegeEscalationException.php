@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Grants\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Grantor tried to grant permissions they do not hold.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class GrantPrivilegeEscalationException extends StackraException
+final class GrantPrivilegeEscalationException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Stackra\Search\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Raised when a tenant exceeds its `search.max_indexes` entitlement.
@@ -13,7 +13,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class SearchIndexLimitExceededException extends StackraException
+final class SearchIndexLimitExceededException extends Exception
 {
     public const CODE = 'SEARCH_INDEX_LIMIT_EXCEEDED';
 

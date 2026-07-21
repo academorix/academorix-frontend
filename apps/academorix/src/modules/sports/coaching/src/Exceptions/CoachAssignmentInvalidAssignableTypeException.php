@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Academorix\Coaching\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * assignable_type must be one of: Session / Team / Event.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class CoachAssignmentInvalidAssignableTypeException extends StackraException
+final class CoachAssignmentInvalidAssignableTypeException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Academorix\Coaching\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Raised when the domain rule `COACHING_PROFILE_TENANT_ID_IMMUTABLE` fires.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class CoachingProfileTenantIdImmutableException extends StackraException
+final class CoachingProfileTenantIdImmutableException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Stackra\Search\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Raised when a search index is in reindexing / disabled / error state.
@@ -13,7 +13,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class SearchIndexNotActiveException extends StackraException
+final class SearchIndexNotActiveException extends Exception
 {
     public const CODE = 'SEARCH_INDEX_NOT_ACTIVE';
 

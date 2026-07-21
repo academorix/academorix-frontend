@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Grants\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Raised when the domain rule `GRANT_NOT_FOUND` fires.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class GrantNotFoundException extends StackraException
+final class GrantNotFoundException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

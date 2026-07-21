@@ -2591,10 +2591,10 @@ declare(strict_types=1);
 
 namespace {ns};
 
-use Stackra\\Exceptions\\StackraException;
+use Stackra\\Exceptions\\Exception;
 
 {doc}
-final class {class_name} extends StackraException
+final class {class_name} extends Exception
 {{
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Rbac\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * DELETE /rbac/principals/{principal}/roles/{role} refused — no active assignment matches.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class RoleAssignmentNotFoundException extends StackraException
+final class RoleAssignmentNotFoundException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

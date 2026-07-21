@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Stackra\Notifications\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Raised when the dispatch call did not provide a recipient and one
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class NotificationRecipientMissingException extends StackraException
+final class NotificationRecipientMissingException extends Exception
 {
     public const CODE = 'NOTIFICATIONS_RECIPIENT_MISSING';
 

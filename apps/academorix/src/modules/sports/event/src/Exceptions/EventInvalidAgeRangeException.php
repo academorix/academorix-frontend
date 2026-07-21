@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Academorix\Event\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * min_age > max_age OR min_age/max_age outside [3, 100].
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class EventInvalidAgeRangeException extends StackraException
+final class EventInvalidAgeRangeException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

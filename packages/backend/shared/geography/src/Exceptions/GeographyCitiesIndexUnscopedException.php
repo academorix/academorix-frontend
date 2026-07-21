@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Stackra\Geography\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Raised when the cities index is called without a `country_id` or
@@ -14,7 +14,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class GeographyCitiesIndexUnscopedException extends StackraException
+final class GeographyCitiesIndexUnscopedException extends Exception
 {
     public const CODE = 'GEOGRAPHY_CITIES_INDEX_UNSCOPED';
 

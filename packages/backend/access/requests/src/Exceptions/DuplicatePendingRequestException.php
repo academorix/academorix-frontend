@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Requests\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * The caller already has a pending request for the same (resource_type, resource_id, permissions_wanted) tuple.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class DuplicatePendingRequestException extends StackraException
+final class DuplicatePendingRequestException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

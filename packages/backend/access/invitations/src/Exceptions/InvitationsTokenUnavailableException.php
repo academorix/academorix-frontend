@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Invitations\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * SendInvitationJob re-hydrated a payload without the raw token — indicates a queue corruption or a leftover job from a rollback.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class InvitationsTokenUnavailableException extends StackraException
+final class InvitationsTokenUnavailableException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

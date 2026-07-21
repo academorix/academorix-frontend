@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Academorix\Attendance\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * grace_period_minutes must be strictly less than late_after_minutes.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class AttendancePolicyGraceExceedsLateException extends StackraException
+final class AttendancePolicyGraceExceedsLateException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

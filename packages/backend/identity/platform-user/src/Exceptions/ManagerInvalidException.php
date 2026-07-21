@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\PlatformUser\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * The proposed manager_id points at a soft-deleted or offboarded PlatformUser.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class ManagerInvalidException extends StackraException
+final class ManagerInvalidException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

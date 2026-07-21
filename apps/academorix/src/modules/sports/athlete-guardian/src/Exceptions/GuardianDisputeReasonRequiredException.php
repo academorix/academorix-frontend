@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Academorix\AthleteGuardian\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Raised when the domain rule `GUARDIAN_DISPUTE_REASON_REQUIRED` fires.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class GuardianDisputeReasonRequiredException extends StackraException
+final class GuardianDisputeReasonRequiredException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

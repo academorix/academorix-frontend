@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Stackra\Transfer\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Raised when a mapping profile references an attribute that isn't
@@ -14,7 +14,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class TransferMappingProfileInvalidException extends StackraException
+final class TransferMappingProfileInvalidException extends Exception
 {
     public const CODE = 'TRANSFER_MAPPING_PROFILE_INVALID';
 

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Stackra\Exceptions\Formatters;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 use Stackra\Exceptions\Contracts\ErrorFormatterInterface;
 use Stackra\Exceptions\Data\ErrorEnvelope;
 use Stackra\Exceptions\Data\FieldError;
@@ -121,7 +121,7 @@ final class JsonErrorFormatter implements ErrorFormatterInterface
      * message; fall back to the redacted developer message; fall
      * back to the humanised error code.
      */
-    private function title(StackraException $e): string
+    private function title(Exception $e): string
     {
         $userMessage = $e->userMessage();
         if ($userMessage !== null && $userMessage !== '') {
@@ -140,7 +140,7 @@ final class JsonErrorFormatter implements ErrorFormatterInterface
      * suppressed by the masking policy for high-severity errors in
      * production.
      */
-    private function detail(StackraException $e): ?string
+    private function detail(Exception $e): ?string
     {
         $developer = $e->getMessage();
         $user = $e->userMessage();
@@ -173,7 +173,7 @@ final class JsonErrorFormatter implements ErrorFormatterInterface
      *
      * @return list<FieldError>
      */
-    private function extractFields(StackraException $e): array
+    private function extractFields(Exception $e): array
     {
         if (! $e instanceof ValidationException) {
             return [];
@@ -194,7 +194,7 @@ final class JsonErrorFormatter implements ErrorFormatterInterface
      *
      * @return array<string, mixed>
      */
-    private function meta(StackraException $e, MaskingPolicy $policy): array
+    private function meta(Exception $e, MaskingPolicy $policy): array
     {
         $meta = [
             'severity' => $e->severity()->value,
@@ -216,7 +216,7 @@ final class JsonErrorFormatter implements ErrorFormatterInterface
      *
      * @return array<string, mixed>
      */
-    private function debug(StackraException $e): array
+    private function debug(Exception $e): array
     {
         return $this->traceCleaner->describe($e);
     }

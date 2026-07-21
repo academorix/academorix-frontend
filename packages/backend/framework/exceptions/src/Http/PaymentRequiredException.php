@@ -25,7 +25,7 @@
  *   exceptions::http.payment_required_upgrade               ({@see planUpgradeRequired()})
  *   exceptions::http.payment_required_insufficient_balance  ({@see insufficientBalance()})
  *
- * @see \Stackra\Exceptions\StackraException  Base class.
+ * @see \Stackra\Exceptions\Exception  Base class.
  * @see \Stackra\Exceptions\Auth\FeatureDisabledException  Sibling class for feature-flag denials.
  */
 
@@ -33,12 +33,12 @@ declare(strict_types=1);
 
 namespace Stackra\Exceptions\Http;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 use Stackra\Exceptions\Enums\ErrorCategory;
 use Stackra\Exceptions\Enums\ErrorSeverity;
 use Symfony\Component\HttpFoundation\Response;
 
-class PaymentRequiredException extends StackraException
+class PaymentRequiredException extends Exception
 {
     /**
      * Machine-readable code exposed on the wire — clients that

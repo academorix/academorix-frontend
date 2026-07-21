@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Academorix\Chargeback\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * This chargeback is not RDR-eligible (Visa-only, below threshold, tenant entitled, unrefunded payment).
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class ChargebackRdrNotEligibleException extends StackraException
+final class ChargebackRdrNotEligibleException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

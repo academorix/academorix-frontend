@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Stackra\Domains\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Raised when a caller attempts to delete the tenant's last primary
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class LastPrimaryDomainException extends StackraException
+final class LastPrimaryDomainException extends Exception
 {
     public const CODE = 'domains.last_primary';
 

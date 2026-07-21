@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Academorix\AthleteGuardian\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Cannot remove the sole guardian of a minor athlete.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class GuardianMinorLastGuardianException extends StackraException
+final class GuardianMinorLastGuardianException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

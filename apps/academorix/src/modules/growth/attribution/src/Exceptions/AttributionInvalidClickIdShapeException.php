@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Academorix\Attribution\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * click_id jsonb blob failed schema validation (unknown provider key, malformed provider_hint, etc.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class AttributionInvalidClickIdShapeException extends StackraException
+final class AttributionInvalidClickIdShapeException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

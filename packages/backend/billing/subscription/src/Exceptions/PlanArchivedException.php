@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Stackra\Subscription\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Raised when a caller references an archived plan — HTTP 410 gone.
@@ -13,7 +13,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class PlanArchivedException extends StackraException
+final class PlanArchivedException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

@@ -38,7 +38,7 @@
  *
  *   exceptions::http.validation
  *
- * @see \Stackra\Exceptions\StackraException  Base class.
+ * @see \Stackra\Exceptions\Exception  Base class.
  * @see UnprocessableEntityException  Sibling class for 422s that
  *      aren't field-level (business-rule semantic rejections).
  */
@@ -47,12 +47,12 @@ declare(strict_types=1);
 
 namespace Stackra\Exceptions\Http;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 use Stackra\Exceptions\Enums\ErrorCategory;
 use Stackra\Exceptions\Enums\ErrorSeverity;
 use Symfony\Component\HttpFoundation\Response;
 
-class ValidationException extends StackraException
+class ValidationException extends Exception
 {
     /**
      * Machine-readable code exposed as `error.code`. Front-end forms

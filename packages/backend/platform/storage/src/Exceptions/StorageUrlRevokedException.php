@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Storage\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Signed URL revoked (admin bulk-revoke, or file erasure).
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class StorageUrlRevokedException extends StackraException
+final class StorageUrlRevokedException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

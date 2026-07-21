@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Academorix\Refund\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Customer attempted to access a refund tied to a payment where they were not the customer, or to a refund they did not initiate.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class RefundCustomerScopeViolationException extends StackraException
+final class RefundCustomerScopeViolationException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

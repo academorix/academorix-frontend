@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\NotificationsMail\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Tenant has no postal_address configured but is trying to send marketing-priority mail.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class NotificationsMailMissingPostalAddressException extends StackraException
+final class NotificationsMailMissingPostalAddressException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

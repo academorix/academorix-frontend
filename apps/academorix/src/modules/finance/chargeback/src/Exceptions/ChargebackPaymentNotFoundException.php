@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Academorix\Chargeback\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Parent payment_id does not exist or is soft-deleted.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class ChargebackPaymentNotFoundException extends StackraException
+final class ChargebackPaymentNotFoundException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

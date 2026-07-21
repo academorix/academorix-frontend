@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Grants\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * resource_type is not in GrantableRegistry.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class GrantResourceTypeUnregisteredException extends StackraException
+final class GrantResourceTypeUnregisteredException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

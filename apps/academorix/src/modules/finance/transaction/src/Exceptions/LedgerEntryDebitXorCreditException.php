@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Academorix\Transaction\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Ledger entry has both debit_cents > 0 AND credit_cents > 0, or both zero.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class LedgerEntryDebitXorCreditException extends StackraException
+final class LedgerEntryDebitXorCreditException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

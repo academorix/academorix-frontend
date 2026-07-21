@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Academorix\Attendance\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * max_unexcused_absences_per_period must be between 1 and 100.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class AttendancePolicyMaxAbsencesInvalidException extends StackraException
+final class AttendancePolicyMaxAbsencesInvalidException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

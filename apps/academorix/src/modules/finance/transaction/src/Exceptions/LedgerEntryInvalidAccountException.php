@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Academorix\Transaction\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Ledger entry account is not one of the 14 chart-of-accounts entries.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class LedgerEntryInvalidAccountException extends StackraException
+final class LedgerEntryInvalidAccountException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

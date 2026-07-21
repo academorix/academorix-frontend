@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Academorix\Chargeback\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * amount_cents must be positive integer.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class ChargebackInvalidAmountException extends StackraException
+final class ChargebackInvalidAmountException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

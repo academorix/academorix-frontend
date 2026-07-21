@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Localization\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Attempted to enable a PlatformLanguage with is_active_on_platform=false.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class PlatformLanguageNotActiveException extends StackraException
+final class PlatformLanguageNotActiveException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

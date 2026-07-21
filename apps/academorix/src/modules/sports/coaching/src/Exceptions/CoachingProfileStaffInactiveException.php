@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Academorix\Coaching\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Cannot create CoachingProfile for a Staff that is offboarded or suspended.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class CoachingProfileStaffInactiveException extends StackraException
+final class CoachingProfileStaffInactiveException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\PlatformUser\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * A PlatformUser cannot manage themselves (unless the `allow_self` bootstrap flag is passed to `manager_belongs_to_platform`, reserved for founder-only edge cases).
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class ManagerSelfReferenceException extends StackraException
+final class ManagerSelfReferenceException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

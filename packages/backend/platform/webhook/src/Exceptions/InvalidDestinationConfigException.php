@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Stackra\Webhook\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Raised when `destination_config` is missing a required key for the
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class InvalidDestinationConfigException extends StackraException
+final class InvalidDestinationConfigException extends Exception
 {
     public const CODE = 'webhook.invalid_destination_config';
 

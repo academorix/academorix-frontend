@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Academorix\Refund\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Tenant does not permit customer-initiated refund requests.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class RefundCustomerSelfServiceNotEntitledException extends StackraException
+final class RefundCustomerSelfServiceNotEntitledException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

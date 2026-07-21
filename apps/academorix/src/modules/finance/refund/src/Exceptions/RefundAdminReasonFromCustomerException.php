@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Academorix\Refund\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Customer path submitted an admin-only reason (fraud_confirmed / admin_correction / regulator_required / accounting_correction / chargeback_prevention).
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class RefundAdminReasonFromCustomerException extends StackraException
+final class RefundAdminReasonFromCustomerException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

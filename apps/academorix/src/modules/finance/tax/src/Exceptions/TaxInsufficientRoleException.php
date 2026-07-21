@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Academorix\Tax\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Caller lacks the owner/admin/finance role required to access the tax surface.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class TaxInsufficientRoleException extends StackraException
+final class TaxInsufficientRoleException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

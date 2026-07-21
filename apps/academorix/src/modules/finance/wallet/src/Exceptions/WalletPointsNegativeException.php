@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Academorix\Wallet\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Points balance cannot go negative.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class WalletPointsNegativeException extends StackraException
+final class WalletPointsNegativeException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

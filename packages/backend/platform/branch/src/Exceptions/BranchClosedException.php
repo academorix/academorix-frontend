@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Branch\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Write attempted against a Branch with status=closed.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class BranchClosedException extends StackraException
+final class BranchClosedException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

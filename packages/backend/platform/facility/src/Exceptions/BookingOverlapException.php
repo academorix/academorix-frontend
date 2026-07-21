@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Facility\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Requested slot conflicts with an existing pending/confirmed booking.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class BookingOverlapException extends StackraException
+final class BookingOverlapException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

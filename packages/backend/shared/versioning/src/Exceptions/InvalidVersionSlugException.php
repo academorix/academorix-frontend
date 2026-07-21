@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Stackra\Versioning\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Raised when a version slug fails validation.
@@ -18,7 +18,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class InvalidVersionSlugException extends StackraException
+final class InvalidVersionSlugException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

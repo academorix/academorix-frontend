@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Academorix\Marketing\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Event captured but no active provider config declares this event_type in its enabled_event_types.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class MarketingNoEligibleProvidersException extends StackraException
+final class MarketingNoEligibleProvidersException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

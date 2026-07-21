@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Academorix\Event\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * prize_pool_cents set without event_prize_pool entitlement (Enterprise-only).
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class EventPrizePoolNotEntitledException extends StackraException
+final class EventPrizePoolNotEntitledException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

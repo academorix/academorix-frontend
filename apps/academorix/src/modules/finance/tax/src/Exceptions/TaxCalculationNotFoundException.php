@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Academorix\Tax\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Raised when the domain rule `TAX_CALCULATION_NOT_FOUND` fires.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class TaxCalculationNotFoundException extends StackraException
+final class TaxCalculationNotFoundException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

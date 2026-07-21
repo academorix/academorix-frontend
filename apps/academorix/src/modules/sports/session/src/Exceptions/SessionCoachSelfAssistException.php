@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Academorix\Session\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * head_coach_id appears in assistant_coach_ids.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class SessionCoachSelfAssistException extends StackraException
+final class SessionCoachSelfAssistException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

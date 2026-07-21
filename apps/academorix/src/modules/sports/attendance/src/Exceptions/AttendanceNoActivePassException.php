@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Academorix\Attendance\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * This session requires an active pass.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class AttendanceNoActivePassException extends StackraException
+final class AttendanceNoActivePassException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Stackra\Newsletter\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Raised when an audience expression fails validation.
@@ -13,7 +13,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class NewsletterAudienceExpressionInvalidException extends StackraException
+final class NewsletterAudienceExpressionInvalidException extends Exception
 {
     public const CODE = 'newsletter.audience_expression_invalid';
 

@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Monitoring\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Caller lacks the ops/admin/owner/support role required to access the monitoring surface.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class MonitoringInsufficientRoleException extends StackraException
+final class MonitoringInsufficientRoleException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

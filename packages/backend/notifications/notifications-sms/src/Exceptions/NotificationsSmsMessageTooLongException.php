@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\NotificationsSms\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Message would exceed max_segments (default 3, ~450 GSM chars).
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class NotificationsSmsMessageTooLongException extends StackraException
+final class NotificationsSmsMessageTooLongException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

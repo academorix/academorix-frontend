@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\User\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * CSV parse failed or a required column (email) is missing on ≥ 1 row.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class BulkInviteCsvInvalidException extends StackraException
+final class BulkInviteCsvInvalidException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

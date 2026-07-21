@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Stackra\Transfer\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Raised when the inline `/exports/stream` path would exceed the
@@ -14,7 +14,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class TransferSyncThresholdExceededException extends StackraException
+final class TransferSyncThresholdExceededException extends Exception
 {
     public const CODE = 'TRANSFER_SYNC_THRESHOLD_EXCEEDED';
 

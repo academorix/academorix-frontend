@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\PlatformUser\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * PurgeOffboardedPlatformUsersJob refused to hard-delete because RevokePlatformUserAccessJob has not completed successfully.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class AccessRevocationIncompleteException extends StackraException
+final class AccessRevocationIncompleteException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

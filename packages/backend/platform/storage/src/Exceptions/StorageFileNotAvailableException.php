@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Storage\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * File exists but virus_scan_state != 'clean'.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class StorageFileNotAvailableException extends StackraException
+final class StorageFileNotAvailableException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

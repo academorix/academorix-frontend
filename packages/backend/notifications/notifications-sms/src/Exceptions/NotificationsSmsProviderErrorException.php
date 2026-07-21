@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\NotificationsSms\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Provider returned 5xx or network error.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class NotificationsSmsProviderErrorException extends StackraException
+final class NotificationsSmsProviderErrorException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

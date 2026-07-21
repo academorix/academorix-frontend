@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Academorix\Invoice\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Tenant used a non-default series without invoice_custom_series (Medium+).
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class InvoiceCustomSeriesNotEntitledException extends StackraException
+final class InvoiceCustomSeriesNotEntitledException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

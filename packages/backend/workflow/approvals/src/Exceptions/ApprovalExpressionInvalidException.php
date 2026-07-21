@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Stackra\Approvals\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 use Stackra\Exceptions\Enums\ErrorCategory;
 use Stackra\Exceptions\Enums\ErrorSeverity;
 use Symfony\Component\ExpressionLanguage\SyntaxError;
@@ -32,7 +32,7 @@ use Throwable;
  *
  * @since    0.1.0
  */
-final class ApprovalExpressionInvalidException extends StackraException
+final class ApprovalExpressionInvalidException extends Exception
 {
     public const CODE = 'approvals.expression.invalid';
     public const TRANSLATION_KEY = 'approvals::errors.expression_invalid';

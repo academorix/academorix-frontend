@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Academorix\MarketplaceFee\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * No active fee schedule for this tenant + application at charge time.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class FeeApplicationNoActiveScheduleException extends StackraException
+final class FeeApplicationNoActiveScheduleException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

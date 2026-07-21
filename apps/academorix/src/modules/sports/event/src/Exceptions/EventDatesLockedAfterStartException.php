@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Academorix\Event\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Cannot change starts_at / ends_at post-in_progress without the `events.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class EventDatesLockedAfterStartException extends StackraException
+final class EventDatesLockedAfterStartException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

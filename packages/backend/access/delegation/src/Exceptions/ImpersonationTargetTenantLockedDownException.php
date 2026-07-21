@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Delegation\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * compliance module has an active security incident declared on the target tenant — impersonation refused until the incident is closed.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class ImpersonationTargetTenantLockedDownException extends StackraException
+final class ImpersonationTargetTenantLockedDownException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

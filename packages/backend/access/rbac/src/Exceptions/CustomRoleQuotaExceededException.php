@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Rbac\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Tenant reached the `custom_role_slot` cap.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class CustomRoleQuotaExceededException extends StackraException
+final class CustomRoleQuotaExceededException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Academorix\Match\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * POST /lineup/publish invoked when lineup_published_at IS NOT NULL.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class MatchLineupAlreadyPublishedException extends StackraException
+final class MatchLineupAlreadyPublishedException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

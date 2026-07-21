@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Foundation\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Base validation failure.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class FoundationUnprocessableEntityException extends StackraException
+final class FoundationUnprocessableEntityException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

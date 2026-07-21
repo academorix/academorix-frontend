@@ -26,7 +26,7 @@
  *
  *   exceptions::domain.invariant_violation
  *
- * @see \Stackra\Exceptions\StackraException  Base class.
+ * @see \Stackra\Exceptions\Exception  Base class.
  * @see DomainException  Preferred when the failure is a recoverable
  *                       business-rule outcome rather than a
  *                       "should never happen" state.
@@ -36,12 +36,12 @@ declare(strict_types=1);
 
 namespace Stackra\Exceptions\Domain;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 use Stackra\Exceptions\Enums\ErrorCategory;
 use Stackra\Exceptions\Enums\ErrorSeverity;
 use Symfony\Component\HttpFoundation\Response;
 
-class InvariantViolationException extends StackraException
+class InvariantViolationException extends Exception
 {
     /**
      * Machine-readable code — reporters use this literal to route

@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Academorix\AgeGroup\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Same as AGE_GROUP_BOUNDS_INVALIDATE_ATHLETES but for cutoff_date_kind / cutoff_month / cutoff_day changes.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class AgeGroupCutoffInvalidateAthletesException extends StackraException
+final class AgeGroupCutoffInvalidateAthletesException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

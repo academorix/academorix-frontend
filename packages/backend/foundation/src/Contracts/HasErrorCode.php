@@ -16,7 +16,7 @@
  *   ai.provider.quota_exceeded
  *
  * The prefix matches the package name that owns the code. See
- * {@see \Stackra\Exceptions\StackraException::$errorCode} for the
+ * {@see \Stackra\Exceptions\Exception::$errorCode} for the
  * base implementation.
  */
 

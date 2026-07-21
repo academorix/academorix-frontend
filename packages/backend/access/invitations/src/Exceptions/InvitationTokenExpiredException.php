@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Stackra\Invitations\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Raised when an invitation is presented after its `expires_at`.
@@ -13,7 +13,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class InvitationTokenExpiredException extends StackraException
+final class InvitationTokenExpiredException extends Exception
 {
     public const string CODE = 'INVITATIONS_TOKEN_EXPIRED';
 

@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Rbac\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Attempted to assign a role from Application A to a User whose `application_id` is B.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class PrincipalApplicationMismatchException extends StackraException
+final class PrincipalApplicationMismatchException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

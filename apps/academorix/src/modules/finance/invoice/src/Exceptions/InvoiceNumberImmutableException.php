@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Academorix\Invoice\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Sequential numbering is immutable per GAAP.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class InvoiceNumberImmutableException extends StackraException
+final class InvoiceNumberImmutableException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

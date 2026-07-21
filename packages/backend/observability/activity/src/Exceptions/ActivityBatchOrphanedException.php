@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Activity\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * ActivityBatchStarted fired but no ActivityBatchCompleted followed within the reconciliation window.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class ActivityBatchOrphanedException extends StackraException
+final class ActivityBatchOrphanedException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

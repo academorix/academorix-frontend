@@ -29,7 +29,7 @@ use Academorix\Gateway\Data\WebhookEnvelope;
  *    driver auto-generates a ULID otherwise). Providers dedupe on the key.
  *  - **Amounts**: minor units only (integer cents). Currency is ISO-4217.
  *  - **Errors**: drivers translate provider-specific error shapes into
- *    `Academorix\Gateway\Exceptions\*` subclasses of `StackraException`.
+ *    `Academorix\Gateway\Exceptions\*` subclasses of `Exception`.
  *  - **Webhooks**: `verifyWebhookSignature()` + `parseWebhook()` split the
  *    two responsibilities — signature verify is a security concern (must
  *    NEVER be bypassed); parse is a mapping concern (may evolve per

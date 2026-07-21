@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Region\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Attempted a retroactive tax_config edit without the `region_time_travel` entitlement OR without the `region.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class RegionTimeTravelDisabledException extends StackraException
+final class RegionTimeTravelDisabledException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

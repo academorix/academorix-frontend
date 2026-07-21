@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Grants\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * subject_type not in the registered subject-type list.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class GrantSubjectTypeUnsupportedException extends StackraException
+final class GrantSubjectTypeUnsupportedException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

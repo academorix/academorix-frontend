@@ -16,7 +16,7 @@
  *
  *   - `docs_url`         — {@see \Stackra\Exceptions\Formatters\JsonErrorFormatter}
  *                          builds `error.type` from this base.
- *   - `ai_solutions.*`   — {@see \Stackra\Exceptions\Ignition\StackraAiSolutionsProvider}
+ *   - `ai_solutions.*`   — {@see \Stackra\Exceptions\Ignition\AiSolutionsProvider}
  *                          gates AI-powered Ignition suggestions.
  *   - `locale`           — Reserved for future per-package locale
  *                          override; today the translator falls back

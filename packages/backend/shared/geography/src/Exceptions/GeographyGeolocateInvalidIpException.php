@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Stackra\Geography\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Raised when the submitted IP is not a valid IPv4 / IPv6 address.
@@ -13,7 +13,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class GeographyGeolocateInvalidIpException extends StackraException
+final class GeographyGeolocateInvalidIpException extends Exception
 {
     public const CODE = 'GEOGRAPHY_GEOLOCATE_INVALID_IP';
 

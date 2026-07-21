@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Academorix\AthleteGuardian\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Revoked is terminal — cannot un-revoke.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class GuardianRevokeIsTerminalException extends StackraException
+final class GuardianRevokeIsTerminalException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

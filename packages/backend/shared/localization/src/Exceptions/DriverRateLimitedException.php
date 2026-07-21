@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Localization\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Raised when the domain rule `DRIVER_RATE_LIMITED` fires.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class DriverRateLimitedException extends StackraException
+final class DriverRateLimitedException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

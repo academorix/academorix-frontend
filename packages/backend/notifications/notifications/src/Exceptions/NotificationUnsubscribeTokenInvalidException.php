@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Stackra\Notifications\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Raised when a signed unsubscribe token fails verification or has
@@ -17,7 +17,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class NotificationUnsubscribeTokenInvalidException extends StackraException
+final class NotificationUnsubscribeTokenInvalidException extends Exception
 {
     public const CODE = 'NOTIFICATIONS_UNSUBSCRIBE_TOKEN_INVALID';
 

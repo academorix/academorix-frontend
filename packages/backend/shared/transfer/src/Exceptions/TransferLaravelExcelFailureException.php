@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Stackra\Transfer\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Wrapping exception for maatwebsite/excel failures so upstream
@@ -14,7 +14,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class TransferLaravelExcelFailureException extends StackraException
+final class TransferLaravelExcelFailureException extends Exception
 {
     public const CODE = 'TRANSFER_LARAVEL_EXCEL_FAILURE';
 

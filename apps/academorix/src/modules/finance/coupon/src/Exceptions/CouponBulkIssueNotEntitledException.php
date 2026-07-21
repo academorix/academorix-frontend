@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Academorix\Coupon\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * POST /coupons/bulk-issue requires Medium+ tier (`coupon_bulk_issue`).
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class CouponBulkIssueNotEntitledException extends StackraException
+final class CouponBulkIssueNotEntitledException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

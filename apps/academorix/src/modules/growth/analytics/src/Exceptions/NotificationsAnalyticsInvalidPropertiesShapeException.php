@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Academorix\Analytics\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * properties exceeded max_properties_per_event (100) OR max_properties_bytes (1024).
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class NotificationsAnalyticsInvalidPropertiesShapeException extends StackraException
+final class NotificationsAnalyticsInvalidPropertiesShapeException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

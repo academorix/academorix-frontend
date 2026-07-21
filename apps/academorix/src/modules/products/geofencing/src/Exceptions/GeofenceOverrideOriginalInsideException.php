@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Academorix\Geofencing\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Cannot request override on an INSIDE check — nothing to override.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class GeofenceOverrideOriginalInsideException extends StackraException
+final class GeofenceOverrideOriginalInsideException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

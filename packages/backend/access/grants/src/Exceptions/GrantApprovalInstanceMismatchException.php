@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Grants\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * AccessRequestApprovedListener received an ApprovalExecuted event whose context_json did not shape into a valid grant payload.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class GrantApprovalInstanceMismatchException extends StackraException
+final class GrantApprovalInstanceMismatchException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

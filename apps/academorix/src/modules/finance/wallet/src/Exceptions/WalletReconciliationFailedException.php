@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Academorix\Wallet\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Upstream (Stripe balance) API failure.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class WalletReconciliationFailedException extends StackraException
+final class WalletReconciliationFailedException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

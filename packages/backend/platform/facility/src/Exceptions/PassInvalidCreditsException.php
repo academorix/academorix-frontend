@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Facility\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * total_credits < 1.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class PassInvalidCreditsException extends StackraException
+final class PassInvalidCreditsException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

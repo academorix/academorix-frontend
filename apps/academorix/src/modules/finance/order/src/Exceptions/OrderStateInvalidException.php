@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Academorix\Order\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Requested transition not allowed from current status.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class OrderStateInvalidException extends StackraException
+final class OrderStateInvalidException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

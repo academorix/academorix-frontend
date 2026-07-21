@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Stackra\Transfer\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Raised when the requested import mode is blocked by feature
@@ -14,7 +14,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class TransferModeNotAllowedException extends StackraException
+final class TransferModeNotAllowedException extends Exception
 {
     public const CODE = 'TRANSFER_MODE_NOT_ALLOWED';
 

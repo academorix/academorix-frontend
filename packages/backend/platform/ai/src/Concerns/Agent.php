@@ -7,7 +7,7 @@ declare(strict_types=1);
 namespace Stackra\Ai\Concerns;
 
 /**
- * Trait — StackraAgent.
+ * Trait — Agent.
  *
  * TODO(gen): describe the compositional intent. Common patterns:
  * BelongsTo<X> (adds an `$x_id` FK + `x()` relation), Has<X>
@@ -18,7 +18,7 @@ namespace Stackra\Ai\Concerns;
  *
  * @since    0.1.0
  */
-trait StackraAgent
+trait Agent
 {
     // TODO(gen): implement the trait's composition surface.
 }

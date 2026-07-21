@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Teams\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Archive refused because pending trials reference the team.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class TeamHasPendingTrialsException extends StackraException
+final class TeamHasPendingTrialsException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Academorix\Registry\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * A tenant custom Sport with the same slug already exists on this tenant (the tenant is trying to add a duplicate of their own custom, not colliding with platform).
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class SportKeyDuplicateException extends StackraException
+final class SportKeyDuplicateException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

@@ -1,10 +1,10 @@
 <?php
 
 /**
- * @file packages/exceptions/tests/Unit/StackraExceptionTest.php
+ * @file packages/exceptions/tests/Unit/ExceptionTest.php
  *
  * @description
- * Unit coverage for {@see \Stackra\Exceptions\StackraException},
+ * Unit coverage for {@see \Stackra\Exceptions\Exception},
  * the root of the whole exception hierarchy.
  *
  * ## Surface under test
@@ -44,7 +44,7 @@
 
 declare(strict_types=1);
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 use Stackra\Exceptions\Auth\ForbiddenException;
 use Stackra\Exceptions\Enums\ErrorCategory;
 use Stackra\Exceptions\Enums\ErrorSeverity;
@@ -62,7 +62,7 @@ afterEach(function (): void {
  * safe to re-include if Pest's runner ever picks it up twice.
  */
 if (! class_exists('StackraExceptionTestFixture', false)) {
-    class StackraExceptionTestFixture extends StackraException
+    class StackraExceptionTestFixture extends Exception
     {
         public const CODE = 'test.fixture';
 
@@ -82,7 +82,7 @@ it('::make preserves the concrete subclass type', function (): void {
     $e = ForbiddenException::make('boom');
 
     expect($e)->toBeInstanceOf(ForbiddenException::class)
-        ->and($e)->toBeInstanceOf(StackraException::class);
+        ->and($e)->toBeInstanceOf(Exception::class);
 });
 
 it('::make on a bare subclass uses the class default message when passed empty', function (): void {

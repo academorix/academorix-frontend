@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Stackra\Auth\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * JWT was found in the deny-list — revoked before natural expiry.
@@ -19,7 +19,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class JwtDeniedException extends StackraException
+final class JwtDeniedException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

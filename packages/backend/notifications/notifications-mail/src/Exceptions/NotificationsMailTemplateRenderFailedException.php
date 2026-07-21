@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\NotificationsMail\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Blade rendering of body_rendered_html threw.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class NotificationsMailTemplateRenderFailedException extends StackraException
+final class NotificationsMailTemplateRenderFailedException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

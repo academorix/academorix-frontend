@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Storage\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Signed URL was user-locked and the caller's session user doesn't match.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class StorageUrlUserLockMismatchException extends StackraException
+final class StorageUrlUserLockMismatchException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

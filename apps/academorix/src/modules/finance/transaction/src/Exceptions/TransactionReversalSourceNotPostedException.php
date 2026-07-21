@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Academorix\Transaction\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Reversal target is not in status='posted'.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class TransactionReversalSourceNotPostedException extends StackraException
+final class TransactionReversalSourceNotPostedException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

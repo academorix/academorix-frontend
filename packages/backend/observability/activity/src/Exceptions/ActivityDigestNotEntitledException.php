@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Activity\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Attempt to opt into digest email without the `activity_digest_email` entitlement (Medium+).
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class ActivityDigestNotEntitledException extends StackraException
+final class ActivityDigestNotEntitledException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Stackra\Storage\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Raised when a tenant's byte or file quota would be crossed by
@@ -14,7 +14,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class StorageQuotaExceededException extends StackraException
+final class StorageQuotaExceededException extends Exception
 {
     public const CODE = 'storage.quota_exceeded';
 

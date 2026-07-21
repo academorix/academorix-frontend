@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Academorix\Session\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Raised when the domain rule `SESSION_PUBLIC_HARD_DELETE_FORBIDDEN` fires.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class SessionPublicHardDeleteForbiddenException extends StackraException
+final class SessionPublicHardDeleteForbiddenException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

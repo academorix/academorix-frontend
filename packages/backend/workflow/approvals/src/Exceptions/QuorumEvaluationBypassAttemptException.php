@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Approvals\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * A decision landed on an already-decided instance/requirement — indicates a race that policy checks + observer both missed.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class QuorumEvaluationBypassAttemptException extends StackraException
+final class QuorumEvaluationBypassAttemptException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

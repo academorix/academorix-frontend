@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Academorix\AthleteGuardian\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * User archive refused because this user is the sole guardian for a minor athlete.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class UserHoldsMinorGuardianshipException extends StackraException
+final class UserHoldsMinorGuardianshipException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

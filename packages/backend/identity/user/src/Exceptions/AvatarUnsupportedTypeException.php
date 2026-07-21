@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\User\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Content-Type must be image/jpeg | image/png | image/webp.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class AvatarUnsupportedTypeException extends StackraException
+final class AvatarUnsupportedTypeException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

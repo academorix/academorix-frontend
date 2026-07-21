@@ -6,21 +6,21 @@ declare(strict_types=1);
 
 namespace Stackra\People\Contracts\Services;
 
-use Stackra\People\Services\StackraIdIssuer;
+use Stackra\People\Services\IdIssuer;
 use Illuminate\Container\Attributes\Bind;
 
 /**
- * Service contract for StackraIdIssuer.
+ * Service contract for IdIssuer.
  *
- * Bound to the concrete via `#[Bind(StackraIdIssuer::class)]`. Consumers
+ * Bound to the concrete via `#[Bind(IdIssuer::class)]`. Consumers
  * type-hint this interface; tests bind a fake through the container.
  *
  * @category People
  *
  * @since    0.1.0
  */
-#[Bind(StackraIdIssuer::class)]
-interface StackraIdIssuerInterface
+#[Bind(IdIssuer::class)]
+interface IdIssuerInterface
 {
     // TODO(gen): declare the domain methods this service exposes.
 }

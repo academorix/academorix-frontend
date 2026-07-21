@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Academorix\Coaching\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Cannot create an assignment against a CoachingProfile that has not been verified by an admin.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class CoachingProfileNotVerifiedException extends StackraException
+final class CoachingProfileNotVerifiedException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

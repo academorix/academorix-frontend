@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Academorix\Attribution\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Attempted to create an attribution_touchpoints row without a resolvable attributions row.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class AttributionTouchpointWithoutProfileException extends StackraException
+final class AttributionTouchpointWithoutProfileException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

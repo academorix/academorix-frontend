@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Academorix\Marketing\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Reached marketing_provider_slot cap.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class MarketingProviderQuotaExceededException extends StackraException
+final class MarketingProviderQuotaExceededException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

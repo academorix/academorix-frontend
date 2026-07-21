@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Requests\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * The `resource_id` does not resolve to a live row of `resource_type` in the caller's tenant.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class ResourceNotFoundException extends StackraException
+final class ResourceNotFoundException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

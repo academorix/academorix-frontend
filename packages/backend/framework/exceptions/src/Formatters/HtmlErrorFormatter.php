@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Stackra\Exceptions\Formatters;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 use Stackra\Exceptions\Contracts\ErrorFormatterInterface;
 use Stackra\Exceptions\Support\ExceptionMapper;
 use Illuminate\Contracts\View\Factory as ViewFactory;

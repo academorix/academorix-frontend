@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Webhook\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * X-Webhook-Timestamp older than replay_window_seconds (default 300s).
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class WebhookSignatureTimestampExpiredException extends StackraException
+final class WebhookSignatureTimestampExpiredException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Academorix\Payment\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Raised when the domain rule `PAYMENT_INVALID_PROVIDER` fires.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class PaymentInvalidProviderException extends StackraException
+final class PaymentInvalidProviderException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

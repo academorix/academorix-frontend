@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Branch\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Attempted to unset is_default=true when no other Branch under the same (tenant, org) is default.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class BranchLastDefaultException extends StackraException
+final class BranchLastDefaultException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

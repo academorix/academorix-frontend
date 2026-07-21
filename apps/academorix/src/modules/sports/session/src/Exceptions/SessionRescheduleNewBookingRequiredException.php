@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Academorix\Session\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Reschedule endpoint called without new_resource_booking_id.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class SessionRescheduleNewBookingRequiredException extends StackraException
+final class SessionRescheduleNewBookingRequiredException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

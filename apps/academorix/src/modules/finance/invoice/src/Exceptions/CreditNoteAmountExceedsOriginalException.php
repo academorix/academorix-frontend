@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Academorix\Invoice\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Sum of existing credits + new credit exceeds the original invoice total.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class CreditNoteAmountExceedsOriginalException extends StackraException
+final class CreditNoteAmountExceedsOriginalException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

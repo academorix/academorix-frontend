@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Approvals\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * action_key does not match `^[a-z][a-z0-9]*(\.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class InvalidActionKeyFormatException extends StackraException
+final class InvalidActionKeyFormatException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

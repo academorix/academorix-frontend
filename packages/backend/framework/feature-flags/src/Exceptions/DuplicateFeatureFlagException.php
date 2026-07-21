@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Stackra\FeatureFlags\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Raised at `package:discover` when two classes declare the same flag name.
@@ -19,7 +19,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class DuplicateFeatureFlagException extends StackraException
+final class DuplicateFeatureFlagException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

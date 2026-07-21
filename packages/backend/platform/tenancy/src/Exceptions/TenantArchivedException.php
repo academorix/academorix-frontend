@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Stackra\Tenancy\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Raised when a request lands on a tenant with `status = archived`.
@@ -16,7 +16,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class TenantArchivedException extends StackraException
+final class TenantArchivedException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

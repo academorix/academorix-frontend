@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Facility\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Completed is a system-managed terminal state; only the automated MarkBookingCompletedJob may transition to it.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class BookingManualCompletionForbiddenException extends StackraException
+final class BookingManualCompletionForbiddenException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

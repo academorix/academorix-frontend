@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Academorix\Refund\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * refunded_to must be one of: original_payment_method / customer_balance / bank_transfer / check.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class RefundInvalidRefundedToException extends StackraException
+final class RefundInvalidRefundedToException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

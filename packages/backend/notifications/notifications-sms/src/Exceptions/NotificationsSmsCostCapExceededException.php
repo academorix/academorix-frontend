@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\NotificationsSms\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Tenant would exceed monthly cost cap.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class NotificationsSmsCostCapExceededException extends StackraException
+final class NotificationsSmsCostCapExceededException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

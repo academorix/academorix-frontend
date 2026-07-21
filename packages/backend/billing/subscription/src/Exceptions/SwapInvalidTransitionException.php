@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Stackra\Subscription\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Raised when a plan swap is refused because the target plan sits
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class SwapInvalidTransitionException extends StackraException
+final class SwapInvalidTransitionException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Stackra\Transfer\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Raised on an underlying filesystem disk error.
@@ -13,7 +13,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class TransferStorageFailureException extends StackraException
+final class TransferStorageFailureException extends Exception
 {
     public const CODE = 'TRANSFER_STORAGE_FAILURE';
 

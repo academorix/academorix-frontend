@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\NotificationsSms\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Destination country not in tenant's allowed_country_codes.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class NotificationsSmsCountryBlockedException extends StackraException
+final class NotificationsSmsCountryBlockedException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

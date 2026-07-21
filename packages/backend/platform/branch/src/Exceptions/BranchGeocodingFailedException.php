@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Branch\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Subprocessor returned an error or no result.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class BranchGeocodingFailedException extends StackraException
+final class BranchGeocodingFailedException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

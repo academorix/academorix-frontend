@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Academorix\Match\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Two squad entries marked is_captain=true.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class MatchSquadCaptainConflictException extends StackraException
+final class MatchSquadCaptainConflictException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Stackra\Transfer\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Raised when the transfer queue kill switch is off.
@@ -13,7 +13,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class TransferQueueDisabledException extends StackraException
+final class TransferQueueDisabledException extends Exception
 {
     public const CODE = 'TRANSFER_QUEUE_DISABLED';
 

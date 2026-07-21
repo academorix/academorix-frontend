@@ -19,19 +19,19 @@
  *
  *   exceptions::http.too_many_requests
  *
- * @see \Stackra\Exceptions\StackraException  Base class exposing `withRetryAfter()`.
+ * @see \Stackra\Exceptions\Exception  Base class exposing `withRetryAfter()`.
  */
 
 declare(strict_types=1);
 
 namespace Stackra\Exceptions\Http;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 use Stackra\Exceptions\Enums\ErrorCategory;
 use Stackra\Exceptions\Enums\ErrorSeverity;
 use Symfony\Component\HttpFoundation\Response;
 
-class TooManyRequestsException extends StackraException
+class TooManyRequestsException extends Exception
 {
     /**
      * Machine-readable code — clients that implement adaptive
@@ -63,7 +63,7 @@ class TooManyRequestsException extends StackraException
     /**
      * Standard 429 status. The renderer pairs this with a
      * `Retry-After:` header sourced from
-     * {@see StackraException::retryAfter()}.
+     * {@see Exception::retryAfter()}.
      */
     protected int $httpStatus = Response::HTTP_TOO_MANY_REQUESTS;
 

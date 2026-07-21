@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Branch\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Reached the `branch_slot` entitlement cap (Small=3, Medium=25, Enterprise=null).
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class BranchSlotQuotaExceededException extends StackraException
+final class BranchSlotQuotaExceededException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

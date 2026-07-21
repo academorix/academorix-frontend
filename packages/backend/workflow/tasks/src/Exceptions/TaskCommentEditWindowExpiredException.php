@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Tasks\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Comments are editable only within 15 minutes of creation.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class TaskCommentEditWindowExpiredException extends StackraException
+final class TaskCommentEditWindowExpiredException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

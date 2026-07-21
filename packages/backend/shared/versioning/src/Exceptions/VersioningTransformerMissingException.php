@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Versioning\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * PayloadTransformerRegistry has no chain from X to Y for the requested (surface, event).
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class VersioningTransformerMissingException extends StackraException
+final class VersioningTransformerMissingException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

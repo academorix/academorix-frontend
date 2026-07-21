@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Academorix\Analytics\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * AnalyticsProviderConfig.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class NotificationsAnalyticsInvalidProviderConfigException extends StackraException
+final class NotificationsAnalyticsInvalidProviderConfigException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

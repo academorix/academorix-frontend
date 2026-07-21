@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Academorix\Payout\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Upstream provider (Stripe) API failure.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class PayoutProviderErrorException extends StackraException
+final class PayoutProviderErrorException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

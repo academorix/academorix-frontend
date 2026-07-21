@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Stackra\Notifications\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Raised when the `notifications.enabled` kill switch is off and a
@@ -17,7 +17,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class NotificationDispatchKillSwitchedException extends StackraException
+final class NotificationDispatchKillSwitchedException extends Exception
 {
     public const CODE = 'NOTIFICATIONS_DISPATCH_KILL_SWITCHED';
 

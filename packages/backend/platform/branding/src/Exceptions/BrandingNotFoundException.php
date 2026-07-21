@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Stackra\Branding\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Raised when a lookup expects a branding profile but none is bound
@@ -14,7 +14,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class BrandingNotFoundException extends StackraException
+final class BrandingNotFoundException extends Exception
 {
     public const CODE = 'branding.not_found';
 

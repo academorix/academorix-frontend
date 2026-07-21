@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Theme\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Attempted to reference a tenant custom preset from a different tenant.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class ThemeCrossTenantPresetRefusedException extends StackraException
+final class ThemeCrossTenantPresetRefusedException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

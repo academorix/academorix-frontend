@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Notifications\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Recipient has opt_out_allowed=true category with enabled=false.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class NotificationsUnsubscribedException extends StackraException
+final class NotificationsUnsubscribedException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

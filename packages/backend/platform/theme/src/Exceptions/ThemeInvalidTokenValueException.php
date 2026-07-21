@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Theme\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Token value does not match the token_type's value schema (e.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class ThemeInvalidTokenValueException extends StackraException
+final class ThemeInvalidTokenValueException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

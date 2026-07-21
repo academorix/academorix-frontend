@@ -552,8 +552,8 @@ the parent's module. If it's a new domain, spin up a new module under
 - ADR-0020 — Bootstrapper vs TenancyHook are two different concepts.
 
 Architecture rules the aggregate must satisfy:
-`EnumUsesStackraEnumTraitRule`, `ServiceProviderHasModuleAttributeRule`,
-`ExceptionsExtendStackraBaseRule`, `ActionHasAsActionAttributeRule`,
+`EnumUsesEnumTraitRule`, `ServiceProviderHasModuleAttributeRule`,
+`ExceptionsExtendBaseRule`, `ActionHasAsActionAttributeRule`,
 `NoServiceLayerRule`, `NoBaseControllerRule`, `NoWorkspaceInBackendRule`,
 `NoTenantMembershipTokenRule`.
 

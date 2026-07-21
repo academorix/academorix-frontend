@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Stackra\Transfer\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Raised when trying to retry a job that is not in a retryable state.
@@ -13,7 +13,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class TransferJobNotRetryableException extends StackraException
+final class TransferJobNotRetryableException extends Exception
 {
     public const CODE = 'TRANSFER_JOB_NOT_RETRYABLE';
 

@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Mfa\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Submitted recovery code did not match ANY unconsumed hash on the Identity.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class MfaChallengeInvalidRecoveryCodeException extends StackraException
+final class MfaChallengeInvalidRecoveryCodeException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

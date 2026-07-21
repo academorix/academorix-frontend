@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Academorix\Leads\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Attempted to mark a task in_progress without setting assigned_to_id first.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class LeadTaskAssigneeRequiredException extends StackraException
+final class LeadTaskAssigneeRequiredException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

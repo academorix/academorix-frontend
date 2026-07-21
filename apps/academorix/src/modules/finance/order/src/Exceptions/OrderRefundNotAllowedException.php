@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Academorix\Order\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Order not in a refundable state, OR refund amount > amount_paid.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class OrderRefundNotAllowedException extends StackraException
+final class OrderRefundNotAllowedException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Requests\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * The `access_requests` entitlement is FALSE for this tenant — opted out via ops-only setting for regulatory reasons.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class AccessRequestsDisabledForTenantException extends StackraException
+final class AccessRequestsDisabledForTenantException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

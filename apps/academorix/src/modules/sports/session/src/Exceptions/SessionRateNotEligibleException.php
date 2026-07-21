@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Academorix\Session\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Caller is not registered for this session AND not a guardian of a registered minor.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class SessionRateNotEligibleException extends StackraException
+final class SessionRateNotEligibleException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

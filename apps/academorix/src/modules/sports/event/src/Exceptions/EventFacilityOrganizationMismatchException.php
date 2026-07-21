@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Academorix\Event\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Facility's branch belongs to a different organization than event.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class EventFacilityOrganizationMismatchException extends StackraException
+final class EventFacilityOrganizationMismatchException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Stackra\Subscription\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Signals that a Cashier webhook has already been processed — the
@@ -16,7 +16,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class WebhookDuplicateException extends StackraException
+final class WebhookDuplicateException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

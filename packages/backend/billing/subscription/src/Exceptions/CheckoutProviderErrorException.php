@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Stackra\Subscription\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Raised when Stripe / Paddle checkout session creation fails. HTTP
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class CheckoutProviderErrorException extends StackraException
+final class CheckoutProviderErrorException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

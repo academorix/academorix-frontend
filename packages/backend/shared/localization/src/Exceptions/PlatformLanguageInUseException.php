@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Stackra\Localization\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Raised when a platform admin tries to hard-delete a
@@ -17,7 +17,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class PlatformLanguageInUseException extends StackraException
+final class PlatformLanguageInUseException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

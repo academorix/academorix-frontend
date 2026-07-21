@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Academorix\Athlete\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * User archive refused because the user is the consent recorder for one or more active minor athletes.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class UserIsMinorConsentRecorderException extends StackraException
+final class UserIsMinorConsentRecorderException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

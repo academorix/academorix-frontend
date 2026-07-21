@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Staff\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * started_at can only be edited during the pre_hire window; after activation it's the audit-of-record.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class StaffStartedAtLockedException extends StackraException
+final class StaffStartedAtLockedException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

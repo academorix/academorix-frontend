@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Stackra\Transfer\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Row-level exception — append-mode import found a row matching an
@@ -14,7 +14,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class TransferDuplicateRowException extends StackraException
+final class TransferDuplicateRowException extends Exception
 {
     public const CODE = 'TRANSFER_DUPLICATE_ROW';
 

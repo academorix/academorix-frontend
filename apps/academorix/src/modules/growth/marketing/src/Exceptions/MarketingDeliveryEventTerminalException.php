@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Academorix\Marketing\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Attempted to attach a new delivery to an event in terminal status.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class MarketingDeliveryEventTerminalException extends StackraException
+final class MarketingDeliveryEventTerminalException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Academorix\Refund\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Refund terms (amount_cents / currency / reason / refund_type / payment_id) cannot be edited once approval starts.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class RefundTermsLockedException extends StackraException
+final class RefundTermsLockedException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

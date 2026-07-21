@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Stackra\Newsletter\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Raised when an import row is missing the required
@@ -14,7 +14,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class NewsletterConsentEvidenceMissingException extends StackraException
+final class NewsletterConsentEvidenceMissingException extends Exception
 {
     public const CODE = 'newsletter.consent_evidence_missing';
 

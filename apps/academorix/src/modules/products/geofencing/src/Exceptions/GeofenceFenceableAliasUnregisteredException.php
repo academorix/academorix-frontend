@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Academorix\Geofencing\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * The submitted fenceable_type is not in the morph map.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class GeofenceFenceableAliasUnregisteredException extends StackraException
+final class GeofenceFenceableAliasUnregisteredException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

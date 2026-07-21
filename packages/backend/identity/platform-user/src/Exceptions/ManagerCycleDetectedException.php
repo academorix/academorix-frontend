@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\PlatformUser\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * The proposed manager chain would create a cycle (A→B→C→A).
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class ManagerCycleDetectedException extends StackraException
+final class ManagerCycleDetectedException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

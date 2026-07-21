@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Mfa\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Assertion refused because the submitted sign_count is <= the stored value.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class WebauthnSignCountReplayDetectedException extends StackraException
+final class WebauthnSignCountReplayDetectedException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Mfa\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * DELETE /me/mfa/totp refused because the caller is trying to disable TOTP with a TOTP challenge (would leave them locked out).
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class MfaDisableRequiresAlternateFactorException extends StackraException
+final class MfaDisableRequiresAlternateFactorException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

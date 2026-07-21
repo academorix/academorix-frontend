@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\NotificationsMail\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Provider webhook referenced a provider_message_id we don't have.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class NotificationsMailWebhookDeliveryNotFoundException extends StackraException
+final class NotificationsMailWebhookDeliveryNotFoundException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

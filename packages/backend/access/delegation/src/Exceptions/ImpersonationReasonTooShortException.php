@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Delegation\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * The impersonation reason is under 40 characters (heavier than delegation's 20).
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class ImpersonationReasonTooShortException extends StackraException
+final class ImpersonationReasonTooShortException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

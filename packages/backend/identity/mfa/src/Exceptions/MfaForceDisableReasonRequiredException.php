@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Mfa\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Platform-admin force-disable refused because `config('mfa.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class MfaForceDisableReasonRequiredException extends StackraException
+final class MfaForceDisableReasonRequiredException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

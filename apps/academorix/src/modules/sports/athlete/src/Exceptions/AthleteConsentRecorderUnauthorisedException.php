@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Academorix\Athlete\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * For minor athletes, consent must be recorded by a User with an active AthleteGuardian row on the athlete + has_legal_custody=true.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class AthleteConsentRecorderUnauthorisedException extends StackraException
+final class AthleteConsentRecorderUnauthorisedException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

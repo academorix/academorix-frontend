@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Academorix\Attribution\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Attempted merge across tenants (into.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class AttributionMergeCrossTenantException extends StackraException
+final class AttributionMergeCrossTenantException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

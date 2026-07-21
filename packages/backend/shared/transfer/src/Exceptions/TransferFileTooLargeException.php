@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Stackra\Transfer\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Raised when an uploaded file exceeds the configured max size.
@@ -13,7 +13,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class TransferFileTooLargeException extends StackraException
+final class TransferFileTooLargeException extends Exception
 {
     public const CODE = 'TRANSFER_FILE_TOO_LARGE';
 

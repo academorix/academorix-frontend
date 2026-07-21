@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Stackra\Integrations\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Raised when a lookup expects a tenant integration but none matches
@@ -14,7 +14,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class IntegrationNotFoundException extends StackraException
+final class IntegrationNotFoundException extends Exception
 {
     public const CODE = 'integrations.not_found';
 

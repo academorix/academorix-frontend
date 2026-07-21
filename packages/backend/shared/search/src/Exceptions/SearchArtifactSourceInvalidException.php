@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Stackra\Search\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Raised when the referenced artifact source is missing or wrong.
@@ -13,7 +13,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class SearchArtifactSourceInvalidException extends StackraException
+final class SearchArtifactSourceInvalidException extends Exception
 {
     public const CODE = 'SEARCH_ARTIFACT_SOURCE_INVALID';
 

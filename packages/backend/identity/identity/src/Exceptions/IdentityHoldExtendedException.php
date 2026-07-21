@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Identity\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Restore-erased-identity refused because the hold-period has been extended by compliance.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class IdentityHoldExtendedException extends StackraException
+final class IdentityHoldExtendedException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

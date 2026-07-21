@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Facility\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Anonymous walk-ins must capture at least a name.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class DayPassAnonymousRequiresNameException extends StackraException
+final class DayPassAnonymousRequiresNameException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

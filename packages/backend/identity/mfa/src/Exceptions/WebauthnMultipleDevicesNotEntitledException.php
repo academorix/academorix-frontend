@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Mfa\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Registration refused because the caller already has one WebAuthn credential AND their tenant lacks the `mfa_multiple_devices` entitlement (free tier).
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class WebauthnMultipleDevicesNotEntitledException extends StackraException
+final class WebauthnMultipleDevicesNotEntitledException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

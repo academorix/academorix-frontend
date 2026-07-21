@@ -41,7 +41,7 @@
 
 declare(strict_types=1);
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 use Stackra\Exceptions\Auth\ForbiddenException;
 use Stackra\Exceptions\Domain\TenantException;
 use Stackra\Exceptions\Enums\ErrorCategory;
@@ -177,7 +177,7 @@ function makeLogReporter(): LogReporter
 // shouldReport
 // -----------------------------------------------------------------
 
-it('shouldReport returns true for a bare StackraException by default', function (): void {
+it('shouldReport returns true for a bare Exception by default', function (): void {
     // Baseline: an Stackra exception has no `report()` method
     // override, so the reporter fires.
     $reporter = makeLogReporter();
@@ -185,7 +185,7 @@ it('shouldReport returns true for a bare StackraException by default', function 
     expect($reporter->shouldReport(ForbiddenException::make()))->toBeTrue();
 });
 
-it('shouldReport returns true for a non-StackraException throwable', function (): void {
+it('shouldReport returns true for a non-Exception throwable', function (): void {
     // Framework `dontReport` handles the coarse skip list —
     // reporter defaults to `true` so wrapped RuntimeExceptions get
     // seen.
@@ -198,7 +198,7 @@ it('shouldReport returns false when the exception subclass report() returns fals
     // A subclass can opt out of reporting by declaring
     // `public function report(): bool { return false; }`. The
     // reporter checks for that hook via `method_exists` + call.
-    $silent = new class extends StackraException
+    $silent = new class extends Exception
     {
         public const CODE = 'test.silent';
 
@@ -224,7 +224,7 @@ it('logs a 4xx exception at info level', function (): void {
 
     $reporter = makeLogReporter();
 
-    $exception = new class extends StackraException
+    $exception = new class extends Exception
     {
         public const CODE = 'test.info_case';
 
@@ -245,7 +245,7 @@ it('logs a 5xx exception at critical level', function (): void {
 
     $reporter = makeLogReporter();
 
-    $exception = new class extends StackraException
+    $exception = new class extends Exception
     {
         public const CODE = 'test.critical_case';
 
@@ -263,7 +263,7 @@ it('logs at emergency level for an Emergency severity', function (): void {
 
     $reporter = makeLogReporter();
 
-    $exception = new class extends StackraException
+    $exception = new class extends Exception
     {
         public const CODE = 'test.emergency_case';
 
@@ -326,7 +326,7 @@ it('falls back to the default channel when no category override applies', functi
 
     $reporter = makeLogReporter();
 
-    $exception = new class extends StackraException
+    $exception = new class extends Exception
     {
         public const CODE = 'test.default_channel';
 
@@ -391,7 +391,7 @@ it('runs the message through the redactor', function (): void {
 
     $reporter = makeLogReporter();
 
-    $exception = new class extends StackraException
+    $exception = new class extends Exception
     {
         public const CODE = 'test.leaky';
 

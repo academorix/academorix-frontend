@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Stackra\Entitlements\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Raised when a lookup expects an entitlement row but finds none.
@@ -16,7 +16,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class EntitlementNotFoundException extends StackraException
+final class EntitlementNotFoundException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

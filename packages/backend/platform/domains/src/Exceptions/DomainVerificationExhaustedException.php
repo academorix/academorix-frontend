@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Stackra\Domains\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Raised when `verification_attempts` hits the 100 cap. Requires a
@@ -14,7 +14,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class DomainVerificationExhaustedException extends StackraException
+final class DomainVerificationExhaustedException extends Exception
 {
     public const CODE = 'domains.verification_exhausted';
 

@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Mfa\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Assertion refused because the UV (user-verification) flag did not match the requested policy.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class WebauthnUvPolicyViolationException extends StackraException
+final class WebauthnUvPolicyViolationException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

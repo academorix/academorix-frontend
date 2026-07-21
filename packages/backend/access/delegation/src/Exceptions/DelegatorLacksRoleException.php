@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Delegation\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * The delegator does not hold the role_id they are attempting to delegate.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class DelegatorLacksRoleException extends StackraException
+final class DelegatorLacksRoleException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

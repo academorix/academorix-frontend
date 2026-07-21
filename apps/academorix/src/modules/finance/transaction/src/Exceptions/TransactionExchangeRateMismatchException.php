@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Academorix\Transaction\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * base_amount_cents != ROUND(amount_cents * exchange_rate_to_base) within ±1 cent rounding tolerance.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class TransactionExchangeRateMismatchException extends StackraException
+final class TransactionExchangeRateMismatchException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

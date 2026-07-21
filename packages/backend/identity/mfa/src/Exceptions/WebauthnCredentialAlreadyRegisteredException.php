@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Mfa\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Registration refused because the submitted credential_id already exists (globally unique).
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class WebauthnCredentialAlreadyRegisteredException extends StackraException
+final class WebauthnCredentialAlreadyRegisteredException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

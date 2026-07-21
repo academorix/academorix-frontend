@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Stackra\Transfer\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Raised when the tenant already has `max_concurrent_jobs` in flight.
@@ -13,7 +13,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class TransferConcurrencyLimitExceededException extends StackraException
+final class TransferConcurrencyLimitExceededException extends Exception
 {
     public const CODE = 'TRANSFER_CONCURRENCY_LIMIT_EXCEEDED';
 

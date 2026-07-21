@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Notifications\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Signed unsubscribe token failed verification OR expired.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class NotificationsUnsubscribeTokenInvalidException extends StackraException
+final class NotificationsUnsubscribeTokenInvalidException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

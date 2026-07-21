@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Requests\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * The request is in a terminal state (approved / rejected / expired / cancelled).
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class RequestTerminalException extends StackraException
+final class RequestTerminalException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

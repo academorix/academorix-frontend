@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Academorix\Geofencing\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Raised when a caller requests an override on a check that already has one
@@ -14,7 +14,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class OverrideAlreadyAppliedException extends StackraException
+final class OverrideAlreadyAppliedException extends Exception
 {
     public const string CODE = 'geofencing.override_already_applied';
 

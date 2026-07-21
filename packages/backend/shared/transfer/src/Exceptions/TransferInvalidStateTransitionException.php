@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Stackra\Transfer\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Raised on an illegal state-machine transition caught by
@@ -14,7 +14,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class TransferInvalidStateTransitionException extends StackraException
+final class TransferInvalidStateTransitionException extends Exception
 {
     public const CODE = 'TRANSFER_INVALID_STATE_TRANSITION';
 

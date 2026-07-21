@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Academorix\Invoice\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * unit_price_cents must be >= 0 for this item_type.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class InvoiceLineInvalidUnitPriceException extends StackraException
+final class InvoiceLineInvalidUnitPriceException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

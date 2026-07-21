@@ -39,7 +39,7 @@
 
 declare(strict_types=1);
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 use Stackra\Exceptions\Formatters\JsonErrorFormatter;
 use Stackra\Exceptions\Http\TooManyRequestsException;
 use Stackra\Exceptions\Support\ExceptionMapper;
@@ -57,7 +57,7 @@ uses(TestCase::class);
  * the tests decoupled from any shipping subclass's defaults.
  */
 if (! class_exists('JsonFormatterFixtureException', false)) {
-    final class JsonFormatterFixtureException extends StackraException
+    final class JsonFormatterFixtureException extends Exception
     {
         public const CODE = 'fixture.simple';
 

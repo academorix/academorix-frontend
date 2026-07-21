@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Academorix\Attribution\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Attempted UPDATE on an attribution_touchpoints row (fields other than metadata).
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class AttributionTouchpointAppendOnlyException extends StackraException
+final class AttributionTouchpointAppendOnlyException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

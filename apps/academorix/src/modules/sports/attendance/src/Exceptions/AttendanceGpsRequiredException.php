@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Academorix\Attendance\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Geofence-verified check-ins require gps_lat + gps_lng.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class AttendanceGpsRequiredException extends StackraException
+final class AttendanceGpsRequiredException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

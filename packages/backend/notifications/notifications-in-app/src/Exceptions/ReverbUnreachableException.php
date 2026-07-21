@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Stackra\Notifications\InApp\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Raised when the Reverb HTTP admin API returns 5xx or times out.
@@ -20,7 +20,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class ReverbUnreachableException extends StackraException
+final class ReverbUnreachableException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

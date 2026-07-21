@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Academorix\Marketing\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * One or more event types in enabled_event_types are not supported by the provider.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class MarketingProviderUnsupportedEventTypeException extends StackraException
+final class MarketingProviderUnsupportedEventTypeException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

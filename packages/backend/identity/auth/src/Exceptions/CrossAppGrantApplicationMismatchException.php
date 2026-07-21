@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Auth\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Grant was issued for a different target Application than the current request's X-Application-Id.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class CrossAppGrantApplicationMismatchException extends StackraException
+final class CrossAppGrantApplicationMismatchException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

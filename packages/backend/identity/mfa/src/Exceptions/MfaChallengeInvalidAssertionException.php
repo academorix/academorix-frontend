@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Mfa\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Submitted WebAuthn assertion failed signature verification.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class MfaChallengeInvalidAssertionException extends StackraException
+final class MfaChallengeInvalidAssertionException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

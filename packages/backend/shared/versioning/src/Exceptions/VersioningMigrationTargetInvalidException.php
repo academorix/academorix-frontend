@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Versioning\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * migration_target_slug references self, non-existent version, or a version that's itself sunset.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class VersioningMigrationTargetInvalidException extends StackraException
+final class VersioningMigrationTargetInvalidException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Stackra\Search\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Raised when the search queue kill switch is off.
@@ -13,7 +13,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class SearchQueueDisabledException extends StackraException
+final class SearchQueueDisabledException extends Exception
 {
     public const CODE = 'SEARCH_QUEUE_DISABLED';
 

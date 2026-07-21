@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Region\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Attempted a status transition that isn't in the state machine (e.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class RegionStatusTransitionInvalidException extends StackraException
+final class RegionStatusTransitionInvalidException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

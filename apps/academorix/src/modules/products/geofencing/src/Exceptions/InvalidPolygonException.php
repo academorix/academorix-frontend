@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Academorix\Geofencing\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 use Academorix\Geofencing\Enums\PolygonValidationReason;
 
 /**
@@ -18,7 +18,7 @@ use Academorix\Geofencing\Enums\PolygonValidationReason;
  *
  * @since    0.1.0
  */
-final class InvalidPolygonException extends StackraException
+final class InvalidPolygonException extends Exception
 {
     public const string CODE = 'geofencing.polygon_invalid';
 

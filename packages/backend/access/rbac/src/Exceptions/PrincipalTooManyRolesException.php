@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Rbac\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Principal has reached config('rbac.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class PrincipalTooManyRolesException extends StackraException
+final class PrincipalTooManyRolesException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

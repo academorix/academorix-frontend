@@ -21,7 +21,7 @@
  *  └── NetworkException                    ← DNS / TCP / TLS / read-timeout — no HTTP response
  * ```
  *
- * All extend `Stackra\Exceptions\StackraException` so the
+ * All extend `Stackra\Exceptions\Exception` so the
  * central JSON renderer treats them uniformly and Sentry gets
  * the correct fingerprint.
  *
@@ -50,7 +50,7 @@ declare(strict_types=1);
 
 namespace Stackra\ApiSdk\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 use Saloon\Http\Request;
 use Saloon\Http\Response;
 use Throwable;
@@ -60,7 +60,7 @@ use Throwable;
  * HTTP status; consumers catch the specific subclass they care
  * about and let others bubble.
  */
-class ApiRequestException extends StackraException
+class ApiRequestException extends Exception
 {
     /**
      * @param  string          $message   Human-readable failure summary.

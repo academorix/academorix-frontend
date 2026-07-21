@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Identity\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Identity is soft-deleted (in the GDPR hold-period).
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class IdentityErasedException extends StackraException
+final class IdentityErasedException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

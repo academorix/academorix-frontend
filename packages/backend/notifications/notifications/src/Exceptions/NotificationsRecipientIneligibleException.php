@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Notifications\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Recipient's consent_age_gate blocks the category (e.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class NotificationsRecipientIneligibleException extends StackraException
+final class NotificationsRecipientIneligibleException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

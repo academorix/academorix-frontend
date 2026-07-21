@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Notifications\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Attempted to delete a NotificationTemplate that has Notification rows in a non-terminal state referencing it.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class NotificationsTemplateLiveSendReferenceException extends StackraException
+final class NotificationsTemplateLiveSendReferenceException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

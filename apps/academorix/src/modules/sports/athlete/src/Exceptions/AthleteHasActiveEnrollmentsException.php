@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Academorix\Athlete\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * The athlete has active enrollments.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class AthleteHasActiveEnrollmentsException extends StackraException
+final class AthleteHasActiveEnrollmentsException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

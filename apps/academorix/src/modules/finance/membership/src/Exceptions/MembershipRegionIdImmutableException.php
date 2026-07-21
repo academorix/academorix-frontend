@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Academorix\Membership\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Raised when the domain rule `MEMBERSHIP_REGION_ID_IMMUTABLE` fires.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class MembershipRegionIdImmutableException extends StackraException
+final class MembershipRegionIdImmutableException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

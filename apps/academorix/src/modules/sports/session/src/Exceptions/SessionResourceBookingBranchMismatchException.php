@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Academorix\Session\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * resource_booking.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class SessionResourceBookingBranchMismatchException extends StackraException
+final class SessionResourceBookingBranchMismatchException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

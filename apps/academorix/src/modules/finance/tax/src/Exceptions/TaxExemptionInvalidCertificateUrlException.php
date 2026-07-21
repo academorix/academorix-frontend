@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Academorix\Tax\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * certificate_document_url must be an HTTPS S3 signed URL under the tenant-scoped bucket prefix.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class TaxExemptionInvalidCertificateUrlException extends StackraException
+final class TaxExemptionInvalidCertificateUrlException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

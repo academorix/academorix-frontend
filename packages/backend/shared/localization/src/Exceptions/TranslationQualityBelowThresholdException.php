@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Localization\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Driver returned a translation with quality_score < tenant_locale.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class TranslationQualityBelowThresholdException extends StackraException
+final class TranslationQualityBelowThresholdException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

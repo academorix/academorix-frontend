@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Academorix\Tax\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * A jurisdiction already exists with the same (tenant_id, country_code, state_code, city, postal_code_pattern, tax_type) tuple.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class TaxJurisdictionDuplicateException extends StackraException
+final class TaxJurisdictionDuplicateException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

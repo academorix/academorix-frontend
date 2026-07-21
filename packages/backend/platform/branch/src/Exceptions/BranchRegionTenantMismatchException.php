@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Branch\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Same as above for Region.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class BranchRegionTenantMismatchException extends StackraException
+final class BranchRegionTenantMismatchException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

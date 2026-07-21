@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\ServiceAccounts\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * The `application_id` in the create payload does not exist or is disabled.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class ServiceAccountApplicationNotFoundException extends StackraException
+final class ServiceAccountApplicationNotFoundException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

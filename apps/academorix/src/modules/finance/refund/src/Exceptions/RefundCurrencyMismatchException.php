@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Academorix\Refund\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Refund currency does not match parent payment currency, and tenant does not hold refund_multi_currency entitlement.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class RefundCurrencyMismatchException extends StackraException
+final class RefundCurrencyMismatchException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

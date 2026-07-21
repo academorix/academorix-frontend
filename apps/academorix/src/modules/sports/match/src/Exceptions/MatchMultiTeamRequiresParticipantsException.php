@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Academorix\Match\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Multi-team match (team_id IS NULL) requires at least 2 match_participants rows.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class MatchMultiTeamRequiresParticipantsException extends StackraException
+final class MatchMultiTeamRequiresParticipantsException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

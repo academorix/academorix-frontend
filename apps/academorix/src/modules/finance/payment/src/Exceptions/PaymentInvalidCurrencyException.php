@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Academorix\Payment\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Currency is not ISO 4217 or not in the supported list.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class PaymentInvalidCurrencyException extends StackraException
+final class PaymentInvalidCurrencyException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

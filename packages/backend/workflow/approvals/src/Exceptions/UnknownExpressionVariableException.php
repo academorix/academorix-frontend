@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Approvals\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * The expression references a variable NOT declared in the action's context_variables_schema.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class UnknownExpressionVariableException extends StackraException
+final class UnknownExpressionVariableException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Academorix\Registry\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Attempted to deactivate OR hard-delete a Sport that still has downstream references (rows in tables listed in config('sports_registry.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class SportReferenceInUseException extends StackraException
+final class SportReferenceInUseException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

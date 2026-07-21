@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Stackra\Newsletter\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Raised when a newsletter's `subscribers_max` entitlement is
@@ -14,7 +14,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class NewsletterSubscribersQuotaExceededException extends StackraException
+final class NewsletterSubscribersQuotaExceededException extends Exception
 {
     public const CODE = 'newsletter.subscribers_quota_exceeded';
 

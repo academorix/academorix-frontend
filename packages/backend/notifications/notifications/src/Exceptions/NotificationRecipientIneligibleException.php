@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Stackra\Notifications\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Raised when the recipient's consent age gate blocks the category
@@ -14,7 +14,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class NotificationRecipientIneligibleException extends StackraException
+final class NotificationRecipientIneligibleException extends Exception
 {
     public const CODE = 'NOTIFICATIONS_RECIPIENT_INELIGIBLE';
 

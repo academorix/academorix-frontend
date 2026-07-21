@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Academorix\Season\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Attempted hard-delete via public API.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class SeasonPublicHardDeleteForbiddenException extends StackraException
+final class SeasonPublicHardDeleteForbiddenException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Stackra\Transfer\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Raised when an import row carries a `tenant_id` column that
@@ -14,7 +14,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class TransferTenantMismatchException extends StackraException
+final class TransferTenantMismatchException extends Exception
 {
     public const CODE = 'TRANSFER_TENANT_MISMATCH';
 

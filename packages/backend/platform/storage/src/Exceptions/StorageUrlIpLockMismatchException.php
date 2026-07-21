@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Storage\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Signed URL was IP-locked and the caller's IP doesn't match the CIDR.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class StorageUrlIpLockMismatchException extends StackraException
+final class StorageUrlIpLockMismatchException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Academorix\Chargeback\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Raised when the domain rule `CHARGEBACK_NOT_FOUND` fires.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class ChargebackNotFoundException extends StackraException
+final class ChargebackNotFoundException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

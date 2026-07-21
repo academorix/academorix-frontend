@@ -42,7 +42,7 @@
 
 declare(strict_types=1);
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 use Stackra\Exceptions\Formatters\HtmlErrorFormatter;
 use Stackra\Exceptions\Http\NotFoundException;
 use Stackra\Exceptions\Support\ExceptionMapper;
@@ -53,7 +53,7 @@ use Orchestra\Testbench\TestCase;
 uses(TestCase::class);
 
 if (! class_exists('HtmlFormatterFixtureException', false)) {
-    final class HtmlFormatterFixtureException extends StackraException
+    final class HtmlFormatterFixtureException extends Exception
     {
         public const CODE = 'fixture.html';
 

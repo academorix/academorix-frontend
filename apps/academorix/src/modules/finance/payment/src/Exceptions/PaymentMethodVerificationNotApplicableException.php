@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Academorix\Payment\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Attempted to verify a payment method that doesn't require verification (only bank_debit methods require ACH micro-deposit verification).
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class PaymentMethodVerificationNotApplicableException extends StackraException
+final class PaymentMethodVerificationNotApplicableException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

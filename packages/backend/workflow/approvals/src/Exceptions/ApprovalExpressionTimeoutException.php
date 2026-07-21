@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Stackra\Approvals\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 use Stackra\Exceptions\Enums\ErrorCategory;
 use Stackra\Exceptions\Enums\ErrorSeverity;
 
@@ -34,7 +34,7 @@ use Stackra\Exceptions\Enums\ErrorSeverity;
  *
  * @since    0.1.0
  */
-final class ApprovalExpressionTimeoutException extends StackraException
+final class ApprovalExpressionTimeoutException extends Exception
 {
     public const CODE = 'approvals.expression.timeout';
     public const TRANSLATION_KEY = 'approvals::errors.expression_timeout';

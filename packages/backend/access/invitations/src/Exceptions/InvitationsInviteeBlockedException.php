@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Invitations\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Invitee email is on the platform's block-list (abuse-response).
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class InvitationsInviteeBlockedException extends StackraException
+final class InvitationsInviteeBlockedException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

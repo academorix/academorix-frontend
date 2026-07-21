@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Academorix\Tax\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Attempted to compute via NativeCalculator for a jurisdiction where the tenant's config mandates a specific external provider (e.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class TaxCalculationProviderMandatedException extends StackraException
+final class TaxCalculationProviderMandatedException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

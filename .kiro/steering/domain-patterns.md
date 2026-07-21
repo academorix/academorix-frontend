@@ -452,7 +452,7 @@ Rules:
   action.
 - **Notifications / Mailables** — `implements ShouldQueue`, always queued.
   Respect `HasLocalePreference` on the notifiable so locale-aware copy works.
-- **Exceptions** — extend `\Stackra\Exceptions\StackraException`. Every
+- **Exceptions** — extend `\Stackra\Exceptions\Exception`. Every
   subclass declares `public const CODE` + `public const TRANSLATION_KEY`
   - severity / category / status defaults. See
     `packages/exceptions/RECOMMENDATIONS.md`.

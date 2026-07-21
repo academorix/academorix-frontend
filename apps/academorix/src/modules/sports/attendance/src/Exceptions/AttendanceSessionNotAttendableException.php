@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Academorix\Attendance\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * The session is not in a status that accepts new attendance (cancelled / archived).
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class AttendanceSessionNotAttendableException extends StackraException
+final class AttendanceSessionNotAttendableException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

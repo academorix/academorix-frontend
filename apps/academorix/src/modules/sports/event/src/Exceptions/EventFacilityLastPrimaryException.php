@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Academorix\Event\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Cannot detach the primary facility from an in-progress event without designating another primary first.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class EventFacilityLastPrimaryException extends StackraException
+final class EventFacilityLastPrimaryException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

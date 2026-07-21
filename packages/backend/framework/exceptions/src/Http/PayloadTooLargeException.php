@@ -19,19 +19,19 @@
  *
  *   exceptions::http.payload_too_large
  *
- * @see \Stackra\Exceptions\StackraException  Base class.
+ * @see \Stackra\Exceptions\Exception  Base class.
  */
 
 declare(strict_types=1);
 
 namespace Stackra\Exceptions\Http;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 use Stackra\Exceptions\Enums\ErrorCategory;
 use Stackra\Exceptions\Enums\ErrorSeverity;
 use Symfony\Component\HttpFoundation\Response;
 
-class PayloadTooLargeException extends StackraException
+class PayloadTooLargeException extends Exception
 {
     /**
      * Machine-readable code exposed as `error.code`. Clients that

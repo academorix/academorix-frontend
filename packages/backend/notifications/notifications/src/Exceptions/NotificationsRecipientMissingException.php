@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Notifications\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Dispatch call provided no recipient AND the caller couldn't be inferred (e.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class NotificationsRecipientMissingException extends StackraException
+final class NotificationsRecipientMissingException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

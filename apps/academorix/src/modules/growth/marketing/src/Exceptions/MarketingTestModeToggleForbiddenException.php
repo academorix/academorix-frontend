@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Academorix\Marketing\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Cannot toggle test_mode after production deliveries.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class MarketingTestModeToggleForbiddenException extends StackraException
+final class MarketingTestModeToggleForbiddenException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

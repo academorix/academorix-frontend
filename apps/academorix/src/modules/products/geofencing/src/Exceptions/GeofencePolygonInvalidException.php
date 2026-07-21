@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Academorix\Geofencing\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Polygon fails PolygonValidator (not closed / self-intersecting / too large / invalid WKT/GeoJSON).
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class GeofencePolygonInvalidException extends StackraException
+final class GeofencePolygonInvalidException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

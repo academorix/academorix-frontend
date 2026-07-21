@@ -20,7 +20,7 @@
  *   exceptions::infrastructure.unavailable             (class default)
  *   exceptions::infrastructure.unavailable_dependency  ({@see dependency()})
  *
- * @see \Stackra\Exceptions\StackraException  Base class.
+ * @see \Stackra\Exceptions\Exception  Base class.
  * @see IntegrationException  For third-party (vendor) outages.
  * @see MaintenanceModeException  Subclass for the "planned downtime" flavour.
  */
@@ -29,12 +29,12 @@ declare(strict_types=1);
 
 namespace Stackra\Exceptions\Infrastructure;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 use Stackra\Exceptions\Enums\ErrorCategory;
 use Stackra\Exceptions\Enums\ErrorSeverity;
 use Symfony\Component\HttpFoundation\Response;
 
-class ServiceUnavailableException extends StackraException
+class ServiceUnavailableException extends Exception
 {
     /**
      * Machine-readable code — treat as public API. Distinct from
@@ -68,7 +68,7 @@ class ServiceUnavailableException extends StackraException
     /**
      * 503 — the standard "service unavailable" status. Paired with
      * a `Retry-After:` header by the renderer, sourced from
-     * {@see StackraException::retryAfter()}.
+     * {@see Exception::retryAfter()}.
      */
     protected int $httpStatus = Response::HTTP_SERVICE_UNAVAILABLE;
 

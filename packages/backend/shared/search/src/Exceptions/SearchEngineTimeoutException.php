@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Stackra\Search\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Raised when the engine does not respond within
@@ -14,7 +14,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class SearchEngineTimeoutException extends StackraException
+final class SearchEngineTimeoutException extends Exception
 {
     public const CODE = 'SEARCH_ENGINE_TIMEOUT';
 

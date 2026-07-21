@@ -5,7 +5,7 @@
  *
  * @description
  * Log-level severity aligned with PSR-3. Every {@see
- * \Stackra\Exceptions\StackraException} declares a severity that
+ * \Stackra\Exceptions\Exception} declares a severity that
  * drives:
  *
  *   - The PSR-3 log level a reporter emits (`Log::log($severity->psr(), ...)`).

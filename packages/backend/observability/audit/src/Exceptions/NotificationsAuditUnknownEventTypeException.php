@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Audit\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * AuditObserver::creating received an event name outside the closed set (vendor defaults + registered custom events).
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class NotificationsAuditUnknownEventTypeException extends StackraException
+final class NotificationsAuditUnknownEventTypeException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Teams\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * result JSONB doesn't match the sport-agnostic patterns validated by valid_result_shape rule.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class EventTeamInvalidResultShapeException extends StackraException
+final class EventTeamInvalidResultShapeException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

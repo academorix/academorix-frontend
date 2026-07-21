@@ -17,7 +17,7 @@
  *
  *   exceptions::http.unsupported_media_type
  *
- * @see \Stackra\Exceptions\StackraException  Base class.
+ * @see \Stackra\Exceptions\Exception  Base class.
  * @see PayloadTooLargeException  Sibling class for the size-guard failure mode.
  */
 
@@ -25,12 +25,12 @@ declare(strict_types=1);
 
 namespace Stackra\Exceptions\Http;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 use Stackra\Exceptions\Enums\ErrorCategory;
 use Stackra\Exceptions\Enums\ErrorSeverity;
 use Symfony\Component\HttpFoundation\Response;
 
-class UnsupportedMediaTypeException extends StackraException
+class UnsupportedMediaTypeException extends Exception
 {
     /**
      * Machine-readable code — treat as public API. Clients that

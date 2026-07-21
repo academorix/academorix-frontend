@@ -1,11 +1,11 @@
 <?php
 
 /**
- * @file packages/exceptions/src/Ignition/StackraSolutionsProvider.php
+ * @file packages/exceptions/src/Ignition/SolutionsProvider.php
  *
  * @description
  * Deterministic solution provider for
- * {@see \Stackra\Exceptions\StackraException} subclasses.
+ * {@see \Stackra\Exceptions\Exception} subclasses.
  * Spatie Ignition (bundled with `spatie/laravel-ignition` in local
  * dev) calls `canSolve()` on every registered provider for every
  * unhandled throwable; every provider that says yes contributes
@@ -16,7 +16,7 @@
  * This class handles the exceptions we already understand — a
  * `ConfigurationException` always wants the same "check Doppler"
  * hint. The AI-powered counterpart
- * ({@see StackraAiSolutionsProvider}) handles the long tail of
+ * ({@see AiSolutionsProvider}) handles the long tail of
  * un-mapped 5xx errors where a generic pattern isn't useful.
  *
  * Both providers are registered when Spatie Ignition is loaded in
@@ -35,7 +35,7 @@ declare(strict_types=1);
 
 namespace Stackra\Exceptions\Ignition;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 use Stackra\Exceptions\Auth\FeatureDisabledException;
 use Stackra\Exceptions\Domain\TenantException;
 use Stackra\Exceptions\Infrastructure\ConfigurationException;
@@ -45,11 +45,11 @@ use Spatie\Ignition\Contracts\Solution;
 use Spatie\Ignition\Solutions\SuggestionSolution;
 use Throwable;
 
-final class StackraSolutionsProvider implements HasSolutionsForThrowable
+final class SolutionsProvider implements HasSolutionsForThrowable
 {
     public function canSolve(Throwable $throwable): bool
     {
-        return $throwable instanceof StackraException;
+        return $throwable instanceof Exception;
     }
 
     /** @return list<Solution> */
@@ -57,7 +57,7 @@ final class StackraSolutionsProvider implements HasSolutionsForThrowable
     {
         // `canSolve()` already guarantees this — but we assert it
         // here so phpstan/level-8 sees the narrower type below.
-        if (! $throwable instanceof StackraException) {
+        if (! $throwable instanceof Exception) {
             return [];
         }
 
@@ -119,7 +119,7 @@ final class StackraSolutionsProvider implements HasSolutionsForThrowable
         );
     }
 
-    private function genericSolution(StackraException $e): Solution
+    private function genericSolution(Exception $e): Solution
     {
         return new SuggestionSolution(
             title: "Stackra error: {$e->errorCode()}",

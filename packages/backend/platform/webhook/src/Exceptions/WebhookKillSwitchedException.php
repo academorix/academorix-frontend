@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Webhook\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * webhook.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class WebhookKillSwitchedException extends StackraException
+final class WebhookKillSwitchedException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

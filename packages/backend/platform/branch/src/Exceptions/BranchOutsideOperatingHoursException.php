@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Branch\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Booking-adjacent write attempted outside the resolved open window (per branch.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class BranchOutsideOperatingHoursException extends StackraException
+final class BranchOutsideOperatingHoursException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

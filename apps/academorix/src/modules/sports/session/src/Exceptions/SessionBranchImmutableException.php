@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Academorix\Session\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * branch_id immutable post-create — session lives at a fixed branch.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class SessionBranchImmutableException extends StackraException
+final class SessionBranchImmutableException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

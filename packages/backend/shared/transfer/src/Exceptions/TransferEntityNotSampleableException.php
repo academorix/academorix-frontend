@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Stackra\Transfer\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Raised when the entity doesn't support sample-data generation.
@@ -13,7 +13,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class TransferEntityNotSampleableException extends StackraException
+final class TransferEntityNotSampleableException extends Exception
 {
     public const CODE = 'TRANSFER_ENTITY_NOT_SAMPLEABLE';
 

@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Branch\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * address JSON failed the `valid_address_structure` rule.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class BranchInvalidAddressException extends StackraException
+final class BranchInvalidAddressException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

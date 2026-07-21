@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Rbac\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Role definition requires a higher subscription tier than the tenant's current tier.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class RoleDefinitionMinTierUnmetException extends StackraException
+final class RoleDefinitionMinTierUnmetException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

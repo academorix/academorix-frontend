@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Invitations\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * unique_pending_invitation validation rule tripped.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class InvitationsEmailAlreadyInvitedException extends StackraException
+final class InvitationsEmailAlreadyInvitedException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

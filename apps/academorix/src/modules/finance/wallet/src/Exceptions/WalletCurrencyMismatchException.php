@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Academorix\Wallet\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Transaction currency does not match wallet currency.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class WalletCurrencyMismatchException extends StackraException
+final class WalletCurrencyMismatchException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Approvals\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * ExpressionLanguageAdapter caught a parse/runtime/timeout error evaluating a selector at instance-create time.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class ApprovalSelectorEvaluationFailedException extends StackraException
+final class ApprovalSelectorEvaluationFailedException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

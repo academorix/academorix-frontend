@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Approvals\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * The when_expression or selector_expression failed to parse via symfony/expression-language.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class InvalidExpressionException extends StackraException
+final class InvalidExpressionException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

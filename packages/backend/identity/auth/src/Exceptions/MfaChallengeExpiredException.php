@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Auth\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * The challenge_id no longer resolves (expired or already consumed).
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class MfaChallengeExpiredException extends StackraException
+final class MfaChallengeExpiredException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

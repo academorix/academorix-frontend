@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Delegation\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Attempted to extend a session past its default TTL by a non-super_admin OR without the impersonation_extended_ttl entitlement.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class ImpersonationExtendRefusedException extends StackraException
+final class ImpersonationExtendRefusedException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

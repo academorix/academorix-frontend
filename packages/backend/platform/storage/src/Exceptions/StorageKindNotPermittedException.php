@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Storage\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Caller lacks permission to upload this kind (per-kind permission override).
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class StorageKindNotPermittedException extends StackraException
+final class StorageKindNotPermittedException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

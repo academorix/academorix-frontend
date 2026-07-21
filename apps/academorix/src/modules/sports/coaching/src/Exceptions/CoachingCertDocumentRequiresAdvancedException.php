@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Academorix\Coaching\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * document_url upload requires the coaching_advanced_certifications entitlement (Medium+).
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class CoachingCertDocumentRequiresAdvancedException extends StackraException
+final class CoachingCertDocumentRequiresAdvancedException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

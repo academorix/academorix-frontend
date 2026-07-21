@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Academorix\Registry\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Tenant attempted to create a custom Sport with a slug that matches an existing platform-seeded Sport (e.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class SportKeyCollidesWithPlatformException extends StackraException
+final class SportKeyCollidesWithPlatformException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

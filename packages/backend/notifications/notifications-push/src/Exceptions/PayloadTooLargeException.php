@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Stackra\Notifications\Push\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Raised when a push payload exceeds the provider's byte limit (FCM 4KB /
@@ -14,7 +14,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class PayloadTooLargeException extends StackraException
+final class PayloadTooLargeException extends Exception
 {
     public const string CODE = 'notifications-push.payload_too_large';
 

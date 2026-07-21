@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Entitlements\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * consume() called with a key not in the registry.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class EntitlementsKeyNotRegisteredException extends StackraException
+final class EntitlementsKeyNotRegisteredException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

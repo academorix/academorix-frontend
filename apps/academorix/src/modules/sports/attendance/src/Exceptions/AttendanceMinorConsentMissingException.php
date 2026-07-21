@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Academorix\Attendance\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * The athlete is a minor and guardian consent for device_fingerprint or GPS capture has not been recorded.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class AttendanceMinorConsentMissingException extends StackraException
+final class AttendanceMinorConsentMissingException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

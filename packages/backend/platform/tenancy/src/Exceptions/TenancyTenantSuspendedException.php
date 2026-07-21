@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Tenancy\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Raised when the domain rule `TENANCY_TENANT_SUSPENDED` fires.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class TenancyTenantSuspendedException extends StackraException
+final class TenancyTenantSuspendedException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

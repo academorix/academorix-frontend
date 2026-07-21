@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Academorix\Athlete\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Raised when a create / update / consent write is attempted against
@@ -22,7 +22,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class AthleteGuardianRequiredException extends StackraException
+final class AthleteGuardianRequiredException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

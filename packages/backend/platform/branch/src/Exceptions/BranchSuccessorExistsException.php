@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Branch\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Attempted to reopen a closed Branch after a successor Branch was created under the same (tenant, organization) post-close.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class BranchSuccessorExistsException extends StackraException
+final class BranchSuccessorExistsException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

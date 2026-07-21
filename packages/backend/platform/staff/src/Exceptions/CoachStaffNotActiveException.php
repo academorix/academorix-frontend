@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Staff\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Cannot create a Coach row for a Staff whose employment_status != 'active'.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class CoachStaffNotActiveException extends StackraException
+final class CoachStaffNotActiveException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

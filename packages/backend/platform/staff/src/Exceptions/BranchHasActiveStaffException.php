@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Staff\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Branch archive refused because active Staff exist.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class BranchHasActiveStaffException extends StackraException
+final class BranchHasActiveStaffException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

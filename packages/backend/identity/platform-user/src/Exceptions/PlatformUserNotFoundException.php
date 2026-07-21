@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\PlatformUser\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * PlatformUser id was not resolved (does not exist, or soft-deleted past the retention hold + hard-deleted).
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class PlatformUserNotFoundException extends StackraException
+final class PlatformUserNotFoundException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

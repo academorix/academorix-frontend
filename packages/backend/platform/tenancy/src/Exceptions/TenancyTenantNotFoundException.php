@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Tenancy\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Host header did not resolve to a Tenant on the current Application.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class TenancyTenantNotFoundException extends StackraException
+final class TenancyTenantNotFoundException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

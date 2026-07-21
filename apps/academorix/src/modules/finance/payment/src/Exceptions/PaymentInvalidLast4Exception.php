@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Academorix\Payment\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * PCI-DSS Level 1 violation attempt.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class PaymentInvalidLast4Exception extends StackraException
+final class PaymentInvalidLast4Exception extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Academorix\Coaching\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * expires_at must be greater than issued_at.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class CoachCertificationInvalidExpiryException extends StackraException
+final class CoachCertificationInvalidExpiryException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

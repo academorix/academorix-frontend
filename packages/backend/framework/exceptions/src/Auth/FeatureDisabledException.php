@@ -34,12 +34,12 @@ declare(strict_types=1);
 
 namespace Stackra\Exceptions\Auth;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 use Stackra\Exceptions\Enums\ErrorCategory;
 use Stackra\Exceptions\Enums\ErrorSeverity;
 use Symfony\Component\HttpFoundation\Response;
 
-class FeatureDisabledException extends StackraException
+class FeatureDisabledException extends Exception
 {
     /**
      * Machine-readable code. Distinct from `auth.forbidden` so

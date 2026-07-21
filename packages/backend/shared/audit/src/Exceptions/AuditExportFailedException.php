@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Stackra\Audit\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Raised when a DSAR export job cannot produce a bundle.
@@ -18,7 +18,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class AuditExportFailedException extends StackraException
+final class AuditExportFailedException extends Exception
 {
     public const CODE = 'audit.export_failed';
 

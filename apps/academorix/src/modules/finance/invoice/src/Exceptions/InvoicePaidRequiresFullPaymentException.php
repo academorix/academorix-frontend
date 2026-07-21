@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Academorix\Invoice\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Defense-in-depth check — status='paid' requires amount_paid_cents == total_cents.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class InvoicePaidRequiresFullPaymentException extends StackraException
+final class InvoicePaidRequiresFullPaymentException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Approvals\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * A user in resolved_approvers was suspended/deleted mid-flow AND their absence makes quorum unreachable.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class ApproverUnavailableException extends StackraException
+final class ApproverUnavailableException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

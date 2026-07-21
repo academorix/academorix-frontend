@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Stackra\Exceptions\Reporters;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 use Stackra\Exceptions\Contracts\ExceptionReporterInterface;
 use Stackra\Exceptions\Support\Redactor;
 use Illuminate\Contracts\Container\Container;
@@ -65,7 +65,7 @@ final class SentryReporter implements ExceptionReporterInterface
                 }
             }
 
-            if ($throwable instanceof StackraException) {
+            if ($throwable instanceof Exception) {
                 $scope->setContext(
                     'stackra.error',
                     $this->redactor->redact($throwable->toArray()),
@@ -104,7 +104,7 @@ final class SentryReporter implements ExceptionReporterInterface
     {
         $tags = [];
 
-        if ($e instanceof StackraException) {
+        if ($e instanceof Exception) {
             $tags['error.code'] = $e->errorCode();
             $tags['error.category'] = $e->category()->value;
             $tags['error.severity'] = $e->severity()->value;

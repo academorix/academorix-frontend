@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Academorix\AgeGroup\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Attempted to change min_age_inclusive or max_age_inclusive on an AgeGroup that currently has enrolled Athletes whose new age would fall outside the new bounds (Wave 3+).
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class AgeGroupBoundsInvalidateAthletesException extends StackraException
+final class AgeGroupBoundsInvalidateAthletesException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

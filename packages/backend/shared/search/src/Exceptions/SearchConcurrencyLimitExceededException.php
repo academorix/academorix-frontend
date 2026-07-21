@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Stackra\Search\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Raised when a tenant exceeds `search.max_reindex_concurrency`.
@@ -13,7 +13,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class SearchConcurrencyLimitExceededException extends StackraException
+final class SearchConcurrencyLimitExceededException extends Exception
 {
     public const CODE = 'SEARCH_CONCURRENCY_LIMIT_EXCEEDED';
 

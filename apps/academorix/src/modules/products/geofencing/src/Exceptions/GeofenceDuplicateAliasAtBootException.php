@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Academorix\Geofencing\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Two classes registered the same #[Geofenceable] or #[GeofenceSubjectAlias] value.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class GeofenceDuplicateAliasAtBootException extends StackraException
+final class GeofenceDuplicateAliasAtBootException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

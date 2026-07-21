@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Stackra\Search\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Raised (or surfaced) when `SearchIndex.config_hash` diverges from the
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class SearchConfigHashDriftException extends StackraException
+final class SearchConfigHashDriftException extends Exception
 {
     public const CODE = 'SEARCH_CONFIG_HASH_DRIFT';
 

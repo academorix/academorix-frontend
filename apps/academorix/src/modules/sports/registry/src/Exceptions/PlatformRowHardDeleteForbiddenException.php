@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Academorix\Registry\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Attempted to hard-delete a platform-seeded row (is_platform_seeded=true, tenant_id NULL).
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class PlatformRowHardDeleteForbiddenException extends StackraException
+final class PlatformRowHardDeleteForbiddenException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Branch\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Submitted amenity tag is not in the platform catalogue AND tenant lacks `branch_amenities: custom` (Enterprise).
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class BranchAmenityUnknownException extends StackraException
+final class BranchAmenityUnknownException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

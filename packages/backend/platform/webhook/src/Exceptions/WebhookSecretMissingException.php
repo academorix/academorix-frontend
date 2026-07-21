@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Webhook\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Subscription has no secret column value.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class WebhookSecretMissingException extends StackraException
+final class WebhookSecretMissingException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

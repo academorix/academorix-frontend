@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Academorix\Referrals\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Small tenants cannot create campaign codes; only user_scoped codes are auto-issued.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class ReferralCodeQuotaExceededException extends StackraException
+final class ReferralCodeQuotaExceededException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

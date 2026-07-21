@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Academorix\Chargeback\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Network must be one of: visa / mastercard / amex / discover / jcb / unionpay / diners / other.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class ChargebackInvalidNetworkException extends StackraException
+final class ChargebackInvalidNetworkException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

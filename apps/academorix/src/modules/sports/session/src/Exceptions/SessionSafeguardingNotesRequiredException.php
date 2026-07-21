@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Academorix\Session\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * safeguarding_incident_flag=true without session_notes narrative.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class SessionSafeguardingNotesRequiredException extends StackraException
+final class SessionSafeguardingNotesRequiredException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

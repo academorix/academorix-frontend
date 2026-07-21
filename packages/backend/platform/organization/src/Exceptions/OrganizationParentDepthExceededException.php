@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Organization\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * The proposed parent's tree_depth + 1 exceeds config('organization.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class OrganizationParentDepthExceededException extends StackraException
+final class OrganizationParentDepthExceededException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

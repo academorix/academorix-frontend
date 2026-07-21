@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Newsletter\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Confirmation or unsubscribe token invalid / expired / signature mismatch.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class NewsletterTokenInvalidException extends StackraException
+final class NewsletterTokenInvalidException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Stackra\Notifications\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Raised when an admin attempts to delete a `NotificationTemplate`
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class NotificationTemplateLiveSendReferenceException extends StackraException
+final class NotificationTemplateLiveSendReferenceException extends Exception
 {
     public const CODE = 'NOTIFICATIONS_TEMPLATE_LIVE_SEND_REFERENCE';
 

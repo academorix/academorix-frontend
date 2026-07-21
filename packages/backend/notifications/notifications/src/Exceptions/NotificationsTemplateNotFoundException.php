@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Notifications\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Template resolver could not locate a template for (category, channel, locale).
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class NotificationsTemplateNotFoundException extends StackraException
+final class NotificationsTemplateNotFoundException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

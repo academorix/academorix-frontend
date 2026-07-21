@@ -20,7 +20,7 @@
  *
  * ## Contract
  *
- * Extends {@see StackraException} so the framework Handler
+ * Extends {@see Exception} so the framework Handler
  * renders it as RFC 7807 problem-details with correlation id,
  * category (`Validation`), severity (`Info`), and machine-readable
  * `error.code`.
@@ -34,12 +34,12 @@ declare(strict_types=1);
 
 namespace Stackra\Routing\Http\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 use Stackra\Exceptions\Enums\ErrorCategory;
 use Stackra\Exceptions\Enums\ErrorSeverity;
 use Symfony\Component\HttpFoundation\Response;
 
-final class MalformedApiVersionException extends StackraException
+final class MalformedApiVersionException extends Exception
 {
     /**
      * Stable machine-readable code exposed on the wire as

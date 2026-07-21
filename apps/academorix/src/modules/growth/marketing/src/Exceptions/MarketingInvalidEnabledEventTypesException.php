@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Academorix\Marketing\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * One or more entries in enabled_event_types are not valid MarketingEventType values.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class MarketingInvalidEnabledEventTypesException extends StackraException
+final class MarketingInvalidEnabledEventTypesException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

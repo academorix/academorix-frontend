@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Stackra\Search\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Raised when the engine-native alias-swap operation fails.
@@ -13,7 +13,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class SearchAliasSwapFailedException extends StackraException
+final class SearchAliasSwapFailedException extends Exception
 {
     public const CODE = 'SEARCH_ALIAS_SWAP_FAILED';
 

@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Approvals\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Expression references a function gated by approval_advanced_expressions (manager_of, except, chain_up_to).
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class EntitlementUnavailableAdvancedExpressionsException extends StackraException
+final class EntitlementUnavailableAdvancedExpressionsException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

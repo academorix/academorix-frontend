@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Organization\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * A row's tree_path is inconsistent with its parent_id chain (materialised path drift).
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class OrganizationTreePathDriftException extends StackraException
+final class OrganizationTreePathDriftException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Stackra\Transfer\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Raised when the download signature is invalid or tampered.
@@ -13,7 +13,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class TransferArtifactLinkInvalidException extends StackraException
+final class TransferArtifactLinkInvalidException extends Exception
 {
     public const CODE = 'TRANSFER_ARTIFACT_LINK_INVALID';
 

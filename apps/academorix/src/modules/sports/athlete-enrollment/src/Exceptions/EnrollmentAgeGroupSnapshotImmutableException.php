@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Academorix\AthleteEnrollment\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * age_group_snapshot_id is frozen at submission.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class EnrollmentAgeGroupSnapshotImmutableException extends StackraException
+final class EnrollmentAgeGroupSnapshotImmutableException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

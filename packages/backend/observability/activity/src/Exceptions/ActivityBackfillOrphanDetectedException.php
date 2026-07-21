@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Activity\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * BackfillActivityTenantIdFromJsonbJob --verify found rows where tenant_id IS NULL AND properties->>'tenant_id' IS NULL.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class ActivityBackfillOrphanDetectedException extends StackraException
+final class ActivityBackfillOrphanDetectedException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

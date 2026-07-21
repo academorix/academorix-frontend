@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Academorix\Invoice\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * billing_address does not match the required shape.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class InvoiceAddressSnapshotInvalidException extends StackraException
+final class InvoiceAddressSnapshotInvalidException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

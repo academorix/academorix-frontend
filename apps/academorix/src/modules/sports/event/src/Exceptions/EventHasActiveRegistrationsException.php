@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Academorix\Event\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Cannot archive an Event while active registrations reference it.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class EventHasActiveRegistrationsException extends StackraException
+final class EventHasActiveRegistrationsException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

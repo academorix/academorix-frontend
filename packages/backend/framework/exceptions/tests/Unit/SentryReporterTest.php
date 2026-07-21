@@ -15,7 +15,7 @@
  *      `shouldReport()` returns `false` in that case so `report()`
  *      is never called — every internal-only app pays no cost.
  *
- *   2. **Tag construction** — for `StackraException` instances,
+ *   2. **Tag construction** — for `Exception` instances,
  *      the reporter builds tags like `error.code`, `error.category`,
  *      `error.severity`, `correlation_id`, plus request-derived
  *      tags like `tenant_id` / `route`. These are the fields
@@ -37,7 +37,7 @@
 
 declare(strict_types=1);
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 use Stackra\Exceptions\Auth\ForbiddenException;
 use Stackra\Exceptions\Reporters\SentryReporter;
 use Stackra\Exceptions\Support\Redactor;
@@ -99,7 +99,7 @@ function invokeSentryReporterTags(
     return $tags;
 }
 
-it('builds tags with error.code, error.category, error.severity for an StackraException', function (): void {
+it('builds tags with error.code, error.category, error.severity for an Exception', function (): void {
     // The three tags Sentry indexes hardest for search + alerting.
     $reporter = makeSentryReporter();
 
@@ -177,7 +177,7 @@ it('tags include the anonymous subclass severity as a string', function (): void
     // severity — the tag value MUST be the enum's `->value` string.
     $reporter = makeSentryReporter();
 
-    $exception = new class extends StackraException
+    $exception = new class extends Exception
     {
         public const CODE = 'test.pagable';
 

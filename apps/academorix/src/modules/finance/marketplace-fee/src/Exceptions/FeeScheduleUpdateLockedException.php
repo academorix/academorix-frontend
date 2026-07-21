@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Academorix\MarketplaceFee\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Cannot update an active schedule — create a new version instead.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class FeeScheduleUpdateLockedException extends StackraException
+final class FeeScheduleUpdateLockedException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

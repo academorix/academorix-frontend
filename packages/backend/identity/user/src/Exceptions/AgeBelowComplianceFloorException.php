@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\User\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * identity->dob puts the subject below the effective compliance floor (COPPA 13 US / GDPR per-country / tenant setting).
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class AgeBelowComplianceFloorException extends StackraException
+final class AgeBelowComplianceFloorException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

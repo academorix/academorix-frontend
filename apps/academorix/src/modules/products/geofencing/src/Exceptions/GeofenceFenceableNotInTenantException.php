@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Academorix\Geofencing\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Cross-tenant assertion collapsed 'not found' + 'wrong tenant' + 'unknown fenceable_type alias' to prevent enumeration.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class GeofenceFenceableNotInTenantException extends StackraException
+final class GeofenceFenceableNotInTenantException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Monitoring\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Tenant already has an active config with this (provider, name) tuple.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class MonitoringProviderAlreadyConfiguredException extends StackraException
+final class MonitoringProviderAlreadyConfiguredException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

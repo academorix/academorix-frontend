@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Activity\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * POST / PATCH / DELETE against /api/v1/activities/* returns 405 with this code — writes happen exclusively via the vendor LogsActivity trait on domain models.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class ActivityWriteForbiddenException extends StackraException
+final class ActivityWriteForbiddenException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

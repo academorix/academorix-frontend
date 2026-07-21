@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Academorix\Membership\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * primary_guardian_id references a guardian relationship that isn't active or doesn't match this athlete.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class MembershipGuardianInvalidException extends StackraException
+final class MembershipGuardianInvalidException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

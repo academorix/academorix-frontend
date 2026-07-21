@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Audit\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * override_starts_at >= override_ends_at (when override_ends_at is set).
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class NotificationsAuditInvalidOverrideDatesException extends StackraException
+final class NotificationsAuditInvalidOverrideDatesException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

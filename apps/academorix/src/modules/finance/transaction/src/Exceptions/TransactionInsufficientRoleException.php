@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Academorix\Transaction\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Caller lacks the admin / finance role required for the transaction surface (viewAny/view).
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class TransactionInsufficientRoleException extends StackraException
+final class TransactionInsufficientRoleException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Academorix\Event\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Registration surface refused because max_participants (or max_teams) reached.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class EventCapacityExceededException extends StackraException
+final class EventCapacityExceededException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Delegation\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Fires from the enforce_active_session middleware when a request bearing an impersonation PAT arrives against an ended session.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class ImpersonationSessionEndedException extends StackraException
+final class ImpersonationSessionEndedException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

@@ -20,7 +20,7 @@
  *
  *   exceptions::http.unprocessable
  *
- * @see \Stackra\Exceptions\StackraException  Base class.
+ * @see \Stackra\Exceptions\Exception  Base class.
  * @see ValidationException  Sibling class for field-level 422s.
  * @see \Stackra\Exceptions\Domain\BusinessRuleException  Preferred when the failure has a stable rule identifier.
  */
@@ -29,12 +29,12 @@ declare(strict_types=1);
 
 namespace Stackra\Exceptions\Http;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 use Stackra\Exceptions\Enums\ErrorCategory;
 use Stackra\Exceptions\Enums\ErrorSeverity;
 use Symfony\Component\HttpFoundation\Response;
 
-class UnprocessableEntityException extends StackraException
+class UnprocessableEntityException extends Exception
 {
     /**
      * Machine-readable code — clients that need to distinguish

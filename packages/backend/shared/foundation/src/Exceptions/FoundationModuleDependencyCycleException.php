@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Foundation\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Cycle detected in module dependency graph at boot.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class FoundationModuleDependencyCycleException extends StackraException
+final class FoundationModuleDependencyCycleException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

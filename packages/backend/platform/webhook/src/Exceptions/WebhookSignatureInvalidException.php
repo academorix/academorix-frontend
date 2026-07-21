@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Webhook\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Inbound signature failed verification against both primary and previous secrets.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class WebhookSignatureInvalidException extends StackraException
+final class WebhookSignatureInvalidException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Academorix\AthleteEnrollment\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Consent snapshot is required for confirmed status.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class EnrollmentConsentSnapshotMissingException extends StackraException
+final class EnrollmentConsentSnapshotMissingException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

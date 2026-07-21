@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Teams\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Cannot schedule a trial for a paused / archived team.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class TrialTeamNotActiveException extends StackraException
+final class TrialTeamNotActiveException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

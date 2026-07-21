@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Entitlements\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Platform admin submitted an invalid override (negative cap, wrong kind, etc).
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class EntitlementsOverrideInvalidException extends StackraException
+final class EntitlementsOverrideInvalidException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

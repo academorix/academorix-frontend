@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Theme\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * The tenant's plan does not include the requested capability.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class ThemeEntitlementRequiredException extends StackraException
+final class ThemeEntitlementRequiredException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Stackra\Branding\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Raised when a caller attempts to delete the tenant's default
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class LastDefaultBrandingException extends StackraException
+final class LastDefaultBrandingException extends Exception
 {
     public const CODE = 'branding.last_default';
 

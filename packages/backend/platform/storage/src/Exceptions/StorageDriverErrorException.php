@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Storage\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Underlying storage driver returned an error (S3 5xx, network timeout).
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class StorageDriverErrorException extends StackraException
+final class StorageDriverErrorException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

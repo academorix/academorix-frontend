@@ -14,7 +14,7 @@
  *
  *   exceptions::http.method_not_allowed
  *
- * @see \Stackra\Exceptions\StackraException  Base class.
+ * @see \Stackra\Exceptions\Exception  Base class.
  * @see \Stackra\Exceptions\Support\ExceptionMapper  Adapter that
  *      converts Symfony's exception into this class.
  */
@@ -23,12 +23,12 @@ declare(strict_types=1);
 
 namespace Stackra\Exceptions\Http;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 use Stackra\Exceptions\Enums\ErrorCategory;
 use Stackra\Exceptions\Enums\ErrorSeverity;
 use Symfony\Component\HttpFoundation\Response;
 
-class MethodNotAllowedException extends StackraException
+class MethodNotAllowedException extends Exception
 {
     /**
      * Stable machine-readable code. Clients that offer a "try the

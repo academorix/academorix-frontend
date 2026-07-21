@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Stackra\Webhook\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Raised when a delivery attempt fails and needs a domain-level
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class WebhookDeliveryFailedException extends StackraException
+final class WebhookDeliveryFailedException extends Exception
 {
     public const CODE = 'webhook.delivery_failed';
 

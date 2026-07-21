@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Academorix\Coaching\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * The assignable's tenant_id does not match the assignment's tenant_id (cross-tenant FK defense-in-depth).
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class CoachAssignmentCrossTenantException extends StackraException
+final class CoachAssignmentCrossTenantException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

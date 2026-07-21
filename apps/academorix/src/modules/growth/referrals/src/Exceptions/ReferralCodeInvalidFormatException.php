@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Academorix\Referrals\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Raised when the domain rule `REFERRAL_CODE_INVALID_FORMAT` fires.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class ReferralCodeInvalidFormatException extends StackraException
+final class ReferralCodeInvalidFormatException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

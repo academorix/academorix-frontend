@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Academorix\Coaching\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * The rater cannot be the same person as the coach being rated.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class CoachSkillRatingSelfRatingForbiddenException extends StackraException
+final class CoachSkillRatingSelfRatingForbiddenException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

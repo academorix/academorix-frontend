@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Stackra\Search\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Raised when a saved-query payload fails validation.
@@ -13,7 +13,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class SearchSavedQueryInvalidException extends StackraException
+final class SearchSavedQueryInvalidException extends Exception
 {
     public const CODE = 'SEARCH_SAVED_QUERY_INVALID';
 

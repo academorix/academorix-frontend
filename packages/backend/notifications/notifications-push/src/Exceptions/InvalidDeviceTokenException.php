@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Stackra\Notifications\Push\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Raised when a device token fails validation on the provider.
@@ -17,7 +17,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class InvalidDeviceTokenException extends StackraException
+final class InvalidDeviceTokenException extends Exception
 {
     public const string CODE = 'notifications-push.token_validation_failed';
 

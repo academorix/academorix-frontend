@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Notifications\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Attempted to set enabled=false on a category with opt_out_allowed=false (transactional_required).
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class NotificationsPreferenceUpdateForbiddenException extends StackraException
+final class NotificationsPreferenceUpdateForbiddenException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

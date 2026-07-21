@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\PlatformUser\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Request refused by the `platform.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class PlatformMfaRequiredException extends StackraException
+final class PlatformMfaRequiredException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

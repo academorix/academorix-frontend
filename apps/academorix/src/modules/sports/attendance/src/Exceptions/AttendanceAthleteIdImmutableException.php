@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Academorix\Attendance\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Raised when the domain rule `ATTENDANCE_ATHLETE_ID_IMMUTABLE` fires.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class AttendanceAthleteIdImmutableException extends StackraException
+final class AttendanceAthleteIdImmutableException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Academorix\Invoice\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * ReconcileInvoicePaymentsJob found amount_paid_cents drift vs transactions module SUM.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class InvoiceReconcileDriftDetectedException extends StackraException
+final class InvoiceReconcileDriftDetectedException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

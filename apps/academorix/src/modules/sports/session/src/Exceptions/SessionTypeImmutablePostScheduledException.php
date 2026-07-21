@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Academorix\Session\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * session_type immutable post-scheduled — a practice becoming a lesson mid-flight is a data-entry error.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class SessionTypeImmutablePostScheduledException extends StackraException
+final class SessionTypeImmutablePostScheduledException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

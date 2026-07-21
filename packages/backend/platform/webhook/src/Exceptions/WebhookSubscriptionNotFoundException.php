@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Stackra\Webhook\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Raised when a subscription lookup expects a match but finds none.
@@ -13,7 +13,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class WebhookSubscriptionNotFoundException extends StackraException
+final class WebhookSubscriptionNotFoundException extends Exception
 {
     public const CODE = 'webhook.subscription_not_found';
 

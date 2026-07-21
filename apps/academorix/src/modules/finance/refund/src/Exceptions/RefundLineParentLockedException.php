@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Academorix\Refund\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Refund lines cannot be added once parent refund enters processing / succeeded / failed / rejected / cancelled.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class RefundLineParentLockedException extends StackraException
+final class RefundLineParentLockedException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

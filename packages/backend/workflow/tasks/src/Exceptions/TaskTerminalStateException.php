@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Tasks\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Cannot modify a completed or cancelled task.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class TaskTerminalStateException extends StackraException
+final class TaskTerminalStateException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

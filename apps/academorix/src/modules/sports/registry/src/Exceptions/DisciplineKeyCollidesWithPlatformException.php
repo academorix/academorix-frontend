@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Academorix\Registry\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Same as SPORT_KEY_COLLIDES_WITH_PLATFORM for Discipline level.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class DisciplineKeyCollidesWithPlatformException extends StackraException
+final class DisciplineKeyCollidesWithPlatformException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

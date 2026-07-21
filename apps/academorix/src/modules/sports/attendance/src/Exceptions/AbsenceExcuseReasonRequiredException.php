@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Academorix\Attendance\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * An absence_reason is required to excuse an absence.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class AbsenceExcuseReasonRequiredException extends StackraException
+final class AbsenceExcuseReasonRequiredException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

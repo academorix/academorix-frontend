@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Stackra\Notifications\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Raised when the template resolver could not locate a template for
@@ -14,7 +14,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class NotificationTemplateNotFoundException extends StackraException
+final class NotificationTemplateNotFoundException extends Exception
 {
     public const CODE = 'NOTIFICATIONS_TEMPLATE_NOT_FOUND';
 

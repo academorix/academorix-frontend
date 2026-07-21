@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Versioning\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Slug fails validation (reserved slug, invalid format, or would collide with existing).
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class VersioningInvalidVersionSlugException extends StackraException
+final class VersioningInvalidVersionSlugException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

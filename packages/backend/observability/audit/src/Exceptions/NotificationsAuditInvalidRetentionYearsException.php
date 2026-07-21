@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Audit\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * retention_years is not in [1.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class NotificationsAuditInvalidRetentionYearsException extends StackraException
+final class NotificationsAuditInvalidRetentionYearsException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

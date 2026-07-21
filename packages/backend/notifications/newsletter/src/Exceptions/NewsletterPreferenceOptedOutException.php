@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Newsletter\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * User already opted out of marketing.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class NewsletterPreferenceOptedOutException extends StackraException
+final class NewsletterPreferenceOptedOutException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

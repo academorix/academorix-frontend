@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Stackra\Search\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Raised when the requested engine is not registered in EngineRegistry.
@@ -13,7 +13,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class SearchEngineNotSupportedException extends StackraException
+final class SearchEngineNotSupportedException extends Exception
 {
     public const CODE = 'SEARCH_ENGINE_NOT_SUPPORTED';
 

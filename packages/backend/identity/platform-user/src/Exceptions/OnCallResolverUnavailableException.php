@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\PlatformUser\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * OnCallResolver timed out (both PagerDuty AND internal fallback failed to respond in time).
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class OnCallResolverUnavailableException extends StackraException
+final class OnCallResolverUnavailableException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

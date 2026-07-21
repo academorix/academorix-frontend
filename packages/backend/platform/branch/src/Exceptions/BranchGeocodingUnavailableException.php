@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Branch\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Attempted `POST /branches/{branch}/geocode` on a tenant lacking the `branch_geocoding` entitlement.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class BranchGeocodingUnavailableException extends StackraException
+final class BranchGeocodingUnavailableException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

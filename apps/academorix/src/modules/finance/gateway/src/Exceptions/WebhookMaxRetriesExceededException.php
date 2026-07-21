@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Academorix\Gateway\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Retry ladder exhausted.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class WebhookMaxRetriesExceededException extends StackraException
+final class WebhookMaxRetriesExceededException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

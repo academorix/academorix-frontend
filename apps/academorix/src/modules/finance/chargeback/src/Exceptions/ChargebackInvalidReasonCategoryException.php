@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Academorix\Chargeback\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Reason category must be one of: fraud / authorization / processing_errors / consumer_disputes / card_recovery.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class ChargebackInvalidReasonCategoryException extends StackraException
+final class ChargebackInvalidReasonCategoryException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

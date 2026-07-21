@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Stackra\Notifications\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Raised when a user attempts to set `enabled=false` on a category
@@ -14,7 +14,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class NotificationPreferenceUpdateForbiddenException extends StackraException
+final class NotificationPreferenceUpdateForbiddenException extends Exception
 {
     public const CODE = 'NOTIFICATIONS_PREFERENCE_UPDATE_FORBIDDEN';
 

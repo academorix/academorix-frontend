@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\ServiceAccounts\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * PATCH attempted to change `application_id`, `tenant_id`, or `signer_kid`.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class ServiceAccountImmutableFieldException extends StackraException
+final class ServiceAccountImmutableFieldException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

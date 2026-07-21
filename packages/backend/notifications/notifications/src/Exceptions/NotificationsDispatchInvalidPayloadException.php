@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Notifications\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Caller passed a payload that fails the category's declared variable schema.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class NotificationsDispatchInvalidPayloadException extends StackraException
+final class NotificationsDispatchInvalidPayloadException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

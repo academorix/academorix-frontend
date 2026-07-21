@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Approvals\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Caller has an approval_decisions row on this requirement.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class ApproverAlreadyDecidedException extends StackraException
+final class ApproverAlreadyDecidedException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

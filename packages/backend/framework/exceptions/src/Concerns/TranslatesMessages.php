@@ -4,7 +4,7 @@
  * @file packages/exceptions/src/Concerns/TranslatesMessages.php
  *
  * @description
- * Trait that hangs off {@see \Stackra\Exceptions\StackraException}
+ * Trait that hangs off {@see \Stackra\Exceptions\Exception}
  * to give every exception a translation pipeline for its user-facing
  * message. The trait is opt-in per exception (via the base class) so
  * exceptions that never see a client don't pay for a translator

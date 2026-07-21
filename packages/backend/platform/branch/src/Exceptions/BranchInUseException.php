@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Branch\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Attempted to close a Branch with active downstream references (teams, facilities, sessions, bookings, memberships).
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class BranchInUseException extends StackraException
+final class BranchInUseException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Academorix\Payment\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * A payment method with the same fingerprint_hash already exists for the customer.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class PaymentMethodDuplicateException extends StackraException
+final class PaymentMethodDuplicateException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

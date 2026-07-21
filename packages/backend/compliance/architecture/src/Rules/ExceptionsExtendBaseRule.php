@@ -1,16 +1,16 @@
 <?php
 
 /**
- * @file packages/architecture/src/Rules/ExceptionsExtendStackraBaseRule.php
+ * @file packages/architecture/src/Rules/ExceptionsExtendBaseRule.php
  *
  * @description
  * Source rule: every concrete exception class must extend
- * {@see \Stackra\Exceptions\StackraException}, not one of
+ * {@see \Stackra\Exceptions\Exception}, not one of
  * PHP's standard-library exception classes directly.
  *
  * ## Why
  *
- * ADR 0002 + 0006 fix `StackraException` as the sole trunk of
+ * ADR 0002 + 0006 fix `Exception` as the sole trunk of
  * the exception hierarchy:
  *
  *   - Central JSON renderer treats every subclass uniformly.
@@ -35,7 +35,7 @@
  *   - The `stackra/exceptions` package itself (defines the
  *     base — can't extend itself).
  *   - Classes that extend an intermediate Stackra subclass
- *     (already implicitly extending `StackraException`).
+ *     (already implicitly extending `Exception`).
  *
  * ## Paired migrator
  *
@@ -54,11 +54,11 @@ use Stackra\Architecture\Violations\Violation;
 
 /**
  * Enforce that every exception extends
- * {@see \Stackra\Exceptions\StackraException}.
+ * {@see \Stackra\Exceptions\Exception}.
  *
  * @final
  */
-final class ExceptionsExtendStackraBaseRule extends AbstractRule
+final class ExceptionsExtendBaseRule extends AbstractRule
 {
     /**
      * PHP-standard exception names disallowed as direct parents.
@@ -79,7 +79,7 @@ final class ExceptionsExtendStackraBaseRule extends AbstractRule
 
     public function description(): string
     {
-        return 'Every exception must extend `Stackra\\Exceptions\\StackraException`, not one of PHP\'s standard-library exception classes.';
+        return 'Every exception must extend `Stackra\\Exceptions\\Exception`, not one of PHP\'s standard-library exception classes.';
     }
 
     protected function defaultSeverity(): Severity
@@ -121,7 +121,7 @@ final class ExceptionsExtendStackraBaseRule extends AbstractRule
                 file: $file,
                 offender: $fqcn !== '' ? $fqcn : $file->className,
                 message: \sprintf(
-                    'Exception "%s" extends "%s" directly — every exception must extend StackraException.',
+                    'Exception "%s" extends "%s" directly — every exception must extend Exception.',
                     $fqcn !== '' ? $fqcn : $file->className,
                     $file->extends,
                 ),

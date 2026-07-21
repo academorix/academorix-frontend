@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Stackra\Invitations\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Raised when the caller presents a token that already accepted
@@ -14,7 +14,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class InvitationAlreadyUsedException extends StackraException
+final class InvitationAlreadyUsedException extends Exception
 {
     public const string CODE = 'INVITATIONS_TOKEN_ALREADY_USED';
 

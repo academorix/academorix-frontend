@@ -19,7 +19,7 @@
  *
  *   exceptions::infrastructure.configuration
  *
- * @see \Stackra\Exceptions\StackraException  Base class.
+ * @see \Stackra\Exceptions\Exception  Base class.
  * @see ServiceUnavailableException  For runtime dependency outages
  *                                   (as opposed to boot-time
  *                                   misconfiguration).
@@ -29,12 +29,12 @@ declare(strict_types=1);
 
 namespace Stackra\Exceptions\Infrastructure;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 use Stackra\Exceptions\Enums\ErrorCategory;
 use Stackra\Exceptions\Enums\ErrorSeverity;
 use Symfony\Component\HttpFoundation\Response;
 
-class ConfigurationException extends StackraException
+class ConfigurationException extends Exception
 {
     /**
      * Machine-readable code — reporters route this literal to the

@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Academorix\Attendance\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Raised when the domain rule `LATE_ARRIVAL_MINUTES_INVALID` fires.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class LateArrivalMinutesInvalidException extends StackraException
+final class LateArrivalMinutesInvalidException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

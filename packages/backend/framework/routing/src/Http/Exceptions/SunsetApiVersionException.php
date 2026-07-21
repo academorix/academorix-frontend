@@ -39,12 +39,12 @@ declare(strict_types=1);
 
 namespace Stackra\Routing\Http\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 use Stackra\Exceptions\Enums\ErrorCategory;
 use Stackra\Exceptions\Enums\ErrorSeverity;
 use Symfony\Component\HttpFoundation\Response;
 
-final class SunsetApiVersionException extends StackraException
+final class SunsetApiVersionException extends Exception
 {
     /** Stable public code. */
     public const CODE = 'routing.api_version.sunset';

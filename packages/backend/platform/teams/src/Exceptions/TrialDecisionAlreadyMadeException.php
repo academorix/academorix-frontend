@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Teams\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Trial is already in a terminal state (converted / rejected / cancelled / no_show).
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class TrialDecisionAlreadyMadeException extends StackraException
+final class TrialDecisionAlreadyMadeException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

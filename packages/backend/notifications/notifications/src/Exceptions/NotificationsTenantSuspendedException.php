@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Notifications\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Tenant is in suspended state — dispatch queued but not delivered.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class NotificationsTenantSuspendedException extends StackraException
+final class NotificationsTenantSuspendedException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

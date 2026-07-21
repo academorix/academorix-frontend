@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Notifications\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * ProcessDigestJob raced with an idempotent duplicate — the second run detected a delivered digest for the same window.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class NotificationsDigestAlreadyDeliveredException extends StackraException
+final class NotificationsDigestAlreadyDeliveredException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

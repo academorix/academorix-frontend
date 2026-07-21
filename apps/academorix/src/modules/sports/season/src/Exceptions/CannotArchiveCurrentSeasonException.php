@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Academorix\Season\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * The Season is is_current=true in its scope tuple.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class CannotArchiveCurrentSeasonException extends StackraException
+final class CannotArchiveCurrentSeasonException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

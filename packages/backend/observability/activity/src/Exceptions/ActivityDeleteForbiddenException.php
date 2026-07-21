@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Activity\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Someone attempted to hard-delete an activity row from outside the retention pipeline.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class ActivityDeleteForbiddenException extends StackraException
+final class ActivityDeleteForbiddenException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

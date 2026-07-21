@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Academorix\Registry\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Attempted to change a slug on an existing row.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class SlugImmutableException extends StackraException
+final class SlugImmutableException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

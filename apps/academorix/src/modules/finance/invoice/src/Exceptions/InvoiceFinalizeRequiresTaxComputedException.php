@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Academorix\Invoice\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Some lines lack tax_calculation_id.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class InvoiceFinalizeRequiresTaxComputedException extends StackraException
+final class InvoiceFinalizeRequiresTaxComputedException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

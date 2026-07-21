@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Academorix\Athlete\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Raised when the domain rule `ATHLETE_MUST_BE_ARCHIVED_BEFORE_DELETE` fires.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class AthleteMustBeArchivedBeforeDeleteException extends StackraException
+final class AthleteMustBeArchivedBeforeDeleteException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Rbac\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Someone tried to rename / delete / modify permissions on an `is_system=true` role.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class SystemRoleModificationRefusedException extends StackraException
+final class SystemRoleModificationRefusedException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

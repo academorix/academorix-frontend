@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Stackra\Integrations\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Raised when a caller attempts to sync (or otherwise operate on) an
@@ -14,7 +14,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class IntegrationDisabledException extends StackraException
+final class IntegrationDisabledException extends Exception
 {
     public const CODE = 'integrations.disabled';
 

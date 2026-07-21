@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Academorix\Season\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Cannot flip is_current=false when this is the only is_current=true row in its scope tuple.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class SeasonLastCurrentException extends StackraException
+final class SeasonLastCurrentException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

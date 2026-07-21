@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Grants\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Tenant-isolation breach attempt: subject.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class GrantCrossTenantException extends StackraException
+final class GrantCrossTenantException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

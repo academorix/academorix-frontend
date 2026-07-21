@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Monitoring\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Cannot delete or change severity on a policy with firing alerts.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class MonitoringPolicyHasActiveAlertsException extends StackraException
+final class MonitoringPolicyHasActiveAlertsException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

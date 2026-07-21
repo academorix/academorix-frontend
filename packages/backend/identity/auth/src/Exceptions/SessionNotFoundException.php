@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Auth\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Session lookup by id refused — either the id doesn't exist OR the caller doesn't own the session.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class SessionNotFoundException extends StackraException
+final class SessionNotFoundException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

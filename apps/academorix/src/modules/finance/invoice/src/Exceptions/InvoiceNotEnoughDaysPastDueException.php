@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Academorix\Invoice\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Cannot mark uncollectible before the configured minimum days past due (default 90).
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class InvoiceNotEnoughDaysPastDueException extends StackraException
+final class InvoiceNotEnoughDaysPastDueException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

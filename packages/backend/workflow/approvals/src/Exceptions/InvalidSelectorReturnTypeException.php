@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Approvals\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Selector expression parsed but returns a type that isn't User[] / User / user_id string.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class InvalidSelectorReturnTypeException extends StackraException
+final class InvalidSelectorReturnTypeException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

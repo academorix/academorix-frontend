@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Academorix\Tax\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * valid_from must be < valid_until when both set.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class TaxExemptionInvalidValidityRangeException extends StackraException
+final class TaxExemptionInvalidValidityRangeException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

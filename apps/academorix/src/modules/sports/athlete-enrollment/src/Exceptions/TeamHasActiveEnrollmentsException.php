@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Academorix\AthleteEnrollment\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Raised when the domain rule `TEAM_HAS_ACTIVE_ENROLLMENTS` fires.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class TeamHasActiveEnrollmentsException extends StackraException
+final class TeamHasActiveEnrollmentsException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Academorix\Athlete\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * User archive refused because the user has an active Athlete row.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class UserHasActiveAthleteException extends StackraException
+final class UserHasActiveAthleteException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

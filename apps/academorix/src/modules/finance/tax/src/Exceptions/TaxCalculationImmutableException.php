@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Academorix\Tax\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Attempted to update / soft-delete / re-compute a tax_calculations row.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class TaxCalculationImmutableException extends StackraException
+final class TaxCalculationImmutableException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

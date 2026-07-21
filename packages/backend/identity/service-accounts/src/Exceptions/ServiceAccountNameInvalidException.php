@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\ServiceAccounts\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Naming rule `valid_service_account_name` refused: too long, invalid characters, missing alphanumeric bookends.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class ServiceAccountNameInvalidException extends StackraException
+final class ServiceAccountNameInvalidException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

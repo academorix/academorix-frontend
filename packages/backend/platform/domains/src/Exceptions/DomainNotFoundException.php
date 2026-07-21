@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Stackra\Domains\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Raised when a request lands on a Host header that maps to no
@@ -14,7 +14,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class DomainNotFoundException extends StackraException
+final class DomainNotFoundException extends Exception
 {
     public const CODE = 'domains.not_found';
 

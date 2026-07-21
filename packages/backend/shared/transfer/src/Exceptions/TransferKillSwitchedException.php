@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Stackra\Transfer\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Raised when one of the `transfer.*` kill switches is off.
@@ -13,7 +13,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class TransferKillSwitchedException extends StackraException
+final class TransferKillSwitchedException extends Exception
 {
     public const CODE = 'TRANSFER_KILL_SWITCHED';
 

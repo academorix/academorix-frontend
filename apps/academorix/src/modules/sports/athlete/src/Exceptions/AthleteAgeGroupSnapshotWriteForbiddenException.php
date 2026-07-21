@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Academorix\Athlete\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * current_age_group_id is written exclusively by RollAthleteAgeGroupSnapshotJob + SetAgeGroupSnapshotOnAthleteCreated hook.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class AthleteAgeGroupSnapshotWriteForbiddenException extends StackraException
+final class AthleteAgeGroupSnapshotWriteForbiddenException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

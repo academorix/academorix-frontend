@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Stackra\Application\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 use Stackra\Exceptions\Enums\ErrorCategory;
 use Stackra\Exceptions\Enums\ErrorSeverity;
 
@@ -35,7 +35,7 @@ use Stackra\Exceptions\Enums\ErrorSeverity;
  *
  * @since    0.1.0
  */
-final class SystemRowImmutableException extends StackraException
+final class SystemRowImmutableException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

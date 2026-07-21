@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Audit\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * byEntity filter references an auditable_type that does not resolve at boot (not a valid audited model class).
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class NotificationsAuditAuditableTypeUnknownException extends StackraException
+final class NotificationsAuditAuditableTypeUnknownException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

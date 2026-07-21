@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\ServiceAccounts\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * The proposed `tenant_id` belongs to an application other than the SA's `application_id`.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class ApplicationMismatchOnTenantException extends StackraException
+final class ApplicationMismatchOnTenantException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

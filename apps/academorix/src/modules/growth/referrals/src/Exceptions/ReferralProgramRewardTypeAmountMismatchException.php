@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Academorix\Referrals\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * reward_type + reward_amount + reward_currency combination is invalid (e.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class ReferralProgramRewardTypeAmountMismatchException extends StackraException
+final class ReferralProgramRewardTypeAmountMismatchException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

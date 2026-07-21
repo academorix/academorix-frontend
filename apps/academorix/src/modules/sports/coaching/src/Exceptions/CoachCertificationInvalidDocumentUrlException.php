@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Academorix\Coaching\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * document_url must be an HTTPS S3 URL.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class CoachCertificationInvalidDocumentUrlException extends StackraException
+final class CoachCertificationInvalidDocumentUrlException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

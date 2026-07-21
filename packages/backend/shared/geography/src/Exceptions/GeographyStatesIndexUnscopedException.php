@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Stackra\Geography\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Raised when the states index is called without a `country_id`
@@ -14,7 +14,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class GeographyStatesIndexUnscopedException extends StackraException
+final class GeographyStatesIndexUnscopedException extends Exception
 {
     public const CODE = 'GEOGRAPHY_STATES_INDEX_UNSCOPED';
 

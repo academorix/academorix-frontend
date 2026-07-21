@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Foundation\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Upstream (Stripe, SendGrid, SAML IdP) returned an error we can't recover from.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class FoundationBadGatewayException extends StackraException
+final class FoundationBadGatewayException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

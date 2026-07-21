@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Versioning\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Attempted an illegal state transition (draft → sunset, or released → draft).
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class VersioningInvalidStateTransitionException extends StackraException
+final class VersioningInvalidStateTransitionException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

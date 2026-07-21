@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Academorix\Geofencing\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Raised when a fenceable has neither a polygon nor a location point.
@@ -16,7 +16,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class FenceableNoGeometryException extends StackraException
+final class FenceableNoGeometryException extends Exception
 {
     public const string CODE = 'geofencing.fenceable_no_geometry';
 

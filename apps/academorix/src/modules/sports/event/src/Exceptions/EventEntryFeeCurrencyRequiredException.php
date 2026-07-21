@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Academorix\Event\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * entry_fee_cents > 0 supplied without entry_fee_currency.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class EventEntryFeeCurrencyRequiredException extends StackraException
+final class EventEntryFeeCurrencyRequiredException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Notifications\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Caller dispatched a category slug that isn't in the registry.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class NotificationsCategoryNotRegisteredException extends StackraException
+final class NotificationsCategoryNotRegisteredException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

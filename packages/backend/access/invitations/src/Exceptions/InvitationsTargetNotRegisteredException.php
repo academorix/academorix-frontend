@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Invitations\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * target_type has no matching registration in InvitationTargetRegistry.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class InvitationsTargetNotRegisteredException extends StackraException
+final class InvitationsTargetNotRegisteredException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Invitations\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * role_key does not exist on the target's guard OR the inviter lacks the ability to assign it.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class InvitationsRoleNotAssignableException extends StackraException
+final class InvitationsRoleNotAssignableException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

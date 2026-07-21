@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Academorix\Coupon\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * discount_type + discount_amount + discount_currency combination is invalid (e.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class CouponInvalidDiscountConfigException extends StackraException
+final class CouponInvalidDiscountConfigException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

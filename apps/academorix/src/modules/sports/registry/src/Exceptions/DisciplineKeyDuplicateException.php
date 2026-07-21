@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Academorix\Registry\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Raised when the domain rule `DISCIPLINE_KEY_DUPLICATE` fires.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class DisciplineKeyDuplicateException extends StackraException
+final class DisciplineKeyDuplicateException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

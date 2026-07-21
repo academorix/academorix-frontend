@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Academorix\Attribution\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * NOT a route-level error — internal signal.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class AttributionConsentNotGrantedException extends StackraException
+final class AttributionConsentNotGrantedException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

@@ -53,7 +53,7 @@ use Throwable;
  *    formatter picks fields off it explicitly rather than shipping
  *    the whole thing.
  */
-abstract class StackraException extends RuntimeException implements
+abstract class Exception extends RuntimeException implements
     Correlatable,
     HasContext,
     HasErrorCode,

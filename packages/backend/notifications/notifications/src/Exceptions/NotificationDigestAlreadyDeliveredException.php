@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Stackra\Notifications\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Raised when `ProcessDigestJob` raced with an idempotent duplicate
@@ -16,7 +16,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class NotificationDigestAlreadyDeliveredException extends StackraException
+final class NotificationDigestAlreadyDeliveredException extends Exception
 {
     public const CODE = 'NOTIFICATIONS_DIGEST_ALREADY_DELIVERED';
 

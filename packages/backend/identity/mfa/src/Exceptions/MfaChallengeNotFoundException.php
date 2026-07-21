@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Mfa\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * The challenge_id path parameter did not resolve to a challenge row.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class MfaChallengeNotFoundException extends StackraException
+final class MfaChallengeNotFoundException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

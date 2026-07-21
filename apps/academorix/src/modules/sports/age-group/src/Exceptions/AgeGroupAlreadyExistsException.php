@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Academorix\AgeGroup\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Attempted to create an AgeGroup with a (tenant_id, organization_id, sport_key, slug) tuple that already exists.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class AgeGroupAlreadyExistsException extends StackraException
+final class AgeGroupAlreadyExistsException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

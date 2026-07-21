@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Stackra\Notifications\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Raised internally when a recipient has opted out of an opt-out-
@@ -17,7 +17,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class NotificationUnsubscribedException extends StackraException
+final class NotificationUnsubscribedException extends Exception
 {
     public const CODE = 'NOTIFICATIONS_UNSUBSCRIBED';
 

@@ -6,7 +6,7 @@
   "kind": "framework-plumbing",
   "purpose": "Structured exception hierarchy, JSON error renderer, sensitive-data masking, Sentry context enrichment, and Spatie Ignition + Laravel AI solution providers.",
   "capabilities": [
-    "StackraException base with translation + user-message + masking",
+    "Exception base with translation + user-message + masking",
     "ExceptionsBootstrap::configure one-line wiring",
     "RFC-7807-flavoured JSON error envelope",
     "SensitiveDataMasker (passwords, tokens, JWTs, cards, emails)",

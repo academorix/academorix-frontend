@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Academorix\Invoice\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * payment_terms='custom' requires payment_terms_custom_days (1-365).
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class InvoiceInvalidCustomTermsException extends StackraException
+final class InvoiceInvalidCustomTermsException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Auth\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Session's Application scope doesn't match the current request's X-Application-Id.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class ApplicationMismatchException extends StackraException
+final class ApplicationMismatchException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

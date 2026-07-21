@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Audit\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Export request estimated row count exceeds config.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class NotificationsAuditExportRowCountExceededException extends StackraException
+final class NotificationsAuditExportRowCountExceededException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

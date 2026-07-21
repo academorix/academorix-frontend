@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Webhook\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * destination_config fails driver's schema validation on create/update.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class WebhookDestinationConfigInvalidException extends StackraException
+final class WebhookDestinationConfigInvalidException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

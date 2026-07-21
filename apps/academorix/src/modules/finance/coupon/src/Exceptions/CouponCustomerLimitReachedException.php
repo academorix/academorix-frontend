@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Academorix\Coupon\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * The customer has already redeemed this coupon per_customer_limit times.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class CouponCustomerLimitReachedException extends StackraException
+final class CouponCustomerLimitReachedException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

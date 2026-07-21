@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Academorix\Chargeback\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Evidence body does not match schemas/chargeback-evidence.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class ChargebackEvidenceInvalidShapeException extends StackraException
+final class ChargebackEvidenceInvalidShapeException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

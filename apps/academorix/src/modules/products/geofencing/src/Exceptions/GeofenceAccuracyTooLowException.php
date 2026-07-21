@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Academorix\Geofencing\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * GPS accuracy exceeds fenceable tolerance.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class GeofenceAccuracyTooLowException extends StackraException
+final class GeofenceAccuracyTooLowException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

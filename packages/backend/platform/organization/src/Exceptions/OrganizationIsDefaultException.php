@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Organization\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Attempted to delete / archive / pause the tenant's is_default=true Organization without first promoting another row to default.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class OrganizationIsDefaultException extends StackraException
+final class OrganizationIsDefaultException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

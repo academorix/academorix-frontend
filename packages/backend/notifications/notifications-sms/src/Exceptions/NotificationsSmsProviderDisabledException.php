@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\NotificationsSms\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Raised when the domain rule `NOTIFICATIONS_SMS_PROVIDER_DISABLED` fires.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class NotificationsSmsProviderDisabledException extends StackraException
+final class NotificationsSmsProviderDisabledException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

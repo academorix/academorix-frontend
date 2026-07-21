@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Academorix\Invoice\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * DomPDF rendering failed.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class InvoicePdfGenerationFailedException extends StackraException
+final class InvoicePdfGenerationFailedException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

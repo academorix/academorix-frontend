@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Approvals\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Reject decisions require a comment.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class RejectCommentRequiredException extends StackraException
+final class RejectCommentRequiredException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

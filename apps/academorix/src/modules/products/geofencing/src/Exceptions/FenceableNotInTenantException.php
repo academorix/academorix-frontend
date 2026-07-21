@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Academorix\Geofencing\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Raised when a fenceable resolves to a row outside the caller's tenant OR
@@ -17,7 +17,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class FenceableNotInTenantException extends StackraException
+final class FenceableNotInTenantException extends Exception
 {
     public const string CODE = 'geofencing.fenceable_not_in_tenant';
 

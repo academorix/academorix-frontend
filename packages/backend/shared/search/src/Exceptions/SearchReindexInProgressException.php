@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Stackra\Search\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Raised when a reindex is already running for the target index.
@@ -13,7 +13,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class SearchReindexInProgressException extends StackraException
+final class SearchReindexInProgressException extends Exception
 {
     public const CODE = 'SEARCH_REINDEX_IN_PROGRESS';
 

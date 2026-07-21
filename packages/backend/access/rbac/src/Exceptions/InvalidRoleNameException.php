@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Rbac\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Role name failed the `valid_role_name` rule (snake_case, max 128 chars, no reserved prefix).
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class InvalidRoleNameException extends StackraException
+final class InvalidRoleNameException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

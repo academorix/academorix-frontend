@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Academorix\Referrals\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Self-referral guard: referrer_id equals referred_id.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class ReferralSelfReferralException extends StackraException
+final class ReferralSelfReferralException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

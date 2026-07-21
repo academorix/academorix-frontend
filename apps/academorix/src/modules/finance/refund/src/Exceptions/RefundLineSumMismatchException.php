@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Academorix\Refund\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Sum of refund_lines.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class RefundLineSumMismatchException extends StackraException
+final class RefundLineSumMismatchException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

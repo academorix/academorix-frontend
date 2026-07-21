@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Stackra\Notifications\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Raised when the dispatch payload fails the category's declared
@@ -16,7 +16,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class NotificationDispatchInvalidPayloadException extends StackraException
+final class NotificationDispatchInvalidPayloadException extends Exception
 {
     public const CODE = 'NOTIFICATIONS_DISPATCH_INVALID_PAYLOAD';
 

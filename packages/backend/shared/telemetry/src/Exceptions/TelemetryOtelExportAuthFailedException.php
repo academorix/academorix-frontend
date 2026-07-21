@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Telemetry\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * OTLP endpoint returned 401.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class TelemetryOtelExportAuthFailedException extends StackraException
+final class TelemetryOtelExportAuthFailedException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

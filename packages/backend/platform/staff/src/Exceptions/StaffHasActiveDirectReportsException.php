@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Staff\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Offboarding a manager: direct reports must be reassigned (they'll be set to reports_to_staff_id=null via SET NULL FK).
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class StaffHasActiveDirectReportsException extends StackraException
+final class StaffHasActiveDirectReportsException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

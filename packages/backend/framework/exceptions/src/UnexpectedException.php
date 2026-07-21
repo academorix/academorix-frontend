@@ -20,7 +20,7 @@
  *
  *   exceptions::generic.unexpected
  *
- * @see StackraException  Base class.
+ * @see Exception  Base class.
  * @see \Stackra\Exceptions\Support\ExceptionMapper  The only legitimate producer of this class.
  */
 
@@ -33,7 +33,7 @@ use Stackra\Exceptions\Enums\ErrorSeverity;
 use Symfony\Component\HttpFoundation\Response;
 use Throwable;
 
-final class UnexpectedException extends StackraException
+final class UnexpectedException extends Exception
 {
     /**
      * Machine-readable code — matches the base class default so

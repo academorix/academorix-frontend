@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Stackra\Auth\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Raised at boot when the HS256 shared secret is unset or too short.
@@ -18,7 +18,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class JwtSecretMisconfiguredException extends StackraException
+final class JwtSecretMisconfiguredException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

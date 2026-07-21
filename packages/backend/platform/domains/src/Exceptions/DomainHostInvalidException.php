@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Stackra\Domains\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Raised when a host does not match the RFC 1035 label syntax.
@@ -13,7 +13,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class DomainHostInvalidException extends StackraException
+final class DomainHostInvalidException extends Exception
 {
     public const CODE = 'domains.host_invalid';
 

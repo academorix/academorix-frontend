@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Academorix\Gateway\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Raised when the domain rule `GATEWAY_NOT_FOUND` fires.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class GatewayNotFoundException extends StackraException
+final class GatewayNotFoundException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

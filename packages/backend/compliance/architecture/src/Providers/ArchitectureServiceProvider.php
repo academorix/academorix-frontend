@@ -69,10 +69,10 @@ use Stackra\Architecture\Rules\CommandUsesAttributeSignatureRule;
 use Stackra\Architecture\Rules\ControllerExtendsBaseRule;
 use Stackra\Architecture\Rules\ControllerNeedsAsControllerRule;
 use Stackra\Architecture\Rules\EnumIsBackedStringRule;
-use Stackra\Architecture\Rules\EnumUsesStackraEnumTraitRule;
+use Stackra\Architecture\Rules\EnumUsesEnumTraitRule;
 use Stackra\Architecture\Rules\EventReadonlyPropertiesRule;
 use Stackra\Architecture\Rules\EventsCarryAsEventAttributeRule;
-use Stackra\Architecture\Rules\ExceptionsExtendStackraBaseRule;
+use Stackra\Architecture\Rules\ExceptionsExtendBaseRule;
 use Stackra\Architecture\Rules\FinalDomainClassesRule;
 use Stackra\Architecture\Rules\JobHasQueueAttributeRule;
 use Stackra\Architecture\Rules\JobImplementsFailedRule;
@@ -156,10 +156,10 @@ final class ArchitectureServiceProvider extends AbstractModuleServiceProvider
         ModelUsesFillableAttributeRule::class,
         ModelNoSideEffectsRule::class,
         EnumIsBackedStringRule::class,
-        EnumUsesStackraEnumTraitRule::class,
+        EnumUsesEnumTraitRule::class,
         EventReadonlyPropertiesRule::class,
         EventsCarryAsEventAttributeRule::class,
-        ExceptionsExtendStackraBaseRule::class,
+        ExceptionsExtendBaseRule::class,
         JobHasQueueAttributeRule::class,
         JobImplementsFailedRule::class,
         CommandUsesAttributeSignatureRule::class,

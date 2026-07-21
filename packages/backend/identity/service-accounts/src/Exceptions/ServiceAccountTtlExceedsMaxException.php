@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\ServiceAccounts\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Token-exchange or IssueTestJwtInput requested a TTL above `service-accounts.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class ServiceAccountTtlExceedsMaxException extends StackraException
+final class ServiceAccountTtlExceedsMaxException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

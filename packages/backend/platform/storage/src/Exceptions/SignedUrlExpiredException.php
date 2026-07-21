@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Stackra\Storage\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Raised when a redemption request lands on a signed URL past its
@@ -14,7 +14,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class SignedUrlExpiredException extends StackraException
+final class SignedUrlExpiredException extends Exception
 {
     public const CODE = 'storage.signed_url_expired';
 

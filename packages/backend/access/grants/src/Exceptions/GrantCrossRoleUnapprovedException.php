@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Grants\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Cross-role grants (grantor lacks the permission) require the `cross_role_grants` entitlement AND a matching workflow/approvals template.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class GrantCrossRoleUnapprovedException extends StackraException
+final class GrantCrossRoleUnapprovedException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

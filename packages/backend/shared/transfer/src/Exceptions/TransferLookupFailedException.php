@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Stackra\Transfer\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Row-level exception — a `#[ImportField(lookup: ...)]` could not
@@ -14,7 +14,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class TransferLookupFailedException extends StackraException
+final class TransferLookupFailedException extends Exception
 {
     public const CODE = 'TRANSFER_LOOKUP_FAILED';
 

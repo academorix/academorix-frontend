@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Stackra\Search\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Raised when the underlying Scout driver throws.
@@ -13,7 +13,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class SearchScoutDriverFailureException extends StackraException
+final class SearchScoutDriverFailureException extends Exception
 {
     public const CODE = 'SEARCH_SCOUT_DRIVER_FAILURE';
 

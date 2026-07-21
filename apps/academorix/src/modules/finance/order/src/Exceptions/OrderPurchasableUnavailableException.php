@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Academorix\Order\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Purchasable is out of stock / sold out / disabled.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class OrderPurchasableUnavailableException extends StackraException
+final class OrderPurchasableUnavailableException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

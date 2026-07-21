@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Academorix\Season\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * has_playoffs=true supplied without playoff_starts_at.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class SeasonPlayoffStartRequiredException extends StackraException
+final class SeasonPlayoffStartRequiredException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

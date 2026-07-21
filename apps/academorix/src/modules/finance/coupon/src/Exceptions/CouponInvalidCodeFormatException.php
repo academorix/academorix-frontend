@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Academorix\Coupon\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Code must be uppercase alphanumeric + dash/underscore, 4.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class CouponInvalidCodeFormatException extends StackraException
+final class CouponInvalidCodeFormatException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

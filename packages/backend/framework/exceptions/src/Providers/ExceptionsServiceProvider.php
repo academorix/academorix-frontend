@@ -77,8 +77,8 @@ use Stackra\Exceptions\Contracts\ExceptionReporterInterface;
 use Stackra\Exceptions\Formatters\HtmlErrorFormatter;
 use Stackra\Exceptions\Formatters\JsonErrorFormatter;
 use Stackra\Exceptions\Handler;
-use Stackra\Exceptions\Ignition\StackraAiSolutionsProvider;
-use Stackra\Exceptions\Ignition\StackraSolutionsProvider;
+use Stackra\Exceptions\Ignition\AiSolutionsProvider;
+use Stackra\Exceptions\Ignition\SolutionsProvider;
 use Stackra\Exceptions\Reporters\LogReporter;
 use Stackra\Exceptions\Reporters\SentryReporter;
 use Stackra\Exceptions\Support\ExceptionMapper;
@@ -298,8 +298,8 @@ final class ExceptionsServiceProvider extends AbstractModuleServiceProvider
      */
     private function registerIgnitionBindings(): void
     {
-        $this->app->singleton(StackraSolutionsProvider::class, StackraSolutionsProvider::class);
-        $this->app->singleton(StackraAiSolutionsProvider::class, StackraAiSolutionsProvider::class);
+        $this->app->singleton(SolutionsProvider::class, SolutionsProvider::class);
+        $this->app->singleton(AiSolutionsProvider::class, AiSolutionsProvider::class);
     }
 
     // -----------------------------------------------------------------
@@ -327,8 +327,8 @@ final class ExceptionsServiceProvider extends AbstractModuleServiceProvider
         }
 
         $providers = [
-            StackraSolutionsProvider::class,
-            StackraAiSolutionsProvider::class,
+            SolutionsProvider::class,
+            AiSolutionsProvider::class,
         ];
 
         if ($this->app->bound($ignitionClass)) {

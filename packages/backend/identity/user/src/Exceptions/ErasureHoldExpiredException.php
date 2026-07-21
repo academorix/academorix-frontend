@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\User\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Attempted to restore a soft-deleted User past the erasure hold window.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class ErasureHoldExpiredException extends StackraException
+final class ErasureHoldExpiredException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

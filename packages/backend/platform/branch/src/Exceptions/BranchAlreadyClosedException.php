@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Branch\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Raised when the domain rule `BRANCH_ALREADY_CLOSED` fires.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class BranchAlreadyClosedException extends StackraException
+final class BranchAlreadyClosedException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Academorix\Session\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * head_coach_id or an entry in assistant_coach_ids belongs to a different tenant.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class SessionCoachTenantMismatchException extends StackraException
+final class SessionCoachTenantMismatchException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

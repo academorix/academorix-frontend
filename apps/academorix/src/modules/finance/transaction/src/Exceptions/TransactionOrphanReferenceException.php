@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Academorix\Transaction\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * The reference_type + reference_id pair does not resolve to an actual row OR the referenced entity belongs to a different tenant.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class TransactionOrphanReferenceException extends StackraException
+final class TransactionOrphanReferenceException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

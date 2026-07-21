@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Newsletter\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Refuse cancelling a campaign whose send-batch jobs have finished.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class NewsletterCampaignAlreadyInProgressException extends StackraException
+final class NewsletterCampaignAlreadyInProgressException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

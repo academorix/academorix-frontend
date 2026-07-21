@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Academorix\Session\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * The specified resource_booking is not in a session-attachable state (cancelled/no_show/completed) OR already has a session attached.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class SessionResourceBookingUnavailableException extends StackraException
+final class SessionResourceBookingUnavailableException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

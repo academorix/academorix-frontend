@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Stackra\Notifications\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Raised when a caller dispatched a category slug that is not
@@ -16,7 +16,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class NotificationCategoryNotRegisteredException extends StackraException
+final class NotificationCategoryNotRegisteredException extends Exception
 {
     public const CODE = 'NOTIFICATIONS_CATEGORY_NOT_REGISTERED';
 

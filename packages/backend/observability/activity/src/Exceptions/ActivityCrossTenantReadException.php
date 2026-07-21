@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Activity\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Attempt to read an activity from a different tenant (bypassing BelongsToTenant scope via a raw ID query).
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class ActivityCrossTenantReadException extends StackraException
+final class ActivityCrossTenantReadException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Academorix\Invoice\Exceptions;
 
-use Stackra\Exceptions\StackraException;
+use Stackra\Exceptions\Exception;
 
 /**
  * Attempted to mutate billing_address / shipping_address / customer_tax_id / currency after create.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\StackraException;
  *
  * @since    0.1.0
  */
-final class InvoiceSnapshotImmutableException extends StackraException
+final class InvoiceSnapshotImmutableException extends Exception
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.
