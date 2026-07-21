@@ -11,7 +11,7 @@ description: >-
   TypeScript, no interfaces, no register helpers, no barrel appends — the future
   `@stackra/i18n` runtime + Vite plugin walk these JSON files at build/runtime
   and register them under the package's directory name as the namespace, exactly
-  like the reference implementation at `.ref/packages/i18n/`. Runs in two modes:
+  like the reference implementation at `packages/frontend/i18n/`. Runs in two modes:
   audit-only (report of candidate strings per package) and scaffold (writes the
   two JSON files). This agent WRITES new JSON catalog files only — it NEVER
   modifies existing component source, tests, manifests, README, or generated
@@ -28,7 +28,7 @@ string a real user would read, and ship two files per package — `en.json` and
 plugin will discover them at build/runtime and register them under the package's
 directory name as the namespace.
 
-The reference implementation you match is `.ref/packages/i18n/`. Study it before
+The reference implementation you match is `packages/frontend/i18n/`. Study it before
 touching anything.
 
 ## Modes
@@ -51,17 +51,17 @@ operator; only run `scaffold <pkg>` after review.
 
 Read, in this order:
 
-- `.ref/packages/i18n/README.md` — the reference runtime. Confirms the
+- `packages/frontend/i18n/README.md` — the reference runtime. Confirms the
   convention: JSON files under a translations directory, discovered by the Vite
   plugin, indexed by locale + namespace.
-- `.ref/packages/i18n/src/vite/i18n-plugin.ts` — the discovery walker. Structure
+- `packages/frontend/i18n/src/vite/i18n-plugin.ts` — the discovery walker. Structure
   it expects: `<translationsDir>/<locale>/<namespace>.json`. Note how the plugin
   builds the `translations` map: locale first, then namespace (filename without
   `.json`).
-- `.ref/packages/i18n/src/core/loaders/static.loader.ts` — how the built
+- `packages/frontend/i18n/src/core/loaders/static.loader.ts` — how the built
   `translations` object is fed into the runtime at boot
   (`I18nModule.forRoot({ loader: StaticLoader, loaderOptions: { translations } })`).
-- `.ref/packages/i18n/src/core/i18n.module.ts` — the `forFeature(...)` path for
+- `packages/frontend/i18n/src/core/i18n.module.ts` — the `forFeature(...)` path for
   packages that register their own translations lazily (accepts a `translations`
   object directly, no filesystem discovery).
 - `packages/contracts/src/interfaces/i18n/i18n-translation.type.ts` — the
@@ -404,7 +404,7 @@ Also visually verify:
 
 - **Building the `@stackra/i18n` runtime package** (the `I18nManager`
   implementation, the `LocaleService`, the direction adapter, the Vite plugin) →
-  `framework-core-builder`. The reference lives at `.ref/packages/i18n/`. Your
+  `framework-core-builder`. The reference lives at `packages/frontend/i18n/`. Your
   job is only the per-package JSON catalogs the runtime consumes.
 - **Migrating components to call `t(...)`** — component-source changes belong to
   `heroui-ui-builder` / `framework-core-builder`. Once the runtime lands, a
@@ -415,7 +415,7 @@ Also visually verify:
   `register<Pkg>Translations(manager)` helper, no barrel append. The runtime
   handles all of it via filesystem discovery. If a consumer wants type-safe
   keys, the runtime's own `generateI18nTypes` command (see
-  `.ref/packages/i18n/README.md` §Type Safety) emits a `.d.ts` at the app level
+  `packages/frontend/i18n/README.md` §Type Safety) emits a `.d.ts` at the app level
   from the discovered JSON — not the package's job.
 - **Manifest normalisation** (adding an `./i18n` subpath entry, updating
   `files:`) → `workspace-standardization-steward`. Flag it.
