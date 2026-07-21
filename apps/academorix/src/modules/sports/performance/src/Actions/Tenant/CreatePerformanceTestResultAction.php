@@ -4,11 +4,11 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Performance\Actions\Tenant;
+namespace Academorix\Performance\Actions\Tenant;
 
-use Stackra\Performance\Contracts\Repositories\PerformanceTestResultRepositoryInterface;
-use Stackra\Performance\Data\PerformanceTestResultData;
-use Stackra\Performance\Data\Requests\CreatePerformanceTestResultRequestData;
+use Academorix\Performance\Contracts\Repositories\PerformanceTestResultRepositoryInterface;
+use Academorix\Performance\Data\PerformanceTestResultData;
+use Academorix\Performance\Data\Requests\CreatePerformanceTestResultRequestData;
 use Stackra\Routing\Attributes\AsAction;
 use Stackra\Routing\Attributes\Middleware;
 use Stackra\Routing\Concerns\AsController;

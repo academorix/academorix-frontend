@@ -1,10 +1,10 @@
 {
-  "name": "stackra-platform/safeguarding-sdk",
+  "name": "academorix-platform/safeguarding-sdk",
   "type": "library",
-  "description": "Wire-visible SDK surface (Spatie Data DTOs + Saloon Request transport + fluent Resources) for the `safeguarding` module of the Platform service. Auto-discovered at boot by stackra/platform-sdk via #[AsSdkResource(name: 'safeguarding', service: 'platform')]; consumed by every cross-service caller strictly over HTTP.",
+  "description": "Wire-visible SDK surface (Spatie Data DTOs + Saloon Request transport + fluent Resources) for the `safeguarding` module of the Platform service. Auto-discovered at boot by academorix/platform-sdk via #[AsSdkResource(name: 'safeguarding', service: 'platform')]; consumed by every cross-service caller strictly over HTTP.",
   "license": "proprietary",
   "keywords": [
-    "stackra",
+    "academorix",
     "sdk",
     "saloon",
     "spatie-data",
@@ -32,12 +32,12 @@
   },
   "autoload": {
     "psr-4": {
-      "Stackra\\\\PlatformSafeguardingSdk\\\\": "src/"
+      "Academorix\\\\PlatformSafeguardingSdk\\": "src/"
     }
   },
   "autoload-dev": {
     "psr-4": {
-      "Stackra\\\\PlatformSafeguardingSdk\\\\Tests\\\\": "tests/"
+      "Academorix\\\\PlatformSafeguardingSdk\\\\Tests\\": "tests/"
     }
   },
   "extra": {

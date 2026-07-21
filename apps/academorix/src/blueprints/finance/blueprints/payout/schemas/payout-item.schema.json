@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/payout/schemas/payout-item",
+  "id": "academorix://modules/payout/schemas/payout-item",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "PayoutItem",
@@ -13,9 +13,9 @@
     "keyType": "string",
     "keyPrefix": "pyi_",
     "incrementing": false,
-    "model": "Stackra\\Finance\\Payout\\Models\\PayoutItem",
-    "interface": "Stackra\\Finance\\Payout\\Contracts\\Data\\PayoutItemInterface",
-    "implements": ["Stackra\\Finance\\Payout\\Contracts\\Data\\PayoutItemInterface"],
+    "model": "Academorix\\Finance\\Payout\\Models\\PayoutItem",
+    "interface": "Academorix\\Finance\\Payout\\Contracts\\Data\\PayoutItemInterface",
+    "implements": ["Academorix\\Finance\\Payout\\Contracts\\Data\\PayoutItemInterface"],
     "traits": [
       "HasFactory",
       "HasUlids",

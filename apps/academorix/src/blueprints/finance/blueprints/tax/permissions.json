@@ -1,8 +1,8 @@
 {
-  "id": "stackra://modules/tax/permissions",
+  "id": "academorix://modules/tax/permissions",
   "$version": 1,
   "title": "tax — permissions",
-  "seeder": "Stackra\\Finance\\Tax\\Database\\Seeders\\TaxPermissionSeeder",
+  "seeder": "Academorix\\Finance\\Tax\\Database\\Seeders\\TaxPermissionSeeder",
   "isSystem": true,
   "description": "Two audiences. Tenant plane (sanctum) — rate + jurisdiction + provider CRUD by owner + admin + finance role; calculation + exemption reads by owner + admin + finance role + support role; exemption verify/reject by admin + owner + compliance role. Platform plane (platform_admin) — cross-tenant support tooling for ops + support cross-tenant P1 review. All tenant-plane permissions carry the `tax.` prefix (or `platform.tax.` on the platform audience) per hierarchy.md §4 audience-boundary rules.",
   "permissions": [

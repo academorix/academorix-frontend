@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\PlatformUser\Exceptions;
 
-use Stackra\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * POST /suspend was called without a reason, or with a reason under 20 chars.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class SuspensionReasonRequiredException extends AcademorixException
+final class SuspensionReasonRequiredException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

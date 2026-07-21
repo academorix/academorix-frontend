@@ -2,18 +2,18 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Registrations\Services;
+namespace Academorix\Registrations\Services;
 
-use Stackra\Registrations\Contracts\Data\OfferInterface;
-use Stackra\Registrations\Contracts\Data\WaitlistEntryInterface;
-use Stackra\Registrations\Contracts\Repositories\OfferRepositoryInterface;
-use Stackra\Registrations\Contracts\Repositories\RegistrationRepositoryInterface;
-use Stackra\Registrations\Contracts\Repositories\WaitlistRepositoryInterface;
-use Stackra\Registrations\Contracts\Services\AutoOffererInterface;
-use Stackra\Registrations\Contracts\Services\CapacityResolverInterface;
-use Stackra\Registrations\Enums\OfferStatus;
-use Stackra\Registrations\Events\OfferMade;
-use Stackra\Registrations\Models\Offer;
+use Academorix\Registrations\Contracts\Data\OfferInterface;
+use Academorix\Registrations\Contracts\Data\WaitlistEntryInterface;
+use Academorix\Registrations\Contracts\Repositories\OfferRepositoryInterface;
+use Academorix\Registrations\Contracts\Repositories\RegistrationRepositoryInterface;
+use Academorix\Registrations\Contracts\Repositories\WaitlistRepositoryInterface;
+use Academorix\Registrations\Contracts\Services\AutoOffererInterface;
+use Academorix\Registrations\Contracts\Services\CapacityResolverInterface;
+use Academorix\Registrations\Enums\OfferStatus;
+use Academorix\Registrations\Events\OfferMade;
+use Academorix\Registrations\Models\Offer;
 use Illuminate\Container\Attributes\Config;
 use Illuminate\Container\Attributes\DB;
 use Illuminate\Container\Attributes\Log;
@@ -24,7 +24,7 @@ use Psr\Log\LoggerInterface;
 
 /**
  * Reference implementation of
- * {@see \Stackra\Registrations\Contracts\Services\AutoOffererInterface}.
+ * {@see \Academorix\Registrations\Contracts\Services\AutoOffererInterface}.
  *
  * Algorithm:
  *  1. Delegate to {@see CapacityResolverInterface::statusFor} to

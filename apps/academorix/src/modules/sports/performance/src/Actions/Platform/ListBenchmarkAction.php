@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Performance\Actions\Platform;
+namespace Academorix\Performance\Actions\Platform;
 
-use Stackra\Performance\Contracts\Repositories\BenchmarkRepositoryInterface;
-use Stackra\Performance\Data\BenchmarkData;
+use Academorix\Performance\Contracts\Repositories\BenchmarkRepositoryInterface;
+use Academorix\Performance\Data\BenchmarkData;
 use Stackra\Routing\Attributes\AsAction;
 use Stackra\Routing\Attributes\Middleware;
 use Stackra\Routing\Concerns\AsController;
@@ -50,7 +50,7 @@ final class ListBenchmarkAction
      */
     public function __invoke(Request $request): PaginatedDataCollection
     {
-        /** @var LengthAwarePaginator<int, \Stackra\Performance\Models\Benchmark> $page */
+        /** @var LengthAwarePaginator<int, \Academorix\Performance\Models\Benchmark> $page */
         $page = $this->repository->paginate(
             perPage: (int) $request->integer('per_page', 15),
         );

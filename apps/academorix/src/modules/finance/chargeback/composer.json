@@ -1,10 +1,10 @@
 {
-  "name": "stackra/chargeback",
+  "name": "academorix/chargeback",
   "type": "library",
-  "description": "Stackra Chargeback module — server-side Laravel package emitted from the module blueprint at `modules/finance/blueprints/chargeback/`. Complements the wire SDK at `stackra-finance/chargeback-sdk`.",
+  "description": "Academorix Chargeback module — server-side Laravel package emitted from the module blueprint at `modules/finance/blueprints/chargeback/`. Complements the wire SDK at `academorix-finance/chargeback-sdk`.",
   "license": "proprietary",
   "keywords": [
-    "stackra",
+    "academorix",
     "module",
     "laravel",
     "finance",
@@ -22,7 +22,7 @@
     "stackra/routing": "@dev",
     "stackra/service-provider": "@dev",
     "stackra/support": "@dev",
-    "stackra-finance/chargeback-sdk": "@dev"
+    "academorix-finance/chargeback-sdk": "@dev"
   },
   "require-dev": {
     "orchestra/testbench": "^11.0",
@@ -33,12 +33,12 @@
   },
   "autoload": {
     "psr-4": {
-      "Stackra\\Chargeback\\": "src/"
+      "Academorix\\Chargeback\\": "src/"
     }
   },
   "autoload-dev": {
     "psr-4": {
-      "Stackra\\Chargeback\\Tests\\": "tests/"
+      "Academorix\\Chargeback\\Tests\\": "tests/"
     }
   },
   "extra": {

@@ -4,17 +4,17 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Gateway\Models;
+namespace Academorix\Gateway\Models;
 
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
-use Stackra\Gateway\Contracts\Data\GatewayWebhookEventInterface;
-use Stackra\Gateway\Database\Factories\GatewayWebhookEventFactory;
+use Academorix\Gateway\Contracts\Data\GatewayWebhookEventInterface;
+use Academorix\Gateway\Database\Factories\GatewayWebhookEventFactory;
 use Stackra\Foundation\Concerns\HasMetadata;
-use Stackra\Gateway\Policies\GatewayWebhookEventPolicy;
+use Academorix\Gateway\Policies\GatewayWebhookEventPolicy;
 use Stackra\Tenancy\Concerns\BelongsToTenant;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;

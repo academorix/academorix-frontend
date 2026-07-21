@@ -1,12 +1,12 @@
 {
-  "id": "stackra://modules/payout/policies",
+  "id": "academorix://modules/payout/policies",
   "$version": 1,
   "title": "payout — authorization policies",
   "description": "Every payout is finance-only. Sync refuses when payout status is already terminal.",
   "policies": [
     {
       "model": "Payout",
-      "class": "Stackra\\Finance\\Payout\\Policies\\PayoutPolicy",
+      "class": "Academorix\\Finance\\Payout\\Policies\\PayoutPolicy",
       "abilities": [
         { "action": "viewAny", "permission": "payouts.viewAny" },
         { "action": "view", "permission": "payouts.view" },
@@ -20,7 +20,7 @@
     },
     {
       "model": "PayoutItem",
-      "class": "Stackra\\Finance\\Payout\\Policies\\PayoutItemPolicy",
+      "class": "Academorix\\Finance\\Payout\\Policies\\PayoutItemPolicy",
       "abilities": [
         { "action": "viewAny", "permission": "payout-items.viewAny" },
         { "action": "view", "permission": "payout-items.view" }
@@ -28,7 +28,7 @@
     },
     {
       "model": "PayoutReconciliation",
-      "class": "Stackra\\Finance\\Payout\\Policies\\PayoutReconciliationPolicy",
+      "class": "Academorix\\Finance\\Payout\\Policies\\PayoutReconciliationPolicy",
       "abilities": [
         { "action": "viewAny", "permission": "payout-reconciliations.viewAny" },
         { "action": "view", "permission": "payout-reconciliations.view" },

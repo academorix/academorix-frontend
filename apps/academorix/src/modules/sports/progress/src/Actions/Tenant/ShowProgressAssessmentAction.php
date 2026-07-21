@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Progress\Actions\Tenant;
+namespace Academorix\Progress\Actions\Tenant;
 
-use Stackra\Progress\Contracts\Repositories\ProgressAssessmentRepositoryInterface;
-use Stackra\Progress\Data\ProgressAssessmentData;
+use Academorix\Progress\Contracts\Repositories\ProgressAssessmentRepositoryInterface;
+use Academorix\Progress\Data\ProgressAssessmentData;
 use Stackra\Routing\Attributes\AsAction;
 use Stackra\Routing\Attributes\Middleware;
 use Stackra\Routing\Concerns\AsController;

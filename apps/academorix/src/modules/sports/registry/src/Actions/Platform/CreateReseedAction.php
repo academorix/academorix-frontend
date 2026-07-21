@@ -4,7 +4,7 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Registry\Actions\Platform;
+namespace Academorix\Registry\Actions\Platform;
 
 use Stackra\Routing\Attributes\AsAction;
 use Stackra\Routing\Attributes\Middleware;

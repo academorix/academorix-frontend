@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/medical/schemas/medical-record",
+  "id": "academorix://modules/medical/schemas/medical-record",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "MedicalRecord",

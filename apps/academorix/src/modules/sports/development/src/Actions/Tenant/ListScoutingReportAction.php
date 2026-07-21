@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Development\Actions\Tenant;
+namespace Academorix\Development\Actions\Tenant;
 
-use Stackra\Development\Contracts\Repositories\ScoutingReportRepositoryInterface;
-use Stackra\Development\Data\ScoutingReportData;
+use Academorix\Development\Contracts\Repositories\ScoutingReportRepositoryInterface;
+use Academorix\Development\Data\ScoutingReportData;
 use Stackra\Routing\Attributes\AsAction;
 use Stackra\Routing\Attributes\Middleware;
 use Stackra\Routing\Concerns\AsController;
@@ -50,7 +50,7 @@ final class ListScoutingReportAction
      */
     public function __invoke(Request $request): PaginatedDataCollection
     {
-        /** @var LengthAwarePaginator<int, \Stackra\Development\Models\ScoutingReport> $page */
+        /** @var LengthAwarePaginator<int, \Academorix\Development\Models\ScoutingReport> $page */
         $page = $this->repository->paginate(
             perPage: (int) $request->integer('per_page', 15),
         );

@@ -1,9 +1,9 @@
 {
-  "id": "stackra://modules/attribution/metrics",
+  "id": "academorix://modules/attribution/metrics",
   "$version": 1,
   "title": "attribution — OpenTelemetry metrics",
   "instrumentation": "self via telemetry",
-  "namespace": "stackra.attribution",
+  "namespace": "academorix.attribution",
   "labelConventions": {
     "always": [],
     "commonlyAvailable": [
@@ -32,53 +32,53 @@
   },
   "metrics": [
     {
-      "name": "stackra.attribution.profiles.total",
+      "name": "academorix.attribution.profiles.total",
       "kind": "gauge",
       "unit": "profiles",
       "labels": ["subject_type", "lifecycle_state"],
       "description": "Count of active attribution profiles per (subject_type, lifecycle_state). Sampled hourly. Powers the lifecycle-summary dashboard card."
     },
     {
-      "name": "stackra.attribution.profiles.created_total",
+      "name": "academorix.attribution.profiles.created_total",
       "kind": "counter",
       "unit": "profiles",
       "labels": ["subject_type", "source_bucket"],
       "description": "New profiles created. source_bucket ∈ { paid, organic, social, referral, direct, email, affiliate, unknown }."
     },
     {
-      "name": "stackra.attribution.subject_identified_total",
+      "name": "academorix.attribution.subject_identified_total",
       "kind": "counter",
       "unit": "profiles",
       "labels": ["was_subject_type", "new_subject_type"]
     },
     {
-      "name": "stackra.attribution.converted_total",
+      "name": "academorix.attribution.converted_total",
       "kind": "counter",
       "unit": "profiles",
       "labels": ["first_touch_source_bucket"],
       "description": "Conversion count per first-touch source bucket. First-touch attribution model."
     },
     {
-      "name": "stackra.attribution.churned_total",
+      "name": "academorix.attribution.churned_total",
       "kind": "counter",
       "unit": "profiles",
       "labels": ["was_lifecycle_state"]
     },
     {
-      "name": "stackra.attribution.restored_total",
+      "name": "academorix.attribution.restored_total",
       "kind": "counter",
       "unit": "profiles",
       "labels": []
     },
     {
-      "name": "stackra.attribution.merged_total",
+      "name": "academorix.attribution.merged_total",
       "kind": "counter",
       "unit": "merges",
       "labels": ["first_touch_overwritten"],
       "description": "Enterprise-only. Merge count per outcome (first_touch overwritten or not)."
     },
     {
-      "name": "stackra.attribution.merge_absorbed_count_bucket",
+      "name": "academorix.attribution.merge_absorbed_count_bucket",
       "kind": "histogram",
       "unit": "profiles",
       "buckets": [1, 2, 3, 5, 10],
@@ -86,21 +86,21 @@
       "description": "How many anonymous profiles were absorbed per merge. Distribution should be heavy on 1-2; long tail indicates a proxy misconfiguration."
     },
     {
-      "name": "stackra.attribution.reset_requested_total",
+      "name": "academorix.attribution.reset_requested_total",
       "kind": "counter",
       "unit": "requests",
       "labels": ["trigger"],
       "description": "trigger ∈ { user_request, admin_action, regulator_request, force_reset }. Compliance signal."
     },
     {
-      "name": "stackra.attribution.touchpoints.captured_total",
+      "name": "academorix.attribution.touchpoints.captured_total",
       "kind": "counter",
       "unit": "touchpoints",
       "labels": ["touchpoint_type", "was_first_touch", "was_authenticated"],
       "description": "High-volume counter. touchpoint_type has 11 values (see events.json AttributionTouchpointCaptured)."
     },
     {
-      "name": "stackra.attribution.touchpoint_write_duration_ms",
+      "name": "academorix.attribution.touchpoint_write_duration_ms",
       "kind": "histogram",
       "unit": "ms",
       "buckets": [1, 5, 20, 100, 500],
@@ -108,7 +108,7 @@
       "description": "AttributionTouchpointObserver.creating latency. P99 target < 20ms — this fires on every attribution-bearing HTTP request. Drift indicates index bloat."
     },
     {
-      "name": "stackra.attribution.middleware_duration_ms",
+      "name": "academorix.attribution.middleware_duration_ms",
       "kind": "histogram",
       "unit": "ms",
       "buckets": [1, 5, 20, 100, 500],
@@ -116,28 +116,28 @@
       "description": "AttributionMiddleware total duration (from consent check → snapshot binding). P99 target < 50ms."
     },
     {
-      "name": "stackra.attribution.consent_suppressions_total",
+      "name": "academorix.attribution.consent_suppressions_total",
       "kind": "counter",
       "unit": "suppressions",
       "labels": ["consent_state_summary"],
       "description": "consent_state_summary ∈ { marketing_off, advertising_off, both_off, partial }. Compliance signal — the rate proves the consent gate fires. Sudden spikes indicate a consent-gate misconfiguration or a large bulk-revocation event."
     },
     {
-      "name": "stackra.attribution.click_ids.captured_total",
+      "name": "academorix.attribution.click_ids.captured_total",
       "kind": "counter",
       "unit": "click_ids",
       "labels": ["provider_hint"],
       "description": "provider_hint ∈ { google, meta, tiktok, microsoft, snapchat, none }. Distribution of click-ID sources — competitive intel for the growth team's channel-mix analysis."
     },
     {
-      "name": "stackra.attribution.rollup.computed_total",
+      "name": "academorix.attribution.rollup.computed_total",
       "kind": "counter",
       "unit": "computations",
       "labels": [],
       "description": "CampaignRollupAggregatorJob completion count. Should tick hourly on every rollup-entitled tenant."
     },
     {
-      "name": "stackra.attribution.rollup.compute_duration_ms",
+      "name": "academorix.attribution.rollup.compute_duration_ms",
       "kind": "histogram",
       "unit": "ms",
       "buckets": [100, 500, 2000, 10000, 60000],
@@ -145,35 +145,35 @@
       "description": "Full rollup pass latency per tenant. P99 target < 10s on large tenants."
     },
     {
-      "name": "stackra.attribution.count_drift_corrections",
+      "name": "academorix.attribution.count_drift_corrections",
       "kind": "counter",
       "unit": "corrections",
       "labels": [],
       "description": "CRITICAL. ReconcileAttributionCountsJob correction count. Should stay at 0. Every fire is a data-integrity signal."
     },
     {
-      "name": "stackra.attribution.reset.audit_hold_purges_total",
+      "name": "academorix.attribution.reset.audit_hold_purges_total",
       "kind": "counter",
       "unit": "resets",
       "labels": [],
       "description": "AttributionResetConfirmed fire count. Tracks completions of the 90-day audit hold post-reset."
     },
     {
-      "name": "stackra.attribution.import.rows_processed_total",
+      "name": "academorix.attribution.import.rows_processed_total",
       "kind": "counter",
       "unit": "rows",
       "labels": ["import_outcome"],
       "description": "Enterprise-only. import_outcome ∈ { imported, skipped_duplicate, rejected_invalid }."
     },
     {
-      "name": "stackra.attribution.retention.purged_total",
+      "name": "academorix.attribution.retention.purged_total",
       "kind": "counter",
       "unit": "rows",
       "labels": ["row_type"],
       "description": "row_type ∈ { attribution, touchpoint }. PurgeArchivedAttributionsJob's per-run count."
     },
     {
-      "name": "stackra.attribution.entitlement.gate_refusals_total",
+      "name": "academorix.attribution.entitlement.gate_refusals_total",
       "kind": "counter",
       "unit": "refusals",
       "labels": ["entitlement_key"],

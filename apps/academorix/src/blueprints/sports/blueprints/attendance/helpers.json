@@ -1,8 +1,8 @@
 {
-  "id": "stackra://modules/attendance/helpers",
+  "id": "academorix://modules/attendance/helpers",
   "$version": 1,
   "title": "attendance — helper functions",
-  "namespace": "Stackra\\Sports\\Attendance\\Support",
+  "namespace": "Academorix\\Sports\\Attendance\\Support",
   "helpers": [
     {
       "signature": "current_attendance_for_session(Session $session): Collection<AttendanceRecord>",

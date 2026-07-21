@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Staff\Exceptions;
 
-use Stackra\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * reports_to_staff_id target is offboarded or suspended.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class StaffManagerNotActiveException extends AcademorixException
+final class StaffManagerNotActiveException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

@@ -4,13 +4,13 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Registrations\Policies;
+namespace Academorix\Registrations\Policies;
 
 use Stackra\User\Models\User;
-use Stackra\Registrations\Models\Offer;
+use Academorix\Registrations\Models\Offer;
 
 /**
- * Authorization policy for {@see \Stackra\Registrations\Models\Offer}.
+ * Authorization policy for {@see \Academorix\Registrations\Models\Offer}.
  *
  * Wired via `#[UsePolicy]` on the Model.
  *

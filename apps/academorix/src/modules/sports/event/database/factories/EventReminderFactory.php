@@ -4,19 +4,19 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Event\Database\Factories;
+namespace Academorix\Event\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Stackra\Event\Contracts\Data\EventReminderInterface;
-use Stackra\Event\Models\EventReminder;
+use Academorix\Event\Contracts\Data\EventReminderInterface;
+use Academorix\Event\Models\EventReminder;
 
 /**
- * Factory for {@see \Stackra\Event\Models\EventReminder}.
+ * Factory for {@see \Academorix\Event\Models\EventReminder}.
  *
  * Auto-generated skeleton — extend with named states as domain
  * cases emerge (e.g. `->published()`, `->overdue()`, `->archived()`).
  *
- * @extends Factory<\Stackra\Event\Models\EventReminder>
+ * @extends Factory<\Academorix\Event\Models\EventReminder>
  *
  * @category Event
  *

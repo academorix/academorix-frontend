@@ -4,16 +4,16 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Formations\Models;
+namespace Academorix\Formations\Models;
 
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
-use Stackra\Formations\Contracts\Data\FormationInterface;
-use Stackra\Formations\Database\Factories\FormationFactory;
-use Stackra\Formations\Policies\FormationPolicy;
+use Academorix\Formations\Contracts\Data\FormationInterface;
+use Academorix\Formations\Database\Factories\FormationFactory;
+use Academorix\Formations\Policies\FormationPolicy;
 use Stackra\Foundation\Concerns\Filterable;
 use Stackra\Foundation\Concerns\HasMetadata;
 use Stackra\Foundation\Concerns\HasPrefixedUlid;

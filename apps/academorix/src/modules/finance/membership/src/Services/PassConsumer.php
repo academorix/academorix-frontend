@@ -4,11 +4,11 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Membership\Services;
+namespace Academorix\Membership\Services;
 
-use Stackra\Membership\Contracts\Services\PassConsumerInterface;
+use Academorix\Membership\Contracts\Services\PassConsumerInterface;
 use Illuminate\Container\Attributes\Scoped;
-use Stackra\Membership\Contracts\Repositories\MembershipPlanRepositoryInterface;
+use Academorix\Membership\Contracts\Repositories\MembershipPlanRepositoryInterface;
 
 /**
  * Concrete service — PassConsumer.

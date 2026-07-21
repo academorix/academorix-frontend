@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Stackra\PlatformApplicationSdk\Enums;
+namespace Academorix\PlatformApplicationSdk\Enums;
 
 use Stackra\Enum\Attributes\Description;
 use Stackra\Enum\Attributes\Label;
@@ -18,7 +18,7 @@ use Stackra\Enum\Enum;
  * `key` field carries the same tokens. Ship them here so callers can
  * type-check the identifier at compile time and hydrate the full
  * catalogue record from
- * {@see \Stackra\PlatformApplicationSdk\Data\BusinessTypeData} at
+ * {@see \Academorix\PlatformApplicationSdk\Data\BusinessTypeData} at
  * runtime.
  *
  * ## Cases

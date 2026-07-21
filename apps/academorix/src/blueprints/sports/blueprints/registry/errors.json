@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/sports-registry/errors",
+  "id": "academorix://modules/sports-registry/errors",
   "$version": 1,
   "title": "sports-registry — error codes",
   "namespace": "sports-registry",

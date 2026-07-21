@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Geofencing\Data;
+namespace Academorix\Geofencing\Data;
 
-use Stackra\Geofencing\Contracts\Data\GeofenceCheckInterface;
-use Stackra\Geofencing\Enums\GeofenceMode;
-use Stackra\Geofencing\Enums\GeofenceResult;
-use Stackra\Geofencing\Models\GeofenceCheck;
+use Academorix\Geofencing\Contracts\Data\GeofenceCheckInterface;
+use Academorix\Geofencing\Enums\GeofenceMode;
+use Academorix\Geofencing\Enums\GeofenceResult;
+use Academorix\Geofencing\Models\GeofenceCheck;
 use Spatie\LaravelData\Attributes\MapOutputName;
 use Spatie\LaravelData\Attributes\WithCast;
 use Spatie\LaravelData\Casts\DateTimeInterfaceCast;

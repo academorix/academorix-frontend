@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Expenses\Contracts\Services;
+namespace Academorix\Expenses\Contracts\Services;
 
-use Stackra\Expenses\Services\AccountingSyncer;
+use Academorix\Expenses\Services\AccountingSyncer;
 use Illuminate\Container\Attributes\Bind;
 
 /**

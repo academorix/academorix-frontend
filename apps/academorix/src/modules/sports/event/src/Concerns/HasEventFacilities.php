@@ -4,7 +4,7 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Event\Concerns;
+namespace Academorix\Event\Concerns;
 
 /**
  * Trait — HasEventFacilities.

@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/attribution/data-classes",
+  "id": "academorix://modules/attribution/data-classes",
   "$version": 1,
   "title": "attribution — field classification",
   "description": "Attributions are behavioural marketing metadata (confidential — tenant-competitive). Touchpoints carry device + IP hash + consent snapshot (confidential + PII-adjacent — redacted on user erasure). Click IDs are third-party tokens (confidential — ad-network vendor lock-in signal). No health data, no financial account data on any owned row.",

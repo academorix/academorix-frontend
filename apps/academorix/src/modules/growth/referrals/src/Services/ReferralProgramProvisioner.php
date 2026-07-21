@@ -4,11 +4,11 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Referrals\Services;
+namespace Academorix\Referrals\Services;
 
-use Stackra\Referrals\Contracts\Services\ReferralProgramProvisionerInterface;
+use Academorix\Referrals\Contracts\Services\ReferralProgramProvisionerInterface;
 use Illuminate\Container\Attributes\Scoped;
-use Stackra\Referrals\Contracts\Repositories\ReferralCodeRepositoryInterface;
+use Academorix\Referrals\Contracts\Repositories\ReferralCodeRepositoryInterface;
 
 /**
  * Concrete service — ReferralProgramProvisioner.

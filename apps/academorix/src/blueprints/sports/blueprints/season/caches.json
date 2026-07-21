@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/season/caches",
+  "id": "academorix://modules/season/caches",
   "$version": 1,
   "title": "season — cache keys + tags",
   "driver": "redis",

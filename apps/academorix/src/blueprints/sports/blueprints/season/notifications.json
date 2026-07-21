@@ -1,8 +1,8 @@
 {
-  "id": "stackra://modules/season/notifications",
+  "id": "academorix://modules/season/notifications",
   "$version": 1,
   "title": "season — notification classes + categories",
-  "namespace": "Stackra\\Sports\\Season\\Notifications",
+  "namespace": "Academorix\\Sports\\Season\\Notifications",
   "notifications": [
     "SeasonRegistrationOpeningNotification",
     "SeasonRegistrationClosingNotification",

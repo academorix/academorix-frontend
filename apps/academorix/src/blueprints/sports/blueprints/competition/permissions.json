@@ -1,8 +1,8 @@
 {
-  "id": "stackra://modules/competition/permissions",
+  "id": "academorix://modules/competition/permissions",
   "$version": 1,
   "title": "competition — permissions",
-  "seeder": "Stackra\\Sports\\Competition\\Database\\Seeders\\CompetitionPermissionSeeder",
+  "seeder": "Academorix\\Sports\\Competition\\Database\\Seeders\\CompetitionPermissionSeeder",
   "isSystem": true,
   "permissions": [
     {

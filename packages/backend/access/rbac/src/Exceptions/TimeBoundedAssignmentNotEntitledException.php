@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Rbac\Exceptions;
 
-use Stackra\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Attempted to write expires_at on model_has_roles without the `time_bounded_role_assignments` entitlement.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class TimeBoundedAssignmentNotEntitledException extends AcademorixException
+final class TimeBoundedAssignmentNotEntitledException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

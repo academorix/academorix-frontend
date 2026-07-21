@@ -1,11 +1,11 @@
 {
-  "id": "stackra://modules/performance/policies",
+  "id": "academorix://modules/performance/policies",
   "$version": 1,
   "title": "performance — authorization policies",
   "policies": [
     {
       "model": "TestBattery",
-      "class": "Stackra\\Sports\\Performance\\Policies\\TestBatteryPolicy",
+      "class": "Academorix\\Sports\\Performance\\Policies\\TestBatteryPolicy",
       "abilities": [
         { "action": "viewAny", "permission": "performance.batteries.viewAny" },
         { "action": "view", "permission": "performance.batteries.view" },
@@ -24,7 +24,7 @@
     },
     {
       "model": "TestResult",
-      "class": "Stackra\\Sports\\Performance\\Policies\\TestResultPolicy",
+      "class": "Academorix\\Sports\\Performance\\Policies\\TestResultPolicy",
       "abilities": [
         {
           "action": "viewAny",

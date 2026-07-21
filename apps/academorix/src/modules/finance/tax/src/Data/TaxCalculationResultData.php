@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Tax\Data;
+namespace Academorix\Tax\Data;
 
 use Spatie\LaravelData\Attributes\MapOutputName;
 use Spatie\LaravelData\Data;
@@ -10,7 +10,7 @@ use Spatie\LaravelData\DataCollection;
 use Spatie\LaravelData\Mappers\SnakeCaseMapper;
 
 /**
- * Aggregate result of {@see \Stackra\Tax\Services\TaxCalculator::calculate}.
+ * Aggregate result of {@see \Academorix\Tax\Services\TaxCalculator::calculate}.
  *
  * Serialised to the caller and persisted to `tax_calculations` for
  * audit. Each line's per-jurisdiction breakdown lives in `lines`;

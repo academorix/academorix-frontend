@@ -1,9 +1,9 @@
 {
-  "id": "stackra://modules/athlete-enrollment/metrics",
+  "id": "academorix://modules/athlete-enrollment/metrics",
   "$version": 1,
   "title": "athlete-enrollment — OpenTelemetry metrics",
   "instrumentation": "self via telemetry",
-  "namespace": "stackra.athlete_enrollment",
+  "namespace": "academorix.athlete_enrollment",
   "labelConventions": {
     "always": [],
     "commonlyAvailable": ["status", "enrollment_type", "enrollment_source", "withdrawal_reason"],
@@ -18,94 +18,94 @@
   },
   "metrics": [
     {
-      "name": "stackra.athlete_enrollment.count",
+      "name": "academorix.athlete_enrollment.count",
       "kind": "gauge",
       "unit": "enrollments",
       "labels": ["status", "enrollment_type"]
     },
     {
-      "name": "stackra.athlete_enrollment.submitted_total",
+      "name": "academorix.athlete_enrollment.submitted_total",
       "kind": "counter",
       "unit": "enrollments",
       "labels": ["enrollment_source", "enrollment_type"]
     },
     {
-      "name": "stackra.athlete_enrollment.confirmed_total",
+      "name": "academorix.athlete_enrollment.confirmed_total",
       "kind": "counter",
       "unit": "enrollments",
       "labels": []
     },
     {
-      "name": "stackra.athlete_enrollment.activated_total",
+      "name": "academorix.athlete_enrollment.activated_total",
       "kind": "counter",
       "unit": "enrollments",
       "labels": []
     },
     {
-      "name": "stackra.athlete_enrollment.completed_total",
+      "name": "academorix.athlete_enrollment.completed_total",
       "kind": "counter",
       "unit": "enrollments",
       "labels": []
     },
     {
-      "name": "stackra.athlete_enrollment.withdrawn_total",
+      "name": "academorix.athlete_enrollment.withdrawn_total",
       "kind": "counter",
       "unit": "enrollments",
       "labels": ["withdrawal_reason"]
     },
     {
-      "name": "stackra.athlete_enrollment.expelled_total",
+      "name": "academorix.athlete_enrollment.expelled_total",
       "kind": "counter",
       "unit": "enrollments",
       "labels": []
     },
     {
-      "name": "stackra.athlete_enrollment.expired_total",
+      "name": "academorix.athlete_enrollment.expired_total",
       "kind": "counter",
       "unit": "enrollments",
       "labels": ["prior_status"]
     },
     {
-      "name": "stackra.athlete_enrollment.waitlisted_total",
+      "name": "academorix.athlete_enrollment.waitlisted_total",
       "kind": "counter",
       "unit": "enrollments",
       "labels": []
     },
     {
-      "name": "stackra.athlete_enrollment.promoted_from_waitlist_total",
+      "name": "academorix.athlete_enrollment.promoted_from_waitlist_total",
       "kind": "counter",
       "unit": "enrollments",
       "labels": []
     },
     {
-      "name": "stackra.athlete_enrollment.atomicity.failures_total",
+      "name": "academorix.athlete_enrollment.atomicity.failures_total",
       "kind": "counter",
       "unit": "failures",
       "labels": [],
       "description": "CRITICAL. Every increment is P1. Should stay at 0. Atomic conversion to TeamMember failed."
     },
     {
-      "name": "stackra.athlete_enrollment.atomicity.retries_total",
+      "name": "academorix.athlete_enrollment.atomicity.retries_total",
       "kind": "counter",
       "unit": "retries",
       "labels": [],
       "description": "Non-fatal retries by ActivateConfirmedEnrollmentsJob before giving up + firing P1."
     },
     {
-      "name": "stackra.athlete_enrollment.invariant.broken",
+      "name": "academorix.athlete_enrollment.invariant.broken",
       "kind": "counter",
       "unit": "findings",
       "labels": [],
       "description": "CRITICAL. ReconcileEnrollmentTeamMemberInvariantJob findings. Should stay at 0."
     },
     {
-      "name": "stackra.athlete_enrollment.age_group_snapshot_mismatch_total",
+      "name": "academorix.athlete_enrollment.age_group_snapshot_mismatch_total",
       "kind": "counter",
       "unit": "mismatches",
       "labels": ["mismatch_kind"]
     },
     {
-      "name": "stackra.athlete_enrollment.activation.duration_ms",
+      "name": "academorix.athlete_enrollment.activation.duration_ms",
       "kind": "histogram",
       "unit": "ms",
       "buckets": [50, 200, 1000, 5000],
@@ -113,13 +113,13 @@
       "description": "P99 target < 1000ms. Slower indicates DB contention on team_members SELECT ... FOR UPDATE."
     },
     {
-      "name": "stackra.athlete_enrollment.retention.hard_purges_total",
+      "name": "academorix.athlete_enrollment.retention.hard_purges_total",
       "kind": "counter",
       "unit": "purges",
       "labels": []
     },
     {
-      "name": "stackra.athlete_enrollment.entitlement.gate_refusals_total",
+      "name": "academorix.athlete_enrollment.entitlement.gate_refusals_total",
       "kind": "counter",
       "unit": "refusals",
       "labels": ["entitlement_key"]

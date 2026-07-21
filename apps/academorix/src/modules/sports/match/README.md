@@ -1,4 +1,4 @@
-# stackra/match
+# academorix/match
 
 Server-side Laravel package for the `match` module. Auto-generated from the
 blueprint at `modules/sports/blueprints/match/`.
@@ -56,6 +56,6 @@ file is a hand-tuned override that survives regeneration.
 ## Companion wire SDK
 
 The wire-visible Saloon + Spatie Data package lives at
-`stackra-sports/match-sdk` under `sdk/sports-match-sdk/`. Consumers cross the
+`academorix-sports/match-sdk` under `sdk/sports-match-sdk/`. Consumers cross the
 service boundary through the SDK; this package is the SERVER-side owner of the
 domain.

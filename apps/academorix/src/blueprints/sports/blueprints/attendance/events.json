@@ -1,14 +1,14 @@
 {
-  "id": "stackra://modules/attendance/events",
+  "id": "academorix://modules/attendance/events",
   "$version": 1,
   "title": "attendance — published events",
-  "namespace": "Stackra\\Sports\\Attendance\\Events",
+  "namespace": "Academorix\\Sports\\Attendance\\Events",
   "dispatchMode": "afterCommit",
   "description": "Every event implements `ShouldDispatchAfterCommit`. AttendanceRecorded is the load-bearing check-in signal — cascades to Pass consumption bookkeeping + growth::analytics + notifications. AbsenceFreezeThresholdReached is a P1 event — every fire pauses a paying membership.",
   "events": [
     {
       "name": "AttendanceRecorded",
-      "class": "Stackra\\Sports\\Attendance\\Events\\AttendanceRecorded",
+      "class": "Academorix\\Sports\\Attendance\\Events\\AttendanceRecorded",
       "trigger": "AttendanceOrchestrator committed the atomic (attendance-create + pass-consume) transaction. Fires exactly once per successful check-in.",
       "queue": "attendance",
       "consumers": [
@@ -35,7 +35,7 @@
     },
     {
       "name": "AttendanceStatusUpdated",
-      "class": "Stackra\\Sports\\Attendance\\Events\\AttendanceStatusUpdated",
+      "class": "Academorix\\Sports\\Attendance\\Events\\AttendanceStatusUpdated",
       "trigger": "Attendance status mutated within the 48h post-session correction window (present → late-marked-explicitly, or notes added).",
       "queue": "attendance",
       "consumers": ["audit::WriteToAuditLog", "activity::WriteToActivityLog"],
@@ -50,7 +50,7 @@
     },
     {
       "name": "AttendanceCheckedOut",
-      "class": "Stackra\\Sports\\Attendance\\Events\\AttendanceCheckedOut",
+      "class": "Academorix\\Sports\\Attendance\\Events\\AttendanceCheckedOut",
       "trigger": "checked_out_at set on an AttendanceRecord. Optional field — only sessions with mandatory check-out or partial-attendance tracking use it.",
       "queue": "attendance",
       "consumers": ["audit::WriteToAuditLog", "activity::WriteToActivityLog"],
@@ -65,7 +65,7 @@
     },
     {
       "name": "AttendanceCancelled",
-      "class": "Stackra\\Sports\\Attendance\\Events\\AttendanceCancelled",
+      "class": "Academorix\\Sports\\Attendance\\Events\\AttendanceCancelled",
       "trigger": "Admin cancelled an attendance record (accidental check-in, wrong athlete, wrong session). The consumed Pass is refunded (returned to unused pool via Pass.refund()) in the same transaction. Also fires via sports::SessionCancelled cascade — every attendance for the cancelled session is cancelled.",
       "queue": "attendance",
       "consumers": [
@@ -86,7 +86,7 @@
     },
     {
       "name": "LateArrivalRecorded",
-      "class": "Stackra\\Sports\\Attendance\\Events\\LateArrivalRecorded",
+      "class": "Academorix\\Sports\\Attendance\\Events\\LateArrivalRecorded",
       "trigger": "AttendanceOrchestrator computed status='late' during check-in and created a LateArrival satellite row. Fires alongside AttendanceRecorded in the same commit.",
       "queue": "attendance",
       "consumers": [
@@ -107,7 +107,7 @@
     },
     {
       "name": "AbsenceRecorded",
-      "class": "Stackra\\Sports\\Attendance\\Events\\AbsenceRecorded",
+      "class": "Academorix\\Sports\\Attendance\\Events\\AbsenceRecorded",
       "trigger": "AbsenceRecord created — either by nightly ReconcileAttendanceJob (auto-detected unexcused no-show) OR by guardian self-report (POST /absences/report).",
       "queue": "attendance",
       "consumers": [
@@ -131,7 +131,7 @@
     },
     {
       "name": "AbsenceExcused",
-      "class": "Stackra\\Sports\\Attendance\\Events\\AbsenceExcused",
+      "class": "Academorix\\Sports\\Attendance\\Events\\AbsenceExcused",
       "trigger": "Admin flipped an existing AbsenceRecord.status from unexcused → excused. counted_toward_freeze flipped to false; threshold re-evaluated (may undo a prior freeze cascade).",
       "queue": "attendance",
       "consumers": [
@@ -152,7 +152,7 @@
     },
     {
       "name": "AbsenceReasonUpdated",
-      "class": "Stackra\\Sports\\Attendance\\Events\\AbsenceReasonUpdated",
+      "class": "Academorix\\Sports\\Attendance\\Events\\AbsenceReasonUpdated",
       "trigger": "absence_reason OR explanation mutated on an existing AbsenceRecord. Distinct from AbsenceExcused which flips the STATUS.",
       "queue": "attendance",
       "consumers": ["audit::WriteToAuditLog"],
@@ -166,7 +166,7 @@
     },
     {
       "name": "AbsenceFreezeThresholdReached",
-      "class": "Stackra\\Sports\\Attendance\\Events\\AbsenceFreezeThresholdReached",
+      "class": "Academorix\\Sports\\Attendance\\Events\\AbsenceFreezeThresholdReached",
       "trigger": "P1 event. EvaluateAbsenceThresholdOnAbsenceRecorded hook detected the athlete's unexcused-absence count in the rolling window has crossed policy.max_unexcused_absences_per_period. Cascades to membership freeze.",
       "queue": "notifications-critical",
       "consumers": [
@@ -189,7 +189,7 @@
     },
     {
       "name": "AttendancePolicyCreated",
-      "class": "Stackra\\Sports\\Attendance\\Events\\AttendancePolicyCreated",
+      "class": "Academorix\\Sports\\Attendance\\Events\\AttendancePolicyCreated",
       "trigger": "New AttendancePolicy committed.",
       "queue": "attendance",
       "consumers": [
@@ -209,7 +209,7 @@
     },
     {
       "name": "AttendancePolicyUpdated",
-      "class": "Stackra\\Sports\\Attendance\\Events\\AttendancePolicyUpdated",
+      "class": "Academorix\\Sports\\Attendance\\Events\\AttendancePolicyUpdated",
       "trigger": "Policy mutated. Cache invalidated so subsequent check-ins pick up new grace period + thresholds.",
       "queue": "attendance",
       "consumers": [
@@ -226,7 +226,7 @@
     },
     {
       "name": "AttendancePolicyActivated",
-      "class": "Stackra\\Sports\\Attendance\\Events\\AttendancePolicyActivated",
+      "class": "Academorix\\Sports\\Attendance\\Events\\AttendancePolicyActivated",
       "trigger": "is_active flipped false → true. Refuses if it would create an active-policy collision at the same (branch, plan) specificity.",
       "queue": "attendance",
       "consumers": [
@@ -243,7 +243,7 @@
     },
     {
       "name": "AttendancePolicyDeactivated",
-      "class": "Stackra\\Sports\\Attendance\\Events\\AttendancePolicyDeactivated",
+      "class": "Academorix\\Sports\\Attendance\\Events\\AttendancePolicyDeactivated",
       "trigger": "is_active flipped true → false. Fallback policy at broader specificity takes over.",
       "queue": "attendance",
       "consumers": [
@@ -260,7 +260,7 @@
     },
     {
       "name": "PassConsumedViaAttendance",
-      "class": "Stackra\\Sports\\Attendance\\Events\\PassConsumedViaAttendance",
+      "class": "Academorix\\Sports\\Attendance\\Events\\PassConsumedViaAttendance",
       "trigger": "Bridges finance::PassConsumed to attendance context. Fires alongside AttendanceRecorded when a Pass was consumed as part of the check-in. Distinct from finance's own PassConsumed which is the raw money-side event.",
       "queue": "attendance",
       "consumers": ["audit::WriteToAuditLog"],
@@ -274,7 +274,7 @@
     },
     {
       "name": "NoShowFeeCharged",
-      "class": "Stackra\\Sports\\Attendance\\Events\\NoShowFeeCharged",
+      "class": "Academorix\\Sports\\Attendance\\Events\\NoShowFeeCharged",
       "trigger": "P1. ChargeNoShowFeeJob dispatched an invoice creation via finance::invoice module for a policy-configured no-show fee. Fires per (athlete, session) once.",
       "queue": "notifications-critical",
       "consumers": [
@@ -296,7 +296,7 @@
     },
     {
       "name": "AttendanceReconciled",
-      "class": "Stackra\\Sports\\Attendance\\Events\\AttendanceReconciled",
+      "class": "Academorix\\Sports\\Attendance\\Events\\AttendanceReconciled",
       "trigger": "ReconcileAttendanceJob completed processing a Session. Fires once per session with count metrics — expected / present / absent / late.",
       "queue": "attendance",
       "consumers": [

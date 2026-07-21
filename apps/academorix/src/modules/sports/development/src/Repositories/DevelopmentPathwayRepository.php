@@ -4,25 +4,25 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Development\Repositories;
+namespace Academorix\Development\Repositories;
 
 use Stackra\Crud\Attributes\AsRepository;
 use Stackra\Crud\Attributes\Cacheable;
 use Stackra\Crud\Attributes\Filterable;
 use Stackra\Crud\Attributes\UseModel;
 use Stackra\Crud\Repositories\Repository;
-use Stackra\Development\Contracts\Data\DevelopmentPathwayInterface;
-use Stackra\Development\Contracts\Repositories\DevelopmentPathwayRepositoryInterface;
-use Stackra\Development\Models\DevelopmentPathway;
+use Academorix\Development\Contracts\Data\DevelopmentPathwayInterface;
+use Academorix\Development\Contracts\Repositories\DevelopmentPathwayRepositoryInterface;
+use Academorix\Development\Models\DevelopmentPathway;
 
 /**
- * Attribute-first Eloquent repository for {@see Stackra\Development\Models\DevelopmentPathway}.
+ * Attribute-first Eloquent repository for {@see Academorix\Development\Models\DevelopmentPathway}.
  *
  * Bound to the interface via `#[AsRepository]`; the model comes from
  * `#[UseModel(DevelopmentPathwayInterface::class)]` which resolves to
  * `DevelopmentPathway` through the interface's `#[Bind]`.
  *
- * @extends Repository<\Stackra\Development\Models\DevelopmentPathway>
+ * @extends Repository<\Academorix\Development\Models\DevelopmentPathway>
  *
  * @category Development
  *

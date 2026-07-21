@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/wallet/schemas/wallet-hold",
+  "id": "academorix://modules/wallet/schemas/wallet-hold",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "WalletHold",
@@ -13,9 +13,9 @@
     "keyType": "string",
     "keyPrefix": "whd_",
     "incrementing": false,
-    "model": "Stackra\\Finance\\Wallet\\Models\\WalletHold",
-    "interface": "Stackra\\Finance\\Wallet\\Contracts\\Data\\WalletHoldInterface",
-    "implements": ["Stackra\\Finance\\Wallet\\Contracts\\Data\\WalletHoldInterface"],
+    "model": "Academorix\\Finance\\Wallet\\Models\\WalletHold",
+    "interface": "Academorix\\Finance\\Wallet\\Contracts\\Data\\WalletHoldInterface",
+    "implements": ["Academorix\\Finance\\Wallet\\Contracts\\Data\\WalletHoldInterface"],
     "traits": [
       "HasFactory",
       "HasUlids",

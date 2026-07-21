@@ -1,81 +1,81 @@
 {
-  "id": "stackra://modules/athlete/commands",
+  "id": "academorix://modules/athlete/commands",
   "$version": 1,
   "title": "athlete — Artisan commands",
   "commands": [
     {
       "signature": "athlete:list {--tenant=} {--branch=} {--status=} {--age-group=} {--has-user} {--is-minor} {--include-archived}",
-      "class": "Stackra\\Sports\\Athlete\\Console\\Commands\\ListAthletesCommand",
+      "class": "Academorix\\Sports\\Athlete\\Console\\Commands\\ListAthletesCommand",
       "purpose": "Table view of athletes. Filterable by tenant, branch, status, current_age_group_id, has_user (linked to a User), is_minor. --include-archived shows archived; default hides them. Medical + emergency contact fields NEVER shown at CLI — support-tooling redaction still applies. Minor names redacted to initials."
     },
     {
       "signature": "athlete:describe {athlete}",
-      "class": "Stackra\\Sports\\Athlete\\Console\\Commands\\DescribeAthleteCommand",
+      "class": "Academorix\\Sports\\Athlete\\Console\\Commands\\DescribeAthleteCommand",
       "purpose": "Verbose read of one Athlete row: base fields + linked User + Profile (redacted if invoker lacks permissions) + guardians summary (Wave 3a sibling) + enrollment summary (Wave 3a sibling) + consent snapshot + medical summary (only when invoked with --show-medical AND caller carries athletes.view.medical)."
     },
     {
       "signature": "athlete:create {tenant} {branch} {--first-name=} {--last-name=} {--dob=} {--user=} {--gender=} {--dry-run}",
-      "class": "Stackra\\Sports\\Athlete\\Console\\Commands\\CreateAthleteCommand",
+      "class": "Academorix\\Sports\\Athlete\\Console\\Commands\\CreateAthleteCommand",
       "purpose": "Scriptable athlete create (test harness + tenant import flow). --dry-run validates the input against every observer rule without persisting. Medical + emergency contact CANNOT be set from this CLI — use the /medical + /emergency-contact endpoints (permission-gated)."
     },
     {
       "signature": "athlete:link-user {athlete} {user}",
-      "class": "Stackra\\Sports\\Athlete\\Console\\Commands\\LinkUserCommand",
+      "class": "Academorix\\Sports\\Athlete\\Console\\Commands\\LinkUserCommand",
       "purpose": "CLI equivalent of POST /{athlete}/link-user. One-shot — refused when athlete already has user_id set."
     },
     {
       "signature": "athlete:pause {athlete} {--reason=} {--return-at=}",
-      "class": "Stackra\\Sports\\Athlete\\Console\\Commands\\PauseAthleteCommand",
+      "class": "Academorix\\Sports\\Athlete\\Console\\Commands\\PauseAthleteCommand",
       "purpose": "Transition to paused. Requires --reason (safeguarding audit)."
     },
     {
       "signature": "athlete:return-from-pause {athlete}",
-      "class": "Stackra\\Sports\\Athlete\\Console\\Commands\\ReturnFromPauseCommand",
+      "class": "Academorix\\Sports\\Athlete\\Console\\Commands\\ReturnFromPauseCommand",
       "purpose": "Transition paused → active."
     },
     {
       "signature": "athlete:graduate {athlete} {--at=} {--cascade}",
-      "class": "Stackra\\Sports\\Athlete\\Console\\Commands\\GraduateAthleteCommand",
+      "class": "Academorix\\Sports\\Athlete\\Console\\Commands\\GraduateAthleteCommand",
       "purpose": "Soft-terminal — kept for alumni. --cascade closes active enrollments in one transaction."
     },
     {
       "signature": "athlete:withdraw {athlete} {--reason=} {--notes=} {--at=} {--cascade} {--guardian-initiated}",
-      "class": "Stackra\\Sports\\Athlete\\Console\\Commands\\WithdrawAthleteCommand",
+      "class": "Academorix\\Sports\\Athlete\\Console\\Commands\\WithdrawAthleteCommand",
       "purpose": "Terminal. Refuses without --reason. --cascade closes active enrollments; --guardian-initiated flags the withdrawal path for the parent-facing UI."
     },
     {
       "signature": "athlete:archive {athlete} {--reason=}",
-      "class": "Stackra\\Sports\\Athlete\\Console\\Commands\\ArchiveAthleteCommand",
+      "class": "Academorix\\Sports\\Athlete\\Console\\Commands\\ArchiveAthleteCommand",
       "purpose": "Terminal archive. Releases 1 unit of athlete_slot."
     },
     {
       "signature": "athlete:restore {athlete}",
-      "class": "Stackra\\Sports\\Athlete\\Console\\Commands\\RestoreAthleteCommand",
+      "class": "Academorix\\Sports\\Athlete\\Console\\Commands\\RestoreAthleteCommand",
       "purpose": "Un-archive. Rare — audit-critical."
     },
     {
       "signature": "athlete:record-consent {athlete} {--photo} {--medical} {--third-party} {--recorded-by=}",
-      "class": "Stackra\\Sports\\Athlete\\Console\\Commands\\RecordConsentCommand",
+      "class": "Academorix\\Sports\\Athlete\\Console\\Commands\\RecordConsentCommand",
       "purpose": "Record consents from CLI. --recorded-by is the User ULID of the guardian/admin recording. For minors, must be an authorised guardian (Wave 3b hard-fail)."
     },
     {
       "signature": "athlete:revoke-consent {athlete} {consent} {--reason=}",
-      "class": "Stackra\\Sports\\Athlete\\Console\\Commands\\RevokeConsentCommand",
+      "class": "Academorix\\Sports\\Athlete\\Console\\Commands\\RevokeConsentCommand",
       "purpose": "Revoke one of `photo_release` / `medical_disclosure` / `third_party`. Fires AthleteConsentRevoked."
     },
     {
       "signature": "athlete:refresh-age-group-snapshot {--tenant=} {--athlete=} {--all}",
-      "class": "Stackra\\Sports\\Athlete\\Console\\Commands\\RefreshAgeGroupSnapshotCommand",
+      "class": "Academorix\\Sports\\Athlete\\Console\\Commands\\RefreshAgeGroupSnapshotCommand",
       "purpose": "One-shot invocation of RollAthleteAgeGroupSnapshotJob. --athlete=<id> targets one athlete; --tenant=<id> processes every athlete in a tenant; --all processes every athlete across all tenants."
     },
     {
       "signature": "athlete:audit-medical {--tenant=} {--from=} {--to=} {--output=csv}",
-      "class": "Stackra\\Sports\\Athlete\\Console\\Commands\\AuditMedicalCommand",
+      "class": "Academorix\\Sports\\Athlete\\Console\\Commands\\AuditMedicalCommand",
       "purpose": "Compliance-only export. Emits a signed audit CSV of every entry in athlete_medical_history for the tenant + window. Requires super_admin token + two-person approval. Every invocation writes a P1 audit row + notifies the tenant's safeguarding_officer + compliance address."
     },
     {
       "signature": "athlete:reconcile-age-group {--tenant=} {--age-group=}",
-      "class": "Stackra\\Sports\\Athlete\\Console\\Commands\\ReconcileAgeGroupCommand",
+      "class": "Academorix\\Sports\\Athlete\\Console\\Commands\\ReconcileAgeGroupCommand",
       "purpose": "Cascade-recompute after an AgeGroup bounds / cutoff change. Runs against every athlete referring to the given age group + its neighbours; reports the delta before applying (--dry-run available)."
     }
   ]

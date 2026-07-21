@@ -4,21 +4,21 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Registrations\Models;
+namespace Academorix\Registrations\Models;
 
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
-use Stackra\Registrations\Contracts\Data\RegistrationInterface;
-use Stackra\Registrations\Database\Factories\RegistrationFactory;
+use Academorix\Registrations\Contracts\Data\RegistrationInterface;
+use Academorix\Registrations\Database\Factories\RegistrationFactory;
 use Stackra\Foundation\Concerns\Filterable;
 use Stackra\Foundation\Concerns\HasMetadata;
 use Stackra\Foundation\Concerns\HasPrefixedUlid;
-use Stackra\Registrations\Enums\RegistrationStage;
-use Stackra\Registrations\Policies\RegistrationPolicy;
-use Stackra\Season\Concerns\BelongsToSeason;
+use Academorix\Registrations\Enums\RegistrationStage;
+use Academorix\Registrations\Policies\RegistrationPolicy;
+use Academorix\Season\Concerns\BelongsToSeason;
 use Stackra\Tenancy\Concerns\BelongsToTenant;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;

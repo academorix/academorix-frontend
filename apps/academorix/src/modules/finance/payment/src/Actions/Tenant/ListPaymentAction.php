@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Payment\Actions\Tenant;
+namespace Academorix\Payment\Actions\Tenant;
 
-use Stackra\Payment\Contracts\Repositories\PaymentRepositoryInterface;
-use Stackra\Payment\Data\PaymentData;
+use Academorix\Payment\Contracts\Repositories\PaymentRepositoryInterface;
+use Academorix\Payment\Data\PaymentData;
 use Stackra\Routing\Attributes\AsAction;
 use Stackra\Routing\Attributes\Middleware;
 use Stackra\Routing\Concerns\AsController;
@@ -50,7 +50,7 @@ final class ListPaymentAction
      */
     public function __invoke(Request $request): PaginatedDataCollection
     {
-        /** @var LengthAwarePaginator<int, \Stackra\Payment\Models\Payment> $page */
+        /** @var LengthAwarePaginator<int, \Academorix\Payment\Models\Payment> $page */
         $page = $this->repository->paginate(
             perPage: (int) $request->integer('per_page', 15),
         );

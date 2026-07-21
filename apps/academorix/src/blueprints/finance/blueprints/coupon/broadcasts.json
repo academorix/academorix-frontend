@@ -1,12 +1,12 @@
 {
-  "id": "stackra://modules/coupon/broadcasts",
+  "id": "academorix://modules/coupon/broadcasts",
   "$version": 1,
   "title": "coupon — realtime broadcast channels",
   "description": "Two broadcast channel families. Tenant-level for admin dashboards (coupon lifecycle + redemption stream); redemption-specific for real-time redemption ledger visibility on the coupon-detail screen. Reverb (Laravel Reverb) is the default transport; the notifications module handles fanout.",
   "channels": [
     {
       "name": "tenant.{tenantId}.coupons",
-      "class": "Stackra\\Finance\\Coupon\\Broadcasts\\TenantCouponsChannel",
+      "class": "Academorix\\Finance\\Coupon\\Broadcasts\\TenantCouponsChannel",
       "description": "Tenant-wide coupon lifecycle stream. Sink for admin dashboards. Broadcasts coupon lifecycle events (created / activated / deactivated / expired / usage_cap_reached) plus the redemption + clawback stream at aggregate level.",
       "authorization": "sanctum::authed AND tenant_matches AND has_permission('coupons.viewAny')",
       "events": [
@@ -29,7 +29,7 @@
     },
     {
       "name": "tenant.{tenantId}.coupon-redemptions",
-      "class": "Stackra\\Finance\\Coupon\\Broadcasts\\TenantCouponRedemptionsChannel",
+      "class": "Academorix\\Finance\\Coupon\\Broadcasts\\TenantCouponRedemptionsChannel",
       "description": "High-volume redemption + refusal stream. Powers the real-time redemption ledger on the coupon-detail screen + the fraud-triage view. Opt-in per user via settings.notify_on_every_redemption — most tenants unsubscribe.",
       "authorization": "sanctum::authed AND tenant_matches AND has_permission('coupon_redemptions.viewAny')",
       "events": [

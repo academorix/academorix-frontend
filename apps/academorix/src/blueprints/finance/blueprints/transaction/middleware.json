@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/transaction/middleware",
+  "id": "academorix://modules/transaction/middleware",
   "$version": 1,
   "title": "transaction — HTTP middleware",
   "middleware": [],

@@ -4,17 +4,17 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Payout\Contracts\Repositories;
+namespace Academorix\Payout\Contracts\Repositories;
 
 use Stackra\Crud\Contracts\RepositoryInterface;
 
 /**
- * Repository contract for {@see Stackra\Payout\Models\Payout}.
+ * Repository contract for {@see Academorix\Payout\Models\Payout}.
  *
  * Consumers type-hint the interface; the container binds the concrete
  * via `#[AsRepository]` on `PayoutRepository`.
  *
- * @extends RepositoryInterface<\Stackra\Payout\Models\Payout>
+ * @extends RepositoryInterface<\Academorix\Payout\Models\Payout>
  *
  * @category Payout
  *

@@ -4,19 +4,19 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Coaching\Database\Factories;
+namespace Academorix\Coaching\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Stackra\Coaching\Contracts\Data\CoachCertificationInterface;
-use Stackra\Coaching\Models\CoachCertification;
+use Academorix\Coaching\Contracts\Data\CoachCertificationInterface;
+use Academorix\Coaching\Models\CoachCertification;
 
 /**
- * Factory for {@see \Stackra\Coaching\Models\CoachCertification}.
+ * Factory for {@see \Academorix\Coaching\Models\CoachCertification}.
  *
  * Auto-generated skeleton — extend with named states as domain
  * cases emerge (e.g. `->published()`, `->overdue()`, `->archived()`).
  *
- * @extends Factory<\Stackra\Coaching\Models\CoachCertification>
+ * @extends Factory<\Academorix\Coaching\Models\CoachCertification>
  *
  * @category Coaching
  *

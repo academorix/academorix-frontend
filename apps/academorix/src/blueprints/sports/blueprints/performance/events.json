@@ -1,8 +1,8 @@
 {
-  "id": "stackra://modules/performance/events",
+  "id": "academorix://modules/performance/events",
   "$version": 1,
   "title": "performance — published events",
-  "namespace": "Stackra\\Sports\\Performance\\Events",
+  "namespace": "Academorix\\Sports\\Performance\\Events",
   "dispatchMode": "afterCommit",
   "description": "Test batteries + benchmarks. Every test result event feeds athlete progress + awards + reporting. BenchmarkBroken events trigger downstream award consideration + coach notification.",
   "events": [

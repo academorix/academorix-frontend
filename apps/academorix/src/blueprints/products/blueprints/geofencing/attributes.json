@@ -1,13 +1,13 @@
 {
-  "id": "stackra://modules/geofencing/attributes",
+  "id": "academorix://modules/geofencing/attributes",
   "$version": 1,
   "title": "geofencing \u2014 PHP attribute contracts",
   "description": "Two class-level attributes. `#[Geofenceable]` on models that carry a fence (registered against the fenceable morph map). `#[GeofenceSubjectAlias]` on models that call the evaluator on their own behalf (registered against the subject morph map). Both refuse duplicate aliases across the codebase at boot.",
-  "namespace": "Stackra\\Geofencing\\Attributes",
+  "namespace": "Academorix\\Geofencing\\Attributes",
   "attributes": [
     {
       "name": "Geofenceable",
-      "class": "Stackra\\Geofencing\\Attributes\\Geofenceable",
+      "class": "Academorix\\Geofencing\\Attributes\\Geofenceable",
       "targets": ["class"],
       "params": [
         {
@@ -20,13 +20,13 @@
       ],
       "example": "#[Geofenceable(alias: 'branch')]\nfinal class Branch extends Model implements Geofenceable\n{\n    use HasGeofence;\n    // ...\n}",
       "runtime_behaviour": "The CompileMorphAliases listener (bound to foundation::ApplicationBooted) scans classes for #[Geofenceable]. Each is registered in the fenceable morph map via Relation::enforceMorphMap(). Boot fails on duplicate aliases OR on aliases whose target class doesn't implement the Geofenceable interface.",
-      "companion_interface": "Stackra\\Geofencing\\Contracts\\Geofenceable",
-      "companion_trait": "Stackra\\Geofencing\\Concerns\\HasGeofence",
+      "companion_interface": "Academorix\\Geofencing\\Contracts\\Geofenceable",
+      "companion_trait": "Academorix\\Geofencing\\Concerns\\HasGeofence",
       "companion_trait_note": "Using the trait provides default implementations of all Geofenceable interface methods reading from the standard 7 columns. Models with non-standard geometry storage can implement the interface directly without the trait."
     },
     {
       "name": "GeofenceSubjectAlias",
-      "class": "Stackra\\Geofencing\\Attributes\\GeofenceSubjectAlias",
+      "class": "Academorix\\Geofencing\\Attributes\\GeofenceSubjectAlias",
       "targets": ["class"],
       "params": [
         {

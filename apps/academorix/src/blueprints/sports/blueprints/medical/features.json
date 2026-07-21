@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/medical/features",
+  "id": "academorix://modules/medical/features",
   "$version": 1,
   "title": "medical — feature keys",
   "features": [

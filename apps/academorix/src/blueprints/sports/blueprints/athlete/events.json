@@ -1,14 +1,14 @@
 {
-  "id": "stackra://modules/athlete/events",
+  "id": "academorix://modules/athlete/events",
   "$version": 1,
   "title": "athlete — published events",
-  "namespace": "Stackra\\Sports\\Athlete\\Events",
+  "namespace": "Academorix\\Sports\\Athlete\\Events",
   "dispatchMode": "afterCommit",
   "description": "Every event implements `ShouldDispatchAfterCommit` so listeners never fire against a rolled-back write. Athlete lifecycle events (create / status-change / pause / graduate / withdraw / archive / restore) fan out to notifications + activity + audit. AthleteMedicalUpdated is a PRIVATE-TIER event — dispatches on the dedicated `medical-audit` queue and the payload NEVER routes through the tenant activity feed (the audit row lands in the separate athlete_medical_history table). AthleteMinorTurnedAdult fires from the CheckAthleteMinorTurnedAdultJob on the 18th birthday for compliance-visibility.",
   "events": [
     {
       "name": "AthleteCreated",
-      "class": "Stackra\\Sports\\Athlete\\Events\\AthleteCreated",
+      "class": "Academorix\\Sports\\Athlete\\Events\\AthleteCreated",
       "trigger": "AthleteProvisioner committed successfully. Fires exactly once per athlete row. Consumes 1 unit of athlete_slot before commit (observer creating hook).",
       "queue": "notifications",
       "consumers": [
@@ -35,7 +35,7 @@
     },
     {
       "name": "AthleteUpdated",
-      "class": "Stackra\\Sports\\Athlete\\Events\\AthleteUpdated",
+      "class": "Academorix\\Sports\\Athlete\\Events\\AthleteUpdated",
       "trigger": "Any Athlete scalar field mutated except status (dedicated transition events), consent_* (AthleteConsentRecorded / AthleteConsentRevoked / AthletePhotoConsentChanged), medical_* (AthleteMedicalUpdated — private-tier), emergency_contact_* (AthleteEmergencyContactUpdated), user_id (AthleteLinkedToUser), current_age_group_id (AthleteAgeGroupSnapshotUpdated).",
       "queue": "notifications",
       "consumers": ["audit::WriteToAuditLog", "activity::WriteToActivityLog"],
@@ -48,7 +48,7 @@
     },
     {
       "name": "AthleteLinkedToUser",
-      "class": "Stackra\\Sports\\Athlete\\Events\\AthleteLinkedToUser",
+      "class": "Academorix\\Sports\\Athlete\\Events\\AthleteLinkedToUser",
       "trigger": "Athlete.user_id transitioned null → non-null. Fires when the minor athlete turns 13-16 + gets a User account, OR when an adult signup's Athlete row is bound to the newly-created User. Never fires for user_id changes (immutable post-first-link).",
       "queue": "notifications",
       "consumers": [
@@ -67,7 +67,7 @@
     },
     {
       "name": "AthleteStatusChanged",
-      "class": "Stackra\\Sports\\Athlete\\Events\\AthleteStatusChanged",
+      "class": "Academorix\\Sports\\Athlete\\Events\\AthleteStatusChanged",
       "trigger": "Athlete.status transitioned. Umbrella event; also fires alongside the dedicated status events (AthletePausedForSafeguarding / AthleteGraduated / AthleteWithdrawn / AthleteArchived / AthleteRestored) so listeners can subscribe to the umbrella when the specific reason doesn't matter to them.",
       "queue": "notifications",
       "consumers": [
@@ -86,7 +86,7 @@
     },
     {
       "name": "AthleteAgeGroupSnapshotUpdated",
-      "class": "Stackra\\Sports\\Athlete\\Events\\AthleteAgeGroupSnapshotUpdated",
+      "class": "Academorix\\Sports\\Athlete\\Events\\AthleteAgeGroupSnapshotUpdated",
       "trigger": "RollAthleteAgeGroupSnapshotJob detected the athlete's resolved age-group flipped (birthday drift + AgeGroupBoundsChanged / AgeGroupCutoffChanged cascade). Aggregated event — fires once per job invocation per athlete whose snapshot changed. Athlete.current_age_group_id + current_age_group_snapshot_at are updated on the same transaction.",
       "queue": "notifications",
       "consumers": [
@@ -106,7 +106,7 @@
     },
     {
       "name": "AthleteMedicalUpdated",
-      "class": "Stackra\\Sports\\Athlete\\Events\\AthleteMedicalUpdated",
+      "class": "Academorix\\Sports\\Athlete\\Events\\AthleteMedicalUpdated",
       "trigger": "Any of medical_conditions / medical_allergies / medical_medications / medical_notes mutated. PRIVATE-TIER event — payload NEVER routed through the activity feed. Audit row lands in the dedicated athlete_medical_history table with 7-year regulated-health retention. Consumers include the Safeguarding module (Wave 4+ medical-clearance workflow).",
       "queue": "medical-audit",
       "consumers": [
@@ -124,7 +124,7 @@
     },
     {
       "name": "AthleteConsentRecorded",
-      "class": "Stackra\\Sports\\Athlete\\Events\\AthleteConsentRecorded",
+      "class": "Academorix\\Sports\\Athlete\\Events\\AthleteConsentRecorded",
       "trigger": "Athlete.consent_recorded_at transitioned null → non-null OR was refreshed with new values (re-consent). Fires alongside AthletePhotoConsentChanged when photo consent specifically flipped.",
       "queue": "notifications",
       "consumers": [
@@ -145,7 +145,7 @@
     },
     {
       "name": "AthleteConsentRevoked",
-      "class": "Stackra\\Sports\\Athlete\\Events\\AthleteConsentRevoked",
+      "class": "Academorix\\Sports\\Athlete\\Events\\AthleteConsentRevoked",
       "trigger": "Any consent_* flag transitioned true → false. Consent revocation is a compliance-critical event. Fires per revocation (multiple flags flipping in one write emits multiple events for auditability).",
       "queue": "notifications-critical",
       "consumers": [
@@ -164,7 +164,7 @@
     },
     {
       "name": "AthletePausedForSafeguarding",
-      "class": "Stackra\\Sports\\Athlete\\Events\\AthletePausedForSafeguarding",
+      "class": "Academorix\\Sports\\Athlete\\Events\\AthletePausedForSafeguarding",
       "trigger": "Athlete.status transitioned active → paused. Distinct from the umbrella AthleteStatusChanged because pause is safeguarding-adjacent and drives dedicated notification cascade + auto-expiry job.",
       "queue": "notifications-critical",
       "consumers": [
@@ -183,7 +183,7 @@
     },
     {
       "name": "AthleteReturnedFromPause",
-      "class": "Stackra\\Sports\\Athlete\\Events\\AthleteReturnedFromPause",
+      "class": "Academorix\\Sports\\Athlete\\Events\\AthleteReturnedFromPause",
       "trigger": "Athlete.status transitioned paused → active. Clears paused_at + paused_reason.",
       "queue": "notifications",
       "consumers": [
@@ -200,7 +200,7 @@
     },
     {
       "name": "AthleteGraduated",
-      "class": "Stackra\\Sports\\Athlete\\Events\\AthleteGraduated",
+      "class": "Academorix\\Sports\\Athlete\\Events\\AthleteGraduated",
       "trigger": "Athlete.status transitioned active → graduated. Soft-terminal — the row is retained for alumni relations.",
       "queue": "notifications",
       "consumers": [
@@ -219,7 +219,7 @@
     },
     {
       "name": "AthleteWithdrawn",
-      "class": "Stackra\\Sports\\Athlete\\Events\\AthleteWithdrawn",
+      "class": "Academorix\\Sports\\Athlete\\Events\\AthleteWithdrawn",
       "trigger": "Athlete.status transitioned active/paused → withdrawn. Terminal. Requires withdrawal_reason.",
       "queue": "notifications-critical",
       "consumers": [
@@ -240,7 +240,7 @@
     },
     {
       "name": "AthleteArchived",
-      "class": "Stackra\\Sports\\Athlete\\Events\\AthleteArchived",
+      "class": "Academorix\\Sports\\Athlete\\Events\\AthleteArchived",
       "trigger": "Athlete soft-deleted (deleted_at set). Status transitions to 'archived'. Releases 1 unit of athlete_slot entitlement.",
       "queue": "notifications",
       "consumers": ["audit::WriteToAuditLog", "activity::WriteToActivityLog"],
@@ -254,7 +254,7 @@
     },
     {
       "name": "AthleteRestored",
-      "class": "Stackra\\Sports\\Athlete\\Events\\AthleteRestored",
+      "class": "Academorix\\Sports\\Athlete\\Events\\AthleteRestored",
       "trigger": "Archived athlete restored (deleted_at cleared, status → active). Consumes 1 unit of athlete_slot. Only within retention window.",
       "queue": "notifications",
       "consumers": ["audit::WriteToAuditLog", "activity::WriteToActivityLog"],
@@ -267,7 +267,7 @@
     },
     {
       "name": "AthleteDeleted",
-      "class": "Stackra\\Sports\\Athlete\\Events\\AthleteDeleted",
+      "class": "Academorix\\Sports\\Athlete\\Events\\AthleteDeleted",
       "trigger": "Athlete hard-deleted. Fires from PurgeArchivedAthletesJob after 7-year retention window + no downstream references. Also fires on TenantErased cascade.",
       "queue": "notifications",
       "consumers": ["audit::WriteToAuditLog"],
@@ -280,7 +280,7 @@
     },
     {
       "name": "AthleteEmergencyContactUpdated",
-      "class": "Stackra\\Sports\\Athlete\\Events\\AthleteEmergencyContactUpdated",
+      "class": "Academorix\\Sports\\Athlete\\Events\\AthleteEmergencyContactUpdated",
       "trigger": "Any of emergency_contact_name / emergency_contact_phone / emergency_contact_relationship mutated. Audit-relevant for safety compliance.",
       "queue": "notifications",
       "consumers": [
@@ -296,7 +296,7 @@
     },
     {
       "name": "AthletePhotoConsentChanged",
-      "class": "Stackra\\Sports\\Athlete\\Events\\AthletePhotoConsentChanged",
+      "class": "Academorix\\Sports\\Athlete\\Events\\AthletePhotoConsentChanged",
       "trigger": "Athlete.consent_photo_release specifically flipped. Distinct event because it drives immediate downstream cascade (marketing collateral, gallery visibility, social-media auto-inclusion — Wave 5+).",
       "queue": "notifications-critical",
       "consumers": [
@@ -314,7 +314,7 @@
     },
     {
       "name": "AthleteMinorTurnedAdult",
-      "class": "Stackra\\Sports\\Athlete\\Events\\AthleteMinorTurnedAdult",
+      "class": "Academorix\\Sports\\Athlete\\Events\\AthleteMinorTurnedAdult",
       "trigger": "CheckAthleteMinorTurnedAdultJob detected an athlete crossing config.athlete.minor_min_age (default 16) OR 18 (legal-adult boundary). Fires per athlete per crossing. Downstream flags: consent snapshot should be re-recorded by the athlete themselves (their prior consents by a guardian expire); AthleteGuardian rows with can_authorise_medical_care=true may auto-downgrade (config-driven, Wave 3b).",
       "queue": "notifications-critical",
       "consumers": [

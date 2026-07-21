@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/payment/entitlements",
+  "id": "academorix://modules/payment/entitlements",
   "$version": 1,
   "title": "payment — declared entitlements",
   "description": "Ten entitlement keys. `payment_capture` is the boolean master gate. `payment_provider_slot` caps provider configs per tenant. `payment_advanced_providers` unlocks Adyen + Square on Medium+ (Small tenants get Stripe + Paddle + PayPal + CustomWebhook only). `payment_manual_capture` unlocks authorization holds on Medium+. `payment_saved_methods` (all tiers) enables tokenized-method reuse. `payment_multi_currency` (Medium+) enables non-tenant-default currency captures. `payment_3ds2_forced` (Enterprise) forces 3DS2 on ALL card transactions (not just PSD2-mandated). `payment_dispute_management` (all tiers) enables the dispute workflow. `payment_custom_webhook` (Enterprise) enables the generic HMAC-signed webhook driver. `payment_extended_retention` (Enterprise) extends retention from 7y to 10y.",

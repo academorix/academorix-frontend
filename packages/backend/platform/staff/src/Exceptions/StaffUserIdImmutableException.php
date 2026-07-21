@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Staff\Exceptions;
 
-use Stackra\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * You cannot repoint a Staff row at a different User.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class StaffUserIdImmutableException extends AcademorixException
+final class StaffUserIdImmutableException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

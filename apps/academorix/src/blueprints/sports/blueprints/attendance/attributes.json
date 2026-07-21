@@ -1,12 +1,12 @@
 {
-  "id": "stackra://modules/attendance/attributes",
+  "id": "academorix://modules/attendance/attributes",
   "$version": 1,
   "title": "attendance — PHP attribute contracts",
-  "namespace": "Stackra\\Sports\\Attendance\\Attributes",
+  "namespace": "Academorix\\Sports\\Attendance\\Attributes",
   "attributes": [
     {
       "name": "AsAttendanceListener",
-      "class": "Stackra\\Sports\\Attendance\\Attributes\\AsAttendanceListener",
+      "class": "Academorix\\Sports\\Attendance\\Attributes\\AsAttendanceListener",
       "targets": ["class"],
       "description": "Marks a service as a subscriber to attendance lifecycle events. AbsenceFreezeThresholdReached (P1) and NoShowFeeCharged (P1) require explicit opt-in — they route on notifications-critical queue.",
       "params": [
@@ -14,7 +14,7 @@
           "name": "events",
           "type": "array<string>",
           "default": [],
-          "description": "Empty = subscribe to every Stackra\\Sports\\Attendance\\Events\\* event EXCEPT the P1 events (AbsenceFreezeThresholdReached, NoShowFeeCharged) — explicit opt-in required."
+          "description": "Empty = subscribe to every Academorix\\Sports\\Attendance\\Events\\* event EXCEPT the P1 events (AbsenceFreezeThresholdReached, NoShowFeeCharged) — explicit opt-in required."
         },
         { "name": "queue", "type": "string | null", "default": null },
         { "name": "priority", "type": "integer", "default": 100 }

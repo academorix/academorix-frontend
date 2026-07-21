@@ -1,20 +1,20 @@
 {
-  "id": "stackra://modules/season/attributes",
+  "id": "academorix://modules/season/attributes",
   "$version": 1,
   "title": "season — PHP attribute contracts",
   "description": "One attribute. `#[AsSeasonListener]` on a service class marks it as a subscriber to season-lifecycle events — the AttributeDiscovery scan picks it up and wires it to the event map declared in `events.json`. No property-level attributes: the Season row uses ordinary Eloquent + spatie/laravel-data class attributes shipped by foundation.",
-  "namespace": "Stackra\\Sports\\Season\\Attributes",
+  "namespace": "Academorix\\Sports\\Season\\Attributes",
   "attributes": [
     {
       "name": "AsSeasonListener",
-      "class": "Stackra\\Sports\\Season\\Attributes\\AsSeasonListener",
+      "class": "Academorix\\Sports\\Season\\Attributes\\AsSeasonListener",
       "targets": ["class"],
       "params": [
         {
           "name": "events",
           "type": "array<string>",
           "default": [],
-          "description": "Array of event short names (`SeasonCreated`, `SeasonCurrentChanged`, `SeasonRegistrationOpened`, `TenantDefaultSeasonSeeded`, ...) the class listens to. Empty = subscribe to every event in `Stackra\\Sports\\Season\\Events\\*`. Names resolved against `events.json`; typos surface at boot time when the discovery scan validates them."
+          "description": "Array of event short names (`SeasonCreated`, `SeasonCurrentChanged`, `SeasonRegistrationOpened`, `TenantDefaultSeasonSeeded`, ...) the class listens to. Empty = subscribe to every event in `Academorix\\Sports\\Season\\Events\\*`. Names resolved against `events.json`; typos surface at boot time when the discovery scan validates them."
         },
         {
           "name": "queue",

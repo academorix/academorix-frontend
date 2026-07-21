@@ -4,13 +4,13 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Marketing\Policies;
+namespace Academorix\Marketing\Policies;
 
 use Stackra\User\Models\User;
-use Stackra\Marketing\Models\MarketingEvent;
+use Academorix\Marketing\Models\MarketingEvent;
 
 /**
- * Authorization policy for {@see \Stackra\Marketing\Models\MarketingEvent}.
+ * Authorization policy for {@see \Academorix\Marketing\Models\MarketingEvent}.
  *
  * Wired via `#[UsePolicy]` on the Model.
  *

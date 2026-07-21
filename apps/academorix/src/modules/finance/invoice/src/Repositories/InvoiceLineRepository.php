@@ -4,25 +4,25 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Invoice\Repositories;
+namespace Academorix\Invoice\Repositories;
 
 use Stackra\Crud\Attributes\AsRepository;
 use Stackra\Crud\Attributes\Cacheable;
 use Stackra\Crud\Attributes\Filterable;
 use Stackra\Crud\Attributes\UseModel;
 use Stackra\Crud\Repositories\Repository;
-use Stackra\Invoice\Contracts\Data\InvoiceLineInterface;
-use Stackra\Invoice\Contracts\Repositories\InvoiceLineRepositoryInterface;
-use Stackra\Invoice\Models\InvoiceLine;
+use Academorix\Invoice\Contracts\Data\InvoiceLineInterface;
+use Academorix\Invoice\Contracts\Repositories\InvoiceLineRepositoryInterface;
+use Academorix\Invoice\Models\InvoiceLine;
 
 /**
- * Attribute-first Eloquent repository for {@see Stackra\Invoice\Models\InvoiceLine}.
+ * Attribute-first Eloquent repository for {@see Academorix\Invoice\Models\InvoiceLine}.
  *
  * Bound to the interface via `#[AsRepository]`; the model comes from
  * `#[UseModel(InvoiceLineInterface::class)]` which resolves to
  * `InvoiceLine` through the interface's `#[Bind]`.
  *
- * @extends Repository<\Stackra\Invoice\Models\InvoiceLine>
+ * @extends Repository<\Academorix\Invoice\Models\InvoiceLine>
  *
  * @category Invoice
  *

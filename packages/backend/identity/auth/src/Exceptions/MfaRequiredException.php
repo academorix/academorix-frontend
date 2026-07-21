@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Auth\Exceptions;
 
-use Stackra\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Not an error per se — the login flow returns 202 with MfaChallengeResult when MFA is enrolled.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class MfaRequiredException extends AcademorixException
+final class MfaRequiredException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

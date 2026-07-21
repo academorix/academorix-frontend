@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/private-sessions/commands",
+  "id": "academorix://modules/private-sessions/commands",
   "$version": 1,
   "title": "private-sessions — Artisan commands",
   "description": "Console commands this module ships.",

@@ -4,11 +4,11 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Development\Actions\Tenant;
+namespace Academorix\Development\Actions\Tenant;
 
-use Stackra\Development\Contracts\Repositories\ScoutingReportRepositoryInterface;
-use Stackra\Development\Data\ScoutingReportData;
-use Stackra\Development\Data\Requests\CreateScoutingReportRequestData;
+use Academorix\Development\Contracts\Repositories\ScoutingReportRepositoryInterface;
+use Academorix\Development\Data\ScoutingReportData;
+use Academorix\Development\Data\Requests\CreateScoutingReportRequestData;
 use Stackra\Routing\Attributes\AsAction;
 use Stackra\Routing\Attributes\Middleware;
 use Stackra\Routing\Concerns\AsController;

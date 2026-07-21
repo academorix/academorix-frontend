@@ -1,76 +1,76 @@
 {
-  "id": "stackra://modules/refund/hooks",
+  "id": "academorix://modules/refund/hooks",
   "$version": 1,
   "title": "refund — TenancyHook + lifecycle hooks",
   "description": "Cross-module hook implementations. TenancyHooks are the tenancy module's contract for reacting to tenant-lifecycle events (provision / suspend / erase). Refund does not register a bootstrapper (nothing to hydrate at tenant-boot — the module resolves per-request), but registers ten cascade hooks: tenant-erasure purge + archive, user-erasure redaction, dispute-accepted → refund creation, refund-succeeded → clawback fan-out (referral + coupon), refund-succeeded → marketing negative-conversion, refund-succeeded → credit-note issuance + transaction offset + invoice state update.",
-  "namespace": "Stackra\\Finance\\Refund\\Hooks",
+  "namespace": "Academorix\\Finance\\Refund\\Hooks",
   "hooks": [
     {
       "name": "PurgeRefundDataForErasedTenant",
-      "class": "Stackra\\Finance\\Refund\\Hooks\\PurgeRefundDataForErasedTenant",
+      "class": "Academorix\\Finance\\Refund\\Hooks\\PurgeRefundDataForErasedTenant",
       "kind": "tenant_erasure",
       "listens_to": "tenancy::TenantErased",
       "purpose": "Cascade delete via FK for non-invoice-linked refunds; writes compliance audit trail entry + emits count metrics per entity family (refunds / refund_lines purged). Audit rows outlive the source rows per financial retention."
     },
     {
       "name": "ArchiveRefundFinancialRecordsOnTenantErasure",
-      "class": "Stackra\\Finance\\Refund\\Hooks\\ArchiveRefundFinancialRecordsOnTenantErasure",
+      "class": "Academorix\\Finance\\Refund\\Hooks\\ArchiveRefundFinancialRecordsOnTenantErasure",
       "kind": "tenant_erasure",
       "listens_to": "tenancy::TenantErasing",
       "purpose": "Runs BEFORE PurgeRefundDataForErasedTenant. Migrates invoice-linked refunds (refunds where the parent invoice still exists in compliance_archive after tenant erasure) to compliance_archive.refunds + compliance_archive.refund_lines. Financial-obligation retention overrides GDPR Art. 17 §3 exception."
     },
     {
       "name": "RedactCustomerFromRefundsOnUserErased",
-      "class": "Stackra\\Finance\\Refund\\Hooks\\RedactCustomerFromRefundsOnUserErased",
+      "class": "Academorix\\Finance\\Refund\\Hooks\\RedactCustomerFromRefundsOnUserErased",
       "kind": "cascade",
       "listens_to": "user::UserErased",
       "purpose": "GDPR minimisation. When a user is erased who initiated_by_user_id / approved_by_user_id / rejected_by_user_id / reversed_by_user_id / cancelled_by_user_id on any Refund: 90 days post-erasure, redact those user_id references to a hashed placeholder. Retention window unchanged; only PII fields redact. The refund row stays for the 7-year financial audit trail."
     },
     {
       "name": "InitiateRefundOnDisputeAccepted",
-      "class": "Stackra\\Finance\\Refund\\Hooks\\InitiateRefundOnDisputeAccepted",
+      "class": "Academorix\\Finance\\Refund\\Hooks\\InitiateRefundOnDisputeAccepted",
       "kind": "cascade",
       "listens_to": "payment::PaymentDisputeAccepted",
       "purpose": "When admin ops chooses to accept a payment dispute rather than fight it (via POST /payment-disputes/{dispute}/accept): auto-create a Refund with reason='chargeback_prevention' + refund_type='full' + amount_cents=dispute.amount_cents. The refund transitions through the normal state machine but bypasses `refund_customer_self_service` entitlement (system-initiated). Fires RefundRequested + eventually RefundSucceeded (per provider dispatch)."
     },
     {
       "name": "CascadeClawbackReferralOnRefundSucceeded",
-      "class": "Stackra\\Finance\\Refund\\Hooks\\CascadeClawbackReferralOnRefundSucceeded",
+      "class": "Academorix\\Finance\\Refund\\Hooks\\CascadeClawbackReferralOnRefundSucceeded",
       "kind": "cascade",
       "listens_to": "refund::RefundSucceeded (self-listener within the finalization chain)",
       "purpose": "Called by FinalizeRefundJob step 4 via ClawbackCoordinator. When the refunded invoice was linked to a materialized ReferralReward (referrals module, Wave 5): fires RefundClawbackReferral downstream. The referrals module handles the actual reward reversal + notifies the referrer."
     },
     {
       "name": "CascadeClawbackCouponOnRefundSucceeded",
-      "class": "Stackra\\Finance\\Refund\\Hooks\\CascadeClawbackCouponOnRefundSucceeded",
+      "class": "Academorix\\Finance\\Refund\\Hooks\\CascadeClawbackCouponOnRefundSucceeded",
       "kind": "cascade",
       "listens_to": "refund::RefundSucceeded (self-listener within the finalization chain)",
       "purpose": "Called by FinalizeRefundJob step 4 via ClawbackCoordinator. When the refunded invoice had a redeemed coupon: fires RefundClawbackCoupon downstream. The coupon module (already listening to finance::RefundIssued) additionally listens to RefundClawbackCoupon for redemption reversal. Backwards compatibility with the existing coupon clawback listener is preserved."
     },
     {
       "name": "FireMarketingRefundIssuedOnRefundSucceeded",
-      "class": "Stackra\\Finance\\Refund\\Hooks\\FireMarketingRefundIssuedOnRefundSucceeded",
+      "class": "Academorix\\Finance\\Refund\\Hooks\\FireMarketingRefundIssuedOnRefundSucceeded",
       "kind": "cascade",
       "listens_to": "refund::RefundSucceeded (self-listener within the finalization chain)",
       "purpose": "Called by FinalizeRefundJob step 5. Fires marketing::RefundIssued (Wave 5 bridge) — negative-value conversion event that ad networks subtract from ROAS + retrain fraud models. Consent-gate is `advertising` — customers who have withdrawn advertising consent have their refunds suppressed at dispatch. Refund still succeeds; only the marketing lane skips."
     },
     {
       "name": "CreateCreditNoteOnRefundSucceeded",
-      "class": "Stackra\\Finance\\Refund\\Hooks\\CreateCreditNoteOnRefundSucceeded",
+      "class": "Academorix\\Finance\\Refund\\Hooks\\CreateCreditNoteOnRefundSucceeded",
       "kind": "cascade",
       "listens_to": "refund::RefundSucceeded (self-listener within the finalization chain)",
       "purpose": "Called by FinalizeRefundJob step 2. Uses `invoice::CreditNoteIssuer::createFromRefund($refund)` to create a reversal credit note tied to the parent invoice. Persists credit_note_id back onto the refund row. Runs in the same transaction as the succeeded status update — a Refund NEVER exists in succeeded state without its credit note (unless the finalization failed + refund transitioned to provider_error for manual retry via GenerateCreditNoteCommand)."
     },
     {
       "name": "RecordOffsettingTransactionOnRefundSucceeded",
-      "class": "Stackra\\Finance\\Refund\\Hooks\\RecordOffsettingTransactionOnRefundSucceeded",
+      "class": "Academorix\\Finance\\Refund\\Hooks\\RecordOffsettingTransactionOnRefundSucceeded",
       "kind": "cascade",
       "listens_to": "refund::RefundSucceeded (self-listener within the finalization chain)",
       "purpose": "Called by FinalizeRefundJob step 1. Uses `transaction::TransactionRecorder::recordOffset($refund)` to record the double-entry ledger movement: debit refunds_owed, credit cash. Persists transaction_id back onto the refund row. Runs in the same transaction — a Refund NEVER exists in succeeded state without its offsetting transaction."
     },
     {
       "name": "MarkInvoiceRefundedOnFullRefundSucceeded",
-      "class": "Stackra\\Finance\\Refund\\Hooks\\MarkInvoiceRefundedOnFullRefundSucceeded",
+      "class": "Academorix\\Finance\\Refund\\Hooks\\MarkInvoiceRefundedOnFullRefundSucceeded",
       "kind": "cascade",
       "listens_to": "refund::RefundSucceeded (self-listener within the finalization chain)",
       "purpose": "Called by FinalizeRefundJob step 3. Uses `invoice::InvoiceStateUpdater::applyRefund($refund)` to update the parent invoice: full refund → invoice.status='refunded' + refunded_at; partial → invoice.status='partially_refunded' + accumulates amount_refunded_cents. Also updates payment.amount_refunded_cents (never exceeds payment.amount_cents). Runs in the same transaction."

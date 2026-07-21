@@ -1,13 +1,13 @@
 {
-  "id": "stackra://modules/payment/attributes",
+  "id": "academorix://modules/payment/attributes",
   "$version": 1,
   "title": "payment — PHP attribute contracts",
   "description": "Three class-level attributes. `#[AsPaymentListener]` subscribes a service to payment-lane events (intent lifecycle + capture + dispute + circuit-breaker). `#[AsPaymentProvider]` marks a class as a provider driver — the PaymentProviderManager discovers these at boot and registers them via createXxxDriver factories. `#[AsPaymentWebhookHandler]` marks a class as a per-provider webhook handler; the payment.webhook_verify middleware dispatches inbound webhooks to the matching handler.",
-  "namespace": "Stackra\\Finance\\Payment\\Attributes",
+  "namespace": "Academorix\\Finance\\Payment\\Attributes",
   "attributes": [
     {
       "name": "AsPaymentListener",
-      "class": "Stackra\\Finance\\Payment\\Attributes\\AsPaymentListener",
+      "class": "Academorix\\Finance\\Payment\\Attributes\\AsPaymentListener",
       "targets": ["class"],
       "isRepeatable": false,
       "description": "Marks a service as a subscriber to payment-lane events (PaymentIntent* / Payment* / PaymentMethod* / PaymentDispute* / PaymentProvider*). Discovery loader picks up each class at boot + wires the declared events. Consumers of critical events (PaymentDisputeLost, PaymentProviderCircuitBreakerOpened) should override queue to `payment-critical`.",
@@ -16,7 +16,7 @@
           "name": "events",
           "type": "array<string>",
           "default": [],
-          "description": "Array of event short names (`PaymentCaptured`, `PaymentDisputeOpened`, `PaymentProviderCircuitBreakerOpened`, …). Empty = subscribe to every `Stackra\\Finance\\Payment\\Events\\*` event. Names resolve against events.json at boot; typos abort boot with a discovery error."
+          "description": "Array of event short names (`PaymentCaptured`, `PaymentDisputeOpened`, `PaymentProviderCircuitBreakerOpened`, …). Empty = subscribe to every `Academorix\\Finance\\Payment\\Events\\*` event. Names resolve against events.json at boot; typos abort boot with a discovery error."
         },
         {
           "name": "queue",
@@ -35,7 +35,7 @@
     },
     {
       "name": "AsPaymentProvider",
-      "class": "Stackra\\Finance\\Payment\\Attributes\\AsPaymentProvider",
+      "class": "Academorix\\Finance\\Payment\\Attributes\\AsPaymentProvider",
       "targets": ["class"],
       "isRepeatable": false,
       "description": "Marks a class as a payment provider driver. The PaymentProviderManager discovers these at boot and registers a createXxxDriver factory keyed on the slug. Every driver MUST implement the IPaymentProvider contract (name(), createIntent, confirmIntent, captureIntent, cancelIntent, attachPaymentMethod, detachPaymentMethod, listIntents, submitDisputeEvidence, verifyWebhookSignature) + ship a JSON Schema under data/providers/<slug>-config.schema.json for config validation + a matching webhook handler decorated with #[AsPaymentWebhookHandler].",
@@ -85,7 +85,7 @@
     },
     {
       "name": "AsPaymentWebhookHandler",
-      "class": "Stackra\\Finance\\Payment\\Attributes\\AsPaymentWebhookHandler",
+      "class": "Academorix\\Finance\\Payment\\Attributes\\AsPaymentWebhookHandler",
       "targets": ["class"],
       "isRepeatable": false,
       "description": "Marks a class as a per-provider webhook handler. The payment.webhook_verify middleware dispatches inbound webhooks to the matching handler after signature verification. Every provider ships a handler that translates provider-native events into our internal state transitions.",

@@ -1,8 +1,8 @@
 {
-  "id": "stackra://modules/session/notifications",
+  "id": "academorix://modules/session/notifications",
   "$version": 1,
   "title": "session — notification classes + categories",
-  "namespace": "Stackra\\Sports\\Session\\Notifications",
+  "namespace": "Academorix\\Sports\\Session\\Notifications",
   "notifications": [
     "SessionScheduledNotification",
     "SessionRescheduledNotification",

@@ -4,21 +4,21 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Leads\Models;
+namespace Academorix\Leads\Models;
 
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
-use Stackra\Leads\Contracts\Data\LeadInterface;
-use Stackra\Leads\Database\Factories\LeadFactory;
+use Academorix\Leads\Contracts\Data\LeadInterface;
+use Academorix\Leads\Database\Factories\LeadFactory;
 use Stackra\Foundation\Concerns\Filterable;
 use Stackra\Foundation\Concerns\HasMetadata;
-use Stackra\Leads\Enums\LeadLostReason;
-use Stackra\Leads\Enums\LeadSource;
-use Stackra\Leads\Enums\LeadStage;
-use Stackra\Leads\Policies\LeadPolicy;
+use Academorix\Leads\Enums\LeadLostReason;
+use Academorix\Leads\Enums\LeadSource;
+use Academorix\Leads\Enums\LeadStage;
+use Academorix\Leads\Policies\LeadPolicy;
 use Stackra\Tenancy\Concerns\BelongsToTenant;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;

@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Staff\Exceptions;
 
-use Stackra\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Branch transfer lands in Wave 3+.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class StaffBranchImmutableWave2BException extends AcademorixException
+final class StaffBranchImmutableWave2BException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

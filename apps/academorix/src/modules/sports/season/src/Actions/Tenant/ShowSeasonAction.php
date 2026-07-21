@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Season\Actions\Tenant;
+namespace Academorix\Season\Actions\Tenant;
 
-use Stackra\Season\Contracts\Repositories\SeasonRepositoryInterface;
-use Stackra\Season\Data\SeasonData;
+use Academorix\Season\Contracts\Repositories\SeasonRepositoryInterface;
+use Academorix\Season\Data\SeasonData;
 use Stackra\Routing\Attributes\AsAction;
 use Stackra\Routing\Attributes\Middleware;
 use Stackra\Routing\Concerns\AsController;

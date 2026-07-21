@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Teams\Exceptions;
 
-use Stackra\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * member_type has no registered resolver in the polymorphism registry (typically because the owning module hasn't landed yet — e.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class TeamMemberPolymorphicUnresolvedException extends AcademorixException
+final class TeamMemberPolymorphicUnresolvedException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

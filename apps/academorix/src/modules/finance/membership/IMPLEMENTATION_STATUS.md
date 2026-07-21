@@ -6,7 +6,7 @@
 
 > **`Finance\Membership` is the parent's paid subscription enrolling an athlete
 > on a plan** (renewing money contract). Do NOT confuse with
-> `TenantSubscription` (the tenant's SaaS subscription to Stackra).
+> `TenantSubscription` (the tenant's SaaS subscription to Academorix).
 
 ## Implementation plan
 

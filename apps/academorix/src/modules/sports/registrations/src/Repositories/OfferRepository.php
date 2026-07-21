@@ -4,25 +4,25 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Registrations\Repositories;
+namespace Academorix\Registrations\Repositories;
 
 use Stackra\Crud\Attributes\AsRepository;
 use Stackra\Crud\Attributes\Cacheable;
 use Stackra\Crud\Attributes\Filterable;
 use Stackra\Crud\Attributes\UseModel;
 use Stackra\Crud\Repositories\Repository;
-use Stackra\Registrations\Contracts\Data\OfferInterface;
-use Stackra\Registrations\Contracts\Repositories\OfferRepositoryInterface;
-use Stackra\Registrations\Models\Offer;
+use Academorix\Registrations\Contracts\Data\OfferInterface;
+use Academorix\Registrations\Contracts\Repositories\OfferRepositoryInterface;
+use Academorix\Registrations\Models\Offer;
 
 /**
- * Attribute-first Eloquent repository for {@see Stackra\Registrations\Models\Offer}.
+ * Attribute-first Eloquent repository for {@see Academorix\Registrations\Models\Offer}.
  *
  * Bound to the interface via `#[AsRepository]`; the model comes from
  * `#[UseModel(OfferInterface::class)]` which resolves to
  * `Offer` through the interface's `#[Bind]`.
  *
- * @extends Repository<\Stackra\Registrations\Models\Offer>
+ * @extends Repository<\Academorix\Registrations\Models\Offer>
  *
  * @category Registrations
  *

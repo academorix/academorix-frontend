@@ -4,13 +4,13 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Attribution\Policies;
+namespace Academorix\Attribution\Policies;
 
 use Stackra\User\Models\User;
-use Stackra\Attribution\Models\Attribution;
+use Academorix\Attribution\Models\Attribution;
 
 /**
- * Authorization policy for {@see \Stackra\Attribution\Models\Attribution}.
+ * Authorization policy for {@see \Academorix\Attribution\Models\Attribution}.
  *
  * Wired via `#[UsePolicy]` on the Model.
  *

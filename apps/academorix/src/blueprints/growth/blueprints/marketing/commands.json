@@ -1,76 +1,76 @@
 {
-  "id": "stackra://modules/marketing/commands",
+  "id": "academorix://modules/marketing/commands",
   "$version": 1,
   "title": "marketing — Artisan commands",
   "commands": [
     {
       "signature": "marketing:list-events {--tenant=} {--event-type=} {--status=} {--from=} {--to=} {--provider=} {--subject-type=} {--limit=100}",
-      "class": "Stackra\\Growth\\Marketing\\Console\\Commands\\ListEventsCommand",
+      "class": "Academorix\\Growth\\Marketing\\Console\\Commands\\ListEventsCommand",
       "purpose": "Table view of marketing_events. Filterable by tenant, event_type, status, date range, provider (via delivery join), subject_type. Default limit 100; use --limit=0 for stream mode."
     },
     {
       "signature": "marketing:describe-event {event}",
-      "class": "Stackra\\Growth\\Marketing\\Console\\Commands\\DescribeEventCommand",
+      "class": "Academorix\\Growth\\Marketing\\Console\\Commands\\DescribeEventCommand",
       "purpose": "Verbose read of one event: base fields + attribution snapshot + consent snapshot + per-provider delivery ledger + retry timeline. Support tool for investigating a specific conversion loss."
     },
     {
       "signature": "marketing:dispatch-event {event} {--force}",
-      "class": "Stackra\\Growth\\Marketing\\Console\\Commands\\DispatchEventCommand",
+      "class": "Academorix\\Growth\\Marketing\\Console\\Commands\\DispatchEventCommand",
       "purpose": "Manual re-dispatch of an existing event. --force bypasses the terminal-status check (audit-critical). Prompts for confirmation unless --no-interaction. Idempotent when the provider supports the event_id contract."
     },
     {
       "signature": "marketing:list-deliveries {--tenant=} {--event=} {--provider=} {--status=} {--from=} {--to=} {--limit=100}",
-      "class": "Stackra\\Growth\\Marketing\\Console\\Commands\\ListDeliveriesCommand",
+      "class": "Academorix\\Growth\\Marketing\\Console\\Commands\\ListDeliveriesCommand",
       "purpose": "Delivery ledger view. Filterable by tenant, event_id, provider, status (succeeded / failed / rate_limited / suppressed_*), date range. Powers support debugging."
     },
     {
       "signature": "marketing:list-dead-letters {--tenant=} {--provider=} {--reason=} {--unresolved} {--limit=50}",
-      "class": "Stackra\\Growth\\Marketing\\Console\\Commands\\ListDeadLettersCommand",
+      "class": "Academorix\\Growth\\Marketing\\Console\\Commands\\ListDeadLettersCommand",
       "purpose": "Dead-letter queue view. --unresolved filters to open items. Sorted by created_at DESC (newest first)."
     },
     {
       "signature": "marketing:replay-dead-letter {dead_letter} {--note=}",
-      "class": "Stackra\\Growth\\Marketing\\Console\\Commands\\ReplayDeadLetterCommand",
+      "class": "Academorix\\Growth\\Marketing\\Console\\Commands\\ReplayDeadLetterCommand",
       "purpose": "Enqueue a fresh DispatchToProviderJob for a dead-lettered delivery with attempt_number=1. --note is required and written to the audit trail. Increments replay_attempts. Successful replay auto-resolves the dead-letter."
     },
     {
       "signature": "marketing:resolve-dead-letter {dead_letter} --note={note}",
-      "class": "Stackra\\Growth\\Marketing\\Console\\Commands\\ResolveDeadLetterCommand",
+      "class": "Academorix\\Growth\\Marketing\\Console\\Commands\\ResolveDeadLetterCommand",
       "purpose": "Manually mark a dead-letter resolved WITHOUT replaying. --note required. Used when the provider event was replayed manually via provider dashboard OR when the loss is intentional (e.g. the tenant deleted the underlying subscription)."
     },
     {
       "signature": "marketing:list-providers {--tenant=} {--provider=} {--active} {--test-mode}",
-      "class": "Stackra\\Growth\\Marketing\\Console\\Commands\\ListProvidersCommand",
+      "class": "Academorix\\Growth\\Marketing\\Console\\Commands\\ListProvidersCommand",
       "purpose": "Provider config view. --active filters is_active=true; --test-mode filters test_mode=true. Shows circuit-breaker state per row."
     },
     {
       "signature": "marketing:configure-provider {--tenant=} {--provider=} {--config-file=} {--enabled-event-types=*} {--test-mode} {--dry-run}",
-      "class": "Stackra\\Growth\\Marketing\\Console\\Commands\\ConfigureProviderCommand",
+      "class": "Academorix\\Growth\\Marketing\\Console\\Commands\\ConfigureProviderCommand",
       "purpose": "Scriptable provider config create/update. --config-file=path/to/config.json is validated against the per-provider JSON schema. --dry-run validates + shows diff without persisting. Encrypts the config at rest."
     },
     {
       "signature": "marketing:test-provider {provider_config}",
-      "class": "Stackra\\Growth\\Marketing\\Console\\Commands\\TestProviderCommand",
+      "class": "Academorix\\Growth\\Marketing\\Console\\Commands\\TestProviderCommand",
       "purpose": "Send a synthetic test event via the provider's sandbox endpoint. Reports success/failure with provider response details. Used by ops to validate a tenant's provider config without disturbing production conversion counts."
     },
     {
       "signature": "marketing:reset-circuit-breaker {provider_config} {--note=}",
-      "class": "Stackra\\Growth\\Marketing\\Console\\Commands\\ResetCircuitBreakerCommand",
+      "class": "Academorix\\Growth\\Marketing\\Console\\Commands\\ResetCircuitBreakerCommand",
       "purpose": "Manually reset an OPEN circuit breaker. Sets circuit_breaker_open_until=NULL + consecutive_failure_count=0 + increments circuit_breaker_reset_count. --note is required and written to the audit trail."
     },
     {
       "signature": "marketing:audit-suppressions {--tenant=} {--from=} {--to=} {--consent-category=}",
-      "class": "Stackra\\Growth\\Marketing\\Console\\Commands\\AuditSuppressionsCommand",
+      "class": "Academorix\\Growth\\Marketing\\Console\\Commands\\AuditSuppressionsCommand",
       "purpose": "Compliance report. Counts events + deliveries suppressed by consent, grouped by (event_type, missing_consent_category). Used by DPO for GDPR Art. 6(1)(a) evidence."
     },
     {
       "signature": "marketing:roas-report {--tenant=} {--from=} {--to=} {--utm-source=} {--utm-campaign=} {--format=table}",
-      "class": "Stackra\\Growth\\Marketing\\Console\\Commands\\RoasReportCommand",
+      "class": "Academorix\\Growth\\Marketing\\Console\\Commands\\RoasReportCommand",
       "purpose": "Aggregated ROAS numbers by campaign. Sums value_amount_cents from delivered events grouped by attribution.utm_source + utm_campaign. --format=table|json|csv. Enterprise-tier tenants get 10-year history."
     },
     {
       "signature": "marketing:reconcile-status {--tenant=} {--dry-run}",
-      "class": "Stackra\\Growth\\Marketing\\Console\\Commands\\ReconcileStatusCommand",
+      "class": "Academorix\\Growth\\Marketing\\Console\\Commands\\ReconcileStatusCommand",
       "purpose": "One-shot invocation of ReconcileMarketingEventStatusJob. Rolls up per-event delivery aggregates + updates marketing_events.status. --dry-run reports findings without repairing. Findings above 0 indicate stuck events from crashed dispatch jobs."
     }
   ]

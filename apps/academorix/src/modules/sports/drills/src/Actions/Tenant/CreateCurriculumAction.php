@@ -4,11 +4,11 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Drills\Actions\Tenant;
+namespace Academorix\Drills\Actions\Tenant;
 
-use Stackra\Drills\Contracts\Repositories\CurriculumRepositoryInterface;
-use Stackra\Drills\Data\CurriculumData;
-use Stackra\Drills\Data\Requests\CreateCurriculumRequestData;
+use Academorix\Drills\Contracts\Repositories\CurriculumRepositoryInterface;
+use Academorix\Drills\Data\CurriculumData;
+use Academorix\Drills\Data\Requests\CreateCurriculumRequestData;
 use Stackra\Routing\Attributes\AsAction;
 use Stackra\Routing\Attributes\Middleware;
 use Stackra\Routing\Concerns\AsController;

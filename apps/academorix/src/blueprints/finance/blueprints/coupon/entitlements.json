@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/coupon/entitlements",
+  "id": "academorix://modules/coupon/entitlements",
   "$version": 1,
   "title": "coupon — declared entitlements",
   "description": "Six entitlement keys. `coupon_capture` is the boolean master gate — on for every tier by default. `coupon_slot` caps the number of ACTIVE coupons per tenant (Small=10, Medium=100, Enterprise=unlimited). `coupon_bulk_issue` (Medium+) unlocks the POST /coupons/bulk-issue endpoint for campaign codes. `coupon_advanced_discount_types` (Medium+) unlocks `free_period`, `first_month_free`, `bogo` discount types — Small tier limited to `percent` + `fixed_amount` + `free_shipping`. `coupon_stackable` (Enterprise) permits multiple coupons applied to a single invoice with defined precedence. `coupon_extended_retention` (Enterprise) extends the 7y retention window to 10y for regulated tenants.",

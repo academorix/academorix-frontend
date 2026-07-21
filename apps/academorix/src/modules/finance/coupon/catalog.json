@@ -1,6 +1,6 @@
 {
-  "$schema": "https://gist.githubusercontent.com/stackra-user/073a1ab687cd93ede7ae927b96a025ea/raw/catalog.v1.json",
-  "name": "stackra/coupon",
+  "$schema": "https://gist.githubusercontent.com/academorix-user/073a1ab687cd93ede7ae927b96a025ea/raw/catalog.v1.json",
+  "name": "academorix/coupon",
   "tier": "saas",
   "surfaces": ["core"],
   "kind": "feature",
@@ -11,22 +11,22 @@
     "Polymorphic target (Membership / Invoice / Transaction)",
     "Time-bounded validity + usage-limit tracking",
     "Attribute-first CRUD, Actions, Policies, Events",
-    "Wire SDK companion at stackra-finance/coupon-sdk"
+    "Wire SDK companion at academorix-finance/coupon-sdk"
   ],
   "when_to_use": "A tenant issues discount codes and needs per-use tracking against specific customers and targets.",
-  "when_not_to_use": "For marketplace-side platform fees, use stackra/marketplace-fee. For coupons on the SaaS plan itself, use stackra/subscription.",
+  "when_not_to_use": "For marketplace-side platform fees, use academorix/marketplace-fee. For coupons on the SaaS plan itself, use academorix/subscription.",
   "peer_deps": [
-    "stackra-finance/coupon-sdk",
-    "stackra/crud",
-    "stackra/foundation",
-    "stackra/routing",
-    "stackra/service-provider",
-    "stackra/support",
+    "academorix-finance/coupon-sdk",
+    "academorix/crud",
+    "academorix/foundation",
+    "academorix/routing",
+    "academorix/service-provider",
+    "academorix/support",
     "spatie/laravel-data"
   ],
   "backend_pair": null,
   "size_gzip_kb": {},
   "maturity": "alpha",
   "owning_agent": "laravel-feature-builder",
-  "docs": ["apps/stackra/src/modules/finance/coupon/README.md"]
+  "docs": ["apps/academorix/src/modules/finance/coupon/README.md"]
 }

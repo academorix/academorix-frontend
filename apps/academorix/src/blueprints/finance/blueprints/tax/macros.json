@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/tax/macros",
+  "id": "academorix://modules/tax/macros",
   "$version": 1,
   "title": "tax — published macros",
   "description": "The tax module publishes ZERO framework macros. Every consumer touches the tax surface via injected services (TaxCalculator, TaxProviderManager) or the invoice-line listener path. Middleware attaches audit-log context (owned by audit module) — tax consumes it via injection.",

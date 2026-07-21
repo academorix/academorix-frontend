@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/analytics/data/providers/amplitude",
+  "id": "academorix://modules/analytics/data/providers/amplitude",
   "$version": 1,
   "provider": "amplitude",
   "displayName": "Amplitude",

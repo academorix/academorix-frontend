@@ -4,19 +4,19 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Analytics\Database\Factories;
+namespace Academorix\Analytics\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Stackra\Analytics\Contracts\Data\AnalyticsProviderConfigInterface;
-use Stackra\Analytics\Models\AnalyticsProviderConfig;
+use Academorix\Analytics\Contracts\Data\AnalyticsProviderConfigInterface;
+use Academorix\Analytics\Models\AnalyticsProviderConfig;
 
 /**
- * Factory for {@see \Stackra\Analytics\Models\AnalyticsProviderConfig}.
+ * Factory for {@see \Academorix\Analytics\Models\AnalyticsProviderConfig}.
  *
  * Auto-generated skeleton — extend with named states as domain
  * cases emerge (e.g. `->published()`, `->overdue()`, `->archived()`).
  *
- * @extends Factory<\Stackra\Analytics\Models\AnalyticsProviderConfig>
+ * @extends Factory<\Academorix\Analytics\Models\AnalyticsProviderConfig>
  *
  * @category Analytics
  *

@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/refund/macros",
+  "id": "academorix://modules/refund/macros",
   "$version": 1,
   "title": "refund — published macros",
   "description": "No published macros. The refund module operates purely through service classes (RefundOrchestrator / RefundApprovalManager / RefundProviderExecutor / ProrationCalculator / ClawbackCoordinator) invoked from HTTP controllers + CLI commands + event listeners. There is no per-request refund context that would justify a Request macro — a refund is initiated at explicit call sites, not implicitly from the request.",

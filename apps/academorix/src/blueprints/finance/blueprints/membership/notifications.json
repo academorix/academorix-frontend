@@ -1,8 +1,8 @@
 {
-  "id": "stackra://modules/membership/notifications",
+  "id": "academorix://modules/membership/notifications",
   "$version": 1,
   "title": "membership — notification classes + categories",
-  "namespace": "Stackra\\Finance\\Membership\\Notifications",
+  "namespace": "Academorix\\Finance\\Membership\\Notifications",
   "description": "11 notification classes. All finance notifications are transactional_required by default — payment + dunning + cancellation are contract-critical, exempt from CAN-SPAM opt-out (Section 5(a)(5)(A) transactional exemption). Marketing win-back campaigns (30 days post-lapsed) route through growth::marketing with marketing consent tier — NOT owned here.",
   "notifications": [
     "MembershipActivatedNotification",

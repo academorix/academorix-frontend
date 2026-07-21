@@ -4,11 +4,11 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Attendance\Services;
+namespace Academorix\Attendance\Services;
 
-use Stackra\Attendance\Contracts\Services\GeofenceValidatorInterface;
+use Academorix\Attendance\Contracts\Services\GeofenceValidatorInterface;
 use Illuminate\Container\Attributes\Scoped;
-use Stackra\Attendance\Contracts\Repositories\AbsenceRecordRepositoryInterface;
+use Academorix\Attendance\Contracts\Repositories\AbsenceRecordRepositoryInterface;
 
 /**
  * Concrete service — GeofenceValidator.

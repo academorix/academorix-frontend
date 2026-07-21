@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Mfa\Exceptions;
 
-use Stackra\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Round-2 confirm refused because the round-1 preview envelope is no longer in Redis (either TTL elapsed OR PurgeUnconfirmedEnrollmentsJob evicted).
@@ -15,7 +15,7 @@ use Stackra\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class MfaPreviewExpiredException extends AcademorixException
+final class MfaPreviewExpiredException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

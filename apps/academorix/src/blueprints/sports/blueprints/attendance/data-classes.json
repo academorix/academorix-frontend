@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/attendance/data-classes",
+  "id": "academorix://modules/attendance/data-classes",
   "$version": 1,
   "title": "attendance — field classification",
   "description": "Attendance carries mostly internal-tier structural data + a set of confidential fields tied to fraud correlation (device_fingerprint_hash, ip_address, gps) and to coach-only notes. For minor athletes, the entire attendance record inherits the regulated_minor tier for cross-tenant reads at the platform plane.",

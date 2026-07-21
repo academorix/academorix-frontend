@@ -4,7 +4,7 @@
 
 declare(strict_types=1);
 
-namespace Stackra\DigitalPasses\Jobs;
+namespace Academorix\DigitalPasses\Jobs;
 
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;

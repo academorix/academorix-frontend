@@ -1,9 +1,9 @@
 {
-  "id": "stackra://modules/athlete/helpers",
+  "id": "academorix://modules/athlete/helpers",
   "$version": 1,
   "title": "athlete — helper functions",
   "description": "Ergonomic helpers for accessing the active athlete from the request context, resolving age-group snapshots, walking the consent + guardian chain, and rendering medical + emergency contact with permission checks. All helpers are thin wrappers around bound services — never business logic.",
-  "namespace": "Stackra\\Sports\\Athlete\\Support",
+  "namespace": "Academorix\\Sports\\Athlete\\Support",
   "helpers": [
     {
       "signature": "active_athlete(): ?Athlete",

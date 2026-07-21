@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/geofencing/caches",
+  "id": "academorix://modules/geofencing/caches",
   "$version": 1,
   "title": "geofencing \u2014 cache keys + tags",
   "driver": "redis",

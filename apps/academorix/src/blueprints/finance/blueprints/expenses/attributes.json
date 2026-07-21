@@ -1,8 +1,8 @@
 {
-  "id": "stackra://modules/expenses/attributes",
+  "id": "academorix://modules/expenses/attributes",
   "$version": 1,
   "title": "expenses — PHP attributes",
   "description": "PHP attributes owned by this module. Empty at scaffold time; fill in with each new `#[As...]` class the module ships.",
-  "namespace": "Stackra\\\\Expenses\\\\Attributes",
+  "namespace": "Academorix\\\\Expenses\\\\Attributes",
   "attributes": []
 }

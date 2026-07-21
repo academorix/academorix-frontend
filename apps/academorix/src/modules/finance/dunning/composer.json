@@ -1,10 +1,10 @@
 {
-  "name": "stackra/dunning",
+  "name": "academorix/dunning",
   "type": "library",
-  "description": "Stackra Dunning module — server-side Laravel package emitted from the module blueprint at `modules/finance/blueprints/dunning/`. Complements the wire SDK at `stackra-finance/dunning-sdk`.",
+  "description": "Academorix Dunning module — server-side Laravel package emitted from the module blueprint at `modules/finance/blueprints/dunning/`. Complements the wire SDK at `academorix-finance/dunning-sdk`.",
   "license": "proprietary",
   "keywords": [
-    "stackra",
+    "academorix",
     "module",
     "laravel",
     "finance",
@@ -22,7 +22,7 @@
     "stackra/routing": "@dev",
     "stackra/service-provider": "@dev",
     "stackra/support": "@dev",
-    "stackra-finance/dunning-sdk": "@dev"
+    "academorix-finance/dunning-sdk": "@dev"
   },
   "require-dev": {
     "orchestra/testbench": "^11.0",
@@ -33,12 +33,12 @@
   },
   "autoload": {
     "psr-4": {
-      "Stackra\\Dunning\\": "src/"
+      "Academorix\\Dunning\\": "src/"
     }
   },
   "autoload-dev": {
     "psr-4": {
-      "Stackra\\Dunning\\Tests\\": "tests/"
+      "Academorix\\Dunning\\Tests\\": "tests/"
     }
   },
   "extra": {

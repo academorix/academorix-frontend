@@ -4,19 +4,19 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Tax\Models;
+namespace Academorix\Tax\Models;
 
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
-use Stackra\Tax\Contracts\Data\TaxJurisdictionInterface;
-use Stackra\Tax\Database\Factories\TaxJurisdictionFactory;
+use Academorix\Tax\Contracts\Data\TaxJurisdictionInterface;
+use Academorix\Tax\Database\Factories\TaxJurisdictionFactory;
 use Stackra\Foundation\Concerns\Filterable;
 use Stackra\Foundation\Concerns\HasMetadata;
-use Stackra\Tax\Enums\TaxJurisdictionNexusType;
-use Stackra\Tax\Policies\TaxJurisdictionPolicy;
+use Academorix\Tax\Enums\TaxJurisdictionNexusType;
+use Academorix\Tax\Policies\TaxJurisdictionPolicy;
 use Stackra\Tenancy\Concerns\BelongsToTenantOptional;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;

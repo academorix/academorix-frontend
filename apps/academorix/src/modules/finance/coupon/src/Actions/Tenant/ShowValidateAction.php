@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Coupon\Actions\Tenant;
+namespace Academorix\Coupon\Actions\Tenant;
 
-use Stackra\Coupon\Contracts\Services\CouponValidatorInterface;
-use Stackra\Coupon\Data\CouponVerdictData;
+use Academorix\Coupon\Contracts\Services\CouponValidatorInterface;
+use Academorix\Coupon\Data\CouponVerdictData;
 use Stackra\Routing\Attributes\AsAction;
 use Stackra\Routing\Attributes\Get;
 use Stackra\Routing\Attributes\Middleware;

@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/analytics/data/providers/posthog",
+  "id": "academorix://modules/analytics/data/providers/posthog",
   "$version": 1,
   "provider": "posthog",
   "displayName": "PostHog",

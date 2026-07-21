@@ -1,10 +1,10 @@
 {
-  "name": "stackra/transaction",
+  "name": "academorix/transaction",
   "type": "library",
-  "description": "Stackra Transaction module — server-side Laravel package emitted from the module blueprint at `modules/finance/blueprints/transaction/`. Complements the wire SDK at `stackra-finance/transaction-sdk`.",
+  "description": "Academorix Transaction module — server-side Laravel package emitted from the module blueprint at `modules/finance/blueprints/transaction/`. Complements the wire SDK at `academorix-finance/transaction-sdk`.",
   "license": "proprietary",
   "keywords": [
-    "stackra",
+    "academorix",
     "module",
     "laravel",
     "finance",
@@ -22,7 +22,7 @@
     "stackra/routing": "@dev",
     "stackra/service-provider": "@dev",
     "stackra/support": "@dev",
-    "stackra-finance/transaction-sdk": "@dev"
+    "academorix-finance/transaction-sdk": "@dev"
   },
   "require-dev": {
     "orchestra/testbench": "^11.0",
@@ -33,12 +33,12 @@
   },
   "autoload": {
     "psr-4": {
-      "Stackra\\Transaction\\": "src/"
+      "Academorix\\Transaction\\": "src/"
     }
   },
   "autoload-dev": {
     "psr-4": {
-      "Stackra\\Transaction\\Tests\\": "tests/"
+      "Academorix\\Transaction\\Tests\\": "tests/"
     }
   },
   "extra": {

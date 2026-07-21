@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/analytics/data/event-category-catalog",
+  "id": "academorix://modules/analytics/data/event-category-catalog",
   "$version": 1,
   "title": "analytics — event category taxonomy",
   "description": "Closed set of AnalyticsEvent.category values. Each category has a description, a display label, an icon, retention behavior, and default consent requirements.",

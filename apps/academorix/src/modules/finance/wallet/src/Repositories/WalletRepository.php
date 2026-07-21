@@ -4,25 +4,25 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Wallet\Repositories;
+namespace Academorix\Wallet\Repositories;
 
 use Stackra\Crud\Attributes\AsRepository;
 use Stackra\Crud\Attributes\Cacheable;
 use Stackra\Crud\Attributes\Filterable;
 use Stackra\Crud\Attributes\UseModel;
 use Stackra\Crud\Repositories\Repository;
-use Stackra\Wallet\Contracts\Data\WalletInterface;
-use Stackra\Wallet\Contracts\Repositories\WalletRepositoryInterface;
-use Stackra\Wallet\Models\Wallet;
+use Academorix\Wallet\Contracts\Data\WalletInterface;
+use Academorix\Wallet\Contracts\Repositories\WalletRepositoryInterface;
+use Academorix\Wallet\Models\Wallet;
 
 /**
- * Attribute-first Eloquent repository for {@see Stackra\Wallet\Models\Wallet}.
+ * Attribute-first Eloquent repository for {@see Academorix\Wallet\Models\Wallet}.
  *
  * Bound to the interface via `#[AsRepository]`; the model comes from
  * `#[UseModel(WalletInterface::class)]` which resolves to
  * `Wallet` through the interface's `#[Bind]`.
  *
- * @extends Repository<\Stackra\Wallet\Models\Wallet>
+ * @extends Repository<\Academorix\Wallet\Models\Wallet>
  *
  * @category Wallet
  *

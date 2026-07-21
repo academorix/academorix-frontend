@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Registry\Actions\Platform;
+namespace Academorix\Registry\Actions\Platform;
 
-use Stackra\Registry\Contracts\Repositories\SportRepositoryInterface;
+use Academorix\Registry\Contracts\Repositories\SportRepositoryInterface;
 use Stackra\Routing\Attributes\AsAction;
 use Stackra\Routing\Attributes\Middleware;
 use Stackra\Routing\Concerns\AsController;

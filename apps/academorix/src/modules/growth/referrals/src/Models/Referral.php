@@ -4,20 +4,20 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Referrals\Models;
+namespace Academorix\Referrals\Models;
 
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
-use Stackra\Referrals\Contracts\Data\ReferralInterface;
-use Stackra\Referrals\Database\Factories\ReferralFactory;
+use Academorix\Referrals\Contracts\Data\ReferralInterface;
+use Academorix\Referrals\Database\Factories\ReferralFactory;
 use Stackra\Foundation\Concerns\Filterable;
 use Stackra\Foundation\Concerns\HasMetadata;
-use Stackra\Referrals\Enums\ReferralCancellationReason;
-use Stackra\Referrals\Enums\ReferralStatus;
-use Stackra\Referrals\Policies\ReferralPolicy;
+use Academorix\Referrals\Enums\ReferralCancellationReason;
+use Academorix\Referrals\Enums\ReferralStatus;
+use Academorix\Referrals\Policies\ReferralPolicy;
 use Stackra\Tenancy\Concerns\BelongsToTenant;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;

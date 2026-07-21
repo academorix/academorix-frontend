@@ -4,13 +4,13 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Season\Policies;
+namespace Academorix\Season\Policies;
 
 use Stackra\User\Models\User;
-use Stackra\Season\Models\Season;
+use Academorix\Season\Models\Season;
 
 /**
- * Authorization policy for {@see \Stackra\Season\Models\Season}.
+ * Authorization policy for {@see \Academorix\Season\Models\Season}.
  *
  * Wired via `#[UsePolicy]` on the Model.
  *

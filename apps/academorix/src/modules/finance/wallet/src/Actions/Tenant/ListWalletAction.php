@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Wallet\Actions\Tenant;
+namespace Academorix\Wallet\Actions\Tenant;
 
-use Stackra\Wallet\Contracts\Repositories\WalletRepositoryInterface;
-use Stackra\Wallet\Data\WalletData;
+use Academorix\Wallet\Contracts\Repositories\WalletRepositoryInterface;
+use Academorix\Wallet\Data\WalletData;
 use Stackra\Routing\Attributes\AsAction;
 use Stackra\Routing\Attributes\Middleware;
 use Stackra\Routing\Concerns\AsController;
@@ -50,7 +50,7 @@ final class ListWalletAction
      */
     public function __invoke(Request $request): PaginatedDataCollection
     {
-        /** @var LengthAwarePaginator<int, \Stackra\Wallet\Models\Wallet> $page */
+        /** @var LengthAwarePaginator<int, \Academorix\Wallet\Models\Wallet> $page */
         $page = $this->repository->paginate(
             perPage: (int) $request->integer('per_page', 15),
         );

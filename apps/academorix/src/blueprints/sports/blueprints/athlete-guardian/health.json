@@ -1,46 +1,46 @@
 {
-  "id": "stackra://modules/athlete-guardian/health",
+  "id": "academorix://modules/athlete-guardian/health",
   "$version": 1,
   "title": "athlete-guardian — health probes",
   "probes": [
     {
       "name": "athlete-guardian-schema-migrations-applied",
-      "class": "Stackra\\Sports\\AthleteGuardian\\Health\\Probes\\SchemaMigrationsAppliedProbe",
+      "class": "Academorix\\Sports\\AthleteGuardian\\Health\\Probes\\SchemaMigrationsAppliedProbe",
       "category": "startup",
       "critical": true,
       "description": "Confirms athlete_guardians table + partial unique indexes exist."
     },
     {
       "name": "athlete-guardian-primary-invariant-index-present",
-      "class": "Stackra\\Sports\\AthleteGuardian\\Health\\Probes\\PrimaryInvariantIndexPresentProbe",
+      "class": "Academorix\\Sports\\AthleteGuardian\\Health\\Probes\\PrimaryInvariantIndexPresentProbe",
       "category": "startup",
       "critical": true,
       "description": "Confirms the partial unique index (athlete_id, is_primary=true, deleted_at IS NULL) exists. Without it, concurrent primary promotions could both succeed."
     },
     {
       "name": "athlete-guardian-primary-invariant-clean",
-      "class": "Stackra\\Sports\\AthleteGuardian\\Health\\Probes\\PrimaryInvariantCleanProbe",
+      "class": "Academorix\\Sports\\AthleteGuardian\\Health\\Probes\\PrimaryInvariantCleanProbe",
       "category": "readiness",
       "critical": false,
       "description": "Runs the same query as ReconcilePrimaryGuardianInvariantJob. Any finding is a P1."
     },
     {
       "name": "athlete-guardian-orphan-minor-detection",
-      "class": "Stackra\\Sports\\AthleteGuardian\\Health\\Probes\\OrphanMinorDetectionProbe",
+      "class": "Academorix\\Sports\\AthleteGuardian\\Health\\Probes\\OrphanMinorDetectionProbe",
       "category": "readiness",
       "critical": true,
       "description": "Detects minor athletes with zero active guardians. Fires P1 — safeguarding-critical."
     },
     {
       "name": "athlete-guardian-verification-backlog",
-      "class": "Stackra\\Sports\\AthleteGuardian\\Health\\Probes\\VerificationBacklogProbe",
+      "class": "Academorix\\Sports\\AthleteGuardian\\Health\\Probes\\VerificationBacklogProbe",
       "category": "readiness",
       "critical": false,
       "description": "Detects guardians stuck in pending state for > config.athlete_guardian.verification.pending_ttl_days. Elevated indicates auto-verify job stalled OR HR queue backlog on Enterprise tenants."
     },
     {
       "name": "athlete-guardian-communications-bounce-rate",
-      "class": "Stackra\\Sports\\AthleteGuardian\\Health\\Probes\\CommunicationsBounceRateProbe",
+      "class": "Academorix\\Sports\\AthleteGuardian\\Health\\Probes\\CommunicationsBounceRateProbe",
       "category": "readiness",
       "critical": false,
       "description": "Percentage of guardians with can_receive_communications=false due to auto-disable via bounce threshold. Elevated indicates email deliverability degradation."

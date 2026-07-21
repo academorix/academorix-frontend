@@ -4,13 +4,13 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Progress\Policies;
+namespace Academorix\Progress\Policies;
 
 use Stackra\User\Models\User;
-use Stackra\Progress\Models\ProgressCard;
+use Academorix\Progress\Models\ProgressCard;
 
 /**
- * Authorization policy for {@see \Stackra\Progress\Models\ProgressCard}.
+ * Authorization policy for {@see \Academorix\Progress\Models\ProgressCard}.
  *
  * Wired via `#[UsePolicy]` on the Model.
  *

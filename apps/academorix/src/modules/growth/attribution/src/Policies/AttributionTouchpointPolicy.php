@@ -4,13 +4,13 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Attribution\Policies;
+namespace Academorix\Attribution\Policies;
 
 use Stackra\User\Models\User;
-use Stackra\Attribution\Models\AttributionTouchpoint;
+use Academorix\Attribution\Models\AttributionTouchpoint;
 
 /**
- * Authorization policy for {@see \Stackra\Attribution\Models\AttributionTouchpoint}.
+ * Authorization policy for {@see \Academorix\Attribution\Models\AttributionTouchpoint}.
  *
  * Wired via `#[UsePolicy]` on the Model.
  *

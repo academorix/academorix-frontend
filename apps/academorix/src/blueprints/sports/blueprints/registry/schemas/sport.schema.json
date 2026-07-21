@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/sports-registry/schemas/sport",
+  "id": "academorix://modules/sports-registry/schemas/sport",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "Sport",
@@ -13,9 +13,9 @@
     "keyType": "string",
     "keyPrefix": "spo_",
     "incrementing": false,
-    "model": "Stackra\\Sports\\Registry\\Models\\Sport",
-    "interface": "Stackra\\Sports\\Registry\\Contracts\\Data\\SportInterface",
-    "implements": ["Stackra\\Sports\\Registry\\Contracts\\Data\\SportInterface"],
+    "model": "Academorix\\Sports\\Registry\\Models\\Sport",
+    "interface": "Academorix\\Sports\\Registry\\Contracts\\Data\\SportInterface",
+    "implements": ["Academorix\\Sports\\Registry\\Contracts\\Data\\SportInterface"],
     "traits": [
       "HasFactory",
       "HasPrefixedUlid",
@@ -36,9 +36,9 @@
       "age_range_min": "integer",
       "age_range_max": "integer",
       "sort_order": "integer",
-      "category": "Stackra\\Sports\\Registry\\Enums\\SportCategory",
-      "gender_typical": "Stackra\\Sports\\Registry\\Enums\\GenderTypical",
-      "primary_color": "Stackra\\Sports\\Registry\\Casts\\HexColor",
+      "category": "Academorix\\Sports\\Registry\\Enums\\SportCategory",
+      "gender_typical": "Academorix\\Sports\\Registry\\Enums\\GenderTypical",
+      "primary_color": "Academorix\\Sports\\Registry\\Casts\\HexColor",
       "metadata": "array"
     },
     "appends": ["display_label", "downstream_reference_count", "discipline_count"],

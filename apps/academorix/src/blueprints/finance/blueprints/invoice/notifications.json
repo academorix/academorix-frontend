@@ -1,8 +1,8 @@
 {
-  "id": "stackra://modules/invoice/notifications",
+  "id": "academorix://modules/invoice/notifications",
   "$version": 1,
   "title": "invoice — notification classes + categories",
-  "namespace": "Stackra\\Finance\\Invoice\\Notifications",
+  "namespace": "Academorix\\Finance\\Invoice\\Notifications",
   "notifications": [
     "InvoiceCreatedNotification",
     "InvoiceSentNotification",

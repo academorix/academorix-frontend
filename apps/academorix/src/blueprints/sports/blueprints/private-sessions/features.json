@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/private-sessions/features",
+  "id": "academorix://modules/private-sessions/features",
   "$version": 1,
   "title": "private-sessions — feature keys",
   "features": [

@@ -12,7 +12,7 @@
 
 declare(strict_types=1);
 
-use Stackra\PlatformApplicationSdk\Data\ApplicationData;
+use Academorix\PlatformApplicationSdk\Data\ApplicationData;
 
 describe('ApplicationData', function (): void {
     it('hydrates every wire column from a canonical response payload', function (): void {

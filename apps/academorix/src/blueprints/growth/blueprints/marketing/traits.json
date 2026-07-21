@@ -1,11 +1,11 @@
 {
-  "id": "stackra://modules/marketing/traits",
+  "id": "academorix://modules/marketing/traits",
   "$version": 1,
   "title": "marketing — trait composition",
   "description": "Three owned traits. `BelongsToMarketingEvent` is the FK trait for downstream models (MarketingDelivery, MarketingDeadLetter). `HasMarketingDeliveries` / `HasMarketingDeadLetters` are inverse-side conveniences on the MarketingEvent model, exposing scoped query helpers (->activeDeliveries(), ->latestFailedDelivery(), ->unresolvedDeadLetters()). Order matters when composed with BelongsToTenant — tenant MUST come first so the scope chain observes the tenant context.",
   "owned": [
     {
-      "trait": "Stackra\\Growth\\Marketing\\Concerns\\BelongsToMarketingEvent",
+      "trait": "Academorix\\Growth\\Marketing\\Concerns\\BelongsToMarketingEvent",
       "description": "Mixed into any domain model that carries a `marketing_event_id` FK. Adds the `marketingEvent()` belongsTo relation. Only used by MarketingDelivery + MarketingDeadLetter — no downstream module currently attaches to marketing events. Provides a `resolveInEvent(?MarketingEvent)` scope for cross-cutting queries.",
       "public": true,
       "usedBy": [
@@ -19,13 +19,13 @@
       ]
     },
     {
-      "trait": "Stackra\\Growth\\Marketing\\Concerns\\HasMarketingDeliveries",
+      "trait": "Academorix\\Growth\\Marketing\\Concerns\\HasMarketingDeliveries",
       "description": "Composed onto the MarketingEvent model itself. Adds `->deliveries()` (hasMany over MarketingDelivery), `->activeDeliveries()` (scope filter status IN ('pending', 'dispatching')), `->succeededDeliveries()`, `->failedDeliveries()`, `->latestDelivery($provider)` (returns the most recent attempt against a provider), `->latestFailedDelivery($provider)` (used by RetryFailedDeliveriesJob to compute next_retry_at). Also adds `->hasSucceededOn($provider)` boolean helper.",
       "public": true,
       "usedBy": ["marketing::MarketingEvent"]
     },
     {
-      "trait": "Stackra\\Growth\\Marketing\\Concerns\\HasMarketingDeadLetters",
+      "trait": "Academorix\\Growth\\Marketing\\Concerns\\HasMarketingDeadLetters",
       "description": "Composed onto the MarketingEvent model itself. Adds `->deadLetters()` (hasMany over MarketingDeadLetter), `->unresolvedDeadLetters()` (scope filter resolved_at IS NULL), `->deadLetterFor($provider)` (returns the dead letter for a specific provider or null). Distinct from HasMarketingDeliveries because dead letters have different lifecycle + retention (indefinite vs 2-year).",
       "public": true,
       "usedBy": ["marketing::MarketingEvent"]
@@ -41,30 +41,30 @@
       }
     ],
     "foundation": [
-      { "trait": "Stackra\\Foundation\\Concerns\\HasUlids" },
-      { "trait": "Stackra\\Foundation\\Concerns\\HasUserstamps" },
-      { "trait": "Stackra\\Foundation\\Concerns\\HasMetadata" },
-      { "trait": "Stackra\\Foundation\\Concerns\\Filterable" },
+      { "trait": "Academorix\\Foundation\\Concerns\\HasUlids" },
+      { "trait": "Academorix\\Foundation\\Concerns\\HasUserstamps" },
+      { "trait": "Academorix\\Foundation\\Concerns\\HasMetadata" },
+      { "trait": "Academorix\\Foundation\\Concerns\\Filterable" },
       {
-        "trait": "Stackra\\Foundation\\Concerns\\Searchable",
+        "trait": "Academorix\\Foundation\\Concerns\\Searchable",
         "reason": "MarketingEvent (searchable by deduplication_key, subject_id, utm_campaign). NOT the other three (they're accessed via relations from MarketingEvent)."
       }
     ],
     "tenants": [
       {
-        "trait": "Stackra\\Tenancy\\Concerns\\BelongsToTenant",
+        "trait": "Academorix\\Tenancy\\Concerns\\BelongsToTenant",
         "reason": "Every owned row carries tenant_id per tenancy-columns.md §3."
       }
     ],
     "audit": [
       {
-        "trait": "Stackra\\Audit\\Concerns\\Auditable",
+        "trait": "Academorix\\Audit\\Concerns\\Auditable",
         "reason": "Every write to marketing_events / marketing_deliveries / marketing_provider_configs / marketing_dead_letters is compliance-relevant (financial retention 7 years)."
       }
     ],
     "activity": [
       {
-        "trait": "Stackra\\Activity\\Concerns\\HasActivityLog",
+        "trait": "Academorix\\Activity\\Concerns\\HasActivityLog",
         "reason": "MarketingProviderConfig + MarketingDeadLetter — admin actions feed the staff-visible activity feed. NOT MarketingEvent + MarketingDelivery — high-volume; already covered by the audit trail."
       }
     ]

@@ -1,8 +1,8 @@
 {
-  "id": "stackra://modules/expenses/events",
+  "id": "academorix://modules/expenses/events",
   "$version": 1,
   "title": "expenses — published events",
-  "namespace": "Stackra\\Finance\\Expenses\\Events",
+  "namespace": "Academorix\\Finance\\Expenses\\Events",
   "dispatchMode": "afterCommit",
   "description": "Money-out audit trail. Every expense event carries the actor + amount + category. Approval events feed the reporting module's cash-flow dashboards.",
   "events": [

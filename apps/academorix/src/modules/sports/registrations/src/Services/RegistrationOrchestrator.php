@@ -4,11 +4,11 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Registrations\Services;
+namespace Academorix\Registrations\Services;
 
-use Stackra\Registrations\Contracts\Services\RegistrationOrchestratorInterface;
+use Academorix\Registrations\Contracts\Services\RegistrationOrchestratorInterface;
 use Illuminate\Container\Attributes\Scoped;
-use Stackra\Registrations\Contracts\Repositories\OfferRepositoryInterface;
+use Academorix\Registrations\Contracts\Repositories\OfferRepositoryInterface;
 
 /**
  * Concrete service — RegistrationOrchestrator.

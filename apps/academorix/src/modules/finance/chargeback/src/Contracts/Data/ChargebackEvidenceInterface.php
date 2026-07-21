@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Chargeback\Contracts\Data;
+namespace Academorix\Chargeback\Contracts\Data;
 
 use Illuminate\Container\Attributes\Bind;
-use Stackra\Chargeback\Models\ChargebackEvidence;
+use Academorix\Chargeback\Models\ChargebackEvidence;
 
 /**
  * Table shape for the `chargeback_evidences` table.

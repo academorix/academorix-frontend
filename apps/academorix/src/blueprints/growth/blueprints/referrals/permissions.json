@@ -1,8 +1,8 @@
 {
-  "id": "stackra://modules/referrals/permissions",
+  "id": "academorix://modules/referrals/permissions",
   "$version": 1,
   "title": "referrals — permissions",
-  "seeder": "Stackra\\Growth\\Referrals\\Database\\Seeders\\ReferralsPermissionSeeder",
+  "seeder": "Academorix\\Growth\\Referrals\\Database\\Seeders\\ReferralsPermissionSeeder",
   "isSystem": true,
   "description": "Two audiences. Tenant plane (sanctum) — admin + marketing manage programs / codes / referrals / rewards / fraud-flags; users have no explicit permissions (own-referral routes are scoped to auth()->id() by policy). Platform plane (platform_admin) — cross-tenant read + support intervention. All tenant permissions carry the appropriate resource prefix (`referral_programs.`, `referral_codes.`, `referrals.`, `referral_rewards.`, `referral_fraud_flags.`).",
   "permissions": [

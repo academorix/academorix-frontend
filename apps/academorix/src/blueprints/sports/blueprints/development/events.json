@@ -1,8 +1,8 @@
 {
-  "id": "stackra://modules/development/events",
+  "id": "academorix://modules/development/events",
   "$version": 1,
   "title": "development — published events",
-  "namespace": "Stackra\\Sports\\Development\\Events",
+  "namespace": "Academorix\\Sports\\Development\\Events",
   "dispatchMode": "afterCommit",
   "description": "Pathway + scouting. AthletePromoted is a P1 event feeding progress + finance/membership (may bump membership tier). ScoutingReportFiled is compliance-audited.",
   "events": [

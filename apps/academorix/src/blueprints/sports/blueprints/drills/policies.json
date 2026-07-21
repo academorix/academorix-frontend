@@ -1,12 +1,12 @@
 {
-  "id": "stackra://modules/drills/policies",
+  "id": "academorix://modules/drills/policies",
   "$version": 1,
   "title": "drills — authorization policies",
   "description": "Drill visibility scoped per visibility field: private (author-only) → branch (branch coaches) → tenant (all coaches) → public (cross-tenant marketplace). Public drills require moderation approval.",
   "policies": [
     {
       "model": "Drill",
-      "class": "Stackra\\Sports\\Drills\\Policies\\DrillPolicy",
+      "class": "Academorix\\Sports\\Drills\\Policies\\DrillPolicy",
       "abilities": [
         { "action": "viewAny", "permission": "drills.viewAny", "scope": "visibility-scoped" },
         { "action": "view", "permission": "drills.view", "scope": "visibility-scoped" },

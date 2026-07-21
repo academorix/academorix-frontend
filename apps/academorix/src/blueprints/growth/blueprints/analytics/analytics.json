@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/analytics/analytics",
+  "id": "academorix://modules/analytics/analytics",
   "$version": 1,
   "lane": "analytics",
   "title": "analytics — self-emitted analytics events",

@@ -1,11 +1,11 @@
 {
-  "id": "stackra://modules/refund/traits",
+  "id": "academorix://modules/refund/traits",
   "$version": 1,
   "title": "refund — trait composition",
   "description": "Two owned traits. `BelongsToRefund` is the FK trait for downstream models (RefundLine + future marketing-event rows tied to a specific refund). `HasRefundLines` is the inverse-side convenience on the parent Refund model. Order matters when composed with `BelongsToTenant`: tenant MUST come first so subsequent traits observe the tenant context.",
   "owned": [
     {
-      "trait": "Stackra\\Finance\\Refund\\Concerns\\BelongsToRefund",
+      "trait": "Academorix\\Finance\\Refund\\Concerns\\BelongsToRefund",
       "description": "Mixed into any domain model that carries a `refund_id` FK. Adds the `refund()` belongsTo relation and refuses cross-tenant writes at save time. Applied to RefundLine directly + planned growth::marketing::MarketingEvent (Wave 5) that carries refund_id for negative-value conversion attribution.",
       "public": true,
       "usedBy": [
@@ -14,7 +14,7 @@
       ]
     },
     {
-      "trait": "Stackra\\Finance\\Refund\\Concerns\\HasRefundLines",
+      "trait": "Academorix\\Finance\\Refund\\Concerns\\HasRefundLines",
       "description": "Composed onto the Refund model. Adds `->lines()` (hasMany), `->hasProration()` (scope filter refund_type='prorated'), `->totalLineAmount()` (SUM of line.amount_cents for invariant check). Convenience: `$refund->lines_count` for the count.",
       "public": true,
       "usedBy": ["refund::Refund"]
@@ -30,27 +30,27 @@
       }
     ],
     "foundation": [
-      { "trait": "Stackra\\Foundation\\Concerns\\HasUlids" },
-      { "trait": "Stackra\\Foundation\\Concerns\\HasUserstamps" },
-      { "trait": "Stackra\\Foundation\\Concerns\\HasMetadata" },
-      { "trait": "Stackra\\Foundation\\Concerns\\Filterable" },
-      { "trait": "Stackra\\Foundation\\Concerns\\Searchable" }
+      { "trait": "Academorix\\Foundation\\Concerns\\HasUlids" },
+      { "trait": "Academorix\\Foundation\\Concerns\\HasUserstamps" },
+      { "trait": "Academorix\\Foundation\\Concerns\\HasMetadata" },
+      { "trait": "Academorix\\Foundation\\Concerns\\Filterable" },
+      { "trait": "Academorix\\Foundation\\Concerns\\Searchable" }
     ],
     "tenants": [
       {
-        "trait": "Stackra\\Tenancy\\Concerns\\BelongsToTenant",
+        "trait": "Academorix\\Tenancy\\Concerns\\BelongsToTenant",
         "reason": "Every owned row carries tenant_id per tenancy-columns.md §3."
       }
     ],
     "audit": [
       {
-        "trait": "Stackra\\Audit\\Concerns\\Auditable",
+        "trait": "Academorix\\Audit\\Concerns\\Auditable",
         "reason": "Every write is compliance-relevant (financial-record 7-year retention). Every state transition on Refund (status, approved_by, rejected_by, processed_at, credit_note_id, transaction_id) + every RefundLine creation is audit-critical."
       }
     ],
     "activity": [
       {
-        "trait": "Stackra\\Activity\\Concerns\\HasActivityLog",
+        "trait": "Academorix\\Activity\\Concerns\\HasActivityLog",
         "reason": "Refund lifecycle transitions (requested / approved / rejected / cancelled / succeeded / failed) feed the staff-visible activity feed. NOT on RefundLine (immutable pivot row — already covered by parent refund activity log)."
       }
     ]

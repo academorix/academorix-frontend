@@ -1,8 +1,8 @@
 {
-  "id": "stackra://modules/coupon/notifications",
+  "id": "academorix://modules/coupon/notifications",
   "$version": 1,
   "title": "coupon — notification classes + categories",
-  "namespace": "Stackra\\Finance\\Coupon\\Notifications",
+  "namespace": "Academorix\\Finance\\Coupon\\Notifications",
   "notifications": [
     "CouponUsageCapReachedNotification",
     "CouponExpiredNotification",

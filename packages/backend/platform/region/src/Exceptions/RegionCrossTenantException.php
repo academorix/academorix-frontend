@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Region\Exceptions;
 
-use Stackra\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * The `X-Region-Id` header points at a Region in a different tenant.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class RegionCrossTenantException extends AcademorixException
+final class RegionCrossTenantException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

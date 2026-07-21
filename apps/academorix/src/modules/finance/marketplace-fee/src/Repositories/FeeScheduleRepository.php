@@ -4,25 +4,25 @@
 
 declare(strict_types=1);
 
-namespace Stackra\MarketplaceFee\Repositories;
+namespace Academorix\MarketplaceFee\Repositories;
 
 use Stackra\Crud\Attributes\AsRepository;
 use Stackra\Crud\Attributes\Cacheable;
 use Stackra\Crud\Attributes\Filterable;
 use Stackra\Crud\Attributes\UseModel;
 use Stackra\Crud\Repositories\Repository;
-use Stackra\MarketplaceFee\Contracts\Data\FeeScheduleInterface;
-use Stackra\MarketplaceFee\Contracts\Repositories\FeeScheduleRepositoryInterface;
-use Stackra\MarketplaceFee\Models\FeeSchedule;
+use Academorix\MarketplaceFee\Contracts\Data\FeeScheduleInterface;
+use Academorix\MarketplaceFee\Contracts\Repositories\FeeScheduleRepositoryInterface;
+use Academorix\MarketplaceFee\Models\FeeSchedule;
 
 /**
- * Attribute-first Eloquent repository for {@see Stackra\MarketplaceFee\Models\FeeSchedule}.
+ * Attribute-first Eloquent repository for {@see Academorix\MarketplaceFee\Models\FeeSchedule}.
  *
  * Bound to the interface via `#[AsRepository]`; the model comes from
  * `#[UseModel(FeeScheduleInterface::class)]` which resolves to
  * `FeeSchedule` through the interface's `#[Bind]`.
  *
- * @extends Repository<\Stackra\MarketplaceFee\Models\FeeSchedule>
+ * @extends Repository<\Academorix\MarketplaceFee\Models\FeeSchedule>
  *
  * @category MarketplaceFee
  *

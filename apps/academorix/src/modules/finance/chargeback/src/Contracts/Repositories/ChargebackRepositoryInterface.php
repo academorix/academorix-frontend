@@ -4,17 +4,17 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Chargeback\Contracts\Repositories;
+namespace Academorix\Chargeback\Contracts\Repositories;
 
 use Stackra\Crud\Contracts\RepositoryInterface;
 
 /**
- * Repository contract for {@see Stackra\Chargeback\Models\Chargeback}.
+ * Repository contract for {@see Academorix\Chargeback\Models\Chargeback}.
  *
  * Consumers type-hint the interface; the container binds the concrete
  * via `#[AsRepository]` on `ChargebackRepository`.
  *
- * @extends RepositoryInterface<\Stackra\Chargeback\Models\Chargeback>
+ * @extends RepositoryInterface<\Academorix\Chargeback\Models\Chargeback>
  *
  * @category Chargeback
  *

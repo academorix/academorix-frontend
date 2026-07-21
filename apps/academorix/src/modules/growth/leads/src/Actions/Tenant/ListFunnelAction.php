@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Leads\Actions\Tenant;
+namespace Academorix\Leads\Actions\Tenant;
 
 use Stackra\Authorization\Attributes\RequirePermission;
-use Stackra\Leads\Contracts\Services\LeadFunnelReporterInterface;
-use Stackra\Leads\Enums\LeadsPermission;
+use Academorix\Leads\Contracts\Services\LeadFunnelReporterInterface;
+use Academorix\Leads\Enums\LeadsPermission;
 use Stackra\Routing\Attributes\AsAction;
 use Stackra\Routing\Attributes\Get;
 use Stackra\Routing\Attributes\Middleware;

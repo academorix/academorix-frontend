@@ -1,12 +1,12 @@
 {
-  "id": "stackra://modules/transaction/broadcasts",
+  "id": "academorix://modules/transaction/broadcasts",
   "$version": 1,
   "title": "transaction — realtime broadcast channels",
   "description": "Three broadcast channel families for live UI updates. Tenant-level channel for the transaction ledger view; ledger-level channel for the per-account balance dashboard; reconciliation channel for the ops queue showing reconciler runs + imbalance detections. Reverb driver (Laravel Reverb) is the default transport; the notifications module handles fanout.",
   "channels": [
     {
       "name": "tenant.{tenantId}.transactions",
-      "class": "Stackra\\Finance\\Transaction\\Broadcasts\\TenantTransactionsChannel",
+      "class": "Academorix\\Finance\\Transaction\\Broadcasts\\TenantTransactionsChannel",
       "description": "Tenant-wide transaction ledger activity. Sink for the transaction ledger dashboard showing real-time transaction posts + reversals.",
       "authorization": "sanctum::authed AND tenant_matches AND (admin OR finance_role)",
       "events": [
@@ -20,7 +20,7 @@
     },
     {
       "name": "tenant.{tenantId}.ledger",
-      "class": "Stackra\\Finance\\Transaction\\Broadcasts\\TenantLedgerChannel",
+      "class": "Academorix\\Finance\\Transaction\\Broadcasts\\TenantLedgerChannel",
       "description": "Per-account balance activity. Powers the per-account running-balance widget + threshold-crossing indicator in the ledger dashboard.",
       "authorization": "sanctum::authed AND tenant_matches AND (admin OR finance_role)",
       "events": [
@@ -34,7 +34,7 @@
     },
     {
       "name": "tenant.{tenantId}.ledger.reconciliation",
-      "class": "Stackra\\Finance\\Transaction\\Broadcasts\\TenantLedgerReconciliationChannel",
+      "class": "Academorix\\Finance\\Transaction\\Broadcasts\\TenantLedgerReconciliationChannel",
       "description": "Reconciler activity + imbalance alerts. Powers the ops queue view showing nightly reconciler runs + any detected imbalances.",
       "authorization": "sanctum::authed AND tenant_matches AND (admin OR finance_role)",
       "events": ["LedgerReconciliationCompleted", "LedgerImbalanceDetected"],

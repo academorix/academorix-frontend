@@ -4,25 +4,25 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Progress\Repositories;
+namespace Academorix\Progress\Repositories;
 
 use Stackra\Crud\Attributes\AsRepository;
 use Stackra\Crud\Attributes\Cacheable;
 use Stackra\Crud\Attributes\Filterable;
 use Stackra\Crud\Attributes\UseModel;
 use Stackra\Crud\Repositories\Repository;
-use Stackra\Progress\Contracts\Data\GradingResultInterface;
-use Stackra\Progress\Contracts\Repositories\GradingResultRepositoryInterface;
-use Stackra\Progress\Models\GradingResult;
+use Academorix\Progress\Contracts\Data\GradingResultInterface;
+use Academorix\Progress\Contracts\Repositories\GradingResultRepositoryInterface;
+use Academorix\Progress\Models\GradingResult;
 
 /**
- * Attribute-first Eloquent repository for {@see Stackra\Progress\Models\GradingResult}.
+ * Attribute-first Eloquent repository for {@see Academorix\Progress\Models\GradingResult}.
  *
  * Bound to the interface via `#[AsRepository]`; the model comes from
  * `#[UseModel(GradingResultInterface::class)]` which resolves to
  * `GradingResult` through the interface's `#[Bind]`.
  *
- * @extends Repository<\Stackra\Progress\Models\GradingResult>
+ * @extends Repository<\Academorix\Progress\Models\GradingResult>
  *
  * @category Progress
  *

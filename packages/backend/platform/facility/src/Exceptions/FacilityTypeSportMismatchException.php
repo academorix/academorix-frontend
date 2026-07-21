@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Facility\Exceptions;
 
-use Stackra\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * facility_type is not valid for sport_category (e.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class FacilityTypeSportMismatchException extends AcademorixException
+final class FacilityTypeSportMismatchException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

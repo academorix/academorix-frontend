@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Coupon\Actions\Tenant;
+namespace Academorix\Coupon\Actions\Tenant;
 
-use Stackra\Coupon\Contracts\Data\CouponInterface;
-use Stackra\Coupon\Contracts\Repositories\CouponRepositoryInterface;
-use Stackra\Coupon\Data\CouponData;
-use Stackra\Coupon\Data\Requests\DeactivateCouponRequestData;
-use Stackra\Coupon\Events\CouponDeactivated;
+use Academorix\Coupon\Contracts\Data\CouponInterface;
+use Academorix\Coupon\Contracts\Repositories\CouponRepositoryInterface;
+use Academorix\Coupon\Data\CouponData;
+use Academorix\Coupon\Data\Requests\DeactivateCouponRequestData;
+use Academorix\Coupon\Events\CouponDeactivated;
 use Stackra\Routing\Attributes\AsAction;
 use Stackra\Routing\Attributes\Middleware;
 use Stackra\Routing\Attributes\Post;

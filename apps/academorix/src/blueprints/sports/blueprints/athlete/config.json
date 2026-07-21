@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/athlete/config",
+  "id": "academorix://modules/athlete/config",
   "$version": 1,
   "title": "athlete — developer configuration",
   "configFile": "config/athlete.php",

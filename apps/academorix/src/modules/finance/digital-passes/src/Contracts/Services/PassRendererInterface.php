@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Stackra\DigitalPasses\Contracts\Services;
+namespace Academorix\DigitalPasses\Contracts\Services;
 
-use Stackra\DigitalPasses\Services\PassRenderer;
+use Academorix\DigitalPasses\Services\PassRenderer;
 use Illuminate\Container\Attributes\Bind;
 
 /**

@@ -1,8 +1,8 @@
 {
-  "id": "stackra://modules/tax/notifications",
+  "id": "academorix://modules/tax/notifications",
   "$version": 1,
   "title": "tax — notification classes + categories",
-  "namespace": "Stackra\\Finance\\Tax\\Notifications",
+  "namespace": "Academorix\\Finance\\Tax\\Notifications",
   "notifications": [
     "TaxExemptionVerifiedNotification",
     "TaxExemptionRejectedNotification",

@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/athlete/macros",
+  "id": "academorix://modules/athlete/macros",
   "$version": 1,
   "title": "athlete — published macros",
   "description": "Two request-level macros that surface the resolved active athlete from the RequestContext. Only /me/athletes routes + per-athlete sub-routes (medical / emergency-contact / consents) load this.",
@@ -10,7 +10,7 @@
       "signature": "Request::activeAthlete(): ?Athlete",
       "adds": "A single accessor on the framework Request class that returns the resolved Athlete model (or null when no athlete context).",
       "description": "Reads from RequestContext::athlete() set by the route-model binding in per-athlete routes. Lazy-loads the model on first access.",
-      "registered_by": "Stackra\\Sports\\Athlete\\Providers\\AthleteServiceProvider::boot()",
+      "registered_by": "Academorix\\Sports\\Athlete\\Providers\\AthleteServiceProvider::boot()",
       "example": "public function show(Request $request): JsonResponse\n{\n    $athlete = $request->activeAthlete();\n    if ($athlete === null) throw new NoActiveAthleteException();\n    // ...\n}"
     },
     {

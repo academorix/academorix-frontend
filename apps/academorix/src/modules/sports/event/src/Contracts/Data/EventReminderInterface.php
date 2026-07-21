@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Event\Contracts\Data;
+namespace Academorix\Event\Contracts\Data;
 
 use Illuminate\Container\Attributes\Bind;
-use Stackra\Event\Models\EventReminder;
+use Academorix\Event\Models\EventReminder;
 
 /**
  * Table shape for the `event_reminders` table.

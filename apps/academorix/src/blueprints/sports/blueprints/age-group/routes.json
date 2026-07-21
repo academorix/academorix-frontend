@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/age-group/routes",
+  "id": "academorix://modules/age-group/routes",
   "$version": 1,
   "title": "age-group — HTTP routes",
   "description": "Tenant-facing age-group CRUD + lifecycle actions (set-default, archive, restore) + hypothetical resolver endpoint that answers 'which age group does this DOB + sport_key fall into?'. Platform-admin cross-tenant read.",
@@ -25,63 +25,63 @@
         {
           "method": "GET",
           "path": "/",
-          "controller": "Stackra\\Sports\\AgeGroup\\Http\\Controllers\\Tenant\\AgeGroupController@index",
+          "controller": "Academorix\\Sports\\AgeGroup\\Http\\Controllers\\Tenant\\AgeGroupController@index",
           "permission": "age_groups.viewAny",
           "description": "filter[organization_id], filter[sport_key], filter[status], filter[is_default], filter[is_seeded], filter[is_youth], filter[gender_category], filter[min_age_lte], filter[max_age_gte], sort[]=sort_order,name,created_at,min_age_inclusive. Default sort: sort_order asc, name asc. include=inbound_reference_count."
         },
         {
           "method": "POST",
           "path": "/",
-          "controller": "Stackra\\Sports\\AgeGroup\\Http\\Controllers\\Tenant\\AgeGroupController@store",
+          "controller": "Academorix\\Sports\\AgeGroup\\Http\\Controllers\\Tenant\\AgeGroupController@store",
           "permission": "age_groups.create",
           "description": "Admin-triggered creation. Body: { name (required), slug, sport_key, organization_id, description, min_age_inclusive (required), max_age_inclusive (required), cutoff_date_kind (default: calendar_year), cutoff_month, cutoff_day, gender_category (default: any), is_default, sort_order, color }. Consumes 1 `age_group_slot` entitlement (is_seeded is always false from tenant callers — reserved for the platform seeder). Refused with AGE_GROUP_CUSTOM_DISABLED on Small tier."
         },
         {
           "method": "GET",
           "path": "/{age_group}",
-          "controller": "Stackra\\Sports\\AgeGroup\\Http\\Controllers\\Tenant\\AgeGroupController@show",
+          "controller": "Academorix\\Sports\\AgeGroup\\Http\\Controllers\\Tenant\\AgeGroupController@show",
           "permission": "age_groups.view",
           "description": "Full AgeGroup row. include=inbound_reference_count for the reference-count aggregate. include=eligibility_preview for a set of sample DOBs the caller can verify against."
         },
         {
           "method": "PATCH",
           "path": "/{age_group}",
-          "controller": "Stackra\\Sports\\AgeGroup\\Http\\Controllers\\Tenant\\AgeGroupController@update",
+          "controller": "Academorix\\Sports\\AgeGroup\\Http\\Controllers\\Tenant\\AgeGroupController@update",
           "permission": "age_groups.update",
           "description": "Update mutable fields. Body: { name, slug, description, color, gender_category, sort_order }. Bounds edits require age_groups.update.bounds. Cutoff edits require age_groups.update.cutoff. Sport-key edits require age_groups.update.sport_key + age_group_sport_specific entitlement. organization_id + tenant_id + is_seeded are immutable. is_youth is auto-derived + read-only."
         },
         {
           "method": "DELETE",
           "path": "/{age_group}",
-          "controller": "Stackra\\Sports\\AgeGroup\\Http\\Controllers\\Tenant\\AgeGroupController@destroy",
+          "controller": "Academorix\\Sports\\AgeGroup\\Http\\Controllers\\Tenant\\AgeGroupController@destroy",
           "permission": "age_groups.delete",
           "description": "Soft-delete (transitions to archived + fires AgeGroupArchived). Refused with 409 CANNOT_DELETE_DEFAULT_AGE_GROUP when is_default=true. Refused with 409 CANNOT_DELETE_SEEDED_AGE_GROUP when is_seeded=true. Refused with 409 AGE_GROUP_IN_USE when Team.age_group_id or EventDivision.age_group_id references. Hard-delete via PurgeArchivedAgeGroupsJob after retention window (1095 days)."
         },
         {
           "method": "POST",
           "path": "/{age_group}/set-default",
-          "controller": "Stackra\\Sports\\AgeGroup\\Http\\Controllers\\Tenant\\AgeGroupController@setDefault",
+          "controller": "Academorix\\Sports\\AgeGroup\\Http\\Controllers\\Tenant\\AgeGroupController@setDefault",
           "permission": "age_groups.set_default",
           "description": "Flip is_default=true within the AgeGroup's (tenant, organization, sport_key) tuple (auto-demotes the previous default in same transaction). Fires AgeGroupDefaultChanged. Body may be empty. Refused when AgeGroup is archived."
         },
         {
           "method": "POST",
           "path": "/{age_group}/archive",
-          "controller": "Stackra\\Sports\\AgeGroup\\Http\\Controllers\\Tenant\\AgeGroupController@archive",
+          "controller": "Academorix\\Sports\\AgeGroup\\Http\\Controllers\\Tenant\\AgeGroupController@archive",
           "permission": "age_groups.archive",
           "description": "Alias for DELETE — soft-archives + fires AgeGroupArchived. Body: { reason }. Same refusals as DELETE."
         },
         {
           "method": "POST",
           "path": "/{age_group}/restore",
-          "controller": "Stackra\\Sports\\AgeGroup\\Http\\Controllers\\Tenant\\AgeGroupController@restore",
+          "controller": "Academorix\\Sports\\AgeGroup\\Http\\Controllers\\Tenant\\AgeGroupController@restore",
           "permission": "age_groups.restore",
           "description": "Un-archive (clears deleted_at). Only within the 1095-day retention window. Refused when restoration would create a duplicate default (AGE_GROUP_DEFAULT_DUPLICATE_ON_RESTORE) or duplicate slug (AGE_GROUP_SLUG_DUPLICATE_ON_RESTORE) in the scoping tuple."
         },
         {
           "method": "GET",
           "path": "/resolve",
-          "controller": "Stackra\\Sports\\AgeGroup\\Http\\Controllers\\Tenant\\AgeGroupController@resolve",
+          "controller": "Academorix\\Sports\\AgeGroup\\Http\\Controllers\\Tenant\\AgeGroupController@resolve",
           "permission": "age_groups.resolve",
           "description": "Hypothetical resolver. Query: dob=YYYY-MM-DD (required), sport_key (nullable — falls back to generic groups), on_date=YYYY-MM-DD (default today), organization_id (nullable — falls back to tenant-wide groups). Returns the matching AgeGroup row + the CutoffDateCalculator's computed effective age + the resolution trace (which groups were candidates + why one won). Multiple matches (indeterminate) return 422 AGE_GROUP_RESOLVE_INDETERMINATE with the candidate list."
         }
@@ -104,14 +104,14 @@
         {
           "method": "GET",
           "path": "/",
-          "controller": "Stackra\\Sports\\AgeGroup\\Http\\Controllers\\Platform\\AgeGroupController@index",
+          "controller": "Academorix\\Sports\\AgeGroup\\Http\\Controllers\\Platform\\AgeGroupController@index",
           "permission": "platform.age_groups.viewAny",
           "description": "Cross-tenant filterable list. filter[tenant_id], filter[sport_key], filter[status], filter[is_default], filter[is_seeded]."
         },
         {
           "method": "GET",
           "path": "/{age_group}",
-          "controller": "Stackra\\Sports\\AgeGroup\\Http\\Controllers\\Platform\\AgeGroupController@show",
+          "controller": "Academorix\\Sports\\AgeGroup\\Http\\Controllers\\Platform\\AgeGroupController@show",
           "permission": "platform.age_groups.view",
           "description": "Single-row cross-tenant read."
         }

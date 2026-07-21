@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Payout\Contracts\Services;
+namespace Academorix\Payout\Contracts\Services;
 
-use Stackra\Payout\Services\Payout;
+use Academorix\Payout\Services\Payout;
 use Illuminate\Container\Attributes\Bind;
 
 /**

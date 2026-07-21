@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Teams\Exceptions;
 
-use Stackra\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Anonymous trialists must have trialist_first_name AND trialist_phone captured.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class TrialAnonymousRequiresNameException extends AcademorixException
+final class TrialAnonymousRequiresNameException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

@@ -1,9 +1,9 @@
 {
-  "id": "stackra://modules/attribution/helpers",
+  "id": "academorix://modules/attribution/helpers",
   "$version": 1,
   "title": "attribution — helper functions",
   "description": "Ergonomic helpers for accessing the current attribution from the request context, building the frozen snapshot for downstream events, extracting click IDs, and hashing IPs. All helpers are thin wrappers around bound services — never business logic.",
-  "namespace": "Stackra\\Growth\\Attribution\\Support",
+  "namespace": "Academorix\\Growth\\Attribution\\Support",
   "helpers": [
     {
       "signature": "current_attribution(): ?Attribution",

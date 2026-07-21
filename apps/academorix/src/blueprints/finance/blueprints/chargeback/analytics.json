@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/chargeback/analytics",
+  "id": "academorix://modules/chargeback/analytics",
   "$version": 1,
   "title": "chargeback — product analytics",
   "lane": "analytics",
@@ -156,7 +156,7 @@
         "transactions_count",
         "days_over_threshold"
       ],
-      "description": "P1 event — merchant-account termination risk. Powers merchant-account risk monitoring dashboards for Stackra platform ops."
+      "description": "P1 event — merchant-account termination risk. Powers merchant-account risk monitoring dashboards for Academorix platform ops."
     },
     {
       "name": "Chargeback Manually Marked Lost",

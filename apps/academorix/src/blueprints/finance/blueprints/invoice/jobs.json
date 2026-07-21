@@ -1,10 +1,10 @@
 {
-  "id": "stackra://modules/invoice/jobs",
+  "id": "academorix://modules/invoice/jobs",
   "$version": 1,
   "title": "invoice — background jobs",
   "jobs": [
     {
-      "class": "Stackra\\Finance\\Invoice\\Jobs\\FinalizeInvoiceJob",
+      "class": "Academorix\\Finance\\Invoice\\Jobs\\FinalizeInvoiceJob",
       "queue": "invoice",
       "purpose": "Atomic transition draft → open. Verifies every line has tax_calculation_id (dispatching CalculateInvoiceTaxJob for any that don't when tax module supports async). Recomputes + freezes subtotal_cents / discount_amount_cents / tax_amount_cents / total_cents. Sets amount_due_cents. Dispatches GenerateInvoicePDFJob + SendInvoiceEmailJob on success.",
       "steps": [
@@ -30,9 +30,9 @@
       "backoff": [30, 120, 600]
     },
     {
-      "class": "Stackra\\Finance\\Invoice\\Jobs\\GenerateInvoicePDFJob",
+      "class": "Academorix\\Finance\\Invoice\\Jobs\\GenerateInvoicePDFJob",
       "queue": "invoice",
-      "purpose": "Render the invoice PDF via DomPDF using the appropriate template (default Stackra template on Small tier; tenant-branded on Medium+ with invoice_tenant_branded_pdf entitlement). Uploads to S3 + sets invoices.pdf_url. Idempotent — regenerates on demand.",
+      "purpose": "Render the invoice PDF via DomPDF using the appropriate template (default Academorix template on Small tier; tenant-branded on Medium+ with invoice_tenant_branded_pdf entitlement). Uploads to S3 + sets invoices.pdf_url. Idempotent — regenerates on demand.",
       "steps": [
         "Load invoice + lines + billing_address + shipping_address + customer_tax_id + tenant.branding when entitlement holds",
         "Select template: 'stackra-default' when invoice_tenant_branded_pdf gate is closed; 'tenant-branded' otherwise",
@@ -50,7 +50,7 @@
       "backoff": [10, 60, 300, 900, 1800]
     },
     {
-      "class": "Stackra\\Finance\\Invoice\\Jobs\\SendInvoiceEmailJob",
+      "class": "Academorix\\Finance\\Invoice\\Jobs\\SendInvoiceEmailJob",
       "queue": "invoice",
       "purpose": "Deliver the invoice email to customer.email with the PDF attached. Waits for GenerateInvoicePDFJob to complete (polls invoices.pdf_url up to 3 times with 30s delay). Delegates rendering + delivery to notifications module.",
       "steps": [
@@ -70,13 +70,13 @@
       "backoff": [60, 300, 1800]
     },
     {
-      "class": "Stackra\\Finance\\Invoice\\Jobs\\MarkOverdueInvoicesJob",
+      "class": "Academorix\\Finance\\Invoice\\Jobs\\MarkOverdueInvoicesJob",
       "queue": "invoice",
       "purpose": "Nightly sweep. Finds invoices where due_date < now() AND status IN ('open', 'partially_paid') AND status != 'past_due' → transitions to 'past_due' + fires InvoicePastDue (which kicks off the dunning ladder).",
       "steps": [
         "SELECT id FROM invoices WHERE deleted_at IS NULL AND status IN ('open', 'partially_paid') AND due_date < now() FOR UPDATE SKIP LOCKED LIMIT 5000",
         "For each: transition status → past_due (the observer computes days_past_due + fires InvoicePastDue + dispatches DispatchDunningRemindersJob)",
-        "Emit stackra.invoice.marked_past_due_total metric"
+        "Emit academorix.invoice.marked_past_due_total metric"
       ],
       "shouldQueue": true,
       "shouldBeUnique": true,
@@ -85,7 +85,7 @@
       "tries": 2
     },
     {
-      "class": "Stackra\\Finance\\Invoice\\Jobs\\DispatchDunningRemindersJob",
+      "class": "Academorix\\Finance\\Invoice\\Jobs\\DispatchDunningRemindersJob",
       "queue": "invoice",
       "purpose": "Per-invoice per-cadence dunning notification dispatch. Fires the appropriate reminder at day+3 / day+7 / day+14 / day+30 / day+60 past due. Enterprise tenants with invoice_dunning_advanced entitlement may override the cadence via settings.",
       "steps": [
@@ -107,7 +107,7 @@
       "backoff": [60, 300, 1800]
     },
     {
-      "class": "Stackra\\Finance\\Invoice\\Jobs\\EscalateDunningToCollectionsJob",
+      "class": "Academorix\\Finance\\Invoice\\Jobs\\EscalateDunningToCollectionsJob",
       "queue": "invoice-critical",
       "purpose": "Enterprise-only. Hands off a past-due invoice to a third-party collections agency after the dunning ladder is exhausted (default 60 days). Delegates to the notifications module's collections integration.",
       "steps": [
@@ -127,13 +127,13 @@
       "backoff": [300, 1800, 7200, 28800, 86400]
     },
     {
-      "class": "Stackra\\Finance\\Invoice\\Jobs\\ReconcileInvoicePaymentsJob",
+      "class": "Academorix\\Finance\\Invoice\\Jobs\\ReconcileInvoicePaymentsJob",
       "queue": "invoice",
       "purpose": "Nightly sweep. Recomputes invoices.amount_paid_cents from the transactions module's ledger (SUM of transactions where invoice_id = ? AND type='payment' AND status='completed'). Detects drift between the invoice and the transaction module (should be zero in a healthy system).",
       "steps": [
         "SELECT id FROM invoices WHERE deleted_at IS NULL AND status NOT IN ('void', 'draft') AND updated_at > now() - interval '48 hours' LIMIT 10000 (only recent invoices — full-history reconciliation is expensive)",
         "For each: query transactions where transactions.invoice_id = invoice.id AND type='payment' AND status='completed'; compute SUM(transaction.amount_cents)",
-        "When SUM != invoice.amount_paid_cents: emit stackra.invoice.reconcile.drift_detected_total metric (P1 signal) + update invoice.amount_paid_cents = SUM",
+        "When SUM != invoice.amount_paid_cents: emit academorix.invoice.reconcile.drift_detected_total metric (P1 signal) + update invoice.amount_paid_cents = SUM",
         "Recompute amount_due_cents = total_cents - amount_paid_cents",
         "When amount_paid_cents == total_cents AND status != 'paid': transition status → paid (fires InvoicePaid via observer)",
         "When 0 < amount_paid_cents < total_cents AND status != 'partially_paid': transition status → partially_paid"
@@ -145,7 +145,7 @@
       "tries": 2
     },
     {
-      "class": "Stackra\\Finance\\Invoice\\Jobs\\CalculateInvoiceTaxJob",
+      "class": "Academorix\\Finance\\Invoice\\Jobs\\CalculateInvoiceTaxJob",
       "queue": "invoice",
       "purpose": "Dispatched by InvoiceLineObserver when a line is created without tax_calculation_id. Delegates to the tax module's TaxResolver (jurisdiction lookup + rate application). Sets invoice_line.tax_calculation_id + tax_amount_cents.",
       "steps": [
@@ -163,7 +163,7 @@
       "backoff": [10, 30, 60, 300, 900]
     },
     {
-      "class": "Stackra\\Finance\\Invoice\\Jobs\\ApplyCouponToInvoiceJob",
+      "class": "Academorix\\Finance\\Invoice\\Jobs\\ApplyCouponToInvoiceJob",
       "queue": "invoice",
       "purpose": "Applies a reserved coupon redemption to a draft invoice. Creates a discount_line + updates the invoice's discount_amount_cents. Delegates to the coupon module's redemption transition (reserved → applied).",
       "steps": [
@@ -182,7 +182,7 @@
       "backoff": [30, 120, 600]
     },
     {
-      "class": "Stackra\\Finance\\Invoice\\Jobs\\GenerateCreditNoteJob",
+      "class": "Academorix\\Finance\\Invoice\\Jobs\\GenerateCreditNoteJob",
       "queue": "invoice",
       "purpose": "Dispatched by refund module on refund.issued. Creates a CreditNote row referencing the original invoice + amount + reason + issued_by_user. The observer fires CreditNoteCreated + enqueues GenerateCreditNotePDFJob.",
       "steps": [
@@ -200,7 +200,7 @@
       "backoff": [30, 120, 600]
     },
     {
-      "class": "Stackra\\Finance\\Invoice\\Jobs\\GenerateCreditNotePDFJob",
+      "class": "Academorix\\Finance\\Invoice\\Jobs\\GenerateCreditNotePDFJob",
       "queue": "invoice",
       "purpose": "Render the credit note PDF (same template family as invoice; different header + negative-total presentation). Uploads to S3 + transitions status draft → issued.",
       "steps": [
@@ -220,7 +220,7 @@
       "backoff": [10, 60, 300, 900, 1800]
     },
     {
-      "class": "Stackra\\Finance\\Invoice\\Jobs\\PurgeExpiredInvoiceDataJob",
+      "class": "Academorix\\Finance\\Invoice\\Jobs\\PurgeExpiredInvoiceDataJob",
       "queue": "invoice",
       "purpose": "Weekly sweep. Applies the per-entity retention windows: invoices > 7 years (10 for Enterprise) → migrate to compliance archive; invoice_lines cascaded via FK RESTRICT; credit_notes 7-10 years then archive; PDFs migrate from S3 hot storage to S3 Glacier cold storage after 7 years. TenantErased cascade preserves financial records in the compliance archive.",
       "steps": [

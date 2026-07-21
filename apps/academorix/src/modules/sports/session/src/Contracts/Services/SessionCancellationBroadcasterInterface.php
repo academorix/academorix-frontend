@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Session\Contracts\Services;
+namespace Academorix\Session\Contracts\Services;
 
-use Stackra\Session\Services\SessionCancellationBroadcaster;
+use Academorix\Session\Services\SessionCancellationBroadcaster;
 use Illuminate\Container\Attributes\Bind;
 
 /**

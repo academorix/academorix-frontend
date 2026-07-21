@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/attendance/feature-flags",
+  "id": "academorix://modules/attendance/feature-flags",
   "$version": 1,
   "title": "attendance — kill switches",
   "engine": "laravel/pennant",

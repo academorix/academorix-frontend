@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Transaction\Contracts\Services;
+namespace Academorix\Transaction\Contracts\Services;
 
-use Stackra\Transaction\Services\TransactionNumberGenerator;
+use Academorix\Transaction\Services\TransactionNumberGenerator;
 use Illuminate\Container\Attributes\Bind;
 
 /**

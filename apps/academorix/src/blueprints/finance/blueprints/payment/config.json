@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/payment/config",
+  "id": "academorix://modules/payment/config",
   "$version": 1,
   "title": "payment — developer configuration",
   "configFile": "config/payment.php",

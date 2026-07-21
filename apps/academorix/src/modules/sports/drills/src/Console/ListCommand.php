@@ -4,7 +4,7 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Drills\Console;
+namespace Academorix\Drills\Console;
 
 use Stackra\Console\Attributes\AsCommand;
 use Stackra\Console\Commands\BaseCommand;

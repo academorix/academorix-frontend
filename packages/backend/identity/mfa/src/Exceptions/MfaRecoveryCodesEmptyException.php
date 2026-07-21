@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Mfa\Exceptions;
 
-use Stackra\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * POST /me/mfa/recovery-codes/download refused because the Identity's recovery-code array is empty (all consumed OR not yet generated).
@@ -15,7 +15,7 @@ use Stackra\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class MfaRecoveryCodesEmptyException extends AcademorixException
+final class MfaRecoveryCodesEmptyException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

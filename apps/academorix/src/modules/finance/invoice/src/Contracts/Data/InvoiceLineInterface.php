@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Invoice\Contracts\Data;
+namespace Academorix\Invoice\Contracts\Data;
 
 use Illuminate\Container\Attributes\Bind;
-use Stackra\Invoice\Models\InvoiceLine;
+use Academorix\Invoice\Models\InvoiceLine;
 
 /**
  * Table shape for the `invoice_lines` table.

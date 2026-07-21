@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Organization\Exceptions;
 
-use Stackra\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Attempted to delete/archive an Organization referenced by one or more `branches` rows.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class OrganizationInUseException extends AcademorixException
+final class OrganizationInUseException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

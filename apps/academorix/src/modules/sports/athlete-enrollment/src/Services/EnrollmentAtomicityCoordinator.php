@@ -4,11 +4,11 @@
 
 declare(strict_types=1);
 
-namespace Stackra\AthleteEnrollment\Services;
+namespace Academorix\AthleteEnrollment\Services;
 
-use Stackra\AthleteEnrollment\Contracts\Services\EnrollmentAtomicityCoordinatorInterface;
+use Academorix\AthleteEnrollment\Contracts\Services\EnrollmentAtomicityCoordinatorInterface;
 use Illuminate\Container\Attributes\Scoped;
-use Stackra\AthleteEnrollment\Contracts\Repositories\AthleteEnrollmentRepositoryInterface;
+use Academorix\AthleteEnrollment\Contracts\Repositories\AthleteEnrollmentRepositoryInterface;
 
 /**
  * Concrete service — EnrollmentAtomicityCoordinator.

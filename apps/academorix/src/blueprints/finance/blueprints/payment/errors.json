@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/payment/errors",
+  "id": "academorix://modules/payment/errors",
   "$version": 1,
   "title": "payment — error codes",
   "namespace": "payment",

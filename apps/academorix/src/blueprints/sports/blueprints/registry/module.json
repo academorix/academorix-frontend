@@ -2,7 +2,7 @@
   "$version": 1,
   "name": "registry",
   "alias": "sports_registry",
-  "namespace": "Stackra\\Sports\\Registry",
+  "namespace": "Academorix\\Sports\\Registry",
   "description": "The sport CATALOG. Owns the canonical Sport + Discipline + Position taxonomy that hardens the free-text `sport_key` + position identifier strings used across every Wave 3 sports module. Three entities. Sport (`spo_`) — top-level sport (`football`, `basketball`, `swimming`, `yoga`, `tennis`, `general_fitness`, 38 platform-seeded sports); every Team, AthleteEnrollment, Coach, Event, Session references `sport_key` which resolves to `Sport.slug`. Discipline (`dis_`) — sport sub-variant / competition format (`football_11v11`, `football_futsal`, `basketball_5v5`, `basketball_3x3`, `swimming_freestyle`, `swimming_relay`); one Sport hasMany Disciplines. Position (`pos_`) — sport-specific role / position (`football_goalkeeper`, `football_defender`, `football_midfielder`, `football_forward`; `basketball_point_guard`, `basketball_center`; `swimming_freestyler`; plus generic `coach`, `assistant_coach`, `medical_staff`); one Discipline hasMany Positions. Ships `data/platform-sports-catalog.json` — a 30+ sport seed loaded by SportCatalogSeeder on first-boot bootstrap. Platform-scoped (tenant_id NULL for platform-seeded rows); tenant customs (tenant_id NOT NULL) available only on Enterprise via the `sports_registry_custom` entitlement. Small + Medium tenants are locked to the platform catalog. NEVER carries `application_id` — the catalog crosses applications and every product deployment reads the same taxonomy. NEVER carries `region_id`, `branch_id`, `organization_id`, `scope_node_id`. Downstream sports modules reference this catalog via `sport_key` string lookup, not FK — so this module has `extendedBy: []` and every consumer stays loosely coupled. Wave 3a of the sports tier (priority 60 — boots after tenancy/application/entitlements, before every other sports module).",
   "keywords": [
     "sport",
@@ -29,7 +29,7 @@
     "wave-3a"
   ],
   "priority": 60,
-  "providers": ["Stackra\\Sports\\Registry\\Providers\\RegistryServiceProvider"],
+  "providers": ["Academorix\\Sports\\Registry\\Providers\\RegistryServiceProvider"],
   "files": [],
   "dependencies": ["foundation", "tenancy", "application", "entitlements"],
   "extendedBy": [],

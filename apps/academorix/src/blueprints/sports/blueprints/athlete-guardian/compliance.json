@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/athlete-guardian/compliance",
+  "id": "academorix://modules/athlete-guardian/compliance",
   "$version": 1,
   "title": "athlete-guardian — compliance evidence",
   "description": "AthleteGuardian is legal-custody + safeguarding-adjacent. Every guardianship record, verification event, and role-flag change is compliance-relevant. GDPR Art. 8 (parental consent), COPPA, FERPA (school-type tenants), SOC 2 CC6.3, anti-fraud (verification workflow prevents unauthorised claim of guardianship).",
@@ -48,7 +48,7 @@
         {
           "criterion": "CC7.2",
           "principle": "system monitoring",
-          "evidence": "ReconcilePrimaryGuardianInvariantJob is the P1 signal — every finding is investigated. `stackra.athlete_guardian.primary.invariant_violations` should stay at 0."
+          "evidence": "ReconcilePrimaryGuardianInvariantJob is the P1 signal — every finding is investigated. `academorix.athlete_guardian.primary.invariant_violations` should stay at 0."
         }
       ]
     },

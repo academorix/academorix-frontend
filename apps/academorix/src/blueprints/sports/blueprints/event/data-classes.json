@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/event/data-classes",
+  "id": "academorix://modules/event/data-classes",
   "$version": 1,
   "title": "event — field classification",
   "description": "Event carries commercial + scheduling reference data. No PII on the Event row itself; participant PII arrives via inbound FK from Wave 3 athlete-enrollment. Bulk of compliance responsibility: financial-record retention (entry_fee / late_fee / prize_pool changes), SOC 2 CC6.3 change tracking (EventCancellationBroadcast + EventRescheduled + EventVenueChanged), and child-safeguarding advance-notice for events with minor registrants.",

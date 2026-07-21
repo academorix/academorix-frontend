@@ -4,7 +4,7 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Tax\Events;
+namespace Academorix\Tax\Events;
 
 use Stackra\Events\Attributes\AsEvent;
 use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;

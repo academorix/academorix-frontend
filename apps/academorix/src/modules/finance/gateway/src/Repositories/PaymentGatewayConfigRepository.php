@@ -4,25 +4,25 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Gateway\Repositories;
+namespace Academorix\Gateway\Repositories;
 
 use Stackra\Crud\Attributes\AsRepository;
 use Stackra\Crud\Attributes\Cacheable;
 use Stackra\Crud\Attributes\Filterable;
 use Stackra\Crud\Attributes\UseModel;
 use Stackra\Crud\Repositories\Repository;
-use Stackra\Gateway\Contracts\Data\PaymentGatewayConfigInterface;
-use Stackra\Gateway\Contracts\Repositories\PaymentGatewayConfigRepositoryInterface;
-use Stackra\Gateway\Models\PaymentGatewayConfig;
+use Academorix\Gateway\Contracts\Data\PaymentGatewayConfigInterface;
+use Academorix\Gateway\Contracts\Repositories\PaymentGatewayConfigRepositoryInterface;
+use Academorix\Gateway\Models\PaymentGatewayConfig;
 
 /**
- * Attribute-first Eloquent repository for {@see Stackra\Gateway\Models\PaymentGatewayConfig}.
+ * Attribute-first Eloquent repository for {@see Academorix\Gateway\Models\PaymentGatewayConfig}.
  *
  * Bound to the interface via `#[AsRepository]`; the model comes from
  * `#[UseModel(PaymentGatewayConfigInterface::class)]` which resolves to
  * `PaymentGatewayConfig` through the interface's `#[Bind]`.
  *
- * @extends Repository<\Stackra\Gateway\Models\PaymentGatewayConfig>
+ * @extends Repository<\Academorix\Gateway\Models\PaymentGatewayConfig>
  *
  * @category Gateway
  *

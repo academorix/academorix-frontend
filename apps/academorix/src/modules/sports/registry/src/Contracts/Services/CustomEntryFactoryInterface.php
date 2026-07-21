@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Registry\Contracts\Services;
+namespace Academorix\Registry\Contracts\Services;
 
-use Stackra\Registry\Services\CustomEntryFactory;
+use Academorix\Registry\Services\CustomEntryFactory;
 use Illuminate\Container\Attributes\Bind;
 
 /**

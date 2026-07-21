@@ -4,19 +4,19 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Performance\Database\Factories;
+namespace Academorix\Performance\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Stackra\Performance\Contracts\Data\TestBatteryInterface;
-use Stackra\Performance\Models\TestBattery;
+use Academorix\Performance\Contracts\Data\TestBatteryInterface;
+use Academorix\Performance\Models\TestBattery;
 
 /**
- * Factory for {@see \Stackra\Performance\Models\TestBattery}.
+ * Factory for {@see \Academorix\Performance\Models\TestBattery}.
  *
  * Auto-generated skeleton — extend with named states as domain
  * cases emerge (e.g. `->published()`, `->overdue()`, `->archived()`).
  *
- * @extends Factory<\Stackra\Performance\Models\TestBattery>
+ * @extends Factory<\Academorix\Performance\Models\TestBattery>
  *
  * @category Performance
  *

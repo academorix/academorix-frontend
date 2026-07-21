@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Teams\Exceptions;
 
-use Stackra\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Trials are Medium+.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class TrialFeatureNotEntitledException extends AcademorixException
+final class TrialFeatureNotEntitledException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

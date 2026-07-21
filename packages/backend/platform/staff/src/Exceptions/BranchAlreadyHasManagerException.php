@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Staff\Exceptions;
 
-use Stackra\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Another active Staff for this branch already has is_branch_manager=true.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class BranchAlreadyHasManagerException extends AcademorixException
+final class BranchAlreadyHasManagerException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Identity\Exceptions;
 
-use Stackra\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Registration or email-change attempt collided with an existing (non-erased) identity.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class IdentityEmailTakenException extends AcademorixException
+final class IdentityEmailTakenException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

@@ -2,7 +2,7 @@
   "$version": 1,
   "name": "performance",
   "alias": "performance",
-  "namespace": "Stackra\\Sports\\Performance",
+  "namespace": "Academorix\\Sports\\Performance",
   "description": "Physical benchmarks + fitness testing per blueprint §14.2. Ships FOUR owned entities: `TestBattery` (named collection of PerformanceTests — e.g. 'U12 Football Physical Q1' bundles 40m sprint + VO2 + vertical jump; per sport_key; versioned), `PerformanceTest` (single physical test definition — name / unit / better_direction higher/lower / age_bands; reusable across batteries), `PerformanceTestResult` (one athlete_enrollment's test outcome — captured_at + value + tester_user_id; metrics JSONB attribute-driven when applicable; percentile computed vs Benchmark), `Benchmark` (age-band × sport_key × test percentile reference p10/p25/p50/p75/p90; seeded from research defaults, tenant-overridable). Distinct from Progress (skill assessment) — this module is OBJECTIVE physical measurement.",
   "keywords": [
     "performance",
@@ -17,7 +17,7 @@
     "wave-3"
   ],
   "priority": 79,
-  "providers": ["Stackra\\Sports\\Performance\\Providers\\PerformanceServiceProvider"],
+  "providers": ["Academorix\\Sports\\Performance\\Providers\\PerformanceServiceProvider"],
   "files": [],
   "dependencies": [
     "foundation",

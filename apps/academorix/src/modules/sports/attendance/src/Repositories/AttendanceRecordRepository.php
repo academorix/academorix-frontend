@@ -4,25 +4,25 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Attendance\Repositories;
+namespace Academorix\Attendance\Repositories;
 
 use Stackra\Crud\Attributes\AsRepository;
 use Stackra\Crud\Attributes\Cacheable;
 use Stackra\Crud\Attributes\Filterable;
 use Stackra\Crud\Attributes\UseModel;
 use Stackra\Crud\Repositories\Repository;
-use Stackra\Attendance\Contracts\Data\AttendanceRecordInterface;
-use Stackra\Attendance\Contracts\Repositories\AttendanceRecordRepositoryInterface;
-use Stackra\Attendance\Models\AttendanceRecord;
+use Academorix\Attendance\Contracts\Data\AttendanceRecordInterface;
+use Academorix\Attendance\Contracts\Repositories\AttendanceRecordRepositoryInterface;
+use Academorix\Attendance\Models\AttendanceRecord;
 
 /**
- * Attribute-first Eloquent repository for {@see Stackra\Attendance\Models\AttendanceRecord}.
+ * Attribute-first Eloquent repository for {@see Academorix\Attendance\Models\AttendanceRecord}.
  *
  * Bound to the interface via `#[AsRepository]`; the model comes from
  * `#[UseModel(AttendanceRecordInterface::class)]` which resolves to
  * `AttendanceRecord` through the interface's `#[Bind]`.
  *
- * @extends Repository<\Stackra\Attendance\Models\AttendanceRecord>
+ * @extends Repository<\Academorix\Attendance\Models\AttendanceRecord>
  *
  * @category Attendance
  *

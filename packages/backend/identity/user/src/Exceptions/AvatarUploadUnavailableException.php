@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\User\Exceptions;
 
-use Stackra\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * `avatar_upload` entitlement is disabled OR `user.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class AvatarUploadUnavailableException extends AcademorixException
+final class AvatarUploadUnavailableException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

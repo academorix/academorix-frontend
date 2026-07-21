@@ -1,11 +1,11 @@
 {
-  "id": "stackra://modules/invoice/middleware",
+  "id": "academorix://modules/invoice/middleware",
   "$version": 1,
   "title": "invoice — HTTP middleware",
   "middleware": [
     {
       "alias": "invoice.enforce_customer_scope",
-      "class": "Stackra\\Finance\\Invoice\\Http\\Middleware\\EnforceCustomerScope",
+      "class": "Academorix\\Finance\\Invoice\\Http\\Middleware\\EnforceCustomerScope",
       "priority": 46,
       "description": "Customer-facing scope guard. Applied to /api/v1/invoices/mine/* and /api/v1/credit-notes routes when the caller lacks invoice.invoices.viewAny. Auto-scopes queries: adds a WHERE clause `customer_id IN (auth.user.id, athlete_ids_where_user_is_guardian)` to the underlying repository. This makes customer routes safe by default — a customer cannot see another customer's invoices even by ID-guessing. Returns 404 (not 403) for out-of-scope IDs to avoid leaking existence.",
       "auto_applied": false,

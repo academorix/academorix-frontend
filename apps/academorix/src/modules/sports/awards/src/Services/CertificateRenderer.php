@@ -4,11 +4,11 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Awards\Services;
+namespace Academorix\Awards\Services;
 
-use Stackra\Awards\Contracts\Services\CertificateRendererInterface;
+use Academorix\Awards\Contracts\Services\CertificateRendererInterface;
 use Illuminate\Container\Attributes\Scoped;
-use Stackra\Awards\Contracts\Repositories\AwardRepositoryInterface;
+use Academorix\Awards\Contracts\Repositories\AwardRepositoryInterface;
 
 /**
  * Concrete service — CertificateRenderer.

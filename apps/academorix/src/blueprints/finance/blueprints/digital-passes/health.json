@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/digital-passes/health",
+  "id": "academorix://modules/digital-passes/health",
   "$version": 1,
   "title": "digital-passes — health probes",
   "description": "Health checks aggregated by foundation's /api/health.",

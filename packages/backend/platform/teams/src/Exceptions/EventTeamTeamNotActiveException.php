@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Teams\Exceptions;
 
-use Stackra\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Raised when the domain rule `EVENT_TEAM_TEAM_NOT_ACTIVE` fires.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class EventTeamTeamNotActiveException extends AcademorixException
+final class EventTeamTeamNotActiveException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

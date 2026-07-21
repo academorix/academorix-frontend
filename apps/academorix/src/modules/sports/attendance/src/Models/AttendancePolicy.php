@@ -4,16 +4,16 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Attendance\Models;
+namespace Academorix\Attendance\Models;
 
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
-use Stackra\Attendance\Contracts\Data\AttendancePolicyInterface;
-use Stackra\Attendance\Database\Factories\AttendancePolicyFactory;
-use Stackra\Attendance\Policies\AttendancePolicyPolicy;
+use Academorix\Attendance\Contracts\Data\AttendancePolicyInterface;
+use Academorix\Attendance\Database\Factories\AttendancePolicyFactory;
+use Academorix\Attendance\Policies\AttendancePolicyPolicy;
 use Stackra\Branch\Concerns\BelongsToBranch;
 use Stackra\Foundation\Concerns\Filterable;
 use Stackra\Foundation\Concerns\HasMetadata;

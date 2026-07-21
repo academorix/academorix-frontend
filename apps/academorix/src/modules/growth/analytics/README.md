@@ -1,4 +1,4 @@
-# stackra/analytics
+# academorix/analytics
 
 Server-side Laravel package for the `analytics` module. Auto-generated from the
 blueprint at `modules/growth/blueprints/analytics/`.
@@ -47,6 +47,6 @@ file is a hand-tuned override that survives regeneration.
 ## Companion wire SDK
 
 The wire-visible Saloon + Spatie Data package lives at
-`stackra-growth/analytics-sdk` under `sdk/growth-analytics-sdk/`. Consumers
+`academorix-growth/analytics-sdk` under `sdk/growth-analytics-sdk/`. Consumers
 cross the service boundary through the SDK; this package is the SERVER-side
 owner of the domain.

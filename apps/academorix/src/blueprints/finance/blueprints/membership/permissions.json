@@ -1,8 +1,8 @@
 {
-  "id": "stackra://modules/membership/permissions",
+  "id": "academorix://modules/membership/permissions",
   "$version": 1,
   "title": "membership — permissions",
-  "seeder": "Stackra\\Finance\\Membership\\Database\\Seeders\\MembershipPermissionSeeder",
+  "seeder": "Academorix\\Finance\\Membership\\Database\\Seeders\\MembershipPermissionSeeder",
   "isSystem": true,
   "description": "Two audiences. Tenant plane (sanctum) — membership CRUD + plan catalog management + report by staff roles; guardian/adult-athlete self-serve via .own scope. Refund + chargeback audit gated to finance-officer + admin + owner. Platform plane (platform_admin) — cross-tenant support read + escalation audit.",
   "permissions": [

@@ -4,18 +4,18 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Coaching\Models;
+namespace Academorix\Coaching\Models;
 
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
-use Stackra\Coaching\Contracts\Data\CoachCertificationInterface;
-use Stackra\Coaching\Database\Factories\CoachCertificationFactory;
-use Stackra\Coaching\Concerns\BelongsToCoachingProfile;
-use Stackra\Coaching\Enums\CoachCertificationLevel;
-use Stackra\Coaching\Policies\CoachCertificationPolicy;
+use Academorix\Coaching\Contracts\Data\CoachCertificationInterface;
+use Academorix\Coaching\Database\Factories\CoachCertificationFactory;
+use Academorix\Coaching\Concerns\BelongsToCoachingProfile;
+use Academorix\Coaching\Enums\CoachCertificationLevel;
+use Academorix\Coaching\Policies\CoachCertificationPolicy;
 use Stackra\Foundation\Concerns\Filterable;
 use Stackra\Foundation\Concerns\HasMetadata;
 use Stackra\Foundation\Concerns\HasPrefixedUlid;

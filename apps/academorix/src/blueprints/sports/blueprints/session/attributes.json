@@ -1,20 +1,20 @@
 {
-  "id": "stackra://modules/session/attributes",
+  "id": "academorix://modules/session/attributes",
   "$version": 1,
   "title": "session — PHP attribute contracts",
   "description": "One attribute — `#[AsSessionListener]` — marks a service class as a subscriber to session-lifecycle events. AttributeDiscovery scans + wires it to the event map declared in events.json.",
-  "namespace": "Stackra\\Sports\\Session\\Attributes",
+  "namespace": "Academorix\\Sports\\Session\\Attributes",
   "attributes": [
     {
       "name": "AsSessionListener",
-      "class": "Stackra\\Sports\\Session\\Attributes\\AsSessionListener",
+      "class": "Academorix\\Sports\\Session\\Attributes\\AsSessionListener",
       "targets": ["class"],
       "params": [
         {
           "name": "events",
           "type": "array<string>",
           "default": [],
-          "description": "Array of event short names. Empty = subscribe to every event in Stackra\\Sports\\Session\\Events\\*. Names validated against events.json at boot."
+          "description": "Array of event short names. Empty = subscribe to every event in Academorix\\Sports\\Session\\Events\\*. Names validated against events.json at boot."
         },
         {
           "name": "queue",

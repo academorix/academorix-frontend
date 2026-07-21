@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Stackra\Tenancy\Exceptions;
 
-use Stackra\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Raised when a `kind = dpo` or `kind = legal` contact is promoted to
@@ -17,7 +17,7 @@ use Stackra\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class TenantContactVerificationRequiredException extends AcademorixException
+final class TenantContactVerificationRequiredException extends StackraException
 {
     public const CODE = 'tenancy.contact_verification_required';
 

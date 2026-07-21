@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Region\Exceptions;
 
-use Stackra\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * The middleware couldn't resolve a default region for the caller's tenant.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class TenantMissingDefaultRegionException extends AcademorixException
+final class TenantMissingDefaultRegionException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

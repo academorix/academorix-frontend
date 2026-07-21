@@ -4,7 +4,7 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Match\Concerns;
+namespace Academorix\Match\Concerns;
 
 /**
  * Trait — BelongsToMatch.

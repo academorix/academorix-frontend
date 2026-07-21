@@ -4,20 +4,20 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Competition\Models;
+namespace Academorix\Competition\Models;
 
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
-use Stackra\Competition\Contracts\Data\CompetitionInterface;
-use Stackra\Competition\Database\Factories\CompetitionFactory;
-use Stackra\Competition\Policies\CompetitionPolicy;
+use Academorix\Competition\Contracts\Data\CompetitionInterface;
+use Academorix\Competition\Database\Factories\CompetitionFactory;
+use Academorix\Competition\Policies\CompetitionPolicy;
 use Stackra\Foundation\Concerns\Filterable;
 use Stackra\Foundation\Concerns\HasMetadata;
 use Stackra\Foundation\Concerns\HasPrefixedUlid;
-use Stackra\Season\Concerns\BelongsToSeason;
+use Academorix\Season\Concerns\BelongsToSeason;
 use Stackra\Tenancy\Concerns\BelongsToTenant;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;

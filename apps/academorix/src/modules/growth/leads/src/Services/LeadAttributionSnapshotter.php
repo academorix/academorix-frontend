@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Leads\Services;
+namespace Academorix\Leads\Services;
 
-use Stackra\Leads\Contracts\Services\LeadAttributionSnapshotterInterface;
+use Academorix\Leads\Contracts\Services\LeadAttributionSnapshotterInterface;
 use Illuminate\Container\Attributes\Scoped;
 use Illuminate\Contracts\Container\Container;
 

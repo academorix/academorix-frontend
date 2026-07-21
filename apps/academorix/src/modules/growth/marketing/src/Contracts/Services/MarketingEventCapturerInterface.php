@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Marketing\Contracts\Services;
+namespace Academorix\Marketing\Contracts\Services;
 
-use Stackra\Marketing\Services\MarketingEventCapturer;
+use Academorix\Marketing\Services\MarketingEventCapturer;
 use Illuminate\Container\Attributes\Bind;
 
 /**

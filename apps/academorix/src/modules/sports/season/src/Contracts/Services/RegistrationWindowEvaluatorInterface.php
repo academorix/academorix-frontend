@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Season\Contracts\Services;
+namespace Academorix\Season\Contracts\Services;
 
-use Stackra\Season\Services\RegistrationWindowEvaluator;
+use Academorix\Season\Services\RegistrationWindowEvaluator;
 use Illuminate\Container\Attributes\Bind;
 
 /**

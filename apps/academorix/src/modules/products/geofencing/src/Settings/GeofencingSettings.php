@@ -4,7 +4,7 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Geofencing\Settings;
+namespace Academorix\Geofencing\Settings;
 
 use Stackra\Settings\Attributes\AsSetting;
 use Stackra\Settings\Attributes\SettingField;

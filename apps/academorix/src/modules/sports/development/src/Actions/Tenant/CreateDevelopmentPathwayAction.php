@@ -4,11 +4,11 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Development\Actions\Tenant;
+namespace Academorix\Development\Actions\Tenant;
 
-use Stackra\Development\Contracts\Repositories\DevelopmentPathwayRepositoryInterface;
-use Stackra\Development\Data\DevelopmentPathwayData;
-use Stackra\Development\Data\Requests\CreateDevelopmentPathwayRequestData;
+use Academorix\Development\Contracts\Repositories\DevelopmentPathwayRepositoryInterface;
+use Academorix\Development\Data\DevelopmentPathwayData;
+use Academorix\Development\Data\Requests\CreateDevelopmentPathwayRequestData;
 use Stackra\Routing\Attributes\AsAction;
 use Stackra\Routing\Attributes\Middleware;
 use Stackra\Routing\Concerns\AsController;

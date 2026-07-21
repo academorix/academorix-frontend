@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Performance\Actions\Tenant;
+namespace Academorix\Performance\Actions\Tenant;
 
-use Stackra\Performance\Contracts\Repositories\TestBatteryRepositoryInterface;
-use Stackra\Performance\Data\TestBatteryData;
+use Academorix\Performance\Contracts\Repositories\TestBatteryRepositoryInterface;
+use Academorix\Performance\Data\TestBatteryData;
 use Stackra\Routing\Attributes\AsAction;
 use Stackra\Routing\Attributes\Middleware;
 use Stackra\Routing\Concerns\AsController;
@@ -50,7 +50,7 @@ final class ListTestBatterieAction
      */
     public function __invoke(Request $request): PaginatedDataCollection
     {
-        /** @var LengthAwarePaginator<int, \Stackra\Performance\Models\TestBattery> $page */
+        /** @var LengthAwarePaginator<int, \Academorix\Performance\Models\TestBattery> $page */
         $page = $this->repository->paginate(
             perPage: (int) $request->integer('per_page', 15),
         );

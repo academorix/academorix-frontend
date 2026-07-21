@@ -4,13 +4,13 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Gateway\Policies;
+namespace Academorix\Gateway\Policies;
 
 use Stackra\User\Models\User;
-use Stackra\Gateway\Models\PaymentMethod;
+use Academorix\Gateway\Models\PaymentMethod;
 
 /**
- * Authorization policy for {@see \Stackra\Gateway\Models\PaymentMethod}.
+ * Authorization policy for {@see \Academorix\Gateway\Models\PaymentMethod}.
  *
  * Wired via `#[UsePolicy]` on the Model.
  *

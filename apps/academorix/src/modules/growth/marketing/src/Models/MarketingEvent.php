@@ -4,20 +4,20 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Marketing\Models;
+namespace Academorix\Marketing\Models;
 
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
-use Stackra\Marketing\Contracts\Data\MarketingEventInterface;
-use Stackra\Marketing\Database\Factories\MarketingEventFactory;
+use Academorix\Marketing\Contracts\Data\MarketingEventInterface;
+use Academorix\Marketing\Database\Factories\MarketingEventFactory;
 use Stackra\Foundation\Concerns\Filterable;
 use Stackra\Foundation\Concerns\HasMetadata;
-use Stackra\Marketing\Enums\MarketingEventSource;
-use Stackra\Marketing\Enums\MarketingEventStatus;
-use Stackra\Marketing\Policies\MarketingEventPolicy;
+use Academorix\Marketing\Enums\MarketingEventSource;
+use Academorix\Marketing\Enums\MarketingEventStatus;
+use Academorix\Marketing\Policies\MarketingEventPolicy;
 use Stackra\Tenancy\Concerns\BelongsToTenant;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Stackra\Invitations\Exceptions;
 
-use Stackra\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Raised when a token-based invitation lookup finds no matching
@@ -14,7 +14,7 @@ use Stackra\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class InvitationNotFoundException extends AcademorixException
+final class InvitationNotFoundException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

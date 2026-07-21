@@ -4,25 +4,25 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Athlete\Repositories;
+namespace Academorix\Athlete\Repositories;
 
 use Stackra\Crud\Attributes\AsRepository;
 use Stackra\Crud\Attributes\Cacheable;
 use Stackra\Crud\Attributes\Filterable;
 use Stackra\Crud\Attributes\UseModel;
 use Stackra\Crud\Repositories\Repository;
-use Stackra\Athlete\Contracts\Data\AthleteInterface;
-use Stackra\Athlete\Contracts\Repositories\AthleteRepositoryInterface;
-use Stackra\Athlete\Models\Athlete;
+use Academorix\Athlete\Contracts\Data\AthleteInterface;
+use Academorix\Athlete\Contracts\Repositories\AthleteRepositoryInterface;
+use Academorix\Athlete\Models\Athlete;
 
 /**
- * Attribute-first Eloquent repository for {@see Stackra\Athlete\Models\Athlete}.
+ * Attribute-first Eloquent repository for {@see Academorix\Athlete\Models\Athlete}.
  *
  * Bound to the interface via `#[AsRepository]`; the model comes from
  * `#[UseModel(AthleteInterface::class)]` which resolves to
  * `Athlete` through the interface's `#[Bind]`.
  *
- * @extends Repository<\Stackra\Athlete\Models\Athlete>
+ * @extends Repository<\Academorix\Athlete\Models\Athlete>
  *
  * @category Athlete
  *

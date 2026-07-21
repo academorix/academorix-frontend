@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/athlete-enrollment/config",
+  "id": "academorix://modules/athlete-enrollment/config",
   "$version": 1,
   "title": "athlete-enrollment — developer configuration",
   "configFile": "config/athlete_enrollment.php",

@@ -4,25 +4,25 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Event\Repositories;
+namespace Academorix\Event\Repositories;
 
 use Stackra\Crud\Attributes\AsRepository;
 use Stackra\Crud\Attributes\Cacheable;
 use Stackra\Crud\Attributes\Filterable;
 use Stackra\Crud\Attributes\UseModel;
 use Stackra\Crud\Repositories\Repository;
-use Stackra\Event\Contracts\Data\CalendarSubscriptionInterface;
-use Stackra\Event\Contracts\Repositories\CalendarSubscriptionRepositoryInterface;
-use Stackra\Event\Models\CalendarSubscription;
+use Academorix\Event\Contracts\Data\CalendarSubscriptionInterface;
+use Academorix\Event\Contracts\Repositories\CalendarSubscriptionRepositoryInterface;
+use Academorix\Event\Models\CalendarSubscription;
 
 /**
- * Attribute-first Eloquent repository for {@see Stackra\Event\Models\CalendarSubscription}.
+ * Attribute-first Eloquent repository for {@see Academorix\Event\Models\CalendarSubscription}.
  *
  * Bound to the interface via `#[AsRepository]`; the model comes from
  * `#[UseModel(CalendarSubscriptionInterface::class)]` which resolves to
  * `CalendarSubscription` through the interface's `#[Bind]`.
  *
- * @extends Repository<\Stackra\Event\Models\CalendarSubscription>
+ * @extends Repository<\Academorix\Event\Models\CalendarSubscription>
  *
  * @category Event
  *

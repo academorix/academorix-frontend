@@ -4,7 +4,7 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Session\Concerns;
+namespace Academorix\Session\Concerns;
 
 /**
  * Trait — BelongsToSession.

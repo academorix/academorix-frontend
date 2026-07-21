@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/coaching/schemas/coaching-profile",
+  "id": "academorix://modules/coaching/schemas/coaching-profile",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "CoachingProfile",
@@ -13,9 +13,9 @@
     "keyType": "string",
     "keyPrefix": "cop_",
     "incrementing": false,
-    "model": "Stackra\\Sports\\Coaching\\Models\\CoachingProfile",
-    "interface": "Stackra\\Sports\\Coaching\\Contracts\\Data\\CoachingProfileInterface",
-    "implements": ["Stackra\\Sports\\Coaching\\Contracts\\Data\\CoachingProfileInterface"],
+    "model": "Academorix\\Sports\\Coaching\\Models\\CoachingProfile",
+    "interface": "Academorix\\Sports\\Coaching\\Contracts\\Data\\CoachingProfileInterface",
+    "implements": ["Academorix\\Sports\\Coaching\\Contracts\\Data\\CoachingProfileInterface"],
     "traits": [
       "HasFactory",
       "HasPrefixedUlid",

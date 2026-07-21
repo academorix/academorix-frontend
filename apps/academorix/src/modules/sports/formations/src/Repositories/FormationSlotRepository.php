@@ -4,25 +4,25 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Formations\Repositories;
+namespace Academorix\Formations\Repositories;
 
 use Stackra\Crud\Attributes\AsRepository;
 use Stackra\Crud\Attributes\Cacheable;
 use Stackra\Crud\Attributes\Filterable;
 use Stackra\Crud\Attributes\UseModel;
 use Stackra\Crud\Repositories\Repository;
-use Stackra\Formations\Contracts\Data\FormationSlotInterface;
-use Stackra\Formations\Contracts\Repositories\FormationSlotRepositoryInterface;
-use Stackra\Formations\Models\FormationSlot;
+use Academorix\Formations\Contracts\Data\FormationSlotInterface;
+use Academorix\Formations\Contracts\Repositories\FormationSlotRepositoryInterface;
+use Academorix\Formations\Models\FormationSlot;
 
 /**
- * Attribute-first Eloquent repository for {@see Stackra\Formations\Models\FormationSlot}.
+ * Attribute-first Eloquent repository for {@see Academorix\Formations\Models\FormationSlot}.
  *
  * Bound to the interface via `#[AsRepository]`; the model comes from
  * `#[UseModel(FormationSlotInterface::class)]` which resolves to
  * `FormationSlot` through the interface's `#[Bind]`.
  *
- * @extends Repository<\Stackra\Formations\Models\FormationSlot>
+ * @extends Repository<\Academorix\Formations\Models\FormationSlot>
  *
  * @category Formations
  *

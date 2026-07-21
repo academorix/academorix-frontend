@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/session/entitlements",
+  "id": "academorix://modules/session/entitlements",
   "$version": 1,
   "title": "session — declared entitlements",
   "description": "Five entitlement keys. `sports_sessions` is the boolean master gate. `session_slot` caps sessions per week per tenant. `session_private_lessons` gates the private_lesson session_type (Medium+). `session_coach_ratings` gates coach_rating_input + AggregateCoachRatingsJob (Medium+). `session_lesson_plans` gates lesson_plan_url + curriculum_topic beyond a small character limit (Enterprise).",

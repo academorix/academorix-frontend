@@ -4,25 +4,25 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Tax\Repositories;
+namespace Academorix\Tax\Repositories;
 
 use Stackra\Crud\Attributes\AsRepository;
 use Stackra\Crud\Attributes\Cacheable;
 use Stackra\Crud\Attributes\Filterable;
 use Stackra\Crud\Attributes\UseModel;
 use Stackra\Crud\Repositories\Repository;
-use Stackra\Tax\Contracts\Data\TaxExemptionInterface;
-use Stackra\Tax\Contracts\Repositories\TaxExemptionRepositoryInterface;
-use Stackra\Tax\Models\TaxExemption;
+use Academorix\Tax\Contracts\Data\TaxExemptionInterface;
+use Academorix\Tax\Contracts\Repositories\TaxExemptionRepositoryInterface;
+use Academorix\Tax\Models\TaxExemption;
 
 /**
- * Attribute-first Eloquent repository for {@see Stackra\Tax\Models\TaxExemption}.
+ * Attribute-first Eloquent repository for {@see Academorix\Tax\Models\TaxExemption}.
  *
  * Bound to the interface via `#[AsRepository]`; the model comes from
  * `#[UseModel(TaxExemptionInterface::class)]` which resolves to
  * `TaxExemption` through the interface's `#[Bind]`.
  *
- * @extends Repository<\Stackra\Tax\Models\TaxExemption>
+ * @extends Repository<\Academorix\Tax\Models\TaxExemption>
  *
  * @category Tax
  *

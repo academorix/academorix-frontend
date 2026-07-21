@@ -1,20 +1,20 @@
 {
-  "id": "stackra://modules/invoice/events",
+  "id": "academorix://modules/invoice/events",
   "$version": 1,
   "title": "invoice — published events",
-  "namespace": "Stackra\\Finance\\Invoice\\Events",
+  "namespace": "Academorix\\Finance\\Invoice\\Events",
   "dispatchMode": "afterCommit",
   "description": "Every event implements `ShouldDispatchAfterCommit` so listeners never fire against a rolled-back write. InvoicePaid is the LOAD-BEARING event of the module — it triggers the marketing::MembershipPurchased signal AND transitions the parent Membership to status='active'. InvoiceUncollectible + InvoiceSentToCollections are compliance-critical signals (bad-debt write-off + collections-agency handoff both feed the finance ledger). InvoiceLineAdded/Updated/Removed only fire while status='draft' — once the invoice is finalized, lines are immutable + credit notes replace them. Every state transition is audit-logged (7-year retention).",
   "events": [
     {
       "name": "InvoiceCreated",
-      "class": "Stackra\\Finance\\Invoice\\Events\\InvoiceCreated",
+      "class": "Academorix\\Finance\\Invoice\\Events\\InvoiceCreated",
       "trigger": "InvoiceObserver.creating committed a new invoices row. Fires exactly once per invoice. Precedes any InvoiceLineAdded events.",
       "queue": "invoice",
       "consumers": [
         "audit::WriteToAuditLog (retention: 7 years — financial record per SOX §404)",
         "activity::WriteToActivityLog (staff-visible feed)",
-        "monitoring::MetricsCollector (increments stackra.invoice.created_total)",
+        "monitoring::MetricsCollector (increments academorix.invoice.created_total)",
         "notifications::DispatchInvoiceCreatedNotification (customer receipt-style when auto_send=true, else silent)"
       ],
       "payload": {
@@ -35,13 +35,13 @@
     },
     {
       "name": "InvoiceFinalized",
-      "class": "Stackra\\Finance\\Invoice\\Events\\InvoiceFinalized",
+      "class": "Academorix\\Finance\\Invoice\\Events\\InvoiceFinalized",
       "trigger": "InvoiceObserver.updating detected status transition draft → open. All lines have tax_calculation_id + totals frozen. Precedes InvoiceSent (dispatched separately by SendInvoiceEmailJob).",
       "queue": "invoice",
       "consumers": [
         "audit::WriteToAuditLog",
         "activity::WriteToActivityLog",
-        "monitoring::MetricsCollector (increments stackra.invoice.finalized_total)",
+        "monitoring::MetricsCollector (increments academorix.invoice.finalized_total)",
         "invoice::EnqueueGenerateInvoicePDFJob (generates PDF + uploads to S3)",
         "invoice::EnqueueSendInvoiceEmailJob (delivers to customer.email)"
       ],
@@ -65,13 +65,13 @@
     },
     {
       "name": "InvoiceSent",
-      "class": "Stackra\\Finance\\Invoice\\Events\\InvoiceSent",
+      "class": "Academorix\\Finance\\Invoice\\Events\\InvoiceSent",
       "trigger": "SendInvoiceEmailJob successfully delivered the invoice email. Sets invoices.sent_at.",
       "queue": "invoice",
       "consumers": [
         "audit::WriteToAuditLog",
         "activity::WriteToActivityLog",
-        "monitoring::MetricsCollector (increments stackra.invoice.sent_total)"
+        "monitoring::MetricsCollector (increments academorix.invoice.sent_total)"
       ],
       "payload": {
         "invoice_id": "ULID",
@@ -85,7 +85,7 @@
     },
     {
       "name": "InvoiceViewed",
-      "class": "Stackra\\Finance\\Invoice\\Events\\InvoiceViewed",
+      "class": "Academorix\\Finance\\Invoice\\Events\\InvoiceViewed",
       "trigger": "POST /invoices/{invoice}/mark-viewed OR the email-tracking pixel fired. Sets invoices.viewed_by_customer_at on FIRST view; subsequent views are idempotent (no re-fire).",
       "queue": "invoice",
       "consumers": ["activity::WriteToActivityLog", "monitoring::MetricsCollector"],
@@ -100,14 +100,14 @@
     },
     {
       "name": "InvoicePaid",
-      "class": "Stackra\\Finance\\Invoice\\Events\\InvoicePaid",
+      "class": "Academorix\\Finance\\Invoice\\Events\\InvoicePaid",
       "trigger": "LOAD-BEARING. InvoiceObserver.updating detected status transition any → paid. Requires amount_paid_cents == total_cents. Fires the marketing::CaptureMembershipPurchasedMarketingEvent when membership_id is set (the marketing lane's revenue signal).",
       "queue": "invoice",
       "consumers": [
         "audit::WriteToAuditLog (retention: 7 years — critical financial event)",
         "activity::WriteToActivityLog",
         "notifications::DispatchInvoicePaidNotification (customer receipt + admin confirmation)",
-        "monitoring::MetricsCollector (increments stackra.invoice.paid_total; buckets on total_cents)",
+        "monitoring::MetricsCollector (increments academorix.invoice.paid_total; buckets on total_cents)",
         "growth::marketing::CaptureMembershipPurchasedMarketingEvent (when membership_id present — the load-bearing marketing signal)",
         "membership::ActivateMembershipOnInvoicePaid (when membership_id present — transitions Membership status=active + generates Passes)"
       ],
@@ -126,7 +126,7 @@
     },
     {
       "name": "InvoicePartiallyPaid",
-      "class": "Stackra\\Finance\\Invoice\\Events\\InvoicePartiallyPaid",
+      "class": "Academorix\\Finance\\Invoice\\Events\\InvoicePartiallyPaid",
       "trigger": "InvoiceObserver.updating detected 0 < amount_paid_cents < total_cents. Status transitions to 'partially_paid'. Non-terminal — the invoice can still reach 'paid' with future payments.",
       "queue": "invoice",
       "consumers": [
@@ -146,7 +146,7 @@
     },
     {
       "name": "InvoiceVoided",
-      "class": "Stackra\\Finance\\Invoice\\Events\\InvoiceVoided",
+      "class": "Academorix\\Finance\\Invoice\\Events\\InvoiceVoided",
       "trigger": "InvoiceObserver.updating detected status transition draft/open → void. REFUSED when status IN ('paid', 'partially_paid') — those must go through credit-note issuance. Requires void_reason + admin+finance role.",
       "queue": "invoice",
       "consumers": [
@@ -165,14 +165,14 @@
     },
     {
       "name": "InvoiceUncollectible",
-      "class": "Stackra\\Finance\\Invoice\\Events\\InvoiceUncollectible",
+      "class": "Academorix\\Finance\\Invoice\\Events\\InvoiceUncollectible",
       "trigger": "Compliance-critical. InvoiceObserver.updating detected status transition past_due → uncollectible. Signals bad-debt write-off. Only allowed after N days past due AND admin+finance role. Feeds the accounting write-off ledger.",
       "queue": "invoice-critical",
       "consumers": [
         "audit::WriteToAuditLog (retention: 7 years)",
         "activity::WriteToActivityLog",
         "notifications::DispatchInvoiceUncollectibleNotification (admin — bad-debt review)",
-        "monitoring::MetricsCollector (increments stackra.invoice.uncollectible_total — every fire is a bad-debt loss signal)"
+        "monitoring::MetricsCollector (increments academorix.invoice.uncollectible_total — every fire is a bad-debt loss signal)"
       ],
       "payload": {
         "invoice_id": "ULID",
@@ -187,7 +187,7 @@
     },
     {
       "name": "InvoicePastDue",
-      "class": "Stackra\\Finance\\Invoice\\Events\\InvoicePastDue",
+      "class": "Academorix\\Finance\\Invoice\\Events\\InvoicePastDue",
       "trigger": "MarkOverdueInvoicesJob detected due_date < now() AND status IN ('open', 'partially_paid'). Transitions status to 'past_due'. Kicks off the dunning schedule.",
       "queue": "invoice",
       "consumers": [
@@ -210,7 +210,7 @@
     },
     {
       "name": "InvoiceRefunded",
-      "class": "Stackra\\Finance\\Invoice\\Events\\InvoiceRefunded",
+      "class": "Academorix\\Finance\\Invoice\\Events\\InvoiceRefunded",
       "trigger": "Refund module fired refund.issued for an invoice's payment. InvoiceObserver reflects the state change: status transitions paid → refunded (full refund) OR stays 'paid' (partial refund). A CreditNote is issued in parallel via GenerateCreditNoteJob.",
       "queue": "invoice",
       "consumers": [
@@ -232,7 +232,7 @@
     },
     {
       "name": "InvoiceDisputed",
-      "class": "Stackra\\Finance\\Invoice\\Events\\InvoiceDisputed",
+      "class": "Academorix\\Finance\\Invoice\\Events\\InvoiceDisputed",
       "trigger": "Chargeback module fired chargeback.filed for the invoice's payment. Status transitions paid → disputed. Admin intervention required.",
       "queue": "invoice-critical",
       "consumers": [
@@ -251,7 +251,7 @@
     },
     {
       "name": "InvoiceDunningStarted",
-      "class": "Stackra\\Finance\\Invoice\\Events\\InvoiceDunningStarted",
+      "class": "Academorix\\Finance\\Invoice\\Events\\InvoiceDunningStarted",
       "trigger": "First DispatchDunningRemindersJob run after InvoicePastDue. Sets invoices.collection_status = 'in_dunning'. Precedes the ladder of reminder notifications.",
       "queue": "invoice",
       "consumers": [
@@ -267,7 +267,7 @@
     },
     {
       "name": "InvoiceDunningEscalated",
-      "class": "Stackra\\Finance\\Invoice\\Events\\InvoiceDunningEscalated",
+      "class": "Academorix\\Finance\\Invoice\\Events\\InvoiceDunningEscalated",
       "trigger": "DispatchDunningRemindersJob progressed to a later stage of the dunning cadence (day+3 → day+7 → day+14 → day+30 → day+60). Each escalation fires once.",
       "queue": "invoice",
       "consumers": ["audit::WriteToAuditLog", "monitoring::MetricsCollector"],
@@ -281,7 +281,7 @@
     },
     {
       "name": "InvoiceSentToCollections",
-      "class": "Stackra\\Finance\\Invoice\\Events\\InvoiceSentToCollections",
+      "class": "Academorix\\Finance\\Invoice\\Events\\InvoiceSentToCollections",
       "trigger": "Enterprise-only. EscalateDunningToCollectionsJob handed off to a third-party collections agency after N days past due (default 60). Sets invoices.collection_status = 'with_collections'.",
       "queue": "invoice-critical",
       "consumers": [
@@ -303,7 +303,7 @@
     },
     {
       "name": "InvoiceWrittenOff",
-      "class": "Stackra\\Finance\\Invoice\\Events\\InvoiceWrittenOff",
+      "class": "Academorix\\Finance\\Invoice\\Events\\InvoiceWrittenOff",
       "trigger": "Compliance-critical. Terminal write-off after collections gives up (typically 180 days past due). Sets invoices.collection_status = 'written_off'. Feeds bad-debt expense line on the accounting ledger.",
       "queue": "invoice-critical",
       "consumers": [
@@ -323,7 +323,7 @@
     },
     {
       "name": "InvoiceReactivated",
-      "class": "Stackra\\Finance\\Invoice\\Events\\InvoiceReactivated",
+      "class": "Academorix\\Finance\\Invoice\\Events\\InvoiceReactivated",
       "trigger": "Rare. Admin manually revives a written-off invoice (e.g. the customer paid after all). Status transitions written_off → paid + records the recovery.",
       "queue": "invoice",
       "consumers": [
@@ -341,7 +341,7 @@
     },
     {
       "name": "InvoiceLineAdded",
-      "class": "Stackra\\Finance\\Invoice\\Events\\InvoiceLineAdded",
+      "class": "Academorix\\Finance\\Invoice\\Events\\InvoiceLineAdded",
       "trigger": "InvoiceLineObserver.creating committed a new invoice_lines row. Only fires while parent invoice.status='draft' — post-finalize additions are refused.",
       "queue": "invoice",
       "consumers": [
@@ -364,7 +364,7 @@
     },
     {
       "name": "InvoiceLineUpdated",
-      "class": "Stackra\\Finance\\Invoice\\Events\\InvoiceLineUpdated",
+      "class": "Academorix\\Finance\\Invoice\\Events\\InvoiceLineUpdated",
       "trigger": "InvoiceLineObserver.updating detected mutation while parent invoice.status='draft'. Refused post-finalize.",
       "queue": "invoice",
       "consumers": ["audit::WriteToAuditLog"],
@@ -378,7 +378,7 @@
     },
     {
       "name": "InvoiceLineRemoved",
-      "class": "Stackra\\Finance\\Invoice\\Events\\InvoiceLineRemoved",
+      "class": "Academorix\\Finance\\Invoice\\Events\\InvoiceLineRemoved",
       "trigger": "InvoiceLineObserver.deleting committed. Only allowed while parent invoice.status='draft'. Recomputes invoice totals + re-assigns line_numbers.",
       "queue": "invoice",
       "consumers": ["audit::WriteToAuditLog"],
@@ -391,7 +391,7 @@
     },
     {
       "name": "CreditNoteCreated",
-      "class": "Stackra\\Finance\\Invoice\\Events\\CreditNoteCreated",
+      "class": "Academorix\\Finance\\Invoice\\Events\\CreditNoteCreated",
       "trigger": "CreditNoteObserver.creating committed a new credit_notes row. Reason + amount + original_invoice reference all set. Precedes CreditNoteIssued after PDF generation.",
       "queue": "invoice",
       "consumers": [
@@ -414,7 +414,7 @@
     },
     {
       "name": "CreditNoteIssued",
-      "class": "Stackra\\Finance\\Invoice\\Events\\CreditNoteIssued",
+      "class": "Academorix\\Finance\\Invoice\\Events\\CreditNoteIssued",
       "trigger": "CreditNoteObserver.updating detected status transition draft → issued. PDF ready + delivered. Sets credit_notes.status='issued'.",
       "queue": "invoice",
       "consumers": [
@@ -435,7 +435,7 @@
     },
     {
       "name": "CreditNoteApplied",
-      "class": "Stackra\\Finance\\Invoice\\Events\\CreditNoteApplied",
+      "class": "Academorix\\Finance\\Invoice\\Events\\CreditNoteApplied",
       "trigger": "CreditNoteObserver.updating detected status transition issued → applied. The credit was consumed — either applied to a refund, offset against a future invoice, or added to the customer's account balance. Sets applied_to_type + applied_to_id.",
       "queue": "invoice",
       "consumers": [
@@ -453,7 +453,7 @@
     },
     {
       "name": "CreditNoteVoided",
-      "class": "Stackra\\Finance\\Invoice\\Events\\CreditNoteVoided",
+      "class": "Academorix\\Finance\\Invoice\\Events\\CreditNoteVoided",
       "trigger": "Rare + audit-heavy. Draft credit notes may be voided by admin before issuance (typo/mistake). Issued/applied credit notes CANNOT be voided — they're immutable financial records.",
       "queue": "invoice-critical",
       "consumers": [

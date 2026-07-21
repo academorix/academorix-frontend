@@ -1,10 +1,10 @@
 {
-  "name": "stackra/tax",
+  "name": "academorix/tax",
   "type": "library",
-  "description": "Stackra Tax module — server-side Laravel package emitted from the module blueprint at `modules/finance/blueprints/tax/`. Complements the wire SDK at `stackra-finance/tax-sdk`.",
+  "description": "Academorix Tax module — server-side Laravel package emitted from the module blueprint at `modules/finance/blueprints/tax/`. Complements the wire SDK at `academorix-finance/tax-sdk`.",
   "license": "proprietary",
   "keywords": [
-    "stackra",
+    "academorix",
     "module",
     "laravel",
     "finance",
@@ -22,7 +22,7 @@
     "stackra/routing": "@dev",
     "stackra/service-provider": "@dev",
     "stackra/support": "@dev",
-    "stackra-finance/tax-sdk": "@dev"
+    "academorix-finance/tax-sdk": "@dev"
   },
   "require-dev": {
     "orchestra/testbench": "^11.0",
@@ -33,12 +33,12 @@
   },
   "autoload": {
     "psr-4": {
-      "Stackra\\Tax\\": "src/"
+      "Academorix\\Tax\\": "src/"
     }
   },
   "autoload-dev": {
     "psr-4": {
-      "Stackra\\Tax\\Tests\\": "tests/"
+      "Academorix\\Tax\\Tests\\": "tests/"
     }
   },
   "extra": {

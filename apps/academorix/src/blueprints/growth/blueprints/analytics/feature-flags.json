@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/analytics/feature-flags",
+  "id": "academorix://modules/analytics/feature-flags",
   "$version": 1,
   "title": "analytics — kill switches + rollout controls",
   "description": "Per-provider kill switches let ops flip a bad provider off in seconds without a redeploy. All kill switches default ON.",

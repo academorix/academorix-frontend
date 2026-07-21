@@ -4,11 +4,11 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Medical\Actions\Tenant;
+namespace Academorix\Medical\Actions\Tenant;
 
-use Stackra\Medical\Contracts\Repositories\MedicalClearanceRepositoryInterface;
-use Stackra\Medical\Data\MedicalClearanceData;
-use Stackra\Medical\Data\Requests\CreateMedicalClearanceRequestData;
+use Academorix\Medical\Contracts\Repositories\MedicalClearanceRepositoryInterface;
+use Academorix\Medical\Data\MedicalClearanceData;
+use Academorix\Medical\Data\Requests\CreateMedicalClearanceRequestData;
 use Stackra\Routing\Attributes\AsAction;
 use Stackra\Routing\Attributes\Middleware;
 use Stackra\Routing\Concerns\AsController;

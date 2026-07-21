@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\ServiceAccounts\Exceptions;
 
-use Stackra\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * The `application_id` in the create payload does not exist or is disabled.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class ServiceAccountApplicationNotFoundException extends AcademorixException
+final class ServiceAccountApplicationNotFoundException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

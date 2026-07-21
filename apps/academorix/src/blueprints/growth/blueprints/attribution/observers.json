@@ -1,12 +1,12 @@
 {
-  "id": "stackra://modules/attribution/observers",
+  "id": "academorix://modules/attribution/observers",
   "$version": 1,
   "title": "attribution — Eloquent observers",
   "description": "Two observers enforce the module's write-time invariants: attribution-profile integrity + first-touch immutability, and attribution-touchpoint append-only + parent-profile-required. The AttributionObserver is the more consequential — it enforces the first-touch-is-immutable rule, cross-tenant refusal, consent-gate defense-in-depth, and lifecycle-transition validity.",
   "observers": [
     {
       "model": "Attribution",
-      "observer": "Stackra\\Growth\\Attribution\\Observers\\AttributionObserver",
+      "observer": "Academorix\\Growth\\Attribution\\Observers\\AttributionObserver",
       "handles": [
         "creating → populate ULID prefix `att_`",
         "creating → refuse when tenant does NOT hold `attribution_capture` entitlement (returns `ATTRIBUTION_CAPTURE_NOT_ENTITLED` — defense-in-depth; the middleware should have short-circuited but observers guard against direct writes)",
@@ -42,7 +42,7 @@
     },
     {
       "model": "AttributionTouchpoint",
-      "observer": "Stackra\\Growth\\Attribution\\Observers\\AttributionTouchpointObserver",
+      "observer": "Academorix\\Growth\\Attribution\\Observers\\AttributionTouchpointObserver",
       "handles": [
         "creating → populate ULID prefix `atp_`",
         "creating → refuse when tenant does NOT hold `attribution_capture` entitlement (returns `ATTRIBUTION_CAPTURE_NOT_ENTITLED` — defense-in-depth)",

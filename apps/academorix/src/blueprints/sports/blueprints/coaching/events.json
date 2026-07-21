@@ -1,14 +1,14 @@
 {
-  "id": "stackra://modules/coaching/events",
+  "id": "academorix://modules/coaching/events",
   "$version": 1,
   "title": "coaching — published events",
-  "namespace": "Stackra\\Sports\\Coaching\\Events",
+  "namespace": "Academorix\\Sports\\Coaching\\Events",
   "dispatchMode": "afterCommit",
   "description": "Every event implements `ShouldDispatchAfterCommit` so listeners never fire against a rolled-back write. Certification-expiration events (ExpiringSoon / Expired) are audit-critical with 7-year retention. Verification + deactivation events cascade downstream to session-assignment invalidation.",
   "events": [
     {
       "name": "CoachingProfileCreated",
-      "class": "Stackra\\Sports\\Coaching\\Events\\CoachingProfileCreated",
+      "class": "Academorix\\Sports\\Coaching\\Events\\CoachingProfileCreated",
       "trigger": "CoachingProfileRepository committed a new profile. Fires once per profile row.",
       "queue": "coaching",
       "consumers": [
@@ -29,7 +29,7 @@
     },
     {
       "name": "CoachingProfileVerified",
-      "class": "Stackra\\Sports\\Coaching\\Events\\CoachingProfileVerified",
+      "class": "Academorix\\Sports\\Coaching\\Events\\CoachingProfileVerified",
       "trigger": "Admin invoked /verify. verified_by_admin_at set. Unlocks assignment creation.",
       "queue": "coaching",
       "consumers": [
@@ -48,7 +48,7 @@
     },
     {
       "name": "CoachingProfileDeactivated",
-      "class": "Stackra\\Sports\\Coaching\\Events\\CoachingProfileDeactivated",
+      "class": "Academorix\\Sports\\Coaching\\Events\\CoachingProfileDeactivated",
       "trigger": "is_active flipped false. May be admin-triggered (via /deactivate) OR cascade-triggered (via StaffOffboarded).",
       "queue": "coaching-critical",
       "consumers": [
@@ -70,7 +70,7 @@
     },
     {
       "name": "CoachingProfileReactivated",
-      "class": "Stackra\\Sports\\Coaching\\Events\\CoachingProfileReactivated",
+      "class": "Academorix\\Sports\\Coaching\\Events\\CoachingProfileReactivated",
       "trigger": "is_active flipped true after prior deactivation. Requires admin re-verification (verified_by_admin_at is set again).",
       "queue": "coaching",
       "consumers": [
@@ -87,7 +87,7 @@
     },
     {
       "name": "CoachAssignmentCreated",
-      "class": "Stackra\\Sports\\Coaching\\Events\\CoachAssignmentCreated",
+      "class": "Academorix\\Sports\\Coaching\\Events\\CoachAssignmentCreated",
       "trigger": "A CoachAssignment row committed successfully.",
       "queue": "coaching",
       "consumers": [
@@ -111,7 +111,7 @@
     },
     {
       "name": "CoachAssignmentUpdated",
-      "class": "Stackra\\Sports\\Coaching\\Events\\CoachAssignmentUpdated",
+      "class": "Academorix\\Sports\\Coaching\\Events\\CoachAssignmentUpdated",
       "trigger": "role change OR notes mutation OR end_date extension.",
       "queue": "coaching",
       "consumers": ["audit::WriteToAuditLog", "activity::WriteToActivityLog"],
@@ -124,7 +124,7 @@
     },
     {
       "name": "CoachAssignmentEnded",
-      "class": "Stackra\\Sports\\Coaching\\Events\\CoachAssignmentEnded",
+      "class": "Academorix\\Sports\\Coaching\\Events\\CoachAssignmentEnded",
       "trigger": "end_date reached (nightly job flips) OR admin invoked /end. Terminal but non-purging.",
       "queue": "coaching",
       "consumers": [
@@ -147,7 +147,7 @@
     },
     {
       "name": "CoachAssignmentCancelled",
-      "class": "Stackra\\Sports\\Coaching\\Events\\CoachAssignmentCancelled",
+      "class": "Academorix\\Sports\\Coaching\\Events\\CoachAssignmentCancelled",
       "trigger": "Assignment deleted before end_date OR cascade-cancelled by CoachingProfileDeactivated / TeamArchived / EventArchived.",
       "queue": "coaching",
       "consumers": [
@@ -167,7 +167,7 @@
     },
     {
       "name": "CoachCertificationAdded",
-      "class": "Stackra\\Sports\\Coaching\\Events\\CoachCertificationAdded",
+      "class": "Academorix\\Sports\\Coaching\\Events\\CoachCertificationAdded",
       "trigger": "A CoachCertification row committed. Schedules the three expiration-cadence checkpoints.",
       "queue": "coaching",
       "consumers": [
@@ -189,7 +189,7 @@
     },
     {
       "name": "CoachCertificationVerified",
-      "class": "Stackra\\Sports\\Coaching\\Events\\CoachCertificationVerified",
+      "class": "Academorix\\Sports\\Coaching\\Events\\CoachCertificationVerified",
       "trigger": "Admin invoked /verify on the certification. verified_by_admin_user_id + verified_at set.",
       "queue": "coaching",
       "consumers": ["audit::WriteToAuditLog (retention: 7 years)", "activity::WriteToActivityLog"],
@@ -203,7 +203,7 @@
     },
     {
       "name": "CoachCertificationExpiringSoon",
-      "class": "Stackra\\Sports\\Coaching\\Events\\CoachCertificationExpiringSoon",
+      "class": "Academorix\\Sports\\Coaching\\Events\\CoachCertificationExpiringSoon",
       "trigger": "NotifyCertificationExpiringJob detected certification within cadence window (90 / 30 / 7 days before expires_at). Fires ONCE PER CADENCE per certification.",
       "queue": "coaching-critical",
       "consumers": [
@@ -223,7 +223,7 @@
     },
     {
       "name": "CoachCertificationExpired",
-      "class": "Stackra\\Sports\\Coaching\\Events\\CoachCertificationExpired",
+      "class": "Academorix\\Sports\\Coaching\\Events\\CoachCertificationExpired",
       "trigger": "NotifyCertificationExpiredJob detected certification with expires_at <= NOW(). Fires ONCE per certification lifecycle.",
       "queue": "coaching-critical",
       "consumers": [
@@ -242,7 +242,7 @@
     },
     {
       "name": "CoachSkillRatingRecorded",
-      "class": "Stackra\\Sports\\Coaching\\Events\\CoachSkillRatingRecorded",
+      "class": "Academorix\\Sports\\Coaching\\Events\\CoachSkillRatingRecorded",
       "trigger": "A CoachSkillRating row committed (fresh rating on a previously-unrated ratable).",
       "queue": "coaching",
       "consumers": [
@@ -265,7 +265,7 @@
     },
     {
       "name": "CoachSkillRatingUpdated",
-      "class": "Stackra\\Sports\\Coaching\\Events\\CoachSkillRatingUpdated",
+      "class": "Academorix\\Sports\\Coaching\\Events\\CoachSkillRatingUpdated",
       "trigger": "Existing rating updated with a new rating_value.",
       "queue": "coaching",
       "consumers": [

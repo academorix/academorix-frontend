@@ -4,7 +4,7 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Marketing\Concerns;
+namespace Academorix\Marketing\Concerns;
 
 /**
  * Trait — HasMarketingDeliveries.

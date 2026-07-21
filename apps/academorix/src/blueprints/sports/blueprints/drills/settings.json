@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/drills/settings",
+  "id": "academorix://modules/drills/settings",
   "$version": 1,
   "title": "drills — tenant-editable settings",
   "description": "Settings this module registers against the settings substrate.",

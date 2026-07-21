@@ -1,12 +1,12 @@
 {
-  "id": "stackra://modules/leads/policies",
+  "id": "academorix://modules/leads/policies",
   "$version": 1,
   "title": "leads — authorization policies",
   "description": "Three policies, one per owned model. Every ability resolves through spatie/laravel-permission then narrows by tenant scope + role-specific rules (coach sees own-athlete leads only; marketing role restricted to their own leads on update). Platform-plane abilities are read-only on tenant-plane.",
   "policies": [
     {
       "model": "Lead",
-      "class": "Stackra\\Growth\\Leads\\Policies\\LeadPolicy",
+      "class": "Academorix\\Growth\\Leads\\Policies\\LeadPolicy",
       "abilities": [
         {
           "action": "viewAny",
@@ -41,7 +41,7 @@
     },
     {
       "model": "LeadActivity",
-      "class": "Stackra\\Growth\\Leads\\Policies\\LeadActivityPolicy",
+      "class": "Academorix\\Growth\\Leads\\Policies\\LeadActivityPolicy",
       "abilities": [
         {
           "action": "viewAny",
@@ -68,7 +68,7 @@
     },
     {
       "model": "LeadTask",
-      "class": "Stackra\\Growth\\Leads\\Policies\\LeadTaskPolicy",
+      "class": "Academorix\\Growth\\Leads\\Policies\\LeadTaskPolicy",
       "abilities": [
         {
           "action": "viewAny",

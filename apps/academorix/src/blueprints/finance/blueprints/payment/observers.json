@@ -1,12 +1,12 @@
 {
-  "id": "stackra://modules/payment/observers",
+  "id": "academorix://modules/payment/observers",
   "$version": 1,
   "title": "payment — Eloquent observers",
   "description": "Four observers enforce the module's write-time invariants: (1) PaymentObserver enforces the parent-invoice + succeeded-intent contract + immutability + the three atomic side effects (Transaction.record + Invoice.mark_paid + marketing capture). (2) PaymentMethodObserver enforces the entitlement gate + fingerprint deduplication + PCI-DSS scope (no PAN). (3) PaymentIntentObserver enforces the state machine (one-way transitions) + 3DS2 gate + encryption. (4) PaymentDisputeObserver enforces the dispute lifecycle + evidence collection + escalation.",
   "observers": [
     {
       "model": "Payment",
-      "observer": "Stackra\\Finance\\Payment\\Observers\\PaymentObserver",
+      "observer": "Academorix\\Finance\\Payment\\Observers\\PaymentObserver",
       "handles": [
         "creating → populate ULID prefix `pay_`",
         "creating → refuse without parent invoice (returns `PAYMENT_MISSING_INVOICE`)",
@@ -31,7 +31,7 @@
     },
     {
       "model": "PaymentMethod",
-      "observer": "Stackra\\Finance\\Payment\\Observers\\PaymentMethodObserver",
+      "observer": "Academorix\\Finance\\Payment\\Observers\\PaymentMethodObserver",
       "handles": [
         "creating → populate ULID prefix `pmt_`",
         "creating → refuse when tenant does NOT hold `payment_capture` entitlement (returns `PAYMENT_FEATURE_NOT_ENTITLED`)",
@@ -60,7 +60,7 @@
     },
     {
       "model": "PaymentIntent",
-      "observer": "Stackra\\Finance\\Payment\\Observers\\PaymentIntentObserver",
+      "observer": "Academorix\\Finance\\Payment\\Observers\\PaymentIntentObserver",
       "handles": [
         "creating → populate ULID prefix `pit_`",
         "creating → refuse when tenant does NOT hold `payment_capture` entitlement",
@@ -89,7 +89,7 @@
     },
     {
       "model": "PaymentDispute",
-      "observer": "Stackra\\Finance\\Payment\\Observers\\PaymentDisputeObserver",
+      "observer": "Academorix\\Finance\\Payment\\Observers\\PaymentDisputeObserver",
       "handles": [
         "creating → populate ULID prefix `pdi_`",
         "creating → refuse when tenant does NOT hold `payment_dispute_management` entitlement (returns `PAYMENT_DISPUTE_MANAGEMENT_NOT_ENTITLED`)",

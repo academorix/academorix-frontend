@@ -4,7 +4,7 @@
 
 ## Implementation plan
 
-Marketplace fee = Stackra platform take-rate. Every tenant-collected payment
+Marketplace fee = Academorix platform take-rate. Every tenant-collected payment
 carries a `platform_fee_minor` that Stripe routes to the platform account via
 Stripe Connect's `application_fee_amount` parameter.
 
@@ -28,7 +28,7 @@ read + platform-admin read/write).
 - `ListMarketplaceFeeAction` — GET fees collected on this tenant.
 - `ShowMarketplaceFeeAction`
 - `RefundMarketplaceFeeAction` — POST admin refund of a fee (used when
-  Stackra waives a fee after the fact).
+  Academorix waives a fee after the fact).
 - Platform actions — cross-tenant analytics.
 
 ### Support services

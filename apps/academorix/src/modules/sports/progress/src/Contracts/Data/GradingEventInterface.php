@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Progress\Contracts\Data;
+namespace Academorix\Progress\Contracts\Data;
 
 use Illuminate\Container\Attributes\Bind;
-use Stackra\Progress\Models\GradingEvent;
+use Academorix\Progress\Models\GradingEvent;
 
 /**
  * Table shape for the `grading_events` table.

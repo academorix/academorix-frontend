@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Rbac\Exceptions;
 
-use Stackra\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Role name failed the `valid_role_name` rule (snake_case, max 128 chars, no reserved prefix).
@@ -15,7 +15,7 @@ use Stackra\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class InvalidRoleNameException extends AcademorixException
+final class InvalidRoleNameException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

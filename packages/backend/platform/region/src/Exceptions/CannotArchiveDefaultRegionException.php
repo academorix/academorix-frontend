@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Region\Exceptions;
 
-use Stackra\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Same reasoning as CANNOT_DELETE_DEFAULT_REGION but for archive.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class CannotArchiveDefaultRegionException extends AcademorixException
+final class CannotArchiveDefaultRegionException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

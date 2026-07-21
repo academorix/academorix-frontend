@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Grants\Exceptions;
 
-use Stackra\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * An active grant with the same (subject, resource, permissions, decision) tuple already exists.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class GrantDuplicateActiveException extends AcademorixException
+final class GrantDuplicateActiveException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

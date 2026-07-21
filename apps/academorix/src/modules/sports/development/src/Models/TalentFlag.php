@@ -4,16 +4,16 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Development\Models;
+namespace Academorix\Development\Models;
 
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
-use Stackra\Development\Contracts\Data\TalentFlagInterface;
-use Stackra\Development\Database\Factories\TalentFlagFactory;
-use Stackra\Athlete\Concerns\BelongsToAthlete;
+use Academorix\Development\Contracts\Data\TalentFlagInterface;
+use Academorix\Development\Database\Factories\TalentFlagFactory;
+use Academorix\Athlete\Concerns\BelongsToAthlete;
 use Stackra\Foundation\Concerns\HasMetadata;
 use Stackra\Foundation\Concerns\HasPrefixedUlid;
 use Stackra\Tenancy\Concerns\BelongsToTenant;

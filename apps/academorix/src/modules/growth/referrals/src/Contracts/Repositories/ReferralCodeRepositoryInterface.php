@@ -4,17 +4,17 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Referrals\Contracts\Repositories;
+namespace Academorix\Referrals\Contracts\Repositories;
 
 use Stackra\Crud\Contracts\RepositoryInterface;
 
 /**
- * Repository contract for {@see Stackra\Referrals\Models\ReferralCode}.
+ * Repository contract for {@see Academorix\Referrals\Models\ReferralCode}.
  *
  * Consumers type-hint the interface; the container binds the concrete
  * via `#[AsRepository]` on `ReferralCodeRepository`.
  *
- * @extends RepositoryInterface<\Stackra\Referrals\Models\ReferralCode>
+ * @extends RepositoryInterface<\Academorix\Referrals\Models\ReferralCode>
  *
  * @category Referrals
  *

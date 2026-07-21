@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/progress/settings",
+  "id": "academorix://modules/progress/settings",
   "$version": 1,
   "title": "progress — tenant-editable settings",
   "description": "Settings this module registers against the settings substrate.",

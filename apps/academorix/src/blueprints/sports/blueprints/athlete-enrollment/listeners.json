@@ -1,70 +1,70 @@
 {
-  "id": "stackra://modules/athlete-enrollment/listeners",
+  "id": "academorix://modules/athlete-enrollment/listeners",
   "$version": 1,
   "title": "athlete-enrollment — subscribed events",
   "listeners": [
     {
       "event": "athlete::AthleteArchived (pre-write)",
-      "listener": "Stackra\\Sports\\AthleteEnrollment\\Listeners\\PreventEnrollmentOrphansOnAthleteArchived",
+      "listener": "Academorix\\Sports\\AthleteEnrollment\\Listeners\\PreventEnrollmentOrphansOnAthleteArchived",
       "queue": "athlete-enrollment",
       "priority": 30,
       "purpose": "Refuses athlete archive when active enrollments exist."
     },
     {
       "event": "athlete::AthleteWithdrawn",
-      "listener": "Stackra\\Sports\\AthleteEnrollment\\Listeners\\CancelEnrollmentsOnAthleteWithdrawn",
+      "listener": "Academorix\\Sports\\AthleteEnrollment\\Listeners\\CancelEnrollmentsOnAthleteWithdrawn",
       "queue": "athlete-enrollment",
       "purpose": "Cascade — transitions active enrollments to withdrawn. Fires only when cascade=true on the athlete withdraw route."
     },
     {
       "event": "athlete::AthleteGraduated",
-      "listener": "Stackra\\Sports\\AthleteEnrollment\\Listeners\\CompleteEnrollmentsOnAthleteGraduated",
+      "listener": "Academorix\\Sports\\AthleteEnrollment\\Listeners\\CompleteEnrollmentsOnAthleteGraduated",
       "queue": "athlete-enrollment",
       "purpose": "Cascade — transitions active enrollments to completed. Fires only when cascade=true on the athlete graduate route."
     },
     {
       "event": "teams::TeamArchived (pre-write)",
-      "listener": "Stackra\\Sports\\AthleteEnrollment\\Listeners\\PreventEnrollmentOrphansOnTeamArchived",
+      "listener": "Academorix\\Sports\\AthleteEnrollment\\Listeners\\PreventEnrollmentOrphansOnTeamArchived",
       "queue": "athlete-enrollment",
       "priority": 30,
       "purpose": "Refuses team archive when active enrollments exist."
     },
     {
       "event": "season::SeasonArchived (pre-write)",
-      "listener": "Stackra\\Sports\\AthleteEnrollment\\Listeners\\PreventEnrollmentOrphansOnSeasonArchived",
+      "listener": "Academorix\\Sports\\AthleteEnrollment\\Listeners\\PreventEnrollmentOrphansOnSeasonArchived",
       "queue": "athlete-enrollment",
       "priority": 30,
       "purpose": "Refuses season archive when active enrollments exist."
     },
     {
       "event": "season::SeasonCompleted",
-      "listener": "Stackra\\Sports\\AthleteEnrollment\\Listeners\\CompleteEnrollmentsOnSeasonCompleted",
+      "listener": "Academorix\\Sports\\AthleteEnrollment\\Listeners\\CompleteEnrollmentsOnSeasonCompleted",
       "queue": "athlete-enrollment",
       "purpose": "Cascade — every active enrollment in the completed season transitions to completed."
     },
     {
       "event": "season::SeasonStarted",
-      "listener": "Stackra\\Sports\\AthleteEnrollment\\Listeners\\ActivateConfirmedEnrollmentsOnSeasonStarted",
+      "listener": "Academorix\\Sports\\AthleteEnrollment\\Listeners\\ActivateConfirmedEnrollmentsOnSeasonStarted",
       "queue": "athlete-enrollment",
       "purpose": "Cascade — every confirmed enrollment for the started season transitions to active (via atomic conversion)."
     },
     {
       "event": "athlete-enrollment::EnrollmentActivated",
-      "listener": "Stackra\\Sports\\AthleteEnrollment\\Listeners\\ConvertEnrollmentToTeamMemberAtomically",
+      "listener": "Academorix\\Sports\\AthleteEnrollment\\Listeners\\ConvertEnrollmentToTeamMemberAtomically",
       "queue": "athlete-enrollment",
       "priority": 10,
       "purpose": "The atomic-conversion hook. Runs BEFORE all other listeners on this event."
     },
     {
       "event": "athlete-enrollment::EnrollmentSubmitted",
-      "listener": "Stackra\\Sports\\AthleteEnrollment\\Listeners\\SnapshotAgeGroupOnEnrollmentSubmitted",
+      "listener": "Academorix\\Sports\\AthleteEnrollment\\Listeners\\SnapshotAgeGroupOnEnrollmentSubmitted",
       "queue": "athlete-enrollment",
       "priority": 15,
       "purpose": "In-band age-group snapshot resolution."
     },
     {
       "event": "tenancy::TenantErased",
-      "listener": "Stackra\\Sports\\AthleteEnrollment\\Listeners\\PurgeAthleteEnrollmentDataForErasedTenant",
+      "listener": "Academorix\\Sports\\AthleteEnrollment\\Listeners\\PurgeAthleteEnrollmentDataForErasedTenant",
       "queue": "athlete-enrollment",
       "purpose": "Cascade delete via FK."
     }

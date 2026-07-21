@@ -4,19 +4,19 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Match\Database\Factories;
+namespace Academorix\Match\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Stackra\Match\Contracts\Data\OpponentLogoInterface;
-use Stackra\Match\Models\OpponentLogo;
+use Academorix\Match\Contracts\Data\OpponentLogoInterface;
+use Academorix\Match\Models\OpponentLogo;
 
 /**
- * Factory for {@see \Stackra\Match\Models\OpponentLogo}.
+ * Factory for {@see \Academorix\Match\Models\OpponentLogo}.
  *
  * Auto-generated skeleton — extend with named states as domain
  * cases emerge (e.g. `->published()`, `->overdue()`, `->archived()`).
  *
- * @extends Factory<\Stackra\Match\Models\OpponentLogo>
+ * @extends Factory<\Academorix\Match\Models\OpponentLogo>
  *
  * @category Match
  *

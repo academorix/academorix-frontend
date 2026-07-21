@@ -1,12 +1,12 @@
 {
-  "id": "stackra://modules/athlete-guardian/broadcasts",
+  "id": "academorix://modules/athlete-guardian/broadcasts",
   "$version": 1,
   "title": "athlete-guardian — realtime broadcast channels",
   "description": "Three broadcast channel families: tenant-level for HR + safeguarding dashboards, athlete-level for co-guardians watching a shared roster, user-level for guardians tracking their own guardianship changes.",
   "channels": [
     {
       "name": "tenant.{tenantId}.guardians",
-      "class": "Stackra\\Sports\\AthleteGuardian\\Broadcasts\\TenantGuardiansChannel",
+      "class": "Academorix\\Sports\\AthleteGuardian\\Broadcasts\\TenantGuardiansChannel",
       "description": "Tenant-wide guardian lifecycle stream. Sink for HR + safeguarding dashboards.",
       "authorization": "sanctum::authed AND tenant_matches AND permission `athlete_guardians.viewAny`",
       "events": [
@@ -23,7 +23,7 @@
     },
     {
       "name": "athlete.{athleteId}.guardians",
-      "class": "Stackra\\Sports\\AthleteGuardian\\Broadcasts\\AthleteGuardiansChannel",
+      "class": "Academorix\\Sports\\AthleteGuardian\\Broadcasts\\AthleteGuardiansChannel",
       "description": "Per-athlete guardian activity. Powers the co-guardian roster view.",
       "authorization": "sanctum::authed AND (permission `athlete_guardians.view` scoped to athlete OR active guardian for this athlete)",
       "events": [
@@ -37,7 +37,7 @@
     },
     {
       "name": "user.{userId}.guardianships",
-      "class": "Stackra\\Sports\\AthleteGuardian\\Broadcasts\\UserGuardianshipsChannel",
+      "class": "Academorix\\Sports\\AthleteGuardian\\Broadcasts\\UserGuardianshipsChannel",
       "description": "Per-user guardianship stream — powers the /me/guardianships live widget.",
       "authorization": "sanctum::authed AND user_matches",
       "events": [

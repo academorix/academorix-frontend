@@ -4,11 +4,11 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Match\Services;
+namespace Academorix\Match\Services;
 
-use Stackra\Match\Contracts\Services\MatchStateTransitionValidatorInterface;
+use Academorix\Match\Contracts\Services\MatchStateTransitionValidatorInterface;
 use Illuminate\Container\Attributes\Scoped;
-use Stackra\Match\Contracts\Repositories\MatchEventRepositoryInterface;
+use Academorix\Match\Contracts\Repositories\MatchEventRepositoryInterface;
 
 /**
  * Concrete service — MatchStateTransitionValidator.

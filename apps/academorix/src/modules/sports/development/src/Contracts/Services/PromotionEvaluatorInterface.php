@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Development\Contracts\Services;
+namespace Academorix\Development\Contracts\Services;
 
-use Stackra\Development\Services\PromotionEvaluator;
+use Academorix\Development\Services\PromotionEvaluator;
 use Illuminate\Container\Attributes\Bind;
 
 /**

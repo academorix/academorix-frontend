@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\ServiceAccounts\Exceptions;
 
-use Stackra\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Generic token-exchange failure: unknown SA-ID, wrong secret, disabled SA, expired secret — all four cases return this single payload with no distinguishing signal.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class InvalidServiceAccountCredentialsException extends AcademorixException
+final class InvalidServiceAccountCredentialsException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

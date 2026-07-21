@@ -4,11 +4,11 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Event\Services;
+namespace Academorix\Event\Services;
 
-use Stackra\Event\Contracts\Services\EventEligibilityEvaluatorInterface;
+use Academorix\Event\Contracts\Services\EventEligibilityEvaluatorInterface;
 use Illuminate\Container\Attributes\Scoped;
-use Stackra\Event\Contracts\Repositories\CalendarSubscriptionRepositoryInterface;
+use Academorix\Event\Contracts\Repositories\CalendarSubscriptionRepositoryInterface;
 
 /**
  * Concrete service — EventEligibilityEvaluator.

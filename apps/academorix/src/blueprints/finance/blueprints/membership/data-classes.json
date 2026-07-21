@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/membership/data-classes",
+  "id": "academorix://modules/membership/data-classes",
   "$version": 1,
   "title": "membership — field classification",
   "description": "Membership tables carry mostly internal-tier structural + financial data. Confidential fields include cancellation_reason (business-sensitive), failure_reason (payment gateway hints). Financial signals (price_snapshot_cents, lifetime_value_cents) are internal + audit-critical.",

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Stackra\Domains\Exceptions;
 
-use Stackra\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Raised when a caller attempts to delete the tenant's last primary
@@ -15,7 +15,7 @@ use Stackra\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class LastPrimaryDomainException extends AcademorixException
+final class LastPrimaryDomainException extends StackraException
 {
     public const CODE = 'domains.last_primary';
 

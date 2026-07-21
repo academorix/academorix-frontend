@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Competition\Contracts\Services;
+namespace Academorix\Competition\Contracts\Services;
 
-use Stackra\Competition\Services\BracketGenerator;
+use Academorix\Competition\Services\BracketGenerator;
 use Illuminate\Container\Attributes\Bind;
 
 /**

@@ -4,14 +4,14 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Performance\Data;
+namespace Academorix\Performance\Data;
 
 use Spatie\LaravelData\Attributes\MapInputName;
 use Spatie\LaravelData\Data;
 use Spatie\LaravelData\Mappers\SnakeCaseMapper;
 
 /**
- * Server-side output DTO for {@see \Stackra\Performance\Models\PerformanceTest}.
+ * Server-side output DTO for {@see \Academorix\Performance\Models\PerformanceTest}.
  *
  * Consumed by controllers + services on the SERVER side. This is
  * distinct from the wire SDK's DTO (which sits under

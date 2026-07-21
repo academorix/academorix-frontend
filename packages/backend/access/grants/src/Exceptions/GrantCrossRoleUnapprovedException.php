@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Grants\Exceptions;
 
-use Stackra\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Cross-role grants (grantor lacks the permission) require the `cross_role_grants` entitlement AND a matching workflow/approvals template.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class GrantCrossRoleUnapprovedException extends AcademorixException
+final class GrantCrossRoleUnapprovedException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

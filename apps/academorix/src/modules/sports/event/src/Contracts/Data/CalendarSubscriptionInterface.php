@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Event\Contracts\Data;
+namespace Academorix\Event\Contracts\Data;
 
 use Illuminate\Container\Attributes\Bind;
-use Stackra\Event\Models\CalendarSubscription;
+use Academorix\Event\Models\CalendarSubscription;
 
 /**
  * Table shape for the `calendar_subscriptions` table.

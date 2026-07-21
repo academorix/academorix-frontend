@@ -4,17 +4,17 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Competition\Contracts\Repositories;
+namespace Academorix\Competition\Contracts\Repositories;
 
 use Stackra\Crud\Contracts\RepositoryInterface;
 
 /**
- * Repository contract for {@see Stackra\Competition\Models\StandingRow}.
+ * Repository contract for {@see Academorix\Competition\Models\StandingRow}.
  *
  * Consumers type-hint the interface; the container binds the concrete
  * via `#[AsRepository]` on `StandingRowRepository`.
  *
- * @extends RepositoryInterface<\Stackra\Competition\Models\StandingRow>
+ * @extends RepositoryInterface<\Academorix\Competition\Models\StandingRow>
  *
  * @category Competition
  *

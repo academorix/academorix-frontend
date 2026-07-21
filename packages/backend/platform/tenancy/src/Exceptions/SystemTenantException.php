@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Stackra\Tenancy\Exceptions;
 
-use Stackra\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Raised when a mutation targets a row with `is_system = true`.
@@ -17,7 +17,7 @@ use Stackra\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class SystemTenantException extends AcademorixException
+final class SystemTenantException extends StackraException
 {
     public const CODE = 'tenancy.system_row_refused';
 

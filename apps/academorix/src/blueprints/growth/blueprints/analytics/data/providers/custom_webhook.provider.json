@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/analytics/data/providers/custom_webhook",
+  "id": "academorix://modules/analytics/data/providers/custom_webhook",
   "$version": 1,
   "provider": "custom_webhook",
   "displayName": "Custom Webhook",

@@ -1,12 +1,12 @@
 {
-  "id": "stackra://modules/attendance/observers",
+  "id": "academorix://modules/attendance/observers",
   "$version": 1,
   "title": "attendance — Eloquent observers",
   "description": "Four observers enforce every write-time invariant: entitlement checks, cross-tenant defense-in-depth, atomic Pass consumption + refund, state-machine transitions, immutability of session/athlete/enrollment, policy resolution, threshold cascades, and geofence validation. Atomic pass-consumption logic is delegated to AttendanceOrchestrator binding — the observer only knows *whether* to consume; the orchestrator encapsulates *how* (DB transaction + SELECT ... FOR UPDATE + Pass.consume() + event fire).",
   "observers": [
     {
       "model": "AttendanceRecord",
-      "observer": "Stackra\\Sports\\Attendance\\Observers\\AttendanceRecordObserver",
+      "observer": "Academorix\\Sports\\Attendance\\Observers\\AttendanceRecordObserver",
       "handles": [
         "creating → populate ULID prefix `atd_`",
         "creating → refuse when tenant does NOT hold `attendance_capture` entitlement (returns `ATTENDANCE_CAPTURE_NOT_ENTITLED`)",
@@ -62,7 +62,7 @@
     },
     {
       "model": "AttendancePolicy",
-      "observer": "Stackra\\Sports\\Attendance\\Observers\\AttendancePolicyObserver",
+      "observer": "Academorix\\Sports\\Attendance\\Observers\\AttendancePolicyObserver",
       "handles": [
         "creating → populate ULID prefix `apo_`",
         "creating → refuse when tenant does NOT hold `attendance_capture` entitlement",
@@ -89,7 +89,7 @@
     },
     {
       "model": "AbsenceRecord",
-      "observer": "Stackra\\Sports\\Attendance\\Observers\\AbsenceRecordObserver",
+      "observer": "Academorix\\Sports\\Attendance\\Observers\\AbsenceRecordObserver",
       "handles": [
         "creating → populate ULID prefix `abs_`",
         "creating → refuse when tenant does NOT hold `attendance_capture` entitlement",
@@ -116,7 +116,7 @@
     },
     {
       "model": "LateArrival",
-      "observer": "Stackra\\Sports\\Attendance\\Observers\\LateArrivalObserver",
+      "observer": "Academorix\\Sports\\Attendance\\Observers\\LateArrivalObserver",
       "handles": [
         "creating → populate ULID prefix `lat_`",
         "creating → refuse without parent AttendanceRecord.status IN ('late', 'left_early') (returns `LATE_ARRIVAL_NOT_APPLICABLE`)",

@@ -4,11 +4,11 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Coaching\Actions\Tenant;
+namespace Academorix\Coaching\Actions\Tenant;
 
-use Stackra\Coaching\Contracts\Repositories\CoachCertificationRepositoryInterface;
-use Stackra\Coaching\Data\CoachCertificationData;
-use Stackra\Coaching\Data\Requests\CreateCoachCertificationRequestData;
+use Academorix\Coaching\Contracts\Repositories\CoachCertificationRepositoryInterface;
+use Academorix\Coaching\Data\CoachCertificationData;
+use Academorix\Coaching\Data\Requests\CreateCoachCertificationRequestData;
 use Stackra\Routing\Attributes\AsAction;
 use Stackra\Routing\Attributes\Middleware;
 use Stackra\Routing\Concerns\AsController;

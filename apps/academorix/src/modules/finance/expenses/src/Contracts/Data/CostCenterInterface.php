@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Expenses\Contracts\Data;
+namespace Academorix\Expenses\Contracts\Data;
 
 use Illuminate\Container\Attributes\Bind;
-use Stackra\Expenses\Models\CostCenter;
+use Academorix\Expenses\Models\CostCenter;
 
 /**
  * Table shape for the `cost_centers` table.

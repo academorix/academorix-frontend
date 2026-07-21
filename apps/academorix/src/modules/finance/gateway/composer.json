@@ -1,10 +1,10 @@
 {
-  "name": "stackra/gateway",
+  "name": "academorix/gateway",
   "type": "library",
-  "description": "Stackra Gateway module — server-side Laravel package emitted from the module blueprint at `modules/finance/blueprints/gateway/`. Complements the wire SDK at `stackra-finance/gateway-sdk`.",
+  "description": "Academorix Gateway module — server-side Laravel package emitted from the module blueprint at `modules/finance/blueprints/gateway/`. Complements the wire SDK at `academorix-finance/gateway-sdk`.",
   "license": "proprietary",
   "keywords": [
-    "stackra",
+    "academorix",
     "module",
     "laravel",
     "finance",
@@ -22,7 +22,7 @@
     "stackra/routing": "@dev",
     "stackra/service-provider": "@dev",
     "stackra/support": "@dev",
-    "stackra-finance/gateway-sdk": "@dev"
+    "academorix-finance/gateway-sdk": "@dev"
   },
   "require-dev": {
     "orchestra/testbench": "^11.0",
@@ -33,12 +33,12 @@
   },
   "autoload": {
     "psr-4": {
-      "Stackra\\Gateway\\": "src/"
+      "Academorix\\Gateway\\": "src/"
     }
   },
   "autoload-dev": {
     "psr-4": {
-      "Stackra\\Gateway\\Tests\\": "tests/"
+      "Academorix\\Gateway\\Tests\\": "tests/"
     }
   },
   "extra": {

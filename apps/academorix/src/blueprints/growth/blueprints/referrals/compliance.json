@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/referrals/compliance",
+  "id": "academorix://modules/referrals/compliance",
   "$version": 1,
   "title": "referrals — compliance evidence",
   "description": "Referrals module is financial-record-adjacent (every reward is 1099-reportable when > $600 US) + PII-adjacent (referred email captured pre-signup) + advertising-adjacent (feeds marketing conversion events) + fraud-audit-relevant (every flag retained 7y). GDPR (Art. 5, 6, 17, 22), CAN-SPAM Act (invitation emails), US tax law (1099 reporting), SOC 2 CC6.3 (segregation of duties), ISO 27001 Annex A (fraud audit).",
@@ -100,7 +100,7 @@
         {
           "criterion": "CC7.2",
           "principle": "system monitoring",
-          "evidence": "ReferralFraudDetected is a P1 signal + tracked via stackra.referrals.fraud_flags_created_total counter. ReferralProgramBudgetSpike is a P2 signal (viral traction vs fraud storm — admin decides). Every ReferralClawback event fires notifications + audit rows."
+          "evidence": "ReferralFraudDetected is a P1 signal + tracked via academorix.referrals.fraud_flags_created_total counter. ReferralProgramBudgetSpike is a P2 signal (viral traction vs fraud storm — admin decides). Every ReferralClawback event fires notifications + audit rows."
         },
         {
           "criterion": "CC9.1",

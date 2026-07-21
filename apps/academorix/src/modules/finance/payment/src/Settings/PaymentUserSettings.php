@@ -4,7 +4,7 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Payment\Settings;
+namespace Academorix\Payment\Settings;
 
 use Stackra\Settings\Attributes\AsSetting;
 use Stackra\Settings\Attributes\SettingField;

@@ -7,7 +7,7 @@ namespace Stackra\SportsMedicalSdk\Tests;
 use Orchestra\Testbench\TestCase as OrchestraTestCase;
 
 /**
- * Base test case for stackra-sports/medical-sdk.
+ * Base test case for academorix-sports/medical-sdk.
  *
  * @category MedicalSdk
  *

@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Geofencing\Contracts\Services;
+namespace Academorix\Geofencing\Contracts\Services;
 
-use Stackra\Geofencing\Services\FenceableResolver;
+use Academorix\Geofencing\Services\FenceableResolver;
 use Illuminate\Container\Attributes\Bind;
 
 /**

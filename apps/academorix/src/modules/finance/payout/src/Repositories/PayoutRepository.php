@@ -4,25 +4,25 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Payout\Repositories;
+namespace Academorix\Payout\Repositories;
 
 use Stackra\Crud\Attributes\AsRepository;
 use Stackra\Crud\Attributes\Cacheable;
 use Stackra\Crud\Attributes\Filterable;
 use Stackra\Crud\Attributes\UseModel;
 use Stackra\Crud\Repositories\Repository;
-use Stackra\Payout\Contracts\Data\PayoutInterface;
-use Stackra\Payout\Contracts\Repositories\PayoutRepositoryInterface;
-use Stackra\Payout\Models\Payout;
+use Academorix\Payout\Contracts\Data\PayoutInterface;
+use Academorix\Payout\Contracts\Repositories\PayoutRepositoryInterface;
+use Academorix\Payout\Models\Payout;
 
 /**
- * Attribute-first Eloquent repository for {@see Stackra\Payout\Models\Payout}.
+ * Attribute-first Eloquent repository for {@see Academorix\Payout\Models\Payout}.
  *
  * Bound to the interface via `#[AsRepository]`; the model comes from
  * `#[UseModel(PayoutInterface::class)]` which resolves to
  * `Payout` through the interface's `#[Bind]`.
  *
- * @extends Repository<\Stackra\Payout\Models\Payout>
+ * @extends Repository<\Academorix\Payout\Models\Payout>
  *
  * @category Payout
  *

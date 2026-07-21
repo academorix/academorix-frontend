@@ -1,59 +1,59 @@
 {
-  "id": "stackra://modules/session/listeners",
+  "id": "academorix://modules/session/listeners",
   "$version": 1,
   "title": "session — subscribed events",
   "listeners": [
     {
       "event": "tenancy::TenantErased",
-      "listener": "Stackra\\Sports\\Session\\Listeners\\PreventSessionOrphansOnTenantErased",
+      "listener": "Academorix\\Sports\\Session\\Listeners\\PreventSessionOrphansOnTenantErased",
       "queue": null,
       "purpose": "See hooks.json — same class registered as both listener + hook."
     },
     {
       "event": "facility::FacilityRetired",
-      "listener": "Stackra\\Sports\\Session\\Listeners\\CancelSessionsOnFacilityRetired",
+      "listener": "Academorix\\Sports\\Session\\Listeners\\CancelSessionsOnFacilityRetired",
       "queue": "sports",
       "purpose": "Cascade auto-cancel sessions on retired facility."
     },
     {
       "event": "facility::BookingCancelled",
-      "listener": "Stackra\\Sports\\Session\\Listeners\\CancelSessionOnBookingCancelled",
+      "listener": "Academorix\\Sports\\Session\\Listeners\\CancelSessionOnBookingCancelled",
       "queue": "sports",
       "purpose": "When a resource_booking is cancelled independently of the session, auto-cancel the session too. Fires SessionCancelled with trigger='booking_cancelled_externally'."
     },
     {
       "event": "facility::BookingRescheduled",
-      "listener": "Stackra\\Sports\\Session\\Listeners\\ReflectBookingRescheduleOnSession",
+      "listener": "Academorix\\Sports\\Session\\Listeners\\ReflectBookingRescheduleOnSession",
       "queue": "sports",
       "purpose": "When a resource_booking is rescheduled (booking time changes), reflect the change on the linked session (starts_at/ends_at are derived — no update needed on session row, but fire SessionRescheduled for downstream consumers)."
     },
     {
       "event": "coaching::CoachDeactivated",
-      "listener": "Stackra\\Sports\\Session\\Listeners\\ReassignCoachOnCoachDeactivated",
+      "listener": "Academorix\\Sports\\Session\\Listeners\\ReassignCoachOnCoachDeactivated",
       "queue": "sports",
       "purpose": "Null head_coach_id + remove from assistant arrays on future sessions."
     },
     {
       "event": "athlete::AthleteDeactivated",
-      "listener": "Stackra\\Sports\\Session\\Listeners\\RemoveAthleteFromFutureSessions",
+      "listener": "Academorix\\Sports\\Session\\Listeners\\RemoveAthleteFromFutureSessions",
       "queue": "sports",
       "purpose": "When an athlete is deactivated (Wave 3+ athlete module), soft-delete their attendance rows on future sessions. Past sessions keep their attendance (safeguarding trail)."
     },
     {
       "event": "team::TeamDisbanded",
-      "listener": "Stackra\\Sports\\Session\\Listeners\\CancelFutureTeamSessionsOnTeamDisbanded",
+      "listener": "Academorix\\Sports\\Session\\Listeners\\CancelFutureTeamSessionsOnTeamDisbanded",
       "queue": "sports",
       "purpose": "When a Team (Wave 2b) is disbanded, cancel all future sessions where team_id points at it. Past sessions retained."
     },
     {
       "event": "season::SeasonCompleted",
-      "listener": "Stackra\\Sports\\Session\\Listeners\\FlagOrphanFutureSessionsOnSeasonCompleted",
+      "listener": "Academorix\\Sports\\Session\\Listeners\\FlagOrphanFutureSessionsOnSeasonCompleted",
       "queue": "low",
       "purpose": "When a season completes, scan for future sessions that reference the season and warn the admin. Does not auto-cancel (the tenant decides)."
     },
     {
       "event": "entitlements::EntitlementDowngrade",
-      "listener": "Stackra\\Sports\\Session\\Listeners\\FlagSessionFeatureDriftOnDowngrade",
+      "listener": "Academorix\\Sports\\Session\\Listeners\\FlagSessionFeatureDriftOnDowngrade",
       "queue": "low",
       "purpose": "When tenant downgrades + loses session_private_lessons / session_coach_ratings / session_lesson_plans, flag the drift + surface in admin UI."
     }

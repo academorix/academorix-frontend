@@ -25,18 +25,18 @@
 
 declare(strict_types=1);
 
-namespace Stackra\PlatformApplicationSdk\Resources;
+namespace Academorix\PlatformApplicationSdk\Resources;
 
 use Stackra\ApiSdk\Client\ApiConnector;
 use Stackra\ApiSdk\Data\PaginatedResponse;
-use Stackra\PlatformApplicationSdk\Data\BusinessTypeData;
-use Stackra\PlatformApplicationSdk\Payloads\BusinessTypes\CreateBusinessTypePayload;
-use Stackra\PlatformApplicationSdk\Payloads\BusinessTypes\UpdateBusinessTypePayload;
-use Stackra\PlatformApplicationSdk\Requests\BusinessTypes\CreateBusinessTypeRequest;
-use Stackra\PlatformApplicationSdk\Requests\BusinessTypes\DeleteBusinessTypeRequest;
-use Stackra\PlatformApplicationSdk\Requests\BusinessTypes\ListBusinessTypesRequest;
-use Stackra\PlatformApplicationSdk\Requests\BusinessTypes\ShowBusinessTypeRequest;
-use Stackra\PlatformApplicationSdk\Requests\BusinessTypes\UpdateBusinessTypeRequest;
+use Academorix\PlatformApplicationSdk\Data\BusinessTypeData;
+use Academorix\PlatformApplicationSdk\Payloads\BusinessTypes\CreateBusinessTypePayload;
+use Academorix\PlatformApplicationSdk\Payloads\BusinessTypes\UpdateBusinessTypePayload;
+use Academorix\PlatformApplicationSdk\Requests\BusinessTypes\CreateBusinessTypeRequest;
+use Academorix\PlatformApplicationSdk\Requests\BusinessTypes\DeleteBusinessTypeRequest;
+use Academorix\PlatformApplicationSdk\Requests\BusinessTypes\ListBusinessTypesRequest;
+use Academorix\PlatformApplicationSdk\Requests\BusinessTypes\ShowBusinessTypeRequest;
+use Academorix\PlatformApplicationSdk\Requests\BusinessTypes\UpdateBusinessTypeRequest;
 
 /**
  * Platform-admin BusinessType catalogue surface — full CRUD.

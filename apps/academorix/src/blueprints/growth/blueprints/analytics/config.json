@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/analytics/config",
+  "id": "academorix://modules/analytics/config",
   "$version": 1,
   "title": "analytics — developer configuration",
   "description": "Deploy-static configuration. Mirrors `config/analytics.php`. Governs capture pipeline, retry policy, sampling defaults, consent enforcement, attribution snapshot behavior, retention windows, batching defaults per provider.",

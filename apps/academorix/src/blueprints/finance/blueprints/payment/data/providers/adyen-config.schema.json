@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/payment/data/providers/adyen-config",
+  "id": "academorix://modules/payment/data/providers/adyen-config",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "Adyen provider config",

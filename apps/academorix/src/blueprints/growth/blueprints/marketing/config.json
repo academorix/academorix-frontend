@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/marketing/config",
+  "id": "academorix://modules/marketing/config",
   "$version": 1,
   "title": "marketing — developer configuration",
   "configFile": "config/marketing.php",

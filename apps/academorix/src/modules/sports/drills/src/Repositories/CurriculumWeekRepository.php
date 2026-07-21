@@ -4,25 +4,25 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Drills\Repositories;
+namespace Academorix\Drills\Repositories;
 
 use Stackra\Crud\Attributes\AsRepository;
 use Stackra\Crud\Attributes\Cacheable;
 use Stackra\Crud\Attributes\Filterable;
 use Stackra\Crud\Attributes\UseModel;
 use Stackra\Crud\Repositories\Repository;
-use Stackra\Drills\Contracts\Data\CurriculumWeekInterface;
-use Stackra\Drills\Contracts\Repositories\CurriculumWeekRepositoryInterface;
-use Stackra\Drills\Models\CurriculumWeek;
+use Academorix\Drills\Contracts\Data\CurriculumWeekInterface;
+use Academorix\Drills\Contracts\Repositories\CurriculumWeekRepositoryInterface;
+use Academorix\Drills\Models\CurriculumWeek;
 
 /**
- * Attribute-first Eloquent repository for {@see Stackra\Drills\Models\CurriculumWeek}.
+ * Attribute-first Eloquent repository for {@see Academorix\Drills\Models\CurriculumWeek}.
  *
  * Bound to the interface via `#[AsRepository]`; the model comes from
  * `#[UseModel(CurriculumWeekInterface::class)]` which resolves to
  * `CurriculumWeek` through the interface's `#[Bind]`.
  *
- * @extends Repository<\Stackra\Drills\Models\CurriculumWeek>
+ * @extends Repository<\Academorix\Drills\Models\CurriculumWeek>
  *
  * @category Drills
  *

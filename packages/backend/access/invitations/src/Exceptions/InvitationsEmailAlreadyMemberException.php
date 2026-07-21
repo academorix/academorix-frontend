@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Invitations\Exceptions;
 
-use Stackra\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Preflight validator on the target refused: the invitee is already a member.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class InvitationsEmailAlreadyMemberException extends AcademorixException
+final class InvitationsEmailAlreadyMemberException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

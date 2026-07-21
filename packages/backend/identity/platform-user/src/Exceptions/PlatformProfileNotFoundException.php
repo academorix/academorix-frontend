@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\PlatformUser\Exceptions;
 
-use Stackra\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Raised when the domain rule `PLATFORM_PROFILE_NOT_FOUND` fires.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class PlatformProfileNotFoundException extends AcademorixException
+final class PlatformProfileNotFoundException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/athlete-guardian/retention",
+  "id": "academorix://modules/athlete-guardian/retention",
   "$version": 1,
   "title": "athlete-guardian — retention windows",
   "description": "Active + pending + disputed guardians retain for the lifetime of the parent Athlete. Revoked guardians retain 7 years for audit (compliance-critical). Soft-deleted guardians: 7-year retention from deleted_at then hard-purge. Athlete hard-delete cascades to all guardian rows regardless of retention state.",

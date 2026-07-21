@@ -2,18 +2,18 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Coupon\Services;
+namespace Academorix\Coupon\Services;
 
-use Stackra\Coupon\Contracts\Data\CouponInterface;
-use Stackra\Coupon\Contracts\Repositories\CouponRepositoryInterface;
-use Stackra\Coupon\Contracts\Services\CodeGeneratorInterface;
-use Stackra\Coupon\Contracts\Services\CouponIssuerInterface;
-use Stackra\Coupon\Enums\CouponIssuanceSource;
-use Stackra\Coupon\Events\CouponCreated;
-use Stackra\Coupon\Events\CouponIssuedByReferralProgram;
-use Stackra\Coupon\Events\CouponIssuedManually;
-use Stackra\Coupon\Exceptions\CouponDuplicateActiveCodeException;
-use Stackra\Coupon\Models\Coupon;
+use Academorix\Coupon\Contracts\Data\CouponInterface;
+use Academorix\Coupon\Contracts\Repositories\CouponRepositoryInterface;
+use Academorix\Coupon\Contracts\Services\CodeGeneratorInterface;
+use Academorix\Coupon\Contracts\Services\CouponIssuerInterface;
+use Academorix\Coupon\Enums\CouponIssuanceSource;
+use Academorix\Coupon\Events\CouponCreated;
+use Academorix\Coupon\Events\CouponIssuedByReferralProgram;
+use Academorix\Coupon\Events\CouponIssuedManually;
+use Academorix\Coupon\Exceptions\CouponDuplicateActiveCodeException;
+use Academorix\Coupon\Models\Coupon;
 use Illuminate\Container\Attributes\Scoped;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
@@ -21,7 +21,7 @@ use Illuminate\Support\Facades\Event;
 
 /**
  * Reference implementation of
- * {@see \Stackra\Coupon\Contracts\Services\CouponIssuerInterface}.
+ * {@see \Academorix\Coupon\Contracts\Services\CouponIssuerInterface}.
  *
  * Owns the create-side workflow — the write, the event dispatch, and
  * (for bulk / referral flows) the collision-free code generation.

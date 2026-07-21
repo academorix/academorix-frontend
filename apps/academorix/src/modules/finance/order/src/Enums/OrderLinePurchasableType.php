@@ -4,7 +4,7 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Order\Enums;
+namespace Academorix\Order\Enums;
 
 use Stackra\Enum\Enum;
 

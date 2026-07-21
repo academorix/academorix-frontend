@@ -4,25 +4,25 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Order\Repositories;
+namespace Academorix\Order\Repositories;
 
 use Stackra\Crud\Attributes\AsRepository;
 use Stackra\Crud\Attributes\Cacheable;
 use Stackra\Crud\Attributes\Filterable;
 use Stackra\Crud\Attributes\UseModel;
 use Stackra\Crud\Repositories\Repository;
-use Stackra\Order\Contracts\Data\OrderAdjustmentInterface;
-use Stackra\Order\Contracts\Repositories\OrderAdjustmentRepositoryInterface;
-use Stackra\Order\Models\OrderAdjustment;
+use Academorix\Order\Contracts\Data\OrderAdjustmentInterface;
+use Academorix\Order\Contracts\Repositories\OrderAdjustmentRepositoryInterface;
+use Academorix\Order\Models\OrderAdjustment;
 
 /**
- * Attribute-first Eloquent repository for {@see Stackra\Order\Models\OrderAdjustment}.
+ * Attribute-first Eloquent repository for {@see Academorix\Order\Models\OrderAdjustment}.
  *
  * Bound to the interface via `#[AsRepository]`; the model comes from
  * `#[UseModel(OrderAdjustmentInterface::class)]` which resolves to
  * `OrderAdjustment` through the interface's `#[Bind]`.
  *
- * @extends Repository<\Stackra\Order\Models\OrderAdjustment>
+ * @extends Repository<\Academorix\Order\Models\OrderAdjustment>
  *
  * @category Order
  *

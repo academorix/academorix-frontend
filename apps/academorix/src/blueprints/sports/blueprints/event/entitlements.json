@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/event/entitlements",
+  "id": "academorix://modules/event/entitlements",
   "$version": 1,
   "title": "event — declared entitlements",
   "description": "Seven entitlement keys. `sports_events` is the boolean master gate for the whole module. `event_slot` caps events per calendar year. `event_public_visibility` gates the public/tenant_only distinction (Medium+ can publish to public marketing pages). `event_livestream` gates the livestream_url/password columns (Medium+). `event_prize_pool` gates the prize_pool_cents column (Enterprise only). `event_multi_facility` gates attaching 2+ facilities to one event (Enterprise). `event_sponsors` gates the sponsors JSONB field (Enterprise).",

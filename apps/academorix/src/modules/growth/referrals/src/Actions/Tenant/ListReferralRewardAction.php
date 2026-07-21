@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Referrals\Actions\Tenant;
+namespace Academorix\Referrals\Actions\Tenant;
 
-use Stackra\Referrals\Contracts\Repositories\ReferralRewardRepositoryInterface;
-use Stackra\Referrals\Data\ReferralRewardData;
+use Academorix\Referrals\Contracts\Repositories\ReferralRewardRepositoryInterface;
+use Academorix\Referrals\Data\ReferralRewardData;
 use Stackra\Routing\Attributes\AsAction;
 use Stackra\Routing\Attributes\Middleware;
 use Stackra\Routing\Concerns\AsController;
@@ -50,7 +50,7 @@ final class ListReferralRewardAction
      */
     public function __invoke(Request $request): PaginatedDataCollection
     {
-        /** @var LengthAwarePaginator<int, \Stackra\Referrals\Models\ReferralReward> $page */
+        /** @var LengthAwarePaginator<int, \Academorix\Referrals\Models\ReferralReward> $page */
         $page = $this->repository->paginate(
             perPage: (int) $request->integer('per_page', 15),
         );

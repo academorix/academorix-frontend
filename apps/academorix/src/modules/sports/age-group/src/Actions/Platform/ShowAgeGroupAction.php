@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Stackra\AgeGroup\Actions\Platform;
+namespace Academorix\AgeGroup\Actions\Platform;
 
-use Stackra\AgeGroup\Contracts\Repositories\AgeGroupRepositoryInterface;
-use Stackra\AgeGroup\Data\AgeGroupData;
+use Academorix\AgeGroup\Contracts\Repositories\AgeGroupRepositoryInterface;
+use Academorix\AgeGroup\Data\AgeGroupData;
 use Stackra\Routing\Attributes\AsAction;
 use Stackra\Routing\Attributes\Middleware;
 use Stackra\Routing\Concerns\AsController;

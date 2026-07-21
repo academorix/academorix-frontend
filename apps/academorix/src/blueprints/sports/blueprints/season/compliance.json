@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/season/compliance",
+  "id": "academorix://modules/season/compliance",
   "$version": 1,
   "title": "season — compliance evidence",
   "description": "Season is a calendrical + commercial container. No PII on the row itself. The bulk of compliance responsibility is around FINANCIAL-record retention (late_registration_fee_cents changes generate 7-year audit rows) + SOC 2 CC6.3 change tracking (SeasonCurrentChanged is audit-critical because year-over-year reports pivot on the current-season flag). Minor-safeguarding regulator interest applies to date-shift events on programs serving under-18s (families need advance notice of schedule changes).",

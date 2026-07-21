@@ -4,25 +4,25 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Attendance\Repositories;
+namespace Academorix\Attendance\Repositories;
 
 use Stackra\Crud\Attributes\AsRepository;
 use Stackra\Crud\Attributes\Cacheable;
 use Stackra\Crud\Attributes\Filterable;
 use Stackra\Crud\Attributes\UseModel;
 use Stackra\Crud\Repositories\Repository;
-use Stackra\Attendance\Contracts\Data\LateArrivalInterface;
-use Stackra\Attendance\Contracts\Repositories\LateArrivalRepositoryInterface;
-use Stackra\Attendance\Models\LateArrival;
+use Academorix\Attendance\Contracts\Data\LateArrivalInterface;
+use Academorix\Attendance\Contracts\Repositories\LateArrivalRepositoryInterface;
+use Academorix\Attendance\Models\LateArrival;
 
 /**
- * Attribute-first Eloquent repository for {@see Stackra\Attendance\Models\LateArrival}.
+ * Attribute-first Eloquent repository for {@see Academorix\Attendance\Models\LateArrival}.
  *
  * Bound to the interface via `#[AsRepository]`; the model comes from
  * `#[UseModel(LateArrivalInterface::class)]` which resolves to
  * `LateArrival` through the interface's `#[Bind]`.
  *
- * @extends Repository<\Stackra\Attendance\Models\LateArrival>
+ * @extends Repository<\Academorix\Attendance\Models\LateArrival>
  *
  * @category Attendance
  *

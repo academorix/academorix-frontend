@@ -1,14 +1,14 @@
 {
-  "id": "stackra://modules/payment/settings",
+  "id": "academorix://modules/payment/settings",
   "$version": 1,
   "title": "payment — settings",
   "description": "Tenant-facing payment configuration + per-user preferences for payment notifications. The payment_providers table is NOT settings — those are per-provider credentials owned by the payment module itself. This file declares tenant-level defaults (default provider, 3DS2 thresholds, dispute defaults) + per-user preferences (payment notification subscription).",
   "storedIn": "settings",
-  "reference": { "contract": "stackra://modules/settings/attributes" },
+  "reference": { "contract": "academorix://modules/settings/attributes" },
   "groups": [
     {
       "key": "payment",
-      "class": "Stackra\\Finance\\Payment\\Settings\\PaymentSettings",
+      "class": "Academorix\\Finance\\Payment\\Settings\\PaymentSettings",
       "label": "Payment processing",
       "description": "Tenant-wide defaults for payment captures + provider routing.",
       "icon": "credit-card",
@@ -180,7 +180,7 @@
     },
     {
       "key": "payment_user",
-      "class": "Stackra\\Finance\\Payment\\Settings\\PaymentUserSettings",
+      "class": "Academorix\\Finance\\Payment\\Settings\\PaymentUserSettings",
       "label": "My payment preferences",
       "description": "Per-user preferences for payment notifications.",
       "icon": "user-circle",

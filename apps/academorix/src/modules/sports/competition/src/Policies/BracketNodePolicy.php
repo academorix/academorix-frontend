@@ -4,13 +4,13 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Competition\Policies;
+namespace Academorix\Competition\Policies;
 
 use Stackra\User\Models\User;
-use Stackra\Competition\Models\BracketNode;
+use Academorix\Competition\Models\BracketNode;
 
 /**
- * Authorization policy for {@see \Stackra\Competition\Models\BracketNode}.
+ * Authorization policy for {@see \Academorix\Competition\Models\BracketNode}.
  *
  * Wired via `#[UsePolicy]` on the Model.
  *

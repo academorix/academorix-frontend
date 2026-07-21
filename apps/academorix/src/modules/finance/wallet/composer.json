@@ -1,10 +1,10 @@
 {
-  "name": "stackra/wallet",
+  "name": "academorix/wallet",
   "type": "library",
-  "description": "Stackra Wallet module — server-side Laravel package emitted from the module blueprint at `modules/finance/blueprints/wallet/`. Complements the wire SDK at `stackra-finance/wallet-sdk`.",
+  "description": "Academorix Wallet module — server-side Laravel package emitted from the module blueprint at `modules/finance/blueprints/wallet/`. Complements the wire SDK at `academorix-finance/wallet-sdk`.",
   "license": "proprietary",
   "keywords": [
-    "stackra",
+    "academorix",
     "module",
     "laravel",
     "finance",
@@ -22,7 +22,7 @@
     "stackra/routing": "@dev",
     "stackra/service-provider": "@dev",
     "stackra/support": "@dev",
-    "stackra-finance/wallet-sdk": "@dev"
+    "academorix-finance/wallet-sdk": "@dev"
   },
   "require-dev": {
     "orchestra/testbench": "^11.0",
@@ -33,12 +33,12 @@
   },
   "autoload": {
     "psr-4": {
-      "Stackra\\Wallet\\": "src/"
+      "Academorix\\Wallet\\": "src/"
     }
   },
   "autoload-dev": {
     "psr-4": {
-      "Stackra\\Wallet\\Tests\\": "tests/"
+      "Academorix\\Wallet\\Tests\\": "tests/"
     }
   },
   "extra": {

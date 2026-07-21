@@ -4,11 +4,11 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Registry\Services;
+namespace Academorix\Registry\Services;
 
-use Stackra\Registry\Contracts\Services\CustomEntryFactoryInterface;
+use Academorix\Registry\Contracts\Services\CustomEntryFactoryInterface;
 use Illuminate\Container\Attributes\Scoped;
-use Stackra\Registry\Contracts\Repositories\DisciplineRepositoryInterface;
+use Academorix\Registry\Contracts\Repositories\DisciplineRepositoryInterface;
 
 /**
  * Concrete service — CustomEntryFactory.

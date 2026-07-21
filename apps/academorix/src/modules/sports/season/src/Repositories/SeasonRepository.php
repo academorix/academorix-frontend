@@ -4,25 +4,25 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Season\Repositories;
+namespace Academorix\Season\Repositories;
 
 use Stackra\Crud\Attributes\AsRepository;
 use Stackra\Crud\Attributes\Cacheable;
 use Stackra\Crud\Attributes\Filterable;
 use Stackra\Crud\Attributes\UseModel;
 use Stackra\Crud\Repositories\Repository;
-use Stackra\Season\Contracts\Data\SeasonInterface;
-use Stackra\Season\Contracts\Repositories\SeasonRepositoryInterface;
-use Stackra\Season\Models\Season;
+use Academorix\Season\Contracts\Data\SeasonInterface;
+use Academorix\Season\Contracts\Repositories\SeasonRepositoryInterface;
+use Academorix\Season\Models\Season;
 
 /**
- * Attribute-first Eloquent repository for {@see Stackra\Season\Models\Season}.
+ * Attribute-first Eloquent repository for {@see Academorix\Season\Models\Season}.
  *
  * Bound to the interface via `#[AsRepository]`; the model comes from
  * `#[UseModel(SeasonInterface::class)]` which resolves to
  * `Season` through the interface's `#[Bind]`.
  *
- * @extends Repository<\Stackra\Season\Models\Season>
+ * @extends Repository<\Academorix\Season\Models\Season>
  *
  * @category Season
  *

@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Invoice\Contracts\Services;
+namespace Academorix\Invoice\Contracts\Services;
 
-use Stackra\Invoice\Services\InvoiceRevenueReporter;
+use Academorix\Invoice\Services\InvoiceRevenueReporter;
 use Illuminate\Container\Attributes\Bind;
 
 /**

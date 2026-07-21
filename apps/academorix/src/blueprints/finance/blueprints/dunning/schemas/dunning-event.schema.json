@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/dunning/schemas/dunning-event",
+  "id": "academorix://modules/dunning/schemas/dunning-event",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "DunningEvent",
@@ -13,9 +13,9 @@
     "keyType": "string",
     "keyPrefix": "dev_",
     "incrementing": false,
-    "model": "Stackra\\Finance\\Dunning\\Models\\DunningEvent",
-    "interface": "Stackra\\Finance\\Dunning\\Contracts\\Data\\DunningEventInterface",
-    "implements": ["Stackra\\Finance\\Dunning\\Contracts\\Data\\DunningEventInterface"],
+    "model": "Academorix\\Finance\\Dunning\\Models\\DunningEvent",
+    "interface": "Academorix\\Finance\\Dunning\\Contracts\\Data\\DunningEventInterface",
+    "implements": ["Academorix\\Finance\\Dunning\\Contracts\\Data\\DunningEventInterface"],
     "traits": [
       "HasFactory",
       "HasUlids",

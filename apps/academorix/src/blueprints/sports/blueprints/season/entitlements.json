@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/season/entitlements",
+  "id": "academorix://modules/season/entitlements",
   "$version": 1,
   "title": "season — declared entitlements",
   "description": "Five entitlement keys. `sports_seasons` is the boolean master gate for the whole module (OFF on Small tier per hierarchy.md §7). `season_slot` caps seasons per year (Medium=4, Enterprise=null). `season_playoffs` gates the has_playoffs=true code path (Medium+). `season_late_registration` gates the allows_late_registration+fee combo (Medium+). `season_sport_scoping` gates the sport_key column (Enterprise-only — multi-sport tenants that run different seasons per sport).",

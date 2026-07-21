@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Analytics\Contracts\Data;
+namespace Academorix\Analytics\Contracts\Data;
 
 use Illuminate\Container\Attributes\Bind;
-use Stackra\Analytics\Models\AnalyticsDelivery;
+use Academorix\Analytics\Models\AnalyticsDelivery;
 
 /**
  * Table shape for the `analytics_deliveries` table.

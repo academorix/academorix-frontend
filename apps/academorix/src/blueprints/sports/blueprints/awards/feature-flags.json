@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/awards/feature-flags",
+  "id": "academorix://modules/awards/feature-flags",
   "$version": 1,
   "title": "awards — feature flags",
   "description": "Kill switches + gradual-rollout flags this module publishes.",

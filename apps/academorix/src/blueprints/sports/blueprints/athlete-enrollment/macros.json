@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/athlete-enrollment/macros",
+  "id": "academorix://modules/athlete-enrollment/macros",
   "$version": 1,
   "title": "athlete-enrollment — published macros",
   "description": "No dedicated request-level macros — enrollment context is composite (team + athlete + season) + resolved via route bindings.",

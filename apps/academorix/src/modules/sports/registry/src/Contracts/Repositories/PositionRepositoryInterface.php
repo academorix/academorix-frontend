@@ -4,17 +4,17 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Registry\Contracts\Repositories;
+namespace Academorix\Registry\Contracts\Repositories;
 
 use Stackra\Crud\Contracts\RepositoryInterface;
 
 /**
- * Repository contract for {@see Stackra\Registry\Models\Position}.
+ * Repository contract for {@see Academorix\Registry\Models\Position}.
  *
  * Consumers type-hint the interface; the container binds the concrete
  * via `#[AsRepository]` on `PositionRepository`.
  *
- * @extends RepositoryInterface<\Stackra\Registry\Models\Position>
+ * @extends RepositoryInterface<\Academorix\Registry\Models\Position>
  *
  * @category Registry
  *

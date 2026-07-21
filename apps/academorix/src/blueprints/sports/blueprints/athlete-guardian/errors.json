@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/athlete-guardian/errors",
+  "id": "academorix://modules/athlete-guardian/errors",
   "$version": 1,
   "title": "athlete-guardian — error codes",
   "namespace": "athlete_guardian",

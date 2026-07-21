@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Teams\Exceptions;
 
-use Stackra\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * schedule_pattern JSONB does not match schemas/team.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class TeamInvalidSchedulePatternException extends AcademorixException
+final class TeamInvalidSchedulePatternException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

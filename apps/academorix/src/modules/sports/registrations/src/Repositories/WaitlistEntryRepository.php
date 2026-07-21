@@ -4,25 +4,25 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Registrations\Repositories;
+namespace Academorix\Registrations\Repositories;
 
 use Stackra\Crud\Attributes\AsRepository;
 use Stackra\Crud\Attributes\Cacheable;
 use Stackra\Crud\Attributes\Filterable;
 use Stackra\Crud\Attributes\UseModel;
 use Stackra\Crud\Repositories\Repository;
-use Stackra\Registrations\Contracts\Data\WaitlistEntryInterface;
-use Stackra\Registrations\Contracts\Repositories\WaitlistEntryRepositoryInterface;
-use Stackra\Registrations\Models\WaitlistEntry;
+use Academorix\Registrations\Contracts\Data\WaitlistEntryInterface;
+use Academorix\Registrations\Contracts\Repositories\WaitlistEntryRepositoryInterface;
+use Academorix\Registrations\Models\WaitlistEntry;
 
 /**
- * Attribute-first Eloquent repository for {@see Stackra\Registrations\Models\WaitlistEntry}.
+ * Attribute-first Eloquent repository for {@see Academorix\Registrations\Models\WaitlistEntry}.
  *
  * Bound to the interface via `#[AsRepository]`; the model comes from
  * `#[UseModel(WaitlistEntryInterface::class)]` which resolves to
  * `WaitlistEntry` through the interface's `#[Bind]`.
  *
- * @extends Repository<\Stackra\Registrations\Models\WaitlistEntry>
+ * @extends Repository<\Academorix\Registrations\Models\WaitlistEntry>
  *
  * @category Registrations
  *

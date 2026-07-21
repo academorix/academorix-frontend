@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/payment/compliance",
+  "id": "academorix://modules/payment/compliance",
   "$version": 1,
   "title": "payment — compliance evidence",
   "description": "Payment is financial-record + PCI-DSS Level 1 concerned + PSD2 SCA-regulated. Every dispatched payment carries customer identifiers (name / email / phone / billing address / hashed PII) + amounts (revenue-sensitive) + tokenized card references (provider-scoped). NO card PAN / CVV / magnetic-stripe / PIN storage anywhere (PCI-DSS scope reduction via customer-side SDK confirmation). GDPR Art. 6(1)(b) contractual basis (no consent required). AML retention 7-year baseline (10y Enterprise). SOX §404 audit trail. SOC 2 CC7.2 monitoring on captures + disputes.",

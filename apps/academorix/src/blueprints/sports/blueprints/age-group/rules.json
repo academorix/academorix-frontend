@@ -1,13 +1,13 @@
 {
-  "id": "stackra://modules/age-group/rules",
+  "id": "academorix://modules/age-group/rules",
   "$version": 1,
   "title": "age-group — validation rules",
   "description": "Five custom Laravel validation rules published by AgeGroupServiceProvider::boot() so any FormRequest / Data class can validate AgeGroup-adjacent fields. Named after their intent so they read cleanly at the composition site.",
-  "namespace": "Stackra\\Sports\\AgeGroup\\Rules",
+  "namespace": "Academorix\\Sports\\AgeGroup\\Rules",
   "rules": [
     {
       "name": "valid_hex_color",
-      "class": "Stackra\\Sports\\AgeGroup\\Rules\\ValidHexColor",
+      "class": "Academorix\\Sports\\AgeGroup\\Rules\\ValidHexColor",
       "signature": "valid_hex_color",
       "description": "Ensures the value is a well-formed CSS hex color literal — either 3-digit shorthand (#RGB) or 6-digit full (#RRGGBB). Case-insensitive. Rejects the 8-digit ARGB form (alpha channel is out of scope for age-group visualisation).",
       "params": [],
@@ -17,7 +17,7 @@
     },
     {
       "name": "valid_age_bounds",
-      "class": "Stackra\\Sports\\AgeGroup\\Rules\\ValidAgeBounds",
+      "class": "Academorix\\Sports\\AgeGroup\\Rules\\ValidAgeBounds",
       "signature": "valid_age_bounds:min_field,max_field",
       "description": "Cross-field validator. Applied on the data object (not on an individual field). Ensures min <= max, min >= 3 (platform floor), max <= 100 (platform ceiling), and both are integers. Runs BEFORE the observer's redundant guard so callers see the clean 422 error before hitting the write path.",
       "params": [
@@ -40,7 +40,7 @@
     },
     {
       "name": "valid_cutoff_date",
-      "class": "Stackra\\Sports\\AgeGroup\\Rules\\ValidCutoffDate",
+      "class": "Academorix\\Sports\\AgeGroup\\Rules\\ValidCutoffDate",
       "signature": "valid_cutoff_date:kind_field,month_field,day_field",
       "description": "Cross-field validator. Ensures the (cutoff_date_kind, cutoff_month, cutoff_day) triple is internally consistent. calendar_year requires both month + day to be NULL. academic_year requires month (1-12) and allows day to be NULL (defaults to 1). custom_date requires both month (1-12) and day (1-31) — with month-appropriate day validation (Feb ≤ 29, 30-day months ≤ 30). rolling_from_birthday requires both to be NULL.",
       "params": [
@@ -54,7 +54,7 @@
     },
     {
       "name": "valid_sport_key",
-      "class": "Stackra\\Sports\\AgeGroup\\Rules\\ValidSportKey",
+      "class": "Academorix\\Sports\\AgeGroup\\Rules\\ValidSportKey",
       "signature": "valid_sport_key[:registry]",
       "description": "Ensures the value matches the sport-key syntax `^[a-z][a-z0-9_]*$` (lowercase snake, starts with a letter). In Wave 3c the rule hardens: with `registry` mode set, it also checks the value against the sport registry (a shipped table of known sport identifiers). Until then, `registry` mode is a no-op — every syntactically-valid value passes.",
       "params": [
@@ -71,7 +71,7 @@
     },
     {
       "name": "age_group_slug_reserved",
-      "class": "Stackra\\Sports\\AgeGroup\\Rules\\AgeGroupSlugReserved",
+      "class": "Academorix\\Sports\\AgeGroup\\Rules\\AgeGroupSlugReserved",
       "signature": "age_group_slug_reserved",
       "description": "Rejects slugs that collide with platform-reserved values (default, system, seeded, admin, platform). Reserved slugs are used by the seeder + admin tooling; tenants must pick a different slug. Case-insensitive comparison.",
       "params": [],

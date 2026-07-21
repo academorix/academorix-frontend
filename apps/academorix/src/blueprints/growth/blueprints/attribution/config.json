@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/attribution/config",
+  "id": "academorix://modules/attribution/config",
   "$version": 1,
   "title": "attribution — developer configuration",
   "configFile": "config/attribution.php",

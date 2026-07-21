@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Progress\Actions\Tenant;
+namespace Academorix\Progress\Actions\Tenant;
 
-use Stackra\Progress\Contracts\Repositories\CoachNoteRepositoryInterface;
-use Stackra\Progress\Data\CoachNoteData;
+use Academorix\Progress\Contracts\Repositories\CoachNoteRepositoryInterface;
+use Academorix\Progress\Data\CoachNoteData;
 use Stackra\Routing\Attributes\AsAction;
 use Stackra\Routing\Attributes\Middleware;
 use Stackra\Routing\Concerns\AsController;
@@ -50,7 +50,7 @@ final class ListCoachNoteAction
      */
     public function __invoke(Request $request): PaginatedDataCollection
     {
-        /** @var LengthAwarePaginator<int, \Stackra\Progress\Models\CoachNote> $page */
+        /** @var LengthAwarePaginator<int, \Academorix\Progress\Models\CoachNote> $page */
         $page = $this->repository->paginate(
             perPage: (int) $request->integer('per_page', 15),
         );

@@ -1,11 +1,11 @@
 {
-  "id": "stackra://modules/chargeback/middleware",
+  "id": "academorix://modules/chargeback/middleware",
   "$version": 1,
   "title": "chargeback — HTTP middleware",
   "middleware": [
     {
       "alias": "chargeback.webhook_verify",
-      "class": "Stackra\\Finance\\Chargeback\\Http\\Middleware\\VerifyChargebackWebhook",
+      "class": "Academorix\\Finance\\Chargeback\\Http\\Middleware\\VerifyChargebackWebhook",
       "priority": 20,
       "description": "Applied to provider webhook routes that carry chargeback-typed events. Delegates to payment::PaymentWebhookVerifier for signature verification (this module does NOT own signature-verification code — the payment module does). On success: dispatches ChargebackWebhookReceived event which the HandleChargebackWebhook listener consumes. On failure: returns 403 `CHARGEBACK_WEBHOOK_INVALID_SIGNATURE` OR 409 `CHARGEBACK_WEBHOOK_STALE_TIMESTAMP`.",
       "auto_applied": false,
@@ -15,7 +15,7 @@
     },
     {
       "alias": "chargeback.enforce_management_entitlement",
-      "class": "Stackra\\Finance\\Chargeback\\Http\\Middleware\\EnforceManagementEntitlement",
+      "class": "Academorix\\Finance\\Chargeback\\Http\\Middleware\\EnforceManagementEntitlement",
       "priority": 40,
       "description": "Thin wrapper over entitlement.enforce that specifically checks the `chargeback_management` entitlement. On refusal returns 402 `CHARGEBACK_MANAGEMENT_NOT_ENTITLED` with an upgrade CTA in the response envelope's .errors[0].meta.upgrade_url. Auto-applied via the `entitlement.enforce:chargeback_management` middleware chain on every /api/v1/chargebacks/* route.",
       "auto_applied": false,

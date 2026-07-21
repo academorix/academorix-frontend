@@ -4,17 +4,17 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Coaching\Contracts\Repositories;
+namespace Academorix\Coaching\Contracts\Repositories;
 
 use Stackra\Crud\Contracts\RepositoryInterface;
 
 /**
- * Repository contract for {@see Stackra\Coaching\Models\CoachSkillRating}.
+ * Repository contract for {@see Academorix\Coaching\Models\CoachSkillRating}.
  *
  * Consumers type-hint the interface; the container binds the concrete
  * via `#[AsRepository]` on `CoachSkillRatingRepository`.
  *
- * @extends RepositoryInterface<\Stackra\Coaching\Models\CoachSkillRating>
+ * @extends RepositoryInterface<\Academorix\Coaching\Models\CoachSkillRating>
  *
  * @category Coaching
  *

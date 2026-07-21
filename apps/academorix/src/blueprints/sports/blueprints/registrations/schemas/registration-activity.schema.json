@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/registrations/schemas/registration-activity",
+  "id": "academorix://modules/registrations/schemas/registration-activity",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "RegistrationActivity",

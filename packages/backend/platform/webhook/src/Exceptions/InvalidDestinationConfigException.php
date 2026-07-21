@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Stackra\Webhook\Exceptions;
 
-use Stackra\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Raised when `destination_config` is missing a required key for the
@@ -15,7 +15,7 @@ use Stackra\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class InvalidDestinationConfigException extends AcademorixException
+final class InvalidDestinationConfigException extends StackraException
 {
     public const CODE = 'webhook.invalid_destination_config';
 

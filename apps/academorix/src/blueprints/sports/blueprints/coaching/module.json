@@ -2,7 +2,7 @@
   "$version": 1,
   "name": "coaching",
   "alias": "coaching",
-  "namespace": "Stackra\\Sports\\Coaching",
+  "namespace": "Academorix\\Sports\\Coaching",
   "description": "The Coach lane. Answers 'which Staff members are coaches, what are they qualified to coach, and which Sessions/Teams are they assigned to?'. Ships FOUR aggregates: `CoachingProfile` (per-Staff satellite — one Staff can have zero or one CoachingProfile; the profile marks them as an active Coach with sport-specific expertise like primary_sport_id, coaching_since_year, bio, photo_url_signed, availability_json, hourly_rate_cents + a jsonb blob of specializations), `CoachAssignment` (many-to-many pivot Coach ↔ Session OR Team OR Event with role IN (head_coach / assistant_coach / observer / substitute), start_date + end_date bounds, per-assignment notes), `CoachCertification` (Coach's held certifications — issuing_body, certification_name, level, issued_at, expires_at, verification_url, verified_by_admin flag; supports 'expires soon' notifications 90/30/7 days out), `CoachSkillRating` (per-Coach per-Sport OR per-Discipline OR per-Position rating — 1-5 stars OR level enum beginner/intermediate/advanced/expert/master; admins rate coaches for match-making athletes to appropriate coaches). Distinct from `Staff` which is generic employment. Coaching profile is opt-in — a coach is a Staff row that ALSO has a `coaching_profiles` row; not every Staff is a Coach (admin staff, reception, maintenance are Staff without CoachingProfile).",
   "keywords": [
     "coach",
@@ -27,7 +27,7 @@
     "wave-3b"
   ],
   "priority": 68,
-  "providers": ["Stackra\\Sports\\Coaching\\Providers\\CoachingServiceProvider"],
+  "providers": ["Academorix\\Sports\\Coaching\\Providers\\CoachingServiceProvider"],
   "files": [],
   "dependencies": [
     "foundation",

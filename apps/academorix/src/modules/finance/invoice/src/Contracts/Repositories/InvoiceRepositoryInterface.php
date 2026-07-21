@@ -4,17 +4,17 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Invoice\Contracts\Repositories;
+namespace Academorix\Invoice\Contracts\Repositories;
 
 use Stackra\Crud\Contracts\RepositoryInterface;
 
 /**
- * Repository contract for {@see Stackra\Invoice\Models\Invoice}.
+ * Repository contract for {@see Academorix\Invoice\Models\Invoice}.
  *
  * Consumers type-hint the interface; the container binds the concrete
  * via `#[AsRepository]` on `InvoiceRepository`.
  *
- * @extends RepositoryInterface<\Stackra\Invoice\Models\Invoice>
+ * @extends RepositoryInterface<\Academorix\Invoice\Models\Invoice>
  *
  * @category Invoice
  *

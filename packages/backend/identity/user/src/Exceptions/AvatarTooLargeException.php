@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\User\Exceptions;
 
-use Stackra\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Upload exceeded the resolved cap (min of tenant setting + tier cap + `user.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class AvatarTooLargeException extends AcademorixException
+final class AvatarTooLargeException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

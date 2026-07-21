@@ -4,16 +4,16 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Competition\Models;
+namespace Academorix\Competition\Models;
 
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
-use Stackra\Competition\Contracts\Data\StandingRowInterface;
-use Stackra\Competition\Database\Factories\StandingRowFactory;
-use Stackra\Competition\Policies\StandingRowPolicy;
+use Academorix\Competition\Contracts\Data\StandingRowInterface;
+use Academorix\Competition\Database\Factories\StandingRowFactory;
+use Academorix\Competition\Policies\StandingRowPolicy;
 use Stackra\Foundation\Concerns\Filterable;
 use Stackra\Foundation\Concerns\HasMetadata;
 use Stackra\Foundation\Concerns\HasPrefixedUlid;

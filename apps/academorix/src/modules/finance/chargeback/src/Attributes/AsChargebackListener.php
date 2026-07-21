@@ -4,7 +4,7 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Chargeback\Attributes;
+namespace Academorix\Chargeback\Attributes;
 
 use Attribute;
 

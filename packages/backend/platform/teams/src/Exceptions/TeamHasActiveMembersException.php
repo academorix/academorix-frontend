@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Teams\Exceptions;
 
-use Stackra\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Archive refused because active members reference the team.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class TeamHasActiveMembersException extends AcademorixException
+final class TeamHasActiveMembersException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

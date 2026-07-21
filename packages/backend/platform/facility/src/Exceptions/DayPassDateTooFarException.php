@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Facility\Exceptions;
 
-use Stackra\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Requested valid_on_date is more than 30 days in the future.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class DayPassDateTooFarException extends AcademorixException
+final class DayPassDateTooFarException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

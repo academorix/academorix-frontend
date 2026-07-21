@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Attendance\Actions\Tenant;
+namespace Academorix\Attendance\Actions\Tenant;
 
-use Stackra\Attendance\Contracts\Repositories\AttendanceRecordRepositoryInterface;
-use Stackra\Attendance\Data\AttendanceRecordData;
+use Academorix\Attendance\Contracts\Repositories\AttendanceRecordRepositoryInterface;
+use Academorix\Attendance\Data\AttendanceRecordData;
 use Stackra\Routing\Attributes\AsAction;
 use Stackra\Routing\Attributes\Middleware;
 use Stackra\Routing\Concerns\AsController;
@@ -50,7 +50,7 @@ final class ListAttendanceRecordAction
      */
     public function __invoke(Request $request): PaginatedDataCollection
     {
-        /** @var LengthAwarePaginator<int, \Stackra\Attendance\Models\AttendanceRecord> $page */
+        /** @var LengthAwarePaginator<int, \Academorix\Attendance\Models\AttendanceRecord> $page */
         $page = $this->repository->paginate(
             perPage: (int) $request->integer('per_page', 15),
         );

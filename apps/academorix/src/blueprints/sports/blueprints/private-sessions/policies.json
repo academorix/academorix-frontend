@@ -1,11 +1,11 @@
 {
-  "id": "stackra://modules/private-sessions/policies",
+  "id": "academorix://modules/private-sessions/policies",
   "$version": 1,
   "title": "private-sessions — authorization policies",
   "policies": [
     {
       "model": "PrivateSessionRequest",
-      "class": "Stackra\\Sports\\PrivateSessions\\Policies\\PrivateSessionRequestPolicy",
+      "class": "Academorix\\Sports\\PrivateSessions\\Policies\\PrivateSessionRequestPolicy",
       "abilities": [
         {
           "action": "viewAny",
@@ -32,7 +32,7 @@
     },
     {
       "model": "PrivateSession",
-      "class": "Stackra\\Sports\\PrivateSessions\\Policies\\PrivateSessionPolicy",
+      "class": "Academorix\\Sports\\PrivateSessions\\Policies\\PrivateSessionPolicy",
       "abilities": [
         { "action": "viewAny", "permission": "private-sessions.sessions.viewAny" },
         { "action": "view", "permission": "private-sessions.sessions.view" },
@@ -50,7 +50,7 @@
     },
     {
       "model": "CreditLedger",
-      "class": "Stackra\\Sports\\PrivateSessions\\Policies\\CreditLedgerPolicy",
+      "class": "Academorix\\Sports\\PrivateSessions\\Policies\\CreditLedgerPolicy",
       "abilities": [
         {
           "action": "viewAny",

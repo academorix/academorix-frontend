@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Marketing\Contracts\Services;
+namespace Academorix\Marketing\Contracts\Services;
 
-use Stackra\Marketing\Services\RateLimitGate;
+use Academorix\Marketing\Services\RateLimitGate;
 use Illuminate\Container\Attributes\Bind;
 
 /**

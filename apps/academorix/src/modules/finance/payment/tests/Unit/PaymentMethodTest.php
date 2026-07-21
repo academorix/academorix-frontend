@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use Stackra\Payment\Models\PaymentMethod;
+use Academorix\Payment\Models\PaymentMethod;
 
 it('is a placeholder — replace with actual PaymentMethod unit tests', function (): void {
     expect(PaymentMethod::class)->toBeString();

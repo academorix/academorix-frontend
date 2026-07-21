@@ -21,7 +21,7 @@ enum ModelHasPermissionsModelType: string
 {
     use Enum;
 
-    case AcademorixUserModelsUser = 'Stackra\User\Models\User';
-    case AcademorixPlatformUserModelsPlatformUser = 'Stackra\PlatformUser\Models\PlatformUser';
-    case AcademorixServiceAccountsModelsServiceAccount = 'Stackra\ServiceAccounts\Models\ServiceAccount';
+    case StackraUserModelsUser = 'Stackra\User\Models\User';
+    case StackraPlatformUserModelsPlatformUser = 'Stackra\PlatformUser\Models\PlatformUser';
+    case StackraServiceAccountsModelsServiceAccount = 'Stackra\ServiceAccounts\Models\ServiceAccount';
 }

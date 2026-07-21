@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/sports-registry/feature-flags",
+  "id": "academorix://modules/sports-registry/feature-flags",
   "$version": 1,
   "title": "sports-registry — kill switches",
   "engine": "laravel/pennant",

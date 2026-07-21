@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Stackra\FeatureFlags\Exceptions;
 
-use Stackra\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Raised when the plan-gate entitlement lookup itself errors.
@@ -19,7 +19,7 @@ use Stackra\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class PlanGateFailedException extends AcademorixException
+final class PlanGateFailedException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

@@ -4,25 +4,25 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Attribution\Repositories;
+namespace Academorix\Attribution\Repositories;
 
 use Stackra\Crud\Attributes\AsRepository;
 use Stackra\Crud\Attributes\Cacheable;
 use Stackra\Crud\Attributes\Filterable;
 use Stackra\Crud\Attributes\UseModel;
 use Stackra\Crud\Repositories\Repository;
-use Stackra\Attribution\Contracts\Data\AttributionTouchpointInterface;
-use Stackra\Attribution\Contracts\Repositories\AttributionTouchpointRepositoryInterface;
-use Stackra\Attribution\Models\AttributionTouchpoint;
+use Academorix\Attribution\Contracts\Data\AttributionTouchpointInterface;
+use Academorix\Attribution\Contracts\Repositories\AttributionTouchpointRepositoryInterface;
+use Academorix\Attribution\Models\AttributionTouchpoint;
 
 /**
- * Attribute-first Eloquent repository for {@see Stackra\Attribution\Models\AttributionTouchpoint}.
+ * Attribute-first Eloquent repository for {@see Academorix\Attribution\Models\AttributionTouchpoint}.
  *
  * Bound to the interface via `#[AsRepository]`; the model comes from
  * `#[UseModel(AttributionTouchpointInterface::class)]` which resolves to
  * `AttributionTouchpoint` through the interface's `#[Bind]`.
  *
- * @extends Repository<\Stackra\Attribution\Models\AttributionTouchpoint>
+ * @extends Repository<\Academorix\Attribution\Models\AttributionTouchpoint>
  *
  * @category Attribution
  *

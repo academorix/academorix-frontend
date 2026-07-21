@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/coaching/schemas/coach-skill-rating",
+  "id": "academorix://modules/coaching/schemas/coach-skill-rating",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "CoachSkillRating",
@@ -13,9 +13,9 @@
     "keyType": "string",
     "keyPrefix": "csr_",
     "incrementing": false,
-    "model": "Stackra\\Sports\\Coaching\\Models\\CoachSkillRating",
-    "interface": "Stackra\\Sports\\Coaching\\Contracts\\Data\\CoachSkillRatingInterface",
-    "implements": ["Stackra\\Sports\\Coaching\\Contracts\\Data\\CoachSkillRatingInterface"],
+    "model": "Academorix\\Sports\\Coaching\\Models\\CoachSkillRating",
+    "interface": "Academorix\\Sports\\Coaching\\Contracts\\Data\\CoachSkillRatingInterface",
+    "implements": ["Academorix\\Sports\\Coaching\\Contracts\\Data\\CoachSkillRatingInterface"],
     "traits": [
       "HasFactory",
       "HasPrefixedUlid",

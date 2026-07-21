@@ -4,17 +4,17 @@
 
 declare(strict_types=1);
 
-namespace Stackra\AthleteEnrollment\Contracts\Repositories;
+namespace Academorix\AthleteEnrollment\Contracts\Repositories;
 
 use Stackra\Crud\Contracts\RepositoryInterface;
 
 /**
- * Repository contract for {@see Stackra\AthleteEnrollment\Models\AthleteEnrollment}.
+ * Repository contract for {@see Academorix\AthleteEnrollment\Models\AthleteEnrollment}.
  *
  * Consumers type-hint the interface; the container binds the concrete
  * via `#[AsRepository]` on `AthleteEnrollmentRepository`.
  *
- * @extends RepositoryInterface<\Stackra\AthleteEnrollment\Models\AthleteEnrollment>
+ * @extends RepositoryInterface<\Academorix\AthleteEnrollment\Models\AthleteEnrollment>
  *
  * @category AthleteEnrollment
  *

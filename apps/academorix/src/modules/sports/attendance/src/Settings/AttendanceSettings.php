@@ -4,7 +4,7 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Attendance\Settings;
+namespace Academorix\Attendance\Settings;
 
 use Stackra\Settings\Attributes\AsSetting;
 use Stackra\Settings\Attributes\SettingField;

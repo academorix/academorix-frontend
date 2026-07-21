@@ -4,19 +4,19 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Marketing\Models;
+namespace Academorix\Marketing\Models;
 
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
-use Stackra\Marketing\Contracts\Data\MarketingDeliveryInterface;
-use Stackra\Marketing\Database\Factories\MarketingDeliveryFactory;
+use Academorix\Marketing\Contracts\Data\MarketingDeliveryInterface;
+use Academorix\Marketing\Database\Factories\MarketingDeliveryFactory;
 use Stackra\Foundation\Concerns\Filterable;
 use Stackra\Foundation\Concerns\HasMetadata;
-use Stackra\Marketing\Enums\MarketingDeliveryStatus;
-use Stackra\Marketing\Policies\MarketingDeliveryPolicy;
+use Academorix\Marketing\Enums\MarketingDeliveryStatus;
+use Academorix\Marketing\Policies\MarketingDeliveryPolicy;
 use Stackra\Tenancy\Concerns\BelongsToTenant;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;

@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/private-sessions/data-classes",
+  "id": "academorix://modules/private-sessions/data-classes",
   "$version": 1,
   "title": "private-sessions — column classification",
   "description": "Every column across this module's schemas classified by foundation's 5-tier taxonomy (public / internal / confidential / restricted / secret).",

@@ -4,7 +4,7 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Drills\Concerns;
+namespace Academorix\Drills\Concerns;
 
 /**
  * Trait — BelongsToCurriculum.

@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Development\Contracts\Data;
+namespace Academorix\Development\Contracts\Data;
 
 use Illuminate\Container\Attributes\Bind;
-use Stackra\Development\Models\PathwayStage;
+use Academorix\Development\Models\PathwayStage;
 
 /**
  * Table shape for the `pathway_stages` table.

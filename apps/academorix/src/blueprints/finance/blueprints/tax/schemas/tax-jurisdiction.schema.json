@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/tax/schemas/tax-jurisdiction",
+  "id": "academorix://modules/tax/schemas/tax-jurisdiction",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "TaxJurisdiction",
@@ -13,9 +13,9 @@
     "keyType": "string",
     "keyPrefix": "txj_",
     "incrementing": false,
-    "model": "Stackra\\Finance\\Tax\\Models\\TaxJurisdiction",
-    "interface": "Stackra\\Finance\\Tax\\Contracts\\Data\\TaxJurisdictionInterface",
-    "implements": ["Stackra\\Finance\\Tax\\Contracts\\Data\\TaxJurisdictionInterface"],
+    "model": "Academorix\\Finance\\Tax\\Models\\TaxJurisdiction",
+    "interface": "Academorix\\Finance\\Tax\\Contracts\\Data\\TaxJurisdictionInterface",
+    "implements": ["Academorix\\Finance\\Tax\\Contracts\\Data\\TaxJurisdictionInterface"],
     "traits": [
       "HasFactory",
       "HasUlids",

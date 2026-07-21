@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Geofencing\Data;
+namespace Academorix\Geofencing\Data;
 
 use Spatie\LaravelData\Attributes\MapInputName;
 use Spatie\LaravelData\Attributes\Validation\Between;

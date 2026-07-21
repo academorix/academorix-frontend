@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\PlatformUser\Exceptions;
 
-use Stackra\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Attempted to hard-delete a PlatformUser row still inside the 90-day retention hold.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class RetentionHoldActiveException extends AcademorixException
+final class RetentionHoldActiveException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

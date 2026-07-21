@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/drills/config",
+  "id": "academorix://modules/drills/config",
   "$version": 1,
   "title": "drills — config keys",
   "description": "config/<module>.php shape + defaults.",

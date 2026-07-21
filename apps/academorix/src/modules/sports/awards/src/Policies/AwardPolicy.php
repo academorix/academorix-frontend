@@ -4,13 +4,13 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Awards\Policies;
+namespace Academorix\Awards\Policies;
 
 use Stackra\User\Models\User;
-use Stackra\Awards\Models\Award;
+use Academorix\Awards\Models\Award;
 
 /**
- * Authorization policy for {@see \Stackra\Awards\Models\Award}.
+ * Authorization policy for {@see \Academorix\Awards\Models\Award}.
  *
  * Wired via `#[UsePolicy]` on the Model.
  *

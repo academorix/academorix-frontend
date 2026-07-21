@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Transaction\Contracts\Services;
+namespace Academorix\Transaction\Contracts\Services;
 
-use Stackra\Transaction\Services\ExchangeRateResolver;
+use Academorix\Transaction\Services\ExchangeRateResolver;
 use Illuminate\Container\Attributes\Bind;
 
 /**

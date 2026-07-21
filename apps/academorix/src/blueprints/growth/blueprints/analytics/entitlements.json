@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/analytics/entitlements",
+  "id": "academorix://modules/analytics/entitlements",
   "$version": 1,
   "title": "analytics — entitlements",
   "description": "Nine entitlements gating analytics capture + delivery + advanced features. Plan-tier scaled: Small (baseline), Medium (advanced providers + batch config), Enterprise (identity merge + sampling config + extended retention + session recording).",
@@ -14,7 +14,7 @@
       "key": "analytics_capture",
       "kind": "boolean",
       "defaultsByPlan": { "free": false, "small": true, "medium": true, "enterprise": true },
-      "description": "Master gate. Off = analytics module refuses capture entirely (no events, no deliveries, no identity resolution). Free tenants have client-side @stackra/analytics still; server-side is gated behind this."
+      "description": "Master gate. Off = analytics module refuses capture entirely (no events, no deliveries, no identity resolution). Free tenants have client-side @academorix/analytics still; server-side is gated behind this."
     },
     {
       "key": "analytics_provider_slot",

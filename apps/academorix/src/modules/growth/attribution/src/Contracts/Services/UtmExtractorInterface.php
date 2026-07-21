@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Attribution\Contracts\Services;
+namespace Academorix\Attribution\Contracts\Services;
 
-use Stackra\Attribution\Data\UtmParametersData;
-use Stackra\Attribution\Services\UtmExtractor;
+use Academorix\Attribution\Data\UtmParametersData;
+use Academorix\Attribution\Services\UtmExtractor;
 use Illuminate\Container\Attributes\Bind;
 
 /**

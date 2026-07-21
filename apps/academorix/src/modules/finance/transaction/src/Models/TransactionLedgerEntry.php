@@ -4,18 +4,18 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Transaction\Models;
+namespace Academorix\Transaction\Models;
 
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
-use Stackra\Transaction\Contracts\Data\TransactionLedgerEntryInterface;
-use Stackra\Transaction\Database\Factories\TransactionLedgerEntryFactory;
+use Academorix\Transaction\Contracts\Data\TransactionLedgerEntryInterface;
+use Academorix\Transaction\Database\Factories\TransactionLedgerEntryFactory;
 use Stackra\Foundation\Concerns\Filterable;
 use Stackra\Tenancy\Concerns\BelongsToTenant;
-use Stackra\Transaction\Policies\TransactionLedgerEntryPolicy;
+use Academorix\Transaction\Policies\TransactionLedgerEntryPolicy;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;

@@ -4,15 +4,15 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Event\Models;
+namespace Academorix\Event\Models;
 
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
-use Stackra\Event\Contracts\Data\CalendarSubscriptionInterface;
-use Stackra\Event\Database\Factories\CalendarSubscriptionFactory;
+use Academorix\Event\Contracts\Data\CalendarSubscriptionInterface;
+use Academorix\Event\Database\Factories\CalendarSubscriptionFactory;
 use Stackra\Foundation\Concerns\Filterable;
 use Stackra\Foundation\Concerns\HasMetadata;
 use Stackra\Foundation\Concerns\HasPrefixedUlid;

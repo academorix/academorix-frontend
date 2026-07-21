@@ -4,19 +4,19 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Progress\Models;
+namespace Academorix\Progress\Models;
 
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
-use Stackra\Progress\Contracts\Data\BeltRankInterface;
-use Stackra\Progress\Database\Factories\BeltRankFactory;
+use Academorix\Progress\Contracts\Data\BeltRankInterface;
+use Academorix\Progress\Database\Factories\BeltRankFactory;
 use Stackra\Foundation\Concerns\Filterable;
 use Stackra\Foundation\Concerns\HasMetadata;
 use Stackra\Foundation\Concerns\HasPrefixedUlid;
-use Stackra\Progress\Policies\BeltRankPolicy;
+use Academorix\Progress\Policies\BeltRankPolicy;
 use Stackra\Tenancy\Concerns\BelongsToTenant;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;

@@ -4,25 +4,25 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Coaching\Repositories;
+namespace Academorix\Coaching\Repositories;
 
 use Stackra\Crud\Attributes\AsRepository;
 use Stackra\Crud\Attributes\Cacheable;
 use Stackra\Crud\Attributes\Filterable;
 use Stackra\Crud\Attributes\UseModel;
 use Stackra\Crud\Repositories\Repository;
-use Stackra\Coaching\Contracts\Data\CoachSkillRatingInterface;
-use Stackra\Coaching\Contracts\Repositories\CoachSkillRatingRepositoryInterface;
-use Stackra\Coaching\Models\CoachSkillRating;
+use Academorix\Coaching\Contracts\Data\CoachSkillRatingInterface;
+use Academorix\Coaching\Contracts\Repositories\CoachSkillRatingRepositoryInterface;
+use Academorix\Coaching\Models\CoachSkillRating;
 
 /**
- * Attribute-first Eloquent repository for {@see Stackra\Coaching\Models\CoachSkillRating}.
+ * Attribute-first Eloquent repository for {@see Academorix\Coaching\Models\CoachSkillRating}.
  *
  * Bound to the interface via `#[AsRepository]`; the model comes from
  * `#[UseModel(CoachSkillRatingInterface::class)]` which resolves to
  * `CoachSkillRating` through the interface's `#[Bind]`.
  *
- * @extends Repository<\Stackra\Coaching\Models\CoachSkillRating>
+ * @extends Repository<\Academorix\Coaching\Models\CoachSkillRating>
  *
  * @category Coaching
  *

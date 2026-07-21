@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Progress\Contracts\Services;
+namespace Academorix\Progress\Contracts\Services;
 
-use Stackra\Progress\Services\ProgressCardRenderer;
+use Academorix\Progress\Services\ProgressCardRenderer;
 use Illuminate\Container\Attributes\Bind;
 
 /**

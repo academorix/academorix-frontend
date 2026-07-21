@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Rbac\Exceptions;
 
-use Stackra\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Role definition requires a higher subscription tier than the tenant's current tier.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class RoleDefinitionMinTierUnmetException extends AcademorixException
+final class RoleDefinitionMinTierUnmetException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

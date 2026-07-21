@@ -4,11 +4,11 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Competition\Services;
+namespace Academorix\Competition\Services;
 
-use Stackra\Competition\Contracts\Services\FixtureSchedulerInterface;
+use Academorix\Competition\Contracts\Services\FixtureSchedulerInterface;
 use Illuminate\Container\Attributes\Scoped;
-use Stackra\Competition\Contracts\Repositories\BracketNodeRepositoryInterface;
+use Academorix\Competition\Contracts\Repositories\BracketNodeRepositoryInterface;
 
 /**
  * Concrete service — FixtureScheduler.

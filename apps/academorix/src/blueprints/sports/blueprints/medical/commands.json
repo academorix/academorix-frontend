@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/medical/commands",
+  "id": "academorix://modules/medical/commands",
   "$version": 1,
   "title": "medical — Artisan commands",
   "description": "Console commands this module ships.",

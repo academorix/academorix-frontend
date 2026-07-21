@@ -1,14 +1,14 @@
 {
-  "id": "stackra://modules/attendance/settings",
+  "id": "academorix://modules/attendance/settings",
   "$version": 1,
   "title": "attendance — settings",
   "description": "Tenant-facing preferences for attendance workflow (default policy shape, kiosk / QR / geofence toggles, notification cadence).",
   "storedIn": "settings",
-  "reference": { "contract": "stackra://modules/settings/attributes" },
+  "reference": { "contract": "academorix://modules/settings/attributes" },
   "groups": [
     {
       "key": "attendance",
-      "class": "Stackra\\Sports\\Attendance\\Settings\\AttendanceSettings",
+      "class": "Academorix\\Sports\\Attendance\\Settings\\AttendanceSettings",
       "label": "Attendance",
       "description": "Tenant-wide attendance workflow settings.",
       "icon": "clipboard-document-check",

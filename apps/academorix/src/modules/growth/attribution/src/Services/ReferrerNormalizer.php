@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Attribution\Services;
+namespace Academorix\Attribution\Services;
 
-use Stackra\Attribution\Contracts\Services\ReferrerNormalizerInterface;
-use Stackra\Attribution\Data\NormalizedReferrerData;
+use Academorix\Attribution\Contracts\Services\ReferrerNormalizerInterface;
+use Academorix\Attribution\Data\NormalizedReferrerData;
 use Illuminate\Container\Attributes\Singleton;
 
 /**

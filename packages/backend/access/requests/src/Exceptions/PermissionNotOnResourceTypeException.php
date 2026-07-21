@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Requests\Exceptions;
 
-use Stackra\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * One or more `permissions_wanted` are not declared on the resource type via `#[AccessRequestable(permissions: [.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class PermissionNotOnResourceTypeException extends AcademorixException
+final class PermissionNotOnResourceTypeException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

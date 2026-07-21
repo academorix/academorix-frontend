@@ -4,11 +4,11 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Medical\Services;
+namespace Academorix\Medical\Services;
 
-use Stackra\Medical\Contracts\Services\EligibilityGateInterface;
+use Academorix\Medical\Contracts\Services\EligibilityGateInterface;
 use Illuminate\Container\Attributes\Scoped;
-use Stackra\Medical\Contracts\Repositories\AllergyRepositoryInterface;
+use Academorix\Medical\Contracts\Repositories\AllergyRepositoryInterface;
 
 /**
  * Concrete service — EligibilityGate.

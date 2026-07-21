@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Leads\Actions\Tenant;
+namespace Academorix\Leads\Actions\Tenant;
 
 use Stackra\Authorization\Attributes\RequirePermission;
-use Stackra\Leads\Contracts\Data\LeadActivityInterface;
-use Stackra\Leads\Contracts\Repositories\LeadActivityRepositoryInterface;
-use Stackra\Leads\Contracts\Repositories\LeadRepositoryInterface;
-use Stackra\Leads\Data\LeadActivityData;
-use Stackra\Leads\Enums\LeadsPermission;
-use Stackra\Leads\Models\LeadActivity;
+use Academorix\Leads\Contracts\Data\LeadActivityInterface;
+use Academorix\Leads\Contracts\Repositories\LeadActivityRepositoryInterface;
+use Academorix\Leads\Contracts\Repositories\LeadRepositoryInterface;
+use Academorix\Leads\Data\LeadActivityData;
+use Academorix\Leads\Enums\LeadsPermission;
+use Academorix\Leads\Models\LeadActivity;
 use Stackra\Routing\Attributes\AsAction;
 use Stackra\Routing\Attributes\Get;
 use Stackra\Routing\Attributes\Middleware;

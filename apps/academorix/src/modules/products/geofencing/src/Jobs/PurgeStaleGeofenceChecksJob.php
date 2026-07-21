@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Geofencing\Jobs;
+namespace Academorix\Geofencing\Jobs;
 
-use Stackra\Geofencing\Contracts\Repositories\GeofenceCheckRepositoryInterface;
+use Academorix\Geofencing\Contracts\Repositories\GeofenceCheckRepositoryInterface;
 use Illuminate\Bus\Queueable;
 use Illuminate\Container\Attributes\Config;
 use Illuminate\Contracts\Queue\ShouldBeUnique;

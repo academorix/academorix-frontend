@@ -1,12 +1,12 @@
 {
-  "id": "stackra://modules/session/policies",
+  "id": "academorix://modules/session/policies",
   "$version": 1,
   "title": "session — authorization policies",
   "description": "Two policies. SessionPolicy narrows by scope suffix — admin/owner see all; coaches see .own; reception sees .branch; athletes/guardians see rows where their attendance exists. SessionAttendancePolicy piggybacks on the parent session's visibility.",
   "policies": [
     {
       "model": "Session",
-      "class": "Stackra\\Sports\\Session\\Policies\\SessionPolicy",
+      "class": "Academorix\\Sports\\Session\\Policies\\SessionPolicy",
       "abilities": [
         {
           "action": "viewAny",
@@ -110,7 +110,7 @@
     },
     {
       "model": "SessionAttendance",
-      "class": "Stackra\\Sports\\Session\\Policies\\SessionAttendancePolicy",
+      "class": "Academorix\\Sports\\Session\\Policies\\SessionAttendancePolicy",
       "abilities": [
         {
           "action": "viewAny",

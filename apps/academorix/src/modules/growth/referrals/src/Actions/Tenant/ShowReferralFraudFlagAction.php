@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Referrals\Actions\Tenant;
+namespace Academorix\Referrals\Actions\Tenant;
 
-use Stackra\Referrals\Contracts\Repositories\ReferralFraudFlagRepositoryInterface;
-use Stackra\Referrals\Data\ReferralFraudFlagData;
+use Academorix\Referrals\Contracts\Repositories\ReferralFraudFlagRepositoryInterface;
+use Academorix\Referrals\Data\ReferralFraudFlagData;
 use Stackra\Routing\Attributes\AsAction;
 use Stackra\Routing\Attributes\Middleware;
 use Stackra\Routing\Concerns\AsController;

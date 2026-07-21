@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/athlete/data-classes",
+  "id": "academorix://modules/athlete/data-classes",
   "$version": 1,
   "title": "athlete — field classification",
   "description": "Athlete carries FOUR tiers of sensitivity: public identifiers (id, tenant_id, branch_id, first_name for internal display), internal operational data (dates, gender, dominant_hand, height/weight, status, age-group snapshot), CONFIDENTIAL (emergency contact cluster + registration_notes, gated by athlete.view.emergency_contact), REGULATED_HEALTH (medical cluster, gated by athlete.view.medical), plus REGULATED_MINOR when the athlete is a minor (age_years < config.athlete.minor_min_age). Consent flags themselves are internal-tier (the fact of a boolean isn't sensitive; the DATA those consents unlock is). The redactor pipeline applies field-level gates on egress — a caller with `athlete.view` but WITHOUT `athlete.view.medical` sees an Athlete object with medical_* keys entirely stripped from the JSON.",

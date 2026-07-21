@@ -1,71 +1,71 @@
 {
-  "id": "stackra://modules/attendance/commands",
+  "id": "academorix://modules/attendance/commands",
   "$version": 1,
   "title": "attendance — Artisan commands",
   "commands": [
     {
       "signature": "attendance:list {--tenant=} {--session=} {--athlete=} {--branch=} {--status=} {--from=} {--to=}",
-      "class": "Stackra\\Sports\\Attendance\\Console\\Commands\\ListAttendanceCommand",
+      "class": "Academorix\\Sports\\Attendance\\Console\\Commands\\ListAttendanceCommand",
       "purpose": "Table view of attendance records filtered by tenant / session / athlete / branch / status / date range."
     },
     {
       "signature": "attendance:check-in {session} {athlete} {--via=admin_recorded} {--at=} {--dry-run}",
-      "class": "Stackra\\Sports\\Attendance\\Console\\Commands\\CheckInAttendanceCommand",
+      "class": "Academorix\\Sports\\Attendance\\Console\\Commands\\CheckInAttendanceCommand",
       "purpose": "Scriptable manual check-in for an athlete on a session. Defaults to checked_in_via='admin_recorded'. Consumes a Pass if session.requires_pass=true. Dry-run mode simulates without committing."
     },
     {
       "signature": "attendance:check-out {record} {--at=} {--reason=}",
-      "class": "Stackra\\Sports\\Attendance\\Console\\Commands\\CheckOutAttendanceCommand",
+      "class": "Academorix\\Sports\\Attendance\\Console\\Commands\\CheckOutAttendanceCommand",
       "purpose": "Set checked_out_at on an attendance record with optional left_early_reason."
     },
     {
       "signature": "attendance:cancel {record} {--reason=}",
-      "class": "Stackra\\Sports\\Attendance\\Console\\Commands\\CancelAttendanceCommand",
+      "class": "Academorix\\Sports\\Attendance\\Console\\Commands\\CancelAttendanceCommand",
       "purpose": "Cancel an accidental check-in. Refunds consumed Pass atomically. Requires --reason."
     },
     {
       "signature": "attendance:report {--tenant=} {--branch=} {--season=} {--coach=} {--period=weekly}",
-      "class": "Stackra\\Sports\\Attendance\\Console\\Commands\\ReportAttendanceCommand",
+      "class": "Academorix\\Sports\\Attendance\\Console\\Commands\\ReportAttendanceCommand",
       "purpose": "Aggregate attendance report — attendance rate, absence patterns, late-arrival trends. Requires attendance_analytics entitlement."
     },
     {
       "signature": "attendance-policy:list {--tenant=} {--branch=} {--plan=} {--active-only}",
-      "class": "Stackra\\Sports\\Attendance\\Console\\Commands\\ListAttendancePoliciesCommand",
+      "class": "Academorix\\Sports\\Attendance\\Console\\Commands\\ListAttendancePoliciesCommand",
       "purpose": "List attendance policies with specificity indicator (plan-scoped / branch-scoped / tenant-wide)."
     },
     {
       "signature": "attendance-policy:create {--tenant=} {--branch=} {--plan=} {--grace-minutes=15} {--late-after=30} {--max-absences=3} {--freeze-period-days=30}",
-      "class": "Stackra\\Sports\\Attendance\\Console\\Commands\\CreateAttendancePolicyCommand",
+      "class": "Academorix\\Sports\\Attendance\\Console\\Commands\\CreateAttendancePolicyCommand",
       "purpose": "Scaffolded policy creation with sensible defaults from data/policy-template-samples.json."
     },
     {
       "signature": "attendance-policy:activate {policy}",
-      "class": "Stackra\\Sports\\Attendance\\Console\\Commands\\ActivateAttendancePolicyCommand",
+      "class": "Academorix\\Sports\\Attendance\\Console\\Commands\\ActivateAttendancePolicyCommand",
       "purpose": "Flip is_active false → true. Refuses composite active-policy collision at same (branch, plan) specificity."
     },
     {
       "signature": "absence:list {--tenant=} {--athlete=} {--session=} {--status=} {--counted-only} {--from=} {--to=}",
-      "class": "Stackra\\Sports\\Attendance\\Console\\Commands\\ListAbsencesCommand",
+      "class": "Academorix\\Sports\\Attendance\\Console\\Commands\\ListAbsencesCommand",
       "purpose": "Table view of absence records."
     },
     {
       "signature": "absence:report {session} {athlete} {--reason=} {--explanation=}",
-      "class": "Stackra\\Sports\\Attendance\\Console\\Commands\\ReportAbsenceCommand",
+      "class": "Academorix\\Sports\\Attendance\\Console\\Commands\\ReportAbsenceCommand",
       "purpose": "Scriptable absence report — guardian self-report OR admin recording an absence."
     },
     {
       "signature": "absence:excuse {absence} {--reason=} {--documented=}",
-      "class": "Stackra\\Sports\\Attendance\\Console\\Commands\\ExcuseAbsenceCommand",
+      "class": "Academorix\\Sports\\Attendance\\Console\\Commands\\ExcuseAbsenceCommand",
       "purpose": "Flip status unexcused → excused. Re-runs threshold check (may undo prior freeze)."
     },
     {
       "signature": "absence:threshold-check {--athlete=} {--all}",
-      "class": "Stackra\\Sports\\Attendance\\Console\\Commands\\ThresholdCheckCommand",
+      "class": "Academorix\\Sports\\Attendance\\Console\\Commands\\ThresholdCheckCommand",
       "purpose": "Manual sweep of the rolling-window absence check. --all iterates every athlete with active enrollment; --athlete=ath_... checks one athlete."
     },
     {
       "signature": "attendance:reconcile {--tenant=} {--session=} {--date=} {--dry-run}",
-      "class": "Stackra\\Sports\\Attendance\\Console\\Commands\\ReconcileAttendanceCommand",
+      "class": "Academorix\\Sports\\Attendance\\Console\\Commands\\ReconcileAttendanceCommand",
       "purpose": "One-shot invocation of ReconcileAttendanceJob for a specific session, tenant, or date. --dry-run reports what would be created without committing."
     }
   ]

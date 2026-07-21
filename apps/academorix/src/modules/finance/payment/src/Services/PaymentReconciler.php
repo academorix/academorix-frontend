@@ -4,11 +4,11 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Payment\Services;
+namespace Academorix\Payment\Services;
 
-use Stackra\Payment\Contracts\Services\PaymentReconcilerInterface;
+use Academorix\Payment\Contracts\Services\PaymentReconcilerInterface;
 use Illuminate\Container\Attributes\Scoped;
-use Stackra\Payment\Contracts\Repositories\PaymentDisputeRepositoryInterface;
+use Academorix\Payment\Contracts\Repositories\PaymentDisputeRepositoryInterface;
 
 /**
  * Concrete service — PaymentReconciler.

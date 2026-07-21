@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Coupon\Data\Requests;
+namespace Academorix\Coupon\Data\Requests;
 
 use Spatie\LaravelData\Attributes\MapInputName;
 use Spatie\LaravelData\Attributes\Validation\Required;

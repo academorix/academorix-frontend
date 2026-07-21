@@ -4,17 +4,17 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Wallet\Contracts\Repositories;
+namespace Academorix\Wallet\Contracts\Repositories;
 
 use Stackra\Crud\Contracts\RepositoryInterface;
 
 /**
- * Repository contract for {@see Stackra\Wallet\Models\WalletTransaction}.
+ * Repository contract for {@see Academorix\Wallet\Models\WalletTransaction}.
  *
  * Consumers type-hint the interface; the container binds the concrete
  * via `#[AsRepository]` on `WalletTransactionRepository`.
  *
- * @extends RepositoryInterface<\Stackra\Wallet\Models\WalletTransaction>
+ * @extends RepositoryInterface<\Academorix\Wallet\Models\WalletTransaction>
  *
  * @category Wallet
  *

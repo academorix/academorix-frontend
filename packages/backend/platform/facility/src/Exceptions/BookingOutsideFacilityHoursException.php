@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Facility\Exceptions;
 
-use Stackra\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Raised when the domain rule `BOOKING_OUTSIDE_FACILITY_HOURS` fires.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class BookingOutsideFacilityHoursException extends AcademorixException
+final class BookingOutsideFacilityHoursException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

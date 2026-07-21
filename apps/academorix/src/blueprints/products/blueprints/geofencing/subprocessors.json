@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/geofencing/subprocessors",
+  "id": "academorix://modules/geofencing/subprocessors",
   "$version": 1,
   "title": "geofencing \u2014 subprocessors",
   "description": "No third-party subprocessors. All geometry math runs locally against Postgres/PostGIS + in-process PolygonEvaluator. Location coordinates never leave our infrastructure.",

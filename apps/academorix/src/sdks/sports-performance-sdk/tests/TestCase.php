@@ -7,7 +7,7 @@ namespace Stackra\SportsPerformanceSdk\Tests;
 use Orchestra\Testbench\TestCase as OrchestraTestCase;
 
 /**
- * Base test case for stackra-sports/performance-sdk.
+ * Base test case for academorix-sports/performance-sdk.
  *
  * @category PerformanceSdk
  *

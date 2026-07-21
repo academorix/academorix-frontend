@@ -1,12 +1,12 @@
 {
-  "id": "stackra://modules/medical/policies",
+  "id": "academorix://modules/medical/policies",
   "$version": 1,
   "title": "medical — authorization policies",
   "description": "Six policies with STRICT RBAC. Medical role has full access; coaches see redacted summaries only; guardians see .own. Every read of encrypted fields (notes / provider names / medication names) requires the medical role — no coach-level bypass.",
   "policies": [
     {
       "model": "MedicalRecord",
-      "class": "Stackra\\Sports\\Medical\\Policies\\MedicalRecordPolicy",
+      "class": "Academorix\\Sports\\Medical\\Policies\\MedicalRecordPolicy",
       "abilities": [
         {
           "action": "viewAny",
@@ -34,7 +34,7 @@
     },
     {
       "model": "Injury",
-      "class": "Stackra\\Sports\\Medical\\Policies\\InjuryPolicy",
+      "class": "Academorix\\Sports\\Medical\\Policies\\InjuryPolicy",
       "abilities": [
         {
           "action": "viewAny",
@@ -76,7 +76,7 @@
     },
     {
       "model": "Treatment",
-      "class": "Stackra\\Sports\\Medical\\Policies\\TreatmentPolicy",
+      "class": "Academorix\\Sports\\Medical\\Policies\\TreatmentPolicy",
       "abilities": [
         {
           "action": "viewAny",
@@ -95,7 +95,7 @@
     },
     {
       "model": "MedicalClearance",
-      "class": "Stackra\\Sports\\Medical\\Policies\\MedicalClearancePolicy",
+      "class": "Academorix\\Sports\\Medical\\Policies\\MedicalClearancePolicy",
       "abilities": [
         {
           "action": "viewAny",
@@ -127,7 +127,7 @@
     },
     {
       "model": "Allergy",
-      "class": "Stackra\\Sports\\Medical\\Policies\\AllergyPolicy",
+      "class": "Academorix\\Sports\\Medical\\Policies\\AllergyPolicy",
       "abilities": [
         {
           "action": "viewAny",
@@ -156,7 +156,7 @@
     },
     {
       "model": "Medication",
-      "class": "Stackra\\Sports\\Medical\\Policies\\MedicationPolicy",
+      "class": "Academorix\\Sports\\Medical\\Policies\\MedicationPolicy",
       "abilities": [
         {
           "action": "viewAny",

@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/athlete/compliance",
+  "id": "academorix://modules/athlete/compliance",
   "$version": 1,
   "title": "athlete — compliance evidence",
   "description": "Athlete module is safeguarding + regulated_health-adjacent. Every consent record, medical mutation, safeguarding pause, and withdrawal is a compliance-relevant event. GDPR Art. 8 (parental consent for minors), GDPR Art. 9 (special-category data — health), COPPA (US minors under 13), FERPA (US school records), SOC 2 CC6.3 (segregation of duties — safeguarding_officer separate from admin for medical + pause), CC6.7 (access revocation on Archive), anti-discrimination compliance (withdrawal reasons audited for pattern detection).",
@@ -83,7 +83,7 @@
         {
           "criterion": "CC7.2",
           "principle": "system monitoring",
-          "evidence": "stackra.athlete.consent.expired_snapshot_total counter fires on the compliance dashboard when consent snapshots age past 365 days. Elevated indicates guardian outreach failure. stackra.athlete.medical_write.large_batch_total counter tracks bulk medical writes — outliers investigated for compromised HR account."
+          "evidence": "academorix.athlete.consent.expired_snapshot_total counter fires on the compliance dashboard when consent snapshots age past 365 days. Elevated indicates guardian outreach failure. academorix.athlete.medical_write.large_batch_total counter tracks bulk medical writes — outliers investigated for compromised HR account."
         }
       ]
     },

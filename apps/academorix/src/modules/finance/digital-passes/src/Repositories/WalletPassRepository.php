@@ -4,25 +4,25 @@
 
 declare(strict_types=1);
 
-namespace Stackra\DigitalPasses\Repositories;
+namespace Academorix\DigitalPasses\Repositories;
 
 use Stackra\Crud\Attributes\AsRepository;
 use Stackra\Crud\Attributes\Cacheable;
 use Stackra\Crud\Attributes\Filterable;
 use Stackra\Crud\Attributes\UseModel;
 use Stackra\Crud\Repositories\Repository;
-use Stackra\DigitalPasses\Contracts\Data\WalletPassInterface;
-use Stackra\DigitalPasses\Contracts\Repositories\WalletPassRepositoryInterface;
-use Stackra\DigitalPasses\Models\WalletPass;
+use Academorix\DigitalPasses\Contracts\Data\WalletPassInterface;
+use Academorix\DigitalPasses\Contracts\Repositories\WalletPassRepositoryInterface;
+use Academorix\DigitalPasses\Models\WalletPass;
 
 /**
- * Attribute-first Eloquent repository for {@see Stackra\DigitalPasses\Models\WalletPass}.
+ * Attribute-first Eloquent repository for {@see Academorix\DigitalPasses\Models\WalletPass}.
  *
  * Bound to the interface via `#[AsRepository]`; the model comes from
  * `#[UseModel(WalletPassInterface::class)]` which resolves to
  * `WalletPass` through the interface's `#[Bind]`.
  *
- * @extends Repository<\Stackra\DigitalPasses\Models\WalletPass>
+ * @extends Repository<\Academorix\DigitalPasses\Models\WalletPass>
  *
  * @category DigitalPasses
  *

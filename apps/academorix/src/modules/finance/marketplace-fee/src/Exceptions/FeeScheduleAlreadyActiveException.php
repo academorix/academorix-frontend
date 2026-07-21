@@ -4,7 +4,7 @@
 
 declare(strict_types=1);
 
-namespace Stackra\MarketplaceFee\Exceptions;
+namespace Academorix\MarketplaceFee\Exceptions;
 
 use Stackra\Exceptions\StackraException;
 

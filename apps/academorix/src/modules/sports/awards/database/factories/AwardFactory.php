@@ -4,19 +4,19 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Awards\Database\Factories;
+namespace Academorix\Awards\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Stackra\Awards\Contracts\Data\AwardInterface;
-use Stackra\Awards\Models\Award;
+use Academorix\Awards\Contracts\Data\AwardInterface;
+use Academorix\Awards\Models\Award;
 
 /**
- * Factory for {@see \Stackra\Awards\Models\Award}.
+ * Factory for {@see \Academorix\Awards\Models\Award}.
  *
  * Auto-generated skeleton — extend with named states as domain
  * cases emerge (e.g. `->published()`, `->overdue()`, `->archived()`).
  *
- * @extends Factory<\Stackra\Awards\Models\Award>
+ * @extends Factory<\Academorix\Awards\Models\Award>
  *
  * @category Awards
  *

@@ -4,19 +4,19 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Payout\Database\Factories;
+namespace Academorix\Payout\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Stackra\Payout\Contracts\Data\PayoutInterface;
-use Stackra\Payout\Models\Payout;
+use Academorix\Payout\Contracts\Data\PayoutInterface;
+use Academorix\Payout\Models\Payout;
 
 /**
- * Factory for {@see \Stackra\Payout\Models\Payout}.
+ * Factory for {@see \Academorix\Payout\Models\Payout}.
  *
  * Auto-generated skeleton — extend with named states as domain
  * cases emerge (e.g. `->published()`, `->overdue()`, `->archived()`).
  *
- * @extends Factory<\Stackra\Payout\Models\Payout>
+ * @extends Factory<\Academorix\Payout\Models\Payout>
  *
  * @category Payout
  *

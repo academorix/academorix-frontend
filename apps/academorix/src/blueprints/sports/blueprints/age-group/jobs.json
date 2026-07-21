@@ -1,10 +1,10 @@
 {
-  "id": "stackra://modules/age-group/jobs",
+  "id": "academorix://modules/age-group/jobs",
   "$version": 1,
   "title": "age-group — background jobs",
   "jobs": [
     {
-      "class": "Stackra\\Sports\\AgeGroup\\Jobs\\SeedDefaultAgeGroupsForTenantJob",
+      "class": "Academorix\\Sports\\AgeGroup\\Jobs\\SeedDefaultAgeGroupsForTenantJob",
       "queue": "notifications",
       "purpose": "Dispatched on tenancy::TenantProvisioned. Creates the tenant's default 10-entry age-group catalog from `data/default-age-groups.json`. Idempotent — a second dispatch for the same tenant no-ops.",
       "steps": [
@@ -24,12 +24,12 @@
       "note": "Runs on the notifications queue because it's part of the tenant-onboarding path — its latency is user-visible (the tenant admin lands in a UI that expects the age-group dropdown to have entries)."
     },
     {
-      "class": "Stackra\\Sports\\AgeGroup\\Jobs\\ReconcileAgeGroupDefaultInvariantJob",
+      "class": "Academorix\\Sports\\AgeGroup\\Jobs\\ReconcileAgeGroupDefaultInvariantJob",
       "queue": "low",
       "purpose": "Nightly at 03:30 UTC. Verifies the invariant `every (tenant, organization, sport_key) tuple with at least one active AgeGroup has EXACTLY ONE row with is_default=true`. Alerts on drift; when configured, auto-heals by promoting the oldest active row to default.",
       "steps": [
         "SELECT tenant_id, organization_id, sport_key, COUNT(*) FILTER (WHERE is_default=true) AS default_count FROM age_groups WHERE deleted_at IS NULL GROUP BY tenant_id, organization_id, sport_key HAVING default_count != 1.",
-        "For each drifted tuple: log a telemetry counter (`stackra.age_group.default_invariant_drift.count`) + fire the alert per `config('age_group.reconciliation.alert_on_drift')`.",
+        "For each drifted tuple: log a telemetry counter (`academorix.age_group.default_invariant_drift.count`) + fire the alert per `config('age_group.reconciliation.alert_on_drift')`.",
         "When `config('age_group.reconciliation.auto_heal')` = true:",
         "  a. default_count = 0 AND >= 1 active row exists → promote the oldest active AgeGroup in the tuple to is_default=true.",
         "  b. default_count = 0 AND no active row exists → skip (the tuple is empty; no invariant to hold).",
@@ -43,7 +43,7 @@
       "note": "Auto-heal is off by default even in production — surface + acknowledge before healing. Turn on when ops has built confidence in the drift patterns."
     },
     {
-      "class": "Stackra\\Sports\\AgeGroup\\Jobs\\PurgeArchivedAgeGroupsJob",
+      "class": "Academorix\\Sports\\AgeGroup\\Jobs\\PurgeArchivedAgeGroupsJob",
       "queue": "low",
       "purpose": "Daily at 04:30 UTC. Hard-deletes soft-deleted (archived) AgeGroup rows past `age_group.retention.archived_age_groups_retention_days` (default 1095 days — 3 years to match rolling youth-development cohort windows) IF no inbound FK row still references them.",
       "steps": [

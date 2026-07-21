@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Membership\Actions\Tenant;
+namespace Academorix\Membership\Actions\Tenant;
 
-use Stackra\Membership\Contracts\Repositories\MembershipPlanRepositoryInterface;
-use Stackra\Membership\Data\MembershipPlanData;
+use Academorix\Membership\Contracts\Repositories\MembershipPlanRepositoryInterface;
+use Academorix\Membership\Data\MembershipPlanData;
 use Stackra\Routing\Attributes\AsAction;
 use Stackra\Routing\Attributes\Middleware;
 use Stackra\Routing\Concerns\AsController;
@@ -50,7 +50,7 @@ final class ListMembershipPlanAction
      */
     public function __invoke(Request $request): PaginatedDataCollection
     {
-        /** @var LengthAwarePaginator<int, \Stackra\Membership\Models\MembershipPlan> $page */
+        /** @var LengthAwarePaginator<int, \Academorix\Membership\Models\MembershipPlan> $page */
         $page = $this->repository->paginate(
             perPage: (int) $request->integer('per_page', 15),
         );

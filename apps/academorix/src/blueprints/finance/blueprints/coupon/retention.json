@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/coupon/retention",
+  "id": "academorix://modules/coupon/retention",
   "$version": 1,
   "title": "coupon — retention windows",
   "description": "Coupon data is financial-audit-adjacent. Every redemption is a compliance-relevant financial event — a discount that reduced the revenue recognised on an invoice line. Default retention 7 years (SOX + SOC 2 CC6.3 + national tax law baselines: US, EU, UK, CA). Enterprise tier extends to 10y via `coupon_extended_retention`. TenantErased cascades FK CASCADE hard-delete of every owned row EXCEPT invoice-linked redemptions — those migrate to a compliance archive for legal-obligation retention.",

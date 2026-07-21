@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Geofencing\Contracts\Services;
+namespace Academorix\Geofencing\Contracts\Services;
 
-use Stackra\Geofencing\Services\GeofenceCheckService;
+use Academorix\Geofencing\Services\GeofenceCheckService;
 use Illuminate\Container\Attributes\Bind;
 
 /**

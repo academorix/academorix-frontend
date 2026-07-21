@@ -4,13 +4,13 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Registry\Policies;
+namespace Academorix\Registry\Policies;
 
 use Stackra\User\Models\User;
-use Stackra\Registry\Models\Sport;
+use Academorix\Registry\Models\Sport;
 
 /**
- * Authorization policy for {@see \Stackra\Registry\Models\Sport}.
+ * Authorization policy for {@see \Academorix\Registry\Models\Sport}.
  *
  * Wired via `#[UsePolicy]` on the Model.
  *

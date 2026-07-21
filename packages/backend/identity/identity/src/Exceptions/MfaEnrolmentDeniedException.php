@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Identity\Exceptions;
 
-use Stackra\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Entitlement gate refused (mfa_totp / mfa_webauthn not entitled) OR feature flag `identity.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class MfaEnrolmentDeniedException extends AcademorixException
+final class MfaEnrolmentDeniedException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

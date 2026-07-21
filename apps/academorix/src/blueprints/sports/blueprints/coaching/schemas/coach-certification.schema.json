@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/coaching/schemas/coach-certification",
+  "id": "academorix://modules/coaching/schemas/coach-certification",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "CoachCertification",
@@ -13,9 +13,9 @@
     "keyType": "string",
     "keyPrefix": "ccf_",
     "incrementing": false,
-    "model": "Stackra\\Sports\\Coaching\\Models\\CoachCertification",
-    "interface": "Stackra\\Sports\\Coaching\\Contracts\\Data\\CoachCertificationInterface",
-    "implements": ["Stackra\\Sports\\Coaching\\Contracts\\Data\\CoachCertificationInterface"],
+    "model": "Academorix\\Sports\\Coaching\\Models\\CoachCertification",
+    "interface": "Academorix\\Sports\\Coaching\\Contracts\\Data\\CoachCertificationInterface",
+    "implements": ["Academorix\\Sports\\Coaching\\Contracts\\Data\\CoachCertificationInterface"],
     "traits": [
       "HasFactory",
       "HasPrefixedUlid",

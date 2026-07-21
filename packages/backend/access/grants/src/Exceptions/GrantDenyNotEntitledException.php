@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Grants\Exceptions;
 
-use Stackra\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * decision='deny' requires the `deny_grants` entitlement (enterprise).
@@ -15,7 +15,7 @@ use Stackra\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class GrantDenyNotEntitledException extends AcademorixException
+final class GrantDenyNotEntitledException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

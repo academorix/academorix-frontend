@@ -46,7 +46,7 @@
       "providers": [
         "Stackra\\Safeguarding\\Providers\\SafeguardingServiceProvider"
       ],
-      "aliases": {}
+      "aliases": []
     }
   },
   "scripts": {
@@ -66,13 +66,6 @@
   "minimum-stability": "stable",
   "prefer-stable": true,
   "repositories": [
-    {
-      "type": "path",
-      "url": "../../../../apps/stackra/src/sdks/platform-safeguarding-sdk",
-      "options": {
-        "symlink": true
-      }
-    },
     {
       "type": "path",
       "url": "../../framework/crud",

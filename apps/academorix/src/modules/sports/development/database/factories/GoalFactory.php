@@ -4,19 +4,19 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Development\Database\Factories;
+namespace Academorix\Development\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Stackra\Development\Contracts\Data\GoalInterface;
-use Stackra\Development\Models\Goal;
+use Academorix\Development\Contracts\Data\GoalInterface;
+use Academorix\Development\Models\Goal;
 
 /**
- * Factory for {@see \Stackra\Development\Models\Goal}.
+ * Factory for {@see \Academorix\Development\Models\Goal}.
  *
  * Auto-generated skeleton — extend with named states as domain
  * cases emerge (e.g. `->published()`, `->overdue()`, `->archived()`).
  *
- * @extends Factory<\Stackra\Development\Models\Goal>
+ * @extends Factory<\Academorix\Development\Models\Goal>
  *
  * @category Development
  *

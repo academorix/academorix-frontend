@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Match\Contracts\Data;
+namespace Academorix\Match\Contracts\Data;
 
 use Illuminate\Container\Attributes\Bind;
-use Stackra\Match\Models\MatchNote;
+use Academorix\Match\Models\MatchNote;
 
 /**
  * Table shape for the `match_notes` table.

@@ -4,25 +4,25 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Referrals\Repositories;
+namespace Academorix\Referrals\Repositories;
 
 use Stackra\Crud\Attributes\AsRepository;
 use Stackra\Crud\Attributes\Cacheable;
 use Stackra\Crud\Attributes\Filterable;
 use Stackra\Crud\Attributes\UseModel;
 use Stackra\Crud\Repositories\Repository;
-use Stackra\Referrals\Contracts\Data\ReferralCodeInterface;
-use Stackra\Referrals\Contracts\Repositories\ReferralCodeRepositoryInterface;
-use Stackra\Referrals\Models\ReferralCode;
+use Academorix\Referrals\Contracts\Data\ReferralCodeInterface;
+use Academorix\Referrals\Contracts\Repositories\ReferralCodeRepositoryInterface;
+use Academorix\Referrals\Models\ReferralCode;
 
 /**
- * Attribute-first Eloquent repository for {@see Stackra\Referrals\Models\ReferralCode}.
+ * Attribute-first Eloquent repository for {@see Academorix\Referrals\Models\ReferralCode}.
  *
  * Bound to the interface via `#[AsRepository]`; the model comes from
  * `#[UseModel(ReferralCodeInterface::class)]` which resolves to
  * `ReferralCode` through the interface's `#[Bind]`.
  *
- * @extends Repository<\Stackra\Referrals\Models\ReferralCode>
+ * @extends Repository<\Academorix\Referrals\Models\ReferralCode>
  *
  * @category Referrals
  *

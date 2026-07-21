@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/digital-passes/jobs",
+  "id": "academorix://modules/digital-passes/jobs",
   "$version": 1,
   "title": "digital-passes — queued jobs",
   "description": "Queued jobs this module dispatches.",

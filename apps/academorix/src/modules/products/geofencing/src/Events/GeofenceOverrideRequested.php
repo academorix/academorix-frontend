@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Geofencing\Events;
+namespace Academorix\Geofencing\Events;
 
 use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
 

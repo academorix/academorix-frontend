@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\PlatformUser\Exceptions;
 
-use Stackra\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * The proposed manager assignment would push the org-chart chain past `platform-user.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class OrgChartDepthExceededException extends AcademorixException
+final class OrgChartDepthExceededException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

@@ -1,14 +1,14 @@
 {
-  "id": "stackra://modules/age-group/settings",
+  "id": "academorix://modules/age-group/settings",
   "$version": 1,
   "title": "age-group — settings",
   "description": "Tenant-scoped policy for age-group provisioning + retention + reconciliation behaviour + resolver strategy. Compliance floors clamp retention_days up when the tenant's regulatory profile requires it (minor-safeguarding retention floor: 730 days for the row; audit rows stay 2555 days regardless).",
   "storedIn": "settings",
-  "reference": { "contract": "stackra://modules/settings/attributes" },
+  "reference": { "contract": "academorix://modules/settings/attributes" },
   "groups": [
     {
       "key": "age_group",
-      "class": "Stackra\\Sports\\AgeGroup\\Settings\\AgeGroupSettings",
+      "class": "Academorix\\Sports\\AgeGroup\\Settings\\AgeGroupSettings",
       "label": "Age groups",
       "description": "Tenant-wide policy for age-group provisioning, resolution, and retention.",
       "icon": "user-group",

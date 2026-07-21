@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/drills/relations",
+  "id": "academorix://modules/drills/relations",
   "$version": 1,
   "title": "drills — model relationships",
   "description": "Eloquent relations rooted at this module's models. `internal` = same-module edges; `outbound` = edges to other modules' models.",

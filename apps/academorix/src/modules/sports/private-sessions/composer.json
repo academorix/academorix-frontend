@@ -1,10 +1,10 @@
 {
-  "name": "stackra/private-sessions",
+  "name": "academorix/private-sessions",
   "type": "library",
-  "description": "Stackra PrivateSessions module — server-side Laravel package emitted from the module blueprint at `modules/sports/blueprints/private-sessions/`. Complements the wire SDK at `stackra-sports/private-sessions-sdk`.",
+  "description": "Academorix PrivateSessions module — server-side Laravel package emitted from the module blueprint at `modules/sports/blueprints/private-sessions/`. Complements the wire SDK at `academorix-sports/private-sessions-sdk`.",
   "license": "proprietary",
   "keywords": [
-    "stackra",
+    "academorix",
     "module",
     "laravel",
     "sports",
@@ -22,7 +22,7 @@
     "stackra/routing": "@dev",
     "stackra/service-provider": "@dev",
     "stackra/support": "@dev",
-    "stackra-sports/private-sessions-sdk": "@dev"
+    "academorix-sports/private-sessions-sdk": "@dev"
   },
   "require-dev": {
     "orchestra/testbench": "^11.0",
@@ -33,12 +33,12 @@
   },
   "autoload": {
     "psr-4": {
-      "Stackra\\PrivateSessions\\": "src/"
+      "Academorix\\PrivateSessions\\": "src/"
     }
   },
   "autoload-dev": {
     "psr-4": {
-      "Stackra\\PrivateSessions\\Tests\\": "tests/"
+      "Academorix\\PrivateSessions\\Tests\\": "tests/"
     }
   },
   "extra": {

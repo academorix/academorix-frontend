@@ -1,10 +1,10 @@
 {
-  "id": "stackra://modules/sports-registry/jobs",
+  "id": "academorix://modules/sports-registry/jobs",
   "$version": 1,
   "title": "sports-registry — background jobs",
   "jobs": [
     {
-      "class": "Stackra\\Sports\\Registry\\Jobs\\SeedPlatformSportsCatalogJob",
+      "class": "Academorix\\Sports\\Registry\\Jobs\\SeedPlatformSportsCatalogJob",
       "queue": "notifications",
       "purpose": "First-boot / on-demand seeder for the platform sports catalog. Parses `data/platform-sports-catalog.json` + UPSERTs the 30+ Sport rows, their nested Disciplines, and their nested Positions. Idempotent — running a second time with the JSON unchanged is a no-op (upsert on (tenant_id NULL, slug) primary conflict resolution).",
       "steps": [
@@ -26,13 +26,13 @@
       "note": "Runs on the notifications queue at platform first-boot triggered by the foundation::ApplicationBooted listener; also runnable on-demand via the CLI `sports:registry:seed-platform-catalog` OR the platform-admin route POST /api/v1/platform/sports/reseed. The uniqueness key is a fixed string (not tenant-scoped) because the seeder acts globally. Refuses to overlap with ReconcileSportReferencesJob to avoid double-touching rows."
     },
     {
-      "class": "Stackra\\Sports\\Registry\\Jobs\\ReconcileSportReferencesJob",
+      "class": "Academorix\\Sports\\Registry\\Jobs\\ReconcileSportReferencesJob",
       "queue": "low",
-      "purpose": "Nightly at 04:15 UTC. Scans every table listed in `config('sports_registry.reconciler.reference_tables')` for `sport_key` / `discipline_key` / `position_key` values that fail to resolve against the catalog. Every failure fires SportPrefixResolutionFailed + logs to `stackra.sports_registry.reference_drift.count` metric.",
+      "purpose": "Nightly at 04:15 UTC. Scans every table listed in `config('sports_registry.reconciler.reference_tables')` for `sport_key` / `discipline_key` / `position_key` values that fail to resolve against the catalog. Every failure fires SportPrefixResolutionFailed + logs to `academorix.sports_registry.reference_drift.count` metric.",
       "steps": [
         "Read the reference-tables config. Wave 3a: `['teams']`; Wave 3+ appends `['athlete_enrollments', 'coaches', 'events', 'sessions', 'seasons', 'age_groups', 'facilities']`.",
         "For each table + tenant scoping: enumerate rows with non-null sport_key. Group by (tenant_id, sport_key) to minimise resolver calls.",
-        "For each (tenant_id, sport_key) group: call `SportKeyResolver::resolve(sport_key, null, null, $tenant)`. On failure, fire `SportPrefixResolutionFailed` per row + increment `stackra.sports_registry.reference_drift.count{table=X, kind=sport}`.",
+        "For each (tenant_id, sport_key) group: call `SportKeyResolver::resolve(sport_key, null, null, $tenant)`. On failure, fire `SportPrefixResolutionFailed` per row + increment `academorix.sports_registry.reference_drift.count{table=X, kind=sport}`.",
         "Repeat for `discipline_key` (call `resolve(sport_key, discipline_key, null, $tenant)`) + `position_key` (full triple resolve).",
         "Aggregate the results into a reconciliation report row in `audit_events` + optionally alert per `config('sports_registry.reconciler.alert_on_drift')`.",
         "The reconciler NEVER edits downstream rows — it just reports. Fixes require operator action (deactivate the referring row, update the sport_key value, or restore the missing catalog row)."
@@ -44,7 +44,7 @@
       "note": "Reference tables are added by convention — each Wave 3 module opts in by appending its table name to the config, no observer edit needed. When a tenant carries thousands of enrollments the job iterates in chunks (default 500) to keep memory bounded. Refuses to overlap with SeedPlatformSportsCatalogJob to avoid inconsistent snapshots."
     },
     {
-      "class": "Stackra\\Sports\\Registry\\Jobs\\PurgeArchivedRegistryRowsJob",
+      "class": "Academorix\\Sports\\Registry\\Jobs\\PurgeArchivedRegistryRowsJob",
       "queue": "low",
       "purpose": "Weekly at 05:30 UTC on Sunday. Hard-deletes tenant custom (is_platform_seeded=false, tenant_id NOT NULL) rows that have been deactivated (is_active=false) for more than the retention window AND have zero downstream references. Platform-seeded rows are NEVER purged — they are permanent.",
       "steps": [

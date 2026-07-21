@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/marketing/routes",
+  "id": "academorix://modules/marketing/routes",
   "$version": 1,
   "title": "marketing — HTTP routes",
   "description": "Tenant-facing marketing surface (event ledger + provider CRUD + dead-letter management + ROAS report + compliance report — 18 routes) + platform-admin cross-tenant support routes (3 routes). Every tenant-plane route carries `entitlement.enforce:marketing_capture` at minimum; the ROAS route additionally carries `entitlement.enforce:marketing_roas_report`; the dead-letter replay route additionally carries `entitlement.enforce:marketing_dead_letter_replay`. Marketing events are NEVER created via API — capture is via the domain-event listener path only. Attempted POST /events returns 403 MARKETING_EVENT_MANUAL_CREATE_FORBIDDEN.",
@@ -25,28 +25,28 @@
         {
           "method": "GET",
           "path": "/",
-          "controller": "Stackra\\Growth\\Marketing\\Http\\Controllers\\Tenant\\MarketingEventController@index",
+          "controller": "Academorix\\Growth\\Marketing\\Http\\Controllers\\Tenant\\MarketingEventController@index",
           "permission": "marketing.events.viewAny",
           "description": "filter[event_type], filter[status], filter[from], filter[to], filter[provider] (via delivery join), filter[subject_type], filter[subject_id], filter[utm_source], filter[utm_campaign]. Default sort: created_at DESC."
         },
         {
           "method": "GET",
           "path": "/{event}",
-          "controller": "Stackra\\Growth\\Marketing\\Http\\Controllers\\Tenant\\MarketingEventController@show",
+          "controller": "Academorix\\Growth\\Marketing\\Http\\Controllers\\Tenant\\MarketingEventController@show",
           "permission": "marketing.events.view",
           "description": "Includes attribution + consent snapshots + eligible_provider_count + delivered_provider_count."
         },
         {
           "method": "GET",
           "path": "/{event}/deliveries",
-          "controller": "Stackra\\Growth\\Marketing\\Http\\Controllers\\Tenant\\MarketingEventController@deliveries",
+          "controller": "Academorix\\Growth\\Marketing\\Http\\Controllers\\Tenant\\MarketingEventController@deliveries",
           "permission": "marketing.deliveries.view",
           "description": "Per-provider delivery ledger for the event. Includes attempt timeline + error details."
         },
         {
           "method": "POST",
           "path": "/{event}/dispatch",
-          "controller": "Stackra\\Growth\\Marketing\\Http\\Controllers\\Tenant\\MarketingEventController@dispatch",
+          "controller": "Academorix\\Growth\\Marketing\\Http\\Controllers\\Tenant\\MarketingEventController@dispatch",
           "permission": "marketing.events.dispatch",
           "description": "Support-tool re-dispatch. Idempotent when the provider supports the event_id contract. Body: { providers?: string[] } (default = all eligible providers)."
         }
@@ -73,14 +73,14 @@
         {
           "method": "GET",
           "path": "/",
-          "controller": "Stackra\\Growth\\Marketing\\Http\\Controllers\\Tenant\\MarketingDeliveryController@index",
+          "controller": "Academorix\\Growth\\Marketing\\Http\\Controllers\\Tenant\\MarketingDeliveryController@index",
           "permission": "marketing.deliveries.viewAny",
           "description": "filter[provider], filter[status], filter[from], filter[to], filter[attempt_number]. Default sort: attempted_at DESC."
         },
         {
           "method": "GET",
           "path": "/{delivery}",
-          "controller": "Stackra\\Growth\\Marketing\\Http\\Controllers\\Tenant\\MarketingDeliveryController@show",
+          "controller": "Academorix\\Growth\\Marketing\\Http\\Controllers\\Tenant\\MarketingDeliveryController@show",
           "permission": "marketing.deliveries.view",
           "description": "Includes request_url + response_status_code + error_details. request_payload + response_body are returned encrypted (support tool decrypts client-side)."
         }
@@ -107,48 +107,48 @@
         {
           "method": "GET",
           "path": "/",
-          "controller": "Stackra\\Growth\\Marketing\\Http\\Controllers\\Tenant\\MarketingProviderConfigController@index",
+          "controller": "Academorix\\Growth\\Marketing\\Http\\Controllers\\Tenant\\MarketingProviderConfigController@index",
           "permission": "marketing.providers.viewAny",
           "description": "filter[provider], filter[is_active], filter[test_mode]. config returned encrypted; support role sees redacted view."
         },
         {
           "method": "POST",
           "path": "/",
-          "controller": "Stackra\\Growth\\Marketing\\Http\\Controllers\\Tenant\\MarketingProviderConfigController@store",
+          "controller": "Academorix\\Growth\\Marketing\\Http\\Controllers\\Tenant\\MarketingProviderConfigController@store",
           "permission": "marketing.providers.create",
           "description": "Body: MarketingProviderConfigCreateData. config jsonb validated against the per-provider JSON Schema. Consumes 1 unit of marketing_provider_slot."
         },
         {
           "method": "GET",
           "path": "/{provider}",
-          "controller": "Stackra\\Growth\\Marketing\\Http\\Controllers\\Tenant\\MarketingProviderConfigController@show",
+          "controller": "Academorix\\Growth\\Marketing\\Http\\Controllers\\Tenant\\MarketingProviderConfigController@show",
           "permission": "marketing.providers.view",
           "description": "{provider} route parameter accepts either the ULID (mpc_*) OR the provider slug when the tenant has exactly one config for that slug (ergonomic)."
         },
         {
           "method": "PATCH",
           "path": "/{provider}",
-          "controller": "Stackra\\Growth\\Marketing\\Http\\Controllers\\Tenant\\MarketingProviderConfigController@update",
+          "controller": "Academorix\\Growth\\Marketing\\Http\\Controllers\\Tenant\\MarketingProviderConfigController@update",
           "permission": "marketing.providers.update"
         },
         {
           "method": "DELETE",
           "path": "/{provider}",
-          "controller": "Stackra\\Growth\\Marketing\\Http\\Controllers\\Tenant\\MarketingProviderConfigController@destroy",
+          "controller": "Academorix\\Growth\\Marketing\\Http\\Controllers\\Tenant\\MarketingProviderConfigController@destroy",
           "permission": "marketing.providers.delete",
           "description": "Soft-delete. Refused when circuit-breaker is open. 90-day grace before hard-purge."
         },
         {
           "method": "POST",
           "path": "/{provider}/test",
-          "controller": "Stackra\\Growth\\Marketing\\Http\\Controllers\\Tenant\\MarketingProviderConfigController@test",
+          "controller": "Academorix\\Growth\\Marketing\\Http\\Controllers\\Tenant\\MarketingProviderConfigController@test",
           "permission": "marketing.providers.test",
           "description": "Send a synthetic test event via the provider's sandbox endpoint. Body: { event_type?, test_event_code? }. Returns test result (succeeded / failed) + latency."
         },
         {
           "method": "POST",
           "path": "/{provider}/reset-circuit-breaker",
-          "controller": "Stackra\\Growth\\Marketing\\Http\\Controllers\\Tenant\\MarketingProviderConfigController@resetCircuitBreaker",
+          "controller": "Academorix\\Growth\\Marketing\\Http\\Controllers\\Tenant\\MarketingProviderConfigController@resetCircuitBreaker",
           "permission": "marketing.providers.reset-circuit-breaker",
           "description": "Body: { note }. Every reset writes to audits with 7-year retention. Increments circuit_breaker_reset_count."
         }
@@ -175,14 +175,14 @@
         {
           "method": "GET",
           "path": "/",
-          "controller": "Stackra\\Growth\\Marketing\\Http\\Controllers\\Tenant\\MarketingDeadLetterController@index",
+          "controller": "Academorix\\Growth\\Marketing\\Http\\Controllers\\Tenant\\MarketingDeadLetterController@index",
           "permission": "marketing.dead_letters.viewAny",
           "description": "filter[provider], filter[reason], filter[resolved], filter[from], filter[to]. Default sort: created_at DESC. --unresolved default filter."
         },
         {
           "method": "POST",
           "path": "/{dead_letter}/replay",
-          "controller": "Stackra\\Growth\\Marketing\\Http\\Controllers\\Tenant\\MarketingDeadLetterController@replay",
+          "controller": "Academorix\\Growth\\Marketing\\Http\\Controllers\\Tenant\\MarketingDeadLetterController@replay",
           "permission": "marketing.dead_letters.replay",
           "middleware_add": ["entitlement.enforce:marketing_dead_letter_replay"],
           "description": "Body: { note }. Enqueue fresh DispatchToProviderJob(attempt=1). Increments replay_attempts. Successful replay auto-resolves. Enterprise-only."
@@ -190,7 +190,7 @@
         {
           "method": "POST",
           "path": "/{dead_letter}/resolve",
-          "controller": "Stackra\\Growth\\Marketing\\Http\\Controllers\\Tenant\\MarketingDeadLetterController@resolve",
+          "controller": "Academorix\\Growth\\Marketing\\Http\\Controllers\\Tenant\\MarketingDeadLetterController@resolve",
           "permission": "marketing.dead_letters.resolve",
           "description": "Body: { note }. Mark resolved WITHOUT replay. Used when the provider event was replayed via the provider dashboard OR when the loss is intentional."
         }
@@ -217,7 +217,7 @@
         {
           "method": "GET",
           "path": "/roas",
-          "controller": "Stackra\\Growth\\Marketing\\Http\\Controllers\\Tenant\\RoasReportController@show",
+          "controller": "Academorix\\Growth\\Marketing\\Http\\Controllers\\Tenant\\RoasReportController@show",
           "permission": "marketing.roas.view",
           "middleware_add": ["entitlement.enforce:marketing_roas_report"],
           "description": "?from=YYYY-MM-DD&to=YYYY-MM-DD&group_by=campaign|source|medium&provider=. Returns aggregated revenue attribution per grouping. Excludes test-mode events. Medium+ only."
@@ -225,7 +225,7 @@
         {
           "method": "GET",
           "path": "/reports/consent-suppressions",
-          "controller": "Stackra\\Growth\\Marketing\\Http\\Controllers\\Tenant\\ConsentSuppressionsReportController@show",
+          "controller": "Academorix\\Growth\\Marketing\\Http\\Controllers\\Tenant\\ConsentSuppressionsReportController@show",
           "permission": "marketing.reports.consent-suppressions.view",
           "description": "?from=YYYY-MM-DD&to=YYYY-MM-DD&consent_category=marketing|advertising. Returns counts of consent-suppressed events + deliveries. Powers the compliance dashboard."
         }
@@ -248,21 +248,21 @@
         {
           "method": "GET",
           "path": "/deliveries",
-          "controller": "Stackra\\Growth\\Marketing\\Http\\Controllers\\Platform\\MarketingDeliveryController@index",
+          "controller": "Academorix\\Growth\\Marketing\\Http\\Controllers\\Platform\\MarketingDeliveryController@index",
           "permission": "platform.marketing.deliveries.viewAny",
           "description": "filter[tenant_id], filter[provider], filter[status], filter[from], filter[to]. Cross-tenant scan for support debugging."
         },
         {
           "method": "GET",
           "path": "/dead-letters",
-          "controller": "Stackra\\Growth\\Marketing\\Http\\Controllers\\Platform\\MarketingDeadLetterController@index",
+          "controller": "Academorix\\Growth\\Marketing\\Http\\Controllers\\Platform\\MarketingDeadLetterController@index",
           "permission": "platform.marketing.dead_letters.viewAny",
           "description": "Cross-tenant P1 review dashboard. filter[tenant_id], filter[provider], filter[reason], filter[unresolved]."
         },
         {
           "method": "GET",
           "path": "/circuit-breakers",
-          "controller": "Stackra\\Growth\\Marketing\\Http\\Controllers\\Platform\\CircuitBreakerHealthController@index",
+          "controller": "Academorix\\Growth\\Marketing\\Http\\Controllers\\Platform\\CircuitBreakerHealthController@index",
           "permission": "platform.marketing.circuit_breakers.viewAny",
           "description": "Cross-tenant view of every OPEN circuit-breaker + half-open probes in flight. Feeds the ops health dashboard."
         }

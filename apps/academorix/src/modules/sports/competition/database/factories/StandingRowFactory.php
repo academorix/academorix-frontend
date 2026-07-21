@@ -4,19 +4,19 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Competition\Database\Factories;
+namespace Academorix\Competition\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Stackra\Competition\Contracts\Data\StandingRowInterface;
-use Stackra\Competition\Models\StandingRow;
+use Academorix\Competition\Contracts\Data\StandingRowInterface;
+use Academorix\Competition\Models\StandingRow;
 
 /**
- * Factory for {@see \Stackra\Competition\Models\StandingRow}.
+ * Factory for {@see \Academorix\Competition\Models\StandingRow}.
  *
  * Auto-generated skeleton — extend with named states as domain
  * cases emerge (e.g. `->published()`, `->overdue()`, `->archived()`).
  *
- * @extends Factory<\Stackra\Competition\Models\StandingRow>
+ * @extends Factory<\Academorix\Competition\Models\StandingRow>
  *
  * @category Competition
  *

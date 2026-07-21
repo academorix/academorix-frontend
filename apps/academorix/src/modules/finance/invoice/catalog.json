@@ -1,6 +1,6 @@
 {
-  "$schema": "https://gist.githubusercontent.com/stackra-user/073a1ab687cd93ede7ae927b96a025ea/raw/catalog.v1.json",
-  "name": "stackra/invoice",
+  "$schema": "https://gist.githubusercontent.com/academorix-user/073a1ab687cd93ede7ae927b96a025ea/raw/catalog.v1.json",
+  "name": "academorix/invoice",
   "tier": "saas",
   "surfaces": ["core"],
   "kind": "feature",
@@ -11,22 +11,22 @@
     "CreditNote aggregate (crn_ prefix) — reversal invoice",
     "State machine (draft, issued, paid, void)",
     "Attribute-first CRUD, Actions, Policies, Events",
-    "Wire SDK companion at stackra-finance/invoice-sdk"
+    "Wire SDK companion at academorix-finance/invoice-sdk"
   ],
   "when_to_use": "A tenant issues an invoice to a customer, or a credit note for a refund/adjustment.",
-  "when_not_to_use": "For the double-entry ledger of money movement, use stackra/transaction. For SaaS-plan invoicing, use stackra/subscription.",
+  "when_not_to_use": "For the double-entry ledger of money movement, use academorix/transaction. For SaaS-plan invoicing, use academorix/subscription.",
   "peer_deps": [
-    "stackra-finance/invoice-sdk",
-    "stackra/crud",
-    "stackra/foundation",
-    "stackra/routing",
-    "stackra/service-provider",
-    "stackra/support",
+    "academorix-finance/invoice-sdk",
+    "academorix/crud",
+    "academorix/foundation",
+    "academorix/routing",
+    "academorix/service-provider",
+    "academorix/support",
     "spatie/laravel-data"
   ],
   "backend_pair": null,
   "size_gzip_kb": {},
   "maturity": "alpha",
   "owning_agent": "laravel-feature-builder",
-  "docs": ["apps/stackra/src/modules/finance/invoice/README.md"]
+  "docs": ["apps/academorix/src/modules/finance/invoice/README.md"]
 }

@@ -4,25 +4,25 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Marketing\Repositories;
+namespace Academorix\Marketing\Repositories;
 
 use Stackra\Crud\Attributes\AsRepository;
 use Stackra\Crud\Attributes\Cacheable;
 use Stackra\Crud\Attributes\Filterable;
 use Stackra\Crud\Attributes\UseModel;
 use Stackra\Crud\Repositories\Repository;
-use Stackra\Marketing\Contracts\Data\MarketingEventInterface;
-use Stackra\Marketing\Contracts\Repositories\MarketingEventRepositoryInterface;
-use Stackra\Marketing\Models\MarketingEvent;
+use Academorix\Marketing\Contracts\Data\MarketingEventInterface;
+use Academorix\Marketing\Contracts\Repositories\MarketingEventRepositoryInterface;
+use Academorix\Marketing\Models\MarketingEvent;
 
 /**
- * Attribute-first Eloquent repository for {@see Stackra\Marketing\Models\MarketingEvent}.
+ * Attribute-first Eloquent repository for {@see Academorix\Marketing\Models\MarketingEvent}.
  *
  * Bound to the interface via `#[AsRepository]`; the model comes from
  * `#[UseModel(MarketingEventInterface::class)]` which resolves to
  * `MarketingEvent` through the interface's `#[Bind]`.
  *
- * @extends Repository<\Stackra\Marketing\Models\MarketingEvent>
+ * @extends Repository<\Academorix\Marketing\Models\MarketingEvent>
  *
  * @category Marketing
  *

@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Leads\Services;
+namespace Academorix\Leads\Services;
 
-use Stackra\Leads\Contracts\Services\LeadStageTransitionValidatorInterface;
-use Stackra\Leads\Enums\LeadStage;
-use Stackra\Leads\Exceptions\LeadInvalidStageTransitionException;
+use Academorix\Leads\Contracts\Services\LeadStageTransitionValidatorInterface;
+use Academorix\Leads\Enums\LeadStage;
+use Academorix\Leads\Exceptions\LeadInvalidStageTransitionException;
 use Illuminate\Container\Attributes\Scoped;
 
 /**
@@ -26,7 +26,7 @@ use Illuminate\Container\Attributes\Scoped;
  *  * `WON` / `LOST` — terminal, no outgoing transitions.
  *
  * `WON` requires the conversion path
- * ({@see \Stackra\Leads\Actions\Tenant\ConvertAction}) — it is NOT
+ * ({@see \Academorix\Leads\Actions\Tenant\ConvertAction}) — it is NOT
  * reachable via a naked `PATCH /leads/{id}`.
  *
  * @category Leads

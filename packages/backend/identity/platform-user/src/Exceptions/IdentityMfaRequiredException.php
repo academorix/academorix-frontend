@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\PlatformUser\Exceptions;
 
-use Stackra\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * The referenced Identity has NULL mfa_secret_encrypted.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class IdentityMfaRequiredException extends AcademorixException
+final class IdentityMfaRequiredException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

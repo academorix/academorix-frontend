@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use Stackra\Progress\Models\BeltRank;
+use Academorix\Progress\Models\BeltRank;
 
 it('is a placeholder — replace with actual BeltRank unit tests', function (): void {
     expect(BeltRank::class)->toBeString();

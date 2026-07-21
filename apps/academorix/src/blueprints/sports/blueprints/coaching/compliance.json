@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/coaching/compliance",
+  "id": "academorix://modules/coaching/compliance",
   "$version": 1,
   "title": "coaching — compliance evidence",
   "description": "Coaching records are employment-adjacent + safeguarding-adjacent. Every certification lifecycle, assignment, and skill rating is compliance-relevant. GDPR Art. 6(1)(b) (contractual basis for employment record), Art. 17 §3 (retained-employment exception), CCPA (right to export), SOC 2 CC6.3, NCAA / IHSA coach-certification verification for youth sports, SafeSport hook (integration point for future safesport module), US DOL wage-and-hour record retention.",
@@ -66,7 +66,7 @@
         {
           "criterion": "CC7.2",
           "principle": "system monitoring",
-          "evidence": "Coach expiration cadence + assignment conflict detection emit metrics; nightly reconciliation on head_coach uniqueness. Metric `stackra.coaching.head_coach.invariant_violations` should stay at 0."
+          "evidence": "Coach expiration cadence + assignment conflict detection emit metrics; nightly reconciliation on head_coach uniqueness. Metric `academorix.coaching.head_coach.invariant_violations` should stay at 0."
         }
       ]
     },

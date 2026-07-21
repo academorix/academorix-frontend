@@ -4,19 +4,19 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Analytics\Database\Factories;
+namespace Academorix\Analytics\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Stackra\Analytics\Contracts\Data\AnalyticsEventInterface;
-use Stackra\Analytics\Models\AnalyticsEvent;
+use Academorix\Analytics\Contracts\Data\AnalyticsEventInterface;
+use Academorix\Analytics\Models\AnalyticsEvent;
 
 /**
- * Factory for {@see \Stackra\Analytics\Models\AnalyticsEvent}.
+ * Factory for {@see \Academorix\Analytics\Models\AnalyticsEvent}.
  *
  * Auto-generated skeleton — extend with named states as domain
  * cases emerge (e.g. `->published()`, `->overdue()`, `->archived()`).
  *
- * @extends Factory<\Stackra\Analytics\Models\AnalyticsEvent>
+ * @extends Factory<\Academorix\Analytics\Models\AnalyticsEvent>
  *
  * @category Analytics
  *

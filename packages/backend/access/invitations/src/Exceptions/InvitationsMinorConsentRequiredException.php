@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Invitations\Exceptions;
 
-use Stackra\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Invitee stated age < 16 / 13 (per jurisdiction); safeguarding module's VPC flow must be completed first.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class InvitationsMinorConsentRequiredException extends AcademorixException
+final class InvitationsMinorConsentRequiredException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

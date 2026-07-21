@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/session/routes",
+  "id": "academorix://modules/session/routes",
   "$version": 1,
   "title": "session — HTTP routes",
   "description": "Tenant-facing session CRUD + lifecycle actions + attendance management + coach assignment + ratings. Every tenant route carries entitlement.enforce:sports_sessions. Attendance routes carry sessions.attendance.record permission.",
@@ -27,155 +27,155 @@
         {
           "method": "GET",
           "path": "/",
-          "controller": "Stackra\\Sports\\Session\\Http\\Controllers\\Tenant\\SessionController@index",
+          "controller": "Academorix\\Sports\\Session\\Http\\Controllers\\Tenant\\SessionController@index",
           "permission": "sessions.viewAny",
           "description": "filter[status], filter[session_type], filter[team_id], filter[season_id], filter[event_id], filter[branch_id], filter[head_coach_id], filter[starts_at.gte], filter[starts_at.lte], filter[has_safeguarding_flag], filter[sport_key], sort[]=starts_at,name,created_at, include=team,season,event,head_coach,resource_booking,attendance_count,primary_facility. Row-level filter applied per role (see permissions.json)."
         },
         {
           "method": "GET",
           "path": "/today",
-          "controller": "Stackra\\Sports\\Session\\Http\\Controllers\\Tenant\\TodaySessionsController@index",
+          "controller": "Academorix\\Sports\\Session\\Http\\Controllers\\Tenant\\TodaySessionsController@index",
           "permission": "sessions.viewAny",
           "description": "Sessions with starts_at in today's local calendar day. High-traffic endpoint — the tenant home page. Cached per (tenant, caller_role) with 60s TTL."
         },
         {
           "method": "GET",
           "path": "/upcoming",
-          "controller": "Stackra\\Sports\\Session\\Http\\Controllers\\Tenant\\UpcomingSessionsController@index",
+          "controller": "Academorix\\Sports\\Session\\Http\\Controllers\\Tenant\\UpcomingSessionsController@index",
           "permission": "sessions.viewAny",
           "description": "Sessions in the next 7 days for the caller. Filtered by role: coaches see their assigned sessions; athletes/guardians see sessions with their attendance."
         },
         {
           "method": "POST",
           "path": "/",
-          "controller": "Stackra\\Sports\\Session\\Http\\Controllers\\Tenant\\SessionController@store",
+          "controller": "Academorix\\Sports\\Session\\Http\\Controllers\\Tenant\\SessionController@store",
           "permission": "sessions.create",
           "description": "Body: SessionCreateData — name (required), branch_id (required), resource_booking_id (required), session_type (required), team_id, season_id, event_id, sport_key, head_coach_id, assistant_coach_ids, supervising_staff_id, attendance_capacity, attendance_min, age_group_id, gender_category, curriculum_topic, lesson_plan_url (entitlement-gated), equipment_needed, description. Consumes 1 session_slot per ISO week of resource_booking.starts_at."
         },
         {
           "method": "GET",
           "path": "/{session}",
-          "controller": "Stackra\\Sports\\Session\\Http\\Controllers\\Tenant\\SessionController@show",
+          "controller": "Academorix\\Sports\\Session\\Http\\Controllers\\Tenant\\SessionController@show",
           "permission": "sessions.view",
           "description": "Full session row. include=team,season,event,head_coach,assistant_coaches,supervising_staff,resource_booking,attendance,primary_facility."
         },
         {
           "method": "PATCH",
           "path": "/{session}",
-          "controller": "Stackra\\Sports\\Session\\Http\\Controllers\\Tenant\\SessionController@update",
+          "controller": "Academorix\\Sports\\Session\\Http\\Controllers\\Tenant\\SessionController@update",
           "permission": "sessions.update",
           "description": "Mutable fields (per caller permission): name, description, curriculum_topic, lesson_plan_url, equipment_needed, attendance_capacity, attendance_min, age_group_id, gender_category, session_notes, coach_rating_input, safeguarding_incident_flag (via sessions.safeguarding.flag). Immutable: tenant_id, branch_id, resource_booking_id (use reschedule endpoint), team_id, session_type post-scheduled."
         },
         {
           "method": "DELETE",
           "path": "/{session}",
-          "controller": "Stackra\\Sports\\Session\\Http\\Controllers\\Tenant\\SessionController@destroy",
+          "controller": "Academorix\\Sports\\Session\\Http\\Controllers\\Tenant\\SessionController@destroy",
           "permission": "sessions.delete",
           "description": "Soft-delete. Requires status IN ('scheduled', 'cancelled', 'completed')."
         },
         {
           "method": "POST",
           "path": "/{session}/confirm",
-          "controller": "Stackra\\Sports\\Session\\Http\\Controllers\\Tenant\\SessionController@confirm",
+          "controller": "Academorix\\Sports\\Session\\Http\\Controllers\\Tenant\\SessionController@confirm",
           "permission": "sessions.confirm",
           "description": "scheduled -> confirmed. Fires SessionConfirmed."
         },
         {
           "method": "POST",
           "path": "/{session}/reschedule",
-          "controller": "Stackra\\Sports\\Session\\Http\\Controllers\\Tenant\\SessionController@reschedule",
+          "controller": "Academorix\\Sports\\Session\\Http\\Controllers\\Tenant\\SessionController@reschedule",
           "permission": "sessions.reschedule",
           "description": "Body: { new_resource_booking_id: string (REQUIRED) }. Old booking is released, new booking is verified same-tenant + same-branch. Fires SessionRescheduled (audit-warn) + cannot-opt-out notification."
         },
         {
           "method": "POST",
           "path": "/{session}/cancel",
-          "controller": "Stackra\\Sports\\Session\\Http\\Controllers\\Tenant\\SessionController@cancel",
+          "controller": "Academorix\\Sports\\Session\\Http\\Controllers\\Tenant\\SessionController@cancel",
           "permission": "sessions.cancel",
           "description": "Body: { cancellation_reason: string (REQUIRED) }. When notice_hours_before_start < 24, additionally requires sessions.cancel.short-notice permission. Fires SessionCancelled + cannot-opt-out notification."
         },
         {
           "method": "POST",
           "path": "/{session}/start",
-          "controller": "Stackra\\Sports\\Session\\Http\\Controllers\\Tenant\\SessionController@start",
+          "controller": "Academorix\\Sports\\Session\\Http\\Controllers\\Tenant\\SessionController@start",
           "permission": "sessions.start",
           "description": "Manual transition to in_progress. Automated at starts_at otherwise."
         },
         {
           "method": "POST",
           "path": "/{session}/complete",
-          "controller": "Stackra\\Sports\\Session\\Http\\Controllers\\Tenant\\SessionController@complete",
+          "controller": "Academorix\\Sports\\Session\\Http\\Controllers\\Tenant\\SessionController@complete",
           "permission": "sessions.complete"
         },
         {
           "method": "POST",
           "path": "/{session}/assign-coach",
-          "controller": "Stackra\\Sports\\Session\\Http\\Controllers\\Tenant\\SessionController@assignCoach",
+          "controller": "Academorix\\Sports\\Session\\Http\\Controllers\\Tenant\\SessionController@assignCoach",
           "permission": "sessions.assign_coach",
           "description": "Body: { head_coach_id: string?, assistant_coach_ids: string[]?, supervising_staff_id: string? }. Same-tenant verified. When head_coach_id changes AND notice_hours_before_start < 24, requires sessions.assign_coach.short-notice + fires SessionCoachReassigned critical."
         },
         {
           "method": "POST",
           "path": "/{session}/update-curriculum",
-          "controller": "Stackra\\Sports\\Session\\Http\\Controllers\\Tenant\\SessionController@updateCurriculum",
+          "controller": "Academorix\\Sports\\Session\\Http\\Controllers\\Tenant\\SessionController@updateCurriculum",
           "permission": "sessions.update",
           "description": "Body: { curriculum_topic: string?, lesson_plan_url: string? }. Fires SessionCurriculumTopicUpdated."
         },
         {
           "method": "POST",
           "path": "/{session}/archive",
-          "controller": "Stackra\\Sports\\Session\\Http\\Controllers\\Tenant\\SessionController@archive",
+          "controller": "Academorix\\Sports\\Session\\Http\\Controllers\\Tenant\\SessionController@archive",
           "permission": "sessions.archive",
           "description": "Manual archive completed or cancelled session."
         },
         {
           "method": "POST",
           "path": "/{session}/restore",
-          "controller": "Stackra\\Sports\\Session\\Http\\Controllers\\Tenant\\SessionController@restore",
+          "controller": "Academorix\\Sports\\Session\\Http\\Controllers\\Tenant\\SessionController@restore",
           "permission": "sessions.restore"
         },
         {
           "method": "GET",
           "path": "/{session}/attendance",
-          "controller": "Stackra\\Sports\\Session\\Http\\Controllers\\Tenant\\AttendanceController@index",
+          "controller": "Academorix\\Sports\\Session\\Http\\Controllers\\Tenant\\AttendanceController@index",
           "permission": "sessions.view",
           "description": "List attendance rows. include=athlete."
         },
         {
           "method": "POST",
           "path": "/{session}/attendance",
-          "controller": "Stackra\\Sports\\Session\\Http\\Controllers\\Tenant\\AttendanceController@store",
+          "controller": "Academorix\\Sports\\Session\\Http\\Controllers\\Tenant\\AttendanceController@store",
           "permission": "sessions.attendance.record",
           "description": "Register an athlete for the session. Body: { athlete_id, athlete_enrollment_id? }. Refused when attendance_capacity reached OR athlete not eligible (age/gender)."
         },
         {
           "method": "POST",
           "path": "/{session}/attendance/{attendance}/check-in",
-          "controller": "Stackra\\Sports\\Session\\Http\\Controllers\\Tenant\\AttendanceController@checkIn",
+          "controller": "Academorix\\Sports\\Session\\Http\\Controllers\\Tenant\\AttendanceController@checkIn",
           "permission": "sessions.attendance.record"
         },
         {
           "method": "POST",
           "path": "/{session}/attendance/{attendance}/mark-absent",
-          "controller": "Stackra\\Sports\\Session\\Http\\Controllers\\Tenant\\AttendanceController@markAbsent",
+          "controller": "Academorix\\Sports\\Session\\Http\\Controllers\\Tenant\\AttendanceController@markAbsent",
           "permission": "sessions.attendance.record"
         },
         {
           "method": "POST",
           "path": "/{session}/attendance/{attendance}/mark-late",
-          "controller": "Stackra\\Sports\\Session\\Http\\Controllers\\Tenant\\AttendanceController@markLate",
+          "controller": "Academorix\\Sports\\Session\\Http\\Controllers\\Tenant\\AttendanceController@markLate",
           "permission": "sessions.attendance.record"
         },
         {
           "method": "DELETE",
           "path": "/{session}/attendance/{attendance}",
-          "controller": "Stackra\\Sports\\Session\\Http\\Controllers\\Tenant\\AttendanceController@destroy",
+          "controller": "Academorix\\Sports\\Session\\Http\\Controllers\\Tenant\\AttendanceController@destroy",
           "permission": "sessions.attendance.remove"
         },
         {
           "method": "POST",
           "path": "/{session}/ratings",
-          "controller": "Stackra\\Sports\\Session\\Http\\Controllers\\Tenant\\RatingController@store",
+          "controller": "Academorix\\Sports\\Session\\Http\\Controllers\\Tenant\\RatingController@store",
           "permission": "sessions.rate",
           "description": "Body: { rating: number (0-5, required), comment: string? }. Gated by session_coach_ratings entitlement. Athlete + guardian can rate."
         }
@@ -197,20 +197,20 @@
         {
           "method": "GET",
           "path": "/",
-          "controller": "Stackra\\Sports\\Session\\Http\\Controllers\\Platform\\SessionController@index",
+          "controller": "Academorix\\Sports\\Session\\Http\\Controllers\\Platform\\SessionController@index",
           "permission": "platform.sessions.viewAny",
           "description": "Cross-tenant list. filter[tenant_id], filter[status], filter[session_type], filter[has_safeguarding_flag]."
         },
         {
           "method": "GET",
           "path": "/{session}",
-          "controller": "Stackra\\Sports\\Session\\Http\\Controllers\\Platform\\SessionController@show",
+          "controller": "Academorix\\Sports\\Session\\Http\\Controllers\\Platform\\SessionController@show",
           "permission": "platform.sessions.view"
         },
         {
           "method": "GET",
           "path": "/safeguarding-incidents",
-          "controller": "Stackra\\Sports\\Session\\Http\\Controllers\\Platform\\SafeguardingIncidentController@index",
+          "controller": "Academorix\\Sports\\Session\\Http\\Controllers\\Platform\\SafeguardingIncidentController@index",
           "permission": "platform.sessions.safeguarding.viewAny",
           "description": "Cross-tenant safeguarding-flagged sessions. Restricted to platform safeguarding role. Every read written to audit_events. Redacts session_notes to a hash unless viewer is the assigned safeguarding officer."
         }

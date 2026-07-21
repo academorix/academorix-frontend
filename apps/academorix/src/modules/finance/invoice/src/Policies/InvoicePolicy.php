@@ -4,13 +4,13 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Invoice\Policies;
+namespace Academorix\Invoice\Policies;
 
 use Stackra\User\Models\User;
-use Stackra\Invoice\Models\Invoice;
+use Academorix\Invoice\Models\Invoice;
 
 /**
- * Authorization policy for {@see \Stackra\Invoice\Models\Invoice}.
+ * Authorization policy for {@see \Academorix\Invoice\Models\Invoice}.
  *
  * Wired via `#[UsePolicy]` on the Model.
  *

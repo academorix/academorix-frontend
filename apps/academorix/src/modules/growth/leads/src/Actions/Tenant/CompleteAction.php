@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Leads\Actions\Tenant;
+namespace Academorix\Leads\Actions\Tenant;
 
 use Stackra\Authorization\Attributes\RequirePermission;
-use Stackra\Leads\Contracts\Data\LeadTaskInterface;
-use Stackra\Leads\Contracts\Repositories\LeadTaskRepositoryInterface;
-use Stackra\Leads\Data\LeadTaskData;
-use Stackra\Leads\Enums\LeadsPermission;
-use Stackra\Leads\Enums\LeadTaskStatus;
-use Stackra\Leads\Exceptions\LeadTaskAlreadyCompletedException;
+use Academorix\Leads\Contracts\Data\LeadTaskInterface;
+use Academorix\Leads\Contracts\Repositories\LeadTaskRepositoryInterface;
+use Academorix\Leads\Data\LeadTaskData;
+use Academorix\Leads\Enums\LeadsPermission;
+use Academorix\Leads\Enums\LeadTaskStatus;
+use Academorix\Leads\Exceptions\LeadTaskAlreadyCompletedException;
 use Stackra\Routing\Attributes\AsAction;
 use Stackra\Routing\Attributes\Middleware;
 use Stackra\Routing\Attributes\Post;
@@ -24,12 +24,12 @@ use Illuminate\Contracts\Auth\Factory as AuthFactory;
  *
  * Terminal transition: `open` / `in_progress` → `completed`. Refuses
  * to complete an already-completed OR cancelled task with
- * {@see \Stackra\Leads\Exceptions\LeadTaskAlreadyCompletedException}
+ * {@see \Academorix\Leads\Exceptions\LeadTaskAlreadyCompletedException}
  * (422). Records the completer id + timestamp for the audit trail.
  *
  * The action-level policy check narrows further — the
  * `lead-tasks.complete` permission is assignee-only via
- * {@see \Stackra\Leads\Policies\LeadTaskPolicy}. Admin + owner
+ * {@see \Academorix\Leads\Policies\LeadTaskPolicy}. Admin + owner
  * override is applied by the policy's `before()` hook.
  *
  * @category Leads
@@ -54,7 +54,7 @@ final class CompleteAction
      * @param  string  $lead_task  ULID from the URL.
      *
      * @throws \Illuminate\Database\Eloquent\ModelNotFoundException  When the row is absent.
-     * @throws \Stackra\Leads\Exceptions\LeadTaskAlreadyCompletedException  When the task is already in a terminal state.
+     * @throws \Academorix\Leads\Exceptions\LeadTaskAlreadyCompletedException  When the task is already in a terminal state.
      */
     public function __invoke(string $lead_task): LeadTaskData
     {

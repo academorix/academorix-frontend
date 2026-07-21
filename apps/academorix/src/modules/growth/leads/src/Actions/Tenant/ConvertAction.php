@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Leads\Actions\Tenant;
+namespace Academorix\Leads\Actions\Tenant;
 
 use Stackra\Authorization\Attributes\RequirePermission;
-use Stackra\Leads\Contracts\Repositories\LeadRepositoryInterface;
-use Stackra\Leads\Contracts\Services\LeadConversionServiceInterface;
-use Stackra\Leads\Data\LeadData;
-use Stackra\Leads\Enums\LeadsPermission;
+use Academorix\Leads\Contracts\Repositories\LeadRepositoryInterface;
+use Academorix\Leads\Contracts\Services\LeadConversionServiceInterface;
+use Academorix\Leads\Data\LeadData;
+use Academorix\Leads\Enums\LeadsPermission;
 use Stackra\Routing\Attributes\AsAction;
 use Stackra\Routing\Attributes\Middleware;
 use Stackra\Routing\Attributes\Post;
@@ -52,8 +52,8 @@ final class ConvertAction
      * @param  string  $lead  ULID from the URL.
      *
      * @throws \Illuminate\Database\Eloquent\ModelNotFoundException  When the row is absent / tenant-scoped out.
-     * @throws \Stackra\Leads\Exceptions\LeadInvalidStageTransitionException  When the transition is refused.
-     * @throws \Stackra\Leads\Exceptions\LeadConversionAthletesRequiredException  When `athlete_names` is empty.
+     * @throws \Academorix\Leads\Exceptions\LeadInvalidStageTransitionException  When the transition is refused.
+     * @throws \Academorix\Leads\Exceptions\LeadConversionAthletesRequiredException  When `athlete_names` is empty.
      */
     public function __invoke(string $lead): LeadData
     {

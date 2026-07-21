@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Referrals\Contracts\Services;
+namespace Academorix\Referrals\Contracts\Services;
 
-use Stackra\Referrals\Services\VestingScheduler;
+use Academorix\Referrals\Services\VestingScheduler;
 use Illuminate\Container\Attributes\Bind;
 
 /**

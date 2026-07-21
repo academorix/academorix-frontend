@@ -4,19 +4,19 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Coupon\Models;
+namespace Academorix\Coupon\Models;
 
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
-use Stackra\Coupon\Contracts\Data\CouponInterface;
-use Stackra\Coupon\Database\Factories\CouponFactory;
-use Stackra\Coupon\Enums\CouponApplicability;
-use Stackra\Coupon\Enums\CouponDiscountType;
-use Stackra\Coupon\Enums\CouponIssuanceSource;
-use Stackra\Coupon\Policies\CouponPolicy;
+use Academorix\Coupon\Contracts\Data\CouponInterface;
+use Academorix\Coupon\Database\Factories\CouponFactory;
+use Academorix\Coupon\Enums\CouponApplicability;
+use Academorix\Coupon\Enums\CouponDiscountType;
+use Academorix\Coupon\Enums\CouponIssuanceSource;
+use Academorix\Coupon\Policies\CouponPolicy;
 use Stackra\Foundation\Concerns\Filterable;
 use Stackra\Foundation\Concerns\HasMetadata;
 use Stackra\Tenancy\Concerns\BelongsToTenant;

@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/event/schemas/event",
+  "id": "academorix://modules/event/schemas/event",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "Event",
@@ -13,9 +13,9 @@
     "keyType": "string",
     "keyPrefix": "eve_",
     "incrementing": false,
-    "model": "Stackra\\Sports\\Event\\Models\\Event",
-    "interface": "Stackra\\Sports\\Event\\Contracts\\Data\\EventInterface",
-    "implements": ["Stackra\\Sports\\Event\\Contracts\\Data\\EventInterface"],
+    "model": "Academorix\\Sports\\Event\\Models\\Event",
+    "interface": "Academorix\\Sports\\Event\\Contracts\\Data\\EventInterface",
+    "implements": ["Academorix\\Sports\\Event\\Contracts\\Data\\EventInterface"],
     "traits": [
       "HasFactory",
       "HasUlids",

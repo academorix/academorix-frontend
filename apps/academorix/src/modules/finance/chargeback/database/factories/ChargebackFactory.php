@@ -4,19 +4,19 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Chargeback\Database\Factories;
+namespace Academorix\Chargeback\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Stackra\Chargeback\Contracts\Data\ChargebackInterface;
-use Stackra\Chargeback\Models\Chargeback;
+use Academorix\Chargeback\Contracts\Data\ChargebackInterface;
+use Academorix\Chargeback\Models\Chargeback;
 
 /**
- * Factory for {@see \Stackra\Chargeback\Models\Chargeback}.
+ * Factory for {@see \Academorix\Chargeback\Models\Chargeback}.
  *
  * Auto-generated skeleton — extend with named states as domain
  * cases emerge (e.g. `->published()`, `->overdue()`, `->archived()`).
  *
- * @extends Factory<\Stackra\Chargeback\Models\Chargeback>
+ * @extends Factory<\Academorix\Chargeback\Models\Chargeback>
  *
  * @category Chargeback
  *

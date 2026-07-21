@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Drills\Actions\Tenant;
+namespace Academorix\Drills\Actions\Tenant;
 
-use Stackra\Drills\Contracts\Repositories\CurriculumRepositoryInterface;
-use Stackra\Drills\Data\CurriculumData;
+use Academorix\Drills\Contracts\Repositories\CurriculumRepositoryInterface;
+use Academorix\Drills\Data\CurriculumData;
 use Stackra\Routing\Attributes\AsAction;
 use Stackra\Routing\Attributes\Middleware;
 use Stackra\Routing\Concerns\AsController;
@@ -50,7 +50,7 @@ final class ListCurriculumAction
      */
     public function __invoke(Request $request): PaginatedDataCollection
     {
-        /** @var LengthAwarePaginator<int, \Stackra\Drills\Models\Curriculum> $page */
+        /** @var LengthAwarePaginator<int, \Academorix\Drills\Models\Curriculum> $page */
         $page = $this->repository->paginate(
             perPage: (int) $request->integer('per_page', 15),
         );

@@ -4,11 +4,11 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Analytics\Services;
+namespace Academorix\Analytics\Services;
 
-use Stackra\Analytics\Contracts\Services\AnalyticsCircuitBreakerRegistryInterface;
+use Academorix\Analytics\Contracts\Services\AnalyticsCircuitBreakerRegistryInterface;
 use Illuminate\Container\Attributes\Scoped;
-use Stackra\Analytics\Contracts\Repositories\AnalyticsDeliveryRepositoryInterface;
+use Academorix\Analytics\Contracts\Repositories\AnalyticsDeliveryRepositoryInterface;
 
 /**
  * Concrete service — AnalyticsCircuitBreakerRegistry.

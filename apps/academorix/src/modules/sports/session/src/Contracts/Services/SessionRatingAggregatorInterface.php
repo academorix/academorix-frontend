@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Session\Contracts\Services;
+namespace Academorix\Session\Contracts\Services;
 
-use Stackra\Session\Services\SessionRatingAggregator;
+use Academorix\Session\Services\SessionRatingAggregator;
 use Illuminate\Container\Attributes\Bind;
 
 /**

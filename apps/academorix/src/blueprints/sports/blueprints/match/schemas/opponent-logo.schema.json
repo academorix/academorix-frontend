@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/match/schemas/opponent-logo",
+  "id": "academorix://modules/match/schemas/opponent-logo",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "OpponentLogo",
@@ -13,9 +13,9 @@
     "keyType": "string",
     "keyPrefix": "olg_",
     "incrementing": false,
-    "model": "Stackra\\Sports\\Match\\Models\\OpponentLogo",
-    "interface": "Stackra\\Sports\\Match\\Contracts\\Data\\OpponentLogoInterface",
-    "implements": ["Stackra\\Sports\\Match\\Contracts\\Data\\OpponentLogoInterface"],
+    "model": "Academorix\\Sports\\Match\\Models\\OpponentLogo",
+    "interface": "Academorix\\Sports\\Match\\Contracts\\Data\\OpponentLogoInterface",
+    "implements": ["Academorix\\Sports\\Match\\Contracts\\Data\\OpponentLogoInterface"],
     "traits": [
       "HasFactory",
       "HasUlids",

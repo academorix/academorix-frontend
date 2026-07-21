@@ -4,7 +4,7 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Season\Exceptions;
+namespace Academorix\Season\Exceptions;
 
 use Stackra\Exceptions\StackraException;
 

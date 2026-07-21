@@ -1,11 +1,11 @@
 {
-  "id": "stackra://modules/season/middleware",
+  "id": "academorix://modules/season/middleware",
   "$version": 1,
   "title": "season — HTTP middleware",
   "middleware": [
     {
       "alias": "season.resolve_active",
-      "class": "Stackra\\Sports\\Season\\Http\\Middleware\\ResolveActiveSeason",
+      "class": "Academorix\\Sports\\Season\\Http\\Middleware\\ResolveActiveSeason",
       "priority": 50,
       "description": "Resolves the caller's active Season for THIS request. Reads (in order): (1) `X-Season-Id` header when the caller's active tenant has a Season on that slug or ULID AND the Season is not archived; (2) CurrentSeasonResolver -> the tenant's Season where is_current=true within the scope-tuple fallback chain (see readme.md §6); (3) null when no season matches (allowed — Small tier + always-on tenants operate here). Sets `Request::activeSeason()` + writes to the `RequestContext.season_id` slot that downstream middleware (season.enforce_registration_open) reads. Runs AFTER `tenant.resolve` but BEFORE any enrollment-adjacent middleware.",
       "auto_applied": true,
@@ -36,7 +36,7 @@
     },
     {
       "alias": "season.enforce_registration_open",
-      "class": "Stackra\\Sports\\Season\\Http\\Middleware\\EnforceRegistrationOpen",
+      "class": "Academorix\\Sports\\Season\\Http\\Middleware\\EnforceRegistrationOpen",
       "priority": 55,
       "description": "Guards enrollment-adjacent write routes (Wave 3 athlete-enrollment surface — this module ships the middleware today so Wave 3 can compose it without a follow-up). Refuses when the resolved active Season's registration window is closed. Not auto-applied — Wave 3 enrollment routes attach it explicitly.",
       "auto_applied": false,

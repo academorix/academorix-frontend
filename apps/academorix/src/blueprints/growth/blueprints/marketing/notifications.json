@@ -1,8 +1,8 @@
 {
-  "id": "stackra://modules/marketing/notifications",
+  "id": "academorix://modules/marketing/notifications",
   "$version": 1,
   "title": "marketing — notification classes + categories",
-  "namespace": "Stackra\\Growth\\Marketing\\Notifications",
+  "namespace": "Academorix\\Growth\\Marketing\\Notifications",
   "notifications": [
     "MarketingProviderCircuitBreakerOpenedNotification",
     "MarketingDeadLetterCreatedNotification",

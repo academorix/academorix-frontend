@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Attribution\Actions\Tenant;
+namespace Academorix\Attribution\Actions\Tenant;
 
-use Stackra\Attribution\Contracts\Repositories\AttributionRepositoryInterface;
-use Stackra\Attribution\Data\AttributionData;
+use Academorix\Attribution\Contracts\Repositories\AttributionRepositoryInterface;
+use Academorix\Attribution\Data\AttributionData;
 use Stackra\Routing\Attributes\AsAction;
 use Stackra\Routing\Attributes\Middleware;
 use Stackra\Routing\Concerns\AsController;
@@ -50,7 +50,7 @@ final class ListAttributionAction
      */
     public function __invoke(Request $request): PaginatedDataCollection
     {
-        /** @var LengthAwarePaginator<int, \Stackra\Attribution\Models\Attribution> $page */
+        /** @var LengthAwarePaginator<int, \Academorix\Attribution\Models\Attribution> $page */
         $page = $this->repository->paginate(
             perPage: (int) $request->integer('per_page', 15),
         );

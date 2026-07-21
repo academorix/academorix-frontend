@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Medical\Actions\Tenant;
+namespace Academorix\Medical\Actions\Tenant;
 
-use Stackra\Medical\Contracts\Repositories\MedicalClearanceRepositoryInterface;
-use Stackra\Medical\Data\MedicalClearanceData;
+use Academorix\Medical\Contracts\Repositories\MedicalClearanceRepositoryInterface;
+use Academorix\Medical\Data\MedicalClearanceData;
 use Stackra\Routing\Attributes\AsAction;
 use Stackra\Routing\Attributes\Middleware;
 use Stackra\Routing\Concerns\AsController;
@@ -50,7 +50,7 @@ final class ListMedicalClearanceAction
      */
     public function __invoke(Request $request): PaginatedDataCollection
     {
-        /** @var LengthAwarePaginator<int, \Stackra\Medical\Models\MedicalClearance> $page */
+        /** @var LengthAwarePaginator<int, \Academorix\Medical\Models\MedicalClearance> $page */
         $page = $this->repository->paginate(
             perPage: (int) $request->integer('per_page', 15),
         );

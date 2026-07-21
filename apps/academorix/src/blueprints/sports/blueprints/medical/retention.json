@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/medical/retention",
+  "id": "academorix://modules/medical/retention",
   "$version": 1,
   "title": "medical — data retention windows",
   "description": "Health data — HIPAA + insurance + litigation horizons. Injuries + clearances retained 10 years (12 years Enterprise for pediatric records — statute of limitations tolling until majority). Medical records NEVER hard-deleted while active; archived to cold on tenant erasure.",

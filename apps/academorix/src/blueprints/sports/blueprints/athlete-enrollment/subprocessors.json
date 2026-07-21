@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/athlete-enrollment/subprocessors",
+  "id": "academorix://modules/athlete-enrollment/subprocessors",
   "$version": 1,
   "title": "athlete-enrollment — subprocessors",
   "description": "The AthleteEnrollment module engages ZERO third-party subprocessors — every state transition is first-party. Downstream: notifications, storage (Wave 4+), finance (Wave 4+ for payment status).",

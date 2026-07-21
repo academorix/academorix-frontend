@@ -4,25 +4,25 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Development\Repositories;
+namespace Academorix\Development\Repositories;
 
 use Stackra\Crud\Attributes\AsRepository;
 use Stackra\Crud\Attributes\Cacheable;
 use Stackra\Crud\Attributes\Filterable;
 use Stackra\Crud\Attributes\UseModel;
 use Stackra\Crud\Repositories\Repository;
-use Stackra\Development\Contracts\Data\PathwayStageInterface;
-use Stackra\Development\Contracts\Repositories\PathwayStageRepositoryInterface;
-use Stackra\Development\Models\PathwayStage;
+use Academorix\Development\Contracts\Data\PathwayStageInterface;
+use Academorix\Development\Contracts\Repositories\PathwayStageRepositoryInterface;
+use Academorix\Development\Models\PathwayStage;
 
 /**
- * Attribute-first Eloquent repository for {@see Stackra\Development\Models\PathwayStage}.
+ * Attribute-first Eloquent repository for {@see Academorix\Development\Models\PathwayStage}.
  *
  * Bound to the interface via `#[AsRepository]`; the model comes from
  * `#[UseModel(PathwayStageInterface::class)]` which resolves to
  * `PathwayStage` through the interface's `#[Bind]`.
  *
- * @extends Repository<\Stackra\Development\Models\PathwayStage>
+ * @extends Repository<\Academorix\Development\Models\PathwayStage>
  *
  * @category Development
  *

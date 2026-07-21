@@ -1,10 +1,10 @@
 {
-  "id": "stackra://modules/geofencing/jobs",
+  "id": "academorix://modules/geofencing/jobs",
   "$version": 1,
   "title": "geofencing \u2014 background jobs",
   "jobs": [
     {
-      "class": "Stackra\\Geofencing\\Jobs\\PurgeStaleGeofenceChecksJob",
+      "class": "Academorix\\Geofencing\\Jobs\\PurgeStaleGeofenceChecksJob",
       "queue": "notifications",
       "purpose": "GDPR retention path. Soft-delete geofence_checks rows past the tenant's retention window (default 7 years). Hard-delete rows past the anonymisation window (10 years).",
       "steps": [
@@ -20,7 +20,7 @@
       "notes": "Weekly. Small batches (1000 rows at a time) to avoid long transactions on the audit table."
     },
     {
-      "class": "Stackra\\Geofencing\\Jobs\\ReconcileGeofenceCheckImmutabilityJob",
+      "class": "Academorix\\Geofencing\\Jobs\\ReconcileGeofenceCheckImmutabilityJob",
       "queue": "notifications",
       "purpose": "Sanity check: no geofence_checks row has been modified since insert. Compares audit-log entries against the audit_include column list; any drift raises a critical alert.",
       "shouldQueue": true,

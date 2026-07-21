@@ -4,16 +4,16 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Event\Models;
+namespace Academorix\Event\Models;
 
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
-use Stackra\Event\Contracts\Data\EventInvitationInterface;
-use Stackra\Event\Database\Factories\EventInvitationFactory;
-use Stackra\Athlete\Concerns\BelongsToAthlete;
+use Academorix\Event\Contracts\Data\EventInvitationInterface;
+use Academorix\Event\Database\Factories\EventInvitationFactory;
+use Academorix\Athlete\Concerns\BelongsToAthlete;
 use Stackra\Foundation\Concerns\Filterable;
 use Stackra\Foundation\Concerns\HasMetadata;
 use Stackra\Foundation\Concerns\HasPrefixedUlid;

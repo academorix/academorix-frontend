@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Chargeback\Services;
+namespace Academorix\Chargeback\Services;
 
-use Stackra\Chargeback\Contracts\Data\ChargebackInterface;
-use Stackra\Chargeback\Contracts\Repositories\ChargebackRepositoryInterface;
-use Stackra\Chargeback\Contracts\Services\ChargebackRateCalculatorInterface;
-use Stackra\Chargeback\Data\ChargebackRateData;
+use Academorix\Chargeback\Contracts\Data\ChargebackInterface;
+use Academorix\Chargeback\Contracts\Repositories\ChargebackRepositoryInterface;
+use Academorix\Chargeback\Contracts\Services\ChargebackRateCalculatorInterface;
+use Academorix\Chargeback\Data\ChargebackRateData;
 use Illuminate\Container\Attributes\Config;
 use Illuminate\Container\Attributes\DB;
 use Illuminate\Container\Attributes\Scoped;
@@ -15,7 +15,7 @@ use Illuminate\Database\ConnectionInterface;
 
 /**
  * Reference implementation of
- * {@see \Stackra\Chargeback\Contracts\Services\ChargebackRateCalculatorInterface}.
+ * {@see \Academorix\Chargeback\Contracts\Services\ChargebackRateCalculatorInterface}.
  *
  * Chargeback rate is computed as a percentage — chargebacks divided
  * by successful transactions in the trailing window. Visa's VDMP

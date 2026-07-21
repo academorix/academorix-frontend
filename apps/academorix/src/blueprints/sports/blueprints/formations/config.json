@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/formations/config",
+  "id": "academorix://modules/formations/config",
   "$version": 1,
   "title": "formations — config keys",
   "description": "config/<module>.php shape + defaults.",

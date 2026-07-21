@@ -2,40 +2,40 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Coupon\Services;
+namespace Academorix\Coupon\Services;
 
-use Stackra\Coupon\Contracts\Data\CouponInterface;
-use Stackra\Coupon\Contracts\Data\CouponRedemptionInterface;
-use Stackra\Coupon\Contracts\Repositories\CouponRedemptionRepositoryInterface;
-use Stackra\Coupon\Contracts\Repositories\CouponRepositoryInterface;
-use Stackra\Coupon\Contracts\Services\CouponRedeemerInterface;
-use Stackra\Coupon\Contracts\Services\CouponValidatorInterface;
-use Stackra\Coupon\Data\CouponVerdictData;
-use Stackra\Coupon\Enums\CouponRedemptionClawbackReason;
-use Stackra\Coupon\Events\CouponRedeemed;
-use Stackra\Coupon\Events\CouponRedemptionRefused;
-use Stackra\Coupon\Events\CouponRedemptionReversed;
-use Stackra\Coupon\Events\CouponUsageCapReached;
-use Stackra\Coupon\Exceptions\CouponAlreadyRedeemedOnTargetException;
-use Stackra\Coupon\Exceptions\CouponApplicabilityMismatchException;
-use Stackra\Coupon\Exceptions\CouponCurrencyMismatchException;
-use Stackra\Coupon\Exceptions\CouponCustomerLimitReachedException;
-use Stackra\Coupon\Exceptions\CouponExpiredException;
-use Stackra\Coupon\Exceptions\CouponInactiveException;
-use Stackra\Coupon\Exceptions\CouponMinimumOrderNotMetException;
-use Stackra\Coupon\Exceptions\CouponNotFoundException;
-use Stackra\Coupon\Exceptions\CouponRedemptionAlreadyReversedException;
-use Stackra\Coupon\Exceptions\CouponRedemptionNotFoundException;
-use Stackra\Coupon\Exceptions\CouponUsageCapReachedException;
-use Stackra\Coupon\Models\Coupon;
-use Stackra\Coupon\Models\CouponRedemption;
+use Academorix\Coupon\Contracts\Data\CouponInterface;
+use Academorix\Coupon\Contracts\Data\CouponRedemptionInterface;
+use Academorix\Coupon\Contracts\Repositories\CouponRedemptionRepositoryInterface;
+use Academorix\Coupon\Contracts\Repositories\CouponRepositoryInterface;
+use Academorix\Coupon\Contracts\Services\CouponRedeemerInterface;
+use Academorix\Coupon\Contracts\Services\CouponValidatorInterface;
+use Academorix\Coupon\Data\CouponVerdictData;
+use Academorix\Coupon\Enums\CouponRedemptionClawbackReason;
+use Academorix\Coupon\Events\CouponRedeemed;
+use Academorix\Coupon\Events\CouponRedemptionRefused;
+use Academorix\Coupon\Events\CouponRedemptionReversed;
+use Academorix\Coupon\Events\CouponUsageCapReached;
+use Academorix\Coupon\Exceptions\CouponAlreadyRedeemedOnTargetException;
+use Academorix\Coupon\Exceptions\CouponApplicabilityMismatchException;
+use Academorix\Coupon\Exceptions\CouponCurrencyMismatchException;
+use Academorix\Coupon\Exceptions\CouponCustomerLimitReachedException;
+use Academorix\Coupon\Exceptions\CouponExpiredException;
+use Academorix\Coupon\Exceptions\CouponInactiveException;
+use Academorix\Coupon\Exceptions\CouponMinimumOrderNotMetException;
+use Academorix\Coupon\Exceptions\CouponNotFoundException;
+use Academorix\Coupon\Exceptions\CouponRedemptionAlreadyReversedException;
+use Academorix\Coupon\Exceptions\CouponRedemptionNotFoundException;
+use Academorix\Coupon\Exceptions\CouponUsageCapReachedException;
+use Academorix\Coupon\Models\Coupon;
+use Academorix\Coupon\Models\CouponRedemption;
 use Illuminate\Container\Attributes\Scoped;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 
 /**
  * Reference implementation of
- * {@see \Stackra\Coupon\Contracts\Services\CouponRedeemerInterface}.
+ * {@see \Academorix\Coupon\Contracts\Services\CouponRedeemerInterface}.
  *
  * Owns the write path for `coupon_redemptions` INSERTs plus the atomic
  * `coupons.usage_count` increment. Every mutating method wraps the two

@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Chargeback\Contracts\Services;
+namespace Academorix\Chargeback\Contracts\Services;
 
-use Stackra\Chargeback\Services\EvidenceCollector;
+use Academorix\Chargeback\Services\EvidenceCollector;
 use Illuminate\Container\Attributes\Bind;
 
 /**

@@ -4,25 +4,25 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Drills\Repositories;
+namespace Academorix\Drills\Repositories;
 
 use Stackra\Crud\Attributes\AsRepository;
 use Stackra\Crud\Attributes\Cacheable;
 use Stackra\Crud\Attributes\Filterable;
 use Stackra\Crud\Attributes\UseModel;
 use Stackra\Crud\Repositories\Repository;
-use Stackra\Drills\Contracts\Data\SessionPlanInterface;
-use Stackra\Drills\Contracts\Repositories\SessionPlanRepositoryInterface;
-use Stackra\Drills\Models\SessionPlan;
+use Academorix\Drills\Contracts\Data\SessionPlanInterface;
+use Academorix\Drills\Contracts\Repositories\SessionPlanRepositoryInterface;
+use Academorix\Drills\Models\SessionPlan;
 
 /**
- * Attribute-first Eloquent repository for {@see Stackra\Drills\Models\SessionPlan}.
+ * Attribute-first Eloquent repository for {@see Academorix\Drills\Models\SessionPlan}.
  *
  * Bound to the interface via `#[AsRepository]`; the model comes from
  * `#[UseModel(SessionPlanInterface::class)]` which resolves to
  * `SessionPlan` through the interface's `#[Bind]`.
  *
- * @extends Repository<\Stackra\Drills\Models\SessionPlan>
+ * @extends Repository<\Academorix\Drills\Models\SessionPlan>
  *
  * @category Drills
  *

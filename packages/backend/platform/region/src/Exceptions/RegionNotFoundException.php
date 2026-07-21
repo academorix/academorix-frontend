@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Region\Exceptions;
 
-use Stackra\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Raised when the domain rule `REGION_NOT_FOUND` fires.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class RegionNotFoundException extends AcademorixException
+final class RegionNotFoundException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

@@ -1,10 +1,10 @@
 {
-  "name": "stackra/expenses",
+  "name": "academorix/expenses",
   "type": "library",
-  "description": "Stackra Expenses module — server-side Laravel package emitted from the module blueprint at `modules/finance/blueprints/expenses/`. Complements the wire SDK at `stackra-finance/expenses-sdk`.",
+  "description": "Academorix Expenses module — server-side Laravel package emitted from the module blueprint at `modules/finance/blueprints/expenses/`. Complements the wire SDK at `academorix-finance/expenses-sdk`.",
   "license": "proprietary",
   "keywords": [
-    "stackra",
+    "academorix",
     "module",
     "laravel",
     "finance",
@@ -22,7 +22,7 @@
     "stackra/routing": "@dev",
     "stackra/service-provider": "@dev",
     "stackra/support": "@dev",
-    "stackra-finance/expenses-sdk": "@dev"
+    "academorix-finance/expenses-sdk": "@dev"
   },
   "require-dev": {
     "orchestra/testbench": "^11.0",
@@ -33,12 +33,12 @@
   },
   "autoload": {
     "psr-4": {
-      "Stackra\\Expenses\\": "src/"
+      "Academorix\\Expenses\\": "src/"
     }
   },
   "autoload-dev": {
     "psr-4": {
-      "Stackra\\Expenses\\Tests\\": "tests/"
+      "Academorix\\Expenses\\Tests\\": "tests/"
     }
   },
   "extra": {

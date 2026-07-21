@@ -4,25 +4,25 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Medical\Repositories;
+namespace Academorix\Medical\Repositories;
 
 use Stackra\Crud\Attributes\AsRepository;
 use Stackra\Crud\Attributes\Cacheable;
 use Stackra\Crud\Attributes\Filterable;
 use Stackra\Crud\Attributes\UseModel;
 use Stackra\Crud\Repositories\Repository;
-use Stackra\Medical\Contracts\Data\InjuryInterface;
-use Stackra\Medical\Contracts\Repositories\InjuryRepositoryInterface;
-use Stackra\Medical\Models\Injury;
+use Academorix\Medical\Contracts\Data\InjuryInterface;
+use Academorix\Medical\Contracts\Repositories\InjuryRepositoryInterface;
+use Academorix\Medical\Models\Injury;
 
 /**
- * Attribute-first Eloquent repository for {@see Stackra\Medical\Models\Injury}.
+ * Attribute-first Eloquent repository for {@see Academorix\Medical\Models\Injury}.
  *
  * Bound to the interface via `#[AsRepository]`; the model comes from
  * `#[UseModel(InjuryInterface::class)]` which resolves to
  * `Injury` through the interface's `#[Bind]`.
  *
- * @extends Repository<\Stackra\Medical\Models\Injury>
+ * @extends Repository<\Academorix\Medical\Models\Injury>
  *
  * @category Medical
  *

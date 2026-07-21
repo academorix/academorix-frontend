@@ -1,9 +1,9 @@
 {
-  "id": "stackra://modules/transaction/helpers",
+  "id": "academorix://modules/transaction/helpers",
   "$version": 1,
   "title": "transaction — helper functions",
   "description": "Ergonomic helpers for recording transactions + querying account balances + resolving exchange rates. All helpers are thin wrappers around bound services — never business logic. Callers who need to record transactions typically use TransactionRecorder directly (via DI); helpers here are for imperative flows (support tools, tests, ad-hoc scripts).",
-  "namespace": "Stackra\\Finance\\Transaction\\Support",
+  "namespace": "Academorix\\Finance\\Transaction\\Support",
   "helpers": [
     {
       "signature": "record_transaction(TransactionKind $kind, string $referenceType, string $referenceId, int $amountCents, string $currency, array $ledgerEntries, array $metadata = []): ?Transaction",

@@ -4,7 +4,7 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Coupon\Settings;
+namespace Academorix\Coupon\Settings;
 
 use Stackra\Settings\Attributes\AsSetting;
 use Stackra\Settings\Attributes\SettingField;

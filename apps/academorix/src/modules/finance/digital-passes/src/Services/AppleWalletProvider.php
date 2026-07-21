@@ -4,11 +4,11 @@
 
 declare(strict_types=1);
 
-namespace Stackra\DigitalPasses\Services;
+namespace Academorix\DigitalPasses\Services;
 
-use Stackra\DigitalPasses\Contracts\Services\AppleWalletProviderInterface;
+use Academorix\DigitalPasses\Contracts\Services\AppleWalletProviderInterface;
 use Illuminate\Container\Attributes\Scoped;
-use Stackra\DigitalPasses\Contracts\Repositories\WalletPassRepositoryInterface;
+use Academorix\DigitalPasses\Contracts\Repositories\WalletPassRepositoryInterface;
 
 /**
  * Concrete service — AppleWalletProvider.

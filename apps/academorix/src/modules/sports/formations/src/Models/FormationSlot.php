@@ -4,15 +4,15 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Formations\Models;
+namespace Academorix\Formations\Models;
 
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
-use Stackra\Formations\Contracts\Data\FormationSlotInterface;
-use Stackra\Formations\Database\Factories\FormationSlotFactory;
+use Academorix\Formations\Contracts\Data\FormationSlotInterface;
+use Academorix\Formations\Database\Factories\FormationSlotFactory;
 use Stackra\Foundation\Concerns\Filterable;
 use Stackra\Foundation\Concerns\HasMetadata;
 use Stackra\Foundation\Concerns\HasPrefixedUlid;

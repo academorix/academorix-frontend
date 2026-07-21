@@ -1,14 +1,14 @@
 {
-  "id": "stackra://modules/event/events",
+  "id": "academorix://modules/event/events",
   "$version": 1,
   "title": "event — published events",
-  "namespace": "Stackra\\Sports\\Event\\Events",
+  "namespace": "Academorix\\Sports\\Event\\Events",
   "dispatchMode": "afterCommit",
   "description": "Every event implements `ShouldDispatchAfterCommit` so listeners never fire against a rolled-back write. Lifecycle events fan out to notifications + activity + audit. Financial-relevant events (EventPricingChanged after registration_open) additionally feed the audit stream with 7-year retention because post-registration price shifts create refund liability. EventMinorEligibilityCorrected is critical-severity because narrowing min/max age post-registration excludes existing registrants (same refund-liability shape). EventCancellationBroadcast is the highest-severity operational event — cannot-opt-out notification to every registered participant.",
   "events": [
     {
       "name": "EventCreated",
-      "class": "Stackra\\Sports\\Event\\Events\\EventCreated",
+      "class": "Academorix\\Sports\\Event\\Events\\EventCreated",
       "trigger": "EventProvisioner completed a successful create. Fires exactly once per `events.id`.",
       "queue": "notifications",
       "consumers": ["audit::WriteToAuditLog", "activity::WriteToActivityLog"],
@@ -31,7 +31,7 @@
     },
     {
       "name": "EventUpdated",
-      "class": "Stackra\\Sports\\Event\\Events\\EventUpdated",
+      "class": "Academorix\\Sports\\Event\\Events\\EventUpdated",
       "trigger": "Any Event scalar field mutated except the specific-transition fields (status, visibility, starts_at, ends_at, branch_id, entry_fee_cents, min_age, max_age, age_group_ids). Umbrella event for renames, description edits, hero_image_url changes, sort tweaks.",
       "queue": "notifications",
       "consumers": ["audit::WriteToAuditLog", "activity::WriteToActivityLog"],
@@ -44,7 +44,7 @@
     },
     {
       "name": "EventStatusChanged",
-      "class": "Stackra\\Sports\\Event\\Events\\EventStatusChanged",
+      "class": "Academorix\\Sports\\Event\\Events\\EventStatusChanged",
       "trigger": "Event.status transitioned to any new value. A superset event; the specific-state events below (EventAnnounced, EventRegistrationOpened, ...) fire alongside for the routing case that cares.",
       "queue": "notifications",
       "consumers": ["audit::WriteToAuditLog", "activity::WriteToActivityLog"],
@@ -60,7 +60,7 @@
     },
     {
       "name": "EventAnnounced",
-      "class": "Stackra\\Sports\\Event\\Events\\EventAnnounced",
+      "class": "Academorix\\Sports\\Event\\Events\\EventAnnounced",
       "trigger": "Event.status transitioned draft -> announced. First point at which the event is visible on public/tenant surfaces. Fires alongside EventStatusChanged.",
       "queue": "notifications",
       "consumers": [
@@ -78,7 +78,7 @@
     },
     {
       "name": "EventRegistrationOpened",
-      "class": "Stackra\\Sports\\Event\\Events\\EventRegistrationOpened",
+      "class": "Academorix\\Sports\\Event\\Events\\EventRegistrationOpened",
       "trigger": "Event.status transitioned to registration_open. Automated (RollEventStatusJob when now() reaches registration_opens_at) OR manual admin.",
       "queue": "notifications",
       "consumers": [
@@ -96,7 +96,7 @@
     },
     {
       "name": "EventRegistrationClosed",
-      "class": "Stackra\\Sports\\Event\\Events\\EventRegistrationClosed",
+      "class": "Academorix\\Sports\\Event\\Events\\EventRegistrationClosed",
       "trigger": "Event.status transitioned registration_open -> registration_closed. Automated (ExpireExpiredEventRegistrationsJob) OR manual. Late-registration window is independent — see allow_late_registration flag.",
       "queue": "notifications",
       "consumers": ["audit::WriteToAuditLog", "activity::WriteToActivityLog"],
@@ -110,7 +110,7 @@
     },
     {
       "name": "EventStarted",
-      "class": "Stackra\\Sports\\Event\\Events\\EventStarted",
+      "class": "Academorix\\Sports\\Event\\Events\\EventStarted",
       "trigger": "Event.status transitioned to in_progress. Fires from RollEventStatusJob at starts_at OR manual admin start.",
       "queue": "notifications",
       "consumers": [
@@ -127,7 +127,7 @@
     },
     {
       "name": "EventCompleted",
-      "class": "Stackra\\Sports\\Event\\Events\\EventCompleted",
+      "class": "Academorix\\Sports\\Event\\Events\\EventCompleted",
       "trigger": "Event.status transitioned in_progress -> completed. Fires from RollEventStatusJob at ends_at + 1h grace OR manual admin.",
       "queue": "notifications",
       "consumers": ["audit::WriteToAuditLog", "activity::WriteToActivityLog"],
@@ -141,7 +141,7 @@
     },
     {
       "name": "EventCancelled",
-      "class": "Stackra\\Sports\\Event\\Events\\EventCancelled",
+      "class": "Academorix\\Sports\\Event\\Events\\EventCancelled",
       "trigger": "Event.status transitioned to cancelled (from any pre-completed state). Requires cancellation_reason. Cannot be reversed except by restore-to-draft flow.",
       "queue": "notifications-critical",
       "consumers": [
@@ -160,7 +160,7 @@
     },
     {
       "name": "EventRescheduled",
-      "class": "Stackra\\Sports\\Event\\Events\\EventRescheduled",
+      "class": "Academorix\\Sports\\Event\\Events\\EventRescheduled",
       "trigger": "Event.starts_at OR Event.ends_at changed on an announced-or-later event. AUDIT-WARN: affects every registered participant's calendar.",
       "queue": "notifications-critical",
       "consumers": [
@@ -180,7 +180,7 @@
     },
     {
       "name": "EventVenueChanged",
-      "class": "Stackra\\Sports\\Event\\Events\\EventVenueChanged",
+      "class": "Academorix\\Sports\\Event\\Events\\EventVenueChanged",
       "trigger": "Event.branch_id OR primary facility changed post-registration_open. AUDIT-WARN — participants planned around the venue.",
       "queue": "notifications-critical",
       "consumers": [
@@ -200,7 +200,7 @@
     },
     {
       "name": "EventCapacityChanged",
-      "class": "Stackra\\Sports\\Event\\Events\\EventCapacityChanged",
+      "class": "Academorix\\Sports\\Event\\Events\\EventCapacityChanged",
       "trigger": "Event.max_participants OR max_teams changed. Informational; the enrollment surface enforces the cap.",
       "queue": "notifications",
       "consumers": ["audit::WriteToAuditLog", "activity::WriteToActivityLog"],
@@ -214,7 +214,7 @@
     },
     {
       "name": "EventPricingChanged",
-      "class": "Stackra\\Sports\\Event\\Events\\EventPricingChanged",
+      "class": "Academorix\\Sports\\Event\\Events\\EventPricingChanged",
       "trigger": "Event.entry_fee_cents, entry_fee_currency, late_registration_fee_cents, OR prize_pool_cents changed. AUDIT-CRITICAL when Event.status IN (registration_open, registration_closed, in_progress) — post-registration price shifts create refund liability; every fire retained 7 years.",
       "queue": "notifications-critical",
       "consumers": [
@@ -243,7 +243,7 @@
     },
     {
       "name": "EventMinorEligibilityCorrected",
-      "class": "Stackra\\Sports\\Event\\Events\\EventMinorEligibilityCorrected",
+      "class": "Academorix\\Sports\\Event\\Events\\EventMinorEligibilityCorrected",
       "trigger": "Event.min_age, max_age, OR age_group_ids narrowed after registrations opened. AUDIT-CRITICAL when the narrowing excludes existing registrants — same refund-liability shape as EventPricingChanged.",
       "queue": "notifications-critical",
       "consumers": [
@@ -272,7 +272,7 @@
     },
     {
       "name": "EventArchived",
-      "class": "Stackra\\Sports\\Event\\Events\\EventArchived",
+      "class": "Academorix\\Sports\\Event\\Events\\EventArchived",
       "trigger": "Event.status transitioned completed -> archived OR cancelled -> archived. Soft-delete; the row is hidden from tenant selectors + registration flows but readable via `?include_archived=true`.",
       "queue": "notifications",
       "consumers": ["audit::WriteToAuditLog", "activity::WriteToActivityLog"],
@@ -287,7 +287,7 @@
     },
     {
       "name": "EventRestored",
-      "class": "Stackra\\Sports\\Event\\Events\\EventRestored",
+      "class": "Academorix\\Sports\\Event\\Events\\EventRestored",
       "trigger": "Archived -> completed OR archived -> cancelled (whichever it was prior to archive). Only within the retention window (default 2555 days = 7 years).",
       "queue": "notifications",
       "consumers": ["audit::WriteToAuditLog", "activity::WriteToActivityLog"],
@@ -301,7 +301,7 @@
     },
     {
       "name": "EventPublished",
-      "class": "Stackra\\Sports\\Event\\Events\\EventPublished",
+      "class": "Academorix\\Sports\\Event\\Events\\EventPublished",
       "trigger": "Event.visibility transitioned to 'public' from any non-public value. Event now appears on public listings + search.",
       "queue": "notifications",
       "consumers": [
@@ -319,7 +319,7 @@
     },
     {
       "name": "EventUnpublished",
-      "class": "Stackra\\Sports\\Event\\Events\\EventUnpublished",
+      "class": "Academorix\\Sports\\Event\\Events\\EventUnpublished",
       "trigger": "Event.visibility transitioned from 'public' to any non-public value. Event no longer appears on public listings.",
       "queue": "notifications",
       "consumers": [
@@ -337,7 +337,7 @@
     },
     {
       "name": "EventFacilityAdded",
-      "class": "Stackra\\Sports\\Event\\Events\\EventFacilityAdded",
+      "class": "Academorix\\Sports\\Event\\Events\\EventFacilityAdded",
       "trigger": "A new event_facilities row created. Fires per attachment.",
       "queue": "notifications",
       "consumers": ["audit::WriteToAuditLog", "activity::WriteToActivityLog"],
@@ -353,7 +353,7 @@
     },
     {
       "name": "EventFacilityRemoved",
-      "class": "Stackra\\Sports\\Event\\Events\\EventFacilityRemoved",
+      "class": "Academorix\\Sports\\Event\\Events\\EventFacilityRemoved",
       "trigger": "An event_facilities row soft-deleted. Fires per detachment. Refused via observer when the event is in_progress + the row is primary + no other facility can replace it.",
       "queue": "notifications",
       "consumers": ["audit::WriteToAuditLog", "activity::WriteToActivityLog"],
@@ -368,7 +368,7 @@
     },
     {
       "name": "EventPrimaryFacilityChanged",
-      "class": "Stackra\\Sports\\Event\\Events\\EventPrimaryFacilityChanged",
+      "class": "Academorix\\Sports\\Event\\Events\\EventPrimaryFacilityChanged",
       "trigger": "The is_primary flag flipped on any event_facilities row. Auto-demote of the previous primary happens in the same transaction.",
       "queue": "notifications",
       "consumers": ["audit::WriteToAuditLog", "activity::WriteToActivityLog"],
@@ -382,7 +382,7 @@
     },
     {
       "name": "EventCancellationBroadcast",
-      "class": "Stackra\\Sports\\Event\\Events\\EventCancellationBroadcast",
+      "class": "Academorix\\Sports\\Event\\Events\\EventCancellationBroadcast",
       "trigger": "Fires alongside EventCancelled to trigger the cannot-opt-out notification fan-out to every registered participant + coach. Separated from EventCancelled because notification consumers subscribe to THIS event (event lifecycle) while audit consumers subscribe to EventCancelled (state transition).",
       "queue": "notifications-critical",
       "consumers": [
@@ -399,7 +399,7 @@
     },
     {
       "name": "EventReminderScheduled",
-      "class": "Stackra\\Sports\\Event\\Events\\EventReminderScheduled",
+      "class": "Academorix\\Sports\\Event\\Events\\EventReminderScheduled",
       "trigger": "Fires when NotifyEventReminderJob queues a T-24h / T-1h reminder for an event. Informational — feeds ops dashboards for reminder-cadence health.",
       "queue": "low",
       "consumers": ["activity::WriteToActivityLog"],
@@ -412,7 +412,7 @@
     },
     {
       "name": "EventLivestreamActivated",
-      "class": "Stackra\\Sports\\Event\\Events\\EventLivestreamActivated",
+      "class": "Academorix\\Sports\\Event\\Events\\EventLivestreamActivated",
       "trigger": "Event.livestream_url set for the first time OR livestream_password rotated. Fires the notification to registered participants (private-tier password delivery).",
       "queue": "notifications",
       "consumers": [

@@ -1,8 +1,8 @@
 {
-  "id": "stackra://modules/awards/events",
+  "id": "academorix://modules/awards/events",
   "$version": 1,
   "title": "awards — published events",
-  "namespace": "Stackra\\Sports\\Awards\\Events",
+  "namespace": "Academorix\\Sports\\Awards\\Events",
   "dispatchMode": "afterCommit",
   "description": "Award issuance triggered by performance benchmarks, competition wins, goal achievements, or manual admin issuance. Certificates rendered async via jobs.",
   "events": [

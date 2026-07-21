@@ -4,11 +4,11 @@
 
 declare(strict_types=1);
 
-namespace Stackra\AgeGroup\Services;
+namespace Academorix\AgeGroup\Services;
 
-use Stackra\AgeGroup\Contracts\Services\CutoffDateCalculatorInterface;
+use Academorix\AgeGroup\Contracts\Services\CutoffDateCalculatorInterface;
 use Illuminate\Container\Attributes\Scoped;
-use Stackra\AgeGroup\Contracts\Repositories\AgeGroupRepositoryInterface;
+use Academorix\AgeGroup\Contracts\Repositories\AgeGroupRepositoryInterface;
 
 /**
  * Concrete service — CutoffDateCalculator.

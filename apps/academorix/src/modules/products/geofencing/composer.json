@@ -1,10 +1,10 @@
 {
-  "name": "stackra/geofencing",
+  "name": "academorix/geofencing",
   "type": "library",
   "description": "Model-agnostic point-in-polygon primitive. Any Eloquent model can carry a geofence by using the HasGeofence trait + declaring itself with the #[Geofenceable] attribute. Owns the audited GeofenceCheck log (immutable, insert-only, `gfc_` prefix). Ships the polygon + radius evaluator, override flow, mobile pre-flight endpoint, and Spatie Health probes.",
   "license": "proprietary",
   "keywords": [
-    "stackra",
+    "academorix",
     "laravel",
     "geofencing",
     "geofence",
@@ -63,14 +63,14 @@
   },
   "autoload": {
     "psr-4": {
-      "Stackra\\Geofencing\\": "src/",
-      "Stackra\\Geofencing\\Database\\Factories\\": "database/factories/",
-      "Stackra\\Geofencing\\Database\\Seeders\\": "database/seeders/"
+      "Academorix\\Geofencing\\": "src/",
+      "Academorix\\Geofencing\\Database\\Factories\\": "database/factories/",
+      "Academorix\\Geofencing\\Database\\Seeders\\": "database/seeders/"
     }
   },
   "autoload-dev": {
     "psr-4": {
-      "Stackra\\Geofencing\\Tests\\": "tests/"
+      "Academorix\\Geofencing\\Tests\\": "tests/"
     }
   },
   "extra": {

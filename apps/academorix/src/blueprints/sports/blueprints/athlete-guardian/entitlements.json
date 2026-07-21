@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/athlete-guardian/entitlements",
+  "id": "academorix://modules/athlete-guardian/entitlements",
   "$version": 1,
   "title": "athlete-guardian — declared entitlements",
   "description": "Two entitlement keys. `athlete_multi_guardian` gates multi-guardian per athlete (Small tier locks to 1; Medium+ unlocks split-family support). `athlete_guardian_verification` gates the HR-verified workflow with signed-document upload (Enterprise-only).",

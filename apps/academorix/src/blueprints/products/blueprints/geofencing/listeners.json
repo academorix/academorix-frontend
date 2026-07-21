@@ -1,65 +1,65 @@
 {
-  "id": "stackra://modules/geofencing/listeners",
+  "id": "academorix://modules/geofencing/listeners",
   "$version": 1,
   "title": "geofencing \u2014 subscribed events",
   "listeners": [
     {
       "event": "geofencing::GeofenceEvaluated",
-      "listener": "Stackra\\Geofencing\\Listeners\\LogGeofenceEvaluationForAudit",
+      "listener": "Academorix\\Geofencing\\Listeners\\LogGeofenceEvaluationForAudit",
       "queue": null,
       "purpose": "Emit a structured `geofence.evaluated` log line via the app logger (tenant_id, fenceable_type, fenceable_id, result, mode, distance_m, accuracy_m, subject_type, subject_id). Sync so the log lands in the same request context."
     },
     {
       "event": "geofencing::GeofenceEvaluated",
-      "listener": "Stackra\\Geofencing\\Metrics\\GeofenceMetricsRecorder",
+      "listener": "Academorix\\Geofencing\\Metrics\\GeofenceMetricsRecorder",
       "queue": null,
-      "purpose": "Emit metrics: increment stackra.geofence.evaluations.total by (result, mode, fenceable_type, subject_type), observe stackra.geofence.evaluation.duration_ms + stackra.geofence.distance_to_fence_m."
+      "purpose": "Emit metrics: increment academorix.geofence.evaluations.total by (result, mode, fenceable_type, subject_type), observe academorix.geofence.evaluation.duration_ms + academorix.geofence.distance_to_fence_m."
     },
     {
       "event": "approvals::ApprovalTaskApproved",
-      "listener": "Stackra\\Geofencing\\Listeners\\ApplyGeofenceOverrideOnApproval",
+      "listener": "Academorix\\Geofencing\\Listeners\\ApplyGeofenceOverrideOnApproval",
       "queue": "notifications",
       "filter": "$event->task->type === 'geofence_override'",
       "purpose": "Mint a new INSIDE GeofenceCheck row with supersedes_check_id set. Copies fenceable_type + fenceable_id + subject_type + subject_id verbatim from the original row so the override lives in the same audit thread. Fires GeofenceOverrideApplied."
     },
     {
       "event": "approvals::ApprovalTaskRejected",
-      "listener": "Stackra\\Geofencing\\Listeners\\HandleGeofenceOverrideRejection",
+      "listener": "Academorix\\Geofencing\\Listeners\\HandleGeofenceOverrideRejection",
       "queue": "notifications",
       "filter": "$event->task->type === 'geofence_override'",
       "purpose": "Fire GeofenceOverrideRejected."
     },
     {
       "event": "geofencing::GeofenceOverrideApplied",
-      "listener": "Stackra\\Geofencing\\Listeners\\LogGeofenceOverrideApplied",
+      "listener": "Academorix\\Geofencing\\Listeners\\LogGeofenceOverrideApplied",
       "queue": null,
       "purpose": "Structured `geofence.override_applied` log line for compliance-grade audit trail. Persisted to audit_log by the audit module's AuditListener."
     },
     {
       "event": "geofencing::GeofenceCheckCreated",
-      "listener": "Stackra\\Geofencing\\Listeners\\Domain\\OnGeofenceCheckCreated",
+      "listener": "Academorix\\Geofencing\\Listeners\\Domain\\OnGeofenceCheckCreated",
       "queue": "notifications",
       "purpose": "Invalidate the tenant + per-fenceable caches. Update the 'last activity' timestamp used by the RecentGeofenceActivityCheck health probe."
     },
     {
       "event": "geofencing::GeofenceCheckUpdated",
-      "listener": "Stackra\\Geofencing\\Listeners\\Domain\\OnGeofenceCheckUpdated",
+      "listener": "Academorix\\Geofencing\\Listeners\\Domain\\OnGeofenceCheckUpdated",
       "queue": "notifications"
     },
     {
       "event": "geofencing::GeofenceCheckDeleted",
-      "listener": "Stackra\\Geofencing\\Listeners\\Domain\\OnGeofenceCheckDeleted",
+      "listener": "Academorix\\Geofencing\\Listeners\\Domain\\OnGeofenceCheckDeleted",
       "queue": "notifications"
     },
     {
       "event": "geofencing::FenceableGeometryUpdated",
-      "listener": "Stackra\\Geofencing\\Listeners\\InvalidateFenceableCache",
+      "listener": "Academorix\\Geofencing\\Listeners\\InvalidateFenceableCache",
       "queue": null,
       "purpose": "Clear the geofence.fenceable:{type}:{id} Redis entry so the next evaluate() re-reads the geometry from the source model."
     },
     {
       "event": "foundation::ApplicationBooted",
-      "listener": "Stackra\\Geofencing\\Listeners\\CompileMorphAliases",
+      "listener": "Academorix\\Geofencing\\Listeners\\CompileMorphAliases",
       "queue": null,
       "purpose": "Discover every #[Geofenceable] + #[GeofenceSubjectAlias] attribute across the codebase. Compile into two morph maps (fenceable_map + subject_map) + register both via Relation::enforceMorphMap(). Refuse duplicate aliases across each namespace. Cache the maps in Redis."
     }

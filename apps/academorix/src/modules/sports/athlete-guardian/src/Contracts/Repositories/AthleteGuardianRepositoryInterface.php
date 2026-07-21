@@ -4,17 +4,17 @@
 
 declare(strict_types=1);
 
-namespace Stackra\AthleteGuardian\Contracts\Repositories;
+namespace Academorix\AthleteGuardian\Contracts\Repositories;
 
 use Stackra\Crud\Contracts\RepositoryInterface;
 
 /**
- * Repository contract for {@see Stackra\AthleteGuardian\Models\AthleteGuardian}.
+ * Repository contract for {@see Academorix\AthleteGuardian\Models\AthleteGuardian}.
  *
  * Consumers type-hint the interface; the container binds the concrete
  * via `#[AsRepository]` on `AthleteGuardianRepository`.
  *
- * @extends RepositoryInterface<\Stackra\AthleteGuardian\Models\AthleteGuardian>
+ * @extends RepositoryInterface<\Academorix\AthleteGuardian\Models\AthleteGuardian>
  *
  * @category AthleteGuardian
  *

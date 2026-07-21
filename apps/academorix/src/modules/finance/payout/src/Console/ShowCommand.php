@@ -4,7 +4,7 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Payout\Console;
+namespace Academorix\Payout\Console;
 
 use Stackra\Console\Attributes\AsCommand;
 use Stackra\Console\Commands\BaseCommand;

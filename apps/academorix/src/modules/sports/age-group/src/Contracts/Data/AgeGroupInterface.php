@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Stackra\AgeGroup\Contracts\Data;
+namespace Academorix\AgeGroup\Contracts\Data;
 
 use Illuminate\Container\Attributes\Bind;
-use Stackra\AgeGroup\Models\AgeGroup;
+use Academorix\AgeGroup\Models\AgeGroup;
 
 /**
  * Table shape for the `age_groups` table.

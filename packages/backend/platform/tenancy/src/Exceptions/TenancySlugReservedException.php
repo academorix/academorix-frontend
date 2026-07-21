@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Tenancy\Exceptions;
 
-use Stackra\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Reserved word (www, api, admin, mail, blog, platform, app).
@@ -15,7 +15,7 @@ use Stackra\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class TenancySlugReservedException extends AcademorixException
+final class TenancySlugReservedException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/invoice/schemas/invoice-line",
+  "id": "academorix://modules/invoice/schemas/invoice-line",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "InvoiceLine",
@@ -13,9 +13,9 @@
     "keyType": "string",
     "keyPrefix": "ivl_",
     "incrementing": false,
-    "model": "Stackra\\Finance\\Invoice\\Models\\InvoiceLine",
-    "interface": "Stackra\\Finance\\Invoice\\Contracts\\Data\\InvoiceLineInterface",
-    "implements": ["Stackra\\Finance\\Invoice\\Contracts\\Data\\InvoiceLineInterface"],
+    "model": "Academorix\\Finance\\Invoice\\Models\\InvoiceLine",
+    "interface": "Academorix\\Finance\\Invoice\\Contracts\\Data\\InvoiceLineInterface",
+    "implements": ["Academorix\\Finance\\Invoice\\Contracts\\Data\\InvoiceLineInterface"],
     "traits": [
       "HasFactory",
       "HasUlids",

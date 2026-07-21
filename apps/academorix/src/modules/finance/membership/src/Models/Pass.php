@@ -4,20 +4,20 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Membership\Models;
+namespace Academorix\Membership\Models;
 
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
-use Stackra\Membership\Contracts\Data\PassInterface;
-use Stackra\Membership\Database\Factories\PassFactory;
+use Academorix\Membership\Contracts\Data\PassInterface;
+use Academorix\Membership\Database\Factories\PassFactory;
 use Stackra\Foundation\Concerns\Filterable;
 use Stackra\Foundation\Concerns\HasMetadata;
 use Stackra\Foundation\Concerns\HasPrefixedUlid;
-use Stackra\Membership\Concerns\BelongsToMembership;
-use Stackra\Membership\Policies\PassPolicy;
+use Academorix\Membership\Concerns\BelongsToMembership;
+use Academorix\Membership\Policies\PassPolicy;
 use Stackra\Tenancy\Concerns\BelongsToTenant;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;

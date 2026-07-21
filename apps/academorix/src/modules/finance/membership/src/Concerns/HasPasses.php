@@ -4,7 +4,7 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Membership\Concerns;
+namespace Academorix\Membership\Concerns;
 
 /**
  * Trait — HasPasses.

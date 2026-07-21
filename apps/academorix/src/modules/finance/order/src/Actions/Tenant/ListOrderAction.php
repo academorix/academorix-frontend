@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Order\Actions\Tenant;
+namespace Academorix\Order\Actions\Tenant;
 
-use Stackra\Order\Contracts\Repositories\OrderRepositoryInterface;
-use Stackra\Order\Data\OrderData;
+use Academorix\Order\Contracts\Repositories\OrderRepositoryInterface;
+use Academorix\Order\Data\OrderData;
 use Stackra\Routing\Attributes\AsAction;
 use Stackra\Routing\Attributes\Middleware;
 use Stackra\Routing\Concerns\AsController;
@@ -50,7 +50,7 @@ final class ListOrderAction
      */
     public function __invoke(Request $request): PaginatedDataCollection
     {
-        /** @var LengthAwarePaginator<int, \Stackra\Order\Models\Order> $page */
+        /** @var LengthAwarePaginator<int, \Academorix\Order\Models\Order> $page */
         $page = $this->repository->paginate(
             perPage: (int) $request->integer('per_page', 15),
         );

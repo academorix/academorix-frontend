@@ -4,7 +4,7 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Payment\Concerns;
+namespace Academorix\Payment\Concerns;
 
 /**
  * Trait — BelongsToPayment.

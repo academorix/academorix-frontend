@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Grants\Exceptions;
 
-use Stackra\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Grantor tried to grant permissions they do not hold.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class GrantPrivilegeEscalationException extends AcademorixException
+final class GrantPrivilegeEscalationException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

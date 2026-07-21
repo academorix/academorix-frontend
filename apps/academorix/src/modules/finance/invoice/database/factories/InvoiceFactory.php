@@ -4,19 +4,19 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Invoice\Database\Factories;
+namespace Academorix\Invoice\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Stackra\Invoice\Contracts\Data\InvoiceInterface;
-use Stackra\Invoice\Models\Invoice;
+use Academorix\Invoice\Contracts\Data\InvoiceInterface;
+use Academorix\Invoice\Models\Invoice;
 
 /**
- * Factory for {@see \Stackra\Invoice\Models\Invoice}.
+ * Factory for {@see \Academorix\Invoice\Models\Invoice}.
  *
  * Auto-generated skeleton — extend with named states as domain
  * cases emerge (e.g. `->published()`, `->overdue()`, `->archived()`).
  *
- * @extends Factory<\Stackra\Invoice\Models\Invoice>
+ * @extends Factory<\Academorix\Invoice\Models\Invoice>
  *
  * @category Invoice
  *

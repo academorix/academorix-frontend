@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Invitations\Exceptions;
 
-use Stackra\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Idempotency guard tripped: (signal_id, transport) already seen.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class InvitationsWebhookReplayDetectedException extends AcademorixException
+final class InvitationsWebhookReplayDetectedException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

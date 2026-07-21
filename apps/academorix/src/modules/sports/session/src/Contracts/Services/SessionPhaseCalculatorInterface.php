@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Session\Contracts\Services;
+namespace Academorix\Session\Contracts\Services;
 
-use Stackra\Session\Services\SessionPhaseCalculator;
+use Academorix\Session\Services\SessionPhaseCalculator;
 use Illuminate\Container\Attributes\Bind;
 
 /**

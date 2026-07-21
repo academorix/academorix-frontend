@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/geofencing/compliance",
+  "id": "academorix://modules/geofencing/compliance",
   "$version": 1,
   "title": "geofencing \u2014 compliance evidence",
   "description": "Location data is personal data under GDPR + often regulated by local employment law. The audit log is compliance-material for disputed clock-ins (wage claims). Immutability enforced in code + verified hourly.",

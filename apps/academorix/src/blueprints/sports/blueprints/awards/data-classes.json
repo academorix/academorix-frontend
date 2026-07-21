@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/awards/data-classes",
+  "id": "academorix://modules/awards/data-classes",
   "$version": 1,
   "title": "awards — column classification",
   "description": "Every column across this module's schemas classified by foundation's 5-tier taxonomy (public / internal / confidential / restricted / secret).",

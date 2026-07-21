@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/coaching/entitlements",
+  "id": "academorix://modules/coaching/entitlements",
   "$version": 1,
   "title": "coaching — declared entitlements",
   "description": "Seven entitlement keys. `coaching_capture` is the master feature (Small+). `coaching_profile_slot` is the slot-count integer (Small=10 / Medium=100 / Enterprise=null). `coaching_advanced_certifications` enables the verification workflow with document upload (Medium+). `coaching_skill_ratings` enables the rating system (Medium+). `coaching_multi_branch` allows cross-branch assignments (Medium+). `coaching_public_directory` exposes verified coaches to customer-facing UI (Medium+). `coaching_extended_retention` extends the retention window from 7 to 10 years (Enterprise).",

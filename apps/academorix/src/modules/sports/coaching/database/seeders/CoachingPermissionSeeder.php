@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Coaching\Database\Seeders;
+namespace Academorix\Coaching\Database\Seeders;
 
-use Stackra\Coaching\Enums\CoachingPermission;
+use Academorix\Coaching\Enums\CoachingPermission;
 use Stackra\Authorization\Database\Seeders\Concerns\SeedsPermissionEnum;
 use Stackra\ServiceProvider\Attributes\AsSeeder;
 use Illuminate\Database\Seeder;

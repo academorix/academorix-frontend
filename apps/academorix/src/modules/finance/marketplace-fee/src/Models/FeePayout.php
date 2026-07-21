@@ -4,18 +4,18 @@
 
 declare(strict_types=1);
 
-namespace Stackra\MarketplaceFee\Models;
+namespace Academorix\MarketplaceFee\Models;
 
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
-use Stackra\MarketplaceFee\Contracts\Data\FeePayoutInterface;
-use Stackra\MarketplaceFee\Database\Factories\FeePayoutFactory;
+use Academorix\MarketplaceFee\Contracts\Data\FeePayoutInterface;
+use Academorix\MarketplaceFee\Database\Factories\FeePayoutFactory;
 use Stackra\Foundation\Concerns\HasMetadata;
-use Stackra\MarketplaceFee\Enums\FeePayoutStatus;
-use Stackra\MarketplaceFee\Policies\FeePayoutPolicy;
+use Academorix\MarketplaceFee\Enums\FeePayoutStatus;
+use Academorix\MarketplaceFee\Policies\FeePayoutPolicy;
 use Stackra\Tenancy\Concerns\BelongsToTenant;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;

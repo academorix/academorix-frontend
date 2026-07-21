@@ -1,10 +1,10 @@
 {
-  "name": "stackra/marketplace-fee",
+  "name": "academorix/marketplace-fee",
   "type": "library",
-  "description": "Stackra MarketplaceFee module — server-side Laravel package emitted from the module blueprint at `modules/finance/blueprints/marketplace-fee/`. Complements the wire SDK at `stackra-finance/marketplace-fee-sdk`.",
+  "description": "Academorix MarketplaceFee module — server-side Laravel package emitted from the module blueprint at `modules/finance/blueprints/marketplace-fee/`. Complements the wire SDK at `academorix-finance/marketplace-fee-sdk`.",
   "license": "proprietary",
   "keywords": [
-    "stackra",
+    "academorix",
     "module",
     "laravel",
     "finance",
@@ -22,7 +22,7 @@
     "stackra/routing": "@dev",
     "stackra/service-provider": "@dev",
     "stackra/support": "@dev",
-    "stackra-finance/marketplace-fee-sdk": "@dev"
+    "academorix-finance/marketplace-fee-sdk": "@dev"
   },
   "require-dev": {
     "orchestra/testbench": "^11.0",
@@ -33,12 +33,12 @@
   },
   "autoload": {
     "psr-4": {
-      "Stackra\\MarketplaceFee\\": "src/"
+      "Academorix\\MarketplaceFee\\": "src/"
     }
   },
   "autoload-dev": {
     "psr-4": {
-      "Stackra\\MarketplaceFee\\Tests\\": "tests/"
+      "Academorix\\MarketplaceFee\\Tests\\": "tests/"
     }
   },
   "extra": {

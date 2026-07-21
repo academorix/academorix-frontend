@@ -4,22 +4,22 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Membership\Models;
+namespace Academorix\Membership\Models;
 
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
-use Stackra\Membership\Contracts\Data\MembershipInterface;
-use Stackra\Membership\Database\Factories\MembershipFactory;
-use Stackra\Athlete\Concerns\BelongsToAthlete;
+use Academorix\Membership\Contracts\Data\MembershipInterface;
+use Academorix\Membership\Database\Factories\MembershipFactory;
+use Academorix\Athlete\Concerns\BelongsToAthlete;
 use Stackra\Branch\Concerns\BelongsToBranch;
 use Stackra\Foundation\Concerns\Filterable;
 use Stackra\Foundation\Concerns\HasMetadata;
 use Stackra\Foundation\Concerns\HasPrefixedUlid;
-use Stackra\Membership\Enums\MembershipStatus;
-use Stackra\Membership\Policies\MembershipPolicy;
+use Academorix\Membership\Enums\MembershipStatus;
+use Academorix\Membership\Policies\MembershipPolicy;
 use Stackra\Region\Concerns\BelongsToRegion;
 use Stackra\Tenancy\Concerns\BelongsToTenant;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;

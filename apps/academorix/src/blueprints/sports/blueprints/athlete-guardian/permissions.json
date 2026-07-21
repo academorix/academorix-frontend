@@ -1,8 +1,8 @@
 {
-  "id": "stackra://modules/athlete-guardian/permissions",
+  "id": "academorix://modules/athlete-guardian/permissions",
   "$version": 1,
   "title": "athlete-guardian — permissions",
-  "seeder": "Stackra\\Sports\\AthleteGuardian\\Database\\Seeders\\AthleteGuardianPermissionSeeder",
+  "seeder": "Academorix\\Sports\\AthleteGuardian\\Database\\Seeders\\AthleteGuardianPermissionSeeder",
   "isSystem": true,
   "description": "Two audiences. Tenant plane (sanctum) — Guardian CRUD by admin / owner / hr / reception, self-service via .own scope for guardians managing their own guardianships. Platform plane (platform_admin) — cross-tenant read + verification audit for compliance ops.",
   "permissions": [

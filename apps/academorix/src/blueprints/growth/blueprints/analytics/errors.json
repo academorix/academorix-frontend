@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/analytics/errors",
+  "id": "academorix://modules/analytics/errors",
   "$version": 1,
   "title": "analytics — error codes",
   "description": "Analytics-scoped error codes. Namespace: NOTIFICATIONS_ANALYTICS_* to match the notifications family convention (analytics is a fan-out module in the same shape). Every code maps to an HTTP status + retryability flag + user-facing bit + audit severity.",

@@ -4,11 +4,11 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Order\Services;
+namespace Academorix\Order\Services;
 
-use Stackra\Order\Contracts\Services\OrderTotalsCalculatorInterface;
+use Academorix\Order\Contracts\Services\OrderTotalsCalculatorInterface;
 use Illuminate\Container\Attributes\Scoped;
-use Stackra\Order\Contracts\Repositories\OrderAdjustmentRepositoryInterface;
+use Academorix\Order\Contracts\Repositories\OrderAdjustmentRepositoryInterface;
 
 /**
  * Concrete service — OrderTotalsCalculator.

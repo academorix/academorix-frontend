@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/attendance/macros",
+  "id": "academorix://modules/attendance/macros",
   "$version": 1,
   "title": "attendance — published macros",
   "description": "No dedicated request-level macros — attendance context is composite (session + athlete + enrollment + pass) + resolved via route bindings.",

@@ -4,25 +4,25 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Transaction\Repositories;
+namespace Academorix\Transaction\Repositories;
 
 use Stackra\Crud\Attributes\AsRepository;
 use Stackra\Crud\Attributes\Cacheable;
 use Stackra\Crud\Attributes\Filterable;
 use Stackra\Crud\Attributes\UseModel;
 use Stackra\Crud\Repositories\Repository;
-use Stackra\Transaction\Contracts\Data\TransactionInterface;
-use Stackra\Transaction\Contracts\Repositories\TransactionRepositoryInterface;
-use Stackra\Transaction\Models\Transaction;
+use Academorix\Transaction\Contracts\Data\TransactionInterface;
+use Academorix\Transaction\Contracts\Repositories\TransactionRepositoryInterface;
+use Academorix\Transaction\Models\Transaction;
 
 /**
- * Attribute-first Eloquent repository for {@see Stackra\Transaction\Models\Transaction}.
+ * Attribute-first Eloquent repository for {@see Academorix\Transaction\Models\Transaction}.
  *
  * Bound to the interface via `#[AsRepository]`; the model comes from
  * `#[UseModel(TransactionInterface::class)]` which resolves to
  * `Transaction` through the interface's `#[Bind]`.
  *
- * @extends Repository<\Stackra\Transaction\Models\Transaction>
+ * @extends Repository<\Academorix\Transaction\Models\Transaction>
  *
  * @category Transaction
  *

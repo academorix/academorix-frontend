@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/progress/features",
+  "id": "academorix://modules/progress/features",
   "$version": 1,
   "title": "progress — feature keys",
   "features": [

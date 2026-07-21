@@ -2,8 +2,8 @@
   "$version": 1,
   "name": "payout",
   "alias": "payout",
-  "namespace": "Stackra\\Finance\\Payout",
-  "description": "Stripe Connect payout mirror. The gateway (Stripe Connect) executes the payout to the tenant's connected bank account; Stackra ledgers what happened locally for reporting + reconciliation. Owns three tables: payouts (one row per gateway payout event, mirrors provider.payouts.*), payout_items (line items inside a payout — the transactions being paid out: order payments, refunds, chargebacks, marketplace fees), payout_reconciliations (nightly per-tenant reconciliation report comparing local total vs gateway total). Not a wallet product — Stackra never touches the money. Cross-integrates with finance/gateway (webhook receiver for payout.* events), finance/marketplace-fee (fees deducted from payouts), finance/chargeback (reversal items).",
+  "namespace": "Academorix\\Finance\\Payout",
+  "description": "Stripe Connect payout mirror. The gateway (Stripe Connect) executes the payout to the tenant's connected bank account; Academorix ledgers what happened locally for reporting + reconciliation. Owns three tables: payouts (one row per gateway payout event, mirrors provider.payouts.*), payout_items (line items inside a payout — the transactions being paid out: order payments, refunds, chargebacks, marketplace fees), payout_reconciliations (nightly per-tenant reconciliation report comparing local total vs gateway total). Not a wallet product — Academorix never touches the money. Cross-integrates with finance/gateway (webhook receiver for payout.* events), finance/marketplace-fee (fees deducted from payouts), finance/chargeback (reversal items).",
   "keywords": [
     "payout",
     "stripe-connect",
@@ -14,7 +14,7 @@
     "finance"
   ],
   "priority": 45,
-  "providers": ["Stackra\\Finance\\Payout\\Providers\\PayoutServiceProvider"],
+  "providers": ["Academorix\\Finance\\Payout\\Providers\\PayoutServiceProvider"],
   "dependencies": ["foundation", "tenancy", "application", "gateway"],
   "extendedBy": [],
   "contributes": {
@@ -60,7 +60,7 @@
   },
   "wraps": {
     "packages": ["laravel/cashier-stripe ^15"],
-    "rationale": "Cashier ships Stripe Connect payout helpers; wrap them into Stackra's payout ledger."
+    "rationale": "Cashier ships Stripe Connect payout helpers; wrap them into Academorix's payout ledger."
   },
   "hosts": {
     "tenant": {

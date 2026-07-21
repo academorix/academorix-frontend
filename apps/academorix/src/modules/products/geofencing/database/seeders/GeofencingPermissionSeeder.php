@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Geofencing\Database\Seeders;
+namespace Academorix\Geofencing\Database\Seeders;
 
 use Stackra\Authorization\Database\Seeders\Concerns\SeedsPermissionEnum;
-use Stackra\Geofencing\Enums\GeofencingPermission;
+use Academorix\Geofencing\Enums\GeofencingPermission;
 use Stackra\ServiceProvider\Attributes\AsSeeder;
 use Illuminate\Database\Seeder;
 

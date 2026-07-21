@@ -1,8 +1,8 @@
 {
-  "id": "stackra://modules/refund/notifications",
+  "id": "academorix://modules/refund/notifications",
   "$version": 1,
   "title": "refund — notification classes + categories",
-  "namespace": "Stackra\\Finance\\Refund\\Notifications",
+  "namespace": "Academorix\\Finance\\Refund\\Notifications",
   "notifications": [
     "RefundRequestedNotification",
     "RefundApprovalRequiredNotification",

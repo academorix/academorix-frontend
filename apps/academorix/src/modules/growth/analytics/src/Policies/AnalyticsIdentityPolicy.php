@@ -4,13 +4,13 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Analytics\Policies;
+namespace Academorix\Analytics\Policies;
 
 use Stackra\User\Models\User;
-use Stackra\Analytics\Models\AnalyticsIdentity;
+use Academorix\Analytics\Models\AnalyticsIdentity;
 
 /**
- * Authorization policy for {@see \Stackra\Analytics\Models\AnalyticsIdentity}.
+ * Authorization policy for {@see \Academorix\Analytics\Models\AnalyticsIdentity}.
  *
  * Wired via `#[UsePolicy]` on the Model.
  *

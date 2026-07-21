@@ -4,7 +4,7 @@
 
 declare(strict_types=1);
 
-namespace Stackra\DigitalPasses\Concerns;
+namespace Academorix\DigitalPasses\Concerns;
 
 /**
  * Trait — HasWalletPass.

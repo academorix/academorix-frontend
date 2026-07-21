@@ -4,17 +4,17 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Transaction\Contracts\Repositories;
+namespace Academorix\Transaction\Contracts\Repositories;
 
 use Stackra\Crud\Contracts\RepositoryInterface;
 
 /**
- * Repository contract for {@see Stackra\Transaction\Models\TransactionLedgerEntry}.
+ * Repository contract for {@see Academorix\Transaction\Models\TransactionLedgerEntry}.
  *
  * Consumers type-hint the interface; the container binds the concrete
  * via `#[AsRepository]` on `TransactionLedgerEntryRepository`.
  *
- * @extends RepositoryInterface<\Stackra\Transaction\Models\TransactionLedgerEntry>
+ * @extends RepositoryInterface<\Academorix\Transaction\Models\TransactionLedgerEntry>
  *
  * @category Transaction
  *

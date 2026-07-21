@@ -4,7 +4,7 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Leads\Concerns;
+namespace Academorix\Leads\Concerns;
 
 /**
  * Trait — BelongsToLead.

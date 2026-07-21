@@ -1,12 +1,12 @@
 {
-  "id": "stackra://modules/geofencing/enums",
+  "id": "academorix://modules/geofencing/enums",
   "$version": 1,
   "title": "geofencing \u2014 enums",
   "description": "Backed string enums. Uppercase for GeofenceResult (matches wire contract R3), lowercase for GeofenceMode (matches observability labels R9).",
   "enums": [
     {
       "name": "GeofenceResult",
-      "class": "Stackra\\Geofencing\\Enums\\GeofenceResult",
+      "class": "Academorix\\Geofencing\\Enums\\GeofenceResult",
       "backing": "string",
       "cases": [
         {
@@ -40,7 +40,7 @@
     },
     {
       "name": "GeofenceMode",
-      "class": "Stackra\\Geofencing\\Enums\\GeofenceMode",
+      "class": "Academorix\\Geofencing\\Enums\\GeofenceMode",
       "backing": "string",
       "cases": [
         {
@@ -58,7 +58,7 @@
     },
     {
       "name": "PolygonValidationReason",
-      "class": "Stackra\\Geofencing\\Enums\\PolygonValidationReason",
+      "class": "Academorix\\Geofencing\\Enums\\PolygonValidationReason",
       "backing": "string",
       "cases": [
         {

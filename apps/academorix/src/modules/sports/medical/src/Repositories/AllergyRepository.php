@@ -4,25 +4,25 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Medical\Repositories;
+namespace Academorix\Medical\Repositories;
 
 use Stackra\Crud\Attributes\AsRepository;
 use Stackra\Crud\Attributes\Cacheable;
 use Stackra\Crud\Attributes\Filterable;
 use Stackra\Crud\Attributes\UseModel;
 use Stackra\Crud\Repositories\Repository;
-use Stackra\Medical\Contracts\Data\AllergyInterface;
-use Stackra\Medical\Contracts\Repositories\AllergyRepositoryInterface;
-use Stackra\Medical\Models\Allergy;
+use Academorix\Medical\Contracts\Data\AllergyInterface;
+use Academorix\Medical\Contracts\Repositories\AllergyRepositoryInterface;
+use Academorix\Medical\Models\Allergy;
 
 /**
- * Attribute-first Eloquent repository for {@see Stackra\Medical\Models\Allergy}.
+ * Attribute-first Eloquent repository for {@see Academorix\Medical\Models\Allergy}.
  *
  * Bound to the interface via `#[AsRepository]`; the model comes from
  * `#[UseModel(AllergyInterface::class)]` which resolves to
  * `Allergy` through the interface's `#[Bind]`.
  *
- * @extends Repository<\Stackra\Medical\Models\Allergy>
+ * @extends Repository<\Academorix\Medical\Models\Allergy>
  *
  * @category Medical
  *

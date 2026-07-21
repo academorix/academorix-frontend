@@ -4,17 +4,17 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Transaction\Contracts\Repositories;
+namespace Academorix\Transaction\Contracts\Repositories;
 
 use Stackra\Crud\Contracts\RepositoryInterface;
 
 /**
- * Repository contract for {@see Stackra\Transaction\Models\Transaction}.
+ * Repository contract for {@see Academorix\Transaction\Models\Transaction}.
  *
  * Consumers type-hint the interface; the container binds the concrete
  * via `#[AsRepository]` on `TransactionRepository`.
  *
- * @extends RepositoryInterface<\Stackra\Transaction\Models\Transaction>
+ * @extends RepositoryInterface<\Academorix\Transaction\Models\Transaction>
  *
  * @category Transaction
  *

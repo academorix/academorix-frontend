@@ -4,25 +4,25 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Session\Repositories;
+namespace Academorix\Session\Repositories;
 
 use Stackra\Crud\Attributes\AsRepository;
 use Stackra\Crud\Attributes\Cacheable;
 use Stackra\Crud\Attributes\Filterable;
 use Stackra\Crud\Attributes\UseModel;
 use Stackra\Crud\Repositories\Repository;
-use Stackra\Session\Contracts\Data\SessionInterface;
-use Stackra\Session\Contracts\Repositories\SessionRepositoryInterface;
-use Stackra\Session\Models\Session;
+use Academorix\Session\Contracts\Data\SessionInterface;
+use Academorix\Session\Contracts\Repositories\SessionRepositoryInterface;
+use Academorix\Session\Models\Session;
 
 /**
- * Attribute-first Eloquent repository for {@see Stackra\Session\Models\Session}.
+ * Attribute-first Eloquent repository for {@see Academorix\Session\Models\Session}.
  *
  * Bound to the interface via `#[AsRepository]`; the model comes from
  * `#[UseModel(SessionInterface::class)]` which resolves to
  * `Session` through the interface's `#[Bind]`.
  *
- * @extends Repository<\Stackra\Session\Models\Session>
+ * @extends Repository<\Academorix\Session\Models\Session>
  *
  * @category Session
  *

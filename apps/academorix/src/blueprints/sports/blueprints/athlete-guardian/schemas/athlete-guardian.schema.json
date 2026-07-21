@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/athlete-guardian/schemas/athlete-guardian",
+  "id": "academorix://modules/athlete-guardian/schemas/athlete-guardian",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "AthleteGuardian",
@@ -13,10 +13,10 @@
     "keyType": "string",
     "keyPrefix": "agu_",
     "incrementing": false,
-    "model": "Stackra\\Sports\\AthleteGuardian\\Models\\AthleteGuardian",
-    "interface": "Stackra\\Sports\\AthleteGuardian\\Contracts\\Data\\AthleteGuardianInterface",
+    "model": "Academorix\\Sports\\AthleteGuardian\\Models\\AthleteGuardian",
+    "interface": "Academorix\\Sports\\AthleteGuardian\\Contracts\\Data\\AthleteGuardianInterface",
     "implements": [
-      "Stackra\\Sports\\AthleteGuardian\\Contracts\\Data\\AthleteGuardianInterface"
+      "Academorix\\Sports\\AthleteGuardian\\Contracts\\Data\\AthleteGuardianInterface"
     ],
     "traits": [
       "HasFactory",

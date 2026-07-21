@@ -1,13 +1,13 @@
 {
-  "id": "stackra://modules/athlete-guardian/attributes",
+  "id": "academorix://modules/athlete-guardian/attributes",
   "$version": 1,
   "title": "athlete-guardian — PHP attribute contracts",
   "description": "One attribute. `#[AsAthleteGuardianListener]` on a service class marks it as a subscriber to guardianship-lifecycle events — AttributeDiscovery picks it up and wires it to the event map declared in `events.json`.",
-  "namespace": "Stackra\\Sports\\AthleteGuardian\\Attributes",
+  "namespace": "Academorix\\Sports\\AthleteGuardian\\Attributes",
   "attributes": [
     {
       "name": "AsAthleteGuardianListener",
-      "class": "Stackra\\Sports\\AthleteGuardian\\Attributes\\AsAthleteGuardianListener",
+      "class": "Academorix\\Sports\\AthleteGuardian\\Attributes\\AsAthleteGuardianListener",
       "targets": ["class"],
       "isRepeatable": false,
       "description": "Marks a service as a subscriber to AthleteGuardian lifecycle events (GuardianAdded / GuardianRemoved / PrimaryGuardianChanged / GuardianCustodyChanged / GuardianVerified / GuardianVerificationDisputed / GuardianVerificationRevoked / GuardianCanPickupToggled / GuardianCanReceiveCommunicationsToggled / GuardianCanAuthoriseMedicalCareToggled / GuardianCommunicationsBounced).",
@@ -16,7 +16,7 @@
           "name": "events",
           "type": "array<string>",
           "default": [],
-          "description": "Array of event short names. Empty = subscribe to every event in `Stackra\\Sports\\AthleteGuardian\\Events\\Guardian*`. Names resolve against events.json at boot."
+          "description": "Array of event short names. Empty = subscribe to every event in `Academorix\\Sports\\AthleteGuardian\\Events\\Guardian*`. Names resolve against events.json at boot."
         },
         {
           "name": "queue",

@@ -4,7 +4,7 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Attendance\Concerns;
+namespace Academorix\Attendance\Concerns;
 
 /**
  * Trait — BelongsToAttendanceRecord.

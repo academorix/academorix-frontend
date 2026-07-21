@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/age-group/broadcasts",
+  "id": "academorix://modules/age-group/broadcasts",
   "$version": 1,
   "title": "age-group — realtime broadcasts",
   "description": "The age-group module does NOT broadcast on realtime channels directly. AgeGroup mutations fire domain events (see `events.json`) which downstream modules (notifications, activity, teams) may republish over their own broadcast channels — but this module ships zero channels of its own. Broadcast surfaces belong to the domain that owns the read side (team-picker UI, enrollment UI), not the write side.",

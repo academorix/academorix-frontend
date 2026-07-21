@@ -4,25 +4,25 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Tax\Repositories;
+namespace Academorix\Tax\Repositories;
 
 use Stackra\Crud\Attributes\AsRepository;
 use Stackra\Crud\Attributes\Cacheable;
 use Stackra\Crud\Attributes\Filterable;
 use Stackra\Crud\Attributes\UseModel;
 use Stackra\Crud\Repositories\Repository;
-use Stackra\Tax\Contracts\Data\TaxRateInterface;
-use Stackra\Tax\Contracts\Repositories\TaxRateRepositoryInterface;
-use Stackra\Tax\Models\TaxRate;
+use Academorix\Tax\Contracts\Data\TaxRateInterface;
+use Academorix\Tax\Contracts\Repositories\TaxRateRepositoryInterface;
+use Academorix\Tax\Models\TaxRate;
 
 /**
- * Attribute-first Eloquent repository for {@see Stackra\Tax\Models\TaxRate}.
+ * Attribute-first Eloquent repository for {@see Academorix\Tax\Models\TaxRate}.
  *
  * Bound to the interface via `#[AsRepository]`; the model comes from
  * `#[UseModel(TaxRateInterface::class)]` which resolves to
  * `TaxRate` through the interface's `#[Bind]`.
  *
- * @extends Repository<\Stackra\Tax\Models\TaxRate>
+ * @extends Repository<\Academorix\Tax\Models\TaxRate>
  *
  * @category Tax
  *

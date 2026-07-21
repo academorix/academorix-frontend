@@ -1,8 +1,8 @@
 {
-  "id": "stackra://modules/attribution/permissions",
+  "id": "academorix://modules/attribution/permissions",
   "$version": 1,
   "title": "attribution — permissions",
-  "seeder": "Stackra\\Growth\\Attribution\\Database\\Seeders\\AttributionPermissionSeeder",
+  "seeder": "Academorix\\Growth\\Attribution\\Database\\Seeders\\AttributionPermissionSeeder",
   "isSystem": true,
   "description": "Two audiences. Tenant plane (sanctum) — admin + marketing + owner see aggregated rollups; individual subjects see only their own profile via `/me/attribution`. Platform plane (platform_admin) — cross-tenant read for support + force-reset for regulator-issued erasure requests. All permissions carry the `attribution.` prefix (or `platform.attribution.` on the platform audience) to align with hierarchy.md §4 audience-boundary rules.",
   "permissions": [

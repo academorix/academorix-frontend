@@ -4,19 +4,19 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Athlete\Models;
+namespace Academorix\Athlete\Models;
 
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
-use Stackra\Athlete\Contracts\Data\AthleteInterface;
-use Stackra\Athlete\Database\Factories\AthleteFactory;
-use Stackra\Athlete\Enums\AthleteDominantHand;
-use Stackra\Athlete\Enums\AthleteGender;
-use Stackra\Athlete\Enums\AthleteStatus;
-use Stackra\Athlete\Policies\AthletePolicy;
+use Academorix\Athlete\Contracts\Data\AthleteInterface;
+use Academorix\Athlete\Database\Factories\AthleteFactory;
+use Academorix\Athlete\Enums\AthleteDominantHand;
+use Academorix\Athlete\Enums\AthleteGender;
+use Academorix\Athlete\Enums\AthleteStatus;
+use Academorix\Athlete\Policies\AthletePolicy;
 use Stackra\Branch\Concerns\BelongsToBranch;
 use Stackra\Foundation\Concerns\Filterable;
 use Stackra\Foundation\Concerns\HasMetadata;

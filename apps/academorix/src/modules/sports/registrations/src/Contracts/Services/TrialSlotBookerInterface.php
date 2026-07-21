@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Registrations\Contracts\Services;
+namespace Academorix\Registrations\Contracts\Services;
 
-use Stackra\Registrations\Services\TrialSlotBooker;
+use Academorix\Registrations\Services\TrialSlotBooker;
 use Illuminate\Container\Attributes\Bind;
 
 /**

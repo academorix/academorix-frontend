@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Referrals\Database\Seeders;
+namespace Academorix\Referrals\Database\Seeders;
 
-use Stackra\Referrals\Enums\ReferralsPermission;
+use Academorix\Referrals\Enums\ReferralsPermission;
 use Stackra\Authorization\Database\Seeders\Concerns\SeedsPermissionEnum;
 use Stackra\ServiceProvider\Attributes\AsSeeder;
 use Illuminate\Database\Seeder;

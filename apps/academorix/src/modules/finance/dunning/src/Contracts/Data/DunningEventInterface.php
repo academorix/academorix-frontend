@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Dunning\Contracts\Data;
+namespace Academorix\Dunning\Contracts\Data;
 
 use Illuminate\Container\Attributes\Bind;
-use Stackra\Dunning\Models\DunningEvent;
+use Academorix\Dunning\Models\DunningEvent;
 
 /**
  * Table shape for the `dunning_events` table.

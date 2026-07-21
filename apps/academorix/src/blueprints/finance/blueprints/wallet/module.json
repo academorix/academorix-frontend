@@ -2,8 +2,8 @@
   "$version": 1,
   "name": "wallet",
   "alias": "wallet",
-  "namespace": "Stackra\\Finance\\Wallet",
-  "description": "Unified ledger for non-cash entitlements: cash-balance mirror + prepaid store credit + loyalty points. One table serves all three via a kind discriminator (per DL-2 in tasks.md). Model A (non-custodial mirror) — Stackra never holds customer funds; the wallet is a materialized view over gateway balances + tenant-issued entitlements. Rejected Model B (custodial) because triggers money-transmitter licensing (state-by-state US, EMI in EU, DFSA in UAE). Owns three tables: wallets (one per owner+kind+currency), wallet_transactions (immutable debit/credit log, composed reference to source), wallet_holds (reserved balance during in-progress checkouts, settled/released on order state transition). Cross-integrates with finance/order (holds on checkout, transactions on paid), finance/refund (credit-refund alternative), finance/gateway (cash-mirror nightly reconciliation via Stripe Connect balance API).",
+  "namespace": "Academorix\\Finance\\Wallet",
+  "description": "Unified ledger for non-cash entitlements: cash-balance mirror + prepaid store credit + loyalty points. One table serves all three via a kind discriminator (per DL-2 in tasks.md). Model A (non-custodial mirror) — Academorix never holds customer funds; the wallet is a materialized view over gateway balances + tenant-issued entitlements. Rejected Model B (custodial) because triggers money-transmitter licensing (state-by-state US, EMI in EU, DFSA in UAE). Owns three tables: wallets (one per owner+kind+currency), wallet_transactions (immutable debit/credit log, composed reference to source), wallet_holds (reserved balance during in-progress checkouts, settled/released on order state transition). Cross-integrates with finance/order (holds on checkout, transactions on paid), finance/refund (credit-refund alternative), finance/gateway (cash-mirror nightly reconciliation via Stripe Connect balance API).",
   "keywords": [
     "wallet",
     "ledger",
@@ -19,7 +19,7 @@
     "finance"
   ],
   "priority": 46,
-  "providers": ["Stackra\\Finance\\Wallet\\Providers\\WalletServiceProvider"],
+  "providers": ["Academorix\\Finance\\Wallet\\Providers\\WalletServiceProvider"],
   "dependencies": ["foundation", "tenancy", "application", "gateway"],
   "extendedBy": [],
   "contributes": {

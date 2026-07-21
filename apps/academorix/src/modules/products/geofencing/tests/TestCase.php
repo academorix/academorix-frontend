@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Geofencing\Tests;
+namespace Academorix\Geofencing\Tests;
 
 use Orchestra\Testbench\TestCase as OrchestraTestCase;
 

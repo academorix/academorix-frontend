@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Chargeback\Services;
+namespace Academorix\Chargeback\Services;
 
-use Stackra\Chargeback\Contracts\Services\NetworkFeeCalculatorInterface;
-use Stackra\Chargeback\Enums\ChargebackNetwork;
+use Academorix\Chargeback\Contracts\Services\NetworkFeeCalculatorInterface;
+use Academorix\Chargeback\Enums\ChargebackNetwork;
 use Illuminate\Container\Attributes\Config;
 use Illuminate\Container\Attributes\Singleton;
 

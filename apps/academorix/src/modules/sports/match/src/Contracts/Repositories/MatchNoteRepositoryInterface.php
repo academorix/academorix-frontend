@@ -4,17 +4,17 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Match\Contracts\Repositories;
+namespace Academorix\Match\Contracts\Repositories;
 
 use Stackra\Crud\Contracts\RepositoryInterface;
 
 /**
- * Repository contract for {@see Stackra\Match\Models\MatchNote}.
+ * Repository contract for {@see Academorix\Match\Models\MatchNote}.
  *
  * Consumers type-hint the interface; the container binds the concrete
  * via `#[AsRepository]` on `MatchNoteRepository`.
  *
- * @extends RepositoryInterface<\Stackra\Match\Models\MatchNote>
+ * @extends RepositoryInterface<\Academorix\Match\Models\MatchNote>
  *
  * @category Match
  *

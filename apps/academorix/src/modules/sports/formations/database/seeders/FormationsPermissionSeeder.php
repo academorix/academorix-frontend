@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Formations\Database\Seeders;
+namespace Academorix\Formations\Database\Seeders;
 
-use Stackra\Formations\Enums\FormationsPermission;
+use Academorix\Formations\Enums\FormationsPermission;
 use Stackra\Authorization\Database\Seeders\Concerns\SeedsPermissionEnum;
 use Stackra\ServiceProvider\Attributes\AsSeeder;
 use Illuminate\Database\Seeder;

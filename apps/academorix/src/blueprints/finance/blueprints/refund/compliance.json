@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/refund/compliance",
+  "id": "academorix://modules/refund/compliance",
   "$version": 1,
   "title": "refund — compliance evidence",
   "description": "Refund module is financial-record-critical (every refund is a reversal that impacts recognised revenue — SOX + tax audit relevant) + PII-adjacent (customer_id + initiated_by_user_id + approved_by_user_id captured on every refund) + advertising-adjacent (feeds negative-value marketing events for ROAS adjustment) + consumer-protection-adjacent (regulator-mandated refund SLAs vary 14-30 days by jurisdiction). GDPR (Art. 5, 6, 17), CAN-SPAM Act (refund notifications), US tax law (7y financial record), SOX 404 (internal controls + segregation of duties), SOC 2 CC6.3, PCI-DSS (token-based reversal, no card data).",
@@ -105,7 +105,7 @@
         {
           "criterion": "CC7.2",
           "principle": "system monitoring",
-          "evidence": "stackra.refund.atomicity.failures_total = 0 target. stackra.refund.finalization_failures_total = 0 target. Every RefundSucceeded fires the finalization chain + records metrics; failures dispatch RefundProviderError + alert."
+          "evidence": "academorix.refund.atomicity.failures_total = 0 target. academorix.refund.finalization_failures_total = 0 target. Every RefundSucceeded fires the finalization chain + records metrics; failures dispatch RefundProviderError + alert."
         },
         {
           "criterion": "CC9.1",
@@ -155,7 +155,7 @@
         {
           "requirement": "SLA-bound refund resolution",
           "principle": "regulator-mandated refund windows",
-          "evidence": "Approval SLA metric (stackra.refund.approvals_stale_total) fires P2 signals when refunds sit > 24h in awaiting_approval. Provider-side dispatch SLA (5-10 days for card refunds) is provider-communicated + surfaced to customer via RefundProcessedNotification. Force-fail escape hatch for stuck refunds (> 240 poll attempts = 10 days at hourly cadence)."
+          "evidence": "Approval SLA metric (academorix.refund.approvals_stale_total) fires P2 signals when refunds sit > 24h in awaiting_approval. Provider-side dispatch SLA (5-10 days for card refunds) is provider-communicated + surfaced to customer via RefundProcessedNotification. Force-fail escape hatch for stuck refunds (> 240 poll attempts = 10 days at hourly cadence)."
         },
         {
           "regulator": "california ccpa §1798.100",

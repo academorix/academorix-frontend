@@ -4,14 +4,14 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Referrals\Data;
+namespace Academorix\Referrals\Data;
 
 use Spatie\LaravelData\Attributes\MapInputName;
 use Spatie\LaravelData\Data;
 use Spatie\LaravelData\Mappers\SnakeCaseMapper;
 
 /**
- * Server-side output DTO for {@see \Stackra\Referrals\Models\Referral}.
+ * Server-side output DTO for {@see \Academorix\Referrals\Models\Referral}.
  *
  * Consumed by controllers + services on the SERVER side. This is
  * distinct from the wire SDK's DTO (which sits under

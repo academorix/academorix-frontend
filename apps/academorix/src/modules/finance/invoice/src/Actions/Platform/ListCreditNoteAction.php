@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Invoice\Actions\Platform;
+namespace Academorix\Invoice\Actions\Platform;
 
-use Stackra\Invoice\Contracts\Repositories\CreditNoteRepositoryInterface;
-use Stackra\Invoice\Data\CreditNoteData;
+use Academorix\Invoice\Contracts\Repositories\CreditNoteRepositoryInterface;
+use Academorix\Invoice\Data\CreditNoteData;
 use Stackra\Routing\Attributes\AsAction;
 use Stackra\Routing\Attributes\Middleware;
 use Stackra\Routing\Concerns\AsController;
@@ -50,7 +50,7 @@ final class ListCreditNoteAction
      */
     public function __invoke(Request $request): PaginatedDataCollection
     {
-        /** @var LengthAwarePaginator<int, \Stackra\Invoice\Models\CreditNote> $page */
+        /** @var LengthAwarePaginator<int, \Academorix\Invoice\Models\CreditNote> $page */
         $page = $this->repository->paginate(
             perPage: (int) $request->integer('per_page', 15),
         );

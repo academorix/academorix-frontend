@@ -4,7 +4,7 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Medical\Actions\Platform;
+namespace Academorix\Medical\Actions\Platform;
 
 use Stackra\Routing\Attributes\AsAction;
 use Stackra\Routing\Attributes\Middleware;

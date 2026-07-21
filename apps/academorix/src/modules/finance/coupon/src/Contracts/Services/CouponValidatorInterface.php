@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Coupon\Contracts\Services;
+namespace Academorix\Coupon\Contracts\Services;
 
-use Stackra\Coupon\Data\CouponVerdictData;
-use Stackra\Coupon\Services\CouponValidator;
+use Academorix\Coupon\Data\CouponVerdictData;
+use Academorix\Coupon\Services\CouponValidator;
 use Illuminate\Container\Attributes\Bind;
 
 /**

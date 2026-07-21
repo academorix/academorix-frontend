@@ -1,8 +1,8 @@
 {
-  "id": "stackra://modules/formations/permissions",
+  "id": "academorix://modules/formations/permissions",
   "$version": 1,
   "title": "formations — permissions",
-  "seeder": "Stackra\\Sports\\Formations\\Database\\Seeders\\FormationsPermissionSeeder",
+  "seeder": "Academorix\\Sports\\Formations\\Database\\Seeders\\FormationsPermissionSeeder",
   "isSystem": true,
   "permissions": [
     {

@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Staff\Exceptions;
 
-use Stackra\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * User archive refused because the user has an active Staff row.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class UserHasActiveStaffException extends AcademorixException
+final class UserHasActiveStaffException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

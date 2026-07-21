@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Registry\Actions\Tenant;
+namespace Academorix\Registry\Actions\Tenant;
 
-use Stackra\Registry\Contracts\Repositories\SportRepositoryInterface;
-use Stackra\Registry\Data\SportData;
+use Academorix\Registry\Contracts\Repositories\SportRepositoryInterface;
+use Academorix\Registry\Data\SportData;
 use Stackra\Routing\Attributes\AsAction;
 use Stackra\Routing\Attributes\Middleware;
 use Stackra\Routing\Concerns\AsController;

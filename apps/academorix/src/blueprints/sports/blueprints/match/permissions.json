@@ -1,8 +1,8 @@
 {
-  "id": "stackra://modules/match/permissions",
+  "id": "academorix://modules/match/permissions",
   "$version": 1,
   "title": "match — permissions",
-  "seeder": "Stackra\\Sports\\Match\\Database\\Seeders\\MatchPermissionSeeder",
+  "seeder": "Academorix\\Sports\\Match\\Database\\Seeders\\MatchPermissionSeeder",
   "isSystem": true,
   "description": "Two audiences per hierarchy.md §4. Tenant plane (sanctum) — coach + head_coach build squads + log events; head_coach + admin + owner publish lineups + record results + reschedule / cancel; parent role reads matches involving their child athletes only via policy narrowing. Platform plane (platform_admin) — ops + support read cross-tenant matches for support-ticket triage (never mutate). Every tenant-plane permission carries the `matches.` prefix (or `platform.matches.` on the platform audience).",
   "permissions": [

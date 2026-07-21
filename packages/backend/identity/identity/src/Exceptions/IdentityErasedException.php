@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Identity\Exceptions;
 
-use Stackra\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Identity is soft-deleted (in the GDPR hold-period).
@@ -15,7 +15,7 @@ use Stackra\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class IdentityErasedException extends AcademorixException
+final class IdentityErasedException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

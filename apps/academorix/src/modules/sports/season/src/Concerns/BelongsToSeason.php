@@ -4,7 +4,7 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Season\Concerns;
+namespace Academorix\Season\Concerns;
 
 /**
  * Trait — BelongsToSeason.

@@ -4,17 +4,17 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Event\Contracts\Repositories;
+namespace Academorix\Event\Contracts\Repositories;
 
 use Stackra\Crud\Contracts\RepositoryInterface;
 
 /**
- * Repository contract for {@see Stackra\Event\Models\CalendarSubscription}.
+ * Repository contract for {@see Academorix\Event\Models\CalendarSubscription}.
  *
  * Consumers type-hint the interface; the container binds the concrete
  * via `#[AsRepository]` on `CalendarSubscriptionRepository`.
  *
- * @extends RepositoryInterface<\Stackra\Event\Models\CalendarSubscription>
+ * @extends RepositoryInterface<\Academorix\Event\Models\CalendarSubscription>
  *
  * @category Event
  *

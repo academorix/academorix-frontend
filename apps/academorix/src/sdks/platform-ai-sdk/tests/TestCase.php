@@ -7,7 +7,7 @@ namespace Stackra\PlatformAiSdk\Tests;
 use Orchestra\Testbench\TestCase as OrchestraTestCase;
 
 /**
- * Base test case for stackra-platform/ai-sdk.
+ * Base test case for academorix-platform/ai-sdk.
  *
  * @category AiSdk
  *

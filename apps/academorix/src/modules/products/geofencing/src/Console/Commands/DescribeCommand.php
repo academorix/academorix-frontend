@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Geofencing\Console\Commands;
+namespace Academorix\Geofencing\Console\Commands;
 
 use Stackra\Console\Commands\BaseCommand;
 use Illuminate\Database\Eloquent\Relations\Relation;

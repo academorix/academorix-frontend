@@ -1,8 +1,8 @@
 {
-  "id": "stackra://modules/referrals/notifications",
+  "id": "academorix://modules/referrals/notifications",
   "$version": 1,
   "title": "referrals — notification classes + categories",
-  "namespace": "Stackra\\Growth\\Referrals\\Notifications",
+  "namespace": "Academorix\\Growth\\Referrals\\Notifications",
   "notifications": [
     "ReferralInvitationSentNotification",
     "ReferralClaimedNotification",

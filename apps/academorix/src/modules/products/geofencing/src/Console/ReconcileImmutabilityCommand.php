@@ -4,7 +4,7 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Geofencing\Console;
+namespace Academorix\Geofencing\Console;
 
 use Stackra\Console\Attributes\AsCommand;
 use Stackra\Console\Commands\BaseCommand;

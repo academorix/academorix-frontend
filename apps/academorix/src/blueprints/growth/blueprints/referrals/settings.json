@@ -1,14 +1,14 @@
 {
-  "id": "stackra://modules/referrals/settings",
+  "id": "academorix://modules/referrals/settings",
   "$version": 1,
   "title": "referrals — settings",
   "description": "Tenant-facing preferences (per-tenant program defaults + fraud thresholds + retention window override) + user-level preferences (invitation channel + referral privacy).",
   "storedIn": "settings",
-  "reference": { "contract": "stackra://modules/settings/attributes" },
+  "reference": { "contract": "academorix://modules/settings/attributes" },
   "groups": [
     {
       "key": "referrals",
-      "class": "Stackra\\Growth\\Referrals\\Settings\\ReferralsSettings",
+      "class": "Academorix\\Growth\\Referrals\\Settings\\ReferralsSettings",
       "label": "Referrals",
       "description": "Tenant-wide defaults for referral programs + fraud detection.",
       "icon": "gift",
@@ -166,7 +166,7 @@
     },
     {
       "key": "referrals_user",
-      "class": "Stackra\\Growth\\Referrals\\Settings\\ReferralsUserSettings",
+      "class": "Academorix\\Growth\\Referrals\\Settings\\ReferralsUserSettings",
       "label": "My referrals",
       "description": "Per-user invitation + notification preferences.",
       "icon": "user-plus",

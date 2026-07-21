@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/coupon/errors",
+  "id": "academorix://modules/coupon/errors",
   "$version": 1,
   "title": "coupon — error codes",
   "namespace": "coupon",

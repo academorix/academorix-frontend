@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Registrations\Actions\Central;
+namespace Academorix\Registrations\Actions\Central;
 
-use Stackra\Registrations\Contracts\Repositories\OfferRepositoryInterface;
-use Stackra\Registrations\Data\OfferData;
+use Academorix\Registrations\Contracts\Repositories\OfferRepositoryInterface;
+use Academorix\Registrations\Data\OfferData;
 use Stackra\Routing\Attributes\AsAction;
 use Stackra\Routing\Attributes\Middleware;
 use Stackra\Routing\Concerns\AsController;

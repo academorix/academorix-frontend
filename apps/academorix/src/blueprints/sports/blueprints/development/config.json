@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/development/config",
+  "id": "academorix://modules/development/config",
   "$version": 1,
   "title": "development — config keys",
   "description": "config/<module>.php shape + defaults.",

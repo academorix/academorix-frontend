@@ -4,11 +4,11 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Performance\Actions\Tenant;
+namespace Academorix\Performance\Actions\Tenant;
 
-use Stackra\Performance\Contracts\Repositories\TestBatteryRepositoryInterface;
-use Stackra\Performance\Data\TestBatteryData;
-use Stackra\Performance\Data\Requests\CreateTestBatteryRequestData;
+use Academorix\Performance\Contracts\Repositories\TestBatteryRepositoryInterface;
+use Academorix\Performance\Data\TestBatteryData;
+use Academorix\Performance\Data\Requests\CreateTestBatteryRequestData;
 use Stackra\Routing\Attributes\AsAction;
 use Stackra\Routing\Attributes\Middleware;
 use Stackra\Routing\Concerns\AsController;

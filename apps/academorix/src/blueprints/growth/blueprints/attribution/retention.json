@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/attribution/retention",
+  "id": "academorix://modules/attribution/retention",
   "$version": 1,
   "title": "attribution — retention windows",
   "description": "Attribution profiles are retained forever while their subject is active. Touchpoints retain 730 days default (2 years) — extended to 2555 days (7 years) on Enterprise via attribution_touchpoint_retention_extended. Reset attributions purge touchpoints 90 days post-request (audit hold). Anonymous session profiles archive at 730 days from last_touch_at. Aligns with GDPR Art. 5(1)(e) storage-limitation principle — shortest legitimate retention consistent with legitimate interest.",

@@ -1,8 +1,8 @@
 {
-  "id": "stackra://modules/gateway/permissions",
+  "id": "academorix://modules/gateway/permissions",
   "$version": 1,
   "title": "gateway — permissions",
-  "seeder": "Stackra\\Finance\\Gateway\\Database\\Seeders\\GatewayPermissionSeeder",
+  "seeder": "Academorix\\Finance\\Gateway\\Database\\Seeders\\GatewayPermissionSeeder",
   "isSystem": true,
   "description": "Two audiences. Tenant plane (sanctum) — owner + admin configure gateways + rotate credentials; support role reads the webhook ledger (never credentials); guardian role manages own payment methods. Platform plane (platform_admin) — ops + support read cross-tenant webhook ledger for support-ticket triage (credentials redacted).",
   "permissions": [

@@ -1,8 +1,8 @@
 {
-  "id": "stackra://modules/formations/events",
+  "id": "academorix://modules/formations/events",
   "$version": 1,
   "title": "formations — published events",
-  "namespace": "Stackra\\Sports\\Formations\\Events",
+  "namespace": "Academorix\\Sports\\Formations\\Events",
   "dispatchMode": "afterCommit",
   "description": "Formations + tactical set-pieces. Sport-specific (soccer 4-3-3, basketball zone defense, etc.). Coach-owned + shared within team.",
   "events": [

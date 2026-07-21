@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Registrations\Contracts\Data;
+namespace Academorix\Registrations\Contracts\Data;
 
 use Illuminate\Container\Attributes\Bind;
-use Stackra\Registrations\Models\TrialBooking;
+use Academorix\Registrations\Models\TrialBooking;
 
 /**
  * Table shape for the `trial_bookings` table.

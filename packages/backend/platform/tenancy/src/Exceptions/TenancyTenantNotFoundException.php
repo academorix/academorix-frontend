@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Tenancy\Exceptions;
 
-use Stackra\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Host header did not resolve to a Tenant on the current Application.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class TenancyTenantNotFoundException extends AcademorixException
+final class TenancyTenantNotFoundException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

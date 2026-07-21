@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/referrals/retention",
+  "id": "academorix://modules/referrals/retention",
   "$version": 1,
   "title": "referrals — retention windows",
   "description": "Referrals data is financial-audit-adjacent. Every issued reward is a compliance-relevant financial event (tax audit, ad-spend audit, fraud audit). Default retention 7 years (SOC 2 CC6.3 + national tax law baselines: US, EU, UK, CA). Enterprise tier extends to 10y via `referrals_extended_retention`. TenantErased cascades FK CASCADE hard-delete of every owned row EXCEPT paid rewards — those migrate to a compliance archive for legal-obligation retention.",

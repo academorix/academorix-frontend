@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\User\Exceptions;
 
-use Stackra\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * UNIQUE(user_id, tenant_id) hit.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class TenantMembershipAlreadyExistsException extends AcademorixException
+final class TenantMembershipAlreadyExistsException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

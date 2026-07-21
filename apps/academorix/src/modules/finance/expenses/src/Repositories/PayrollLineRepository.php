@@ -4,25 +4,25 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Expenses\Repositories;
+namespace Academorix\Expenses\Repositories;
 
 use Stackra\Crud\Attributes\AsRepository;
 use Stackra\Crud\Attributes\Cacheable;
 use Stackra\Crud\Attributes\Filterable;
 use Stackra\Crud\Attributes\UseModel;
 use Stackra\Crud\Repositories\Repository;
-use Stackra\Expenses\Contracts\Data\PayrollLineInterface;
-use Stackra\Expenses\Contracts\Repositories\PayrollLineRepositoryInterface;
-use Stackra\Expenses\Models\PayrollLine;
+use Academorix\Expenses\Contracts\Data\PayrollLineInterface;
+use Academorix\Expenses\Contracts\Repositories\PayrollLineRepositoryInterface;
+use Academorix\Expenses\Models\PayrollLine;
 
 /**
- * Attribute-first Eloquent repository for {@see Stackra\Expenses\Models\PayrollLine}.
+ * Attribute-first Eloquent repository for {@see Academorix\Expenses\Models\PayrollLine}.
  *
  * Bound to the interface via `#[AsRepository]`; the model comes from
  * `#[UseModel(PayrollLineInterface::class)]` which resolves to
  * `PayrollLine` through the interface's `#[Bind]`.
  *
- * @extends Repository<\Stackra\Expenses\Models\PayrollLine>
+ * @extends Repository<\Academorix\Expenses\Models\PayrollLine>
  *
  * @category Expenses
  *

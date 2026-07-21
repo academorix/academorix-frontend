@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Delegation\Exceptions;
 
-use Stackra\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * target_tenant_id doesn't match the impersonated User's tenant_id.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class ImpersonationCrossTenantTargetException extends AcademorixException
+final class ImpersonationCrossTenantTargetException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

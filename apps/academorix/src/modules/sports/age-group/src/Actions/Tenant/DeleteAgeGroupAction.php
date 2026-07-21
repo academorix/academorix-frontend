@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Stackra\AgeGroup\Actions\Tenant;
+namespace Academorix\AgeGroup\Actions\Tenant;
 
-use Stackra\AgeGroup\Contracts\Repositories\AgeGroupRepositoryInterface;
+use Academorix\AgeGroup\Contracts\Repositories\AgeGroupRepositoryInterface;
 use Stackra\Routing\Attributes\AsAction;
 use Stackra\Routing\Attributes\Middleware;
 use Stackra\Routing\Concerns\AsController;

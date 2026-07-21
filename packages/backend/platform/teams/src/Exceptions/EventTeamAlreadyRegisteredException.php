@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Teams\Exceptions;
 
-use Stackra\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * (team_id, event_id) already registered.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class EventTeamAlreadyRegisteredException extends AcademorixException
+final class EventTeamAlreadyRegisteredException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

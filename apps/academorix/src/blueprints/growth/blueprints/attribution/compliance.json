@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/attribution/compliance",
+  "id": "academorix://modules/attribution/compliance",
   "$version": 1,
   "title": "attribution — compliance evidence",
   "description": "Attribution is privacy-sensitive by design — it processes personal data (behavioural marketing metadata) under GDPR Art. 6(1)(f) legitimate interest, gated by explicit user consent under Art. 6(1)(a) for personalized advertising. Full GDPR + CCPA + LGPD alignment. NO health data, NO financial account data, NO minor-specific data (attribution operates on the User/session level, minors are attributed through their guardian's User row per user::hierarchy). PCI-DSS scope: N/A — attribution captures no card data ever.",
@@ -135,7 +135,7 @@
         {
           "criterion": "CC7.2",
           "principle": "system monitoring",
-          "evidence": "stackra.attribution.consent_suppressions_total counter tracks consent-gate refusals. stackra.attribution.count_drift_corrections counter tracks integrity drift. Both feed the observability dashboard."
+          "evidence": "academorix.attribution.consent_suppressions_total counter tracks consent-gate refusals. academorix.attribution.count_drift_corrections counter tracks integrity drift. Both feed the observability dashboard."
         },
         {
           "criterion": "CC9.1",

@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Geofencing\Events;
+namespace Academorix\Geofencing\Events;
 
-use Stackra\Geofencing\Data\EvaluateGeofenceData;
-use Stackra\Geofencing\Models\GeofenceCheck;
+use Academorix\Geofencing\Data\EvaluateGeofenceData;
+use Academorix\Geofencing\Models\GeofenceCheck;
 
 use Stackra\Events\Attributes\AsEvent;
 /**
- * Fired synchronously by {@see \Stackra\Geofencing\Services\GeofenceService::evaluate()}
+ * Fired synchronously by {@see \Academorix\Geofencing\Services\GeofenceService::evaluate()}
  * immediately after the row is persisted.
  *
  * Public wire contract: `contracts/geofence-evaluated.v1.json`. Consumers read

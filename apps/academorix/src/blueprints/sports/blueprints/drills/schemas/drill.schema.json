@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/drills/schemas/drill",
+  "id": "academorix://modules/drills/schemas/drill",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "Drill",

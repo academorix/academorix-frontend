@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/gateway/schemas/payment-gateway-config",
+  "id": "academorix://modules/gateway/schemas/payment-gateway-config",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "PaymentGatewayConfig",
@@ -13,9 +13,9 @@
     "keyType": "string",
     "keyPrefix": "pgc_",
     "incrementing": false,
-    "model": "Stackra\\Finance\\Gateway\\Models\\PaymentGatewayConfig",
-    "interface": "Stackra\\Finance\\Gateway\\Contracts\\Data\\PaymentGatewayConfigInterface",
-    "implements": ["Stackra\\Finance\\Gateway\\Contracts\\Data\\PaymentGatewayConfigInterface"],
+    "model": "Academorix\\Finance\\Gateway\\Models\\PaymentGatewayConfig",
+    "interface": "Academorix\\Finance\\Gateway\\Contracts\\Data\\PaymentGatewayConfigInterface",
+    "implements": ["Academorix\\Finance\\Gateway\\Contracts\\Data\\PaymentGatewayConfigInterface"],
     "traits": [
       "HasFactory",
       "HasUlids",

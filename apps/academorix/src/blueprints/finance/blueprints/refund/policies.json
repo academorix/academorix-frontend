@@ -1,12 +1,12 @@
 {
-  "id": "stackra://modules/refund/policies",
+  "id": "academorix://modules/refund/policies",
   "$version": 1,
   "title": "refund — authorization policies",
   "description": "Two policies, one per owned entity. Segregation of duties is the load-bearing invariant — approve/reject/force-fail refuse when the actor is the initiator (per SOX §404). Customer path scoped by `refund.enforce_customer_scope` middleware; admin path opens to finance + admin + owner roles. Every ability defers to spatie/laravel-permission for the permission check; scope narrowing runs via the ResolveScope middleware (tenant context; no branch scoping — refunds are tenant-wide by design).",
   "policies": [
     {
       "model": "Refund",
-      "class": "Stackra\\Finance\\Refund\\Policies\\RefundPolicy",
+      "class": "Academorix\\Finance\\Refund\\Policies\\RefundPolicy",
       "abilities": [
         {
           "action": "viewAny",
@@ -69,7 +69,7 @@
     },
     {
       "model": "RefundLine",
-      "class": "Stackra\\Finance\\Refund\\Policies\\RefundLinePolicy",
+      "class": "Academorix\\Finance\\Refund\\Policies\\RefundLinePolicy",
       "abilities": [
         {
           "action": "viewAny",

@@ -4,13 +4,13 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Progress\Policies;
+namespace Academorix\Progress\Policies;
 
 use Stackra\User\Models\User;
-use Stackra\Progress\Models\GradingEvent;
+use Academorix\Progress\Models\GradingEvent;
 
 /**
- * Authorization policy for {@see \Stackra\Progress\Models\GradingEvent}.
+ * Authorization policy for {@see \Academorix\Progress\Models\GradingEvent}.
  *
  * Wired via `#[UsePolicy]` on the Model.
  *

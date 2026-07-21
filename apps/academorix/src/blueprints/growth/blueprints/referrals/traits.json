@@ -1,11 +1,11 @@
 {
-  "id": "stackra://modules/referrals/traits",
+  "id": "academorix://modules/referrals/traits",
   "$version": 1,
   "title": "referrals — trait composition",
   "description": "Six owned traits. `BelongsToReferralProgram` is the FK trait for downstream models (ReferralCode, Referral). `BelongsToReferral` is the FK trait for ReferralReward, ReferralFraudFlag, and future downstream (e.g. a marketing event tied to a specific referral). `HasReferralCode` / `HasReferrals` / `HasReferralRewards` / `HasReferralFraudFlags` are inverse-side conveniences on the parent models. Order matters when composed with `BelongsToTenant`: tenant MUST come first so subsequent traits observe the tenant context.",
   "owned": [
     {
-      "trait": "Stackra\\Growth\\Referrals\\Concerns\\BelongsToReferralProgram",
+      "trait": "Academorix\\Growth\\Referrals\\Concerns\\BelongsToReferralProgram",
       "description": "Mixed into any domain model that carries a `referral_program_id` FK. Adds the `program()` belongsTo relation and a `booted()` hook that fills `referral_program_id = active_referral_program_id()` on `creating` when the field is null AND the current request carries a resolved active program. Refuses to save a row whose `referral_program_id` points at a program in a different tenant than the row itself.",
       "public": true,
       "usedBy": [
@@ -15,7 +15,7 @@
       "composition_notes": ["Order: BelongsToTenant must appear BEFORE BelongsToReferralProgram."]
     },
     {
-      "trait": "Stackra\\Growth\\Referrals\\Concerns\\BelongsToReferral",
+      "trait": "Academorix\\Growth\\Referrals\\Concerns\\BelongsToReferral",
       "description": "Mixed into models carrying a `referral_id` FK (ReferralReward, ReferralFraudFlag). Adds the `referral()` belongsTo relation + refuses cross-tenant writes.",
       "public": true,
       "usedBy": [
@@ -25,25 +25,25 @@
       ]
     },
     {
-      "trait": "Stackra\\Growth\\Referrals\\Concerns\\HasReferralCode",
+      "trait": "Academorix\\Growth\\Referrals\\Concerns\\HasReferralCode",
       "description": "Composed onto the User model. Adds `->referralCode()` (hasOne over ReferralCode for the active program with owner_user_id = self.id) + `->referralCodes()` (hasMany for cross-program). Convenience: `$user->referralCode->code` for the display code.",
       "public": true,
       "usedBy": ["user::User"]
     },
     {
-      "trait": "Stackra\\Growth\\Referrals\\Concerns\\HasReferrals",
+      "trait": "Academorix\\Growth\\Referrals\\Concerns\\HasReferrals",
       "description": "Composed onto the ReferralProgram model. Adds `->codes()`, `->referrals()`, `->activeReferrals()` (scope filter status NOT IN terminal set), `->completedReferrals()` (scope filter status IN ('rewarded'))",
       "public": true,
       "usedBy": ["referrals::ReferralProgram"]
     },
     {
-      "trait": "Stackra\\Growth\\Referrals\\Concerns\\HasReferralRewards",
+      "trait": "Academorix\\Growth\\Referrals\\Concerns\\HasReferralRewards",
       "description": "Composed onto the User model (for recipient rewards) AND onto the Referral model. On User: `->referralRewards()` (hasMany filtered on recipient_type='user' AND recipient_id=self.id). On Referral: `->rewards()` (hasMany). Dual-composition — same relation shape, different scoping predicate.",
       "public": true,
       "usedBy": ["user::User (as recipient of rewards)", "referrals::Referral"]
     },
     {
-      "trait": "Stackra\\Growth\\Referrals\\Concerns\\HasReferralFraudFlags",
+      "trait": "Academorix\\Growth\\Referrals\\Concerns\\HasReferralFraudFlags",
       "description": "Composed onto the Referral model. Adds `->fraudFlags()` (hasMany) + `->activeFraudFlags()` (scope filter disposition IS NULL — unreviewed) + `->hasBlockingFraudFlag()` (bool — severity=block AND disposition != false_positive).",
       "public": true,
       "usedBy": ["referrals::Referral"]
@@ -59,31 +59,31 @@
       }
     ],
     "foundation": [
-      { "trait": "Stackra\\Foundation\\Concerns\\HasUlids" },
-      { "trait": "Stackra\\Foundation\\Concerns\\HasUserstamps" },
-      { "trait": "Stackra\\Foundation\\Concerns\\HasMetadata" },
-      { "trait": "Stackra\\Foundation\\Concerns\\Filterable" },
-      { "trait": "Stackra\\Foundation\\Concerns\\Searchable" },
+      { "trait": "Academorix\\Foundation\\Concerns\\HasUlids" },
+      { "trait": "Academorix\\Foundation\\Concerns\\HasUserstamps" },
+      { "trait": "Academorix\\Foundation\\Concerns\\HasMetadata" },
+      { "trait": "Academorix\\Foundation\\Concerns\\Filterable" },
+      { "trait": "Academorix\\Foundation\\Concerns\\Searchable" },
       {
-        "trait": "Stackra\\Foundation\\Concerns\\HasSlug",
+        "trait": "Academorix\\Foundation\\Concerns\\HasSlug",
         "reason": "ReferralProgram only — unique per (tenant_id)."
       }
     ],
     "tenants": [
       {
-        "trait": "Stackra\\Tenancy\\Concerns\\BelongsToTenant",
+        "trait": "Academorix\\Tenancy\\Concerns\\BelongsToTenant",
         "reason": "Every owned row carries tenant_id per tenancy-columns.md §3."
       }
     ],
     "audit": [
       {
-        "trait": "Stackra\\Audit\\Concerns\\Auditable",
+        "trait": "Academorix\\Audit\\Concerns\\Auditable",
         "reason": "Every write is compliance-relevant (financial-record 7-year retention)."
       }
     ],
     "activity": [
       {
-        "trait": "Stackra\\Activity\\Concerns\\HasActivityLog",
+        "trait": "Academorix\\Activity\\Concerns\\HasActivityLog",
         "reason": "Referral + ReferralReward lifecycle transitions feed the staff-visible activity feed. NOT on ReferralFraudFlag (high volume + already surfaces via ReferralFraudDetected event)."
       }
     ]

@@ -1,76 +1,76 @@
 {
-  "id": "stackra://modules/payment/commands",
+  "id": "academorix://modules/payment/commands",
   "$version": 1,
   "title": "payment — Artisan commands",
   "commands": [
     {
       "signature": "payment:list {--tenant=} {--status=} {--provider=} {--from=} {--to=} {--customer=} {--limit=100}",
-      "class": "Stackra\\Finance\\Payment\\Console\\Commands\\ListPaymentsCommand",
+      "class": "Academorix\\Finance\\Payment\\Console\\Commands\\ListPaymentsCommand",
       "purpose": "Table view of payments. Filterable by tenant, status (derived from amount_refunded + disputes), provider, date range, customer_id (via invoice join). Default limit 100."
     },
     {
       "signature": "payment:describe {payment}",
-      "class": "Stackra\\Finance\\Payment\\Console\\Commands\\DescribePaymentCommand",
+      "class": "Academorix\\Finance\\Payment\\Console\\Commands\\DescribePaymentCommand",
       "purpose": "Verbose read of one payment: base fields + parent invoice + parent intent + payment_method summary + refunds accumulated + open disputes + linked transaction + billing snapshot. Support tool."
     },
     {
       "signature": "payment:capture {payment_intent} {--amount=} {--note=}",
-      "class": "Stackra\\Finance\\Payment\\Console\\Commands\\CapturePaymentCommand",
+      "class": "Academorix\\Finance\\Payment\\Console\\Commands\\CapturePaymentCommand",
       "purpose": "Manual capture for authorization-hold intents (capture_method='manual'). --amount is optional and defaults to the intent's amount (full capture). Partial capture creates a partially_captured event. Requires payment_manual_capture entitlement."
     },
     {
       "signature": "payment:reconcile {--tenant=} {--provider=} {--dry-run}",
-      "class": "Stackra\\Finance\\Payment\\Console\\Commands\\ReconcilePaymentsCommand",
+      "class": "Academorix\\Finance\\Payment\\Console\\Commands\\ReconcilePaymentsCommand",
       "purpose": "On-demand invocation of ReconcilePaymentIntentsJob. Per active provider: polls provider intent list + reconciles drift. --dry-run reports findings without repairing. Findings above 0 indicate lost webhooks."
     },
     {
       "signature": "payment-method:list-mine {customer} {--active} {--provider=}",
-      "class": "Stackra\\Finance\\Payment\\Console\\Commands\\ListMyPaymentMethodsCommand",
+      "class": "Academorix\\Finance\\Payment\\Console\\Commands\\ListMyPaymentMethodsCommand",
       "purpose": "Table view of a customer's saved payment methods. --active filters is_active=true. --provider filters by provider slug. Support tool for troubleshooting customer payment flows."
     },
     {
       "signature": "payment-method:remove {payment_method} {--reason=customer_removed} {--note=}",
-      "class": "Stackra\\Finance\\Payment\\Console\\Commands\\RemovePaymentMethodCommand",
+      "class": "Academorix\\Finance\\Payment\\Console\\Commands\\RemovePaymentMethodCommand",
       "purpose": "Soft-delete a payment method. --reason IN (customer_removed / card_expired / provider_failure / duplicate / fraud_flag). Dispatches provider-side detach. --note required and written to audit trail."
     },
     {
       "signature": "payment-intent:list {--tenant=} {--status=} {--provider=} {--from=} {--to=} {--limit=100}",
-      "class": "Stackra\\Finance\\Payment\\Console\\Commands\\ListPaymentIntentsCommand",
+      "class": "Academorix\\Finance\\Payment\\Console\\Commands\\ListPaymentIntentsCommand",
       "purpose": "Table view of in-flight + recent intents. Filterable by status (initialized / requires_action / requires_payment_method / requires_confirmation / requires_capture / processing / succeeded / cancelled / failed). Default sort: created_at DESC."
     },
     {
       "signature": "payment-intent:cancel {payment_intent} {--reason=requested_by_customer} {--note=}",
-      "class": "Stackra\\Finance\\Payment\\Console\\Commands\\CancelPaymentIntentCommand",
+      "class": "Academorix\\Finance\\Payment\\Console\\Commands\\CancelPaymentIntentCommand",
       "purpose": "Manually cancel an in-flight intent (any non-terminal status). --reason IN (requested_by_customer / duplicate / fraudulent / abandoned / expired). Dispatches provider.cancelIntent. --note required and written to audit trail."
     },
     {
       "signature": "payment-intent:confirm {payment_intent} {--payment-method=} {--note=}",
-      "class": "Stackra\\Finance\\Payment\\Console\\Commands\\ConfirmPaymentIntentCommand",
+      "class": "Academorix\\Finance\\Payment\\Console\\Commands\\ConfirmPaymentIntentCommand",
       "purpose": "Support tool. Confirm an intent on the customer's behalf (typically used when the customer's SDK failed to post the confirmation but the customer completed the flow). --payment-method attaches a method (required if not already attached). --note required."
     },
     {
       "signature": "payment-dispute:list {--tenant=} {--status=} {--provider=} {--reason=} {--unresolved} {--limit=50}",
-      "class": "Stackra\\Finance\\Payment\\Console\\Commands\\ListPaymentDisputesCommand",
+      "class": "Academorix\\Finance\\Payment\\Console\\Commands\\ListPaymentDisputesCommand",
       "purpose": "Table view of disputes. --unresolved filters to non-terminal statuses. Sorted by created_at DESC."
     },
     {
       "signature": "payment-dispute:describe {payment_dispute}",
-      "class": "Stackra\\Finance\\Payment\\Console\\Commands\\DescribeDisputeCommand",
+      "class": "Academorix\\Finance\\Payment\\Console\\Commands\\DescribeDisputeCommand",
       "purpose": "Verbose read of one dispute: base fields + parent payment + evidence (redacted for non-authorized callers) + evidence_due_by countdown + refund/chargeback links (if escalated). Support tool."
     },
     {
       "signature": "payment-dispute:submit-evidence {payment_dispute} {--force}",
-      "class": "Stackra\\Finance\\Payment\\Console\\Commands\\SubmitDisputeEvidenceCommand",
+      "class": "Academorix\\Finance\\Payment\\Console\\Commands\\SubmitDisputeEvidenceCommand",
       "purpose": "Submit collected evidence to the provider. Dispatches SubmitDisputeEvidenceJob. --force bypasses the 'evidence already collected' check (rare — resubmits ONLY where the provider allows)."
     },
     {
       "signature": "payment-dispute:accept {payment_dispute} --note={note}",
-      "class": "Stackra\\Finance\\Payment\\Console\\Commands\\AcceptDisputeCommand",
+      "class": "Academorix\\Finance\\Payment\\Console\\Commands\\AcceptDisputeCommand",
       "purpose": "Concede the dispute WITHOUT fighting. Creates a refund via the refund module + transitions dispute status → 'charge_refunded'. --note required. Every accept writes to audits with 7-year retention."
     },
     {
       "signature": "payment-provider:configure {--tenant=} {--provider=} {--config-file=} {--dry-run}",
-      "class": "Stackra\\Finance\\Payment\\Console\\Commands\\ConfigurePaymentProviderCommand",
+      "class": "Academorix\\Finance\\Payment\\Console\\Commands\\ConfigurePaymentProviderCommand",
       "purpose": "Scriptable provider config create/update. --config-file=path/to/config.json validated against the per-provider JSON schema. --dry-run validates + shows diff without persisting. Encrypts the config at rest."
     }
   ]

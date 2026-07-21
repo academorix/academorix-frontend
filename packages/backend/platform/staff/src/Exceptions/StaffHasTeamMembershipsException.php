@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Staff\Exceptions;
 
-use Stackra\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * The staff still has active team memberships.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class StaffHasTeamMembershipsException extends AcademorixException
+final class StaffHasTeamMembershipsException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

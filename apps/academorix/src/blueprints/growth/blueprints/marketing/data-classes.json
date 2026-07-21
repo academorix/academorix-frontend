@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/marketing/data-classes",
+  "id": "academorix://modules/marketing/data-classes",
   "$version": 1,
   "title": "marketing — field classification",
   "description": "Marketing carries user identifiers dispatched to third-party ad networks (email hashed / phone hashed / click IDs). Value amounts are confidential (competitor tenant cross-inference risk). Provider credentials are RESTRICTED (financial-critical). Consent + attribution snapshots are internal (compliance evidence). No card data (day-pass modeling's payment_method is a category on facility side; marketing carries no payment_method).",

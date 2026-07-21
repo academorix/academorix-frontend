@@ -4,25 +4,25 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Invoice\Repositories;
+namespace Academorix\Invoice\Repositories;
 
 use Stackra\Crud\Attributes\AsRepository;
 use Stackra\Crud\Attributes\Cacheable;
 use Stackra\Crud\Attributes\Filterable;
 use Stackra\Crud\Attributes\UseModel;
 use Stackra\Crud\Repositories\Repository;
-use Stackra\Invoice\Contracts\Data\CreditNoteInterface;
-use Stackra\Invoice\Contracts\Repositories\CreditNoteRepositoryInterface;
-use Stackra\Invoice\Models\CreditNote;
+use Academorix\Invoice\Contracts\Data\CreditNoteInterface;
+use Academorix\Invoice\Contracts\Repositories\CreditNoteRepositoryInterface;
+use Academorix\Invoice\Models\CreditNote;
 
 /**
- * Attribute-first Eloquent repository for {@see Stackra\Invoice\Models\CreditNote}.
+ * Attribute-first Eloquent repository for {@see Academorix\Invoice\Models\CreditNote}.
  *
  * Bound to the interface via `#[AsRepository]`; the model comes from
  * `#[UseModel(CreditNoteInterface::class)]` which resolves to
  * `CreditNote` through the interface's `#[Bind]`.
  *
- * @extends Repository<\Stackra\Invoice\Models\CreditNote>
+ * @extends Repository<\Academorix\Invoice\Models\CreditNote>
  *
  * @category Invoice
  *

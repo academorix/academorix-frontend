@@ -4,7 +4,7 @@
 
 declare(strict_types=1);
 
-namespace Stackra\MarketplaceFee\Actions\CentralAdmin;
+namespace Academorix\MarketplaceFee\Actions\CentralAdmin;
 
 use Stackra\Routing\Attributes\AsAction;
 use Stackra\Routing\Attributes\Middleware;

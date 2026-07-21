@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Refund\Actions\Tenant;
+namespace Academorix\Refund\Actions\Tenant;
 
-use Stackra\Refund\Contracts\Repositories\RefundRepositoryInterface;
-use Stackra\Refund\Data\RefundData;
+use Academorix\Refund\Contracts\Repositories\RefundRepositoryInterface;
+use Academorix\Refund\Data\RefundData;
 use Stackra\Routing\Attributes\AsAction;
 use Stackra\Routing\Attributes\Middleware;
 use Stackra\Routing\Concerns\AsController;
@@ -50,7 +50,7 @@ final class ListRefundAction
      */
     public function __invoke(Request $request): PaginatedDataCollection
     {
-        /** @var LengthAwarePaginator<int, \Stackra\Refund\Models\Refund> $page */
+        /** @var LengthAwarePaginator<int, \Academorix\Refund\Models\Refund> $page */
         $page = $this->repository->paginate(
             perPage: (int) $request->integer('per_page', 15),
         );

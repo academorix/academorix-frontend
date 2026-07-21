@@ -4,13 +4,13 @@
 
 declare(strict_types=1);
 
-namespace Stackra\PrivateSessions\Policies;
+namespace Academorix\PrivateSessions\Policies;
 
 use Stackra\User\Models\User;
-use Stackra\PrivateSessions\Models\PrivateSessionRequest;
+use Academorix\PrivateSessions\Models\PrivateSessionRequest;
 
 /**
- * Authorization policy for {@see \Stackra\PrivateSessions\Models\PrivateSessionRequest}.
+ * Authorization policy for {@see \Academorix\PrivateSessions\Models\PrivateSessionRequest}.
  *
  * Wired via `#[UsePolicy]` on the Model.
  *

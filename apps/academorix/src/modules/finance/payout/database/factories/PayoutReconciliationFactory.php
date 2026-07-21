@@ -4,19 +4,19 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Payout\Database\Factories;
+namespace Academorix\Payout\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Stackra\Payout\Contracts\Data\PayoutReconciliationInterface;
-use Stackra\Payout\Models\PayoutReconciliation;
+use Academorix\Payout\Contracts\Data\PayoutReconciliationInterface;
+use Academorix\Payout\Models\PayoutReconciliation;
 
 /**
- * Factory for {@see \Stackra\Payout\Models\PayoutReconciliation}.
+ * Factory for {@see \Academorix\Payout\Models\PayoutReconciliation}.
  *
  * Auto-generated skeleton — extend with named states as domain
  * cases emerge (e.g. `->published()`, `->overdue()`, `->archived()`).
  *
- * @extends Factory<\Stackra\Payout\Models\PayoutReconciliation>
+ * @extends Factory<\Academorix\Payout\Models\PayoutReconciliation>
  *
  * @category Payout
  *

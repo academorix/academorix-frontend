@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/payment/routes",
+  "id": "academorix://modules/payment/routes",
   "$version": 1,
   "title": "payment — HTTP routes",
   "description": "Tenant-facing payment surface (customer routes for own payment methods + intents + payments + own dispute status; admin+finance for provider CRUD + captures + dispute management) + public webhook plane (per-provider HMAC-verified inbound) + platform-admin cross-tenant support routes. Every tenant-plane route carries `entitlement.enforce:payment_capture` at minimum. Payments are NEVER created via API — captures happen via PaymentIntent.succeeded transition. Attempted POST /payments returns 403 PAYMENT_MANUAL_CREATE_FORBIDDEN.",
@@ -24,28 +24,28 @@
         {
           "method": "POST",
           "path": "/",
-          "controller": "Stackra\\Finance\\Payment\\Http\\Controllers\\Tenant\\PaymentIntentController@store",
+          "controller": "Academorix\\Finance\\Payment\\Http\\Controllers\\Tenant\\PaymentIntentController@store",
           "permission": "payment.intents.create",
           "description": "Body: { invoice_id, amount_cents?, currency?, capture_method?, confirmation_method?, payment_method_id? }. Returns { id, client_secret, next_action_type?, next_action_url? }. Customer's SDK uses client_secret to confirm client-side."
         },
         {
           "method": "GET",
           "path": "/{intent}",
-          "controller": "Stackra\\Finance\\Payment\\Http\\Controllers\\Tenant\\PaymentIntentController@show",
+          "controller": "Academorix\\Finance\\Payment\\Http\\Controllers\\Tenant\\PaymentIntentController@show",
           "permission": "payment.intents.view",
           "description": "Includes status + next_action_* when requires_action. client_secret returned only when caller owns the intent."
         },
         {
           "method": "POST",
           "path": "/{intent}/confirm",
-          "controller": "Stackra\\Finance\\Payment\\Http\\Controllers\\Tenant\\PaymentIntentController@confirm",
+          "controller": "Academorix\\Finance\\Payment\\Http\\Controllers\\Tenant\\PaymentIntentController@confirm",
           "permission": "payment.intents.confirm",
           "description": "Body: { payment_method_id? }. Dispatches ConfirmPaymentIntentJob."
         },
         {
           "method": "POST",
           "path": "/{intent}/cancel",
-          "controller": "Stackra\\Finance\\Payment\\Http\\Controllers\\Tenant\\PaymentIntentController@cancel",
+          "controller": "Academorix\\Finance\\Payment\\Http\\Controllers\\Tenant\\PaymentIntentController@cancel",
           "permission": "payment.intents.cancel",
           "description": "Body: { reason?, note? }. Refused when status IS terminal."
         }
@@ -71,27 +71,27 @@
         {
           "method": "GET",
           "path": "/mine",
-          "controller": "Stackra\\Finance\\Payment\\Http\\Controllers\\Tenant\\PaymentController@mine",
+          "controller": "Academorix\\Finance\\Payment\\Http\\Controllers\\Tenant\\PaymentController@mine",
           "permission": "payment.payments.view",
           "description": "Customer's own payments (auto-scoped by invoice.customer_id). filter[from], filter[to], filter[provider], filter[status]. Default sort: captured_at DESC."
         },
         {
           "method": "GET",
           "path": "/{payment}",
-          "controller": "Stackra\\Finance\\Payment\\Http\\Controllers\\Tenant\\PaymentController@show",
+          "controller": "Academorix\\Finance\\Payment\\Http\\Controllers\\Tenant\\PaymentController@show",
           "permission": "payment.payments.view"
         },
         {
           "method": "GET",
           "path": "/",
-          "controller": "Stackra\\Finance\\Payment\\Http\\Controllers\\Tenant\\PaymentController@index",
+          "controller": "Academorix\\Finance\\Payment\\Http\\Controllers\\Tenant\\PaymentController@index",
           "permission": "payment.payments.viewAny",
           "description": "Admin + finance tenant-wide view. filter[customer_id], filter[provider], filter[status], filter[from], filter[to], filter[invoice_id]. Default sort: captured_at DESC."
         },
         {
           "method": "POST",
           "path": "/{payment}/capture",
-          "controller": "Stackra\\Finance\\Payment\\Http\\Controllers\\Tenant\\PaymentController@capture",
+          "controller": "Academorix\\Finance\\Payment\\Http\\Controllers\\Tenant\\PaymentController@capture",
           "permission": "payment.payments.capture",
           "middleware_add": ["entitlement.enforce:payment_manual_capture"],
           "description": "Body: { amount_cents? }. Dispatches CapturePaymentIntentJob. Requires payment_manual_capture entitlement. Refused when intent.capture_method != 'manual' or status != 'requires_capture'."
@@ -119,28 +119,28 @@
         {
           "method": "GET",
           "path": "/mine",
-          "controller": "Stackra\\Finance\\Payment\\Http\\Controllers\\Tenant\\PaymentMethodController@mine",
+          "controller": "Academorix\\Finance\\Payment\\Http\\Controllers\\Tenant\\PaymentMethodController@mine",
           "permission": "payment.methods.viewAny",
           "description": "Customer's own saved methods. filter[is_active], filter[provider], filter[method_type]. Default sort: is_default DESC, last_used_at DESC."
         },
         {
           "method": "POST",
           "path": "/",
-          "controller": "Stackra\\Finance\\Payment\\Http\\Controllers\\Tenant\\PaymentMethodController@store",
+          "controller": "Academorix\\Finance\\Payment\\Http\\Controllers\\Tenant\\PaymentMethodController@store",
           "permission": "payment.methods.create",
           "description": "SetupIntent flow — customer's client-side SDK provides the tokenized payment method reference. Body: { provider, provider_reference_id, method_type, brand?, last4?, exp_month?, exp_year?, fingerprint_hash, billing_address?, is_default? }. Duplicate fingerprint returns 409 with existing method_id."
         },
         {
           "method": "POST",
           "path": "/{method}/set-default",
-          "controller": "Stackra\\Finance\\Payment\\Http\\Controllers\\Tenant\\PaymentMethodController@setDefault",
+          "controller": "Academorix\\Finance\\Payment\\Http\\Controllers\\Tenant\\PaymentMethodController@setDefault",
           "permission": "payment.methods.set-default",
           "description": "Atomic lock-and-swap for is_default flag. Refused when method.is_active=false."
         },
         {
           "method": "DELETE",
           "path": "/{method}",
-          "controller": "Stackra\\Finance\\Payment\\Http\\Controllers\\Tenant\\PaymentMethodController@destroy",
+          "controller": "Academorix\\Finance\\Payment\\Http\\Controllers\\Tenant\\PaymentMethodController@destroy",
           "permission": "payment.methods.delete",
           "description": "Soft-delete + dispatch provider-side detach. Refused when method is referenced by an in-flight PaymentIntent."
         }
@@ -167,28 +167,28 @@
         {
           "method": "GET",
           "path": "/",
-          "controller": "Stackra\\Finance\\Payment\\Http\\Controllers\\Tenant\\PaymentDisputeController@index",
+          "controller": "Academorix\\Finance\\Payment\\Http\\Controllers\\Tenant\\PaymentDisputeController@index",
           "permission": "payment.disputes.viewAny",
           "description": "filter[status], filter[provider], filter[reason], filter[from], filter[to]. Default sort: opened_at DESC. Unresolved first."
         },
         {
           "method": "GET",
           "path": "/{dispute}",
-          "controller": "Stackra\\Finance\\Payment\\Http\\Controllers\\Tenant\\PaymentDisputeController@show",
+          "controller": "Academorix\\Finance\\Payment\\Http\\Controllers\\Tenant\\PaymentDisputeController@show",
           "permission": "payment.disputes.view",
           "description": "Evidence field returned encrypted; support role sees redacted view (evidence fields nulled)."
         },
         {
           "method": "POST",
           "path": "/{dispute}/submit-evidence",
-          "controller": "Stackra\\Finance\\Payment\\Http\\Controllers\\Tenant\\PaymentDisputeController@submitEvidence",
+          "controller": "Academorix\\Finance\\Payment\\Http\\Controllers\\Tenant\\PaymentDisputeController@submitEvidence",
           "permission": "payment.disputes.submit-evidence",
           "description": "Dispatches SubmitDisputeEvidenceJob. Body: { override_evidence?: { ... } } — optional overrides on the auto-collected evidence pack."
         },
         {
           "method": "POST",
           "path": "/{dispute}/accept",
-          "controller": "Stackra\\Finance\\Payment\\Http\\Controllers\\Tenant\\PaymentDisputeController@accept",
+          "controller": "Academorix\\Finance\\Payment\\Http\\Controllers\\Tenant\\PaymentDisputeController@accept",
           "permission": "payment.disputes.accept",
           "description": "Body: { note }. Dispatches refund via the refund module + transitions dispute → 'charge_refunded'. --note required (audit trail)."
         }
@@ -214,34 +214,34 @@
         {
           "method": "GET",
           "path": "/",
-          "controller": "Stackra\\Finance\\Payment\\Http\\Controllers\\Tenant\\PaymentProviderController@index",
+          "controller": "Academorix\\Finance\\Payment\\Http\\Controllers\\Tenant\\PaymentProviderController@index",
           "permission": "payment.providers.viewAny",
           "description": "filter[provider], filter[is_active]. Config field returned encrypted; support role sees redacted view."
         },
         {
           "method": "POST",
           "path": "/",
-          "controller": "Stackra\\Finance\\Payment\\Http\\Controllers\\Tenant\\PaymentProviderController@store",
+          "controller": "Academorix\\Finance\\Payment\\Http\\Controllers\\Tenant\\PaymentProviderController@store",
           "permission": "payment.providers.create",
           "description": "Body: PaymentProviderConfigCreateData. config jsonb validated against the per-provider JSON Schema in data/providers/. Consumes 1 unit of payment_provider_slot."
         },
         {
           "method": "PATCH",
           "path": "/{provider}",
-          "controller": "Stackra\\Finance\\Payment\\Http\\Controllers\\Tenant\\PaymentProviderController@update",
+          "controller": "Academorix\\Finance\\Payment\\Http\\Controllers\\Tenant\\PaymentProviderController@update",
           "permission": "payment.providers.update"
         },
         {
           "method": "POST",
           "path": "/{provider}/test",
-          "controller": "Stackra\\Finance\\Payment\\Http\\Controllers\\Tenant\\PaymentProviderController@test",
+          "controller": "Academorix\\Finance\\Payment\\Http\\Controllers\\Tenant\\PaymentProviderController@test",
           "permission": "payment.providers.test",
           "description": "Send a synthetic test event via the provider's sandbox endpoint. Body: { test_mode?: boolean }. Returns test result (succeeded / failed) + latency."
         },
         {
           "method": "POST",
           "path": "/{provider}/reconcile",
-          "controller": "Stackra\\Finance\\Payment\\Http\\Controllers\\Tenant\\PaymentProviderController@reconcile",
+          "controller": "Academorix\\Finance\\Payment\\Http\\Controllers\\Tenant\\PaymentProviderController@reconcile",
           "permission": "payment.providers.reconcile",
           "description": "Trigger on-demand reconciliation for this provider. Returns { intents_polled, drift_count, reconciled_count }."
         }
@@ -263,7 +263,7 @@
         {
           "method": "POST",
           "path": "/{provider}",
-          "controller": "Stackra\\Finance\\Payment\\Http\\Controllers\\Webhook\\PaymentWebhookController@handle",
+          "controller": "Academorix\\Finance\\Payment\\Http\\Controllers\\Webhook\\PaymentWebhookController@handle",
           "description": "Dispatches to the provider's handler (StripeWebhookHandler, PaddleWebhookHandler, etc.). Handlers are idempotent — same webhook fired twice creates zero duplicates (deduplication key = provider_event_id). Returns 200 with empty body when accepted. Returns 400 on signature-invalid (no body echoed)."
         }
       ]
@@ -285,14 +285,14 @@
         {
           "method": "GET",
           "path": "/payments",
-          "controller": "Stackra\\Finance\\Payment\\Http\\Controllers\\Platform\\PaymentController@index",
+          "controller": "Academorix\\Finance\\Payment\\Http\\Controllers\\Platform\\PaymentController@index",
           "permission": "platform.payment.payments.viewAny",
           "description": "filter[tenant_id], filter[provider], filter[status], filter[from], filter[to]. Cross-tenant scan for support debugging."
         },
         {
           "method": "GET",
           "path": "/payment-disputes",
-          "controller": "Stackra\\Finance\\Payment\\Http\\Controllers\\Platform\\PaymentDisputeController@index",
+          "controller": "Academorix\\Finance\\Payment\\Http\\Controllers\\Platform\\PaymentDisputeController@index",
           "permission": "platform.payment.disputes.viewAny",
           "description": "Cross-tenant P1 review dashboard. filter[tenant_id], filter[status], filter[provider], filter[unresolved]."
         }

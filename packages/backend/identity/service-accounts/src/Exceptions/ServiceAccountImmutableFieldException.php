@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\ServiceAccounts\Exceptions;
 
-use Stackra\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * PATCH attempted to change `application_id`, `tenant_id`, or `signer_kid`.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class ServiceAccountImmutableFieldException extends AcademorixException
+final class ServiceAccountImmutableFieldException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

@@ -1,8 +1,8 @@
 {
-  "id": "stackra://modules/medical/permissions",
+  "id": "academorix://modules/medical/permissions",
   "$version": 1,
   "title": "medical — permissions",
-  "seeder": "Stackra\\Sports\\Medical\\Database\\Seeders\\MedicalPermissionSeeder",
+  "seeder": "Academorix\\Sports\\Medical\\Database\\Seeders\\MedicalPermissionSeeder",
   "isSystem": true,
   "description": "STRICT RBAC — medical role + admin ONLY for full read/write. Coaches see redacted allergy summary (never full detail). Guardians see .own for their athletes. Platform plane strictly PII-masked.",
   "permissions": [

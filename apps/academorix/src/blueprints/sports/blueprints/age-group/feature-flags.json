@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/age-group/feature-flags",
+  "id": "academorix://modules/age-group/feature-flags",
   "$version": 1,
   "title": "age-group — kill switches",
   "engine": "laravel/pennant",

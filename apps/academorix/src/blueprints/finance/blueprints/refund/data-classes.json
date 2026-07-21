@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/refund/data-classes",
+  "id": "academorix://modules/refund/data-classes",
   "$version": 1,
   "title": "refund — field classification",
   "description": "Refund data is a mix of operational identifiers (refund_id, refund_number), financial records (amount_cents, currency, provider_fee_reversal_cents — 7y financial retention), workflow-state metadata (status, approved_by, rejected_by), and marketing-adjacent metadata (issuance context tagging linked marketing conversion event). No health / medical / minor-specific data on any row.",

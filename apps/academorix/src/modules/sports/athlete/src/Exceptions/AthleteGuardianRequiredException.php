@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Athlete\Exceptions;
+namespace Academorix\Athlete\Exceptions;
 
 use Stackra\Exceptions\StackraException;
 
 /**
  * Raised when a create / update / consent write is attempted against
  * a minor athlete with no active, non-revoked
- * {@see \Stackra\AthleteGuardian\Models\AthleteGuardian} row on file.
+ * {@see \Academorix\AthleteGuardian\Models\AthleteGuardian} row on file.
  *
  * Per `.kiro/steering/hierarchy.md` §17 and the P0 finding from
  * `security-compliance-reviewer`, every write that touches a minor

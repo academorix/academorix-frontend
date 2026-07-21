@@ -1,10 +1,10 @@
 {
-  "name": "stackra/membership",
+  "name": "academorix/membership",
   "type": "library",
-  "description": "Stackra Membership module — server-side Laravel package emitted from the module blueprint at `modules/finance/blueprints/membership/`. Complements the wire SDK at `stackra-finance/membership-sdk`.",
+  "description": "Academorix Membership module — server-side Laravel package emitted from the module blueprint at `modules/finance/blueprints/membership/`. Complements the wire SDK at `academorix-finance/membership-sdk`.",
   "license": "proprietary",
   "keywords": [
-    "stackra",
+    "academorix",
     "module",
     "laravel",
     "finance",
@@ -22,7 +22,7 @@
     "stackra/routing": "@dev",
     "stackra/service-provider": "@dev",
     "stackra/support": "@dev",
-    "stackra-finance/membership-sdk": "@dev"
+    "academorix-finance/membership-sdk": "@dev"
   },
   "require-dev": {
     "orchestra/testbench": "^11.0",
@@ -33,12 +33,12 @@
   },
   "autoload": {
     "psr-4": {
-      "Stackra\\Membership\\": "src/"
+      "Academorix\\Membership\\": "src/"
     }
   },
   "autoload-dev": {
     "psr-4": {
-      "Stackra\\Membership\\Tests\\": "tests/"
+      "Academorix\\Membership\\Tests\\": "tests/"
     }
   },
   "extra": {

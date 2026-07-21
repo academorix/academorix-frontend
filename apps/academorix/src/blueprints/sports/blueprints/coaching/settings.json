@@ -1,14 +1,14 @@
 {
-  "id": "stackra://modules/coaching/settings",
+  "id": "academorix://modules/coaching/settings",
   "$version": 1,
   "title": "coaching — settings",
   "description": "Tenant-facing preferences for coaching workflow: verification cadence, assignment limits, rating defaults, availability strictness.",
   "storedIn": "settings",
-  "reference": { "contract": "stackra://modules/settings/attributes" },
+  "reference": { "contract": "academorix://modules/settings/attributes" },
   "groups": [
     {
       "key": "coaching",
-      "class": "Stackra\\Sports\\Coaching\\Settings\\CoachingSettings",
+      "class": "Academorix\\Sports\\Coaching\\Settings\\CoachingSettings",
       "label": "Coaching",
       "description": "Tenant-wide coaching workflow defaults.",
       "icon": "user-group",

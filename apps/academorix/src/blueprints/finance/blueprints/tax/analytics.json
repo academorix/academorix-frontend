@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/tax/analytics",
+  "id": "academorix://modules/tax/analytics",
   "$version": 1,
   "title": "tax — product analytics",
   "sink": "segment",

@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/referrals/feature-flags",
+  "id": "academorix://modules/referrals/feature-flags",
   "$version": 1,
   "title": "referrals — kill switches",
   "engine": "laravel/pennant",

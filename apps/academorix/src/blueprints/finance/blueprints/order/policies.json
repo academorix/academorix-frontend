@@ -1,12 +1,12 @@
 {
-  "id": "stackra://modules/order/policies",
+  "id": "academorix://modules/order/policies",
   "$version": 1,
   "title": "order — authorization policies",
   "description": "Buyer-scoped: guardians see only their own orders. State-gated: adjustments/lines editable only while order.status IN ('draft', 'pending'). Refund-gated: only paid orders refundable.",
   "policies": [
     {
       "model": "Order",
-      "class": "Stackra\\Finance\\Order\\Policies\\OrderPolicy",
+      "class": "Academorix\\Finance\\Order\\Policies\\OrderPolicy",
       "abilities": [
         {
           "action": "viewAny",
@@ -45,7 +45,7 @@
     },
     {
       "model": "OrderLine",
-      "class": "Stackra\\Finance\\Order\\Policies\\OrderLinePolicy",
+      "class": "Academorix\\Finance\\Order\\Policies\\OrderLinePolicy",
       "abilities": [
         {
           "action": "create",
@@ -66,7 +66,7 @@
     },
     {
       "model": "OrderAdjustment",
-      "class": "Stackra\\Finance\\Order\\Policies\\OrderAdjustmentPolicy",
+      "class": "Academorix\\Finance\\Order\\Policies\\OrderAdjustmentPolicy",
       "abilities": [
         {
           "action": "create",

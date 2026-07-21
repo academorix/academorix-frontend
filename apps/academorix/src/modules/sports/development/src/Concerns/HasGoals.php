@@ -4,7 +4,7 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Development\Concerns;
+namespace Academorix\Development\Concerns;
 
 /**
  * Trait — HasGoals.

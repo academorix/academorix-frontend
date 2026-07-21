@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Drills\Contracts\Services;
+namespace Academorix\Drills\Contracts\Services;
 
-use Stackra\Drills\Services\DrillSearchIndexer;
+use Academorix\Drills\Services\DrillSearchIndexer;
 use Illuminate\Container\Attributes\Bind;
 
 /**

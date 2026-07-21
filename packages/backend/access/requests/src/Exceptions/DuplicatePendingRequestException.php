@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Requests\Exceptions;
 
-use Stackra\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * The caller already has a pending request for the same (resource_type, resource_id, permissions_wanted) tuple.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class DuplicatePendingRequestException extends AcademorixException
+final class DuplicatePendingRequestException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

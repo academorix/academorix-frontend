@@ -4,7 +4,7 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Session\Attributes;
+namespace Academorix\Session\Attributes;
 
 use Attribute;
 

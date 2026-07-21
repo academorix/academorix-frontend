@@ -1,10 +1,10 @@
 {
-  "name": "stackra/marketing",
+  "name": "academorix/marketing",
   "type": "library",
-  "description": "Stackra Marketing module — server-side Laravel package emitted from the module blueprint at `modules/growth/blueprints/marketing/`. Complements the wire SDK at `stackra-growth/marketing-sdk`.",
+  "description": "Academorix Marketing module — server-side Laravel package emitted from the module blueprint at `modules/growth/blueprints/marketing/`. Complements the wire SDK at `academorix-growth/marketing-sdk`.",
   "license": "proprietary",
   "keywords": [
-    "stackra",
+    "academorix",
     "module",
     "laravel",
     "growth",
@@ -22,7 +22,7 @@
     "stackra/routing": "@dev",
     "stackra/service-provider": "@dev",
     "stackra/support": "@dev",
-    "stackra-growth/marketing-sdk": "@dev"
+    "academorix-growth/marketing-sdk": "@dev"
   },
   "require-dev": {
     "orchestra/testbench": "^11.0",
@@ -33,12 +33,12 @@
   },
   "autoload": {
     "psr-4": {
-      "Stackra\\Marketing\\": "src/"
+      "Academorix\\Marketing\\": "src/"
     }
   },
   "autoload-dev": {
     "psr-4": {
-      "Stackra\\Marketing\\Tests\\": "tests/"
+      "Academorix\\Marketing\\Tests\\": "tests/"
     }
   },
   "extra": {

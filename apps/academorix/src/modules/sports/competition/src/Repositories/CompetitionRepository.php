@@ -4,25 +4,25 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Competition\Repositories;
+namespace Academorix\Competition\Repositories;
 
 use Stackra\Crud\Attributes\AsRepository;
 use Stackra\Crud\Attributes\Cacheable;
 use Stackra\Crud\Attributes\Filterable;
 use Stackra\Crud\Attributes\UseModel;
 use Stackra\Crud\Repositories\Repository;
-use Stackra\Competition\Contracts\Data\CompetitionInterface;
-use Stackra\Competition\Contracts\Repositories\CompetitionRepositoryInterface;
-use Stackra\Competition\Models\Competition;
+use Academorix\Competition\Contracts\Data\CompetitionInterface;
+use Academorix\Competition\Contracts\Repositories\CompetitionRepositoryInterface;
+use Academorix\Competition\Models\Competition;
 
 /**
- * Attribute-first Eloquent repository for {@see Stackra\Competition\Models\Competition}.
+ * Attribute-first Eloquent repository for {@see Academorix\Competition\Models\Competition}.
  *
  * Bound to the interface via `#[AsRepository]`; the model comes from
  * `#[UseModel(CompetitionInterface::class)]` which resolves to
  * `Competition` through the interface's `#[Bind]`.
  *
- * @extends Repository<\Stackra\Competition\Models\Competition>
+ * @extends Repository<\Academorix\Competition\Models\Competition>
  *
  * @category Competition
  *

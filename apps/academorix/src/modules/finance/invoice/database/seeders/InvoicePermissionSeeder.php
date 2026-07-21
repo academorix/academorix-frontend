@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Invoice\Database\Seeders;
+namespace Academorix\Invoice\Database\Seeders;
 
-use Stackra\Invoice\Enums\InvoicePermission;
+use Academorix\Invoice\Enums\InvoicePermission;
 use Stackra\Authorization\Database\Seeders\Concerns\SeedsPermissionEnum;
 use Stackra\ServiceProvider\Attributes\AsSeeder;
 use Illuminate\Database\Seeder;

@@ -1,9 +1,9 @@
 {
-  "id": "stackra://modules/sports-registry/helpers",
+  "id": "academorix://modules/sports-registry/helpers",
   "$version": 1,
   "title": "sports-registry — helper functions",
   "description": "Four published helpers for common sport-catalog lookups from any layer (controller, action, listener, blade template, artisan command). Sport keys are NOT a request-scoped context axis (there is no `X-Sport-Id` header), so the helpers accept explicit arguments rather than reading from request state.",
-  "namespace": "Stackra\\Sports\\Registry\\Support",
+  "namespace": "Academorix\\Sports\\Registry\\Support",
   "helpers": [
     {
       "signature": "resolve_sport(string $sport_key, ?string $discipline_key = null, ?string $position_key = null, ?string $tenant_id = null): array | null",

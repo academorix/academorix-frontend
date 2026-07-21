@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Tax\Services;
+namespace Academorix\Tax\Services;
 
-use Stackra\Tax\Contracts\Data\TaxRateInterface;
-use Stackra\Tax\Contracts\Services\ExemptionValidatorInterface;
-use Stackra\Tax\Contracts\Services\TaxCalculatorInterface;
-use Stackra\Tax\Contracts\Services\TaxRateResolverInterface;
-use Stackra\Tax\Data\TaxCalculationResultData;
-use Stackra\Tax\Data\TaxLineResultData;
+use Academorix\Tax\Contracts\Data\TaxRateInterface;
+use Academorix\Tax\Contracts\Services\ExemptionValidatorInterface;
+use Academorix\Tax\Contracts\Services\TaxCalculatorInterface;
+use Academorix\Tax\Contracts\Services\TaxRateResolverInterface;
+use Academorix\Tax\Data\TaxCalculationResultData;
+use Academorix\Tax\Data\TaxLineResultData;
 use Illuminate\Container\Attributes\Log;
 use Illuminate\Container\Attributes\Scoped;
 use Psr\Log\LoggerInterface;
@@ -17,7 +17,7 @@ use Spatie\LaravelData\DataCollection;
 
 /**
  * Reference implementation of
- * {@see \Stackra\Tax\Contracts\Services\TaxCalculatorInterface}.
+ * {@see \Academorix\Tax\Contracts\Services\TaxCalculatorInterface}.
  *
  * Algorithm:
  *  1. Ask the ExemptionValidator whether the customer holds a

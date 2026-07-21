@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Stackra\Webhook\Exceptions;
 
-use Stackra\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Raised when a caller attempts to dispatch through a disabled or
@@ -14,7 +14,7 @@ use Stackra\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class WebhookSubscriptionDisabledException extends AcademorixException
+final class WebhookSubscriptionDisabledException extends StackraException
 {
     public const CODE = 'webhook.subscription_disabled';
 

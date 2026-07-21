@@ -1,8 +1,8 @@
 {
-  "id": "stackra://modules/athlete/notifications",
+  "id": "academorix://modules/athlete/notifications",
   "$version": 1,
   "title": "athlete — notification classes + categories",
-  "namespace": "Stackra\\Sports\\Athlete\\Notifications",
+  "namespace": "Academorix\\Sports\\Athlete\\Notifications",
   "notifications": [
     "AthleteWelcomeNotification",
     "AthleteConsentRecordedNotification",

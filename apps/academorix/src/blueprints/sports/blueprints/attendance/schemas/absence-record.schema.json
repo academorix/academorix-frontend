@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/attendance/schemas/absence-record",
+  "id": "academorix://modules/attendance/schemas/absence-record",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "AbsenceRecord",
@@ -13,8 +13,8 @@
     "keyType": "string",
     "keyPrefix": "abs_",
     "incrementing": false,
-    "model": "Stackra\\Sports\\Attendance\\Models\\AbsenceRecord",
-    "interface": "Stackra\\Sports\\Attendance\\Contracts\\Data\\AbsenceRecordInterface",
+    "model": "Academorix\\Sports\\Attendance\\Models\\AbsenceRecord",
+    "interface": "Academorix\\Sports\\Attendance\\Contracts\\Data\\AbsenceRecordInterface",
     "traits": [
       "HasFactory",
       "HasPrefixedUlid",

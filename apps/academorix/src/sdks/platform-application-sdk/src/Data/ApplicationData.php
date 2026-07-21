@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Stackra\PlatformApplicationSdk\Data;
+namespace Academorix\PlatformApplicationSdk\Data;
 
 use Spatie\LaravelData\Attributes\MapInputName;
 use Spatie\LaravelData\Data;
@@ -96,7 +96,7 @@ final class ApplicationData extends Data
      * Useful for callers that received the payload from somewhere
      * other than a Saloon response (fixtures, webhooks, message
      * broker payloads). Prefer the Saloon path
-     * ({@see \Stackra\PlatformApplicationSdk\Requests\Applications\ShowApplicationRequest::createDtoFromResponse()})
+     * ({@see \Academorix\PlatformApplicationSdk\Requests\Applications\ShowApplicationRequest::createDtoFromResponse()})
      * when the record came from an HTTP response.
      *
      * @param  array<string, mixed>  $row  The raw snake_case record.

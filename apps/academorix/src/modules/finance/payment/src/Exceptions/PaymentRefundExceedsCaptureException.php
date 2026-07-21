@@ -4,7 +4,7 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Payment\Exceptions;
+namespace Academorix\Payment\Exceptions;
 
 use Stackra\Exceptions\StackraException;
 

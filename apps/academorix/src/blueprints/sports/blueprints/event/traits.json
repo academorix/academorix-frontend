@@ -1,11 +1,11 @@
 {
-  "id": "stackra://modules/event/traits",
+  "id": "academorix://modules/event/traits",
   "$version": 1,
   "title": "event — trait composition",
   "description": "Two owned traits — `BelongsToEvent` for downstream models that carry an `event_id` FK (Session Wave 3b, teams::EventTeam Wave 2b nullable), and `HasEventFacilities` for the Event model itself. Order matters: BelongsToTenant precedes BelongsToOrganization precedes BelongsToBranch precedes BelongsToSeason precedes owned traits.",
   "owned": [
     {
-      "trait": "Stackra\\Sports\\Event\\Concerns\\BelongsToEvent",
+      "trait": "Academorix\\Sports\\Event\\Concerns\\BelongsToEvent",
       "description": "Mixed into downstream models carrying an Event FK. Adds `event()` belongsTo relation, `resolveInEvent(?Event $event = null)` query scope filtering `WHERE event_id = ?` with `Request::activeEvent()` fallback, and a booted() hook filling event_id from active-event context on creating (opt-in per-model via bool $fillEventOnCreating). Refuses cross-tenant FK smuggling at save time.",
       "public": true,
       "usedBy": [
@@ -21,7 +21,7 @@
       ]
     },
     {
-      "trait": "Stackra\\Sports\\Event\\Concerns\\HasEventFacilities",
+      "trait": "Academorix\\Sports\\Event\\Concerns\\HasEventFacilities",
       "description": "Mixed into the Event model itself. Exposes `facilities()` hasMany (via event_facilities pivot) + `primaryFacility()` hasOne (WHERE is_primary=true) + computed accessors `facilityCount()` + `hasPrimaryFacility()`. Also publishes `attachFacility($facilityId, purpose='competition', primary=false)` + `detachFacility($eventFacilityId)` + `setPrimaryFacility($eventFacilityId)` mutation helpers that route through the observer.",
       "public": true,
       "usedBy": ["event::Event"],
@@ -39,38 +39,38 @@
       { "trait": "Illuminate\\Database\\Eloquent\\SoftDeletes" }
     ],
     "foundation": [
-      { "trait": "Stackra\\Foundation\\Concerns\\HasPrefixedUlid" },
-      { "trait": "Stackra\\Foundation\\Concerns\\HasUserstamps" },
-      { "trait": "Stackra\\Foundation\\Concerns\\HasMetadata" },
-      { "trait": "Stackra\\Foundation\\Concerns\\HasSlug" },
-      { "trait": "Stackra\\Foundation\\Concerns\\Filterable" },
-      { "trait": "Stackra\\Foundation\\Concerns\\Searchable" }
+      { "trait": "Academorix\\Foundation\\Concerns\\HasPrefixedUlid" },
+      { "trait": "Academorix\\Foundation\\Concerns\\HasUserstamps" },
+      { "trait": "Academorix\\Foundation\\Concerns\\HasMetadata" },
+      { "trait": "Academorix\\Foundation\\Concerns\\HasSlug" },
+      { "trait": "Academorix\\Foundation\\Concerns\\Filterable" },
+      { "trait": "Academorix\\Foundation\\Concerns\\Searchable" }
     ],
-    "tenancy": [{ "trait": "Stackra\\Tenancy\\Concerns\\BelongsToTenant" }],
+    "tenancy": [{ "trait": "Academorix\\Tenancy\\Concerns\\BelongsToTenant" }],
     "organization": [
       {
-        "trait": "Stackra\\Organization\\Concerns\\BelongsToOrganization",
+        "trait": "Academorix\\Organization\\Concerns\\BelongsToOrganization",
         "reason": "Required FK — every event belongs to an organization."
       }
     ],
     "branch": [
-      { "trait": "Stackra\\Branch\\Concerns\\BelongsToBranch", "reason": "Optional FK." }
+      { "trait": "Academorix\\Branch\\Concerns\\BelongsToBranch", "reason": "Optional FK." }
     ],
     "season": [
       {
-        "trait": "Stackra\\Sports\\Season\\Concerns\\BelongsToSeason",
+        "trait": "Academorix\\Sports\\Season\\Concerns\\BelongsToSeason",
         "reason": "Optional FK — stand-alone events are allowed."
       }
     ],
     "audit": [
       {
-        "trait": "Stackra\\Audit\\Concerns\\Auditable",
+        "trait": "Academorix\\Audit\\Concerns\\Auditable",
         "reason": "Event mutations write to the `audits` table — every one of them is compliance-relevant, and financial/eligibility changes are 7-year retention."
       }
     ],
     "activity": [
       {
-        "trait": "Stackra\\Activity\\Concerns\\HasActivityLog",
+        "trait": "Academorix\\Activity\\Concerns\\HasActivityLog",
         "reason": "Event lifecycle events feed the tenant admin's product-facing activity feed."
       }
     ]

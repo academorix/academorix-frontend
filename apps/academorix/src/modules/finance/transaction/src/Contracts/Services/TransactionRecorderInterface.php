@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Transaction\Contracts\Services;
+namespace Academorix\Transaction\Contracts\Services;
 
-use Stackra\Transaction\Services\TransactionRecorder;
+use Academorix\Transaction\Services\TransactionRecorder;
 use Illuminate\Container\Attributes\Bind;
 
 /**

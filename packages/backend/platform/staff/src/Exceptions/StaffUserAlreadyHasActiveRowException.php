@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Staff\Exceptions;
 
-use Stackra\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * The user already has an active Staff row in this tenant.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class StaffUserAlreadyHasActiveRowException extends AcademorixException
+final class StaffUserAlreadyHasActiveRowException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

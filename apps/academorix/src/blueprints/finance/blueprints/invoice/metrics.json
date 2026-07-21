@@ -1,9 +1,9 @@
 {
-  "id": "stackra://modules/invoice/metrics",
+  "id": "academorix://modules/invoice/metrics",
   "$version": 1,
   "title": "invoice — OpenTelemetry metrics",
   "instrumentation": "self via telemetry",
-  "namespace": "stackra.invoice",
+  "namespace": "academorix.invoice",
   "labelConventions": {
     "always": [],
     "commonlyAvailable": ["tenant_tier", "status", "reason", "series", "currency"],
@@ -20,91 +20,91 @@
   },
   "metrics": [
     {
-      "name": "stackra.invoice.created_total",
+      "name": "academorix.invoice.created_total",
       "kind": "counter",
       "unit": "invoices",
       "labels": ["tenant_tier", "series", "currency", "created_by_role", "is_membership_linked"],
       "description": "New invoices created. Rate signal for tenant activity."
     },
     {
-      "name": "stackra.invoice.finalized_total",
+      "name": "academorix.invoice.finalized_total",
       "kind": "counter",
       "unit": "invoices",
       "labels": ["tenant_tier", "currency"]
     },
     {
-      "name": "stackra.invoice.paid_total",
+      "name": "academorix.invoice.paid_total",
       "kind": "counter",
       "unit": "invoices",
       "labels": ["tenant_tier", "currency", "is_membership_linked", "payment_method_bucket"],
       "description": "Load-bearing revenue metric. Every increment is a revenue event."
     },
     {
-      "name": "stackra.invoice.paid_total_cents",
+      "name": "academorix.invoice.paid_total_cents",
       "kind": "counter",
       "unit": "cents",
       "labels": ["tenant_tier", "currency", "is_membership_linked"],
       "description": "Cumulative paid revenue. Bucketed at ingestion — total_cents_raw not carried."
     },
     {
-      "name": "stackra.invoice.partially_paid_total",
+      "name": "academorix.invoice.partially_paid_total",
       "kind": "counter",
       "unit": "invoices",
       "labels": ["tenant_tier", "currency"]
     },
     {
-      "name": "stackra.invoice.voided_total",
+      "name": "academorix.invoice.voided_total",
       "kind": "counter",
       "unit": "invoices",
       "labels": ["tenant_tier", "previous_status", "reason_category"]
     },
     {
-      "name": "stackra.invoice.past_due_total",
+      "name": "academorix.invoice.past_due_total",
       "kind": "counter",
       "unit": "invoices",
       "labels": ["tenant_tier", "days_past_due_bucket", "currency"],
       "description": "days_past_due_bucket = '1-7' / '8-30' / '31-60' / '61-90' / '91+' to bound cardinality."
     },
     {
-      "name": "stackra.invoice.uncollectible_total",
+      "name": "academorix.invoice.uncollectible_total",
       "kind": "counter",
       "unit": "invoices",
       "labels": ["tenant_tier", "currency"],
       "description": "P1 — every increment is a bad-debt loss."
     },
     {
-      "name": "stackra.invoice.uncollectible_total_cents",
+      "name": "academorix.invoice.uncollectible_total_cents",
       "kind": "counter",
       "unit": "cents",
       "labels": ["tenant_tier", "currency"],
       "description": "Cumulative bad-debt amount."
     },
     {
-      "name": "stackra.invoice.sent_to_collections_total",
+      "name": "academorix.invoice.sent_to_collections_total",
       "kind": "counter",
       "unit": "invoices",
       "labels": ["tenant_tier", "collections_agency_slug"]
     },
     {
-      "name": "stackra.invoice.written_off_total",
+      "name": "academorix.invoice.written_off_total",
       "kind": "counter",
       "unit": "invoices",
       "labels": ["tenant_tier", "currency"]
     },
     {
-      "name": "stackra.invoice.refunded_total",
+      "name": "academorix.invoice.refunded_total",
       "kind": "counter",
       "unit": "invoices",
       "labels": ["tenant_tier", "is_full_refund", "currency"]
     },
     {
-      "name": "stackra.invoice.disputed_total",
+      "name": "academorix.invoice.disputed_total",
       "kind": "counter",
       "unit": "invoices",
       "labels": ["tenant_tier", "currency"]
     },
     {
-      "name": "stackra.invoice.finalize_duration_ms",
+      "name": "academorix.invoice.finalize_duration_ms",
       "kind": "histogram",
       "unit": "ms",
       "buckets": [50, 200, 1000, 5000, 15000],
@@ -112,7 +112,7 @@
       "description": "FinalizeInvoiceJob end-to-end latency. Includes tax-completion polling for async-tax tenants."
     },
     {
-      "name": "stackra.invoice.pdf_generation_duration_ms",
+      "name": "academorix.invoice.pdf_generation_duration_ms",
       "kind": "histogram",
       "unit": "ms",
       "buckets": [100, 500, 2000, 10000, 30000],
@@ -120,99 +120,99 @@
       "description": "GenerateInvoicePDFJob latency. Should stay < 2s P99 for DomPDF."
     },
     {
-      "name": "stackra.invoice.email_delivery_duration_ms",
+      "name": "academorix.invoice.email_delivery_duration_ms",
       "kind": "histogram",
       "unit": "ms",
       "buckets": [100, 500, 2000, 10000, 30000],
       "labels": ["email_channel"]
     },
     {
-      "name": "stackra.invoice.dunning_dispatched_total",
+      "name": "academorix.invoice.dunning_dispatched_total",
       "kind": "counter",
       "unit": "notifications",
       "labels": ["stage", "tenant_tier"],
       "description": "stage = 'day_3' / 'day_7' / 'day_14' / 'day_30' / 'day_60' — the dunning cadence position."
     },
     {
-      "name": "stackra.invoice.reconcile.drift_detected_total",
+      "name": "academorix.invoice.reconcile.drift_detected_total",
       "kind": "counter",
       "unit": "invoices",
       "labels": ["tenant_tier"],
       "description": "P1 — every increment is drift between invoice.amount_paid_cents and transactions.SUM(amount). Should stay at 0 in a healthy system."
     },
     {
-      "name": "stackra.invoice.credit_note.created_total",
+      "name": "academorix.invoice.credit_note.created_total",
       "kind": "counter",
       "unit": "credit_notes",
       "labels": ["tenant_tier", "reason"]
     },
     {
-      "name": "stackra.invoice.credit_note.issued_total",
+      "name": "academorix.invoice.credit_note.issued_total",
       "kind": "counter",
       "unit": "credit_notes",
       "labels": ["tenant_tier"]
     },
     {
-      "name": "stackra.invoice.credit_note.applied_total",
+      "name": "academorix.invoice.credit_note.applied_total",
       "kind": "counter",
       "unit": "credit_notes",
       "labels": ["tenant_tier", "applied_to_type"]
     },
     {
-      "name": "stackra.invoice.credit_note.total_cents",
+      "name": "academorix.invoice.credit_note.total_cents",
       "kind": "counter",
       "unit": "cents",
       "labels": ["tenant_tier", "reason", "currency"],
       "description": "Cumulative credited amount by reason. Signals refund + adjustment rates."
     },
     {
-      "name": "stackra.invoice.aging.current",
+      "name": "academorix.invoice.aging.current",
       "kind": "gauge",
       "unit": "cents",
       "labels": ["tenant_tier", "currency"],
       "description": "Current AR balance in the 'current' (not past due) bucket. Sampled nightly by MarkOverdueInvoicesJob."
     },
     {
-      "name": "stackra.invoice.aging.past_due_1_30",
+      "name": "academorix.invoice.aging.past_due_1_30",
       "kind": "gauge",
       "unit": "cents",
       "labels": ["tenant_tier", "currency"]
     },
     {
-      "name": "stackra.invoice.aging.past_due_31_60",
+      "name": "academorix.invoice.aging.past_due_31_60",
       "kind": "gauge",
       "unit": "cents",
       "labels": ["tenant_tier", "currency"]
     },
     {
-      "name": "stackra.invoice.aging.past_due_61_90",
+      "name": "academorix.invoice.aging.past_due_61_90",
       "kind": "gauge",
       "unit": "cents",
       "labels": ["tenant_tier", "currency"]
     },
     {
-      "name": "stackra.invoice.aging.past_due_91_plus",
+      "name": "academorix.invoice.aging.past_due_91_plus",
       "kind": "gauge",
       "unit": "cents",
       "labels": ["tenant_tier", "currency"],
       "description": "AR balance in the 91+ day bucket. High values indicate collection issues."
     },
     {
-      "name": "stackra.invoice.entitlement.gate_refusals_total",
+      "name": "academorix.invoice.entitlement.gate_refusals_total",
       "kind": "counter",
       "unit": "refusals",
       "labels": ["entitlement_key"],
       "description": "Number of writes refused by the entitlement middleware or observer. Product signal for upgrade-CTA impressions."
     },
     {
-      "name": "stackra.invoice.stale_drafts",
+      "name": "academorix.invoice.stale_drafts",
       "kind": "gauge",
       "unit": "invoices",
       "labels": ["tenant_tier"],
       "description": "Count of draft invoices older than 90 days per tenant. Emitted by the invoice-detect-stale-drafts weekly job."
     },
     {
-      "name": "stackra.invoice.viewed_by_customer_total",
+      "name": "academorix.invoice.viewed_by_customer_total",
       "kind": "counter",
       "unit": "views",
       "labels": ["tenant_tier", "viewed_via"],

@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Athlete\Contracts\Services;
+namespace Academorix\Athlete\Contracts\Services;
 
-use Stackra\Athlete\Services\AgeGroupSnapshotResolver;
+use Academorix\Athlete\Services\AgeGroupSnapshotResolver;
 use Illuminate\Container\Attributes\Bind;
 
 /**
@@ -17,7 +17,7 @@ use Illuminate\Container\Attributes\Bind;
  * age-group filters without a per-request compute.
  *
  * Two consumers:
- *   - {@see \Stackra\Athlete\Services\AthleteProvisioner} calls this
+ *   - {@see \Academorix\Athlete\Services\AthleteProvisioner} calls this
  *     at create time to compute the initial snapshot.
  *   - `RollAthleteAgeGroupSnapshotJob` calls this per athlete at the
  *     season-boundary cutoff to roll every snapshot forward.

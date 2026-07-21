@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/chargeback/entitlements",
+  "id": "academorix://modules/chargeback/entitlements",
   "$version": 1,
   "title": "chargeback — declared entitlements",
   "description": "Seven entitlement keys. `chargeback_management` is the boolean master gate — on for every tier by default (chargebacks are bank-forced, so the tracker fires regardless; the workflow features gate here). `chargeback_evidence_submission` (Small+) permits evidence submission workflow (default on — without it, chargebacks auto-lose on deadline). `chargeback_rdr` (Medium+) unlocks the Rapid Dispute Resolution auto-refund path (Visa-only). `chargeback_ce3` (Medium+) unlocks Compelling Evidence 3.0 evidence builder (Visa-only). `chargeback_rate_monitoring` (Small+, default on) enables the rate tracker + alerts. `chargeback_extended_retention` (Enterprise) extends 7y to 10y. `chargeback_advanced_reporting` (Medium+) unlocks rich rate + reason + provider distribution reports.",

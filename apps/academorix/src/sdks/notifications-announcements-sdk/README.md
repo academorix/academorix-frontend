@@ -1,7 +1,7 @@
-# stackra-notifications/announcements-sdk
+# academorix-notifications/announcements-sdk
 
 Wire-visible SDK surface for the `announcements` module of the Notifications
-service. Auto-discovered by `stackra/notifications-sdk` (the service
+service. Auto-discovered by `academorix/notifications-sdk` (the service
 umbrella) via
 `#[AsSdkResource(name: 'announcements', service: 'notifications')]`.
 
@@ -26,7 +26,7 @@ src/
 Consumed only over HTTP via the umbrella client:
 
 ```php
-app(\Stackra\NotificationsSdk\Client\NotificationsSdk::class)
+app(\Academorix\NotificationsSdk\Client\NotificationsSdk::class)
     ->announcements()
     ->announcementViews()
     ->list();

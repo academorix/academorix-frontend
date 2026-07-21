@@ -13,7 +13,7 @@ Priority: 66 (Wave 5, downstream of `attribution` at 63 and upstream of
 
 ## 1. Why this module exists
 
-The frontend already ships `@stackra/analytics` for client-side capture (page
+The frontend already ships `@academorix/analytics` for client-side capture (page
 views, clicks, form-field interactions). That layer is fast, granular, and
 tenant-controlled — but it disappears the moment an ad-blocker fires or iOS ITP
 purges the storage. **Backend-driven state transitions and monetary events must
@@ -182,7 +182,7 @@ Seven entitlements sourced from the `entitlements` module.
   types carry `application_id` directly; analytics is not one of them.
 - **No `region_id` / `organization_id` / `scope_node_id`.** Analytics is not a
   configuration consumer — it doesn't participate in the scope substrate.
-- **No client-side capture.** That's `@stackra/analytics` frontend. This module
+- **No client-side capture.** That's `@academorix/analytics` frontend. This module
   is server-only.
 - **No ML-based user segmentation.** Providers do their own segmentation
   server-side (PostHog cohorts, Amplitude behavioral cohorts). Deferred.

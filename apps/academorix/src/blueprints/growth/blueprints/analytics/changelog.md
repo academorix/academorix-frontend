@@ -118,7 +118,7 @@ Nothing yet.
 
 ### Migration path
 
-Green-field module. No migration from prior state. Frontend `@stackra/analytics`
+Green-field module. No migration from prior state. Frontend `@academorix/analytics`
 continues to operate independently for client-side capture; server-side capture
 via this module is complementary (not a replacement).
 

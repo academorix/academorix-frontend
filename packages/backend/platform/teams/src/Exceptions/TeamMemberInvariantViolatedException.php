@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Teams\Exceptions;
 
-use Stackra\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Reconciler discovered a (team, member_type, member_id) with 2+ active rows.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class TeamMemberInvariantViolatedException extends AcademorixException
+final class TeamMemberInvariantViolatedException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

@@ -1,8 +1,8 @@
 {
-  "id": "stackra://modules/private-sessions/events",
+  "id": "academorix://modules/private-sessions/events",
   "$version": 1,
   "title": "private-sessions — published events",
-  "namespace": "Stackra\\Sports\\PrivateSessions\\Events",
+  "namespace": "Academorix\\Sports\\PrivateSessions\\Events",
   "dispatchMode": "afterCommit",
   "description": "1:1 coaching session lifecycle. Request → approve → schedule → deliver, with a credit ledger.",
   "events": [

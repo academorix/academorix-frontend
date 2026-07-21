@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Drills\Actions\Tenant;
+namespace Academorix\Drills\Actions\Tenant;
 
-use Stackra\Drills\Contracts\Repositories\DrillCategoryRepositoryInterface;
-use Stackra\Drills\Data\DrillCategoryData;
+use Academorix\Drills\Contracts\Repositories\DrillCategoryRepositoryInterface;
+use Academorix\Drills\Data\DrillCategoryData;
 use Stackra\Routing\Attributes\AsAction;
 use Stackra\Routing\Attributes\Middleware;
 use Stackra\Routing\Concerns\AsController;
@@ -50,7 +50,7 @@ final class ListDrillCategorieAction
      */
     public function __invoke(Request $request): PaginatedDataCollection
     {
-        /** @var LengthAwarePaginator<int, \Stackra\Drills\Models\DrillCategory> $page */
+        /** @var LengthAwarePaginator<int, \Academorix\Drills\Models\DrillCategory> $page */
         $page = $this->repository->paginate(
             perPage: (int) $request->integer('per_page', 15),
         );

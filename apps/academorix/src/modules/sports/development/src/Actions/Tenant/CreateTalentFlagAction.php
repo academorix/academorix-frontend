@@ -4,11 +4,11 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Development\Actions\Tenant;
+namespace Academorix\Development\Actions\Tenant;
 
-use Stackra\Development\Contracts\Repositories\TalentFlagRepositoryInterface;
-use Stackra\Development\Data\TalentFlagData;
-use Stackra\Development\Data\Requests\CreateTalentFlagRequestData;
+use Academorix\Development\Contracts\Repositories\TalentFlagRepositoryInterface;
+use Academorix\Development\Data\TalentFlagData;
+use Academorix\Development\Data\Requests\CreateTalentFlagRequestData;
 use Stackra\Routing\Attributes\AsAction;
 use Stackra\Routing\Attributes\Middleware;
 use Stackra\Routing\Concerns\AsController;

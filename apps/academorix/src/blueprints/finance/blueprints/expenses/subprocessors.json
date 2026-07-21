@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/expenses/subprocessors",
+  "id": "academorix://modules/expenses/subprocessors",
   "$version": 1,
   "title": "expenses — subprocessors used",
   "description": "Third-party subprocessors this module uses for its own operation.",

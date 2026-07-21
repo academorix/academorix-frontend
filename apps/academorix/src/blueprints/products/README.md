@@ -41,7 +41,7 @@ Both `shared/` and `products/` ship as Composer packages that services /
 products `require`. The difference is audience:
 
 - **`shared/`** — every service consumes it (foundation, telemetry, audit, …).
-  If you're building any Stackra service, you pull in `shared/`.
+  If you're building any Academorix service, you pull in `shared/`.
 - **`products/`** — only consuming products pull it in. A Sports-only deployment
   carries `geofencing/`; a Marketplace-only deployment might not.
 

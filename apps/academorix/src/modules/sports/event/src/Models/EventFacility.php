@@ -4,18 +4,18 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Event\Models;
+namespace Academorix\Event\Models;
 
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
-use Stackra\Event\Contracts\Data\EventFacilityInterface;
-use Stackra\Event\Database\Factories\EventFacilityFactory;
-use Stackra\Event\Concerns\BelongsToEvent;
-use Stackra\Event\Enums\EventFacilityPurpose;
-use Stackra\Event\Policies\EventFacilityPolicy;
+use Academorix\Event\Contracts\Data\EventFacilityInterface;
+use Academorix\Event\Database\Factories\EventFacilityFactory;
+use Academorix\Event\Concerns\BelongsToEvent;
+use Academorix\Event\Enums\EventFacilityPurpose;
+use Academorix\Event\Policies\EventFacilityPolicy;
 use Stackra\Foundation\Concerns\Filterable;
 use Stackra\Foundation\Concerns\HasMetadata;
 use Stackra\Tenancy\Concerns\BelongsToTenant;

@@ -1,81 +1,81 @@
 {
-  "id": "stackra://modules/athlete-enrollment/commands",
+  "id": "academorix://modules/athlete-enrollment/commands",
   "$version": 1,
   "title": "athlete-enrollment — Artisan commands",
   "commands": [
     {
       "signature": "enrollment:list {--tenant=} {--team=} {--athlete=} {--season=} {--status=}",
-      "class": "Stackra\\Sports\\AthleteEnrollment\\Console\\Commands\\ListEnrollmentsCommand",
+      "class": "Academorix\\Sports\\AthleteEnrollment\\Console\\Commands\\ListEnrollmentsCommand",
       "purpose": "Table view of enrollments."
     },
     {
       "signature": "enrollment:describe {enrollment}",
-      "class": "Stackra\\Sports\\AthleteEnrollment\\Console\\Commands\\DescribeEnrollmentCommand",
+      "class": "Academorix\\Sports\\AthleteEnrollment\\Console\\Commands\\DescribeEnrollmentCommand",
       "purpose": "Verbose read of one enrollment: base fields + linked athlete + team + season + consent snapshot + status timeline."
     },
     {
       "signature": "enrollment:submit {athlete} {team} {season} {--type=regular} {--source=admin} {--dry-run}",
-      "class": "Stackra\\Sports\\AthleteEnrollment\\Console\\Commands\\SubmitEnrollmentCommand",
+      "class": "Academorix\\Sports\\AthleteEnrollment\\Console\\Commands\\SubmitEnrollmentCommand",
       "purpose": "Scriptable enrollment submission."
     },
     {
       "signature": "enrollment:confirm {enrollment}",
-      "class": "Stackra\\Sports\\AthleteEnrollment\\Console\\Commands\\ConfirmEnrollmentCommand",
+      "class": "Academorix\\Sports\\AthleteEnrollment\\Console\\Commands\\ConfirmEnrollmentCommand",
       "purpose": "Transition submitted/payment_pending/consent_pending → confirmed."
     },
     {
       "signature": "enrollment:activate {enrollment}",
-      "class": "Stackra\\Sports\\AthleteEnrollment\\Console\\Commands\\ActivateEnrollmentCommand",
+      "class": "Academorix\\Sports\\AthleteEnrollment\\Console\\Commands\\ActivateEnrollmentCommand",
       "purpose": "Transition confirmed → active. Triggers atomic conversion."
     },
     {
       "signature": "enrollment:complete {enrollment}",
-      "class": "Stackra\\Sports\\AthleteEnrollment\\Console\\Commands\\CompleteEnrollmentCommand",
+      "class": "Academorix\\Sports\\AthleteEnrollment\\Console\\Commands\\CompleteEnrollmentCommand",
       "purpose": "Transition active → completed. Terminal happy path."
     },
     {
       "signature": "enrollment:withdraw {enrollment} {--reason=} {--notes=}",
-      "class": "Stackra\\Sports\\AthleteEnrollment\\Console\\Commands\\WithdrawEnrollmentCommand",
+      "class": "Academorix\\Sports\\AthleteEnrollment\\Console\\Commands\\WithdrawEnrollmentCommand",
       "purpose": "Transition to withdrawn. Terminal."
     },
     {
       "signature": "enrollment:expel {enrollment} {--reason=}",
-      "class": "Stackra\\Sports\\AthleteEnrollment\\Console\\Commands\\ExpelEnrollmentCommand",
+      "class": "Academorix\\Sports\\AthleteEnrollment\\Console\\Commands\\ExpelEnrollmentCommand",
       "purpose": "Disciplinary expulsion."
     },
     {
       "signature": "enrollment:waitlist {enrollment}",
-      "class": "Stackra\\Sports\\AthleteEnrollment\\Console\\Commands\\WaitlistEnrollmentCommand",
+      "class": "Academorix\\Sports\\AthleteEnrollment\\Console\\Commands\\WaitlistEnrollmentCommand",
       "purpose": "Manually move to waitlist."
     },
     {
       "signature": "enrollment:promote-from-waitlist {enrollment}",
-      "class": "Stackra\\Sports\\AthleteEnrollment\\Console\\Commands\\PromoteFromWaitlistCommand",
+      "class": "Academorix\\Sports\\AthleteEnrollment\\Console\\Commands\\PromoteFromWaitlistCommand",
       "purpose": "Manual waitlist promotion."
     },
     {
       "signature": "enrollment:assign-position {enrollment} {position}",
-      "class": "Stackra\\Sports\\AthleteEnrollment\\Console\\Commands\\AssignPositionCommand",
+      "class": "Academorix\\Sports\\AthleteEnrollment\\Console\\Commands\\AssignPositionCommand",
       "purpose": "Coach assigns position."
     },
     {
       "signature": "enrollment:assign-jersey {enrollment} {jersey}",
-      "class": "Stackra\\Sports\\AthleteEnrollment\\Console\\Commands\\AssignJerseyCommand",
+      "class": "Academorix\\Sports\\AthleteEnrollment\\Console\\Commands\\AssignJerseyCommand",
       "purpose": "Assign jersey number."
     },
     {
       "signature": "enrollment:reconcile-team-members {--tenant=} {--dry-run}",
-      "class": "Stackra\\Sports\\AthleteEnrollment\\Console\\Commands\\ReconcileTeamMembersCommand",
+      "class": "Academorix\\Sports\\AthleteEnrollment\\Console\\Commands\\ReconcileTeamMembersCommand",
       "purpose": "One-shot invocation of ReconcileEnrollmentTeamMemberInvariantJob. Detects atomicity drift."
     },
     {
       "signature": "enrollment:cascade-purge {--athlete=} {--team=} {--season=} {--dry-run}",
-      "class": "Stackra\\Sports\\AthleteEnrollment\\Console\\Commands\\CascadePurgeCommand",
+      "class": "Academorix\\Sports\\AthleteEnrollment\\Console\\Commands\\CascadePurgeCommand",
       "purpose": "Cascade-purge enrollments matching filters. Used by admin during data cleanup."
     },
     {
       "signature": "enrollment:report-atomicity-failures {--tenant=} {--from=} {--to=}",
-      "class": "Stackra\\Sports\\AthleteEnrollment\\Console\\Commands\\ReportAtomicityFailuresCommand",
+      "class": "Academorix\\Sports\\AthleteEnrollment\\Console\\Commands\\ReportAtomicityFailuresCommand",
       "purpose": "Compliance report of EnrollmentAtomicityFailed events. Super_admin only."
     }
   ]

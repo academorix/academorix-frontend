@@ -1,12 +1,12 @@
 {
-  "id": "stackra://modules/athlete-enrollment/policies",
+  "id": "academorix://modules/athlete-enrollment/policies",
   "$version": 1,
   "title": "athlete-enrollment — authorization policies",
   "description": "One policy, AthleteEnrollmentPolicy. Composes ResolveScope + .own scope for guardians / adult athletes.",
   "policies": [
     {
       "model": "AthleteEnrollment",
-      "class": "Stackra\\Sports\\AthleteEnrollment\\Policies\\AthleteEnrollmentPolicy",
+      "class": "Academorix\\Sports\\AthleteEnrollment\\Policies\\AthleteEnrollmentPolicy",
       "abilities": [
         {
           "action": "viewAny",

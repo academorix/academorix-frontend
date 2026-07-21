@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Stackra\AgeGroup\Actions\Tenant;
+namespace Academorix\AgeGroup\Actions\Tenant;
 
-use Stackra\AgeGroup\Contracts\Repositories\AgeGroupRepositoryInterface;
-use Stackra\AgeGroup\Data\AgeGroupData;
+use Academorix\AgeGroup\Contracts\Repositories\AgeGroupRepositoryInterface;
+use Academorix\AgeGroup\Data\AgeGroupData;
 use Stackra\Routing\Attributes\AsAction;
 use Stackra\Routing\Attributes\Middleware;
 use Stackra\Routing\Concerns\AsController;
@@ -50,7 +50,7 @@ final class ListAgeGroupAction
      */
     public function __invoke(Request $request): PaginatedDataCollection
     {
-        /** @var LengthAwarePaginator<int, \Stackra\AgeGroup\Models\AgeGroup> $page */
+        /** @var LengthAwarePaginator<int, \Academorix\AgeGroup\Models\AgeGroup> $page */
         $page = $this->repository->paginate(
             perPage: (int) $request->integer('per_page', 15),
         );

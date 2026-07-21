@@ -4,7 +4,7 @@
 
 declare(strict_types=1);
 
-namespace Stackra\AthleteGuardian\Enums;
+namespace Academorix\AthleteGuardian\Enums;
 
 use Stackra\Authorization\Contracts\PermissionEnum;
 use Stackra\Authorization\Enums\Guard;

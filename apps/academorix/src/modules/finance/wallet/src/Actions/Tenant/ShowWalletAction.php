@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Wallet\Actions\Tenant;
+namespace Academorix\Wallet\Actions\Tenant;
 
-use Stackra\Wallet\Contracts\Repositories\WalletRepositoryInterface;
-use Stackra\Wallet\Data\WalletData;
+use Academorix\Wallet\Contracts\Repositories\WalletRepositoryInterface;
+use Academorix\Wallet\Data\WalletData;
 use Stackra\Routing\Attributes\AsAction;
 use Stackra\Routing\Attributes\Middleware;
 use Stackra\Routing\Concerns\AsController;

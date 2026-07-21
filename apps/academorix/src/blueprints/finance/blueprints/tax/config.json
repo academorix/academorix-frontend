@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/tax/config",
+  "id": "academorix://modules/tax/config",
   "$version": 1,
   "title": "tax — developer configuration",
   "configFile": "config/tax.php",

@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Identity\Exceptions;
 
-use Stackra\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * haveibeenpwned reported the password in ≥ breach_check_threshold public data breaches.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class PasswordBreachedException extends AcademorixException
+final class PasswordBreachedException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

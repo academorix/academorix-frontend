@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Membership\Contracts\Data;
+namespace Academorix\Membership\Contracts\Data;
 
 use Illuminate\Container\Attributes\Bind;
-use Stackra\Membership\Models\Membership;
+use Academorix\Membership\Models\Membership;
 
 /**
  * Table shape for the `memberships` table.

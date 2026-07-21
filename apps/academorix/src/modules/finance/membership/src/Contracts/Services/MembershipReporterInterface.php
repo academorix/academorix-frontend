@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Membership\Contracts\Services;
+namespace Academorix\Membership\Contracts\Services;
 
-use Stackra\Membership\Services\MembershipReporter;
+use Academorix\Membership\Services\MembershipReporter;
 use Illuminate\Container\Attributes\Bind;
 
 /**

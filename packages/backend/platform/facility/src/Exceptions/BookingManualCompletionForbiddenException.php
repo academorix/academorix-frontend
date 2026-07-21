@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Facility\Exceptions;
 
-use Stackra\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Completed is a system-managed terminal state; only the automated MarkBookingCompletedJob may transition to it.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class BookingManualCompletionForbiddenException extends AcademorixException
+final class BookingManualCompletionForbiddenException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

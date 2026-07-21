@@ -1,11 +1,11 @@
 {
-  "id": "stackra://modules/invoice/health",
+  "id": "academorix://modules/invoice/health",
   "$version": 1,
   "title": "invoice — health probes",
   "probes": [
     {
       "name": "invoice-schema-migrations-applied",
-      "class": "Stackra\\Finance\\Invoice\\Health\\Probes\\SchemaMigrationsAppliedProbe",
+      "class": "Academorix\\Finance\\Invoice\\Health\\Probes\\SchemaMigrationsAppliedProbe",
       "category": "startup",
       "critical": true,
       "description": "Confirms every migration this module ships has run: invoices, invoice_lines, credit_notes, plus their indexes (composite unique per-tenant-per-year on invoice_number + credit_note_number; issue_date DESC for aging queries).",
@@ -13,21 +13,21 @@
     },
     {
       "name": "invoice-sequential-numbering-index-present",
-      "class": "Stackra\\Finance\\Invoice\\Health\\Probes\\SequentialNumberingIndexProbe",
+      "class": "Academorix\\Finance\\Invoice\\Health\\Probes\\SequentialNumberingIndexProbe",
       "category": "startup",
       "critical": true,
       "description": "Confirms the composite unique partial indexes on (tenant_id, invoice_number) WHERE deleted_at IS NULL AND (tenant_id, credit_note_number) exist. Missing these makes sequential numbering unenforceable + permits duplicate numbers under concurrent writes."
     },
     {
       "name": "invoice-postgres-advisory-lock-available",
-      "class": "Stackra\\Finance\\Invoice\\Health\\Probes\\PostgresAdvisoryLockProbe",
+      "class": "Academorix\\Finance\\Invoice\\Health\\Probes\\PostgresAdvisoryLockProbe",
       "category": "startup",
       "critical": true,
       "description": "Confirms pg_advisory_xact_lock is available (Postgres-only). The number generator relies on advisory locks for gap-free sequential numbering under concurrent writes. Fails hard on non-Postgres DBs."
     },
     {
       "name": "invoice-pdf-storage-writable",
-      "class": "Stackra\\Finance\\Invoice\\Health\\Probes\\PdfStorageWritableProbe",
+      "class": "Academorix\\Finance\\Invoice\\Health\\Probes\\PdfStorageWritableProbe",
       "category": "startup",
       "critical": true,
       "description": "Confirms the configured PDF storage disk (config('invoice.pdf.storage_disk')) is writable with SSE-KMS encryption enabled. Tests by uploading + deleting a small test file.",
@@ -35,14 +35,14 @@
     },
     {
       "name": "invoice-pdf-renderer-registered",
-      "class": "Stackra\\Finance\\Invoice\\Health\\Probes\\PdfRendererRegisteredProbe",
+      "class": "Academorix\\Finance\\Invoice\\Health\\Probes\\PdfRendererRegisteredProbe",
       "category": "startup",
       "critical": true,
       "description": "Confirms at least one #[AsInvoicePdfRenderer] driver is registered (DomPDF at minimum). Enterprise deployments with custom renderers verify each is discoverable."
     },
     {
       "name": "invoice-draft-backlog",
-      "class": "Stackra\\Finance\\Invoice\\Health\\Probes\\DraftBacklogProbe",
+      "class": "Academorix\\Finance\\Invoice\\Health\\Probes\\DraftBacklogProbe",
       "category": "readiness",
       "critical": false,
       "description": "Warns when > 500 invoices are in status='draft' for > 24h across all tenants. Indicates FinalizeInvoiceJob has stalled or tax-computation is backing up.",
@@ -50,7 +50,7 @@
     },
     {
       "name": "invoice-stale-drafts",
-      "class": "Stackra\\Finance\\Invoice\\Health\\Probes\\StaleDraftsProbe",
+      "class": "Academorix\\Finance\\Invoice\\Health\\Probes\\StaleDraftsProbe",
       "category": "readiness",
       "critical": false,
       "description": "Warns when > 1000 invoices are in status='draft' AND created_at < now() - interval '90 days'. Indicates abandoned workflows that need cleanup.",
@@ -58,7 +58,7 @@
     },
     {
       "name": "invoice-past-due-count",
-      "class": "Stackra\\Finance\\Invoice\\Health\\Probes\\PastDueCountProbe",
+      "class": "Academorix\\Finance\\Invoice\\Health\\Probes\\PastDueCountProbe",
       "category": "readiness",
       "critical": false,
       "description": "Reports the current count of past_due invoices per tenant_tier. Non-zero is normal; sudden spikes indicate customer payment issues.",
@@ -66,15 +66,15 @@
     },
     {
       "name": "invoice-reconciliation-drift",
-      "class": "Stackra\\Finance\\Invoice\\Health\\Probes\\ReconciliationDriftProbe",
+      "class": "Academorix\\Finance\\Invoice\\Health\\Probes\\ReconciliationDriftProbe",
       "category": "readiness",
       "critical": false,
-      "description": "Checks stackra.invoice.reconcile.drift_detected_total over the last 24h. Any > 0 is a P1 signal — indicates transaction module drift. Warns; the ReconcileInvoicePaymentsJob would emit the metric.",
+      "description": "Checks academorix.invoice.reconcile.drift_detected_total over the last 24h. Any > 0 is a P1 signal — indicates transaction module drift. Warns; the ReconcileInvoicePaymentsJob would emit the metric.",
       "timeoutMs": 500
     },
     {
       "name": "invoice-pdf-generation-backlog",
-      "class": "Stackra\\Finance\\Invoice\\Health\\Probes\\PdfGenerationBacklogProbe",
+      "class": "Academorix\\Finance\\Invoice\\Health\\Probes\\PdfGenerationBacklogProbe",
       "category": "readiness",
       "critical": false,
       "description": "Warns when > 100 open invoices lack pdf_url for > 30min. Indicates GenerateInvoicePDFJob workers have stalled.",
@@ -82,7 +82,7 @@
     },
     {
       "name": "invoice-email-delivery-backlog",
-      "class": "Stackra\\Finance\\Invoice\\Health\\Probes\\EmailDeliveryBacklogProbe",
+      "class": "Academorix\\Finance\\Invoice\\Health\\Probes\\EmailDeliveryBacklogProbe",
       "category": "readiness",
       "critical": false,
       "description": "Warns when > 500 open invoices with pdf_url set have not been sent_at for > 1h. Indicates SendInvoiceEmailJob workers have stalled or notifications module is degraded.",
@@ -90,7 +90,7 @@
     },
     {
       "name": "invoice-dunning-scheduler",
-      "class": "Stackra\\Finance\\Invoice\\Health\\Probes\\DunningSchedulerProbe",
+      "class": "Academorix\\Finance\\Invoice\\Health\\Probes\\DunningSchedulerProbe",
       "category": "readiness",
       "critical": false,
       "description": "Confirms invoice-dispatch-dunning ran within the last 25 hours (daily cadence + 1h slop). Stale scheduler indicates dunning has stopped firing.",
@@ -98,7 +98,7 @@
     },
     {
       "name": "invoice-reconciler-recent",
-      "class": "Stackra\\Finance\\Invoice\\Health\\Probes\\ReconcilerRecentProbe",
+      "class": "Academorix\\Finance\\Invoice\\Health\\Probes\\ReconcilerRecentProbe",
       "category": "readiness",
       "critical": false,
       "description": "Confirms ReconcileInvoicePaymentsJob completed within the last 48 hours. Stale reconciler indicates scheduler drift.",
@@ -106,7 +106,7 @@
     },
     {
       "name": "invoice-encryption-key-rotated",
-      "class": "Stackra\\Finance\\Invoice\\Health\\Probes\\EncryptionKeyRotatedProbe",
+      "class": "Academorix\\Finance\\Invoice\\Health\\Probes\\EncryptionKeyRotatedProbe",
       "category": "readiness",
       "critical": false,
       "description": "Warns when the SSE-KMS key used for PDF storage has not been rotated in > 90 days. Delegated to the compliance/encryption service's rotation cadence.",
@@ -114,7 +114,7 @@
     },
     {
       "name": "invoice-tax-integration-healthy",
-      "class": "Stackra\\Finance\\Invoice\\Health\\Probes\\TaxIntegrationHealthyProbe",
+      "class": "Academorix\\Finance\\Invoice\\Health\\Probes\\TaxIntegrationHealthyProbe",
       "category": "readiness",
       "critical": false,
       "description": "Confirms the tax module's TaxResolver is responsive within 500ms. CalculateInvoiceTaxJob depends on this integration.",

@@ -1,10 +1,10 @@
 {
-  "id": "stackra://modules/analytics/metrics",
+  "id": "academorix://modules/analytics/metrics",
   "$version": 1,
   "title": "analytics — OpenTelemetry metrics",
   "description": "Per-provider capture + delivery + retry + circuit-breaker + batching + sampling metrics. Distinct from analytics.json (which is behavior signal for growth dashboards); metrics are OPS signal for on-call.",
   "instrumentation": "open-telemetry/sdk",
-  "namespace": "stackra.analytics",
+  "namespace": "academorix.analytics",
   "labelConventions": {
     "always": ["tenant_id"],
     "commonlyAvailable": ["provider", "event_name", "event_kind", "category", "outcome"],
@@ -12,14 +12,14 @@
   },
   "metrics": [
     {
-      "name": "stackra.analytics.events.captured.total",
+      "name": "academorix.analytics.events.captured.total",
       "kind": "counter",
       "unit": "events",
       "labels": ["tenant_id", "event_kind", "category", "outcome"],
       "description": "outcome: captured / suppressed_by_consent / suppressed_by_sampling / suppressed_by_provider_off / refused_by_validator."
     },
     {
-      "name": "stackra.analytics.dispatch.duration_ms",
+      "name": "academorix.analytics.dispatch.duration_ms",
       "kind": "histogram",
       "unit": "ms",
       "buckets": [10, 50, 200, 1000, 5000, 30000],
@@ -27,14 +27,14 @@
       "description": "DispatchToProviderJob duration \u2014 tests provider round-trip. Cardinality: bounded by provider count."
     },
     {
-      "name": "stackra.analytics.deliveries.by_state_total",
+      "name": "academorix.analytics.deliveries.by_state_total",
       "kind": "counter",
       "unit": "deliveries",
       "labels": ["provider", "state"],
       "description": "state: pending / dispatching / delivered / failed / rate_limited / circuit_open / suppressed_*. Fed from AnalyticsDelivery status transitions."
     },
     {
-      "name": "stackra.analytics.deliveries.attempts",
+      "name": "academorix.analytics.deliveries.attempts",
       "kind": "histogram",
       "unit": "attempts",
       "buckets": [1, 2, 3, 4, 5, 10],
@@ -42,7 +42,7 @@
       "description": "Distribution of attempts required to reach terminal state per delivery."
     },
     {
-      "name": "stackra.analytics.batch.size",
+      "name": "academorix.analytics.batch.size",
       "kind": "histogram",
       "unit": "events",
       "buckets": [1, 10, 50, 100, 500, 1000, 2000],
@@ -50,54 +50,54 @@
       "description": "Events per batch flush. High values indicate healthy batching; consistently low values (~1) indicate the batch buffer is undersubscribed."
     },
     {
-      "name": "stackra.analytics.batch.flush.duration_ms",
+      "name": "academorix.analytics.batch.flush.duration_ms",
       "kind": "histogram",
       "unit": "ms",
       "buckets": [100, 500, 2000, 10000, 60000],
       "labels": ["provider"]
     },
     {
-      "name": "stackra.analytics.batch.buffer_depth.gauge",
+      "name": "academorix.analytics.batch.buffer_depth.gauge",
       "kind": "gauge",
       "unit": "events",
       "labels": ["tenant_id", "provider"],
       "description": "Current buffer depth per (tenant, provider). Sampled every 30s. Backpressure signal \u2014 sustained > threshold triggers AnalyticsBatchBackpressureNotification."
     },
     {
-      "name": "stackra.analytics.circuit_breaker.state.gauge",
+      "name": "academorix.analytics.circuit_breaker.state.gauge",
       "kind": "gauge",
       "unit": "state",
       "labels": ["tenant_id", "provider"],
       "description": "Encoded state: 0=closed, 1=half_open, 2=open. Enables 'how many breakers open right now' dashboards."
     },
     {
-      "name": "stackra.analytics.circuit_breaker.transitions.total",
+      "name": "academorix.analytics.circuit_breaker.transitions.total",
       "kind": "counter",
       "unit": "transitions",
       "labels": ["tenant_id", "provider", "from_state", "to_state"]
     },
     {
-      "name": "stackra.analytics.sampling.rolled_total",
+      "name": "academorix.analytics.sampling.rolled_total",
       "kind": "counter",
       "unit": "rolls",
       "labels": ["provider", "outcome"],
       "description": "outcome: dispatch / suppress. Ratio matches configured sampling_rate over long enough window."
     },
     {
-      "name": "stackra.analytics.identity.identify_events.total",
+      "name": "academorix.analytics.identity.identify_events.total",
       "kind": "counter",
       "unit": "identifies",
       "labels": ["tenant_id"]
     },
     {
-      "name": "stackra.analytics.identity.merge_events.total",
+      "name": "academorix.analytics.identity.merge_events.total",
       "kind": "counter",
       "unit": "merges",
       "labels": ["tenant_id"],
       "description": "Enterprise-only. Volume of identity merges + how many events each merge rewrote."
     },
     {
-      "name": "stackra.analytics.consent.suppression_ratio_gauge",
+      "name": "academorix.analytics.consent.suppression_ratio_gauge",
       "kind": "gauge",
       "unit": "ratio",
       "labels": ["tenant_id"],

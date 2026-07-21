@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/medical/subprocessors",
+  "id": "academorix://modules/medical/subprocessors",
   "$version": 1,
   "title": "medical — subprocessors used",
   "description": "Third-party subprocessors this module uses for its own operation.",

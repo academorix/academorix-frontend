@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/digital-passes/schedule",
+  "id": "academorix://modules/digital-passes/schedule",
   "$version": 1,
   "title": "digital-passes — scheduled tasks",
   "description": "Artisan / cron entries this module registers.",

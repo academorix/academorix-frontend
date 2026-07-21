@@ -11,7 +11,7 @@
 
 declare(strict_types=1);
 
-use Stackra\PlatformApplicationSdk\Data\BusinessTypeData;
+use Academorix\PlatformApplicationSdk\Data\BusinessTypeData;
 
 describe('BusinessTypeData', function (): void {
     it('hydrates the full catalogue entry with defaults', function (): void {

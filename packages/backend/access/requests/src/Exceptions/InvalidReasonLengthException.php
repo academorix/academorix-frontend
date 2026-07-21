@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Requests\Exceptions;
 
-use Stackra\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * `reason` must be between 20 and 1000 chars.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class InvalidReasonLengthException extends AcademorixException
+final class InvalidReasonLengthException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

@@ -1,10 +1,10 @@
 {
-  "name": "stackra/formations",
+  "name": "academorix/formations",
   "type": "library",
-  "description": "Stackra Formations module — server-side Laravel package emitted from the module blueprint at `modules/sports/blueprints/formations/`. Complements the wire SDK at `stackra-sports/formations-sdk`.",
+  "description": "Academorix Formations module — server-side Laravel package emitted from the module blueprint at `modules/sports/blueprints/formations/`. Complements the wire SDK at `academorix-sports/formations-sdk`.",
   "license": "proprietary",
   "keywords": [
-    "stackra",
+    "academorix",
     "module",
     "laravel",
     "sports",
@@ -22,7 +22,7 @@
     "stackra/routing": "@dev",
     "stackra/service-provider": "@dev",
     "stackra/support": "@dev",
-    "stackra-sports/formations-sdk": "@dev"
+    "academorix-sports/formations-sdk": "@dev"
   },
   "require-dev": {
     "orchestra/testbench": "^11.0",
@@ -33,12 +33,12 @@
   },
   "autoload": {
     "psr-4": {
-      "Stackra\\Formations\\": "src/"
+      "Academorix\\Formations\\": "src/"
     }
   },
   "autoload-dev": {
     "psr-4": {
-      "Stackra\\Formations\\Tests\\": "tests/"
+      "Academorix\\Formations\\Tests\\": "tests/"
     }
   },
   "extra": {

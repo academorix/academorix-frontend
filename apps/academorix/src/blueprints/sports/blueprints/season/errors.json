@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/season/errors",
+  "id": "academorix://modules/season/errors",
   "$version": 1,
   "title": "season — error codes",
   "namespace": "season",

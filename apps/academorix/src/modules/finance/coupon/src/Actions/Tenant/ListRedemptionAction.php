@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Coupon\Actions\Tenant;
+namespace Academorix\Coupon\Actions\Tenant;
 
-use Stackra\Coupon\Contracts\Repositories\CouponRedemptionRepositoryInterface;
-use Stackra\Coupon\Data\CouponRedemptionData;
+use Academorix\Coupon\Contracts\Repositories\CouponRedemptionRepositoryInterface;
+use Academorix\Coupon\Data\CouponRedemptionData;
 use Stackra\Routing\Attributes\AsAction;
 use Stackra\Routing\Attributes\Get;
 use Stackra\Routing\Attributes\Middleware;
@@ -47,7 +47,7 @@ final class ListRedemptionAction
      */
     public function __invoke(Request $request): PaginatedDataCollection
     {
-        /** @var LengthAwarePaginator<int, \Stackra\Coupon\Models\CouponRedemption> $page */
+        /** @var LengthAwarePaginator<int, \Academorix\Coupon\Models\CouponRedemption> $page */
         $page = $this->repository->paginate(
             perPage: (int) $request->integer('per_page', 15),
         );

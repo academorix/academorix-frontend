@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/refund/marketing",
+  "id": "academorix://modules/refund/marketing",
   "$version": 1,
   "title": "refund — marketing events (negative-value conversions)",
   "lane": "marketing",

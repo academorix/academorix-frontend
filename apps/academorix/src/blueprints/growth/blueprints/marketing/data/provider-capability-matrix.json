@@ -124,7 +124,7 @@
         "contact_form_submitted",
         "app_install"
       ],
-      "notes": "Universal support — the tenant's GTM Server container decides the downstream fan-out. Stackra delivers the canonical event shape + attribution + consent snapshot."
+      "notes": "Universal support — the tenant's GTM Server container decides the downstream fan-out. Academorix delivers the canonical event shape + attribution + consent snapshot."
     },
     "tiktok_events": {
       "display_name": "TikTok Events API",

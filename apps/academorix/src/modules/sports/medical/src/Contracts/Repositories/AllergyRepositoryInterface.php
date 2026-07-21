@@ -4,17 +4,17 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Medical\Contracts\Repositories;
+namespace Academorix\Medical\Contracts\Repositories;
 
 use Stackra\Crud\Contracts\RepositoryInterface;
 
 /**
- * Repository contract for {@see Stackra\Medical\Models\Allergy}.
+ * Repository contract for {@see Academorix\Medical\Models\Allergy}.
  *
  * Consumers type-hint the interface; the container binds the concrete
  * via `#[AsRepository]` on `AllergyRepository`.
  *
- * @extends RepositoryInterface<\Stackra\Medical\Models\Allergy>
+ * @extends RepositoryInterface<\Academorix\Medical\Models\Allergy>
  *
  * @category Medical
  *

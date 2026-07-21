@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Stackra\Storage\Exceptions;
 
-use Stackra\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Raised when a File referenced by id or signature does not exist.
@@ -13,7 +13,7 @@ use Stackra\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class FileNotFoundException extends AcademorixException
+final class FileNotFoundException extends StackraException
 {
     public const CODE = 'storage.not_found';
 

@@ -1,4 +1,4 @@
-# stackra/marketplace-fee
+# academorix/marketplace-fee
 
 Server-side Laravel package for the `marketplace-fee` module. Auto-generated
 from the blueprint at `modules/finance/blueprints/marketplace-fee/`.
@@ -47,6 +47,6 @@ file is a hand-tuned override that survives regeneration.
 ## Companion wire SDK
 
 The wire-visible Saloon + Spatie Data package lives at
-`stackra-finance/marketplace-fee-sdk` under
+`academorix-finance/marketplace-fee-sdk` under
 `sdk/finance-marketplace-fee-sdk/`. Consumers cross the service boundary through
 the SDK; this package is the SERVER-side owner of the domain.

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Stackra\MarketplaceFee\Tests;
+namespace Academorix\MarketplaceFee\Tests;
 
 use Orchestra\Testbench\TestCase as OrchestraTestCase;
 

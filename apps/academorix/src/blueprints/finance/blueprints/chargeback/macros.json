@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/chargeback/macros",
+  "id": "academorix://modules/chargeback/macros",
   "$version": 1,
   "title": "chargeback — published macros",
   "description": "No published macros. The chargeback module operates purely through service classes (ChargebackOrchestrator / EvidenceCollector / EvidenceSubmitter / RdrHandler / Ce3EvidenceBuilder / ChargebackRateCalculator / NetworkFeeCalculator / ClawbackCoordinator) invoked from HTTP controllers + CLI commands + event listeners. There is no per-request chargeback context that would justify a Request macro — a chargeback is created by webhook OR by the CreateChargebackFromDisputeLost cascade, not by an authenticated end-user request.",

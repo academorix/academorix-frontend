@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Referrals\Contracts\Services;
+namespace Academorix\Referrals\Contracts\Services;
 
-use Stackra\Referrals\Services\ReferralClaimer;
+use Academorix\Referrals\Services\ReferralClaimer;
 use Illuminate\Container\Attributes\Bind;
 
 /**

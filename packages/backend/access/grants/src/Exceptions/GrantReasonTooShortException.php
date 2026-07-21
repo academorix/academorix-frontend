@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Grants\Exceptions;
 
-use Stackra\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * reason < 20 characters (or configured settings.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class GrantReasonTooShortException extends AcademorixException
+final class GrantReasonTooShortException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

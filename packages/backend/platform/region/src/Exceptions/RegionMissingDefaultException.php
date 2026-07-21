@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Region\Exceptions;
 
-use Stackra\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Attempted to flip is_default=false without a sibling Region carrying is_default=true.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class RegionMissingDefaultException extends AcademorixException
+final class RegionMissingDefaultException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

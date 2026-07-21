@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Webhook\Exceptions;
 
-use Stackra\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Tenant reached webhook.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class WebhookDeliveryQuotaExceededException extends AcademorixException
+final class WebhookDeliveryQuotaExceededException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

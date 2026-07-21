@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Storage\Exceptions;
 
-use Stackra\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Caller lacks permission to upload this kind (per-kind permission override).
@@ -15,7 +15,7 @@ use Stackra\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class StorageKindNotPermittedException extends AcademorixException
+final class StorageKindNotPermittedException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

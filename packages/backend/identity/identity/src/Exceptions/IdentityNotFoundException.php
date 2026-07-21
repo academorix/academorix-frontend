@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Identity\Exceptions;
 
-use Stackra\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Platform-admin surface reference to a non-existent Identity.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class IdentityNotFoundException extends AcademorixException
+final class IdentityNotFoundException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

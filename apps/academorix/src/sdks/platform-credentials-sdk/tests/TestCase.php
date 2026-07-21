@@ -7,7 +7,7 @@ namespace Stackra\PlatformCredentialsSdk\Tests;
 use Orchestra\Testbench\TestCase as OrchestraTestCase;
 
 /**
- * Base test case for stackra-platform/credentials-sdk.
+ * Base test case for academorix-platform/credentials-sdk.
  *
  * @category CredentialsSdk
  *

@@ -4,7 +4,7 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Coupon\Exceptions;
+namespace Academorix\Coupon\Exceptions;
 
 use Stackra\Exceptions\StackraException;
 

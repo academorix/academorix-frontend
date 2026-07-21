@@ -1,10 +1,10 @@
 {
-  "id": "stackra://modules/chargeback/jobs",
+  "id": "academorix://modules/chargeback/jobs",
   "$version": 1,
   "title": "chargeback — background jobs",
   "jobs": [
     {
-      "class": "Stackra\\Finance\\Chargeback\\Jobs\\CreateChargebackFromDisputeJob",
+      "class": "Academorix\\Finance\\Chargeback\\Jobs\\CreateChargebackFromDisputeJob",
       "queue": "chargebacks-critical",
       "purpose": "Dispatched by the payment::PaymentDisputeLost listener. Creates a Chargeback row from a lost PaymentDispute — snapshots reason_code + reason_category + reason_description from the parent PaymentDispute + copies network + amount + currency + provider + provider_reference_id. Sets status='pending_evidence' + computes evidence_due_by from the bank-communicated window (per-network default: Visa 30d / Mastercard 45d / Amex 20d / Discover 30d). Fires ChargebackFiled + dispatches CollectChargebackEvidenceJob.",
       "steps": [
@@ -18,7 +18,7 @@
         "Fire ChargebackFiled (P0)",
         "Dispatch CollectChargebackEvidenceJob (auto-collect pre-populates the evidence bundle)",
         "Dispatch NotifyChargebackEvidenceOverdueJob at (evidence_due_by - 7 days) + (evidence_due_by - 3 days) + (evidence_due_by - 1 day) scheduled cadence",
-        "Emit stackra.chargeback.filed_total counter labelled by network + reason_category"
+        "Emit academorix.chargeback.filed_total counter labelled by network + reason_category"
       ],
       "shouldQueue": true,
       "shouldBeUnique": true,
@@ -28,7 +28,7 @@
       "backoff": [30, 120, 600]
     },
     {
-      "class": "Stackra\\Finance\\Chargeback\\Jobs\\CollectChargebackEvidenceJob",
+      "class": "Academorix\\Finance\\Chargeback\\Jobs\\CollectChargebackEvidenceJob",
       "queue": "chargebacks",
       "purpose": "Auto-collects evidence pieces from invoice + membership + notifications + support modules. Runs immediately on chargeback creation to pre-populate the evidence bundle. Admin reviews + potentially edits the auto-collected evidence before submitting via POST /chargebacks/{chargeback}/evidence. Does NOT submit to the provider — that's SubmitChargebackEvidenceJob's job.",
       "steps": [
@@ -41,7 +41,7 @@
         "Collect shipping_docs: NULL for pure service tenants; when physical goods sold, delegate to fulfillment module (Wave 5+)",
         "Collect customer_signature_evidence: payment::PaymentRepository::checkoutSignature($payment_id) + IP + device_fingerprint_hash + timestamp",
         "Cache the collected bundle in rfd:evidence-draft:{chargeback_id} (30d TTL) for admin review — NOT persisted to chargeback_evidence table until admin submits",
-        "Emit stackra.chargeback.evidence_auto_collected_total counter + stackra.chargeback.evidence_completeness_percent histogram"
+        "Emit academorix.chargeback.evidence_auto_collected_total counter + academorix.chargeback.evidence_completeness_percent histogram"
       ],
       "shouldQueue": true,
       "shouldBeUnique": true,
@@ -51,7 +51,7 @@
       "backoff": [60, 300, 900]
     },
     {
-      "class": "Stackra\\Finance\\Chargeback\\Jobs\\SubmitChargebackEvidenceJob",
+      "class": "Academorix\\Finance\\Chargeback\\Jobs\\SubmitChargebackEvidenceJob",
       "queue": "chargebacks-critical",
       "purpose": "Dispatched when admin submits evidence via POST /chargebacks/{chargeback}/evidence. Persists the ChargebackEvidence row + dispatches the evidence to the provider via payment::PaymentProviderManager. Transitions chargeback status pending_evidence -> evidence_submitted. Provider async response transitions to under_bank_review later.",
       "steps": [
@@ -63,7 +63,7 @@
         "On 4xx non-recoverable (evidence rejected by provider): fire ChargebackEvidenceRequested with additional_evidence_requested=true + network_request_notes=provider_error_message",
         "On 5xx transient: retry per backoff schedule",
         "Fire ChargebackEvidenceSubmitted",
-        "Emit stackra.chargeback.evidence_submissions_total counter + stackra.chargeback.provider_dispatch_duration_ms histogram"
+        "Emit academorix.chargeback.evidence_submissions_total counter + academorix.chargeback.provider_dispatch_duration_ms histogram"
       ],
       "shouldQueue": true,
       "shouldBeUnique": true,
@@ -73,7 +73,7 @@
       "backoff": [60, 300, 900, 1800, 3600]
     },
     {
-      "class": "Stackra\\Finance\\Chargeback\\Jobs\\NotifyChargebackEvidenceOverdueJob",
+      "class": "Academorix\\Finance\\Chargeback\\Jobs\\NotifyChargebackEvidenceOverdueJob",
       "queue": "notifications",
       "purpose": "Dispatched by CreateChargebackFromDisputeJob at three scheduled times relative to evidence_due_by (7 days before / 3 days before / 1 day before). Fires ChargebackEvidenceOverdue + sends escalating cadence notifications to admin. Idempotent — refuses re-fire when evidence has already been submitted OR chargeback is in a terminal state.",
       "steps": [
@@ -83,7 +83,7 @@
         "Fire ChargebackEvidenceOverdue with days_remaining",
         "Dispatch ChargebackEvidenceOverdueNotification (P2 at 7 days, P1 at 3 days, P0 at 1 day) to every user holding chargebacks.viewAny + chargebacks.submit-evidence",
         "Record dispatched_at on chargeback.metadata.overdue_notifications for idempotency",
-        "Emit stackra.chargeback.evidence_overdue_total counter labelled by days_remaining"
+        "Emit academorix.chargeback.evidence_overdue_total counter labelled by days_remaining"
       ],
       "shouldQueue": true,
       "shouldBeUnique": true,
@@ -93,7 +93,7 @@
       "backoff": [30, 120, 600]
     },
     {
-      "class": "Stackra\\Finance\\Chargeback\\Jobs\\CheckChargebackStatusJob",
+      "class": "Academorix\\Finance\\Chargeback\\Jobs\\CheckChargebackStatusJob",
       "queue": "chargebacks",
       "purpose": "Polls the provider periodically for chargebacks in status='evidence_submitted' + 'under_bank_review'. Reconciles our record against the provider's authoritative status. Per-provider cadence configurable (Stripe hourly / Adyen hourly / Paddle 4h / etc.). Dispatched by MonitorChargebackRateJob nightly for every non-terminal chargeback.",
       "steps": [
@@ -105,7 +105,7 @@
         "If provider returned 'lost' + we're not terminal: UPDATE status='lost' + dispatch FinalizeChargebackJob + fire ChargebackLost + fire ChargebackReconciled with drift_detected=true",
         "If provider status matches ours: UPDATE updated_at=NOW() (touch), fire ChargebackReconciled with drift_detected=false",
         "If provider returns 404 (reference not found — investigate ops): UPDATE metadata.reconcile_error='provider_reference_not_found' + P2 alert",
-        "Emit stackra.chargeback.polls_total counter labelled by provider + terminal_state"
+        "Emit academorix.chargeback.polls_total counter labelled by provider + terminal_state"
       ],
       "shouldQueue": true,
       "shouldBeUnique": true,
@@ -115,7 +115,7 @@
       "backoff": [60, 300, 900]
     },
     {
-      "class": "Stackra\\Finance\\Chargeback\\Jobs\\FinalizeChargebackJob",
+      "class": "Academorix\\Finance\\Chargeback\\Jobs\\FinalizeChargebackJob",
       "queue": "chargebacks-critical",
       "purpose": "Dispatched by ChargebackObserver.updating when status transitions to `lost` OR `expired`. Runs the finalization chain: records TWO offsetting Transactions (disputed amount + network fee) + updates parent Invoice state + fires clawback events (ChargebackClawbackReferral + ChargebackClawbackCoupon) + fires marketing::ChargebackFiled negative-value + fraud signal. All 5 steps run in the same DB transaction — a Chargeback row NEVER exists in status=lost/expired without its two transactions + invoice state update. On failure, the whole chain rolls back (transient) OR the chargeback stays in the terminal status with metadata.finalization_error set for manual investigation via `chargeback:reconcile`.",
       "steps": [
@@ -126,8 +126,8 @@
         "Step 4: chargeback::ClawbackCoordinator::fanOut($chargeback) — dispatches ChargebackClawbackReferral (when materialized referral reward exists) + ChargebackClawbackCoupon (when redeemed coupon exists).",
         "Step 5: chargeback::FireMarketingChargebackFiled($chargeback) — dispatches marketing::ChargebackFiled negative-value conversion + fraud signal event.",
         "Commit transaction",
-        "On any step failure: rollback + UPDATE chargebacks SET metadata.finalization_error=? + fire ChargebackReconciled with drift_detected=true + emit stackra.chargeback.finalization_failures_total counter",
-        "Emit stackra.chargeback.finalizations_total counter labelled by success/failure"
+        "On any step failure: rollback + UPDATE chargebacks SET metadata.finalization_error=? + fire ChargebackReconciled with drift_detected=true + emit academorix.chargeback.finalization_failures_total counter",
+        "Emit academorix.chargeback.finalizations_total counter labelled by success/failure"
       ],
       "shouldQueue": true,
       "shouldBeUnique": true,
@@ -137,7 +137,7 @@
       "backoff": [60, 300, 900, 1800, 3600]
     },
     {
-      "class": "Stackra\\Finance\\Chargeback\\Jobs\\MarkExpiredChargebacksJob",
+      "class": "Academorix\\Finance\\Chargeback\\Jobs\\MarkExpiredChargebacksJob",
       "queue": "chargebacks-critical",
       "purpose": "Nightly. Finds chargebacks past their evidence_due_by that are still in status='pending_evidence' + transitions them to `expired`. The transition dispatches FinalizeChargebackJob (auto-loss finalization chain). Idempotent — refuses re-fire on already-expired rows.",
       "steps": [
@@ -145,7 +145,7 @@
         "For each: UPDATE chargebacks SET status='expired', decision_at=NOW(), decision_reason='evidence_deadline_missed'",
         "Fire ChargebackExpired",
         "Dispatch FinalizeChargebackJob (invokes the LOST finalization chain for auto-loss)",
-        "Emit stackra.chargeback.expired_total counter"
+        "Emit academorix.chargeback.expired_total counter"
       ],
       "shouldQueue": true,
       "shouldBeUnique": true,
@@ -154,17 +154,17 @@
       "backoff": [60, 300, 900]
     },
     {
-      "class": "Stackra\\Finance\\Chargeback\\Jobs\\MonitorChargebackRateJob",
+      "class": "Academorix\\Finance\\Chargeback\\Jobs\\MonitorChargebackRateJob",
       "queue": "chargebacks",
       "purpose": "Nightly. Computes rolling 60-day chargeback rate per tenant per network. Alerts when rate crosses the network's VDMP/MDMP threshold (0.9% Visa / 1.5% Mastercard / 1.0% Amex / 1.0% Discover). Also dispatches CheckChargebackStatusJob per-provider for every non-terminal chargeback (reconciliation loop).",
       "steps": [
         "For each tenant with chargeback_rate_monitoring entitlement + at least one payment in the last 60 days:",
         "  For each network: compute rate = chargebacks_count / transactions_count over rolling 60d window",
         "  Compare rate against config chargeback.rate_monitoring.threshold_<network>_percent (default 0.009 Visa / 0.015 Mastercard / 0.01 Amex / 0.01 Discover)",
-        "  When rate >= threshold: fire ChargebackRateThresholdExceeded + dispatch ChargebackRateThresholdExceededNotification (P1 admin + Stackra platform ops)",
+        "  When rate >= threshold: fire ChargebackRateThresholdExceeded + dispatch ChargebackRateThresholdExceededNotification (P1 admin + Academorix platform ops)",
         "  When rate < threshold BUT was above threshold within last 7 days: fire ChargebackRateThresholdClearing (informational)",
         "Dispatch CheckChargebackStatusJob per-provider for every non-terminal chargeback (reconciliation loop)",
-        "Emit stackra.chargeback.rate_percent gauge labelled by network + stackra.chargeback.rate_threshold_exceeded_total counter"
+        "Emit academorix.chargeback.rate_percent gauge labelled by network + academorix.chargeback.rate_threshold_exceeded_total counter"
       ],
       "shouldQueue": true,
       "shouldBeUnique": true,
@@ -172,7 +172,7 @@
       "tries": 2
     },
     {
-      "class": "Stackra\\Finance\\Chargeback\\Jobs\\PurgeExpiredChargebackDataJob",
+      "class": "Academorix\\Finance\\Chargeback\\Jobs\\PurgeExpiredChargebackDataJob",
       "queue": "chargebacks",
       "purpose": "Weekly. Hard-purge chargebacks + chargeback_evidence past 7-year (or 10-year Enterprise) retention. Invoice-linked chargebacks migrate to compliance_archive.chargebacks + compliance_archive.chargeback_evidence prior to cascade (financial-obligation retention). Non-invoice-linked chargebacks hard-delete. Audit rows outlive per audit module design.",
       "steps": [
@@ -180,7 +180,7 @@
         "For each tenant: SELECT chargebacks WHERE decision_at < cutoff AND deleted_at IS NULL FOR UPDATE SKIP LOCKED LIMIT 5000",
         "For each chargeback: if invoice_id is set + parent invoice still exists in compliance_archive: INSERT INTO compliance_archive.chargebacks + compliance_archive.chargeback_evidence",
         "DELETE FROM chargebacks (FK CASCADE handles chargeback_evidence)",
-        "Emit stackra.chargeback.retention_purged_total counter labelled by entity (chargebacks / chargeback_evidence) + destination (hard_delete / compliance_archive)"
+        "Emit academorix.chargeback.retention_purged_total counter labelled by entity (chargebacks / chargeback_evidence) + destination (hard_delete / compliance_archive)"
       ],
       "shouldQueue": true,
       "shouldBeUnique": true,

@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/tax/schemas/tax-calculation",
+  "id": "academorix://modules/tax/schemas/tax-calculation",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "TaxCalculation",
@@ -13,9 +13,9 @@
     "keyType": "string",
     "keyPrefix": "txc_",
     "incrementing": false,
-    "model": "Stackra\\Finance\\Tax\\Models\\TaxCalculation",
-    "interface": "Stackra\\Finance\\Tax\\Contracts\\Data\\TaxCalculationInterface",
-    "implements": ["Stackra\\Finance\\Tax\\Contracts\\Data\\TaxCalculationInterface"],
+    "model": "Academorix\\Finance\\Tax\\Models\\TaxCalculation",
+    "interface": "Academorix\\Finance\\Tax\\Contracts\\Data\\TaxCalculationInterface",
+    "implements": ["Academorix\\Finance\\Tax\\Contracts\\Data\\TaxCalculationInterface"],
     "traits": [
       "HasFactory",
       "HasUlids",

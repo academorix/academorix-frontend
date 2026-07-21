@@ -1,9 +1,9 @@
 {
-  "id": "stackra://modules/season/metrics",
+  "id": "academorix://modules/season/metrics",
   "$version": 1,
   "title": "season — OpenTelemetry metrics",
   "instrumentation": "self via telemetry",
-  "namespace": "stackra.season",
+  "namespace": "academorix.season",
   "labelConventions": {
     "always": [],
     "commonlyAvailable": ["season_type", "status", "source", "trigger", "outcome", "business_type"],
@@ -11,14 +11,14 @@
   },
   "metrics": [
     {
-      "name": "stackra.season.created.total",
+      "name": "academorix.season.created.total",
       "kind": "counter",
       "unit": "seasons",
       "labels": ["season_type", "source", "business_type"],
       "description": "source: admin_created / tenant_provisioning / legacy_backfill_command / clone_from_prior. business_type: label the caller's business_type at create time."
     },
     {
-      "name": "stackra.season.create.duration_ms",
+      "name": "academorix.season.create.duration_ms",
       "kind": "histogram",
       "unit": "ms",
       "buckets": [50, 200, 1000, 5000],
@@ -26,82 +26,82 @@
       "description": "End-to-end provisioning latency (validate + resolve defaults + write row + fire events)."
     },
     {
-      "name": "stackra.season.current_changed.total",
+      "name": "academorix.season.current_changed.total",
       "kind": "counter",
       "unit": "changes",
       "labels": [],
       "description": "How often the current-season flag flips per tenant. Audit-critical; high rate is a red flag — year-over-year reports pivot on this."
     },
     {
-      "name": "stackra.season.status_transition.total",
+      "name": "academorix.season.status_transition.total",
       "kind": "counter",
       "unit": "transitions",
       "labels": ["from_status", "to_status", "trigger"],
       "description": "trigger: automated_phase_roll / manual_admin. Feeds a heatmap of when phase transitions happen."
     },
     {
-      "name": "stackra.season.dates_shifted.total",
+      "name": "academorix.season.dates_shifted.total",
       "kind": "counter",
       "unit": "shifts",
       "labels": ["status"],
       "description": "How often dates are shifted post-in_progress. status: in_progress / playoffs. Should stay low; frequent shifts feed the ops-quality dashboard."
     },
     {
-      "name": "stackra.season.sport_key_changed.total",
+      "name": "academorix.season.sport_key_changed.total",
       "kind": "counter",
       "unit": "changes",
       "labels": [],
       "description": "How often sport_key mutates. Should stay near 0 — every fire is a critical audit event."
     },
     {
-      "name": "stackra.season.active.count",
+      "name": "academorix.season.active.count",
       "kind": "gauge",
       "unit": "seasons",
       "labels": ["status", "season_type"],
       "description": "Point-in-time count of Seasons per status per season_type. Populated hourly by a metrics-collector task."
     },
     {
-      "name": "stackra.season.per_tenant.count",
+      "name": "academorix.season.per_tenant.count",
       "kind": "gauge",
       "unit": "seasons",
       "labels": [],
       "description": "Global histogram of seasons-per-tenant. Feeds the tier-adoption dashboard."
     },
     {
-      "name": "stackra.season.current_invariant_drift.count",
+      "name": "academorix.season.current_invariant_drift.count",
       "kind": "gauge",
       "unit": "tuples",
       "labels": [],
       "description": "Number of (tenant, org, branch, sport_key) tuples with >1 is_current=true rows. Populated by ReconcileCurrentSeasonInvariantJob. Ideally always 0."
     },
     {
-      "name": "stackra.season.registration_opened.total",
+      "name": "academorix.season.registration_opened.total",
       "kind": "counter",
       "unit": "opens",
       "labels": ["trigger"],
       "description": "trigger: automated_phase_roll / manual_admin."
     },
     {
-      "name": "stackra.season.registration_closed.total",
+      "name": "academorix.season.registration_closed.total",
       "kind": "counter",
       "unit": "closes",
       "labels": ["trigger"]
     },
     {
-      "name": "stackra.season.late_registration_opened.total",
+      "name": "academorix.season.late_registration_opened.total",
       "kind": "counter",
       "unit": "opens",
       "labels": []
     },
     {
-      "name": "stackra.season.slot_exhaustion.total",
+      "name": "academorix.season.slot_exhaustion.total",
       "kind": "counter",
       "unit": "refusals",
       "labels": [],
       "description": "How often season_slot entitlement quota refuses a Season create. Feeds the upsell funnel."
     },
     {
-      "name": "stackra.season.middleware_resolve.duration_ms",
+      "name": "academorix.season.middleware_resolve.duration_ms",
       "kind": "histogram",
       "unit": "ms",
       "buckets": [1, 5, 20, 100],
@@ -109,14 +109,14 @@
       "description": "`season.resolve_active` middleware latency. source: header / current_cache / current_db. P99 target < 10ms."
     },
     {
-      "name": "stackra.season.middleware_reject.total",
+      "name": "academorix.season.middleware_reject.total",
       "kind": "counter",
       "unit": "rejects",
       "labels": ["reason"],
       "description": "reason: cross_tenant / archived / no_active_season / registration_not_open / registration_closed / late_permission_missing. Cross-tenant rejects are security-relevant."
     },
     {
-      "name": "stackra.season.seed_default.duration_ms",
+      "name": "academorix.season.seed_default.duration_ms",
       "kind": "histogram",
       "unit": "ms",
       "buckets": [100, 500, 2000, 10000],
@@ -124,14 +124,14 @@
       "description": "SeedDefaultSeasonForTenantJob end-to-end latency. source: tenant_provisioning / legacy_backfill_command."
     },
     {
-      "name": "stackra.season.seed_skipped.total",
+      "name": "academorix.season.seed_skipped.total",
       "kind": "counter",
       "unit": "skips",
       "labels": ["reason"],
       "description": "reason: non_seasonal_business_type / feature_not_entitled / already_has_default. Explains why the tenant provisioning skipped the default-season seed."
     },
     {
-      "name": "stackra.season.phase_roll.duration_ms",
+      "name": "academorix.season.phase_roll.duration_ms",
       "kind": "histogram",
       "unit": "ms",
       "buckets": [200, 1000, 5000, 30000],
@@ -139,14 +139,14 @@
       "description": "RollSeasonPhaseJob end-to-end latency per run."
     },
     {
-      "name": "stackra.season.phase_roll.transitions",
+      "name": "academorix.season.phase_roll.transitions",
       "kind": "counter",
       "unit": "transitions",
       "labels": ["to_status"],
       "description": "How many transitions the automated job triggered in the run. Feeds capacity planning for the hourly job."
     },
     {
-      "name": "stackra.season.purge_pending.count",
+      "name": "academorix.season.purge_pending.count",
       "kind": "gauge",
       "unit": "seasons",
       "labels": [],

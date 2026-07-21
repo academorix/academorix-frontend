@@ -1,9 +1,9 @@
 {
-  "id": "stackra://modules/athlete-guardian/metrics",
+  "id": "academorix://modules/athlete-guardian/metrics",
   "$version": 1,
   "title": "athlete-guardian — OpenTelemetry metrics",
   "instrumentation": "self via telemetry",
-  "namespace": "stackra.athlete_guardian",
+  "namespace": "academorix.athlete_guardian",
   "labelConventions": {
     "always": [],
     "commonlyAvailable": ["verification_method", "relationship_bucket", "trigger"],
@@ -20,88 +20,88 @@
   },
   "metrics": [
     {
-      "name": "stackra.athlete_guardian.count",
+      "name": "academorix.athlete_guardian.count",
       "kind": "gauge",
       "unit": "guardians",
       "labels": ["verification_status", "is_primary"]
     },
     {
-      "name": "stackra.athlete_guardian.added_total",
+      "name": "academorix.athlete_guardian.added_total",
       "kind": "counter",
       "unit": "guardians",
       "labels": ["relationship_bucket", "is_primary_at_create", "athlete_is_minor"]
     },
     {
-      "name": "stackra.athlete_guardian.removed_total",
+      "name": "academorix.athlete_guardian.removed_total",
       "kind": "counter",
       "unit": "guardians",
       "labels": ["was_primary", "was_verified"]
     },
     {
-      "name": "stackra.athlete_guardian.primary.changed_total",
+      "name": "academorix.athlete_guardian.primary.changed_total",
       "kind": "counter",
       "unit": "changes",
       "labels": ["trigger"]
     },
     {
-      "name": "stackra.athlete_guardian.primary.invariant_violations",
+      "name": "academorix.athlete_guardian.primary.invariant_violations",
       "kind": "counter",
       "unit": "violations",
       "labels": [],
       "description": "CRITICAL. Every increment indicates the one-primary-per-athlete invariant broke. Should stay at 0."
     },
     {
-      "name": "stackra.athlete_guardian.verified_total",
+      "name": "academorix.athlete_guardian.verified_total",
       "kind": "counter",
       "unit": "verifications",
       "labels": ["verification_method"]
     },
     {
-      "name": "stackra.athlete_guardian.verification_pending_backlog",
+      "name": "academorix.athlete_guardian.verification_pending_backlog",
       "kind": "gauge",
       "unit": "guardians",
       "labels": [],
       "description": "Count of guardians in pending state > 30 days. Sampled hourly. Elevated indicates HR queue backlog or auto-verify job failure."
     },
     {
-      "name": "stackra.athlete_guardian.disputed_total",
+      "name": "academorix.athlete_guardian.disputed_total",
       "kind": "counter",
       "unit": "disputes",
       "labels": []
     },
     {
-      "name": "stackra.athlete_guardian.revoked_total",
+      "name": "academorix.athlete_guardian.revoked_total",
       "kind": "counter",
       "unit": "revocations",
       "labels": ["was_primary"]
     },
     {
-      "name": "stackra.athlete_guardian.custody_changed_total",
+      "name": "academorix.athlete_guardian.custody_changed_total",
       "kind": "counter",
       "unit": "changes",
       "labels": []
     },
     {
-      "name": "stackra.athlete_guardian.pickup_flag_toggled_total",
+      "name": "academorix.athlete_guardian.pickup_flag_toggled_total",
       "kind": "counter",
       "unit": "toggles",
       "labels": []
     },
     {
-      "name": "stackra.athlete_guardian.communications_bounced_total",
+      "name": "academorix.athlete_guardian.communications_bounced_total",
       "kind": "counter",
       "unit": "bounces",
       "labels": ["auto_disabled"]
     },
     {
-      "name": "stackra.athlete_guardian.orphan_minor_count",
+      "name": "academorix.athlete_guardian.orphan_minor_count",
       "kind": "gauge",
       "unit": "athletes",
       "labels": [],
       "description": "CRITICAL. Minor athletes with zero active guardians. Should stay at 0 — safeguarding compliance."
     },
     {
-      "name": "stackra.athlete_guardian.retention.hard_purges_total",
+      "name": "academorix.athlete_guardian.retention.hard_purges_total",
       "kind": "counter",
       "unit": "purges",
       "labels": []

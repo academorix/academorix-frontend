@@ -1,13 +1,13 @@
 {
-  "id": "stackra://modules/payout/events",
+  "id": "academorix://modules/payout/events",
   "$version": 1,
   "title": "payout — published events",
-  "namespace": "Stackra\\Finance\\Payout\\Events",
+  "namespace": "Academorix\\Finance\\Payout\\Events",
   "dispatchMode": "afterCommit",
   "events": [
     {
       "name": "PayoutInitiated",
-      "class": "Stackra\\Finance\\Payout\\Events\\PayoutInitiated",
+      "class": "Academorix\\Finance\\Payout\\Events\\PayoutInitiated",
       "trigger": "New payout row synced from gateway with status='pending'.",
       "queue": "payout",
       "consumers": ["audit::WriteToAuditLog"],
@@ -21,7 +21,7 @@
     },
     {
       "name": "PayoutInTransit",
-      "class": "Stackra\\Finance\\Payout\\Events\\PayoutInTransit",
+      "class": "Academorix\\Finance\\Payout\\Events\\PayoutInTransit",
       "trigger": "Payout.status transitions pending -> in_transit.",
       "queue": "payout",
       "consumers": ["audit::WriteToAuditLog"],
@@ -34,7 +34,7 @@
     },
     {
       "name": "PayoutPaid",
-      "class": "Stackra\\Finance\\Payout\\Events\\PayoutPaid",
+      "class": "Academorix\\Finance\\Payout\\Events\\PayoutPaid",
       "trigger": "Payout.status transitions -> paid. Triggers reconciliation job.",
       "queue": "payout-critical",
       "consumers": [
@@ -51,7 +51,7 @@
     },
     {
       "name": "PayoutFailed",
-      "class": "Stackra\\Finance\\Payout\\Events\\PayoutFailed",
+      "class": "Academorix\\Finance\\Payout\\Events\\PayoutFailed",
       "trigger": "Payout.status transitions -> failed. Provider rejected the payout.",
       "queue": "payout-critical",
       "consumers": [
@@ -68,7 +68,7 @@
     },
     {
       "name": "PayoutCancelled",
-      "class": "Stackra\\Finance\\Payout\\Events\\PayoutCancelled",
+      "class": "Academorix\\Finance\\Payout\\Events\\PayoutCancelled",
       "trigger": "Payout.status transitions -> cancelled.",
       "queue": "payout",
       "consumers": ["audit::WriteToAuditLog"],
@@ -76,7 +76,7 @@
     },
     {
       "name": "PayoutReconciled",
-      "class": "Stackra\\Finance\\Payout\\Events\\PayoutReconciled",
+      "class": "Academorix\\Finance\\Payout\\Events\\PayoutReconciled",
       "trigger": "PayoutReconciliation.status -> matched. Local + provider totals agree.",
       "queue": "payout",
       "consumers": ["audit::WriteToAuditLog"],
@@ -84,7 +84,7 @@
     },
     {
       "name": "PayoutReconciliationDrift",
-      "class": "Stackra\\Finance\\Payout\\Events\\PayoutReconciliationDrift",
+      "class": "Academorix\\Finance\\Payout\\Events\\PayoutReconciliationDrift",
       "trigger": "Reconciliation found drift_minor != 0. INCIDENT SIGNAL.",
       "queue": "payout-critical",
       "consumers": [

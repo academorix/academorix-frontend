@@ -4,13 +4,13 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Gateway\Policies;
+namespace Academorix\Gateway\Policies;
 
 use Stackra\User\Models\User;
-use Stackra\Gateway\Models\GatewayWebhookEvent;
+use Academorix\Gateway\Models\GatewayWebhookEvent;
 
 /**
- * Authorization policy for {@see \Stackra\Gateway\Models\GatewayWebhookEvent}.
+ * Authorization policy for {@see \Academorix\Gateway\Models\GatewayWebhookEvent}.
  *
  * Wired via `#[UsePolicy]` on the Model.
  *

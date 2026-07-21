@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Invoice\Actions\Tenant;
+namespace Academorix\Invoice\Actions\Tenant;
 
-use Stackra\Invoice\Contracts\Repositories\CreditNoteRepositoryInterface;
-use Stackra\Invoice\Data\CreditNoteData;
+use Academorix\Invoice\Contracts\Repositories\CreditNoteRepositoryInterface;
+use Academorix\Invoice\Data\CreditNoteData;
 use Stackra\Routing\Attributes\AsAction;
 use Stackra\Routing\Attributes\Middleware;
 use Stackra\Routing\Concerns\AsController;

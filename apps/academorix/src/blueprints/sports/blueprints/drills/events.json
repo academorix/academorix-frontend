@@ -1,8 +1,8 @@
 {
-  "id": "stackra://modules/drills/events",
+  "id": "academorix://modules/drills/events",
   "$version": 1,
   "title": "drills — published events",
-  "namespace": "Stackra\\Sports\\Drills\\Events",
+  "namespace": "Academorix\\Sports\\Drills\\Events",
   "dispatchMode": "afterCommit",
   "description": "Drill library. Every drill is search-indexed via search::UpsertDrillEmbedding (feeds ai/RAG). CoachAssistantPersona queries this library during session planning.",
   "events": [

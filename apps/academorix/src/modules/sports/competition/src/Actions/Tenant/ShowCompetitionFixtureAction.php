@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Competition\Actions\Tenant;
+namespace Academorix\Competition\Actions\Tenant;
 
-use Stackra\Competition\Contracts\Repositories\CompetitionFixtureRepositoryInterface;
-use Stackra\Competition\Data\CompetitionFixtureData;
+use Academorix\Competition\Contracts\Repositories\CompetitionFixtureRepositoryInterface;
+use Academorix\Competition\Data\CompetitionFixtureData;
 use Stackra\Routing\Attributes\AsAction;
 use Stackra\Routing\Attributes\Middleware;
 use Stackra\Routing\Concerns\AsController;

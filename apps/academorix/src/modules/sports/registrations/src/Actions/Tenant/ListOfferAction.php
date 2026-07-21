@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Registrations\Actions\Tenant;
+namespace Academorix\Registrations\Actions\Tenant;
 
-use Stackra\Registrations\Contracts\Repositories\OfferRepositoryInterface;
-use Stackra\Registrations\Data\OfferData;
+use Academorix\Registrations\Contracts\Repositories\OfferRepositoryInterface;
+use Academorix\Registrations\Data\OfferData;
 use Stackra\Routing\Attributes\AsAction;
 use Stackra\Routing\Attributes\Middleware;
 use Stackra\Routing\Concerns\AsController;
@@ -50,7 +50,7 @@ final class ListOfferAction
      */
     public function __invoke(Request $request): PaginatedDataCollection
     {
-        /** @var LengthAwarePaginator<int, \Stackra\Registrations\Models\Offer> $page */
+        /** @var LengthAwarePaginator<int, \Academorix\Registrations\Models\Offer> $page */
         $page = $this->repository->paginate(
             perPage: (int) $request->integer('per_page', 15),
         );

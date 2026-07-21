@@ -4,11 +4,11 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Session\Actions\Tenant;
+namespace Academorix\Session\Actions\Tenant;
 
-use Stackra\Session\Contracts\Repositories\SessionRepositoryInterface;
-use Stackra\Session\Data\SessionData;
-use Stackra\Session\Data\Requests\CreateSessionRequestData;
+use Academorix\Session\Contracts\Repositories\SessionRepositoryInterface;
+use Academorix\Session\Data\SessionData;
+use Academorix\Session\Data\Requests\CreateSessionRequestData;
 use Stackra\Routing\Attributes\AsAction;
 use Stackra\Routing\Attributes\Middleware;
 use Stackra\Routing\Concerns\AsController;

@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Organization\Exceptions;
 
-use Stackra\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Attempted to delete / archive / pause the tenant's is_default=true Organization without first promoting another row to default.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class OrganizationIsDefaultException extends AcademorixException
+final class OrganizationIsDefaultException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

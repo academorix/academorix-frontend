@@ -1,8 +1,8 @@
 {
-  "id": "stackra://modules/private-sessions/attributes",
+  "id": "academorix://modules/private-sessions/attributes",
   "$version": 1,
   "title": "private-sessions — PHP attributes",
   "description": "PHP attributes owned by this module. Empty at scaffold time; fill in with each new `#[As...]` class the module ships.",
-  "namespace": "Stackra\\\\PrivateSessions\\\\Attributes",
+  "namespace": "Academorix\\\\PrivateSessions\\\\Attributes",
   "attributes": []
 }

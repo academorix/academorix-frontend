@@ -1,8 +1,8 @@
 {
-  "id": "stackra://modules/refund/subprocessors",
+  "id": "academorix://modules/refund/subprocessors",
   "$version": 1,
   "title": "refund — subprocessors",
-  "description": "The Refund module itself engages ZERO third-party subprocessors — every state transition happens within the Stackra platform. Downstream payment module engages the actual payment providers (Stripe / Paddle / Adyen / Square / PayPal / CustomWebhook) that receive the refund dispatch; downstream marketing module engages ad-network subprocessors (Meta / Google / TikTok / Microsoft / Snapchat) that receive negative-value conversion events; downstream notifications module engages email/SMS subprocessors. All are declared in their respective modules' subprocessors.json.",
+  "description": "The Refund module itself engages ZERO third-party subprocessors — every state transition happens within the Academorix platform. Downstream payment module engages the actual payment providers (Stripe / Paddle / Adyen / Square / PayPal / CustomWebhook) that receive the refund dispatch; downstream marketing module engages ad-network subprocessors (Meta / Google / TikTok / Microsoft / Snapchat) that receive negative-value conversion events; downstream notifications module engages email/SMS subprocessors. All are declared in their respective modules' subprocessors.json.",
   "subprocessors": [],
   "downstream_subprocessors_referenced": [
     {

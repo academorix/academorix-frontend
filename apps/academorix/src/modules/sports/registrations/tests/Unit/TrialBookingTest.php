@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use Stackra\Registrations\Models\TrialBooking;
+use Academorix\Registrations\Models\TrialBooking;
 
 it('is a placeholder — replace with actual TrialBooking unit tests', function (): void {
     expect(TrialBooking::class)->toBeString();

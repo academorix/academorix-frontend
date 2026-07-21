@@ -4,7 +4,7 @@
 
 declare(strict_types=1);
 
-namespace Stackra\AgeGroup\Console;
+namespace Academorix\AgeGroup\Console;
 
 use Stackra\Console\Attributes\AsCommand;
 use Stackra\Console\Commands\BaseCommand;

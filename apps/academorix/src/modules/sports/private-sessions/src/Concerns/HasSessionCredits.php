@@ -4,7 +4,7 @@
 
 declare(strict_types=1);
 
-namespace Stackra\PrivateSessions\Concerns;
+namespace Academorix\PrivateSessions\Concerns;
 
 /**
  * Trait — HasSessionCredits.

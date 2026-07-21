@@ -4,7 +4,7 @@
 
 declare(strict_types=1);
 
-namespace Stackra\AthleteEnrollment\Actions\Tenant;
+namespace Academorix\AthleteEnrollment\Actions\Tenant;
 
 use Stackra\Routing\Attributes\AsAction;
 use Stackra\Routing\Attributes\Middleware;

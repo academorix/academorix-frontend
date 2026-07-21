@@ -1,12 +1,12 @@
 {
-  "id": "stackra://modules/wallet/policies",
+  "id": "academorix://modules/wallet/policies",
   "$version": 1,
   "title": "wallet — authorization policies",
   "description": "Guardian narrowed to own wallets (owner_type='guardian', owner_id=current_user). WalletTransaction is read-only (never editable — ledger integrity). WalletHold.release refuses when status != 'active'.",
   "policies": [
     {
       "model": "Wallet",
-      "class": "Stackra\\Finance\\Wallet\\Policies\\WalletPolicy",
+      "class": "Academorix\\Finance\\Wallet\\Policies\\WalletPolicy",
       "abilities": [
         {
           "action": "viewAny",
@@ -24,7 +24,7 @@
     },
     {
       "model": "WalletTransaction",
-      "class": "Stackra\\Finance\\Wallet\\Policies\\WalletTransactionPolicy",
+      "class": "Academorix\\Finance\\Wallet\\Policies\\WalletTransactionPolicy",
       "abilities": [
         {
           "action": "viewAny",
@@ -36,7 +36,7 @@
     },
     {
       "model": "WalletHold",
-      "class": "Stackra\\Finance\\Wallet\\Policies\\WalletHoldPolicy",
+      "class": "Academorix\\Finance\\Wallet\\Policies\\WalletHoldPolicy",
       "abilities": [
         { "action": "viewAny", "permission": "wallet-holds.viewAny" },
         { "action": "view", "permission": "wallet-holds.view" },

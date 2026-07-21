@@ -4,7 +4,7 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Registrations\Concerns;
+namespace Academorix\Registrations\Concerns;
 
 /**
  * Trait — HasRegistration.

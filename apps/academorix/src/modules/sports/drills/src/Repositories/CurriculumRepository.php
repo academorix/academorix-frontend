@@ -4,25 +4,25 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Drills\Repositories;
+namespace Academorix\Drills\Repositories;
 
 use Stackra\Crud\Attributes\AsRepository;
 use Stackra\Crud\Attributes\Cacheable;
 use Stackra\Crud\Attributes\Filterable;
 use Stackra\Crud\Attributes\UseModel;
 use Stackra\Crud\Repositories\Repository;
-use Stackra\Drills\Contracts\Data\CurriculumInterface;
-use Stackra\Drills\Contracts\Repositories\CurriculumRepositoryInterface;
-use Stackra\Drills\Models\Curriculum;
+use Academorix\Drills\Contracts\Data\CurriculumInterface;
+use Academorix\Drills\Contracts\Repositories\CurriculumRepositoryInterface;
+use Academorix\Drills\Models\Curriculum;
 
 /**
- * Attribute-first Eloquent repository for {@see Stackra\Drills\Models\Curriculum}.
+ * Attribute-first Eloquent repository for {@see Academorix\Drills\Models\Curriculum}.
  *
  * Bound to the interface via `#[AsRepository]`; the model comes from
  * `#[UseModel(CurriculumInterface::class)]` which resolves to
  * `Curriculum` through the interface's `#[Bind]`.
  *
- * @extends Repository<\Stackra\Drills\Models\Curriculum>
+ * @extends Repository<\Academorix\Drills\Models\Curriculum>
  *
  * @category Drills
  *

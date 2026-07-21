@@ -1,14 +1,14 @@
 {
-  "id": "stackra://modules/attribution/settings",
+  "id": "academorix://modules/attribution/settings",
   "$version": 1,
   "title": "attribution — settings",
   "description": "Tenant-facing preferences (campaign rollup configuration, consent-suppression notification frequency) + user-level preferences (attribution timeline visibility on the user dashboard).",
   "storedIn": "settings",
-  "reference": { "contract": "stackra://modules/settings/attributes" },
+  "reference": { "contract": "academorix://modules/settings/attributes" },
   "groups": [
     {
       "key": "attribution",
-      "class": "Stackra\\Growth\\Attribution\\Settings\\AttributionSettings",
+      "class": "Academorix\\Growth\\Attribution\\Settings\\AttributionSettings",
       "label": "Attribution",
       "description": "Tenant-wide attribution capture + rollup preferences.",
       "icon": "chart-bar",
@@ -204,7 +204,7 @@
     },
     {
       "key": "attribution_user",
-      "class": "Stackra\\Growth\\Attribution\\Settings\\AttributionUserSettings",
+      "class": "Academorix\\Growth\\Attribution\\Settings\\AttributionUserSettings",
       "label": "My attribution",
       "description": "Personal attribution preferences.",
       "icon": "user-circle",

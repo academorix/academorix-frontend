@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Stackra\AgeGroup\Tests;
+namespace Academorix\AgeGroup\Tests;
 
 use Orchestra\Testbench\TestCase as OrchestraTestCase;
 

@@ -1,8 +1,8 @@
 {
-  "id": "stackra://modules/attendance/permissions",
+  "id": "academorix://modules/attendance/permissions",
   "$version": 1,
   "title": "attendance — permissions",
-  "seeder": "Stackra\\Sports\\Attendance\\Database\\Seeders\\AttendancePermissionSeeder",
+  "seeder": "Academorix\\Sports\\Attendance\\Database\\Seeders\\AttendancePermissionSeeder",
   "isSystem": true,
   "description": "Two audiences. Tenant plane (sanctum) — attendance CRUD by admin / hr / branch_manager / coach / reception, self-service via .own scope for guardians + adult athletes on the kiosk / self surfaces. Platform plane (platform_admin) — cross-tenant read.",
   "permissions": [

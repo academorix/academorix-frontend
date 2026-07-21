@@ -1,8 +1,8 @@
 {
-  "id": "stackra://modules/digital-passes/attributes",
+  "id": "academorix://modules/digital-passes/attributes",
   "$version": 1,
   "title": "digital-passes — PHP attributes",
   "description": "PHP attributes owned by this module. Empty at scaffold time; fill in with each new `#[As...]` class the module ships.",
-  "namespace": "Stackra\\\\DigitalPasses\\\\Attributes",
+  "namespace": "Academorix\\\\DigitalPasses\\\\Attributes",
   "attributes": []
 }

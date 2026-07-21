@@ -4,15 +4,15 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Development\Models;
+namespace Academorix\Development\Models;
 
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
-use Stackra\Development\Contracts\Data\PathwayStageInterface;
-use Stackra\Development\Database\Factories\PathwayStageFactory;
+use Academorix\Development\Contracts\Data\PathwayStageInterface;
+use Academorix\Development\Database\Factories\PathwayStageFactory;
 use Stackra\Attributes\Concerns\HasAttributeSet;
 use Stackra\Foundation\Concerns\Filterable;
 use Stackra\Foundation\Concerns\HasMetadata;

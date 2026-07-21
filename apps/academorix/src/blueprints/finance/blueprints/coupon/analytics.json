@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/coupon/analytics",
+  "id": "academorix://modules/coupon/analytics",
   "$version": 1,
   "title": "coupon — product analytics",
   "lane": "analytics",

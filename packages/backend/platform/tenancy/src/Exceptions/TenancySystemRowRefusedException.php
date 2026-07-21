@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Tenancy\Exceptions;
 
-use Stackra\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Attempt to update or delete a row with is_system=true.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class TenancySystemRowRefusedException extends AcademorixException
+final class TenancySystemRowRefusedException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

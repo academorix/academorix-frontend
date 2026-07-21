@@ -4,16 +4,16 @@
 
 declare(strict_types=1);
 
-namespace Stackra\PrivateSessions\Models;
+namespace Academorix\PrivateSessions\Models;
 
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
-use Stackra\PrivateSessions\Contracts\Data\SessionCreditInterface;
-use Stackra\PrivateSessions\Database\Factories\SessionCreditFactory;
-use Stackra\Athlete\Concerns\BelongsToAthlete;
+use Academorix\PrivateSessions\Contracts\Data\SessionCreditInterface;
+use Academorix\PrivateSessions\Database\Factories\SessionCreditFactory;
+use Academorix\Athlete\Concerns\BelongsToAthlete;
 use Stackra\Foundation\Concerns\Filterable;
 use Stackra\Foundation\Concerns\HasMetadata;
 use Stackra\Foundation\Concerns\HasPrefixedUlid;

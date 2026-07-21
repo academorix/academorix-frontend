@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/transaction/routes",
+  "id": "academorix://modules/transaction/routes",
   "$version": 1,
   "title": "transaction — HTTP routes",
   "description": "READ-ONLY tenant-facing surface (admin + finance role only) — transaction ledger read + per-account balance read + General Ledger report + reconciliation audit trail. The ONE write endpoint is POST /transactions/{id}/reverse (admin-only) which creates a NEW offsetting transaction (never mutates the original). Every tenant-plane route carries `entitlement.enforce:transaction_capture` at minimum; the report + export routes carry `entitlement.enforce:transaction_advanced_reporting`; the on-demand reconciliation endpoint carries `entitlement.enforce:transaction_ledger_reconciliation_api`. There is NO POST /transactions endpoint — transactions are recorded ONLY via internal service (TransactionRecorder) called by invoice / payment / refund / chargeback modules.",
@@ -24,28 +24,28 @@
         {
           "method": "GET",
           "path": "/",
-          "controller": "Stackra\\Finance\\Transaction\\Http\\Controllers\\Tenant\\TransactionController@index",
+          "controller": "Academorix\\Finance\\Transaction\\Http\\Controllers\\Tenant\\TransactionController@index",
           "permission": "transaction.viewAny",
           "description": "filter[kind], filter[status], filter[reference_type], filter[reference_id], filter[from], filter[to], filter[currency], filter[has_reversal]. Default sort: effective_date DESC, transaction_number DESC. Returns paginated transaction ledger for the tenant."
         },
         {
           "method": "GET",
           "path": "/{transaction}",
-          "controller": "Stackra\\Finance\\Transaction\\Http\\Controllers\\Tenant\\TransactionController@show",
+          "controller": "Academorix\\Finance\\Transaction\\Http\\Controllers\\Tenant\\TransactionController@show",
           "permission": "transaction.view",
           "description": "Includes full ledger entry set + reference entity chain + reversal chain (if this transaction was reversed OR is itself a reversal). Amount + ledger entries visible only to admin + finance role."
         },
         {
           "method": "GET",
           "path": "/{transaction}/ledger-entries",
-          "controller": "Stackra\\Finance\\Transaction\\Http\\Controllers\\Tenant\\TransactionController@ledgerEntries",
+          "controller": "Academorix\\Finance\\Transaction\\Http\\Controllers\\Tenant\\TransactionController@ledgerEntries",
           "permission": "transaction.ledger_entries.view",
           "description": "The load-bearing double-entry line items for this transaction. Admin + finance role only."
         },
         {
           "method": "POST",
           "path": "/{transaction}/reverse",
-          "controller": "Stackra\\Finance\\Transaction\\Http\\Controllers\\Tenant\\TransactionController@reverse",
+          "controller": "Academorix\\Finance\\Transaction\\Http\\Controllers\\Tenant\\TransactionController@reverse",
           "permission": "transaction.reverse",
           "description": "Admin-ONLY manual reversal. Creates a NEW offsetting transaction with reversal_reason='accounting_adjustment'. Body: { amendment_note: string (required, ≥ 10 chars — regulator-visible justification), effective_date?: ISO date (defaults to today) }. Refuses when transaction.status != 'posted'. Refuses when transaction already has a reversal in this direction. Every fire writes a critical audit row + fires TransactionAmendmentRequested + TransactionAmendmentAppliedNotification (cannot-opt-out)."
         }
@@ -71,28 +71,28 @@
         {
           "method": "GET",
           "path": "/accounts",
-          "controller": "Stackra\\Finance\\Transaction\\Http\\Controllers\\Tenant\\LedgerAccountController@index",
+          "controller": "Academorix\\Finance\\Transaction\\Http\\Controllers\\Tenant\\LedgerAccountController@index",
           "permission": "transaction.ledger.account_balance.view",
           "description": "List every account in the chart-of-accounts + current running balance per account. Includes account, current_balance_cents (signed), currency, threshold state (below_low_watermark / above_high_watermark / normal)."
         },
         {
           "method": "GET",
           "path": "/accounts/{account}",
-          "controller": "Stackra\\Finance\\Transaction\\Http\\Controllers\\Tenant\\LedgerAccountController@show",
+          "controller": "Academorix\\Finance\\Transaction\\Http\\Controllers\\Tenant\\LedgerAccountController@show",
           "permission": "transaction.ledger.account_balance.view",
           "description": "Detail for a specific account: current balance + recent entries + threshold config."
         },
         {
           "method": "GET",
           "path": "/accounts/{account}/history",
-          "controller": "Stackra\\Finance\\Transaction\\Http\\Controllers\\Tenant\\LedgerAccountController@history",
+          "controller": "Academorix\\Finance\\Transaction\\Http\\Controllers\\Tenant\\LedgerAccountController@history",
           "permission": "transaction.ledger.account_balance.view",
           "description": "Running-balance history for the account. ?from=YYYY-MM-DD&to=YYYY-MM-DD (default: last 90 days). Returns time-series with running balance after each entry."
         },
         {
           "method": "GET",
           "path": "/report",
-          "controller": "Stackra\\Finance\\Transaction\\Http\\Controllers\\Tenant\\LedgerReportController@show",
+          "controller": "Academorix\\Finance\\Transaction\\Http\\Controllers\\Tenant\\LedgerReportController@show",
           "permission": "transaction.ledger.report.view",
           "middleware_add": ["entitlement.enforce:transaction_advanced_reporting"],
           "description": "General Ledger report. ?from=YYYY-MM-DD&to=YYYY-MM-DD (default: previous calendar month) &format=json|csv|jsonl. Returns per-account opening balance + all posted transactions + closing balance + total debits + total credits. Medium+ only."
@@ -100,7 +100,7 @@
         {
           "method": "GET",
           "path": "/reconciliation",
-          "controller": "Stackra\\Finance\\Transaction\\Http\\Controllers\\Tenant\\LedgerReconciliationController@show",
+          "controller": "Academorix\\Finance\\Transaction\\Http\\Controllers\\Tenant\\LedgerReconciliationController@show",
           "permission": "transaction.ledger.reconciliation.view",
           "middleware_add": ["entitlement.enforce:transaction_ledger_reconciliation_api"],
           "description": "Reconciliation audit trail. Returns the last N reconciliation runs (default 30 days) + any detected imbalances. ?from=YYYY-MM-DD&to=YYYY-MM-DD. Enterprise-only."
@@ -124,21 +124,21 @@
         {
           "method": "GET",
           "path": "/transactions",
-          "controller": "Stackra\\Finance\\Transaction\\Http\\Controllers\\Platform\\TransactionController@index",
+          "controller": "Academorix\\Finance\\Transaction\\Http\\Controllers\\Platform\\TransactionController@index",
           "permission": "platform.transaction.viewAny",
           "description": "Cross-tenant transaction read. filter[tenant_id], filter[kind], filter[from], filter[to]. Used by ops + support for support-intervention scenarios."
         },
         {
           "method": "POST",
           "path": "/ledger/reconcile",
-          "controller": "Stackra\\Finance\\Transaction\\Http\\Controllers\\Platform\\LedgerReconciliationController@run",
+          "controller": "Academorix\\Finance\\Transaction\\Http\\Controllers\\Platform\\LedgerReconciliationController@run",
           "permission": "platform.transaction.ledger.reconcile",
           "description": "Force a reconciliation run for a specific tenant. Body: { tenant_id, scope: 'per_transaction' | 'per_account_daily' | 'global_tenant', from?: ISO date, to?: ISO date, note: string (required — regulator audit context) }. Every fire notifies the tenant admin + writes an audit row with 7-year retention. Super_admin + ops only."
         },
         {
           "method": "GET",
           "path": "/ledger/imbalances",
-          "controller": "Stackra\\Finance\\Transaction\\Http\\Controllers\\Platform\\LedgerImbalanceController@index",
+          "controller": "Academorix\\Finance\\Transaction\\Http\\Controllers\\Platform\\LedgerImbalanceController@index",
           "permission": "platform.transaction.ledger.imbalances.view",
           "description": "Cross-tenant view of every detected ledger imbalance (from LedgerImbalanceDetected event history). Feeds the ops finance-health dashboard. filter[tenant_id], filter[scope], filter[resolved]."
         }

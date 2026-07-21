@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Match\Actions\Tenant;
+namespace Academorix\Match\Actions\Tenant;
 
-use Stackra\Match\Contracts\Repositories\OpponentLogoRepositoryInterface;
+use Academorix\Match\Contracts\Repositories\OpponentLogoRepositoryInterface;
 use Stackra\Routing\Attributes\AsAction;
 use Stackra\Routing\Attributes\Middleware;
 use Stackra\Routing\Concerns\AsController;

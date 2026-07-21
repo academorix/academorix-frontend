@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Theme\Exceptions;
 
-use Stackra\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Attempted to write to a platform preset (tenant_id NULL) from a tenant caller.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class ThemePlatformPresetWriteDeniedException extends AcademorixException
+final class ThemePlatformPresetWriteDeniedException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

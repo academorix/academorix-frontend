@@ -4,7 +4,7 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Referrals\Concerns;
+namespace Academorix\Referrals\Concerns;
 
 /**
  * Trait — HasReferralCode.

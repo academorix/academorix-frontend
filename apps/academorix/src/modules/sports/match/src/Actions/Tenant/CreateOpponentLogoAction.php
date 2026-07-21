@@ -4,11 +4,11 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Match\Actions\Tenant;
+namespace Academorix\Match\Actions\Tenant;
 
-use Stackra\Match\Contracts\Repositories\OpponentLogoRepositoryInterface;
-use Stackra\Match\Data\OpponentLogoData;
-use Stackra\Match\Data\Requests\CreateOpponentLogoRequestData;
+use Academorix\Match\Contracts\Repositories\OpponentLogoRepositoryInterface;
+use Academorix\Match\Data\OpponentLogoData;
+use Academorix\Match\Data\Requests\CreateOpponentLogoRequestData;
 use Stackra\Routing\Attributes\AsAction;
 use Stackra\Routing\Attributes\Middleware;
 use Stackra\Routing\Concerns\AsController;

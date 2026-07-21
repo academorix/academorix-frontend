@@ -1,11 +1,11 @@
 {
-  "id": "stackra://modules/refund/middleware",
+  "id": "academorix://modules/refund/middleware",
   "$version": 1,
   "title": "refund — HTTP middleware",
   "middleware": [
     {
       "alias": "refund.enforce_customer_scope",
-      "class": "Stackra\\Finance\\Refund\\Http\\Middleware\\EnforceCustomerScope",
+      "class": "Academorix\\Finance\\Refund\\Http\\Middleware\\EnforceCustomerScope",
       "priority": 60,
       "description": "Applied to all /api/v1/refunds/mine and /api/v1/refunds/{refund} customer routes. Ensures a customer can only request refunds against payments where they were the customer (payment.customer_type + payment.customer_id match auth()->id() OR auth()->athlete_id via the parent tenant_member relation). Blocks: (1) POST /refunds with a payment_id where the customer is not the actor, (2) GET /refunds/{refund} for refunds where refund.initiated_by_user_id != auth()->id() AND refund.customer_id != auth()->id(). On refusal returns 403 `REFUND_CUSTOMER_SCOPE_VIOLATION`.",
       "auto_applied": false,
@@ -18,7 +18,7 @@
     },
     {
       "alias": "refund.enforce_capture_entitlement",
-      "class": "Stackra\\Finance\\Refund\\Http\\Middleware\\EnforceCaptureEntitlement",
+      "class": "Academorix\\Finance\\Refund\\Http\\Middleware\\EnforceCaptureEntitlement",
       "priority": 40,
       "description": "Thin wrapper over entitlement.enforce that specifically checks the `refund_capture` entitlement. On refusal returns 402 `REFUND_CAPTURE_NOT_ENTITLED` with an upgrade CTA in the response envelope's .errors[0].meta.upgrade_url. Auto-applied via the `entitlement.enforce:refund_capture` middleware chain on every /api/v1/refunds/* route.",
       "auto_applied": false,

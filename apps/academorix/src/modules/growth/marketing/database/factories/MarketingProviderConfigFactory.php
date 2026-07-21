@@ -4,19 +4,19 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Marketing\Database\Factories;
+namespace Academorix\Marketing\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Stackra\Marketing\Contracts\Data\MarketingProviderConfigInterface;
-use Stackra\Marketing\Models\MarketingProviderConfig;
+use Academorix\Marketing\Contracts\Data\MarketingProviderConfigInterface;
+use Academorix\Marketing\Models\MarketingProviderConfig;
 
 /**
- * Factory for {@see \Stackra\Marketing\Models\MarketingProviderConfig}.
+ * Factory for {@see \Academorix\Marketing\Models\MarketingProviderConfig}.
  *
  * Auto-generated skeleton — extend with named states as domain
  * cases emerge (e.g. `->published()`, `->overdue()`, `->archived()`).
  *
- * @extends Factory<\Stackra\Marketing\Models\MarketingProviderConfig>
+ * @extends Factory<\Academorix\Marketing\Models\MarketingProviderConfig>
  *
  * @category Marketing
  *

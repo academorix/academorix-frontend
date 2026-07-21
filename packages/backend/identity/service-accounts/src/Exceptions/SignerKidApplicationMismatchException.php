@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\ServiceAccounts\Exceptions;
 
-use Stackra\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * The proposed `signer_kid` is bound to an application other than the SA's `application_id`.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class SignerKidApplicationMismatchException extends AcademorixException
+final class SignerKidApplicationMismatchException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

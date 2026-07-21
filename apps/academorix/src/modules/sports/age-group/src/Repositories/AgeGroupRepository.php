@@ -4,25 +4,25 @@
 
 declare(strict_types=1);
 
-namespace Stackra\AgeGroup\Repositories;
+namespace Academorix\AgeGroup\Repositories;
 
 use Stackra\Crud\Attributes\AsRepository;
 use Stackra\Crud\Attributes\Cacheable;
 use Stackra\Crud\Attributes\Filterable;
 use Stackra\Crud\Attributes\UseModel;
 use Stackra\Crud\Repositories\Repository;
-use Stackra\AgeGroup\Contracts\Data\AgeGroupInterface;
-use Stackra\AgeGroup\Contracts\Repositories\AgeGroupRepositoryInterface;
-use Stackra\AgeGroup\Models\AgeGroup;
+use Academorix\AgeGroup\Contracts\Data\AgeGroupInterface;
+use Academorix\AgeGroup\Contracts\Repositories\AgeGroupRepositoryInterface;
+use Academorix\AgeGroup\Models\AgeGroup;
 
 /**
- * Attribute-first Eloquent repository for {@see Stackra\AgeGroup\Models\AgeGroup}.
+ * Attribute-first Eloquent repository for {@see Academorix\AgeGroup\Models\AgeGroup}.
  *
  * Bound to the interface via `#[AsRepository]`; the model comes from
  * `#[UseModel(AgeGroupInterface::class)]` which resolves to
  * `AgeGroup` through the interface's `#[Bind]`.
  *
- * @extends Repository<\Stackra\AgeGroup\Models\AgeGroup>
+ * @extends Repository<\Academorix\AgeGroup\Models\AgeGroup>
  *
  * @category AgeGroup
  *

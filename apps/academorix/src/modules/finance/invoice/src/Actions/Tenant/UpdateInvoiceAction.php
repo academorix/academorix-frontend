@@ -4,11 +4,11 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Invoice\Actions\Tenant;
+namespace Academorix\Invoice\Actions\Tenant;
 
-use Stackra\Invoice\Contracts\Repositories\InvoiceRepositoryInterface;
-use Stackra\Invoice\Data\InvoiceData;
-use Stackra\Invoice\Data\Requests\UpdateInvoiceRequestData;
+use Academorix\Invoice\Contracts\Repositories\InvoiceRepositoryInterface;
+use Academorix\Invoice\Data\InvoiceData;
+use Academorix\Invoice\Data\Requests\UpdateInvoiceRequestData;
 use Stackra\Routing\Attributes\AsAction;
 use Stackra\Routing\Attributes\Middleware;
 use Stackra\Routing\Concerns\AsController;

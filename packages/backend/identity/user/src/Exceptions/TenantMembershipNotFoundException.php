@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\User\Exceptions;
 
-use Stackra\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Raised when the domain rule `TENANT_MEMBERSHIP_NOT_FOUND` fires.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class TenantMembershipNotFoundException extends AcademorixException
+final class TenantMembershipNotFoundException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

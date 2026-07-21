@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Stackra\AthleteGuardian\Contracts\Services;
+namespace Academorix\AthleteGuardian\Contracts\Services;
 
-use Stackra\AthleteGuardian\Models\AthleteGuardian;
-use Stackra\AthleteGuardian\Services\ConsentDelegationChain;
+use Academorix\AthleteGuardian\Models\AthleteGuardian;
+use Academorix\AthleteGuardian\Services\ConsentDelegationChain;
 use Illuminate\Container\Attributes\Bind;
 
 /**

@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\ServiceAccounts\Exceptions;
 
-use Stackra\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * The SA's `is_enabled = false`.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class ServiceAccountDisabledException extends AcademorixException
+final class ServiceAccountDisabledException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

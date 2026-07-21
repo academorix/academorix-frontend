@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Expenses\Contracts\Data;
+namespace Academorix\Expenses\Contracts\Data;
 
 use Illuminate\Container\Attributes\Bind;
-use Stackra\Expenses\Models\PayrollRun;
+use Academorix\Expenses\Models\PayrollRun;
 
 /**
  * Table shape for the `payroll_runs` table.

@@ -1,13 +1,13 @@
 {
-  "id": "stackra://modules/coupon/attributes",
+  "id": "academorix://modules/coupon/attributes",
   "$version": 1,
   "title": "coupon — PHP attribute contracts",
   "description": "Two class-level attributes for listener discovery. `AsCouponListener` subscribes to coupon lifecycle events (created / activated / deactivated / expired / usage_cap_reached / issued); `AsCouponRedemptionListener` subscribes to redemption events (redeemed / refused / reversed / clawback_requested / clawback_completed). Discovery loader picks up each class at boot + wires the declared events. No property-level attributes: the two owned rows use ordinary Eloquent + spatie/laravel-data class attributes shipped by foundation.",
-  "namespace": "Stackra\\Finance\\Coupon\\Attributes",
+  "namespace": "Academorix\\Finance\\Coupon\\Attributes",
   "attributes": [
     {
       "name": "AsCouponListener",
-      "class": "Stackra\\Finance\\Coupon\\Attributes\\AsCouponListener",
+      "class": "Academorix\\Finance\\Coupon\\Attributes\\AsCouponListener",
       "targets": ["class"],
       "isRepeatable": false,
       "description": "Marks a service as a subscriber to coupon lifecycle events (CouponCreated / CouponUpdated / CouponActivated / CouponDeactivated / CouponExpired / CouponUsageCapReached / CouponIssuedByReferralProgram / CouponIssuedManually / CouponReportGenerated).",
@@ -34,7 +34,7 @@
     },
     {
       "name": "AsCouponRedemptionListener",
-      "class": "Stackra\\Finance\\Coupon\\Attributes\\AsCouponRedemptionListener",
+      "class": "Academorix\\Finance\\Coupon\\Attributes\\AsCouponRedemptionListener",
       "targets": ["class"],
       "isRepeatable": false,
       "description": "Marks a service as a subscriber to redemption lifecycle events (CouponRedeemed / CouponRedemptionRefused / CouponRedemptionReversed / CouponClawbackRequested / CouponClawbackCompleted). CouponRedeemed + CouponClawbackCompleted are queue='coupons-critical' by default because they trigger downstream finance + marketing lane events.",

@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/payout/errors",
+  "id": "academorix://modules/payout/errors",
   "$version": 1,
   "title": "payout — error codes",
   "namespace": "payout",

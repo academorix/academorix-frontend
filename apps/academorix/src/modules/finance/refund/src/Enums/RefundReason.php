@@ -4,7 +4,7 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Refund\Enums;
+namespace Academorix\Refund\Enums;
 
 use Stackra\Enum\Enum;
 

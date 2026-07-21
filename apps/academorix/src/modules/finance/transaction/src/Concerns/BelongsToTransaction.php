@@ -4,7 +4,7 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Transaction\Concerns;
+namespace Academorix\Transaction\Concerns;
 
 /**
  * Trait — BelongsToTransaction.

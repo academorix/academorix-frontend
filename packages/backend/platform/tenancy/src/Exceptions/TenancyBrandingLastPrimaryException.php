@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Tenancy\Exceptions;
 
-use Stackra\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Attempt to delete the tenant's primary Branding without promoting another first.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class TenancyBrandingLastPrimaryException extends AcademorixException
+final class TenancyBrandingLastPrimaryException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

@@ -4,17 +4,17 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Membership\Contracts\Repositories;
+namespace Academorix\Membership\Contracts\Repositories;
 
 use Stackra\Crud\Contracts\RepositoryInterface;
 
 /**
- * Repository contract for {@see Stackra\Membership\Models\Membership}.
+ * Repository contract for {@see Academorix\Membership\Models\Membership}.
  *
  * Consumers type-hint the interface; the container binds the concrete
  * via `#[AsRepository]` on `MembershipRepository`.
  *
- * @extends RepositoryInterface<\Stackra\Membership\Models\Membership>
+ * @extends RepositoryInterface<\Academorix\Membership\Models\Membership>
  *
  * @category Membership
  *

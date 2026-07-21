@@ -4,25 +4,25 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Payout\Repositories;
+namespace Academorix\Payout\Repositories;
 
 use Stackra\Crud\Attributes\AsRepository;
 use Stackra\Crud\Attributes\Cacheable;
 use Stackra\Crud\Attributes\Filterable;
 use Stackra\Crud\Attributes\UseModel;
 use Stackra\Crud\Repositories\Repository;
-use Stackra\Payout\Contracts\Data\PayoutReconciliationInterface;
-use Stackra\Payout\Contracts\Repositories\PayoutReconciliationRepositoryInterface;
-use Stackra\Payout\Models\PayoutReconciliation;
+use Academorix\Payout\Contracts\Data\PayoutReconciliationInterface;
+use Academorix\Payout\Contracts\Repositories\PayoutReconciliationRepositoryInterface;
+use Academorix\Payout\Models\PayoutReconciliation;
 
 /**
- * Attribute-first Eloquent repository for {@see Stackra\Payout\Models\PayoutReconciliation}.
+ * Attribute-first Eloquent repository for {@see Academorix\Payout\Models\PayoutReconciliation}.
  *
  * Bound to the interface via `#[AsRepository]`; the model comes from
  * `#[UseModel(PayoutReconciliationInterface::class)]` which resolves to
  * `PayoutReconciliation` through the interface's `#[Bind]`.
  *
- * @extends Repository<\Stackra\Payout\Models\PayoutReconciliation>
+ * @extends Repository<\Academorix\Payout\Models\PayoutReconciliation>
  *
  * @category Payout
  *

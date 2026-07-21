@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Geofencing\Contracts\Data;
+namespace Academorix\Geofencing\Contracts\Data;
 
-use Stackra\Geofencing\Models\GeofenceCheck;
+use Academorix\Geofencing\Models\GeofenceCheck;
 use Illuminate\Container\Attributes\Bind;
 
 /**

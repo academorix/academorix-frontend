@@ -40,14 +40,14 @@
  * $types = $platform->application()->businessTypes()->list();
  * ```
  *
- * @see \Stackra\PlatformApplicationSdk\Resources\ApplicationsResource
- * @see \Stackra\PlatformApplicationSdk\Resources\ApplicationsAdminResource
- * @see \Stackra\PlatformApplicationSdk\Resources\BusinessTypesResource
+ * @see \Academorix\PlatformApplicationSdk\Resources\ApplicationsResource
+ * @see \Academorix\PlatformApplicationSdk\Resources\ApplicationsAdminResource
+ * @see \Academorix\PlatformApplicationSdk\Resources\BusinessTypesResource
  */
 
 declare(strict_types=1);
 
-namespace Stackra\PlatformApplicationSdk\Resources;
+namespace Academorix\PlatformApplicationSdk\Resources;
 
 use Stackra\ApiSdk\Attributes\AsSdkResource;
 use Stackra\ApiSdk\Resources\BaseSdkResource;

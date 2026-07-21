@@ -4,17 +4,17 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Attendance\Contracts\Repositories;
+namespace Academorix\Attendance\Contracts\Repositories;
 
 use Stackra\Crud\Contracts\RepositoryInterface;
 
 /**
- * Repository contract for {@see Stackra\Attendance\Models\LateArrival}.
+ * Repository contract for {@see Academorix\Attendance\Models\LateArrival}.
  *
  * Consumers type-hint the interface; the container binds the concrete
  * via `#[AsRepository]` on `LateArrivalRepository`.
  *
- * @extends RepositoryInterface<\Stackra\Attendance\Models\LateArrival>
+ * @extends RepositoryInterface<\Academorix\Attendance\Models\LateArrival>
  *
  * @category Attendance
  *

@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/geofencing/config",
+  "id": "academorix://modules/geofencing/config",
   "$version": 1,
   "title": "geofencing \u2014 developer configuration",
   "configFile": "config/geofencing.php",

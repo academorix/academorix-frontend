@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/attribution/routes",
+  "id": "academorix://modules/attribution/routes",
   "$version": 1,
   "title": "attribution — HTTP routes",
   "description": "Tenant-facing attribution reads + admin actions (merge / reset / import) + campaign rollup + user-facing my-attribution + platform-admin cross-tenant support routes. Every tenant-plane route carries `entitlement.enforce:attribution_capture` at minimum; rollup routes additionally require `attribution_rollup` (Medium+); merge route requires `attribution_merge` (Enterprise); import route requires `attribution_import` (Enterprise).",
@@ -25,28 +25,28 @@
         {
           "method": "GET",
           "path": "/",
-          "controller": "Stackra\\Growth\\Attribution\\Http\\Controllers\\Tenant\\AttributionController@index",
+          "controller": "Academorix\\Growth\\Attribution\\Http\\Controllers\\Tenant\\AttributionController@index",
           "permission": "attribution.viewAny",
           "description": "filter[subject_type], filter[lifecycle_state], filter[first_touch_source], filter[first_touch_campaign], filter[last_touch_source], filter[last_touch_campaign], filter[created_at.gte], filter[created_at.lte]. Marketing role gets aggregated view (no PII); admin + owner see full rows."
         },
         {
           "method": "GET",
           "path": "/{attribution}",
-          "controller": "Stackra\\Growth\\Attribution\\Http\\Controllers\\Tenant\\AttributionController@show",
+          "controller": "Academorix\\Growth\\Attribution\\Http\\Controllers\\Tenant\\AttributionController@show",
           "permission": "attribution.view",
           "description": "Full profile view. Confidential fields redacted unless caller has attribution.view-confidential."
         },
         {
           "method": "GET",
           "path": "/{attribution}/touchpoints",
-          "controller": "Stackra\\Growth\\Attribution\\Http\\Controllers\\Tenant\\AttributionTouchpointController@index",
+          "controller": "Academorix\\Growth\\Attribution\\Http\\Controllers\\Tenant\\AttributionTouchpointController@index",
           "permission": "attribution.view",
           "description": "The touchpoint history for one attribution. Ordered captured_at DESC. Pagination cursor. filter[touchpoint_type], filter[was_conversion]."
         },
         {
           "method": "POST",
           "path": "/{attribution}/merge",
-          "controller": "Stackra\\Growth\\Attribution\\Http\\Controllers\\Tenant\\AttributionMergeController@store",
+          "controller": "Academorix\\Growth\\Attribution\\Http\\Controllers\\Tenant\\AttributionMergeController@store",
           "permission": "attribution.merge",
           "middleware_add": [
             "attribution.resolve_subject",
@@ -57,7 +57,7 @@
         {
           "method": "POST",
           "path": "/{attribution}/reset",
-          "controller": "Stackra\\Growth\\Attribution\\Http\\Controllers\\Tenant\\AttributionResetController@store",
+          "controller": "Academorix\\Growth\\Attribution\\Http\\Controllers\\Tenant\\AttributionResetController@store",
           "permission": "attribution.reset",
           "middleware_add": ["attribution.resolve_subject"],
           "description": "Body: { reason, subject_confirms_gdpr_request: true }. GDPR right-to-erasure path. Redacts the profile immediately + schedules touchpoint hard-delete 90 days out. Fires AttributionResetRequested + AttributionResetConfirmationNotification. Duplicate resets return 409 ATTRIBUTION_RESET_IN_PROGRESS."
@@ -65,7 +65,7 @@
         {
           "method": "POST",
           "path": "/import",
-          "controller": "Stackra\\Growth\\Attribution\\Http\\Controllers\\Tenant\\AttributionImportController@store",
+          "controller": "Academorix\\Growth\\Attribution\\Http\\Controllers\\Tenant\\AttributionImportController@store",
           "permission": "attribution.import",
           "middleware_add": ["entitlement.enforce:attribution_import"],
           "description": "Enterprise-only. Body: multipart file upload (CSV, max 50k rows). Each row creates a fresh attributions + attribution_touchpoints record. Returns 202 with the import job ID. Refuses rows failing schema validation (returns 422 with per-row error report)."
@@ -73,7 +73,7 @@
         {
           "method": "GET",
           "path": "/consent-suppressions",
-          "controller": "Stackra\\Growth\\Attribution\\Http\\Controllers\\Tenant\\ConsentSuppressionsController@index",
+          "controller": "Academorix\\Growth\\Attribution\\Http\\Controllers\\Tenant\\ConsentSuppressionsController@index",
           "permission": "attribution.view-consent-suppressions",
           "description": "Compliance-team report. filter[from], filter[to], filter[consent_state_summary]. Aggregated counts + per-day breakdown. NO PII."
         }
@@ -100,21 +100,21 @@
         {
           "method": "GET",
           "path": "/",
-          "controller": "Stackra\\Growth\\Attribution\\Http\\Controllers\\Tenant\\MyAttributionController@show",
+          "controller": "Academorix\\Growth\\Attribution\\Http\\Controllers\\Tenant\\MyAttributionController@show",
           "permission": "attribution.view-own",
           "description": "Return the caller's own attribution profile with FULL confidential fields (they own their own data — no redactor)."
         },
         {
           "method": "GET",
           "path": "/touchpoints",
-          "controller": "Stackra\\Growth\\Attribution\\Http\\Controllers\\Tenant\\MyAttributionTouchpointController@index",
+          "controller": "Academorix\\Growth\\Attribution\\Http\\Controllers\\Tenant\\MyAttributionTouchpointController@index",
           "permission": "attribution.view-own",
           "description": "Return the caller's own touchpoint timeline."
         },
         {
           "method": "POST",
           "path": "/reset",
-          "controller": "Stackra\\Growth\\Attribution\\Http\\Controllers\\Tenant\\MyAttributionResetController@store",
+          "controller": "Academorix\\Growth\\Attribution\\Http\\Controllers\\Tenant\\MyAttributionResetController@store",
           "permission": "attribution.reset-own",
           "description": "GDPR right-to-erasure for own attribution. Body: { reason?, subject_confirms_gdpr_request: true }."
         }
@@ -142,14 +142,14 @@
         {
           "method": "GET",
           "path": "/",
-          "controller": "Stackra\\Growth\\Attribution\\Http\\Controllers\\Tenant\\CampaignRollupController@index",
+          "controller": "Academorix\\Growth\\Attribution\\Http\\Controllers\\Tenant\\CampaignRollupController@index",
           "permission": "attribution.view-rollup",
           "description": "Aggregated campaign performance. ?window=24h|7d|30d. filter[source_bucket], filter[medium]. Returns { campaign, source, medium, touchpoints, conversions, first_touches } rows sorted by touchpoints DESC."
         },
         {
           "method": "GET",
           "path": "/{campaign}",
-          "controller": "Stackra\\Growth\\Attribution\\Http\\Controllers\\Tenant\\CampaignRollupController@show",
+          "controller": "Academorix\\Growth\\Attribution\\Http\\Controllers\\Tenant\\CampaignRollupController@show",
           "permission": "attribution.view-rollup",
           "description": "Deep dive on one campaign. ?window=24h|7d|30d. Returns per-source + per-medium breakdown + daily time-series + top-N first-touch subjects (aggregated — no PII)."
         }
@@ -172,14 +172,14 @@
         {
           "method": "GET",
           "path": "/",
-          "controller": "Stackra\\Growth\\Attribution\\Http\\Controllers\\Platform\\AttributionController@index",
+          "controller": "Academorix\\Growth\\Attribution\\Http\\Controllers\\Platform\\AttributionController@index",
           "permission": "platform.attribution.viewAny",
           "description": "filter[tenant_id], filter[subject_type], filter[lifecycle_state]. Cross-tenant scan."
         },
         {
           "method": "POST",
           "path": "/{attribution}/force-reset",
-          "controller": "Stackra\\Growth\\Attribution\\Http\\Controllers\\Platform\\AttributionController@forceReset",
+          "controller": "Academorix\\Growth\\Attribution\\Http\\Controllers\\Platform\\AttributionController@forceReset",
           "permission": "platform.attribution.force-reset",
           "description": "Support-only escape hatch. Bypasses tenant guards. Regulator-issued erasure requests. Notifies tenant admin + writes audit row with 7-year retention. Body: { reason, regulator_reference }."
         }

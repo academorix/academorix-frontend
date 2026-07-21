@@ -4,17 +4,17 @@
 
 declare(strict_types=1);
 
-namespace Stackra\AthleteGuardian\Models;
+namespace Academorix\AthleteGuardian\Models;
 
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
-use Stackra\AthleteGuardian\Contracts\Data\AthleteGuardianInterface;
-use Stackra\AthleteGuardian\Database\Factories\AthleteGuardianFactory;
-use Stackra\AthleteGuardian\Policies\AthleteGuardianPolicy;
-use Stackra\Athlete\Concerns\BelongsToAthlete;
+use Academorix\AthleteGuardian\Contracts\Data\AthleteGuardianInterface;
+use Academorix\AthleteGuardian\Database\Factories\AthleteGuardianFactory;
+use Academorix\AthleteGuardian\Policies\AthleteGuardianPolicy;
+use Academorix\Athlete\Concerns\BelongsToAthlete;
 use Stackra\Foundation\Concerns\Filterable;
 use Stackra\Foundation\Concerns\HasMetadata;
 use Stackra\Foundation\Concerns\HasPrefixedUlid;

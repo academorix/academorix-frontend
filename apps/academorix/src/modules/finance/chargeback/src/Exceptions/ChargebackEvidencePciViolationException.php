@@ -4,7 +4,7 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Chargeback\Exceptions;
+namespace Academorix\Chargeback\Exceptions;
 
 use Stackra\Exceptions\StackraException;
 

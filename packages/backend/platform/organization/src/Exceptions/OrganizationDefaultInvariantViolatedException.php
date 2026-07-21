@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Organization\Exceptions;
 
-use Stackra\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * The tenant has zero or 2+ is_default=true rows.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class OrganizationDefaultInvariantViolatedException extends AcademorixException
+final class OrganizationDefaultInvariantViolatedException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

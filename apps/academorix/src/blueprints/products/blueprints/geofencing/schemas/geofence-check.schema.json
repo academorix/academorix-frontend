@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/geofencing/schemas/geofence-check",
+  "id": "academorix://modules/geofencing/schemas/geofence-check",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "GeofenceCheck",
@@ -13,10 +13,10 @@
     "keyType": "string",
     "keyPrefix": "gfc_",
     "incrementing": false,
-    "model": "Stackra\\Geofencing\\Models\\GeofenceCheck",
-    "interface": "Stackra\\Geofencing\\Contracts\\Data\\GeofenceCheckInterface",
+    "model": "Academorix\\Geofencing\\Models\\GeofenceCheck",
+    "interface": "Academorix\\Geofencing\\Contracts\\Data\\GeofenceCheckInterface",
     "implements": [
-      "Stackra\\Geofencing\\Contracts\\Data\\GeofenceCheckInterface",
+      "Academorix\\Geofencing\\Contracts\\Data\\GeofenceCheckInterface",
       "OwenIt\\Auditing\\Contracts\\Auditable"
     ],
     "traits": [
@@ -266,7 +266,7 @@
     "envelope": "spatie-data",
     "wrap": "data",
     "mapper": "SnakeCaseMapper",
-    "resource_class": "Stackra\\Geofencing\\Data\\Resources\\GeofenceCheckResourceData"
+    "resource_class": "Academorix\\Geofencing\\Data\\Resources\\GeofenceCheckResourceData"
   },
   "x-immutability": {
     "guard": "saving-hook",

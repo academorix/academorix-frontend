@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Formations\Actions\Tenant;
+namespace Academorix\Formations\Actions\Tenant;
 
-use Stackra\Formations\Contracts\Repositories\FormationRepositoryInterface;
-use Stackra\Formations\Data\FormationData;
+use Academorix\Formations\Contracts\Repositories\FormationRepositoryInterface;
+use Academorix\Formations\Data\FormationData;
 use Stackra\Routing\Attributes\AsAction;
 use Stackra\Routing\Attributes\Middleware;
 use Stackra\Routing\Concerns\AsController;
@@ -50,7 +50,7 @@ final class ListFormationAction
      */
     public function __invoke(Request $request): PaginatedDataCollection
     {
-        /** @var LengthAwarePaginator<int, \Stackra\Formations\Models\Formation> $page */
+        /** @var LengthAwarePaginator<int, \Academorix\Formations\Models\Formation> $page */
         $page = $this->repository->paginate(
             perPage: (int) $request->integer('per_page', 15),
         );

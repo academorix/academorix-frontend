@@ -4,15 +4,15 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Drills\Models;
+namespace Academorix\Drills\Models;
 
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
-use Stackra\Drills\Contracts\Data\SessionPlanInterface;
-use Stackra\Drills\Database\Factories\SessionPlanFactory;
+use Academorix\Drills\Contracts\Data\SessionPlanInterface;
+use Academorix\Drills\Database\Factories\SessionPlanFactory;
 use Stackra\Foundation\Concerns\Filterable;
 use Stackra\Foundation\Concerns\HasMetadata;
 use Stackra\Foundation\Concerns\HasPrefixedUlid;

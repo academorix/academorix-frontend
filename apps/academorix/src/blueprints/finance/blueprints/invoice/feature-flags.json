@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/invoice/feature-flags",
+  "id": "academorix://modules/invoice/feature-flags",
   "$version": 1,
   "title": "invoice — kill switches",
   "engine": "laravel/pennant",

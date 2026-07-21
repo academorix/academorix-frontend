@@ -1,12 +1,12 @@
 {
-  "id": "stackra://modules/attendance/policies",
+  "id": "academorix://modules/attendance/policies",
   "$version": 1,
   "title": "attendance — authorization policies",
   "description": "Four policies — one per aggregate. Compose ResolveScope + .own scope for guardians / athletes / coaches viewing their own attendance surfaces.",
   "policies": [
     {
       "model": "AttendanceRecord",
-      "class": "Stackra\\Sports\\Attendance\\Policies\\AttendanceRecordPolicy",
+      "class": "Academorix\\Sports\\Attendance\\Policies\\AttendanceRecordPolicy",
       "abilities": [
         {
           "action": "viewAny",
@@ -58,7 +58,7 @@
     },
     {
       "model": "AttendancePolicy",
-      "class": "Stackra\\Sports\\Attendance\\Policies\\AttendancePolicyPolicy",
+      "class": "Academorix\\Sports\\Attendance\\Policies\\AttendancePolicyPolicy",
       "abilities": [
         {
           "action": "viewAny",
@@ -87,7 +87,7 @@
     },
     {
       "model": "AbsenceRecord",
-      "class": "Stackra\\Sports\\Attendance\\Policies\\AbsenceRecordPolicy",
+      "class": "Academorix\\Sports\\Attendance\\Policies\\AbsenceRecordPolicy",
       "abilities": [
         {
           "action": "viewAny",
@@ -133,7 +133,7 @@
     },
     {
       "model": "LateArrival",
-      "class": "Stackra\\Sports\\Attendance\\Policies\\LateArrivalPolicy",
+      "class": "Academorix\\Sports\\Attendance\\Policies\\LateArrivalPolicy",
       "abilities": [
         {
           "action": "viewAny",

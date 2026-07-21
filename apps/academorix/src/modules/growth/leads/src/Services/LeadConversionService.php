@@ -2,18 +2,18 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Leads\Services;
+namespace Academorix\Leads\Services;
 
-use Stackra\Leads\Contracts\Data\LeadActivityInterface;
-use Stackra\Leads\Contracts\Data\LeadInterface;
-use Stackra\Leads\Contracts\Repositories\LeadActivityRepositoryInterface;
-use Stackra\Leads\Contracts\Services\LeadConversionServiceInterface;
-use Stackra\Leads\Contracts\Services\LeadStageTransitionValidatorInterface;
-use Stackra\Leads\Enums\LeadActivityType;
-use Stackra\Leads\Enums\LeadStage;
-use Stackra\Leads\Events\LeadConverted;
-use Stackra\Leads\Exceptions\LeadConversionAthletesRequiredException;
-use Stackra\Leads\Models\Lead;
+use Academorix\Leads\Contracts\Data\LeadActivityInterface;
+use Academorix\Leads\Contracts\Data\LeadInterface;
+use Academorix\Leads\Contracts\Repositories\LeadActivityRepositoryInterface;
+use Academorix\Leads\Contracts\Services\LeadConversionServiceInterface;
+use Academorix\Leads\Contracts\Services\LeadStageTransitionValidatorInterface;
+use Academorix\Leads\Enums\LeadActivityType;
+use Academorix\Leads\Enums\LeadStage;
+use Academorix\Leads\Events\LeadConverted;
+use Academorix\Leads\Exceptions\LeadConversionAthletesRequiredException;
+use Academorix\Leads\Models\Lead;
 use Illuminate\Container\Attributes\Auth;
 use Illuminate\Container\Attributes\Scoped;
 use Illuminate\Contracts\Auth\Factory as AuthFactory;

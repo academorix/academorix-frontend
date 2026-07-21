@@ -1,14 +1,14 @@
 {
-  "id": "stackra://modules/refund/events",
+  "id": "academorix://modules/refund/events",
   "$version": 1,
   "title": "refund — published events",
-  "namespace": "Stackra\\Finance\\Refund\\Events",
+  "namespace": "Academorix\\Finance\\Refund\\Events",
   "dispatchMode": "afterCommit",
   "description": "Every event implements `ShouldDispatchAfterCommit` so listeners never fire against a rolled-back write. Two events are CRITICAL: `RefundSucceeded` (P1 signal — the finalization chain fires credit-note + transaction + clawback fan-out + marketing negative-conversion), and `RefundFailed` / `RefundProviderError` (P1 signal — merchant fails to reverse a legitimate refund request, exposing customer-service + regulator risk). Financial events (`RefundApproved` / `RefundSucceeded` / `RefundClawbackReferral` / `RefundClawbackCoupon`) additionally fan out to finance::invoice for state update + finance::transaction for ledger offset + finance::credit-note (via invoice module) for reversal document. `RefundSucceeded` fires a marketing negative-value conversion downstream to protect ROAS + retrain fraud models on ad networks.",
   "events": [
     {
       "name": "RefundRequested",
-      "class": "Stackra\\Finance\\Refund\\Events\\RefundRequested",
+      "class": "Academorix\\Finance\\Refund\\Events\\RefundRequested",
       "trigger": "RefundRepository finished a successful create. Fires exactly once per refund. Distinct from `RefundApproved` — this fires unconditionally at initiation, before approval routing.",
       "queue": "refunds",
       "consumers": [
@@ -36,14 +36,14 @@
     },
     {
       "name": "RefundApprovalRequired",
-      "class": "Stackra\\Finance\\Refund\\Events\\RefundApprovalRequired",
+      "class": "Academorix\\Finance\\Refund\\Events\\RefundApprovalRequired",
       "trigger": "RefundObserver.creating computed `requires_approval=true` (amount / staleness threshold OR always-approve reason). Distinct from RefundRequested (which fires unconditionally). Dispatches NotifyRefundApprovalRequiredJob to seed approver notifications.",
       "queue": "refunds-critical",
       "consumers": [
         "audit::WriteToAuditLog (retention: 7 years — financial-audit)",
         "activity::WriteToActivityLog",
         "notifications::DispatchRefundApprovalRequiredNotification (admin approvers)",
-        "observability::MetricsCollector (stackra.refund.approvals_pending_total)"
+        "observability::MetricsCollector (academorix.refund.approvals_pending_total)"
       ],
       "payload": {
         "refund_id": "ULID",
@@ -61,7 +61,7 @@
     },
     {
       "name": "RefundApproved",
-      "class": "Stackra\\Finance\\Refund\\Events\\RefundApproved",
+      "class": "Academorix\\Finance\\Refund\\Events\\RefundApproved",
       "trigger": "Refund.status transitioned awaiting_approval -> approved. Approver clicked approve OR requires_approval=false path auto-transitioned at creation.",
       "queue": "refunds-critical",
       "consumers": [
@@ -79,7 +79,7 @@
     },
     {
       "name": "RefundRejected",
-      "class": "Stackra\\Finance\\Refund\\Events\\RefundRejected",
+      "class": "Academorix\\Finance\\Refund\\Events\\RefundRejected",
       "trigger": "Refund.status transitioned awaiting_approval -> rejected. Approver clicked reject. Terminal state — no provider dispatch.",
       "queue": "refunds",
       "consumers": [
@@ -97,7 +97,7 @@
     },
     {
       "name": "RefundProcessing",
-      "class": "Stackra\\Finance\\Refund\\Events\\RefundProcessing",
+      "class": "Academorix\\Finance\\Refund\\Events\\RefundProcessing",
       "trigger": "Refund.status transitioned approved -> processing. InitiateProviderRefundJob dispatched the provider-side createRefund call + received an async 'processing' response.",
       "queue": "refunds",
       "consumers": [
@@ -116,7 +116,7 @@
     },
     {
       "name": "RefundSucceeded",
-      "class": "Stackra\\Finance\\Refund\\Events\\RefundSucceeded",
+      "class": "Academorix\\Finance\\Refund\\Events\\RefundSucceeded",
       "trigger": "Refund.status transitioned processing -> succeeded. Provider webhook OR CheckRefundProviderStatusJob confirmed terminal success. FIRES THE FINALIZATION CHAIN: credit note creation + offsetting transaction + invoice state update + clawback fan-out + marketing negative-conversion. P1 event.",
       "queue": "refunds-critical",
       "consumers": [
@@ -128,7 +128,7 @@
         "refund::ClawbackCoordinator (dispatches RefundClawbackReferral + RefundClawbackCoupon downstream)",
         "marketing::FireMarketingRefundIssuedOnRefundSucceeded (negative-value conversion — ad-network ROAS adjustment)",
         "notifications::DispatchRefundSucceededNotification (customer — money received; note: for cards, this is estimated delivery not exact)",
-        "observability::MetricsCollector (stackra.refund.succeeded_total labelled by reason)"
+        "observability::MetricsCollector (academorix.refund.succeeded_total labelled by reason)"
       ],
       "payload": {
         "refund_id": "ULID",
@@ -155,14 +155,14 @@
     },
     {
       "name": "RefundFailed",
-      "class": "Stackra\\Finance\\Refund\\Events\\RefundFailed",
+      "class": "Academorix\\Finance\\Refund\\Events\\RefundFailed",
       "trigger": "Refund.status transitioned processing -> failed. Provider returned a non-recoverable error (original charge already refunded, provider account closed, source no longer valid). Terminal. Customer + admin notified. Payment untouched.",
       "queue": "refunds-critical",
       "consumers": [
         "audit::WriteToAuditLog (retention: 7 years — financial record)",
         "activity::WriteToActivityLog",
         "notifications::DispatchRefundFailedNotification (customer + admin)",
-        "observability::MetricsCollector (stackra.refund.failed_total labelled by failure_reason_category)"
+        "observability::MetricsCollector (academorix.refund.failed_total labelled by failure_reason_category)"
       ],
       "payload": {
         "refund_id": "ULID",
@@ -178,7 +178,7 @@
     },
     {
       "name": "RefundCancelled",
-      "class": "Stackra\\Finance\\Refund\\Events\\RefundCancelled",
+      "class": "Academorix\\Finance\\Refund\\Events\\RefundCancelled",
       "trigger": "Refund.status transitioned awaiting_approval | approved -> cancelled. Cancel path — customer cancelled their own request OR admin cancelled before provider dispatch. Terminal.",
       "queue": "refunds",
       "consumers": [
@@ -196,7 +196,7 @@
     },
     {
       "name": "RefundLineCreated",
-      "class": "Stackra\\Finance\\Refund\\Events\\RefundLineCreated",
+      "class": "Academorix\\Finance\\Refund\\Events\\RefundLineCreated",
       "trigger": "RefundLineRepository finished a successful create. Fires per line at partial / prorated refund creation. Distinct from RefundRequested (parent) — one parent request emits one RefundRequested + N RefundLineCreated events.",
       "queue": "refunds",
       "consumers": [
@@ -216,7 +216,7 @@
     },
     {
       "name": "RefundClawbackReferral",
-      "class": "Stackra\\Finance\\Refund\\Events\\RefundClawbackReferral",
+      "class": "Academorix\\Finance\\Refund\\Events\\RefundClawbackReferral",
       "trigger": "RefundSucceeded fired + ClawbackCoordinator detected that the refunded invoice was linked to a materialized ReferralReward. Cascades to growth::referrals for reward reversal.",
       "queue": "refunds-critical",
       "consumers": [
@@ -235,7 +235,7 @@
     },
     {
       "name": "RefundClawbackCoupon",
-      "class": "Stackra\\Finance\\Refund\\Events\\RefundClawbackCoupon",
+      "class": "Academorix\\Finance\\Refund\\Events\\RefundClawbackCoupon",
       "trigger": "RefundSucceeded fired + ClawbackCoordinator detected that the refunded invoice had a redeemed coupon. Cascades to coupon module for redemption reversal.",
       "queue": "refunds-critical",
       "consumers": [
@@ -253,13 +253,13 @@
     },
     {
       "name": "RefundNotifiedProvider",
-      "class": "Stackra\\Finance\\Refund\\Events\\RefundNotifiedProvider",
+      "class": "Academorix\\Finance\\Refund\\Events\\RefundNotifiedProvider",
       "trigger": "InitiateProviderRefundJob successfully called the provider's createRefund method and received a 2xx response. Distinct from RefundProcessing (which fires on the async 'processing' state after the call) — this fires immediately after the HTTP call succeeds.",
       "queue": "refunds",
       "consumers": [
         "audit::WriteToAuditLog",
         "activity::WriteToActivityLog",
-        "observability::MetricsCollector (stackra.refund.provider_dispatch_total labelled by provider)"
+        "observability::MetricsCollector (academorix.refund.provider_dispatch_total labelled by provider)"
       ],
       "payload": {
         "refund_id": "ULID",
@@ -272,14 +272,14 @@
     },
     {
       "name": "RefundProviderError",
-      "class": "Stackra\\Finance\\Refund\\Events\\RefundProviderError",
+      "class": "Academorix\\Finance\\Refund\\Events\\RefundProviderError",
       "trigger": "Refund.status transitioned processing -> provider_error. Provider returned a non-terminal error (network timeout, transient outage, rate limit) — the refund is retryable via ReconcileRefundsJob or manual force-fail after investigation. P1 signal — actionable to ops.",
       "queue": "refunds-critical",
       "consumers": [
         "audit::WriteToAuditLog (retention: 7 years)",
         "activity::WriteToActivityLog",
         "notifications::DispatchRefundStatusNotification (admin only — do not alarm customer until terminal)",
-        "observability::MetricsCollector (stackra.refund.provider_errors_total labelled by provider + error_category)"
+        "observability::MetricsCollector (academorix.refund.provider_errors_total labelled by provider + error_category)"
       ],
       "payload": {
         "refund_id": "ULID",
@@ -294,13 +294,13 @@
     },
     {
       "name": "RefundProviderReconciled",
-      "class": "Stackra\\Finance\\Refund\\Events\\RefundProviderReconciled",
+      "class": "Academorix\\Finance\\Refund\\Events\\RefundProviderReconciled",
       "trigger": "Provider webhook (via payment::PaymentWebhookHandler dispatching a refund-status webhook) OR ReconcileRefundsJob detected a state change on the provider side. The refund's status is now aligned with the provider's authoritative record. Distinct from RefundSucceeded / RefundFailed — this event fires FIRST (before terminal transition) to record the reconciliation itself.",
       "queue": "refunds",
       "consumers": [
         "audit::WriteToAuditLog (retention: 7 years)",
         "activity::WriteToActivityLog",
-        "observability::MetricsCollector (stackra.refund.reconciliations_total labelled by drift_detected)"
+        "observability::MetricsCollector (academorix.refund.reconciliations_total labelled by drift_detected)"
       ],
       "payload": {
         "refund_id": "ULID",

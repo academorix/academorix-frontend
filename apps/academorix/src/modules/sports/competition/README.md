@@ -1,4 +1,4 @@
-# stackra/competition
+# academorix/competition
 
 Server-side Laravel package for the `competition` module. Auto-generated from
 the blueprint at `modules/sports/blueprints/competition/`.
@@ -49,6 +49,6 @@ file is a hand-tuned override that survives regeneration.
 ## Companion wire SDK
 
 The wire-visible Saloon + Spatie Data package lives at
-`stackra-sports/competition-sdk` under `sdk/sports-competition-sdk/`.
+`academorix-sports/competition-sdk` under `sdk/sports-competition-sdk/`.
 Consumers cross the service boundary through the SDK; this package is the
 SERVER-side owner of the domain.

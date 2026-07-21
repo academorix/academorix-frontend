@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Stackra\DigitalPasses\Tests;
+namespace Academorix\DigitalPasses\Tests;
 
 use Orchestra\Testbench\TestCase as OrchestraTestCase;
 

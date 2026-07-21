@@ -1,12 +1,12 @@
 {
-  "id": "stackra://modules/transaction/policies",
+  "id": "academorix://modules/transaction/policies",
   "$version": 1,
   "title": "transaction — authorization policies",
   "description": "Two policies, one per owned model. WRITE actions on Transaction + TransactionLedgerEntry are NEVER exposed to HTTP — transactions are recorded ONLY through internal service calls (TransactionRecorder) by invoice / payment / refund / chargeback modules. The one exception is the reversal endpoint, which creates a NEW offsetting transaction (never mutates). Ledger entries are ALWAYS internal — no HTTP surface for them at all.",
   "policies": [
     {
       "model": "Transaction",
-      "class": "Stackra\\Finance\\Transaction\\Policies\\TransactionPolicy",
+      "class": "Academorix\\Finance\\Transaction\\Policies\\TransactionPolicy",
       "abilities": [
         {
           "action": "viewAny",
@@ -53,7 +53,7 @@
     },
     {
       "model": "TransactionLedgerEntry",
-      "class": "Stackra\\Finance\\Transaction\\Policies\\TransactionLedgerEntryPolicy",
+      "class": "Academorix\\Finance\\Transaction\\Policies\\TransactionLedgerEntryPolicy",
       "abilities": [
         {
           "action": "viewAny",

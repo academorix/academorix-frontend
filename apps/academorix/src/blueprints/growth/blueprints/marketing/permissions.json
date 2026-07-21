@@ -1,8 +1,8 @@
 {
-  "id": "stackra://modules/marketing/permissions",
+  "id": "academorix://modules/marketing/permissions",
   "$version": 1,
   "title": "marketing — permissions",
-  "seeder": "Stackra\\Growth\\Marketing\\Database\\Seeders\\MarketingPermissionSeeder",
+  "seeder": "Academorix\\Growth\\Marketing\\Database\\Seeders\\MarketingPermissionSeeder",
   "isSystem": true,
   "description": "Two audiences. Tenant plane (sanctum) — provider CRUD by owner + admin; event + delivery reads by owner + admin + marketing role + support role; dead-letter management by owner + admin (replay requires Enterprise entitlement). Platform plane (platform_admin) — cross-tenant support tooling for ops + support cross-tenant P1 review. All tenant-plane permissions carry the `marketing.` prefix (or `platform.marketing.` on the platform audience) per hierarchy.md §4 audience-boundary rules.",
   "permissions": [

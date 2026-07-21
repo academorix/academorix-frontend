@@ -1,76 +1,76 @@
 {
-  "id": "stackra://modules/tax/rules",
+  "id": "academorix://modules/tax/rules",
   "$version": 1,
   "title": "tax — validation rules",
   "description": "Custom Laravel validation rules published by TaxServiceProvider::boot(). All rules are used both by the observer chain (for authoritative refusal on write) AND by FormRequest data classes (for early request-time validation with clear error surfaces).",
-  "namespace": "Stackra\\Finance\\Tax\\Rules",
+  "namespace": "Academorix\\Finance\\Tax\\Rules",
   "rules": [
     {
       "name": "valid_percentage",
-      "class": "Stackra\\Finance\\Tax\\Rules\\ValidPercentage",
+      "class": "Academorix\\Finance\\Tax\\Rules\\ValidPercentage",
       "signature": "valid_percentage",
       "description": "Decimal in range [0.0000, 1.0000]. Rejects values above 1.0 (100%+ tax rates are almost always misconfigurations). Precision to 4 decimal places (matches DB column shape decimal(5,4)).",
       "default_message": "The :attribute must be a decimal between 0.0000 and 1.0000 (representing 0% to 100%)."
     },
     {
       "name": "valid_country_code",
-      "class": "Stackra\\Finance\\Tax\\Rules\\ValidCountryCode",
+      "class": "Academorix\\Finance\\Tax\\Rules\\ValidCountryCode",
       "signature": "valid_country_code",
       "description": "Value is a valid ISO 3166-1 alpha-2 country code. Backed by league/iso3166 catalog (offline lookup).",
       "default_message": "The :attribute must be a valid ISO 3166-1 alpha-2 country code (e.g. US, GB, DE, JP)."
     },
     {
       "name": "valid_state_code",
-      "class": "Stackra\\Finance\\Tax\\Rules\\ValidStateCode",
+      "class": "Academorix\\Finance\\Tax\\Rules\\ValidStateCode",
       "signature": "valid_state_code",
       "description": "Value is a valid ISO 3166-2 subdivision code for the provided country_code. Requires country_code as a parameter or from the same form.",
       "default_message": "The :attribute must be a valid ISO 3166-2 subdivision code for country ':country_code'."
     },
     {
       "name": "valid_postal_pattern",
-      "class": "Stackra\\Finance\\Tax\\Rules\\ValidPostalPattern",
+      "class": "Academorix\\Finance\\Tax\\Rules\\ValidPostalPattern",
       "signature": "valid_postal_pattern",
       "description": "Value is a valid PCRE regex. Tests compilation by attempting @preg_match($pattern, '') and checking for errors.",
       "default_message": "The :attribute must be a valid PCRE regex pattern."
     },
     {
       "name": "valid_iso_currency",
-      "class": "Stackra\\Finance\\Tax\\Rules\\ValidIsoCurrency",
+      "class": "Academorix\\Finance\\Tax\\Rules\\ValidIsoCurrency",
       "signature": "valid_iso_currency",
       "description": "ISO 4217 3-letter uppercase currency code. Skipped when the parent field (e.g. source_currency on tax_calculations) is null.",
       "default_message": "The :attribute must be a valid ISO 4217 currency code (e.g. USD, EUR, GBP, JPY)."
     },
     {
       "name": "valid_positive_amount",
-      "class": "Stackra\\Finance\\Tax\\Rules\\ValidPositiveAmount",
+      "class": "Academorix\\Finance\\Tax\\Rules\\ValidPositiveAmount",
       "signature": "valid_positive_amount",
       "description": "Integer >= 0 in cents. NOTE: unlike some finance rules, tax allows negative amounts on refund calculations — those are validated by a distinct rule. This rule is for CREATE paths (rates, jurisdictions) where negatives are always wrong.",
       "default_message": "The :attribute must be a non-negative integer (in cents)."
     },
     {
       "name": "valid_effective_range",
-      "class": "Stackra\\Finance\\Tax\\Rules\\ValidEffectiveRange",
+      "class": "Academorix\\Finance\\Tax\\Rules\\ValidEffectiveRange",
       "signature": "valid_effective_range",
       "description": "For fields (effective_from, effective_to) or (valid_from, valid_until): the start date must be strictly less than the end date when both are set. Either side null is OK.",
       "default_message": "The :attribute range is invalid: start date must be before end date."
     },
     {
       "name": "valid_provider_config",
-      "class": "Stackra\\Finance\\Tax\\Rules\\ValidProviderConfig",
+      "class": "Academorix\\Finance\\Tax\\Rules\\ValidProviderConfig",
       "signature": "valid_provider_config",
       "description": "config jsonb validates against the per-provider JSON Schema in data/providers/<provider>-config.schema.json. TaxJar: api_token. Avalara: account_id + license_key + company_code. Stripe Tax: api_key. NativeCalculator: {} (empty — no external credentials). Custom Webhook: webhook_url + hmac_secret.",
       "default_message": "The provider config does not match the schema for the ':provider' provider. Missing required fields: :missing_fields."
     },
     {
       "name": "valid_exemption_certificate_url",
-      "class": "Stackra\\Finance\\Tax\\Rules\\ValidExemptionCertificateUrl",
+      "class": "Academorix\\Finance\\Tax\\Rules\\ValidExemptionCertificateUrl",
       "signature": "valid_exemption_certificate_url",
       "description": "certificate_document_url must (a) start with 'https://', (b) resolve to the tenant's S3 bucket prefix (e.g. https://stackra-certificates.s3.amazonaws.com/tenants/{tenant_short_id}/...), (c) NOT contain query parameters that expose the underlying signing key (only tenant-scoped signed URL params allowed).",
       "default_message": "The :attribute must be an HTTPS S3 signed URL under the tenant's scoped bucket prefix."
     },
     {
       "name": "valid_verification_status_transition",
-      "class": "Stackra\\Finance\\Tax\\Rules\\ValidVerificationStatusTransition",
+      "class": "Academorix\\Finance\\Tax\\Rules\\ValidVerificationStatusTransition",
       "signature": "valid_verification_status_transition",
       "description": "verification_status state machine. Valid transitions: pending → verified (with verified_by_user_id set OR is_automatic_registry_check=true); pending → rejected (with rejection_reason set); verified → expired (automatic only, via ExpireExemptionsJob). No transitions FROM verified back to pending. No un-reject. No un-expire.",
       "default_message": "The verification_status transition from ':old' to ':new' is not allowed."

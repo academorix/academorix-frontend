@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/coaching/errors",
+  "id": "academorix://modules/coaching/errors",
   "$version": 1,
   "title": "coaching — error codes",
   "namespace": "coaching",

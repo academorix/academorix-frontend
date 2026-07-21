@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Drills\Actions\Tenant;
+namespace Academorix\Drills\Actions\Tenant;
 
-use Stackra\Drills\Contracts\Repositories\SessionPlanRepositoryInterface;
-use Stackra\Drills\Data\SessionPlanData;
+use Academorix\Drills\Contracts\Repositories\SessionPlanRepositoryInterface;
+use Academorix\Drills\Data\SessionPlanData;
 use Stackra\Routing\Attributes\AsAction;
 use Stackra\Routing\Attributes\Middleware;
 use Stackra\Routing\Concerns\AsController;
@@ -50,7 +50,7 @@ final class ListSessionPlanAction
      */
     public function __invoke(Request $request): PaginatedDataCollection
     {
-        /** @var LengthAwarePaginator<int, \Stackra\Drills\Models\SessionPlan> $page */
+        /** @var LengthAwarePaginator<int, \Academorix\Drills\Models\SessionPlan> $page */
         $page = $this->repository->paginate(
             perPage: (int) $request->integer('per_page', 15),
         );

@@ -1,12 +1,12 @@
 {
-  "id": "stackra://modules/referrals/observers",
+  "id": "academorix://modules/referrals/observers",
   "$version": 1,
   "title": "referrals — Eloquent observers",
   "description": "Five observers enforce this module's write-time invariants. ReferralProgramObserver validates config shape + entitlement + program window; ReferralCodeObserver enforces unique code + owner-matches-type + slot consumption; ReferralObserver is the load-bearing observer that runs FraudDetector, snapshots attribution, gates the state machine + creates rewards atomically at vested transition; ReferralRewardObserver enforces the reward state machine + calls Finance module for materialization + prevents double-spend; ReferralFraudFlagObserver cascades severity=critical flags to the parent referral.",
   "observers": [
     {
       "model": "ReferralProgram",
-      "observer": "Stackra\\Growth\\Referrals\\Observers\\ReferralProgramObserver",
+      "observer": "Academorix\\Growth\\Referrals\\Observers\\ReferralProgramObserver",
       "handles": [
         "creating → populate ULID prefix `rpg_`",
         "creating → refuse when tenant does NOT hold `referrals_capture` entitlement (returns `REFERRAL_CAPTURE_NOT_ENTITLED`)",
@@ -31,7 +31,7 @@
     },
     {
       "model": "ReferralCode",
-      "observer": "Stackra\\Growth\\Referrals\\Observers\\ReferralCodeObserver",
+      "observer": "Academorix\\Growth\\Referrals\\Observers\\ReferralCodeObserver",
       "handles": [
         "creating → populate ULID prefix `rcd_`",
         "creating → refuse when parent program.status NOT IN ('draft','active') — no code creation on paused/archived",
@@ -51,7 +51,7 @@
     },
     {
       "model": "Referral",
-      "observer": "Stackra\\Growth\\Referrals\\Observers\\ReferralObserver",
+      "observer": "Academorix\\Growth\\Referrals\\Observers\\ReferralObserver",
       "handles": [
         "creating → populate ULID prefix `ref_`",
         "creating → refuse when tenant does NOT hold `referrals_capture` entitlement",
@@ -81,7 +81,7 @@
     },
     {
       "model": "ReferralReward",
-      "observer": "Stackra\\Growth\\Referrals\\Observers\\ReferralRewardObserver",
+      "observer": "Academorix\\Growth\\Referrals\\Observers\\ReferralRewardObserver",
       "handles": [
         "creating → populate ULID prefix `rrw_`",
         "creating → verify parent Referral status IN ('vesting','vested') — otherwise refuse (returns `REFERRAL_REWARD_INVALID_PARENT_STATUS`)",
@@ -103,7 +103,7 @@
     },
     {
       "model": "ReferralFraudFlag",
-      "observer": "Stackra\\Growth\\Referrals\\Observers\\ReferralFraudFlagObserver",
+      "observer": "Academorix\\Growth\\Referrals\\Observers\\ReferralFraudFlagObserver",
       "handles": [
         "creating → populate ULID prefix `rfr_`",
         "creating → verify parent Referral.tenant_id equals flag.tenant_id (cross-tenant guard)",

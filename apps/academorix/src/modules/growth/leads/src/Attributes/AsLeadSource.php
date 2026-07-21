@@ -4,7 +4,7 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Leads\Attributes;
+namespace Academorix\Leads\Attributes;
 
 use Attribute;
 

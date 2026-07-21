@@ -1,12 +1,12 @@
 {
-  "id": "stackra://modules/analytics/health",
+  "id": "academorix://modules/analytics/health",
   "$version": 1,
   "title": "analytics — health probes",
   "description": "Per-provider reachability probes + capture pipeline probes.",
   "probes": [
     {
       "name": "analytics-posthog-reachable",
-      "class": "Stackra\\Growth\\Analytics\\Health\\Probes\\PostHogReachableProbe",
+      "class": "Academorix\\Growth\\Analytics\\Health\\Probes\\PostHogReachableProbe",
       "category": "readiness",
       "critical": false,
       "description": "GET https://{host}/decide/?token={api_token} \u2014 verifies credentials + reachability. Only when a PostHog config is active for at least one tenant.",
@@ -15,7 +15,7 @@
     },
     {
       "name": "analytics-amplitude-reachable",
-      "class": "Stackra\\Growth\\Analytics\\Health\\Probes\\AmplitudeReachableProbe",
+      "class": "Academorix\\Growth\\Analytics\\Health\\Probes\\AmplitudeReachableProbe",
       "category": "readiness",
       "critical": false,
       "description": "OPTIONS request to /2/httpapi (no-op that validates reachability).",
@@ -24,7 +24,7 @@
     },
     {
       "name": "analytics-mixpanel-reachable",
-      "class": "Stackra\\Growth\\Analytics\\Health\\Probes\\MixpanelReachableProbe",
+      "class": "Academorix\\Growth\\Analytics\\Health\\Probes\\MixpanelReachableProbe",
       "category": "readiness",
       "critical": false,
       "timeoutMs": 3000,
@@ -32,7 +32,7 @@
     },
     {
       "name": "analytics-segment-reachable",
-      "class": "Stackra\\Growth\\Analytics\\Health\\Probes\\SegmentReachableProbe",
+      "class": "Academorix\\Growth\\Analytics\\Health\\Probes\\SegmentReachableProbe",
       "category": "readiness",
       "critical": false,
       "timeoutMs": 3000,
@@ -40,7 +40,7 @@
     },
     {
       "name": "analytics-june-reachable",
-      "class": "Stackra\\Growth\\Analytics\\Health\\Probes\\JuneReachableProbe",
+      "class": "Academorix\\Growth\\Analytics\\Health\\Probes\\JuneReachableProbe",
       "category": "readiness",
       "critical": false,
       "timeoutMs": 3000,
@@ -48,7 +48,7 @@
     },
     {
       "name": "analytics-google-analytics-4-reachable",
-      "class": "Stackra\\Growth\\Analytics\\Health\\Probes\\GoogleAnalytics4ReachableProbe",
+      "class": "Academorix\\Growth\\Analytics\\Health\\Probes\\GoogleAnalytics4ReachableProbe",
       "category": "readiness",
       "critical": false,
       "description": "GA4 measurement protocol has no ping endpoint \u2014 probe uses a debug event dispatch to /mp/collect?debug_mode=true.",
@@ -57,7 +57,7 @@
     },
     {
       "name": "analytics-batch-buffer-writable",
-      "class": "Stackra\\Growth\\Analytics\\Health\\Probes\\BatchBufferWritableProbe",
+      "class": "Academorix\\Growth\\Analytics\\Health\\Probes\\BatchBufferWritableProbe",
       "category": "readiness",
       "critical": true,
       "description": "Redis PING + a probe key write/read. Critical \u2014 without the buffer, batched dispatch collapses.",
@@ -65,7 +65,7 @@
     },
     {
       "name": "analytics-capture-pipeline",
-      "class": "Stackra\\Growth\\Analytics\\Health\\Probes\\CapturePipelineProbe",
+      "class": "Academorix\\Growth\\Analytics\\Health\\Probes\\CapturePipelineProbe",
       "category": "readiness",
       "critical": false,
       "description": "Round-trip probe: fake AnalyticsEventCapturer emits a probe event tagged internal=true; probe waits up to 5s for the DispatchAnalyticsEventJob to fire. Validates the full capture \u2192 fan-out chain wiring.",
@@ -73,7 +73,7 @@
     },
     {
       "name": "analytics-open-circuits-count",
-      "class": "Stackra\\Growth\\Analytics\\Health\\Probes\\OpenCircuitsCountProbe",
+      "class": "Academorix\\Growth\\Analytics\\Health\\Probes\\OpenCircuitsCountProbe",
       "category": "readiness",
       "critical": false,
       "description": "Counts open circuits across all tenants + providers. Warn at 3+; fail at 10+ (widespread provider outage).",

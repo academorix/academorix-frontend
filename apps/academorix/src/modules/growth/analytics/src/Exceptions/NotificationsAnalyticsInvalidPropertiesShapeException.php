@@ -4,7 +4,7 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Analytics\Exceptions;
+namespace Academorix\Analytics\Exceptions;
 
 use Stackra\Exceptions\StackraException;
 

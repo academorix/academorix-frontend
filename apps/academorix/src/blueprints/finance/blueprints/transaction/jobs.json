@@ -1,10 +1,10 @@
 {
-  "id": "stackra://modules/transaction/jobs",
+  "id": "academorix://modules/transaction/jobs",
   "$version": 1,
   "title": "transaction — background jobs",
   "jobs": [
     {
-      "class": "Stackra\\Finance\\Transaction\\Jobs\\RecordInvoicePaidTransactionJob",
+      "class": "Academorix\\Finance\\Transaction\\Jobs\\RecordInvoicePaidTransactionJob",
       "queue": "finance",
       "purpose": "Listener-driven. Fired by an invoice module listener when Invoice.paid fires. Delegates to TransactionRecorder::recordInvoicePayment() which builds a transaction (kind='invoice_payment') + [debit: cash, credit: accounts_receivable] ledger entries in the same DB transaction as the invoice update. If the transaction commit fails, the invoice-paid state must roll back too — the invoice listener owns the atomicity.",
       "steps": [
@@ -24,7 +24,7 @@
       "backoff": [30, 120, 600, 3600, 14400]
     },
     {
-      "class": "Stackra\\Finance\\Transaction\\Jobs\\RecordRefundIssuedTransactionJob",
+      "class": "Academorix\\Finance\\Transaction\\Jobs\\RecordRefundIssuedTransactionJob",
       "queue": "finance",
       "purpose": "Listener-driven. Fired by a refund module listener when refund.issued fires. Records TWO transactions: (1) kind='refund_issued' with [debit: refunds_owed, credit: cash] — the money leaves; (2) kind='adjustment' with [debit: refunds_expense, credit: revenue] (reversed) — the revenue is un-recognized. Both transactions share source_transaction_id pointing at the original invoice-payment transaction.",
       "steps": [
@@ -45,7 +45,7 @@
       "backoff": [30, 120, 600, 3600, 14400]
     },
     {
-      "class": "Stackra\\Finance\\Transaction\\Jobs\\RecordChargebackTransactionJob",
+      "class": "Academorix\\Finance\\Transaction\\Jobs\\RecordChargebackTransactionJob",
       "queue": "finance-critical",
       "purpose": "Listener-driven. Fired by a chargeback module listener when chargeback.filed fires. Records a transaction (kind='chargeback_debit') + [debit: chargebacks_expense, credit: cash] ledger entries — the money leaves the tenant's cash account into the bank's chargeback bucket. Distinct from refund_issued because chargebacks are involuntary + carry regulator-tracked reason codes.",
       "steps": [
@@ -65,7 +65,7 @@
       "backoff": [30, 120, 600, 3600, 14400]
     },
     {
-      "class": "Stackra\\Finance\\Transaction\\Jobs\\ReconcileLedgerBalancesJob",
+      "class": "Academorix\\Finance\\Transaction\\Jobs\\ReconcileLedgerBalancesJob",
       "queue": "finance",
       "purpose": "Nightly. The load-bearing integrity check. For every tenant, computes SUM(debit_cents) - SUM(credit_cents) globally per account per day + per transaction. Any non-zero delta fires LedgerImbalanceDetected (P0). Also computes running account balances + fires AccountBalanceThresholdCrossed when thresholds cross.",
       "steps": [
@@ -83,7 +83,7 @@
       "tries": 2
     },
     {
-      "class": "Stackra\\Finance\\Transaction\\Jobs\\GenerateGeneralLedgerReportJob",
+      "class": "Academorix\\Finance\\Transaction\\Jobs\\GenerateGeneralLedgerReportJob",
       "queue": "finance",
       "purpose": "Monthly. Generates a per-tenant General Ledger (GL) report for the closed month: per-account opening balance + all posted transactions + closing balance + total debits + total credits. Report format = accountant-shaped CSV + JSONL. Delivered via MonthlyLedgerReportNotification to the finance-role user list configured in tenant settings.",
       "steps": [
@@ -100,7 +100,7 @@
       "tries": 2
     },
     {
-      "class": "Stackra\\Finance\\Transaction\\Jobs\\PurgeExpiredTransactionDataJob",
+      "class": "Academorix\\Finance\\Transaction\\Jobs\\PurgeExpiredTransactionDataJob",
       "queue": "finance",
       "purpose": "Weekly sweep. Applies the per-entity retention windows: transactions > 7 years past effective_date → archive to compliance-storage then hard-delete; transaction_ledger_entries cascade via FK. Enterprise tenants with transaction_extended_retention: 10-year retention. NEVER hard-purges without first archiving — a copy always lives in compliance-storage per SOX 404 + regulator record-retention.",
       "steps": [
@@ -109,7 +109,7 @@
         "After archive verified: DELETE FROM transaction_ledger_entries WHERE transaction_id IN (...) (cascade)",
         "DELETE FROM transactions WHERE id IN (...)",
         "For Enterprise tenants: same query but with 10-year threshold",
-        "Emit stackra.transaction.purged_total metric"
+        "Emit academorix.transaction.purged_total metric"
       ],
       "shouldQueue": true,
       "shouldBeUnique": true,

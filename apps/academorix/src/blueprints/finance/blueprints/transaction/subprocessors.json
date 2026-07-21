@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/transaction/subprocessors",
+  "id": "academorix://modules/transaction/subprocessors",
   "$version": 1,
   "title": "transaction — subprocessors",
   "description": "The Transaction module engages up to THREE third-party subprocessors — all for exchange-rate lookup during cross-currency transactions. Tenants using multi-currency (Medium+ tier) can choose one at settings-time; tenants operating single-currency engage NO subprocessors. All three are FX-rate data providers; no PII / no financial account data / no card data flows through any of them (they receive only currency-pair codes like 'USD-EUR' at rate-fetch time). GDPR Art. 28 DPA references + Art. 30 records of processing activities apply.",

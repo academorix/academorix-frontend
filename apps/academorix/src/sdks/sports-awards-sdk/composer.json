@@ -1,10 +1,10 @@
 {
-  "name": "stackra-sports/awards-sdk",
+  "name": "academorix-sports/awards-sdk",
   "type": "library",
-  "description": "Wire-visible SDK surface (Spatie Data DTOs + Saloon Request transport + fluent Resources) for the `awards` module of the Sports service. Auto-discovered at boot by stackra/sports-sdk via #[AsSdkResource(name: 'awards', service: 'sports')]; consumed by every cross-service caller strictly over HTTP.",
+  "description": "Wire-visible SDK surface (Spatie Data DTOs + Saloon Request transport + fluent Resources) for the `awards` module of the Sports service. Auto-discovered at boot by academorix/sports-sdk via #[AsSdkResource(name: 'awards', service: 'sports')]; consumed by every cross-service caller strictly over HTTP.",
   "license": "proprietary",
   "keywords": [
-    "stackra",
+    "academorix",
     "sdk",
     "saloon",
     "spatie-data",
@@ -32,12 +32,12 @@
   },
   "autoload": {
     "psr-4": {
-      "Stackra\\\\SportsAwardsSdk\\\\": "src/"
+      "Academorix\\\\SportsAwardsSdk\\": "src/"
     }
   },
   "autoload-dev": {
     "psr-4": {
-      "Stackra\\\\SportsAwardsSdk\\\\Tests\\\\": "tests/"
+      "Academorix\\\\SportsAwardsSdk\\\\Tests\\": "tests/"
     }
   },
   "extra": {

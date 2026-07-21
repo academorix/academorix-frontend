@@ -1,11 +1,11 @@
 {
-  "id": "stackra://modules/refund/health",
+  "id": "academorix://modules/refund/health",
   "$version": 1,
   "title": "refund — health probes",
   "probes": [
     {
       "name": "refund-schema-migrations-applied",
-      "class": "Stackra\\Finance\\Refund\\Health\\Probes\\SchemaMigrationsAppliedProbe",
+      "class": "Academorix\\Finance\\Refund\\Health\\Probes\\SchemaMigrationsAppliedProbe",
       "category": "startup",
       "critical": true,
       "description": "Confirms both migrations this module ships have run: refunds + refund_lines, plus their composite unique indexes.",
@@ -13,7 +13,7 @@
     },
     {
       "name": "refund-unique-indexes-present",
-      "class": "Stackra\\Finance\\Refund\\Health\\Probes\\UniqueIndexesPresentProbe",
+      "class": "Academorix\\Finance\\Refund\\Health\\Probes\\UniqueIndexesPresentProbe",
       "category": "startup",
       "critical": true,
       "description": "Confirms the composite unique indexes exist: (tenant_id, refund_number) on refunds; (tenant_id, refund_id, invoice_line_id) on refund_lines. Missing any index risks duplicate refund_number generation OR double-refunding a single invoice line.",
@@ -21,7 +21,7 @@
     },
     {
       "name": "refund-approvals-not-stale",
-      "class": "Stackra\\Finance\\Refund\\Health\\Probes\\ApprovalsNotStaleProbe",
+      "class": "Academorix\\Finance\\Refund\\Health\\Probes\\ApprovalsNotStaleProbe",
       "category": "readiness",
       "critical": false,
       "description": "Warns when > 5 refunds sit in awaiting_approval > refund.approval.approval_sla_hours (default 24h). Actionable — consumer-protection-law SLAs risk breach. Fires per-tenant.",
@@ -29,7 +29,7 @@
     },
     {
       "name": "refund-provider-errors-clearing",
-      "class": "Stackra\\Finance\\Refund\\Health\\Probes\\ProviderErrorsClearingProbe",
+      "class": "Academorix\\Finance\\Refund\\Health\\Probes\\ProviderErrorsClearingProbe",
       "category": "readiness",
       "critical": false,
       "description": "Warns when > 20 refunds are stuck in status='provider_error' > refund.reconciliation.stale_provider_error_threshold_hours (default 24h). Indicates ReconcileRefundsJob has stalled OR a provider is systemically failing.",
@@ -37,15 +37,15 @@
     },
     {
       "name": "refund-finalization-chain-clean",
-      "class": "Stackra\\Finance\\Refund\\Health\\Probes\\FinalizationChainCleanProbe",
+      "class": "Academorix\\Finance\\Refund\\Health\\Probes\\FinalizationChainCleanProbe",
       "category": "readiness",
       "critical": true,
-      "description": "Reads stackra.refund.finalization_failures_total counter. Any non-zero value in the last 24h is a P1 signal — FinalizeRefundJob failed to complete the credit-note + transaction + clawback + marketing chain, leaving a succeeded refund with orphan side effects.",
+      "description": "Reads academorix.refund.finalization_failures_total counter. Any non-zero value in the last 24h is a P1 signal — FinalizeRefundJob failed to complete the credit-note + transaction + clawback + marketing chain, leaving a succeeded refund with orphan side effects.",
       "timeoutMs": 200
     },
     {
       "name": "refund-succeeded-orphans-clean",
-      "class": "Stackra\\Finance\\Refund\\Health\\Probes\\SucceededOrphansCleanProbe",
+      "class": "Academorix\\Finance\\Refund\\Health\\Probes\\SucceededOrphansCleanProbe",
       "category": "readiness",
       "critical": false,
       "description": "Detects refunds in status='succeeded' with credit_note_id IS NULL OR transaction_id IS NULL — the finalization chain partially failed. Warn signal, actionable via refund:generate-credit-note admin CLI.",
@@ -53,7 +53,7 @@
     },
     {
       "name": "refund-reconciler-recent",
-      "class": "Stackra\\Finance\\Refund\\Health\\Probes\\ReconcilerRecentProbe",
+      "class": "Academorix\\Finance\\Refund\\Health\\Probes\\ReconcilerRecentProbe",
       "category": "readiness",
       "critical": false,
       "description": "Confirms ReconcileRefundsJob completed within the last 25 hours (nightly cadence + 1h slop). Stale reconciler indicates scheduler drift.",
@@ -61,7 +61,7 @@
     },
     {
       "name": "refund-provider-manager-healthy",
-      "class": "Stackra\\Finance\\Refund\\Health\\Probes\\ProviderManagerHealthyProbe",
+      "class": "Academorix\\Finance\\Refund\\Health\\Probes\\ProviderManagerHealthyProbe",
       "category": "readiness",
       "critical": false,
       "description": "Delegates to payment::PaymentProviderManager health check. Refund can't dispatch if payment providers are down. Warn when any provider circuit breaker is open.",
@@ -69,7 +69,7 @@
     },
     {
       "name": "refund-clawback-backlog",
-      "class": "Stackra\\Finance\\Refund\\Health\\Probes\\ClawbackBacklogProbe",
+      "class": "Academorix\\Finance\\Refund\\Health\\Probes\\ClawbackBacklogProbe",
       "category": "readiness",
       "critical": false,
       "description": "Warns when > 10 RefundClawbackReferral / RefundClawbackCoupon events are stuck in the queue > 30 min. Indicates downstream referrals/coupon modules are failing to process cascades.",

@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/digital-passes/middleware",
+  "id": "academorix://modules/digital-passes/middleware",
   "$version": 1,
   "title": "digital-passes — HTTP middleware",
   "description": "Middleware aliases this module contributes.",

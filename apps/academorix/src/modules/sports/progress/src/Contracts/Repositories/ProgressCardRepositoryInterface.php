@@ -4,17 +4,17 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Progress\Contracts\Repositories;
+namespace Academorix\Progress\Contracts\Repositories;
 
 use Stackra\Crud\Contracts\RepositoryInterface;
 
 /**
- * Repository contract for {@see Stackra\Progress\Models\ProgressCard}.
+ * Repository contract for {@see Academorix\Progress\Models\ProgressCard}.
  *
  * Consumers type-hint the interface; the container binds the concrete
  * via `#[AsRepository]` on `ProgressCardRepository`.
  *
- * @extends RepositoryInterface<\Stackra\Progress\Models\ProgressCard>
+ * @extends RepositoryInterface<\Academorix\Progress\Models\ProgressCard>
  *
  * @category Progress
  *

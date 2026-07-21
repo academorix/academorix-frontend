@@ -1,69 +1,69 @@
 {
-  "id": "stackra://modules/attribution/rules",
+  "id": "academorix://modules/attribution/rules",
   "$version": 1,
   "title": "attribution — validation rules",
   "description": "Custom Laravel validation rules published by AttributionServiceProvider::boot(). All rules are used both by the observer chain (for authoritative refusal on write) AND by FormRequest data classes (for early request-time validation with clear error surfaces).",
-  "namespace": "Stackra\\Growth\\Attribution\\Rules",
+  "namespace": "Academorix\\Growth\\Attribution\\Rules",
   "rules": [
     {
       "name": "valid_url",
-      "class": "Stackra\\Growth\\Attribution\\Rules\\ValidUrl",
+      "class": "Academorix\\Growth\\Attribution\\Rules\\ValidUrl",
       "signature": "valid_url",
       "description": "Landing page or referrer must be a valid URL per RFC 3986. Scheme must be http | https (never javascript:, data:, file:). Max length 512 chars. Null allowed (referrer is nullable).",
       "default_message": "The :attribute must be a valid http or https URL, max 512 characters."
     },
     {
       "name": "valid_click_id_shape",
-      "class": "Stackra\\Growth\\Attribution\\Rules\\ValidClickIdShape",
+      "class": "Academorix\\Growth\\Attribution\\Rules\\ValidClickIdShape",
       "signature": "valid_click_id_shape",
       "description": "Validates the click_id jsonb blob against schemas/attribution.schema.json + data/click-id-catalog.json. Shape: { gclid?, fbclid?, ttclid?, msclkid?, sccid?, provider_hint }. Every present key must match its provider's expected pattern (Google gclid: alphanumeric + dashes + underscores + ~100 chars; Meta fbclid: alphanumeric + dashes + underscores + ~200 chars; etc.). provider_hint must be one of { google, meta, tiktok, microsoft, snapchat, none }.",
       "default_message": "The :attribute has an invalid click ID shape. See schemas/attribution.schema.json for the expected structure."
     },
     {
       "name": "valid_utm_length_bounds",
-      "class": "Stackra\\Growth\\Attribution\\Rules\\ValidUtmLengthBounds",
+      "class": "Academorix\\Growth\\Attribution\\Rules\\ValidUtmLengthBounds",
       "signature": "valid_utm_length_bounds",
       "description": "utm_source (max 128), utm_medium (max 64), utm_campaign (max 256), utm_content (max 256), utm_term (max 256). Values exceeding bounds are refused (rather than silently truncated) so tenants notice malformed campaign URLs.",
       "default_message": "The :attribute exceeds the maximum length. utm_source ≤ 128, utm_medium ≤ 64, utm_campaign / content / term ≤ 256."
     },
     {
       "name": "valid_session_id",
-      "class": "Stackra\\Growth\\Attribution\\Rules\\ValidSessionId",
+      "class": "Academorix\\Growth\\Attribution\\Rules\\ValidSessionId",
       "signature": "valid_session_id",
       "description": "session_id must be a valid UUID v4. Version 1 UUIDs are refused because they leak MAC address; v4 is random. The check runs on new_session_id + was_session_id.",
       "default_message": "The :attribute must be a valid UUID v4."
     },
     {
       "name": "valid_ip_hash",
-      "class": "Stackra\\Growth\\Attribution\\Rules\\ValidIpHash",
+      "class": "Academorix\\Growth\\Attribution\\Rules\\ValidIpHash",
       "signature": "valid_ip_hash",
       "description": "ip_hash must be a valid SHA-256 hex string (exactly 64 chars, [0-9a-f]). Rejects unhashed IPs (colons in IPv6, dots in IPv4) — the observer never accepts raw IPs.",
       "default_message": "The :attribute must be a SHA-256 hex hash (64 characters, [0-9a-f]). Raw IP addresses are refused."
     },
     {
       "name": "valid_lifecycle_state_transition",
-      "class": "Stackra\\Growth\\Attribution\\Rules\\ValidLifecycleStateTransition",
+      "class": "Academorix\\Growth\\Attribution\\Rules\\ValidLifecycleStateTransition",
       "signature": "valid_lifecycle_state_transition",
       "description": "Enforces the state machine: anonymous → identified → converted (forward-only), plus lifecycle → churned (from any non-terminal state), plus churned → identified | anonymous (via AttributionRestored). Backward transitions (converted → identified, churned → converted without going through identified) refused. Reset is a special-cased path that redacts the row rather than transitioning.",
       "default_message": "The lifecycle state transition ':was → :new' is not allowed. Only forward transitions are permitted (except reset)."
     },
     {
       "name": "valid_attribution_scoping",
-      "class": "Stackra\\Growth\\Attribution\\Rules\\ValidAttributionScoping",
+      "class": "Academorix\\Growth\\Attribution\\Rules\\ValidAttributionScoping",
       "signature": "valid_attribution_scoping",
       "description": "Enforces (subject_type, subject_id) shape: user/athlete/lead → ULID with the correct prefix (usr_ / ath_ / lead_); anonymous_session → UUID v4. Refuses cross-tenant subject_id references (subject.tenant_id != attribution.tenant_id).",
       "default_message": "The subject_type ':subject_type' requires a subject_id in the correct shape. See rule catalog for expected shapes."
     },
     {
       "name": "valid_device_snapshot",
-      "class": "Stackra\\Growth\\Attribution\\Rules\\ValidDeviceSnapshot",
+      "class": "Academorix\\Growth\\Attribution\\Rules\\ValidDeviceSnapshot",
       "signature": "valid_device_snapshot",
       "description": "device_snapshot jsonb must contain: user_agent_hash (SHA-256 shape) + ip_hash (SHA-256 shape) + device_type (mobile | tablet | desktop | bot | other) + browser (string, max 64) + os (string, max 64) + is_mobile (bool). Optional: screen_size (string, max 32) + timezone (IANA string, max 64) + locale (BCP-47 string, max 16). NEVER contains raw UA / raw IP.",
       "default_message": "The device_snapshot jsonb is malformed. See schemas/attribution.schema.json § device_snapshot."
     },
     {
       "name": "valid_consent_snapshot",
-      "class": "Stackra\\Growth\\Attribution\\Rules\\ValidConsentSnapshot",
+      "class": "Academorix\\Growth\\Attribution\\Rules\\ValidConsentSnapshot",
       "signature": "valid_consent_snapshot",
       "description": "consent_snapshot jsonb must contain the four attribution-relevant booleans: { marketing, advertising, personalized_advertising, functional }. Every value must be a bool (never null / string). Extra keys are refused — the schema is closed for regulator-queryability.",
       "default_message": "The consent_snapshot must contain the four booleans: marketing, advertising, personalized_advertising, functional. Extra keys are not permitted."

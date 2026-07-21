@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Region\Exceptions;
 
-use Stackra\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Attempted to create a Region with a (tenant_id, slug) pair that already exists.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class RegionAlreadyExistsException extends AcademorixException
+final class RegionAlreadyExistsException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

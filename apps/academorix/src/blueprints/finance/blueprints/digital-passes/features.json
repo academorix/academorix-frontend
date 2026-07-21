@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/digital-passes/features",
+  "id": "academorix://modules/digital-passes/features",
   "$version": 1,
   "title": "digital-passes — feature keys",
   "features": [

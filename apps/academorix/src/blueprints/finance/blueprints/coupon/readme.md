@@ -138,7 +138,7 @@ Enforced by:
    exceeds `usage_cap` (returns `COUPON_USAGE_CAP_EXCEEDED`, a P1 signal because
    it means the redeemer's guard leaked).
 
-The metric `stackra.coupons.atomicity.failures_total` should stay at 0.
+The metric `academorix.coupons.atomicity.failures_total` should stay at 0.
 
 ## 5. Discount type semantics
 

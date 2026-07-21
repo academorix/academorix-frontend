@@ -4,7 +4,7 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Geofencing\Exceptions;
+namespace Academorix\Geofencing\Exceptions;
 
 use Stackra\Exceptions\StackraException;
 

@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Coupon\Contracts\Services;
+namespace Academorix\Coupon\Contracts\Services;
 
-use Stackra\Coupon\Models\CouponRedemption;
-use Stackra\Coupon\Services\CouponRedeemer;
+use Academorix\Coupon\Models\CouponRedemption;
+use Academorix\Coupon\Services\CouponRedeemer;
 use Illuminate\Container\Attributes\Bind;
 
 /**
@@ -36,7 +36,7 @@ interface CouponRedeemerInterface
      *
      * Fails-closed via exception when the redemption cannot be
      * committed — the exception hierarchy under
-     * `Stackra\Coupon\Exceptions` maps 1:1 to the refusal
+     * `Academorix\Coupon\Exceptions` maps 1:1 to the refusal
      * reasons in `blueprints/coupon/errors.json`. Callers should
      * expect to translate the exception into a `CouponRedemptionRefused`
      * event before rethrowing when they need graceful failure
@@ -58,15 +58,15 @@ interface CouponRedeemerInterface
      * @param  string|null $planId         Membership plan id (when applied
      *                                     to a plan-eligible order).
      *
-     * @throws \Stackra\Coupon\Exceptions\CouponNotFoundException
-     * @throws \Stackra\Coupon\Exceptions\CouponInactiveException
-     * @throws \Stackra\Coupon\Exceptions\CouponExpiredException
-     * @throws \Stackra\Coupon\Exceptions\CouponUsageCapReachedException
-     * @throws \Stackra\Coupon\Exceptions\CouponCustomerLimitReachedException
-     * @throws \Stackra\Coupon\Exceptions\CouponApplicabilityMismatchException
-     * @throws \Stackra\Coupon\Exceptions\CouponMinimumOrderNotMetException
-     * @throws \Stackra\Coupon\Exceptions\CouponCurrencyMismatchException
-     * @throws \Stackra\Coupon\Exceptions\CouponAlreadyRedeemedOnTargetException
+     * @throws \Academorix\Coupon\Exceptions\CouponNotFoundException
+     * @throws \Academorix\Coupon\Exceptions\CouponInactiveException
+     * @throws \Academorix\Coupon\Exceptions\CouponExpiredException
+     * @throws \Academorix\Coupon\Exceptions\CouponUsageCapReachedException
+     * @throws \Academorix\Coupon\Exceptions\CouponCustomerLimitReachedException
+     * @throws \Academorix\Coupon\Exceptions\CouponApplicabilityMismatchException
+     * @throws \Academorix\Coupon\Exceptions\CouponMinimumOrderNotMetException
+     * @throws \Academorix\Coupon\Exceptions\CouponCurrencyMismatchException
+     * @throws \Academorix\Coupon\Exceptions\CouponAlreadyRedeemedOnTargetException
      *
      * @return CouponRedemption The freshly-persisted redemption row.
      */
@@ -98,8 +98,8 @@ interface CouponRedeemerInterface
      * @param  string  $reversedByUserId  Admin performing the reversal.
      * @param  string  $reason            Free-form reason (audit trail).
      *
-     * @throws \Stackra\Coupon\Exceptions\CouponRedemptionNotFoundException
-     * @throws \Stackra\Coupon\Exceptions\CouponRedemptionAlreadyReversedException
+     * @throws \Academorix\Coupon\Exceptions\CouponRedemptionNotFoundException
+     * @throws \Academorix\Coupon\Exceptions\CouponRedemptionAlreadyReversedException
      *
      * @return CouponRedemption The updated redemption row.
      */

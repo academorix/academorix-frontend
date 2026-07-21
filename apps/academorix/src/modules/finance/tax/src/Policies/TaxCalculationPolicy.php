@@ -4,13 +4,13 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Tax\Policies;
+namespace Academorix\Tax\Policies;
 
 use Stackra\User\Models\User;
-use Stackra\Tax\Models\TaxCalculation;
+use Academorix\Tax\Models\TaxCalculation;
 
 /**
- * Authorization policy for {@see \Stackra\Tax\Models\TaxCalculation}.
+ * Authorization policy for {@see \Academorix\Tax\Models\TaxCalculation}.
  *
  * Wired via `#[UsePolicy]` on the Model.
  *

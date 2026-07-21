@@ -1,14 +1,14 @@
 {
-  "id": "stackra://modules/athlete-guardian/settings",
+  "id": "academorix://modules/athlete-guardian/settings",
   "$version": 1,
   "title": "athlete-guardian — settings",
   "description": "Tenant-facing preferences for guardian workflow (verification cadence, dispute review) + user preferences for guardians managing their own guardianships.",
   "storedIn": "settings",
-  "reference": { "contract": "stackra://modules/settings/attributes" },
+  "reference": { "contract": "academorix://modules/settings/attributes" },
   "groups": [
     {
       "key": "athlete_guardian",
-      "class": "Stackra\\Sports\\AthleteGuardian\\Settings\\AthleteGuardianSettings",
+      "class": "Academorix\\Sports\\AthleteGuardian\\Settings\\AthleteGuardianSettings",
       "label": "Guardians",
       "description": "Tenant-wide guardian workflow defaults.",
       "icon": "users",

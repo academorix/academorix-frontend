@@ -4,14 +4,14 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Analytics\Data;
+namespace Academorix\Analytics\Data;
 
 use Spatie\LaravelData\Attributes\MapInputName;
 use Spatie\LaravelData\Data;
 use Spatie\LaravelData\Mappers\SnakeCaseMapper;
 
 /**
- * Server-side output DTO for {@see \Stackra\Analytics\Models\AnalyticsProviderConfig}.
+ * Server-side output DTO for {@see \Academorix\Analytics\Models\AnalyticsProviderConfig}.
  *
  * Consumed by controllers + services on the SERVER side. This is
  * distinct from the wire SDK's DTO (which sits under

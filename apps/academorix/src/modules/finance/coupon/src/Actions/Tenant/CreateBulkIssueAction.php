@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Coupon\Actions\Tenant;
+namespace Academorix\Coupon\Actions\Tenant;
 
-use Stackra\Coupon\Contracts\Services\CouponIssuerInterface;
-use Stackra\Coupon\Data\CouponData;
-use Stackra\Coupon\Data\Requests\BulkIssueCouponRequestData;
+use Academorix\Coupon\Contracts\Services\CouponIssuerInterface;
+use Academorix\Coupon\Data\CouponData;
+use Academorix\Coupon\Data\Requests\BulkIssueCouponRequestData;
 use Stackra\Routing\Attributes\AsAction;
 use Stackra\Routing\Attributes\Middleware;
 use Stackra\Routing\Attributes\Post;

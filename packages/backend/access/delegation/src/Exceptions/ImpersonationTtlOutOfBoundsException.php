@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Delegation\Exceptions;
 
-use Stackra\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Requested duration exceeds the 60-minute default cap AND tenant lacks impersonation_extended_ttl entitlement, OR requested duration exceeds max_minutes_extended.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class ImpersonationTtlOutOfBoundsException extends AcademorixException
+final class ImpersonationTtlOutOfBoundsException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/invoice/features",
+  "id": "academorix://modules/invoice/features",
   "$version": 1,
   "title": "invoice — feature keys",
   "reference": {

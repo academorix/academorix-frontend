@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Competition\Contracts\Data;
+namespace Academorix\Competition\Contracts\Data;
 
 use Illuminate\Container\Attributes\Bind;
-use Stackra\Competition\Models\BracketNode;
+use Academorix\Competition\Models\BracketNode;
 
 /**
  * Table shape for the `bracket_nodes` table.

@@ -4,16 +4,16 @@
 
 declare(strict_types=1);
 
-namespace Stackra\AgeGroup\Models;
+namespace Academorix\AgeGroup\Models;
 
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
-use Stackra\AgeGroup\Contracts\Data\AgeGroupInterface;
-use Stackra\AgeGroup\Database\Factories\AgeGroupFactory;
-use Stackra\AgeGroup\Policies\AgeGroupPolicy;
+use Academorix\AgeGroup\Contracts\Data\AgeGroupInterface;
+use Academorix\AgeGroup\Database\Factories\AgeGroupFactory;
+use Academorix\AgeGroup\Policies\AgeGroupPolicy;
 use Stackra\Foundation\Concerns\Filterable;
 use Stackra\Foundation\Concerns\HasMetadata;
 use Stackra\Foundation\Concerns\HasPrefixedUlid;

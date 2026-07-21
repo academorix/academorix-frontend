@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Facility\Exceptions;
 
-use Stackra\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Raised when the domain rule `DAY_PASS_DATE_IN_PAST` fires.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class DayPassDateInPastException extends AcademorixException
+final class DayPassDateInPastException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

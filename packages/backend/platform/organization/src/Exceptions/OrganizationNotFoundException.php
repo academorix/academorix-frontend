@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Organization\Exceptions;
 
-use Stackra\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Raised when the domain rule `ORGANIZATION_NOT_FOUND` fires.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class OrganizationNotFoundException extends AcademorixException
+final class OrganizationNotFoundException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

@@ -4,25 +4,25 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Registrations\Repositories;
+namespace Academorix\Registrations\Repositories;
 
 use Stackra\Crud\Attributes\AsRepository;
 use Stackra\Crud\Attributes\Cacheable;
 use Stackra\Crud\Attributes\Filterable;
 use Stackra\Crud\Attributes\UseModel;
 use Stackra\Crud\Repositories\Repository;
-use Stackra\Registrations\Contracts\Data\RegistrationInterface;
-use Stackra\Registrations\Contracts\Repositories\RegistrationRepositoryInterface;
-use Stackra\Registrations\Models\Registration;
+use Academorix\Registrations\Contracts\Data\RegistrationInterface;
+use Academorix\Registrations\Contracts\Repositories\RegistrationRepositoryInterface;
+use Academorix\Registrations\Models\Registration;
 
 /**
- * Attribute-first Eloquent repository for {@see Stackra\Registrations\Models\Registration}.
+ * Attribute-first Eloquent repository for {@see Academorix\Registrations\Models\Registration}.
  *
  * Bound to the interface via `#[AsRepository]`; the model comes from
  * `#[UseModel(RegistrationInterface::class)]` which resolves to
  * `Registration` through the interface's `#[Bind]`.
  *
- * @extends Repository<\Stackra\Registrations\Models\Registration>
+ * @extends Repository<\Academorix\Registrations\Models\Registration>
  *
  * @category Registrations
  *

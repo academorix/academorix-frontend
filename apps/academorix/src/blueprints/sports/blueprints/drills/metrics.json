@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/drills/metrics",
+  "id": "academorix://modules/drills/metrics",
   "$version": 1,
   "title": "drills — OpenTelemetry metrics",
   "description": "OTel / Prometheus metrics this module emits.",

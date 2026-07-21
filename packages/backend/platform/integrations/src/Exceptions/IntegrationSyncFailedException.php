@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Stackra\Integrations\Exceptions;
 
-use Stackra\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Raised when a {@see \Stackra\Integrations\Jobs\SyncIntegrationJob}
@@ -15,7 +15,7 @@ use Stackra\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class IntegrationSyncFailedException extends AcademorixException
+final class IntegrationSyncFailedException extends StackraException
 {
     public const CODE = 'integrations.sync_failed';
 

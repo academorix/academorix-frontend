@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Dunning\Contracts\Services;
+namespace Academorix\Dunning\Contracts\Services;
 
-use Stackra\Dunning\Services\RetryScheduler;
+use Academorix\Dunning\Services\RetryScheduler;
 use Illuminate\Container\Attributes\Bind;
 
 /**

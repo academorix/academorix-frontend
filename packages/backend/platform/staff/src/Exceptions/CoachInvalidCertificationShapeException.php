@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Staff\Exceptions;
 
-use Stackra\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * A certification entry violates the required shape (organization + certification + certified_at required).
@@ -15,7 +15,7 @@ use Stackra\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class CoachInvalidCertificationShapeException extends AcademorixException
+final class CoachInvalidCertificationShapeException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

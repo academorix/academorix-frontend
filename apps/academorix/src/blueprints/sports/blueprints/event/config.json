@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/event/config",
+  "id": "academorix://modules/event/config",
   "$version": 1,
   "title": "event — developer configuration",
   "configFile": "config/event.php",

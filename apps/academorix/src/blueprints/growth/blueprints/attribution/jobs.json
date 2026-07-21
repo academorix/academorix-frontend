@@ -1,17 +1,17 @@
 {
-  "id": "stackra://modules/attribution/jobs",
+  "id": "academorix://modules/attribution/jobs",
   "$version": 1,
   "title": "attribution — background jobs",
   "jobs": [
     {
-      "class": "Stackra\\Growth\\Attribution\\Jobs\\ReconcileAttributionCountsJob",
+      "class": "Academorix\\Growth\\Attribution\\Jobs\\ReconcileAttributionCountsJob",
       "queue": "attribution",
       "purpose": "Nightly audit sweep to catch drift between attributions.touchpoint_count / conversion_touchpoint_count and the actual attribution_touchpoints row count. Fires AttributionTouchpointCountReconciled per drift found + increments the count_drift_corrections counter. Should always report 0 findings.",
       "steps": [
         "SELECT id, touchpoint_count, conversion_touchpoint_count FROM attributions WHERE deleted_at IS NULL LIMIT 1000",
         "For each: SELECT COUNT(*), SUM(was_conversion::int) FROM attribution_touchpoints WHERE attribution_id = ?",
         "When mismatch: UPDATE attributions SET touchpoint_count = actual, conversion_touchpoint_count = actual + fire AttributionTouchpointCountReconciled",
-        "Emit metric stackra.attribution.count_drift_corrections — should always be 0 in production"
+        "Emit metric academorix.attribution.count_drift_corrections — should always be 0 in production"
       ],
       "shouldQueue": true,
       "shouldBeUnique": true,
@@ -19,7 +19,7 @@
       "tries": 2
     },
     {
-      "class": "Stackra\\Growth\\Attribution\\Jobs\\MarkAttributionChurnedJob",
+      "class": "Academorix\\Growth\\Attribution\\Jobs\\MarkAttributionChurnedJob",
       "queue": "attribution",
       "purpose": "Nightly sweep. Subjects with no touchpoint in the last 90 days transition anonymous | identified → churned. Fires AttributionChurned per row. Batched daily digest via AttributionChurnDetectedNotification.",
       "steps": [
@@ -33,7 +33,7 @@
       "tries": 2
     },
     {
-      "class": "Stackra\\Growth\\Attribution\\Jobs\\MergeIdentifiedAttributionsJob",
+      "class": "Academorix\\Growth\\Attribution\\Jobs\\MergeIdentifiedAttributionsJob",
       "queue": "attribution-critical",
       "purpose": "Dispatched by MergeAnonymousAttributionsOnSubjectIdentified hook when AttributionSubjectIdentified fires (Enterprise-only). Finds anonymous profiles with matching signals (session_id / ip_hash / device_hash) within the last 30 days + merges them into the identified profile. Fires AttributionMerged on success.",
       "steps": [
@@ -53,7 +53,7 @@
       "backoff": [30, 120, 600]
     },
     {
-      "class": "Stackra\\Growth\\Attribution\\Jobs\\PurgeArchivedAttributionsJob",
+      "class": "Academorix\\Growth\\Attribution\\Jobs\\PurgeArchivedAttributionsJob",
       "queue": "attribution",
       "purpose": "Daily sweep. Hard-delete soft-deleted attribution rows past retention (730d default, 2555d on Enterprise via attribution_touchpoint_retention_extended). Also hard-delete touchpoints past retention. Also completes the reset audit hold — attribution_touchpoints rows past their reset's 90-day hold are hard-deleted, firing AttributionResetConfirmed.",
       "steps": [
@@ -69,7 +69,7 @@
       "tries": 1
     },
     {
-      "class": "Stackra\\Growth\\Attribution\\Jobs\\CampaignRollupAggregatorJob",
+      "class": "Academorix\\Growth\\Attribution\\Jobs\\CampaignRollupAggregatorJob",
       "queue": "attribution",
       "purpose": "Hourly pre-aggregation of campaign performance into a rollup cache. Runs per-tenant with attribution_rollup entitlement. Groups touchpoints by (campaign, source, medium) + counts + conversion counts + first-touch counts. Materialises into att:rollup:{tenant_id}:{window} cache keys for the four windows (1h, 24h, 7d, 30d).",
       "steps": [
@@ -87,7 +87,7 @@
       "backoff": [60, 300]
     },
     {
-      "class": "Stackra\\Growth\\Attribution\\Jobs\\AttributionExpiryNotifierJob",
+      "class": "Academorix\\Growth\\Attribution\\Jobs\\AttributionExpiryNotifierJob",
       "queue": "notifications",
       "purpose": "Fires 7 days before a tenant's touchpoint retention window would purge a large batch. Sends an AttributionExpiringNotification to the tenant admin so they can request an export or upgrade to the extended-retention entitlement.",
       "steps": [

@@ -7,7 +7,7 @@ namespace Stackra\PlatformPublicSiteSdk\Tests;
 use Orchestra\Testbench\TestCase as OrchestraTestCase;
 
 /**
- * Base test case for stackra-platform/public-site-sdk.
+ * Base test case for academorix-platform/public-site-sdk.
  *
  * @category PublicSiteSdk
  *

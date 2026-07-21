@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Tax\Contracts\Services;
+namespace Academorix\Tax\Contracts\Services;
 
-use Stackra\Tax\Services\TaxProviderRegistry;
+use Academorix\Tax\Services\TaxProviderRegistry;
 use Illuminate\Container\Attributes\Bind;
 
 /**

@@ -4,25 +4,25 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Competition\Repositories;
+namespace Academorix\Competition\Repositories;
 
 use Stackra\Crud\Attributes\AsRepository;
 use Stackra\Crud\Attributes\Cacheable;
 use Stackra\Crud\Attributes\Filterable;
 use Stackra\Crud\Attributes\UseModel;
 use Stackra\Crud\Repositories\Repository;
-use Stackra\Competition\Contracts\Data\StandingRowInterface;
-use Stackra\Competition\Contracts\Repositories\StandingRowRepositoryInterface;
-use Stackra\Competition\Models\StandingRow;
+use Academorix\Competition\Contracts\Data\StandingRowInterface;
+use Academorix\Competition\Contracts\Repositories\StandingRowRepositoryInterface;
+use Academorix\Competition\Models\StandingRow;
 
 /**
- * Attribute-first Eloquent repository for {@see Stackra\Competition\Models\StandingRow}.
+ * Attribute-first Eloquent repository for {@see Academorix\Competition\Models\StandingRow}.
  *
  * Bound to the interface via `#[AsRepository]`; the model comes from
  * `#[UseModel(StandingRowInterface::class)]` which resolves to
  * `StandingRow` through the interface's `#[Bind]`.
  *
- * @extends Repository<\Stackra\Competition\Models\StandingRow>
+ * @extends Repository<\Academorix\Competition\Models\StandingRow>
  *
  * @category Competition
  *

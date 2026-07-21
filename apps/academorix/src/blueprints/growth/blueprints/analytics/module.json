@@ -2,8 +2,8 @@
   "$version": 1,
   "name": "analytics",
   "alias": "analytics",
-  "namespace": "Stackra\\Growth\\Analytics",
-  "description": "Server-side behavioral event fan-out to product analytics platforms. Answers 'how are users behaving in the product?'. Fires FINE-GRAINED product-usage events (feature_viewed, action_completed, funnel_step_reached, experiment_variant_assigned, screen_time_recorded, cta_clicked, form_submitted, error_encountered, ...) that complement the FRONTEND `@stackra/analytics` package's client-side capture. Server-side is the AUTHORITATIVE source for events that MUST NOT be lost (payment succeeded, mutation completed, backend-driven state transitions) which browser-side capture drops to ad-blockers and iOS ITP. Ships FOUR tables: `analytics_events` (canonical ledger, 2-year retention), `analytics_deliveries` (per-provider log, 90-day retention), `analytics_provider_configs` (per-tenant provider credentials + enabled_event_types + sampling_rate + circuit-breaker), `analytics_identities` (identify \u2192 user_id resolution table \u2014 maps anonymous_id \u2192 identified_user_id across sessions). MultipleInstanceManager via `AnalyticsProviderManager` with 7 driver day-1: PostHog, Amplitude, Mixpanel, Segment (fan-out to N destinations behind Segment), June, Google Analytics 4 (yes, GA4 appears in both analytics and marketing \u2014 different event categories, same wire protocol), Custom Webhook (generic escape hatch). Each provider drives its own event batching (Segment batches; Mixpanel batches; PostHog can batch or single). Consent-gated under `analytics` consent category (distinct from `marketing`). Attribution snapshot pulled at event-create time. Server-side identify + track + page + screen + alias + group verbs. Sampling per-event-type + per-provider \u2014 PostHog might get 100%, Amplitude might get 10% for volume-heavy event types.",
+  "namespace": "Academorix\\Growth\\Analytics",
+  "description": "Server-side behavioral event fan-out to product analytics platforms. Answers 'how are users behaving in the product?'. Fires FINE-GRAINED product-usage events (feature_viewed, action_completed, funnel_step_reached, experiment_variant_assigned, screen_time_recorded, cta_clicked, form_submitted, error_encountered, ...) that complement the FRONTEND `@academorix/analytics` package's client-side capture. Server-side is the AUTHORITATIVE source for events that MUST NOT be lost (payment succeeded, mutation completed, backend-driven state transitions) which browser-side capture drops to ad-blockers and iOS ITP. Ships FOUR tables: `analytics_events` (canonical ledger, 2-year retention), `analytics_deliveries` (per-provider log, 90-day retention), `analytics_provider_configs` (per-tenant provider credentials + enabled_event_types + sampling_rate + circuit-breaker), `analytics_identities` (identify \u2192 user_id resolution table \u2014 maps anonymous_id \u2192 identified_user_id across sessions). MultipleInstanceManager via `AnalyticsProviderManager` with 7 driver day-1: PostHog, Amplitude, Mixpanel, Segment (fan-out to N destinations behind Segment), June, Google Analytics 4 (yes, GA4 appears in both analytics and marketing \u2014 different event categories, same wire protocol), Custom Webhook (generic escape hatch). Each provider drives its own event batching (Segment batches; Mixpanel batches; PostHog can batch or single). Consent-gated under `analytics` consent category (distinct from `marketing`). Attribution snapshot pulled at event-create time. Server-side identify + track + page + screen + alias + group verbs. Sampling per-event-type + per-provider \u2014 PostHog might get 100%, Amplitude might get 10% for volume-heavy event types.",
   "keywords": [
     "analytics",
     "product-analytics",
@@ -36,7 +36,7 @@
     "wave-5"
   ],
   "priority": 66,
-  "providers": ["Stackra\\Growth\\Analytics\\Providers\\AnalyticsServiceProvider"],
+  "providers": ["Academorix\\Growth\\Analytics\\Providers\\AnalyticsServiceProvider"],
   "files": [],
   "dependencies": [
     "foundation",
@@ -206,7 +206,7 @@
     "drivers": [
       {
         "name": "posthog",
-        "class": "Stackra\\Growth\\Analytics\\Drivers\\PostHogProvider",
+        "class": "Academorix\\Growth\\Analytics\\Drivers\\PostHogProvider",
         "endpoint": "https://{host}/capture/ (default host: app.posthog.com; EU host: eu.posthog.com)",
         "auth": "api_key in body",
         "payload_shape": "{ api_key, event, distinct_id, properties: { ...event_properties, $set: user_properties }, timestamp }",
@@ -218,7 +218,7 @@
       },
       {
         "name": "amplitude",
-        "class": "Stackra\\Growth\\Analytics\\Drivers\\AmplitudeProvider",
+        "class": "Academorix\\Growth\\Analytics\\Drivers\\AmplitudeProvider",
         "endpoint": "https://api.amplitude.com/2/httpapi (US) / https://api.eu.amplitude.com/2/httpapi (EU)",
         "auth": "api_key in body",
         "payload_shape": "{ api_key, events: [{ event_type, user_id, device_id, event_properties, user_properties, session_id, time, ip, platform, os_name, os_version }] }",
@@ -236,7 +236,7 @@
       },
       {
         "name": "mixpanel",
-        "class": "Stackra\\Growth\\Analytics\\Drivers\\MixpanelProvider",
+        "class": "Academorix\\Growth\\Analytics\\Drivers\\MixpanelProvider",
         "endpoint": "https://api.mixpanel.com/import",
         "auth": "Basic (service_account:secret)",
         "payload_shape": "[{ event, properties: { $device_id, $distinct_id, time, $insert_id, ...event_properties } }]",
@@ -254,7 +254,7 @@
       },
       {
         "name": "segment",
-        "class": "Stackra\\Growth\\Analytics\\Drivers\\SegmentProvider",
+        "class": "Academorix\\Growth\\Analytics\\Drivers\\SegmentProvider",
         "endpoint": "https://api.segment.io/v1/{track|identify|page|screen|alias|group|batch}",
         "auth": "Basic (write_key:)",
         "payload_shape": "verb-specific \u2014 spec: https://segment.com/docs/connections/spec/",
@@ -263,11 +263,11 @@
         "max_batch_bytes": 500000,
         "flush_interval_ms_default": 10000,
         "verbs_supported": ["track", "identify", "page", "screen", "alias", "group"],
-        "note": "Segment fans out to N downstream destinations configured tenant-side in Segment console. Stackra sees Segment as one provider; effective destinations are Segment's problem."
+        "note": "Segment fans out to N downstream destinations configured tenant-side in Segment console. Academorix sees Segment as one provider; effective destinations are Segment's problem."
       },
       {
         "name": "june",
-        "class": "Stackra\\Growth\\Analytics\\Drivers\\JuneProvider",
+        "class": "Academorix\\Growth\\Analytics\\Drivers\\JuneProvider",
         "endpoint": "https://api.june.so/sdk/",
         "auth": "Bearer api_key",
         "payload_shape": "{ event, userId, properties, timestamp }",
@@ -277,7 +277,7 @@
       },
       {
         "name": "google_analytics_4",
-        "class": "Stackra\\Growth\\Analytics\\Drivers\\GoogleAnalytics4Provider",
+        "class": "Academorix\\Growth\\Analytics\\Drivers\\GoogleAnalytics4Provider",
         "endpoint": "https://www.google-analytics.com/mp/collect?measurement_id={id}&api_secret={secret}",
         "auth": "api_secret + measurement_id in query",
         "payload_shape": "{ client_id, user_id, timestamp_micros, events: [{ name, params }] }",
@@ -289,7 +289,7 @@
       },
       {
         "name": "custom_webhook",
-        "class": "Stackra\\Growth\\Analytics\\Drivers\\CustomWebhookProvider",
+        "class": "Academorix\\Growth\\Analytics\\Drivers\\CustomWebhookProvider",
         "endpoint": "caller-configured",
         "auth": "HMAC-SHA256 signature in X-Stackra-Signature header",
         "payload_shape": "full analytics_event row (JSON)",

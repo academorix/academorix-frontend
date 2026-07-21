@@ -4,7 +4,7 @@
 
 declare(strict_types=1);
 
-namespace Stackra\AthleteGuardian\Attributes;
+namespace Academorix\AthleteGuardian\Attributes;
 
 use Attribute;
 

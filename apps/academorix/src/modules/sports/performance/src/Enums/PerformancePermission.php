@@ -4,7 +4,7 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Performance\Enums;
+namespace Academorix\Performance\Enums;
 
 use Stackra\Authorization\Contracts\PermissionEnum;
 use Stackra\Authorization\Enums\Guard;

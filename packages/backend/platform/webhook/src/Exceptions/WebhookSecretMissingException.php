@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Webhook\Exceptions;
 
-use Stackra\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Subscription has no secret column value.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class WebhookSecretMissingException extends AcademorixException
+final class WebhookSecretMissingException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

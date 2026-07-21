@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Attendance\Contracts\Services;
+namespace Academorix\Attendance\Contracts\Services;
 
-use Stackra\Attendance\Services\AttendanceReporter;
+use Academorix\Attendance\Services\AttendanceReporter;
 use Illuminate\Container\Attributes\Bind;
 
 /**

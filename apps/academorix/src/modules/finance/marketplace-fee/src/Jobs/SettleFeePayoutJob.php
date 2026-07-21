@@ -4,7 +4,7 @@
 
 declare(strict_types=1);
 
-namespace Stackra\MarketplaceFee\Jobs;
+namespace Academorix\MarketplaceFee\Jobs;
 
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;

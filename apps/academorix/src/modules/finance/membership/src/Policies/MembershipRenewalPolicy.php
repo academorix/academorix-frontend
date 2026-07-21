@@ -4,13 +4,13 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Membership\Policies;
+namespace Academorix\Membership\Policies;
 
 use Stackra\User\Models\User;
-use Stackra\Membership\Models\MembershipRenewal;
+use Academorix\Membership\Models\MembershipRenewal;
 
 /**
- * Authorization policy for {@see \Stackra\Membership\Models\MembershipRenewal}.
+ * Authorization policy for {@see \Academorix\Membership\Models\MembershipRenewal}.
  *
  * Wired via `#[UsePolicy]` on the Model.
  *

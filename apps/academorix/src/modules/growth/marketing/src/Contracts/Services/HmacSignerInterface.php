@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Marketing\Contracts\Services;
+namespace Academorix\Marketing\Contracts\Services;
 
-use Stackra\Marketing\Services\HmacSigner;
+use Academorix\Marketing\Services\HmacSigner;
 use Illuminate\Container\Attributes\Bind;
 
 /**

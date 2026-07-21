@@ -4,25 +4,25 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Chargeback\Repositories;
+namespace Academorix\Chargeback\Repositories;
 
 use Stackra\Crud\Attributes\AsRepository;
 use Stackra\Crud\Attributes\Cacheable;
 use Stackra\Crud\Attributes\Filterable;
 use Stackra\Crud\Attributes\UseModel;
 use Stackra\Crud\Repositories\Repository;
-use Stackra\Chargeback\Contracts\Data\ChargebackEvidenceInterface;
-use Stackra\Chargeback\Contracts\Repositories\ChargebackEvidenceRepositoryInterface;
-use Stackra\Chargeback\Models\ChargebackEvidence;
+use Academorix\Chargeback\Contracts\Data\ChargebackEvidenceInterface;
+use Academorix\Chargeback\Contracts\Repositories\ChargebackEvidenceRepositoryInterface;
+use Academorix\Chargeback\Models\ChargebackEvidence;
 
 /**
- * Attribute-first Eloquent repository for {@see Stackra\Chargeback\Models\ChargebackEvidence}.
+ * Attribute-first Eloquent repository for {@see Academorix\Chargeback\Models\ChargebackEvidence}.
  *
  * Bound to the interface via `#[AsRepository]`; the model comes from
  * `#[UseModel(ChargebackEvidenceInterface::class)]` which resolves to
  * `ChargebackEvidence` through the interface's `#[Bind]`.
  *
- * @extends Repository<\Stackra\Chargeback\Models\ChargebackEvidence>
+ * @extends Repository<\Academorix\Chargeback\Models\ChargebackEvidence>
  *
  * @category Chargeback
  *

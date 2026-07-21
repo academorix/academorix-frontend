@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Stackra\MarketplaceFee\Contracts\Services;
+namespace Academorix\MarketplaceFee\Contracts\Services;
 
-use Stackra\MarketplaceFee\Services\FeeCalculator;
+use Academorix\MarketplaceFee\Services\FeeCalculator;
 use Illuminate\Container\Attributes\Bind;
 
 /**

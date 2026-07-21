@@ -1,60 +1,60 @@
 {
-  "id": "stackra://modules/refund/schedule",
+  "id": "academorix://modules/refund/schedule",
   "$version": 1,
   "title": "refund — scheduled tasks",
   "entries": [
     {
       "name": "refund-reconcile",
-      "command": "queue:dispatch --job=Stackra\\Finance\\Refund\\Jobs\\ReconcileRefundsJob",
+      "command": "queue:dispatch --job=Academorix\\Finance\\Refund\\Jobs\\ReconcileRefundsJob",
       "cron": "0 3 * * *",
       "timezone": "UTC",
       "purpose": "Nightly 03:00 UTC. Reconciles every non-terminal refund against provider authoritative state. Dispatches CheckRefundProviderStatusJob per-provider for every refund still in status IN ('processing', 'provider_error'). Alerts on drift > 0 or on stuck provider_error > 24h."
     },
     {
       "name": "refund-check-provider-status-stripe",
-      "command": "queue:dispatch --job=Stackra\\Finance\\Refund\\Jobs\\CheckRefundProviderStatusJob --provider=stripe",
+      "command": "queue:dispatch --job=Academorix\\Finance\\Refund\\Jobs\\CheckRefundProviderStatusJob --provider=stripe",
       "cron": "0 * * * *",
       "timezone": "UTC",
       "purpose": "Hourly. Polls Stripe for the status of every refund in status='processing' + provider='stripe'. Stripe card refunds take 5-10 business days; hourly polling balances timeliness vs API rate limits."
     },
     {
       "name": "refund-check-provider-status-paddle",
-      "command": "queue:dispatch --job=Stackra\\Finance\\Refund\\Jobs\\CheckRefundProviderStatusJob --provider=paddle",
+      "command": "queue:dispatch --job=Academorix\\Finance\\Refund\\Jobs\\CheckRefundProviderStatusJob --provider=paddle",
       "cron": "0 */4 * * *",
       "timezone": "UTC",
       "purpose": "Every 4h. Polls Paddle for the status of every refund in status='processing' + provider='paddle'."
     },
     {
       "name": "refund-check-provider-status-adyen",
-      "command": "queue:dispatch --job=Stackra\\Finance\\Refund\\Jobs\\CheckRefundProviderStatusJob --provider=adyen",
+      "command": "queue:dispatch --job=Academorix\\Finance\\Refund\\Jobs\\CheckRefundProviderStatusJob --provider=adyen",
       "cron": "0 * * * *",
       "timezone": "UTC",
       "purpose": "Hourly. Polls Adyen for the status of every refund in status='processing' + provider='adyen'."
     },
     {
       "name": "refund-check-provider-status-square",
-      "command": "queue:dispatch --job=Stackra\\Finance\\Refund\\Jobs\\CheckRefundProviderStatusJob --provider=square",
+      "command": "queue:dispatch --job=Academorix\\Finance\\Refund\\Jobs\\CheckRefundProviderStatusJob --provider=square",
       "cron": "0 */4 * * *",
       "timezone": "UTC",
       "purpose": "Every 4h. Polls Square for the status of every refund in status='processing' + provider='square'."
     },
     {
       "name": "refund-check-provider-status-paypal",
-      "command": "queue:dispatch --job=Stackra\\Finance\\Refund\\Jobs\\CheckRefundProviderStatusJob --provider=paypal",
+      "command": "queue:dispatch --job=Academorix\\Finance\\Refund\\Jobs\\CheckRefundProviderStatusJob --provider=paypal",
       "cron": "0 * * * *",
       "timezone": "UTC",
       "purpose": "Hourly. Polls PayPal for the status of every refund in status='processing' + provider='paypal'."
     },
     {
       "name": "refund-audit-pending-approvals",
-      "command": "queue:dispatch --job=Stackra\\Finance\\Refund\\Jobs\\AuditPendingApprovalsJob",
+      "command": "queue:dispatch --job=Academorix\\Finance\\Refund\\Jobs\\AuditPendingApprovalsJob",
       "cron": "0 9,15 * * *",
       "timezone": "UTC",
-      "purpose": "Twice daily (09:00 + 15:00 UTC). Reports refunds stuck in awaiting_approval > refund.approval.approval_sla_hours (default 24h). Actionable — consumer-protection-law SLAs risk breach. Emits stackra.refund.approvals_stale_total counter + dispatches admin notification when threshold breached."
+      "purpose": "Twice daily (09:00 + 15:00 UTC). Reports refunds stuck in awaiting_approval > refund.approval.approval_sla_hours (default 24h). Actionable — consumer-protection-law SLAs risk breach. Emits academorix.refund.approvals_stale_total counter + dispatches admin notification when threshold breached."
     },
     {
       "name": "refund-purge-expired",
-      "command": "queue:dispatch --job=Stackra\\Finance\\Refund\\Jobs\\PurgeExpiredRefundDataJob",
+      "command": "queue:dispatch --job=Academorix\\Finance\\Refund\\Jobs\\PurgeExpiredRefundDataJob",
       "cron": "0 5 * * 0",
       "timezone": "UTC",
       "purpose": "Weekly Sunday 05:00 UTC. Hard-purge refunds + refund_lines past 7-year (or 10-year Enterprise) retention. Invoice-linked refunds migrate to compliance_archive.refunds + compliance_archive.refund_lines prior to cascade (financial-obligation retention)."

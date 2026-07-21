@@ -4,7 +4,7 @@
 
 declare(strict_types=1);
 
-namespace Stackra\PrivateSessions\Console;
+namespace Academorix\PrivateSessions\Console;
 
 use Stackra\Console\Attributes\AsCommand;
 use Stackra\Console\Commands\BaseCommand;

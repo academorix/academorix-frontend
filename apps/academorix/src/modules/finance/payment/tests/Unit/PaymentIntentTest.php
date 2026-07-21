@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use Stackra\Payment\Models\PaymentIntent;
+use Academorix\Payment\Models\PaymentIntent;
 
 it('is a placeholder — replace with actual PaymentIntent unit tests', function (): void {
     expect(PaymentIntent::class)->toBeString();

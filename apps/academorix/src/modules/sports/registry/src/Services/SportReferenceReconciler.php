@@ -4,11 +4,11 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Registry\Services;
+namespace Academorix\Registry\Services;
 
-use Stackra\Registry\Contracts\Services\SportReferenceReconcilerInterface;
+use Academorix\Registry\Contracts\Services\SportReferenceReconcilerInterface;
 use Illuminate\Container\Attributes\Scoped;
-use Stackra\Registry\Contracts\Repositories\DisciplineRepositoryInterface;
+use Academorix\Registry\Contracts\Repositories\DisciplineRepositoryInterface;
 
 /**
  * Concrete service — SportReferenceReconciler.

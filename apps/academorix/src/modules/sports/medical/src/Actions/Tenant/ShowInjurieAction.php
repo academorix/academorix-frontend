@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Medical\Actions\Tenant;
+namespace Academorix\Medical\Actions\Tenant;
 
-use Stackra\Medical\Contracts\Repositories\InjuryRepositoryInterface;
-use Stackra\Medical\Data\InjuryData;
+use Academorix\Medical\Contracts\Repositories\InjuryRepositoryInterface;
+use Academorix\Medical\Data\InjuryData;
 use Stackra\Routing\Attributes\AsAction;
 use Stackra\Routing\Attributes\Middleware;
 use Stackra\Routing\Concerns\AsController;

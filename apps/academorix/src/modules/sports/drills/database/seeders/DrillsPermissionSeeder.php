@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Drills\Database\Seeders;
+namespace Academorix\Drills\Database\Seeders;
 
-use Stackra\Drills\Enums\DrillsPermission;
+use Academorix\Drills\Enums\DrillsPermission;
 use Stackra\Authorization\Database\Seeders\Concerns\SeedsPermissionEnum;
 use Stackra\ServiceProvider\Attributes\AsSeeder;
 use Illuminate\Database\Seeder;

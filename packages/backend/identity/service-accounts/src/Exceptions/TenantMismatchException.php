@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\ServiceAccounts\Exceptions;
 
-use Stackra\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * JWT's `tid` claim does not match the request's `X-Tenant-Id` header (or the routed tenant context).
@@ -15,7 +15,7 @@ use Stackra\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class TenantMismatchException extends AcademorixException
+final class TenantMismatchException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

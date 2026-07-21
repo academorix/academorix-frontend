@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Stackra\AthleteGuardian\Contracts\Data;
+namespace Academorix\AthleteGuardian\Contracts\Data;
 
 use Illuminate\Container\Attributes\Bind;
-use Stackra\AthleteGuardian\Models\AthleteGuardian;
+use Academorix\AthleteGuardian\Models\AthleteGuardian;
 
 /**
  * Table shape for the `athlete_guardians` table.

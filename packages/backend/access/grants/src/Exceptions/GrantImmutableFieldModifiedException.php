@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Grants\Exceptions;
 
-use Stackra\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Attempt to PATCH `subject_id / resource_type / resource_id / permissions / decision / granted_by / granted_at / source / source_reference / tenant_id`.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class GrantImmutableFieldModifiedException extends AcademorixException
+final class GrantImmutableFieldModifiedException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

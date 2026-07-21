@@ -1,13 +1,13 @@
 {
-  "id": "stackra://modules/coaching/hooks",
+  "id": "academorix://modules/coaching/hooks",
   "$version": 1,
   "title": "coaching — TenancyHook + lifecycle hooks",
   "description": "Cross-module hook implementations. Coaching does not register a bootstrapper. Ships five hooks: prevent staff-offboarding with active profile, tenant erasure cascade, staff-offboarded cascade, profile-deactivated → cancel-assignments cascade, cert-added → schedule expiration notices.",
-  "namespace": "Stackra\\Sports\\Coaching\\Hooks",
+  "namespace": "Academorix\\Sports\\Coaching\\Hooks",
   "hooks": [
     {
       "name": "PreventStaffOffboardingWithActiveCoachingProfile",
-      "class": "Stackra\\Sports\\Coaching\\Hooks\\PreventStaffOffboardingWithActiveCoachingProfile",
+      "class": "Academorix\\Sports\\Coaching\\Hooks\\PreventStaffOffboardingWithActiveCoachingProfile",
       "kind": "cascade_prevention",
       "listens_to": "staff::StaffOffboardingStarted (pre-write hook)",
       "purpose": "Refuse the Staff offboard when the Staff still has an active CoachingProfile UNLESS the offboard invocation carries cascade=true. When cascade=true, the DeactivateCoachingProfileOnStaffOffboarded hook takes over post-write. This preserves the invariant that a Staff cannot be silently offboarded while carrying open coaching commitments.",
@@ -17,7 +17,7 @@
     },
     {
       "name": "DeactivateCoachingProfileOnStaffOffboarded",
-      "class": "Stackra\\Sports\\Coaching\\Hooks\\DeactivateCoachingProfileOnStaffOffboarded",
+      "class": "Academorix\\Sports\\Coaching\\Hooks\\DeactivateCoachingProfileOnStaffOffboarded",
       "kind": "cascade",
       "listens_to": "staff::StaffOffboarded",
       "purpose": "Post-offboard cascade. Flips CoachingProfile.is_active=false with trigger='staff_offboarded'. Fires CoachingProfileDeactivated. Downstream CancelActiveAssignmentsOnCoachingProfileDeactivated cancels open assignments.",
@@ -26,7 +26,7 @@
     },
     {
       "name": "CancelActiveAssignmentsOnCoachingProfileDeactivated",
-      "class": "Stackra\\Sports\\Coaching\\Hooks\\CancelActiveAssignmentsOnCoachingProfileDeactivated",
+      "class": "Academorix\\Sports\\Coaching\\Hooks\\CancelActiveAssignmentsOnCoachingProfileDeactivated",
       "kind": "cascade",
       "listens_to": "coaching::CoachingProfileDeactivated",
       "purpose": "Cancels every active CoachAssignment for the deactivated profile. Fires one CoachAssignmentCancelled per assignment with trigger='coaching_profile_deactivated'.",
@@ -34,7 +34,7 @@
     },
     {
       "name": "ScheduleExpirationNoticesOnCertificationAdded",
-      "class": "Stackra\\Sports\\Coaching\\Hooks\\ScheduleExpirationNoticesOnCertificationAdded",
+      "class": "Academorix\\Sports\\Coaching\\Hooks\\ScheduleExpirationNoticesOnCertificationAdded",
       "kind": "cascade",
       "listens_to": "coaching::CoachCertificationAdded",
       "purpose": "When the cert has expires_at, schedules NotifyCertificationExpiringJob at (expires_at - 90d), (- 30d), (- 7d). Also schedules NotifyCertificationExpiredJob at expires_at. Idempotent — reruns replace the schedule (used when admin updates the cert's expires_at).",
@@ -42,7 +42,7 @@
     },
     {
       "name": "PurgeCoachingDataForErasedTenant",
-      "class": "Stackra\\Sports\\Coaching\\Hooks\\PurgeCoachingDataForErasedTenant",
+      "class": "Academorix\\Sports\\Coaching\\Hooks\\PurgeCoachingDataForErasedTenant",
       "kind": "tenant_erasure",
       "listens_to": "tenancy::TenantErased",
       "purpose": "Cascade delete via FK. Writes compliance audit trail entry + emits count metrics per entity (profiles / assignments / certifications / ratings). Skips rows under an active regulator hold (defense-in-depth: reads the tenancy audit trail's active-hold flags before firing).",

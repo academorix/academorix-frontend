@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/attendance/schemas/attendance-record",
+  "id": "academorix://modules/attendance/schemas/attendance-record",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "AttendanceRecord",
@@ -13,9 +13,9 @@
     "keyType": "string",
     "keyPrefix": "atd_",
     "incrementing": false,
-    "model": "Stackra\\Sports\\Attendance\\Models\\AttendanceRecord",
-    "interface": "Stackra\\Sports\\Attendance\\Contracts\\Data\\AttendanceRecordInterface",
-    "implements": ["Stackra\\Sports\\Attendance\\Contracts\\Data\\AttendanceRecordInterface"],
+    "model": "Academorix\\Sports\\Attendance\\Models\\AttendanceRecord",
+    "interface": "Academorix\\Sports\\Attendance\\Contracts\\Data\\AttendanceRecordInterface",
+    "implements": ["Academorix\\Sports\\Attendance\\Contracts\\Data\\AttendanceRecordInterface"],
     "traits": [
       "HasFactory",
       "HasPrefixedUlid",

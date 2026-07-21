@@ -1,8 +1,8 @@
 {
-  "id": "stackra://modules/age-group/permissions",
+  "id": "academorix://modules/age-group/permissions",
   "$version": 1,
   "title": "age-group — permissions",
-  "seeder": "Stackra\\Sports\\AgeGroup\\Database\\Seeders\\AgeGroupPermissionSeeder",
+  "seeder": "Academorix\\Sports\\AgeGroup\\Database\\Seeders\\AgeGroupPermissionSeeder",
   "isSystem": true,
   "scope_suffix_convention": "Every read permission may be seeded WITH a scope suffix (`.any`, `.tenant`). The base permission (no suffix) is the highest-tier variant, effectively `.tenant`. Age groups are tenant-wide reference data — no `.branch` / `.own` variants exist.",
   "permissions": [

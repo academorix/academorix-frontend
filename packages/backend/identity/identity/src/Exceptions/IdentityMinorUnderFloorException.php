@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Identity\Exceptions;
 
-use Stackra\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * CompliantAgePolicy refused the Identity creation because dob resolves the applicant below the effective compliance floor (COPPA 13 in US; GDPR 13–16 per EU country).
@@ -15,7 +15,7 @@ use Stackra\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class IdentityMinorUnderFloorException extends AcademorixException
+final class IdentityMinorUnderFloorException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

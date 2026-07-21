@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Requests\Exceptions;
 
-use Stackra\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * The caller is not in the resolved approvers set for any pending requirement on this request.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class CallerNotApproverException extends AcademorixException
+final class CallerNotApproverException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

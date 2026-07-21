@@ -4,17 +4,17 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Dunning\Contracts\Repositories;
+namespace Academorix\Dunning\Contracts\Repositories;
 
 use Stackra\Crud\Contracts\RepositoryInterface;
 
 /**
- * Repository contract for {@see Stackra\Dunning\Models\DunningPlan}.
+ * Repository contract for {@see Academorix\Dunning\Models\DunningPlan}.
  *
  * Consumers type-hint the interface; the container binds the concrete
  * via `#[AsRepository]` on `DunningPlanRepository`.
  *
- * @extends RepositoryInterface<\Stackra\Dunning\Models\DunningPlan>
+ * @extends RepositoryInterface<\Academorix\Dunning\Models\DunningPlan>
  *
  * @category Dunning
  *

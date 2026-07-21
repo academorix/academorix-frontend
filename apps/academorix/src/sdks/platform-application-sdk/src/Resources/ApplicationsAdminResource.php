@@ -20,18 +20,18 @@
 
 declare(strict_types=1);
 
-namespace Stackra\PlatformApplicationSdk\Resources;
+namespace Academorix\PlatformApplicationSdk\Resources;
 
 use Stackra\ApiSdk\Client\ApiConnector;
 use Stackra\ApiSdk\Data\PaginatedResponse;
-use Stackra\PlatformApplicationSdk\Data\ApplicationData;
-use Stackra\PlatformApplicationSdk\Payloads\Applications\CreateApplicationPayload;
-use Stackra\PlatformApplicationSdk\Payloads\Applications\UpdateApplicationPayload;
-use Stackra\PlatformApplicationSdk\Requests\Applications\CreateApplicationRequest;
-use Stackra\PlatformApplicationSdk\Requests\Applications\DeleteApplicationRequest;
-use Stackra\PlatformApplicationSdk\Requests\Applications\ListApplicationsAdminRequest;
-use Stackra\PlatformApplicationSdk\Requests\Applications\ShowApplicationAdminRequest;
-use Stackra\PlatformApplicationSdk\Requests\Applications\UpdateApplicationRequest;
+use Academorix\PlatformApplicationSdk\Data\ApplicationData;
+use Academorix\PlatformApplicationSdk\Payloads\Applications\CreateApplicationPayload;
+use Academorix\PlatformApplicationSdk\Payloads\Applications\UpdateApplicationPayload;
+use Academorix\PlatformApplicationSdk\Requests\Applications\CreateApplicationRequest;
+use Academorix\PlatformApplicationSdk\Requests\Applications\DeleteApplicationRequest;
+use Academorix\PlatformApplicationSdk\Requests\Applications\ListApplicationsAdminRequest;
+use Academorix\PlatformApplicationSdk\Requests\Applications\ShowApplicationAdminRequest;
+use Academorix\PlatformApplicationSdk\Requests\Applications\UpdateApplicationRequest;
 
 /**
  * Platform-admin Applications surface — full CRUD.

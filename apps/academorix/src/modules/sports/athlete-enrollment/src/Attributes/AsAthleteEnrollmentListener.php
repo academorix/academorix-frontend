@@ -4,7 +4,7 @@
 
 declare(strict_types=1);
 
-namespace Stackra\AthleteEnrollment\Attributes;
+namespace Academorix\AthleteEnrollment\Attributes;
 
 use Attribute;
 

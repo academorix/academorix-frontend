@@ -14,7 +14,7 @@
 
 declare(strict_types=1);
 
-namespace Stackra\PlatformApplicationSdk\Requests\BusinessTypes;
+namespace Academorix\PlatformApplicationSdk\Requests\BusinessTypes;
 
 use Stackra\ApiSdk\Requests\BaseSdkRequest;
 use Saloon\Enums\Method;

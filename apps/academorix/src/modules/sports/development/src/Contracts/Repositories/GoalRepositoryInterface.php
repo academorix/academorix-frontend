@@ -4,17 +4,17 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Development\Contracts\Repositories;
+namespace Academorix\Development\Contracts\Repositories;
 
 use Stackra\Crud\Contracts\RepositoryInterface;
 
 /**
- * Repository contract for {@see Stackra\Development\Models\Goal}.
+ * Repository contract for {@see Academorix\Development\Models\Goal}.
  *
  * Consumers type-hint the interface; the container binds the concrete
  * via `#[AsRepository]` on `GoalRepository`.
  *
- * @extends RepositoryInterface<\Stackra\Development\Models\Goal>
+ * @extends RepositoryInterface<\Academorix\Development\Models\Goal>
  *
  * @category Development
  *

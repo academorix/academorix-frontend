@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Stackra\DigitalPasses\Actions\Tenant;
+namespace Academorix\DigitalPasses\Actions\Tenant;
 
-use Stackra\DigitalPasses\Contracts\Repositories\WalletPassRepositoryInterface;
-use Stackra\DigitalPasses\Data\WalletPassData;
+use Academorix\DigitalPasses\Contracts\Repositories\WalletPassRepositoryInterface;
+use Academorix\DigitalPasses\Data\WalletPassData;
 use Stackra\Routing\Attributes\AsAction;
 use Stackra\Routing\Attributes\Middleware;
 use Stackra\Routing\Concerns\AsController;

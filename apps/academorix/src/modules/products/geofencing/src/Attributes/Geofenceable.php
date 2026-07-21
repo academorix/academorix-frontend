@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Geofencing\Attributes;
+namespace Academorix\Geofencing\Attributes;
 
 use Attribute;
 
@@ -13,14 +13,14 @@ use Attribute;
  * `Stackra\Foundation\Contracts\DiscoversAttributes` and registers each
  * against the fenceable morph map via `Relation::enforceMorphMap()`. Boot
  * fails on duplicate aliases OR on aliases whose target class doesn't
- * implement the {@see \Stackra\Geofencing\Contracts\Geofenceable}
+ * implement the {@see \Academorix\Geofencing\Contracts\Geofenceable}
  * interface.
  *
  * ```php
  * #[Geofenceable(alias: 'branch')]
- * final class Branch extends Model implements \Stackra\Geofencing\Contracts\Geofenceable
+ * final class Branch extends Model implements \Academorix\Geofencing\Contracts\Geofenceable
  * {
- *     use \Stackra\Geofencing\Concerns\HasGeofence;
+ *     use \Academorix\Geofencing\Concerns\HasGeofence;
  * }
  * ```
  *

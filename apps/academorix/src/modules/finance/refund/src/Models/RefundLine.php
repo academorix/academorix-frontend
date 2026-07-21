@@ -4,18 +4,18 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Refund\Models;
+namespace Academorix\Refund\Models;
 
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
-use Stackra\Refund\Contracts\Data\RefundLineInterface;
-use Stackra\Refund\Database\Factories\RefundLineFactory;
+use Academorix\Refund\Contracts\Data\RefundLineInterface;
+use Academorix\Refund\Database\Factories\RefundLineFactory;
 use Stackra\Foundation\Concerns\Filterable;
 use Stackra\Foundation\Concerns\HasMetadata;
-use Stackra\Refund\Policies\RefundLinePolicy;
+use Academorix\Refund\Policies\RefundLinePolicy;
 use Stackra\Tenancy\Concerns\BelongsToTenant;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;

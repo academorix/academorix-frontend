@@ -1,8 +1,8 @@
 {
-  "id": "stackra://modules/payment/permissions",
+  "id": "academorix://modules/payment/permissions",
   "$version": 1,
   "title": "payment — permissions",
-  "seeder": "Stackra\\Finance\\Payment\\Database\\Seeders\\PaymentPermissionSeeder",
+  "seeder": "Academorix\\Finance\\Payment\\Database\\Seeders\\PaymentPermissionSeeder",
   "isSystem": true,
   "description": "Two audiences. Tenant plane (sanctum) — customer manages own payment methods + views own payments + intents + own dispute status; admin+finance manages provider CRUD + captures + dispute evidence. Platform plane (platform_admin) — cross-tenant support tooling for ops + support cross-tenant P1 review. All tenant-plane permissions carry the `payment.` prefix (or `platform.payment.` on the platform audience) per hierarchy.md §4 audience-boundary rules.",
   "permissions": [

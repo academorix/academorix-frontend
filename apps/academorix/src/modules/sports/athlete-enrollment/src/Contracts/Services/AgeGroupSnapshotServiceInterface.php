@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Stackra\AthleteEnrollment\Contracts\Services;
+namespace Academorix\AthleteEnrollment\Contracts\Services;
 
-use Stackra\AthleteEnrollment\Services\AgeGroupSnapshotService;
+use Academorix\AthleteEnrollment\Services\AgeGroupSnapshotService;
 use Illuminate\Container\Attributes\Bind;
 
 /**

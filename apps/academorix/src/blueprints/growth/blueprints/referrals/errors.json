@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/referrals/errors",
+  "id": "academorix://modules/referrals/errors",
   "$version": 1,
   "title": "referrals — error codes",
   "namespace": "referrals",

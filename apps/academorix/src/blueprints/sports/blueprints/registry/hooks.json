@@ -1,19 +1,19 @@
 {
-  "id": "stackra://modules/sports-registry/hooks",
+  "id": "academorix://modules/sports-registry/hooks",
   "$version": 1,
   "title": "sports-registry — tenancy hooks",
   "description": "The registry module ships ONE tenancy lifecycle hook. Distinct from `listeners.json` (domain-event listeners) — the hook fires at a specific tenancy lifecycle point (erasure) and participates in the tenancy transaction. No per-tenant provisioning hook because the platform-seeded catalog is global (loaded once at boot) — new tenants inherit the platform catalog immediately without any per-tenant seed step.",
   "reference": {
-    "contract": "stackra://modules/tenancy/hooks",
+    "contract": "academorix://modules/tenancy/hooks",
     "hierarchy_note": "See `hierarchy.md` §12 + `tenancy-columns.md` for the tenant plane the registry module lives on."
   },
   "hooks": [
     {
-      "class": "Stackra\\Sports\\Registry\\Hooks\\PreventCustomRegistryOrphansOnTenantErased",
+      "class": "Academorix\\Sports\\Registry\\Hooks\\PreventCustomRegistryOrphansOnTenantErased",
       "event": "tenancy::TenantErased",
       "lifecycle_phase": "before_cascade",
       "queue": null,
-      "purpose": "Runs BEFORE tenancy's FK cascade drops the tenant. Iterates every custom Sport / Discipline / Position row belonging to the tenant + verifies no cross-tenant references remain. Historically impossible (cross-tenant references are refused at write) but the hook catches drift from direct SQL edits. Writes a diagnostic entry to the tenancy erasure report + increments `stackra.sports_registry.orphan_check.total` metric. Does NOT rehome the custom rows to platform (platform-seeded is a distinct scope + shape); the actual DELETE fires via the tenant_id FK CASCADE. Platform-seeded rows (tenant_id NULL) are unaffected."
+      "purpose": "Runs BEFORE tenancy's FK cascade drops the tenant. Iterates every custom Sport / Discipline / Position row belonging to the tenant + verifies no cross-tenant references remain. Historically impossible (cross-tenant references are refused at write) but the hook catches drift from direct SQL edits. Writes a diagnostic entry to the tenancy erasure report + increments `academorix.sports_registry.orphan_check.total` metric. Does NOT rehome the custom rows to platform (platform-seeded is a distinct scope + shape); the actual DELETE fires via the tenant_id FK CASCADE. Platform-seeded rows (tenant_id NULL) are unaffected."
     }
   ],
   "notes": [

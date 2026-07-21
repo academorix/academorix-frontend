@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/progress/compliance",
+  "id": "academorix://modules/progress/compliance",
   "$version": 1,
   "title": "progress — self-compliance posture",
   "description": "Regulatory regimes this module's data touches + how each is discharged.",

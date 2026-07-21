@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Requests\Exceptions;
 
-use Stackra\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * The `access_requests` entitlement is FALSE for this tenant — opted out via ops-only setting for regulatory reasons.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class AccessRequestsDisabledForTenantException extends AcademorixException
+final class AccessRequestsDisabledForTenantException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

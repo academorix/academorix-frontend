@@ -4,21 +4,21 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Medical\Models;
+namespace Academorix\Medical\Models;
 
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
-use Stackra\Medical\Contracts\Data\InjuryInterface;
-use Stackra\Medical\Database\Factories\InjuryFactory;
-use Stackra\Athlete\Concerns\BelongsToAthlete;
+use Academorix\Medical\Contracts\Data\InjuryInterface;
+use Academorix\Medical\Database\Factories\InjuryFactory;
+use Academorix\Athlete\Concerns\BelongsToAthlete;
 use Stackra\Foundation\Concerns\EncryptsSensitiveFields;
 use Stackra\Foundation\Concerns\Filterable;
 use Stackra\Foundation\Concerns\HasMetadata;
 use Stackra\Foundation\Concerns\HasPrefixedUlid;
-use Stackra\Medical\Policies\InjuryPolicy;
+use Academorix\Medical\Policies\InjuryPolicy;
 use Stackra\Tenancy\Concerns\BelongsToTenant;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;

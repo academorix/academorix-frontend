@@ -1,79 +1,79 @@
 {
-  "id": "stackra://modules/membership/rules",
+  "id": "academorix://modules/membership/rules",
   "$version": 1,
   "title": "membership — validation rules",
-  "namespace": "Stackra\\Finance\\Membership\\Rules",
+  "namespace": "Academorix\\Finance\\Membership\\Rules",
   "rules": [
     {
       "name": "valid_billing_interval",
-      "class": "Stackra\\Finance\\Membership\\Rules\\ValidBillingInterval",
+      "class": "Academorix\\Finance\\Membership\\Rules\\ValidBillingInterval",
       "signature": "valid_billing_interval",
       "description": "Enforces billing_interval enum: monthly / quarterly / annual / lifetime. Cross-field: billing_interval='lifetime' requires next_renewal_at = null; other intervals require next_renewal_at set for active memberships."
     },
     {
       "name": "valid_currency",
-      "class": "Stackra\\Foundation\\Rules\\ValidIso4217Currency",
+      "class": "Academorix\\Foundation\\Rules\\ValidIso4217Currency",
       "signature": "valid_currency",
       "description": "ISO 4217 3-letter currency code."
     },
     {
       "name": "valid_positive_price",
-      "class": "Stackra\\Foundation\\Rules\\ValidPositiveInt",
+      "class": "Academorix\\Foundation\\Rules\\ValidPositiveInt",
       "signature": "valid_positive_price",
       "description": "Non-negative integer. Used on price_cents + price_snapshot_cents + amount_cents."
     },
     {
       "name": "valid_positive_passes_per_period",
-      "class": "Stackra\\Finance\\Membership\\Rules\\ValidPositivePassesPerPeriod",
+      "class": "Academorix\\Finance\\Membership\\Rules\\ValidPositivePassesPerPeriod",
       "signature": "valid_positive_passes_per_period",
       "description": "Non-negative integer OR null (null = unlimited). Zero means the plan grants access without pass-per-session accounting."
     },
     {
       "name": "valid_trial_days",
-      "class": "Stackra\\Finance\\Membership\\Rules\\ValidTrialDays",
+      "class": "Academorix\\Finance\\Membership\\Rules\\ValidTrialDays",
       "signature": "valid_trial_days",
       "description": "0 <= trial_days <= 90. Cross-field: > 0 requires `membership_trial_periods` entitlement."
     },
     {
       "name": "valid_refund_policy",
-      "class": "Stackra\\Finance\\Membership\\Rules\\ValidRefundPolicy",
+      "class": "Academorix\\Finance\\Membership\\Rules\\ValidRefundPolicy",
       "signature": "valid_refund_policy",
       "description": "Enforces refund_policy enum + consistency with refund_grace_days: 'no_refund' requires refund_grace_days = 0; 'full_within_grace' requires refund_grace_days > 0."
     },
     {
       "name": "valid_effective_range",
-      "class": "Stackra\\Finance\\Membership\\Rules\\ValidEffectiveRange",
+      "class": "Academorix\\Finance\\Membership\\Rules\\ValidEffectiveRange",
       "signature": "valid_effective_range",
       "description": "When both plan.effective_from + plan.effective_until are set, from < until. Otherwise either may be null (indefinite start or end)."
     },
     {
       "name": "valid_prerequisites_shape",
-      "class": "Stackra\\Finance\\Membership\\Rules\\ValidPrerequisitesShape",
+      "class": "Academorix\\Finance\\Membership\\Rules\\ValidPrerequisitesShape",
       "signature": "valid_prerequisites_shape",
       "description": "JSONB schema check on plan.prerequisites: { requires_athlete_medical_clearance: bool, requires_guardian_verified: bool, requires_minimum_athlete_age: int|null }."
     },
     {
       "name": "valid_addon_config_shape",
-      "class": "Stackra\\Finance\\Membership\\Rules\\ValidAddonConfigShape",
+      "class": "Academorix\\Finance\\Membership\\Rules\\ValidAddonConfigShape",
       "signature": "valid_addon_config_shape",
       "description": "JSONB schema check on plan.addon_config. Cross-field: non-empty addon_config requires `membership_addon_management` entitlement."
     },
     {
       "name": "valid_state_transition",
-      "class": "Stackra\\Finance\\Membership\\Rules\\ValidStateTransition",
+      "class": "Academorix\\Finance\\Membership\\Rules\\ValidStateTransition",
       "signature": "valid_state_transition",
       "description": "Enforces membership state machine: pending → {active, cancelled}; active ⇄ paused; active/paused → cancelled; active/paused → lapsed; active → expired; refunded is a cross-cut from any state (refund module authority). No transitions from terminal states (cancelled/lapsed/expired/refunded)."
     },
     {
       "name": "atomic_membership_invoice_creation",
-      "class": "Stackra\\Finance\\Membership\\Rules\\AtomicMembershipInvoiceCreation",
+      "class": "Academorix\\Finance\\Membership\\Rules\\AtomicMembershipInvoiceCreation",
       "signature": "atomic_membership_invoice_creation",
       "description": "LOAD-BEARING. Enforces that MembershipCreated fired implies an invoice::Invoice was created in the same DB transaction with total_amount matching membership's price + tax - coupon. Post-hook assertion — reads the invoice by membership_id back-reference; refuses with `MEMBERSHIP_INVOICE_CREATE_FAILED` when missing. Rules out silent invoice-lookup drift.",
       "kind": "post_hook_assertion"
     },
     {
       "name": "unique_active_membership_per_athlete_per_plan",
-      "class": "Stackra\\Finance\\Membership\\Rules\\UniqueActiveMembershipPerAthletePerPlan",
+      "class": "Academorix\\Finance\\Membership\\Rules\\UniqueActiveMembershipPerAthletePerPlan",
       "signature": "unique_active_membership_per_athlete_per_plan",
       "description": "Enforces partial unique index (tenant_id, athlete_id, membership_plan_id) WHERE status IN ('pending', 'active', 'paused'). Refuses with `MEMBERSHIP_DUPLICATE` on collision."
     }

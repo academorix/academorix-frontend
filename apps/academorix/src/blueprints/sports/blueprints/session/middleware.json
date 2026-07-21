@@ -1,11 +1,11 @@
 {
-  "id": "stackra://modules/session/middleware",
+  "id": "academorix://modules/session/middleware",
   "$version": 1,
   "title": "session — HTTP middleware",
   "middleware": [
     {
       "alias": "session.resolve_active",
-      "class": "Stackra\\Sports\\Session\\Http\\Middleware\\ResolveActiveSession",
+      "class": "Academorix\\Sports\\Session\\Http\\Middleware\\ResolveActiveSession",
       "priority": 60,
       "description": "Resolves the caller's active Session when a route depends on one. Reads `X-Session-Id` header when the caller's active tenant has a matching session AND the session is not archived. Sets Request::activeSession(). Runs AFTER event.resolve_active.",
       "auto_applied": true,

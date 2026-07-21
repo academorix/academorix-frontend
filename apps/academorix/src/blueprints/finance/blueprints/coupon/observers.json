@@ -1,12 +1,12 @@
 {
-  "id": "stackra://modules/coupon/observers",
+  "id": "academorix://modules/coupon/observers",
   "$version": 1,
   "title": "coupon — Eloquent observers",
   "description": "Two observers enforce this module's write-time invariants. CouponObserver validates code format + discount config + entitlement + validity window at creation; refuses discount_type / discount_amount mutations post-redemption. CouponRedemptionObserver is the load-bearing observer — every redemption row is created INSIDE a transaction with a SELECT ... FOR UPDATE row lock on the parent Coupon; it validates active window + usage_cap + per_customer_limit + applicability + minimum-order-amount under the row lock and atomically increments coupon.usage_count.",
   "observers": [
     {
       "model": "Coupon",
-      "observer": "Stackra\\Finance\\Coupon\\Observers\\CouponObserver",
+      "observer": "Academorix\\Finance\\Coupon\\Observers\\CouponObserver",
       "handles": [
         "creating -> populate ULID prefix `cpn_`",
         "creating -> refuse when tenant does NOT hold `coupon_capture` entitlement (returns `COUPON_CAPTURE_NOT_ENTITLED`)",
@@ -33,7 +33,7 @@
     },
     {
       "model": "CouponRedemption",
-      "observer": "Stackra\\Finance\\Coupon\\Observers\\CouponRedemptionObserver",
+      "observer": "Academorix\\Finance\\Coupon\\Observers\\CouponRedemptionObserver",
       "handles": [
         "creating -> populate ULID prefix `crd_`",
         "creating -> MUST run inside an enclosing transaction opened by CouponRedeemer::redeem() (invariant: the caller acquired a SELECT ... FOR UPDATE row lock on the parent Coupon). Refuses when no active transaction is present (returns `COUPON_REDEMPTION_REQUIRES_TRANSACTION` — should never surface; defensive)",

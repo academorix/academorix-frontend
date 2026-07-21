@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/age-group/entitlements",
+  "id": "academorix://modules/age-group/entitlements",
   "$version": 1,
   "title": "age-group — declared entitlements",
   "description": "Three entitlement keys. `age_group_slot` caps the number of tenant-custom (is_seeded=false) age groups per tenant. `age_group_custom` gates the ability to create any custom age group at all (Small tier locked to the seeded catalog). `age_group_sport_specific` gates the `sport_key` column — sport-specific overrides are Enterprise-only.",

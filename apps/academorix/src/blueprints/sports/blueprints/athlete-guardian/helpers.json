@@ -1,9 +1,9 @@
 {
-  "id": "stackra://modules/athlete-guardian/helpers",
+  "id": "academorix://modules/athlete-guardian/helpers",
   "$version": 1,
   "title": "athlete-guardian — helper functions",
   "description": "Ergonomic helpers for resolving primary guardian, checking guardianship status, resolving pickup roster + medical authorisation.",
-  "namespace": "Stackra\\Sports\\AthleteGuardian\\Support",
+  "namespace": "Academorix\\Sports\\AthleteGuardian\\Support",
   "helpers": [
     {
       "signature": "primary_guardian_for(Athlete $athlete): ?AthleteGuardian",

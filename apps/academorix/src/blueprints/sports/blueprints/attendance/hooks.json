@@ -1,13 +1,13 @@
 {
-  "id": "stackra://modules/attendance/hooks",
+  "id": "academorix://modules/attendance/hooks",
   "$version": 1,
   "title": "attendance — TenancyHook + lifecycle hooks",
   "description": "Eight cascade hooks: atomic pass consumption + refund coordinators, absence detection + threshold evaluator, membership freeze cascade, tenant-erasure cascade, and two archive-prevention hooks (enrollment + session).",
-  "namespace": "Stackra\\Sports\\Attendance\\Hooks",
+  "namespace": "Academorix\\Sports\\Attendance\\Hooks",
   "hooks": [
     {
       "name": "ConsumePassAtomicallyOnAttendanceCreated",
-      "class": "Stackra\\Sports\\Attendance\\Hooks\\ConsumePassAtomicallyOnAttendanceCreated",
+      "class": "Academorix\\Sports\\Attendance\\Hooks\\ConsumePassAtomicallyOnAttendanceCreated",
       "kind": "atomic_conversion",
       "listens_to": "attendance::AttendanceRecord.creating (pre-commit)",
       "purpose": "P1 hook. When session.requires_pass=true, opens a DB transaction, SELECT ... FOR UPDATE the earliest unconsumed Pass in the enrollment's active membership's current period, UPDATE passes SET consumed_at + consumed_by_session_id + refunded_at=NULL, SETS attendance.consumed_pass_id + attendance.membership_id, COMMITS. On any failure, rolls back both writes + fires PassConsumeAtomicityFailed. THIS IS THE LOAD-BEARING ATOMICITY GUARANTEE — CleanupOrphanCheckinsJob cross-checks + surfaces any drift as P1.",
@@ -16,7 +16,7 @@
     },
     {
       "name": "RefundPassAtomicallyOnAttendanceCancelled",
-      "class": "Stackra\\Sports\\Attendance\\Hooks\\RefundPassAtomicallyOnAttendanceCancelled",
+      "class": "Academorix\\Sports\\Attendance\\Hooks\\RefundPassAtomicallyOnAttendanceCancelled",
       "kind": "atomic_reversal",
       "listens_to": "attendance::AttendanceCancelled (pre-commit)",
       "purpose": "P1 hook. Reverse of ConsumePassAtomicallyOnAttendanceCreated. When an attendance is cancelled, opens a DB transaction, SELECT ... FOR UPDATE the Pass, UPDATE passes SET consumed_at=NULL + consumed_by_session_id=NULL + refunded_at=now() + refund_reason='attendance_cancelled', SETS attendance.consumed_pass_id remains for audit but the Pass returns to the unused pool. Rolls back on failure + fires PassRefundAtomicityFailed.",
@@ -24,7 +24,7 @@
     },
     {
       "name": "DetectAndCreateAbsencesForCompletedSession",
-      "class": "Stackra\\Sports\\Attendance\\Hooks\\DetectAndCreateAbsencesForCompletedSession",
+      "class": "Academorix\\Sports\\Attendance\\Hooks\\DetectAndCreateAbsencesForCompletedSession",
       "kind": "cascade",
       "listens_to": "sports::SessionCompleted",
       "purpose": "Optional in-band absence detection. When a Session transitions to completed status BEFORE the nightly ReconcileAttendanceJob runs, immediately sweep expected attendees for that session and create AbsenceRecord for no-shows. Lets the coach's post-session summary notification carry fresh absence data.",
@@ -33,7 +33,7 @@
     },
     {
       "name": "EvaluateAbsenceThresholdOnAbsenceRecorded",
-      "class": "Stackra\\Sports\\Attendance\\Hooks\\EvaluateAbsenceThresholdOnAbsenceRecorded",
+      "class": "Academorix\\Sports\\Attendance\\Hooks\\EvaluateAbsenceThresholdOnAbsenceRecorded",
       "kind": "cascade",
       "listens_to": "attendance::AbsenceRecorded",
       "purpose": "In-band rolling-window check. Given the newly-recorded absence, computes the athlete's unexcused-absence count in the applicable policy's freeze_period_days window. If count crosses max_unexcused_absences_per_period, fires AbsenceFreezeThresholdReached (P1). Also runs on excusal reversals to re-evaluate.",
@@ -41,7 +41,7 @@
     },
     {
       "name": "FreezeMembershipOnThresholdReached",
-      "class": "Stackra\\Sports\\Attendance\\Hooks\\FreezeMembershipOnThresholdReached",
+      "class": "Academorix\\Sports\\Attendance\\Hooks\\FreezeMembershipOnThresholdReached",
       "kind": "cascade",
       "listens_to": "attendance::AbsenceFreezeThresholdReached",
       "purpose": "P1 hook. Pauses the athlete's active membership via `membership::MembershipObserver.setStatus('paused', pause_reason='attendance_threshold', paused_by='attendance_module')`. The pause suspends renewal + future pass generation until admin manually resumes via membership:resume. Refuses to fire when tenant lacks `attendance_freeze_enforcement` entitlement (event still fires for audit trail, membership stays active).",
@@ -49,14 +49,14 @@
     },
     {
       "name": "PurgeAttendanceDataForErasedTenant",
-      "class": "Stackra\\Sports\\Attendance\\Hooks\\PurgeAttendanceDataForErasedTenant",
+      "class": "Academorix\\Sports\\Attendance\\Hooks\\PurgeAttendanceDataForErasedTenant",
       "kind": "tenant_erasure",
       "listens_to": "tenancy::TenantErased",
       "purpose": "Cascade delete via FK. Records under regulator hold survive as compliance archive rows (managed by compliance module). Writes compliance audit + emits count metrics per aggregate."
     },
     {
       "name": "PreventEnrollmentArchiveWithActiveAttendance",
-      "class": "Stackra\\Sports\\Attendance\\Hooks\\PreventEnrollmentArchiveWithActiveAttendance",
+      "class": "Academorix\\Sports\\Attendance\\Hooks\\PreventEnrollmentArchiveWithActiveAttendance",
       "kind": "cascade_prevention",
       "listens_to": "athlete-enrollment::EnrollmentWithdrawn / EnrollmentExpelled (pre-write when cascade would hard-delete)",
       "purpose": "Refuse hard-delete of an AthleteEnrollment when active AttendanceRecord references remain. Terminal enrollments soft-delete OK; hard-delete waits for retention window.",
@@ -65,7 +65,7 @@
     },
     {
       "name": "PreventSessionArchiveWithActiveAttendance",
-      "class": "Stackra\\Sports\\Attendance\\Hooks\\PreventSessionArchiveWithActiveAttendance",
+      "class": "Academorix\\Sports\\Attendance\\Hooks\\PreventSessionArchiveWithActiveAttendance",
       "kind": "cascade_prevention",
       "listens_to": "sports::SessionArchived (pre-write)",
       "purpose": "Refuse Session archive when active AttendanceRecord references remain. Historical rows survive; the session cannot be archived out from under them. cascade=true on the session archive route bypasses + cancels all attendance in one transaction (which refunds every consumed Pass).",

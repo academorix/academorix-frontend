@@ -1,9 +1,9 @@
 {
-  "id": "stackra://modules/referrals/metrics",
+  "id": "academorix://modules/referrals/metrics",
   "$version": 1,
   "title": "referrals — OpenTelemetry metrics",
   "instrumentation": "self via telemetry",
-  "namespace": "stackra.referrals",
+  "namespace": "academorix.referrals",
   "labelConventions": {
     "always": [],
     "commonlyAvailable": [
@@ -33,87 +33,87 @@
   },
   "metrics": [
     {
-      "name": "stackra.referrals.programs.count",
+      "name": "academorix.referrals.programs.count",
       "kind": "gauge",
       "unit": "programs",
       "labels": ["status", "side", "reward_type"],
       "description": "Count of programs per (status, side, reward_type). Sampled hourly."
     },
     {
-      "name": "stackra.referrals.codes.count",
+      "name": "academorix.referrals.codes.count",
       "kind": "gauge",
       "unit": "codes",
       "labels": ["code_type", "is_active"]
     },
     {
-      "name": "stackra.referrals.clicks_total",
+      "name": "academorix.referrals.clicks_total",
       "kind": "counter",
       "unit": "clicks",
       "labels": ["click_id_provider", "has_utm", "has_code"]
     },
     {
-      "name": "stackra.referrals.claims_total",
+      "name": "academorix.referrals.claims_total",
       "kind": "counter",
       "unit": "claims",
       "labels": ["code_type", "fraud_score_bucket"],
       "description": "fraud_score_bucket: 0-19 / 20-39 / 40-69 / 70-89 / 90-100."
     },
     {
-      "name": "stackra.referrals.signups_total",
+      "name": "academorix.referrals.signups_total",
       "kind": "counter",
       "unit": "signups",
       "labels": ["click_id_provider", "utm_source_bucket"]
     },
     {
-      "name": "stackra.referrals.triggers_reached_total",
+      "name": "academorix.referrals.triggers_reached_total",
       "kind": "counter",
       "unit": "triggers",
       "labels": ["trigger_event"]
     },
     {
-      "name": "stackra.referrals.vestings_total",
+      "name": "academorix.referrals.vestings_total",
       "kind": "counter",
       "unit": "vestings",
       "labels": ["reward_type", "side", "was_forced"]
     },
     {
-      "name": "stackra.referrals.rewards.created_total",
+      "name": "academorix.referrals.rewards.created_total",
       "kind": "counter",
       "unit": "rewards",
       "labels": ["reward_type", "recipient_role", "side"]
     },
     {
-      "name": "stackra.referrals.rewards.materialized_total",
+      "name": "academorix.referrals.rewards.materialized_total",
       "kind": "counter",
       "unit": "rewards",
       "labels": ["reward_type", "recipient_role"]
     },
     {
-      "name": "stackra.referrals.rewards.paid_total",
+      "name": "academorix.referrals.rewards.paid_total",
       "kind": "counter",
       "unit": "rewards",
       "labels": ["reward_type", "recipient_role"]
     },
     {
-      "name": "stackra.referrals.rewards.clawback_total",
+      "name": "academorix.referrals.rewards.clawback_total",
       "kind": "counter",
       "unit": "rewards",
       "labels": ["clawback_reason", "was_paid", "was_materialized"]
     },
     {
-      "name": "stackra.referrals.cancellations_total",
+      "name": "academorix.referrals.cancellations_total",
       "kind": "counter",
       "unit": "referrals",
       "labels": ["cancellation_reason"]
     },
     {
-      "name": "stackra.referrals.expirations_total",
+      "name": "academorix.referrals.expirations_total",
       "kind": "counter",
       "unit": "referrals",
       "labels": []
     },
     {
-      "name": "stackra.referrals.claim_duration_ms",
+      "name": "academorix.referrals.claim_duration_ms",
       "kind": "histogram",
       "unit": "ms",
       "buckets": [10, 50, 200, 1000, 5000],
@@ -121,7 +121,7 @@
       "description": "GET /api/v1/referrals/claim/{code} HTTP latency including FraudDetector's synchronous score computation. P99 target < 300ms."
     },
     {
-      "name": "stackra.referrals.fraud_detector.duration_ms",
+      "name": "academorix.referrals.fraud_detector.duration_ms",
       "kind": "histogram",
       "unit": "ms",
       "buckets": [1, 10, 50, 200, 500],
@@ -129,79 +129,79 @@
       "description": "FraudDetector.score() duration. detection_phase: 'claim_time' / 'trigger_time'."
     },
     {
-      "name": "stackra.referrals.fraud_flags_created_total",
+      "name": "academorix.referrals.fraud_flags_created_total",
       "kind": "counter",
       "unit": "flags",
       "labels": ["flag_type", "severity"],
       "description": "Every ReferralFraudFlag write is counted. Severity=critical is a P1 signal that must page ops."
     },
     {
-      "name": "stackra.referrals.fraud_flags_reviewed_total",
+      "name": "academorix.referrals.fraud_flags_reviewed_total",
       "kind": "counter",
       "unit": "flags",
       "labels": ["disposition", "days_from_created_bucket"]
     },
     {
-      "name": "stackra.referrals.fraud_open_flags",
+      "name": "academorix.referrals.fraud_open_flags",
       "kind": "gauge",
       "unit": "flags",
       "labels": ["severity"],
       "description": "Currently-unreviewed fraud flags. Warns admin when > 100 across the platform."
     },
     {
-      "name": "stackra.referrals.atomicity.failures_total",
+      "name": "academorix.referrals.atomicity.failures_total",
       "kind": "counter",
       "unit": "failures",
       "labels": ["failure_point"],
       "description": "CRITICAL. Vested-transition + reward creation atomicity failures. Should stay at 0. failure_point: 'reward_insert' / 'referral_update' / 'db_deadlock' / 'unknown'."
     },
     {
-      "name": "stackra.referrals.rewards.double_materialization_attempts_total",
+      "name": "academorix.referrals.rewards.double_materialization_attempts_total",
       "kind": "counter",
       "unit": "attempts",
       "labels": [],
       "description": "CRITICAL. Every fire is a race condition the unique index should have prevented. P1 signal."
     },
     {
-      "name": "stackra.referrals.budget.reached_total",
+      "name": "academorix.referrals.budget.reached_total",
       "kind": "counter",
       "unit": "programs",
       "labels": []
     },
     {
-      "name": "stackra.referrals.budget.spikes_total",
+      "name": "academorix.referrals.budget.spikes_total",
       "kind": "counter",
       "unit": "programs",
       "labels": []
     },
     {
-      "name": "stackra.referrals.budget.drift_ratio",
+      "name": "academorix.referrals.budget.drift_ratio",
       "kind": "gauge",
       "unit": "ratio",
       "labels": [],
       "description": "ReconcileProgramBudgetJob measures the drift between rewards_issued_count (denormalised counter) vs the recomputed count. Should stay 0. Any drift is a bug in the counter-increment path."
     },
     {
-      "name": "stackra.referrals.invitations.sent_total",
+      "name": "academorix.referrals.invitations.sent_total",
       "kind": "counter",
       "unit": "invitations",
       "labels": ["channel", "template_slug"]
     },
     {
-      "name": "stackra.referrals.invitations.suppressed_total",
+      "name": "academorix.referrals.invitations.suppressed_total",
       "kind": "counter",
       "unit": "invitations",
       "labels": ["suppression_reason"],
       "description": "suppression_reason: 'unsubscribed' / 'disposable_email' / 'existing_user' / 'rate_limit'."
     },
     {
-      "name": "stackra.referrals.invitations.clicked_total",
+      "name": "academorix.referrals.invitations.clicked_total",
       "kind": "counter",
       "unit": "clicks",
       "labels": ["channel"]
     },
     {
-      "name": "stackra.referrals.materialization.duration_ms",
+      "name": "academorix.referrals.materialization.duration_ms",
       "kind": "histogram",
       "unit": "ms",
       "buckets": [50, 200, 1000, 5000, 30000],
@@ -209,14 +209,14 @@
       "description": "MaterializeVestedRewardsJob per-reward duration (Finance module call latency)."
     },
     {
-      "name": "stackra.referrals.entitlement.gate_refusals_total",
+      "name": "academorix.referrals.entitlement.gate_refusals_total",
       "kind": "counter",
       "unit": "refusals",
       "labels": ["entitlement_key"],
       "description": "Route hits refused by the entitlement middleware. Product signal for upgrade-CTA impressions."
     },
     {
-      "name": "stackra.referrals.retention.purged_total",
+      "name": "academorix.referrals.retention.purged_total",
       "kind": "counter",
       "unit": "rows",
       "labels": ["entity"],

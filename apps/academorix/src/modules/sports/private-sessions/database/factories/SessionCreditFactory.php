@@ -4,19 +4,19 @@
 
 declare(strict_types=1);
 
-namespace Stackra\PrivateSessions\Database\Factories;
+namespace Academorix\PrivateSessions\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Stackra\PrivateSessions\Contracts\Data\SessionCreditInterface;
-use Stackra\PrivateSessions\Models\SessionCredit;
+use Academorix\PrivateSessions\Contracts\Data\SessionCreditInterface;
+use Academorix\PrivateSessions\Models\SessionCredit;
 
 /**
- * Factory for {@see \Stackra\PrivateSessions\Models\SessionCredit}.
+ * Factory for {@see \Academorix\PrivateSessions\Models\SessionCredit}.
  *
  * Auto-generated skeleton — extend with named states as domain
  * cases emerge (e.g. `->published()`, `->overdue()`, `->archived()`).
  *
- * @extends Factory<\Stackra\PrivateSessions\Models\SessionCredit>
+ * @extends Factory<\Academorix\PrivateSessions\Models\SessionCredit>
  *
  * @category PrivateSessions
  *

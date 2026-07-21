@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/attendance/schemas/attendance-policy",
+  "id": "academorix://modules/attendance/schemas/attendance-policy",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "AttendancePolicy",
@@ -13,8 +13,8 @@
     "keyType": "string",
     "keyPrefix": "apo_",
     "incrementing": false,
-    "model": "Stackra\\Sports\\Attendance\\Models\\AttendancePolicy",
-    "interface": "Stackra\\Sports\\Attendance\\Contracts\\Data\\AttendancePolicyInterface",
+    "model": "Academorix\\Sports\\Attendance\\Models\\AttendancePolicy",
+    "interface": "Academorix\\Sports\\Attendance\\Contracts\\Data\\AttendancePolicyInterface",
     "traits": [
       "HasFactory",
       "HasPrefixedUlid",

@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Refund\Contracts\Data;
+namespace Academorix\Refund\Contracts\Data;
 
 use Illuminate\Container\Attributes\Bind;
-use Stackra\Refund\Models\RefundLine;
+use Academorix\Refund\Models\RefundLine;
 
 /**
  * Table shape for the `refund_lines` table.

@@ -4,17 +4,17 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Leads\Contracts\Repositories;
+namespace Academorix\Leads\Contracts\Repositories;
 
 use Stackra\Crud\Contracts\RepositoryInterface;
 
 /**
- * Repository contract for {@see Stackra\Leads\Models\LeadActivity}.
+ * Repository contract for {@see Academorix\Leads\Models\LeadActivity}.
  *
  * Consumers type-hint the interface; the container binds the concrete
  * via `#[AsRepository]` on `LeadActivityRepository`.
  *
- * @extends RepositoryInterface<\Stackra\Leads\Models\LeadActivity>
+ * @extends RepositoryInterface<\Academorix\Leads\Models\LeadActivity>
  *
  * @category Leads
  *

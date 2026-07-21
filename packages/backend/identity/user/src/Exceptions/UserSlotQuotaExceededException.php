@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\User\Exceptions;
 
-use Stackra\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Reached the `user_slot` entitlement cap for this tenant.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class UserSlotQuotaExceededException extends AcademorixException
+final class UserSlotQuotaExceededException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

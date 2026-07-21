@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/athlete-guardian/routes",
+  "id": "academorix://modules/athlete-guardian/routes",
   "$version": 1,
   "title": "athlete-guardian — HTTP routes",
   "description": "Tenant-facing AthleteGuardian CRUD (nested under athletes) + verification workflow + primary-guardian swap + per-user guardianships surface. Every route carries `auth:sanctum` + `tenant.resolve` + policy check via the route-level `permission` metadata. The nested route shape (/athletes/{athlete}/guardians/{guardian}) makes the parent athlete explicit at every operation.",
@@ -25,62 +25,62 @@
         {
           "method": "GET",
           "path": "/",
-          "controller": "Stackra\\Sports\\AthleteGuardian\\Http\\Controllers\\Tenant\\AthleteGuardianController@index",
+          "controller": "Academorix\\Sports\\AthleteGuardian\\Http\\Controllers\\Tenant\\AthleteGuardianController@index",
           "permission": "athlete_guardians.viewAny",
           "description": "List all guardians for the athlete. filter[verification_status], filter[is_primary], filter[has_legal_custody], filter[can_pickup], filter[can_receive_communications]. Guardians see only their own row via the .own scope."
         },
         {
           "method": "POST",
           "path": "/",
-          "controller": "Stackra\\Sports\\AthleteGuardian\\Http\\Controllers\\Tenant\\AthleteGuardianController@store",
+          "controller": "Academorix\\Sports\\AthleteGuardian\\Http\\Controllers\\Tenant\\AthleteGuardianController@store",
           "permission": "athlete_guardians.create",
           "description": "Body: GuardianAddData { user_id, relationship, has_legal_custody, can_pickup, can_receive_communications, can_authorise_medical_care, is_primary }. Refused when tenant lacks athlete_multi_guardian AND athlete already has one guardian (GUARDIAN_TIER_LIMIT_EXCEEDED). Auto-dispatches VerifyGuardianByEmailDomainJob."
         },
         {
           "method": "GET",
           "path": "/{guardian}",
-          "controller": "Stackra\\Sports\\AthleteGuardian\\Http\\Controllers\\Tenant\\AthleteGuardianController@show",
+          "controller": "Academorix\\Sports\\AthleteGuardian\\Http\\Controllers\\Tenant\\AthleteGuardianController@show",
           "permission": "athlete_guardians.view"
         },
         {
           "method": "PATCH",
           "path": "/{guardian}",
-          "controller": "Stackra\\Sports\\AthleteGuardian\\Http\\Controllers\\Tenant\\AthleteGuardianController@update",
+          "controller": "Academorix\\Sports\\AthleteGuardian\\Http\\Controllers\\Tenant\\AthleteGuardianController@update",
           "permission": "athlete_guardians.update",
           "description": "Body: GuardianUpdateData (excludes athlete_id, user_id, tenant_id [immutable], verification_status [dedicated endpoints], is_primary [use /set-primary]). Role flags update via this endpoint."
         },
         {
           "method": "DELETE",
           "path": "/{guardian}",
-          "controller": "Stackra\\Sports\\AthleteGuardian\\Http\\Controllers\\Tenant\\AthleteGuardianController@destroy",
+          "controller": "Academorix\\Sports\\AthleteGuardian\\Http\\Controllers\\Tenant\\AthleteGuardianController@destroy",
           "permission": "athlete_guardians.delete",
           "description": "Soft-delete. Fires GuardianRemoved. When the removed guardian was primary, auto-elects a new primary + fires PrimaryGuardianChanged. Refused when this is the only active guardian for a MINOR athlete (GUARDIAN_MINOR_LAST_GUARDIAN)."
         },
         {
           "method": "POST",
           "path": "/{guardian}/set-primary",
-          "controller": "Stackra\\Sports\\AthleteGuardian\\Http\\Controllers\\Tenant\\AthleteGuardianController@setPrimary",
+          "controller": "Academorix\\Sports\\AthleteGuardian\\Http\\Controllers\\Tenant\\AthleteGuardianController@setPrimary",
           "permission": "athlete_guardians.set-primary",
           "description": "Body may be empty. Atomic swap — demotes existing primary + promotes this guardian in one transaction. Refused when guardian.verification_status != 'verified' (returns PRIMARY_GUARDIAN_MUST_BE_VERIFIED)."
         },
         {
           "method": "POST",
           "path": "/{guardian}/verify",
-          "controller": "Stackra\\Sports\\AthleteGuardian\\Http\\Controllers\\Tenant\\AthleteGuardianController@verify",
+          "controller": "Academorix\\Sports\\AthleteGuardian\\Http\\Controllers\\Tenant\\AthleteGuardianController@verify",
           "permission": "athlete_guardians.verify",
           "description": "Body: { verification_document_file_id? }. When athlete_guardian_verification entitlement is on, verification_document_file_id is REQUIRED. Transitions pending/disputed → verified with method='hr_manual'. Fires GuardianVerified. Enterprise-only path when the entitlement is on."
         },
         {
           "method": "POST",
           "path": "/{guardian}/dispute",
-          "controller": "Stackra\\Sports\\AthleteGuardian\\Http\\Controllers\\Tenant\\AthleteGuardianController@dispute",
+          "controller": "Academorix\\Sports\\AthleteGuardian\\Http\\Controllers\\Tenant\\AthleteGuardianController@dispute",
           "permission": "athlete_guardians.dispute",
           "description": "Body: { dispute_reason (required) }. Transitions verified → disputed. Blocks the guardian from acting as consent recorder for athlete consents. HR + safeguarding_officer + admin only."
         },
         {
           "method": "POST",
           "path": "/{guardian}/revoke",
-          "controller": "Stackra\\Sports\\AthleteGuardian\\Http\\Controllers\\Tenant\\AthleteGuardianController@revoke",
+          "controller": "Academorix\\Sports\\AthleteGuardian\\Http\\Controllers\\Tenant\\AthleteGuardianController@revoke",
           "permission": "athlete_guardians.revoke",
           "description": "Body: { revoke_reason (required) }. Terminal transition. Auto-flips is_primary to false + auto-elects a new primary. Fires GuardianVerificationRevoked + PrimaryGuardianChanged."
         }
@@ -106,7 +106,7 @@
         {
           "method": "GET",
           "path": "/",
-          "controller": "Stackra\\Sports\\AthleteGuardian\\Http\\Controllers\\Tenant\\MyGuardianshipsController@index",
+          "controller": "Academorix\\Sports\\AthleteGuardian\\Http\\Controllers\\Tenant\\MyGuardianshipsController@index",
           "permission": "athlete_guardians.view.own",
           "description": "List every AthleteGuardian row where user_id = current_user_id. Filters by verification_status."
         }
@@ -129,19 +129,19 @@
         {
           "method": "GET",
           "path": "/",
-          "controller": "Stackra\\Sports\\AthleteGuardian\\Http\\Controllers\\Platform\\GuardianshipsController@index",
+          "controller": "Academorix\\Sports\\AthleteGuardian\\Http\\Controllers\\Platform\\GuardianshipsController@index",
           "permission": "platform.athlete_guardians.viewAny"
         },
         {
           "method": "GET",
           "path": "/{guardian}",
-          "controller": "Stackra\\Sports\\AthleteGuardian\\Http\\Controllers\\Platform\\GuardianshipsController@show",
+          "controller": "Academorix\\Sports\\AthleteGuardian\\Http\\Controllers\\Platform\\GuardianshipsController@show",
           "permission": "platform.athlete_guardians.view"
         },
         {
           "method": "GET",
           "path": "/audit-verification",
-          "controller": "Stackra\\Sports\\AthleteGuardian\\Http\\Controllers\\Platform\\VerificationAuditController@export",
+          "controller": "Academorix\\Sports\\AthleteGuardian\\Http\\Controllers\\Platform\\VerificationAuditController@export",
           "permission": "platform.athlete_guardians.audit-verification",
           "description": "Compliance-only export. Emits signed CSV of every verify/dispute/revoke action. Super_admin only."
         }

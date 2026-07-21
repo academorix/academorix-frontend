@@ -4,7 +4,7 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Dunning\Concerns;
+namespace Academorix\Dunning\Concerns;
 
 /**
  * Trait — HasDunning.

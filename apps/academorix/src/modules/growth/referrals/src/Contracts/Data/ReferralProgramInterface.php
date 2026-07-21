@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Referrals\Contracts\Data;
+namespace Academorix\Referrals\Contracts\Data;
 
 use Illuminate\Container\Attributes\Bind;
-use Stackra\Referrals\Models\ReferralProgram;
+use Academorix\Referrals\Models\ReferralProgram;
 
 /**
  * Table shape for the `referral_programs` table.

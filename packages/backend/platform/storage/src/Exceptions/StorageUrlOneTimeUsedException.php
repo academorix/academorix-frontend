@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Storage\Exceptions;
 
-use Stackra\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Signed URL had one_time_use=true and hit_count is already 1.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class StorageUrlOneTimeUsedException extends AcademorixException
+final class StorageUrlOneTimeUsedException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

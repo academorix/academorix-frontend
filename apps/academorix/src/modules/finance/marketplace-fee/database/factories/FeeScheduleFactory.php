@@ -4,19 +4,19 @@
 
 declare(strict_types=1);
 
-namespace Stackra\MarketplaceFee\Database\Factories;
+namespace Academorix\MarketplaceFee\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Stackra\MarketplaceFee\Contracts\Data\FeeScheduleInterface;
-use Stackra\MarketplaceFee\Models\FeeSchedule;
+use Academorix\MarketplaceFee\Contracts\Data\FeeScheduleInterface;
+use Academorix\MarketplaceFee\Models\FeeSchedule;
 
 /**
- * Factory for {@see \Stackra\MarketplaceFee\Models\FeeSchedule}.
+ * Factory for {@see \Academorix\MarketplaceFee\Models\FeeSchedule}.
  *
  * Auto-generated skeleton — extend with named states as domain
  * cases emerge (e.g. `->published()`, `->overdue()`, `->archived()`).
  *
- * @extends Factory<\Stackra\MarketplaceFee\Models\FeeSchedule>
+ * @extends Factory<\Academorix\MarketplaceFee\Models\FeeSchedule>
  *
  * @category MarketplaceFee
  *

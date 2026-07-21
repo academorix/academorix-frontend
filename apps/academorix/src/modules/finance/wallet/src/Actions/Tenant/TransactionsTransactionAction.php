@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Wallet\Actions\Tenant;
+namespace Academorix\Wallet\Actions\Tenant;
 
 use Stackra\Routing\Attributes\AsAction;
 use Stackra\Routing\Attributes\Get;
 use Stackra\Routing\Attributes\Middleware;
 use Stackra\Routing\Concerns\AsController;
-use Stackra\Wallet\Contracts\Data\WalletTransactionInterface;
-use Stackra\Wallet\Contracts\Repositories\WalletTransactionRepositoryInterface;
+use Academorix\Wallet\Contracts\Data\WalletTransactionInterface;
+use Academorix\Wallet\Contracts\Repositories\WalletTransactionRepositoryInterface;
 use Illuminate\Http\Request;
 
 /**

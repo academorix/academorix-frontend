@@ -1,4 +1,4 @@
-# stackra/invoice
+# academorix/invoice
 
 Server-side Laravel package for the `invoice` module. Auto-generated from the
 blueprint at `modules/finance/blueprints/invoice/`.
@@ -46,6 +46,6 @@ file is a hand-tuned override that survives regeneration.
 ## Companion wire SDK
 
 The wire-visible Saloon + Spatie Data package lives at
-`stackra-finance/invoice-sdk` under `sdk/finance-invoice-sdk/`. Consumers
+`academorix-finance/invoice-sdk` under `sdk/finance-invoice-sdk/`. Consumers
 cross the service boundary through the SDK; this package is the SERVER-side
 owner of the domain.

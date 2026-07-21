@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/payment/data-classes",
+  "id": "academorix://modules/payment/data-classes",
   "$version": 1,
   "title": "payment — field classification",
   "description": "Payment carries customer identifiers (email, phone, billing address), amounts (revenue-sensitive), payment method tokens (RESTRICTED — provider credentials + card data equivalents), risk scores + fraud signals. Zero card PAN/CVV/magnetic-stripe/PIN — those are PCI-DSS scope and NEVER touched (customer confirms via provider SDK client-side). Billing details snapshot is PII + retained per financial retention (7y / 10y). Dispute evidence is confidential — competitor + regulator sensitivity.",

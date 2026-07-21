@@ -4,17 +4,17 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Development\Models;
+namespace Academorix\Development\Models;
 
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
-use Stackra\Development\Contracts\Data\ScoutingReportInterface;
-use Stackra\Development\Database\Factories\ScoutingReportFactory;
-use Stackra\Athlete\Concerns\BelongsToAthlete;
-use Stackra\Development\Policies\ScoutingReportPolicy;
+use Academorix\Development\Contracts\Data\ScoutingReportInterface;
+use Academorix\Development\Database\Factories\ScoutingReportFactory;
+use Academorix\Athlete\Concerns\BelongsToAthlete;
+use Academorix\Development\Policies\ScoutingReportPolicy;
 use Stackra\Foundation\Concerns\Filterable;
 use Stackra\Foundation\Concerns\HasMetadata;
 use Stackra\Foundation\Concerns\HasPrefixedUlid;

@@ -2,7 +2,7 @@
   "$version": 1,
   "name": "coupon",
   "alias": "coupon",
-  "namespace": "Stackra\\Finance\\Coupon",
+  "namespace": "Academorix\\Finance\\Coupon",
   "description": "Discount code + redemption tracker. Answers 'what discount applies to this invoice line, and how many times has this coupon been used?'. Ships TWO tables: `coupons` (the discount config — percent / fixed_amount / free_period / first_month_free / bogo with usage caps, expiry, applicability filters), `coupon_redemptions` (per-use pivot with atomic constraint check — this coupon x this customer x this invoice/membership tuple). Complements referrals — a referral CAN issue a coupon code for the referred to redeem, but coupons ALSO exist standalone (seasonal SUMMER25, corporate CORP_DISCOUNT, promotional Newsletter subscriber code). Redemption is atomic — the check 'is this coupon still valid AND has this customer not already redeemed AND has program cap not exceeded' happens in a single DB transaction with row lock on the coupon record. Every redemption fires a marketing event for ad-network attribution + a domain event that finance::invoice can subscribe to for line-item discount application. Fraud checks (device fingerprint match, email-variant match, velocity limits) delegated to `growth::referrals::FraudDetector` when the coupon was issued via referral; standalone coupons rely on usage_cap + per_customer_limit + coupon.rate_limit middleware.",
   "keywords": [
     "coupon",
@@ -40,7 +40,7 @@
     "wave-4"
   ],
   "priority": 61,
-  "providers": ["Stackra\\Finance\\Coupon\\Providers\\CouponServiceProvider"],
+  "providers": ["Academorix\\Finance\\Coupon\\Providers\\CouponServiceProvider"],
   "files": [],
   "dependencies": [
     "foundation",

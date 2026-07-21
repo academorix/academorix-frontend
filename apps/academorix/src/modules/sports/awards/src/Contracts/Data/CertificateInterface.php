@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Awards\Contracts\Data;
+namespace Academorix\Awards\Contracts\Data;
 
 use Illuminate\Container\Attributes\Bind;
-use Stackra\Awards\Models\Certificate;
+use Academorix\Awards\Models\Certificate;
 
 /**
  * Table shape for the `certificates` table.

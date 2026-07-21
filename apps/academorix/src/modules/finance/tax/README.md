@@ -1,4 +1,4 @@
-# stackra/tax
+# academorix/tax
 
 Server-side Laravel package for the `tax` module. Auto-generated from the
 blueprint at `modules/finance/blueprints/tax/`.
@@ -47,6 +47,6 @@ file is a hand-tuned override that survives regeneration.
 ## Companion wire SDK
 
 The wire-visible Saloon + Spatie Data package lives at
-`stackra-finance/tax-sdk` under `sdk/finance-tax-sdk/`. Consumers cross the
+`academorix-finance/tax-sdk` under `sdk/finance-tax-sdk/`. Consumers cross the
 service boundary through the SDK; this package is the SERVER-side owner of the
 domain.

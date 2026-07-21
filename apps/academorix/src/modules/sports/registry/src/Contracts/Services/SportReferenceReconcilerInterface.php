@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Registry\Contracts\Services;
+namespace Academorix\Registry\Contracts\Services;
 
-use Stackra\Registry\Services\SportReferenceReconciler;
+use Academorix\Registry\Services\SportReferenceReconciler;
 use Illuminate\Container\Attributes\Bind;
 
 /**

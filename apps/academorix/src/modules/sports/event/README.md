@@ -1,4 +1,4 @@
-# stackra/event
+# academorix/event
 
 Server-side Laravel package for the `event` module. Auto-generated from the
 blueprint at `modules/sports/blueprints/event/`.
@@ -51,6 +51,6 @@ file is a hand-tuned override that survives regeneration.
 ## Companion wire SDK
 
 The wire-visible Saloon + Spatie Data package lives at
-`stackra-sports/event-sdk` under `sdk/sports-event-sdk/`. Consumers cross the
+`academorix-sports/event-sdk` under `sdk/sports-event-sdk/`. Consumers cross the
 service boundary through the SDK; this package is the SERVER-side owner of the
 domain.

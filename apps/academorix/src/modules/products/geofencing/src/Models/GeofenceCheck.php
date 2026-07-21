@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Geofencing\Models;
+namespace Academorix\Geofencing\Models;
 
 use Stackra\Database\Concerns\HasMetadata;
 use Stackra\Database\Concerns\HasPrefixedUlid;
-use Stackra\Geofencing\Contracts\Data\GeofenceCheckInterface;
-use Stackra\Geofencing\Database\Factories\GeofenceCheckFactory;
-use Stackra\Geofencing\Enums\GeofenceMode;
-use Stackra\Geofencing\Enums\GeofenceResult;
-use Stackra\Geofencing\Observers\GeofenceCheckObserver;
-use Stackra\Geofencing\Policies\GeofenceCheckPolicy;
+use Academorix\Geofencing\Contracts\Data\GeofenceCheckInterface;
+use Academorix\Geofencing\Database\Factories\GeofenceCheckFactory;
+use Academorix\Geofencing\Enums\GeofenceMode;
+use Academorix\Geofencing\Enums\GeofenceResult;
+use Academorix\Geofencing\Observers\GeofenceCheckObserver;
+use Academorix\Geofencing\Policies\GeofenceCheckPolicy;
 use Stackra\Tenancy\Concerns\BelongsToTenant;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;

@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/marketing/subprocessors",
+  "id": "academorix://modules/marketing/subprocessors",
   "$version": 1,
   "title": "marketing — subprocessors",
   "description": "The Marketing module engages NINE third-party subprocessors — one per ad-network provider driver. Every subprocessor receives hashed PII (email SHA256, phone SHA256, name SHA256) via HTTPS. GDPR Art. 28 DPA references + Art. 30 records of processing activities. Every tenant that activates a provider effectively adds that subprocessor to their processing register; the tenant admin acknowledges the DPA reference before configuring.",
@@ -71,11 +71,11 @@
       "slug": "gtm_server",
       "vendor_name": "Google LLC (Google Tag Manager Server-side)",
       "vendor_url": "https://developers.google.com/tag-platform/tag-manager/server-side",
-      "purpose": "Server-to-server delivery to a tenant-hosted GTM Server container. The container itself may fan out to further destinations (this is the tenant's decision, out of Stackra's scope).",
+      "purpose": "Server-to-server delivery to a tenant-hosted GTM Server container. The container itself may fan out to further destinations (this is the tenant's decision, out of Academorix's scope).",
       "data_categories": [
-        "caller-configured schema — Stackra delivers the canonical event shape + attribution + consent snapshot"
+        "caller-configured schema — Academorix delivers the canonical event shape + attribution + consent snapshot"
       ],
-      "data_hashing": "none by Stackra; the GTM container may hash on its own",
+      "data_hashing": "none by Academorix; the GTM container may hash on its own",
       "endpoint": "caller-configured",
       "sub_processing_locations": ["caller-hosted"],
       "dpa_url": "https://privacy.google.com/businesses/processorterms/ (base GTM DPA — tenant additionally responsible for their container's downstream)",
@@ -172,7 +172,7 @@
       "vendor_url": "N/A (tenant-owned endpoint)",
       "purpose": "Generic HMAC-signed JSON webhook. Escape hatch for tenants using Segment / Rudderstack / custom analytics warehouses. Data ultimately delivered to a caller-configured URL.",
       "data_categories": ["full marketing_event row + attribution snapshot + consent snapshot"],
-      "data_hashing": "none by Stackra — caller's endpoint responsible for handling",
+      "data_hashing": "none by Academorix — caller's endpoint responsible for handling",
       "endpoint": "caller-configured",
       "sub_processing_locations": ["caller-hosted"],
       "dpa_url": "N/A — the tenant is responsible for their downstream endpoint's DPA if any",

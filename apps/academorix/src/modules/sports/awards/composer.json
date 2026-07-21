@@ -1,10 +1,10 @@
 {
-  "name": "stackra/awards",
+  "name": "academorix/awards",
   "type": "library",
-  "description": "Stackra Awards module — server-side Laravel package emitted from the module blueprint at `modules/sports/blueprints/awards/`. Complements the wire SDK at `stackra-sports/awards-sdk`.",
+  "description": "Academorix Awards module — server-side Laravel package emitted from the module blueprint at `modules/sports/blueprints/awards/`. Complements the wire SDK at `academorix-sports/awards-sdk`.",
   "license": "proprietary",
   "keywords": [
-    "stackra",
+    "academorix",
     "module",
     "laravel",
     "sports",
@@ -22,7 +22,7 @@
     "stackra/routing": "@dev",
     "stackra/service-provider": "@dev",
     "stackra/support": "@dev",
-    "stackra-sports/awards-sdk": "@dev"
+    "academorix-sports/awards-sdk": "@dev"
   },
   "require-dev": {
     "orchestra/testbench": "^11.0",
@@ -33,12 +33,12 @@
   },
   "autoload": {
     "psr-4": {
-      "Stackra\\Awards\\": "src/"
+      "Academorix\\Awards\\": "src/"
     }
   },
   "autoload-dev": {
     "psr-4": {
-      "Stackra\\Awards\\Tests\\": "tests/"
+      "Academorix\\Awards\\Tests\\": "tests/"
     }
   },
   "extra": {

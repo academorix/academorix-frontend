@@ -1,11 +1,11 @@
 {
-  "id": "stackra://modules/athlete/traits",
+  "id": "academorix://modules/athlete/traits",
   "$version": 1,
   "title": "athlete — trait composition",
   "description": "Two owned traits. `BelongsToAthlete` is the FK trait for downstream models (AthleteGuardian, AthleteEnrollment, TeamMember polymorphic, EventRegistration, SessionAttendance, Membership); `HasAthleteHealthProfile` is composed onto the Athlete model itself + surfaces the medical + emergency-contact accessors with the redactor pipeline applied. Order matters when composed with `BelongsToTenant` / `BelongsToBranch` / `BelongsToUser` — tenant MUST come first so scope chains observe the tenant context; branch and user precede the module-owned trait.",
   "owned": [
     {
-      "trait": "Stackra\\Sports\\Athlete\\Concerns\\BelongsToAthlete",
+      "trait": "Academorix\\Sports\\Athlete\\Concerns\\BelongsToAthlete",
       "description": "Mixed into any domain model that carries an `athlete_id` FK. Adds the `athlete()` belongsTo relation, a `resolveInAthlete(?Athlete)` query scope that filters `WHERE athlete_id = ?` (falling back to a caller-supplied resolver when the arg is omitted), and a `booted()` hook that refuses to save a row whose `athlete_id` points at an Athlete in a different tenant than the row itself (defense-in-depth against cross-tenant FK smuggling). Also refuses when the referenced Athlete is not in a coherent state for the operation — configurable per composing model (e.g. AthleteEnrollment refuses when athlete.status = 'archived'; AthleteGuardian permits any non-archived status).",
       "public": true,
       "usedBy": [
@@ -25,7 +25,7 @@
       ]
     },
     {
-      "trait": "Stackra\\Sports\\Athlete\\Concerns\\HasAthleteHealthProfile",
+      "trait": "Academorix\\Sports\\Athlete\\Concerns\\HasAthleteHealthProfile",
       "description": "Composed onto the Athlete model itself. Adds accessor methods for the medical + emergency-contact clusters that apply the redactor pipeline based on the current caller's permissions. Also exposes `hasActiveConsentFor(purpose: 'photo_release' | 'medical_disclosure' | 'third_party'): bool` (checks the flag + the recorded_at freshness when athlete_consent_workflow entitlement is on).",
       "public": true,
       "usedBy": ["athlete::Athlete"],
@@ -46,39 +46,39 @@
       }
     ],
     "foundation": [
-      { "trait": "Stackra\\Foundation\\Concerns\\HasPrefixedUlid" },
-      { "trait": "Stackra\\Foundation\\Concerns\\HasUserstamps" },
-      { "trait": "Stackra\\Foundation\\Concerns\\HasMetadata" },
-      { "trait": "Stackra\\Foundation\\Concerns\\Filterable" },
-      { "trait": "Stackra\\Foundation\\Concerns\\Searchable" }
+      { "trait": "Academorix\\Foundation\\Concerns\\HasPrefixedUlid" },
+      { "trait": "Academorix\\Foundation\\Concerns\\HasUserstamps" },
+      { "trait": "Academorix\\Foundation\\Concerns\\HasMetadata" },
+      { "trait": "Academorix\\Foundation\\Concerns\\Filterable" },
+      { "trait": "Academorix\\Foundation\\Concerns\\Searchable" }
     ],
     "tenants": [
       {
-        "trait": "Stackra\\Tenancy\\Concerns\\BelongsToTenant",
+        "trait": "Academorix\\Tenancy\\Concerns\\BelongsToTenant",
         "reason": "Every owned row carries tenant_id per tenancy-columns.md §3."
       }
     ],
     "branch": [
       {
-        "trait": "Stackra\\Branch\\Concerns\\BelongsToBranch",
+        "trait": "Academorix\\Branch\\Concerns\\BelongsToBranch",
         "reason": "Athlete carries branch_id directly."
       }
     ],
     "user": [
       {
-        "trait": "Stackra\\User\\Concerns\\BelongsToUser",
+        "trait": "Academorix\\User\\Concerns\\BelongsToUser",
         "reason": "Athlete carries user_id (nullable) + composes BelongsToUser for the .own scope suffix. `athletes.view.own` narrows to `WHERE user_id = current_user_id`."
       }
     ],
     "audit": [
       {
-        "trait": "Stackra\\Audit\\Concerns\\Auditable",
+        "trait": "Academorix\\Audit\\Concerns\\Auditable",
         "reason": "Every mutation is compliance-relevant. Medical columns write to a SEPARATE audit table (`athlete_medical_history`) with 7-year retention."
       }
     ],
     "activity": [
       {
-        "trait": "Stackra\\Activity\\Concerns\\HasActivityLog",
+        "trait": "Academorix\\Activity\\Concerns\\HasActivityLog",
         "reason": "Lifecycle transitions + consent recording + age-group snapshot flips feed the tenant activity feed. Medical changes DO NOT feed activity (private-tier)."
       }
     ]

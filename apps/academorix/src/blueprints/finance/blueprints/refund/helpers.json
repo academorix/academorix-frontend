@@ -1,9 +1,9 @@
 {
-  "id": "stackra://modules/refund/helpers",
+  "id": "academorix://modules/refund/helpers",
   "$version": 1,
   "title": "refund — helper functions",
   "description": "Ergonomic helpers for resolving refunds, computing refundable amounts, computing proration, and reading approval state. All helpers are thin wrappers around bound services — never business logic.",
-  "namespace": "Stackra\\Finance\\Refund\\Support",
+  "namespace": "Academorix\\Finance\\Refund\\Support",
   "helpers": [
     {
       "signature": "resolve_refund(string $refundId, string $tenantId): ?Refund",

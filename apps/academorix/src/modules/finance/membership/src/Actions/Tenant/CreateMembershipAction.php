@@ -4,11 +4,11 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Membership\Actions\Tenant;
+namespace Academorix\Membership\Actions\Tenant;
 
-use Stackra\Membership\Contracts\Repositories\MembershipRepositoryInterface;
-use Stackra\Membership\Data\MembershipData;
-use Stackra\Membership\Data\Requests\CreateMembershipRequestData;
+use Academorix\Membership\Contracts\Repositories\MembershipRepositoryInterface;
+use Academorix\Membership\Data\MembershipData;
+use Academorix\Membership\Data\Requests\CreateMembershipRequestData;
 use Stackra\Routing\Attributes\AsAction;
 use Stackra\Routing\Attributes\Middleware;
 use Stackra\Routing\Concerns\AsController;

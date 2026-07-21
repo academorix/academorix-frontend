@@ -1,12 +1,12 @@
 {
-  "id": "stackra://modules/refund/broadcasts",
+  "id": "academorix://modules/refund/broadcasts",
   "$version": 1,
   "title": "refund — realtime broadcast channels",
   "description": "Three broadcast channel families. Tenant-level for admin dashboards (refund lifecycle stream); pending-approvals for approver dashboards; per-customer for customer refund status live-view. Reverb (Laravel Reverb) is the default transport; the notifications module handles fanout.",
   "channels": [
     {
       "name": "tenant.{tenantId}.refunds",
-      "class": "Stackra\\Finance\\Refund\\Broadcasts\\TenantRefundsChannel",
+      "class": "Academorix\\Finance\\Refund\\Broadcasts\\TenantRefundsChannel",
       "description": "Tenant-wide refund lifecycle stream. Sink for admin dashboards. Broadcasts every refund lifecycle event (requested / approval_required / approved / rejected / processing / succeeded / failed / cancelled / provider_error / provider_reconciled) at tenant level.",
       "authorization": "sanctum::authed AND tenant_matches AND has_permission('refunds.viewAny')",
       "events": [
@@ -30,7 +30,7 @@
     },
     {
       "name": "tenant.{tenantId}.refunds.pending-approvals",
-      "class": "Stackra\\Finance\\Refund\\Broadcasts\\TenantRefundsPendingApprovalsChannel",
+      "class": "Academorix\\Finance\\Refund\\Broadcasts\\TenantRefundsPendingApprovalsChannel",
       "description": "Approval-workflow queue stream. Powers the real-time pending-approvals dashboard for approvers. Fires when a refund enters awaiting_approval + when it leaves (approved / rejected / cancelled). Enables live queue updates without polling.",
       "authorization": "sanctum::authed AND tenant_matches AND has_permission('refunds.approve')",
       "events": ["RefundApprovalRequired", "RefundApproved", "RefundRejected", "RefundCancelled"],
@@ -39,7 +39,7 @@
     },
     {
       "name": "customer.{customerId}.refunds",
-      "class": "Stackra\\Finance\\Refund\\Broadcasts\\CustomerRefundsChannel",
+      "class": "Academorix\\Finance\\Refund\\Broadcasts\\CustomerRefundsChannel",
       "description": "Per-customer refund lifecycle stream. Powers the customer-facing refund status live-view (mobile app + web PWA). Broadcasts every state transition on refunds where the customer is the initiator or the customer_id on the parent payment.",
       "authorization": "sanctum::authed AND auth()->id() == customerId",
       "events": [

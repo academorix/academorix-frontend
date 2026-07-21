@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Attribution\Contracts\Services;
+namespace Academorix\Attribution\Contracts\Services;
 
-use Stackra\Attribution\Services\IpHasher;
+use Academorix\Attribution\Services\IpHasher;
 use Illuminate\Container\Attributes\Bind;
 
 /**

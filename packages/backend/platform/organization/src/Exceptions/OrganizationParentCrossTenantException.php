@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Organization\Exceptions;
 
-use Stackra\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * The proposed parent_id belongs to a different tenant.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class OrganizationParentCrossTenantException extends AcademorixException
+final class OrganizationParentCrossTenantException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

@@ -4,17 +4,17 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Attribution\Models;
+namespace Academorix\Attribution\Models;
 
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
-use Stackra\Attribution\Contracts\Data\AttributionInterface;
-use Stackra\Attribution\Database\Factories\AttributionFactory;
-use Stackra\Attribution\Enums\AttributionLifecycleState;
-use Stackra\Attribution\Policies\AttributionPolicy;
+use Academorix\Attribution\Contracts\Data\AttributionInterface;
+use Academorix\Attribution\Database\Factories\AttributionFactory;
+use Academorix\Attribution\Enums\AttributionLifecycleState;
+use Academorix\Attribution\Policies\AttributionPolicy;
 use Stackra\Foundation\Concerns\Filterable;
 use Stackra\Foundation\Concerns\HasMetadata;
 use Stackra\Tenancy\Concerns\BelongsToTenant;

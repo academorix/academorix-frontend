@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/performance/schemas/test-battery",
+  "id": "academorix://modules/performance/schemas/test-battery",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "TestBattery",

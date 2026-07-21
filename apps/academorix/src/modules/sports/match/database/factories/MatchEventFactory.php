@@ -4,19 +4,19 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Match\Database\Factories;
+namespace Academorix\Match\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Stackra\Match\Contracts\Data\MatchEventInterface;
-use Stackra\Match\Models\MatchEvent;
+use Academorix\Match\Contracts\Data\MatchEventInterface;
+use Academorix\Match\Models\MatchEvent;
 
 /**
- * Factory for {@see \Stackra\Match\Models\MatchEvent}.
+ * Factory for {@see \Academorix\Match\Models\MatchEvent}.
  *
  * Auto-generated skeleton — extend with named states as domain
  * cases emerge (e.g. `->published()`, `->overdue()`, `->archived()`).
  *
- * @extends Factory<\Stackra\Match\Models\MatchEvent>
+ * @extends Factory<\Academorix\Match\Models\MatchEvent>
  *
  * @category Match
  *

@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\PlatformUser\Exceptions;
 
-use Stackra\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * A mutating command was invoked without --reason=<text> when `platform-user.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class PlatformUserReasonRequiredException extends AcademorixException
+final class PlatformUserReasonRequiredException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

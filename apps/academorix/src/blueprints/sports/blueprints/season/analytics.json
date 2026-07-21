@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/season/analytics",
+  "id": "academorix://modules/season/analytics",
   "$version": 1,
   "title": "season — product analytics",
   "sink": "segment",

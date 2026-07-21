@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Stackra\PrivateSessions\Contracts\Services;
+namespace Academorix\PrivateSessions\Contracts\Services;
 
-use Stackra\PrivateSessions\Services\PrivateSessionOrchestrator;
+use Academorix\PrivateSessions\Services\PrivateSessionOrchestrator;
 use Illuminate\Container\Attributes\Bind;
 
 /**

@@ -4,7 +4,7 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Invoice\Actions\Platform;
+namespace Academorix\Invoice\Actions\Platform;
 
 use Stackra\Routing\Attributes\AsAction;
 use Stackra\Routing\Attributes\Middleware;

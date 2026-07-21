@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Stackra\FeatureFlags\Exceptions;
 
-use Stackra\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 use Stackra\FeatureFlags\Enums\ResolutionSource;
 use Stackra\FeatureFlags\Resolver\FeatureResolution;
 
@@ -22,7 +22,7 @@ use Stackra\FeatureFlags\Resolver\FeatureResolution;
  *
  * @since    0.1.0
  */
-final class FeatureDisabledException extends AcademorixException
+final class FeatureDisabledException extends StackraException
 {
     /**
      * Default machine-readable error code — used for `kill_switch`, `rollout`, `default` sources.

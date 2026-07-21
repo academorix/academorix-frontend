@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Coupon\Actions\Platform;
+namespace Academorix\Coupon\Actions\Platform;
 
-use Stackra\Coupon\Contracts\Repositories\CouponRepositoryInterface;
-use Stackra\Coupon\Data\CouponData;
+use Academorix\Coupon\Contracts\Repositories\CouponRepositoryInterface;
+use Academorix\Coupon\Data\CouponData;
 use Stackra\Routing\Attributes\AsAction;
 use Stackra\Routing\Attributes\Middleware;
 use Stackra\Routing\Concerns\AsController;
@@ -50,7 +50,7 @@ final class ListCouponAction
      */
     public function __invoke(Request $request): PaginatedDataCollection
     {
-        /** @var LengthAwarePaginator<int, \Stackra\Coupon\Models\Coupon> $page */
+        /** @var LengthAwarePaginator<int, \Academorix\Coupon\Models\Coupon> $page */
         $page = $this->repository->paginate(
             perPage: (int) $request->integer('per_page', 15),
         );

@@ -28,7 +28,7 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Geofencing\Providers;
+namespace Academorix\Geofencing\Providers;
 
 use Stackra\ServiceProvider\Attributes\AsModule;
 use Stackra\ServiceProvider\Attributes\LoadsResources;

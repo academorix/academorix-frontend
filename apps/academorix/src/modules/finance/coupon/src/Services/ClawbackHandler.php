@@ -2,26 +2,26 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Coupon\Services;
+namespace Academorix\Coupon\Services;
 
-use Stackra\Coupon\Contracts\Data\CouponInterface;
-use Stackra\Coupon\Contracts\Data\CouponRedemptionInterface;
-use Stackra\Coupon\Contracts\Repositories\CouponRedemptionRepositoryInterface;
-use Stackra\Coupon\Contracts\Repositories\CouponRepositoryInterface;
-use Stackra\Coupon\Contracts\Services\ClawbackHandlerInterface;
-use Stackra\Coupon\Events\CouponClawbackCompleted;
-use Stackra\Coupon\Events\CouponClawbackRequested;
-use Stackra\Coupon\Exceptions\CouponClawbackFailedException;
-use Stackra\Coupon\Exceptions\CouponRedemptionAlreadyReversedException;
-use Stackra\Coupon\Exceptions\CouponRedemptionNotFoundException;
-use Stackra\Coupon\Models\CouponRedemption;
+use Academorix\Coupon\Contracts\Data\CouponInterface;
+use Academorix\Coupon\Contracts\Data\CouponRedemptionInterface;
+use Academorix\Coupon\Contracts\Repositories\CouponRedemptionRepositoryInterface;
+use Academorix\Coupon\Contracts\Repositories\CouponRepositoryInterface;
+use Academorix\Coupon\Contracts\Services\ClawbackHandlerInterface;
+use Academorix\Coupon\Events\CouponClawbackCompleted;
+use Academorix\Coupon\Events\CouponClawbackRequested;
+use Academorix\Coupon\Exceptions\CouponClawbackFailedException;
+use Academorix\Coupon\Exceptions\CouponRedemptionAlreadyReversedException;
+use Academorix\Coupon\Exceptions\CouponRedemptionNotFoundException;
+use Academorix\Coupon\Models\CouponRedemption;
 use Illuminate\Container\Attributes\Scoped;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 
 /**
  * Reference implementation of
- * {@see \Stackra\Coupon\Contracts\Services\ClawbackHandlerInterface}.
+ * {@see \Academorix\Coupon\Contracts\Services\ClawbackHandlerInterface}.
  *
  * Called by `ProcessCouponClawbackJob` in response to a `CouponClawbackRequested`
  * event fired from the finance module (`InvoiceRefunded`, `ChargebackFiled`).

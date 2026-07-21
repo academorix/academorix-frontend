@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Organization\Exceptions;
 
-use Stackra\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Proposed parent_id is a descendant of the current node — would create a cycle.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class OrganizationParentCycleException extends AcademorixException
+final class OrganizationParentCycleException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

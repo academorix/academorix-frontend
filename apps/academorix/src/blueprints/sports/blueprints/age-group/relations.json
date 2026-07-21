@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/age-group/relations",
+  "id": "academorix://modules/age-group/relations",
   "$version": 1,
   "title": "age-group — model relationships",
   "description": "AgeGroup is a leaf reference-data aggregate below Tenant with no children of its own inside this module. Optional FK to Organization (nullable — when null the row is tenant-wide; when set the row is scoped to one Organization's brand). Inbound relations arrive from Team (Wave 2b, nullable FK) and AthleteEnrollment (Wave 3+, snapshotted at enrollment time so the enrollment survives athlete birthday drift). Every FK from an AgeGroup to another aggregate is same-tenant — cross-tenant FKs are forbidden per `.kiro/steering/tenancy-columns.md` §5. `age_groups` NEVER carries `application_id` (hierarchy.md §2 forbids it — Application cascades through `tenants.application_id`), NEVER carries `region_id` (age groups don't scope to regions; the same U12 group applies across every region of a tenant), NEVER carries `branch_id` (same — U12 applies across every branch), NEVER carries `scope_node_id` (age groups are not a scope consumer).",
@@ -40,7 +40,7 @@
       "target": {
         "module": "scope",
         "model": "ScopeNode",
-        "class": "Stackra\\Scope\\Models\\ScopeNode"
+        "class": "Academorix\\Scope\\Models\\ScopeNode"
       },
       "morphType": "entity_type",
       "morphId": "entity_id",

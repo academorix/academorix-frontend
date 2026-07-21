@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Referrals\Contracts\Data;
+namespace Academorix\Referrals\Contracts\Data;
 
 use Illuminate\Container\Attributes\Bind;
-use Stackra\Referrals\Models\ReferralFraudFlag;
+use Academorix\Referrals\Models\ReferralFraudFlag;
 
 /**
  * Table shape for the `referral_fraud_flags` table.

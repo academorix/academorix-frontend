@@ -7,7 +7,7 @@ namespace Stackra\FinanceDigitalPassesSdk\Tests;
 use Orchestra\Testbench\TestCase as OrchestraTestCase;
 
 /**
- * Base test case for stackra-finance/digital-passes-sdk.
+ * Base test case for academorix-finance/digital-passes-sdk.
  *
  * @category DigitalPassesSdk
  *

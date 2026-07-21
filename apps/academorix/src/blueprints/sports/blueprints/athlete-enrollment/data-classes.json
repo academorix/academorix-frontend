@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/athlete-enrollment/data-classes",
+  "id": "academorix://modules/athlete-enrollment/data-classes",
   "$version": 1,
   "title": "athlete-enrollment — field classification",
   "description": "AthleteEnrollment carries mostly internal-tier structural data. Notes fields (enrollment_notes, coach_notes) are confidential-tier (HR/coach-visible only). Consent snapshot inherits the tier of its constituent flags (mostly internal — the FACT of consent is not sensitive; the DATA those consents unlock is).",

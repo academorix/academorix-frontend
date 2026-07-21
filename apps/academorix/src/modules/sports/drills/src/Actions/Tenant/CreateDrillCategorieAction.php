@@ -4,11 +4,11 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Drills\Actions\Tenant;
+namespace Academorix\Drills\Actions\Tenant;
 
-use Stackra\Drills\Contracts\Repositories\DrillCategoryRepositoryInterface;
-use Stackra\Drills\Data\DrillCategoryData;
-use Stackra\Drills\Data\Requests\CreateDrillCategoryRequestData;
+use Academorix\Drills\Contracts\Repositories\DrillCategoryRepositoryInterface;
+use Academorix\Drills\Data\DrillCategoryData;
+use Academorix\Drills\Data\Requests\CreateDrillCategoryRequestData;
 use Stackra\Routing\Attributes\AsAction;
 use Stackra\Routing\Attributes\Middleware;
 use Stackra\Routing\Concerns\AsController;

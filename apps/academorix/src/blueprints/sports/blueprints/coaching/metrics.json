@@ -1,9 +1,9 @@
 {
-  "id": "stackra://modules/coaching/metrics",
+  "id": "academorix://modules/coaching/metrics",
   "$version": 1,
   "title": "coaching — OpenTelemetry metrics",
   "instrumentation": "self via telemetry",
-  "namespace": "stackra.coaching",
+  "namespace": "academorix.coaching",
   "labelConventions": {
     "always": [],
     "commonlyAvailable": [
@@ -32,136 +32,136 @@
   },
   "metrics": [
     {
-      "name": "stackra.coaching.profile.count",
+      "name": "academorix.coaching.profile.count",
       "kind": "gauge",
       "unit": "profiles",
       "labels": ["is_active", "verified"]
     },
     {
-      "name": "stackra.coaching.profile.created_total",
+      "name": "academorix.coaching.profile.created_total",
       "kind": "counter",
       "unit": "profiles",
       "labels": ["primary_sport_key", "is_accepting_new_athletes"]
     },
     {
-      "name": "stackra.coaching.profile.verified_total",
+      "name": "academorix.coaching.profile.verified_total",
       "kind": "counter",
       "unit": "profiles",
       "labels": []
     },
     {
-      "name": "stackra.coaching.profile.deactivated_total",
+      "name": "academorix.coaching.profile.deactivated_total",
       "kind": "counter",
       "unit": "profiles",
       "labels": ["trigger"]
     },
     {
-      "name": "stackra.coaching.profile.slot_usage_ratio",
+      "name": "academorix.coaching.profile.slot_usage_ratio",
       "kind": "gauge",
       "unit": "ratio",
       "labels": [],
       "description": "Per-tenant active_profiles / coaching_profile_slot. Sampled hourly."
     },
     {
-      "name": "stackra.coaching.assignment.count",
+      "name": "academorix.coaching.assignment.count",
       "kind": "gauge",
       "unit": "assignments",
       "labels": ["role", "assignable_type"]
     },
     {
-      "name": "stackra.coaching.assignment.created_total",
+      "name": "academorix.coaching.assignment.created_total",
       "kind": "counter",
       "unit": "assignments",
       "labels": ["role", "assignable_type", "cross_branch"]
     },
     {
-      "name": "stackra.coaching.assignment.ended_total",
+      "name": "academorix.coaching.assignment.ended_total",
       "kind": "counter",
       "unit": "assignments",
       "labels": ["role", "reached_scheduled_end"]
     },
     {
-      "name": "stackra.coaching.assignment.cancelled_total",
+      "name": "academorix.coaching.assignment.cancelled_total",
       "kind": "counter",
       "unit": "assignments",
       "labels": ["role", "trigger"]
     },
     {
-      "name": "stackra.coaching.head_coach.invariant_violations",
+      "name": "academorix.coaching.head_coach.invariant_violations",
       "kind": "counter",
       "unit": "violations",
       "labels": [],
       "description": "CRITICAL. Every increment indicates the one-head-coach-per-assignable invariant broke. Should stay at 0."
     },
     {
-      "name": "stackra.coaching.assignment.conflict_detected_total",
+      "name": "academorix.coaching.assignment.conflict_detected_total",
       "kind": "counter",
       "unit": "conflicts",
       "labels": ["assignable_type", "conflict_source"]
     },
     {
-      "name": "stackra.coaching.certification.count",
+      "name": "academorix.coaching.certification.count",
       "kind": "gauge",
       "unit": "certifications",
       "labels": ["issuing_body_bucket", "verified"]
     },
     {
-      "name": "stackra.coaching.certification.added_total",
+      "name": "academorix.coaching.certification.added_total",
       "kind": "counter",
       "unit": "certifications",
       "labels": ["issuing_body_bucket", "has_expiry"]
     },
     {
-      "name": "stackra.coaching.certification.verified_total",
+      "name": "academorix.coaching.certification.verified_total",
       "kind": "counter",
       "unit": "certifications",
       "labels": ["issuing_body_bucket"]
     },
     {
-      "name": "stackra.coaching.certification.expiring_soon_total",
+      "name": "academorix.coaching.certification.expiring_soon_total",
       "kind": "counter",
       "unit": "notices",
       "labels": ["cadence_days", "issuing_body_bucket"]
     },
     {
-      "name": "stackra.coaching.certification.expired_total",
+      "name": "academorix.coaching.certification.expired_total",
       "kind": "counter",
       "unit": "expirations",
       "labels": ["issuing_body_bucket", "was_verified"]
     },
     {
-      "name": "stackra.coaching.certification.verification_backlog",
+      "name": "academorix.coaching.certification.verification_backlog",
       "kind": "gauge",
       "unit": "certifications",
       "labels": [],
       "description": "Count of certifications added > 7 days ago without verified_at. Sampled hourly. Elevated indicates admin queue backlog."
     },
     {
-      "name": "stackra.coaching.skill_rating.count",
+      "name": "academorix.coaching.skill_rating.count",
       "kind": "gauge",
       "unit": "ratings",
       "labels": ["rating_scale"]
     },
     {
-      "name": "stackra.coaching.skill_rating.recorded_total",
+      "name": "academorix.coaching.skill_rating.recorded_total",
       "kind": "counter",
       "unit": "ratings",
       "labels": ["rating_scale", "ratable_type"]
     },
     {
-      "name": "stackra.coaching.skill_rating.updated_total",
+      "name": "academorix.coaching.skill_rating.updated_total",
       "kind": "counter",
       "unit": "updates",
       "labels": ["rating_scale"]
     },
     {
-      "name": "stackra.coaching.skill_rating.expired_total",
+      "name": "academorix.coaching.skill_rating.expired_total",
       "kind": "counter",
       "unit": "ratings",
       "labels": []
     },
     {
-      "name": "stackra.coaching.retention.hard_purges_total",
+      "name": "academorix.coaching.retention.hard_purges_total",
       "kind": "counter",
       "unit": "purges",
       "labels": ["entity"]

@@ -1,13 +1,13 @@
 {
-  "id": "stackra://modules/coaching/attributes",
+  "id": "academorix://modules/coaching/attributes",
   "$version": 1,
   "title": "coaching — PHP attribute contracts",
   "description": "One attribute. `#[AsCoachingListener]` on a service class marks it as a subscriber to coaching-lifecycle events — AttributeDiscovery picks it up and wires it to the event map declared in `events.json`.",
-  "namespace": "Stackra\\Sports\\Coaching\\Attributes",
+  "namespace": "Academorix\\Sports\\Coaching\\Attributes",
   "attributes": [
     {
       "name": "AsCoachingListener",
-      "class": "Stackra\\Sports\\Coaching\\Attributes\\AsCoachingListener",
+      "class": "Academorix\\Sports\\Coaching\\Attributes\\AsCoachingListener",
       "targets": ["class"],
       "isRepeatable": false,
       "description": "Marks a service as a subscriber to coaching module events (CoachingProfileCreated / CoachingProfileVerified / CoachingProfileDeactivated / CoachingProfileReactivated / CoachAssignmentCreated / CoachAssignmentUpdated / CoachAssignmentEnded / CoachAssignmentCancelled / CoachCertificationAdded / CoachCertificationVerified / CoachCertificationExpiringSoon / CoachCertificationExpired / CoachSkillRatingRecorded / CoachSkillRatingUpdated).",
@@ -16,7 +16,7 @@
           "name": "events",
           "type": "array<string>",
           "default": [],
-          "description": "Array of event short names. Empty = subscribe to every event in `Stackra\\Sports\\Coaching\\Events\\*`. Names resolve against events.json at boot."
+          "description": "Array of event short names. Empty = subscribe to every event in `Academorix\\Sports\\Coaching\\Events\\*`. Names resolve against events.json at boot."
         },
         {
           "name": "queue",

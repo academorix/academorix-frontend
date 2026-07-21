@@ -4,25 +4,25 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Analytics\Repositories;
+namespace Academorix\Analytics\Repositories;
 
 use Stackra\Crud\Attributes\AsRepository;
 use Stackra\Crud\Attributes\Cacheable;
 use Stackra\Crud\Attributes\Filterable;
 use Stackra\Crud\Attributes\UseModel;
 use Stackra\Crud\Repositories\Repository;
-use Stackra\Analytics\Contracts\Data\AnalyticsEventInterface;
-use Stackra\Analytics\Contracts\Repositories\AnalyticsEventRepositoryInterface;
-use Stackra\Analytics\Models\AnalyticsEvent;
+use Academorix\Analytics\Contracts\Data\AnalyticsEventInterface;
+use Academorix\Analytics\Contracts\Repositories\AnalyticsEventRepositoryInterface;
+use Academorix\Analytics\Models\AnalyticsEvent;
 
 /**
- * Attribute-first Eloquent repository for {@see Stackra\Analytics\Models\AnalyticsEvent}.
+ * Attribute-first Eloquent repository for {@see Academorix\Analytics\Models\AnalyticsEvent}.
  *
  * Bound to the interface via `#[AsRepository]`; the model comes from
  * `#[UseModel(AnalyticsEventInterface::class)]` which resolves to
  * `AnalyticsEvent` through the interface's `#[Bind]`.
  *
- * @extends Repository<\Stackra\Analytics\Models\AnalyticsEvent>
+ * @extends Repository<\Academorix\Analytics\Models\AnalyticsEvent>
  *
  * @category Analytics
  *

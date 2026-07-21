@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Chargeback\Contracts\Services;
+namespace Academorix\Chargeback\Contracts\Services;
 
-use Stackra\Chargeback\Services\RdrHandler;
+use Academorix\Chargeback\Services\RdrHandler;
 use Illuminate\Container\Attributes\Bind;
 
 /**

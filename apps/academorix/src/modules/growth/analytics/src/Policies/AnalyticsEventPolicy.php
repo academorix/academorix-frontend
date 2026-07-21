@@ -4,13 +4,13 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Analytics\Policies;
+namespace Academorix\Analytics\Policies;
 
 use Stackra\User\Models\User;
-use Stackra\Analytics\Models\AnalyticsEvent;
+use Academorix\Analytics\Models\AnalyticsEvent;
 
 /**
- * Authorization policy for {@see \Stackra\Analytics\Models\AnalyticsEvent}.
+ * Authorization policy for {@see \Academorix\Analytics\Models\AnalyticsEvent}.
  *
  * Wired via `#[UsePolicy]` on the Model.
  *

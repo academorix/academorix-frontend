@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/invoice/analytics",
+  "id": "academorix://modules/invoice/analytics",
   "$version": 1,
   "title": "invoice — product analytics",
   "sink": "segment",

@@ -2,17 +2,17 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Tax\Services;
+namespace Academorix\Tax\Services;
 
-use Stackra\Tax\Contracts\Data\TaxExemptionInterface;
-use Stackra\Tax\Contracts\Repositories\TaxExemptionRepositoryInterface;
-use Stackra\Tax\Contracts\Services\ExemptionValidatorInterface;
-use Stackra\Tax\Data\ExemptionVerdictData;
+use Academorix\Tax\Contracts\Data\TaxExemptionInterface;
+use Academorix\Tax\Contracts\Repositories\TaxExemptionRepositoryInterface;
+use Academorix\Tax\Contracts\Services\ExemptionValidatorInterface;
+use Academorix\Tax\Data\ExemptionVerdictData;
 use Illuminate\Container\Attributes\Scoped;
 
 /**
  * Reference implementation of
- * {@see \Stackra\Tax\Contracts\Services\ExemptionValidatorInterface}.
+ * {@see \Academorix\Tax\Contracts\Services\ExemptionValidatorInterface}.
  *
  * Fail-closed on every branch — an ambiguous or missing state
  * yields `valid = false`. The tax_exemption row's presence alone

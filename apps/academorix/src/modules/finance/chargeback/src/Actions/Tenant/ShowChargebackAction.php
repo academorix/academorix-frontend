@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Chargeback\Actions\Tenant;
+namespace Academorix\Chargeback\Actions\Tenant;
 
-use Stackra\Chargeback\Contracts\Repositories\ChargebackRepositoryInterface;
-use Stackra\Chargeback\Data\ChargebackData;
+use Academorix\Chargeback\Contracts\Repositories\ChargebackRepositoryInterface;
+use Academorix\Chargeback\Data\ChargebackData;
 use Stackra\Routing\Attributes\AsAction;
 use Stackra\Routing\Attributes\Middleware;
 use Stackra\Routing\Concerns\AsController;

@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/match/schemas/match-fixture",
+  "id": "academorix://modules/match/schemas/match-fixture",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "MatchFixture",
@@ -13,9 +13,9 @@
     "keyType": "string",
     "keyPrefix": "mat_",
     "incrementing": false,
-    "model": "Stackra\\Sports\\Match\\Models\\MatchFixture",
-    "interface": "Stackra\\Sports\\Match\\Contracts\\Data\\MatchFixtureInterface",
-    "implements": ["Stackra\\Sports\\Match\\Contracts\\Data\\MatchFixtureInterface"],
+    "model": "Academorix\\Sports\\Match\\Models\\MatchFixture",
+    "interface": "Academorix\\Sports\\Match\\Contracts\\Data\\MatchFixtureInterface",
+    "implements": ["Academorix\\Sports\\Match\\Contracts\\Data\\MatchFixtureInterface"],
     "traits": [
       "HasFactory",
       "HasUlids",

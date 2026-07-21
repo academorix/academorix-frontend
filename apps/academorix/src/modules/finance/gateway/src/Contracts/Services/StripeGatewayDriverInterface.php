@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Gateway\Contracts\Services;
+namespace Academorix\Gateway\Contracts\Services;
 
-use Stackra\Gateway\Services\StripeGatewayDriver;
+use Academorix\Gateway\Services\StripeGatewayDriver;
 use Illuminate\Container\Attributes\Bind;
 
 /**

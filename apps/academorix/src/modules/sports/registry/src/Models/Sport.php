@@ -4,19 +4,19 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Registry\Models;
+namespace Academorix\Registry\Models;
 
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
-use Stackra\Registry\Contracts\Data\SportInterface;
-use Stackra\Registry\Database\Factories\SportFactory;
+use Academorix\Registry\Contracts\Data\SportInterface;
+use Academorix\Registry\Database\Factories\SportFactory;
 use Stackra\Foundation\Concerns\Filterable;
 use Stackra\Foundation\Concerns\HasMetadata;
 use Stackra\Foundation\Concerns\HasPrefixedUlid;
-use Stackra\Registry\Policies\SportPolicy;
+use Academorix\Registry\Policies\SportPolicy;
 use Stackra\Tenancy\Concerns\BelongsToTenant;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;

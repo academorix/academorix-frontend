@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/season/relations",
+  "id": "academorix://modules/season/relations",
   "$version": 1,
   "title": "season — model relationships",
   "description": "Season sits below Tenant + optionally under Organization + Branch. Its outbound relations reach up to those parents; its inbound relations arrive from Team (Wave 2b) + AthleteEnrollment / Event / Session (Wave 3) via the `BelongsToSeason` trait shipped here. Every FK from a Season to another aggregate is same-tenant — cross-tenant FKs are forbidden per `.kiro/steering/tenancy-columns.md` §5. `season_id` NEVER carries `application_id` (hierarchy.md §2 forbids it — Application cascades through tenants.application_id).",

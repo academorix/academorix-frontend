@@ -4,25 +4,25 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Progress\Repositories;
+namespace Academorix\Progress\Repositories;
 
 use Stackra\Crud\Attributes\AsRepository;
 use Stackra\Crud\Attributes\Cacheable;
 use Stackra\Crud\Attributes\Filterable;
 use Stackra\Crud\Attributes\UseModel;
 use Stackra\Crud\Repositories\Repository;
-use Stackra\Progress\Contracts\Data\ProgressAssessmentInterface;
-use Stackra\Progress\Contracts\Repositories\ProgressAssessmentRepositoryInterface;
-use Stackra\Progress\Models\ProgressAssessment;
+use Academorix\Progress\Contracts\Data\ProgressAssessmentInterface;
+use Academorix\Progress\Contracts\Repositories\ProgressAssessmentRepositoryInterface;
+use Academorix\Progress\Models\ProgressAssessment;
 
 /**
- * Attribute-first Eloquent repository for {@see Stackra\Progress\Models\ProgressAssessment}.
+ * Attribute-first Eloquent repository for {@see Academorix\Progress\Models\ProgressAssessment}.
  *
  * Bound to the interface via `#[AsRepository]`; the model comes from
  * `#[UseModel(ProgressAssessmentInterface::class)]` which resolves to
  * `ProgressAssessment` through the interface's `#[Bind]`.
  *
- * @extends Repository<\Stackra\Progress\Models\ProgressAssessment>
+ * @extends Repository<\Academorix\Progress\Models\ProgressAssessment>
  *
  * @category Progress
  *

@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Payout\Contracts\Data;
+namespace Academorix\Payout\Contracts\Data;
 
 use Illuminate\Container\Attributes\Bind;
-use Stackra\Payout\Models\PayoutItem;
+use Academorix\Payout\Models\PayoutItem;
 
 /**
  * Table shape for the `payout_items` table.

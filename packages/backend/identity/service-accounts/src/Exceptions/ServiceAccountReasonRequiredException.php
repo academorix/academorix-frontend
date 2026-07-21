@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\ServiceAccounts\Exceptions;
 
-use Stackra\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Mutating command invoked without --reason=<text> while `service-accounts.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class ServiceAccountReasonRequiredException extends AcademorixException
+final class ServiceAccountReasonRequiredException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

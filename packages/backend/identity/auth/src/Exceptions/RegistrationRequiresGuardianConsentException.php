@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Auth\Exceptions;
 
-use Stackra\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Applicant is a minor per CompliantAgePolicy AND requires guardian approval.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class RegistrationRequiresGuardianConsentException extends AcademorixException
+final class RegistrationRequiresGuardianConsentException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

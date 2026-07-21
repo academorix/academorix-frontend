@@ -1,14 +1,14 @@
 {
-  "id": "stackra://modules/athlete-enrollment/settings",
+  "id": "academorix://modules/athlete-enrollment/settings",
   "$version": 1,
   "title": "athlete-enrollment — settings",
   "description": "Tenant-facing preferences for enrollment workflow (deadline reminders, late-registration fees, waitlist policy).",
   "storedIn": "settings",
-  "reference": { "contract": "stackra://modules/settings/attributes" },
+  "reference": { "contract": "academorix://modules/settings/attributes" },
   "groups": [
     {
       "key": "athlete_enrollment",
-      "class": "Stackra\\Sports\\AthleteEnrollment\\Settings\\AthleteEnrollmentSettings",
+      "class": "Academorix\\Sports\\AthleteEnrollment\\Settings\\AthleteEnrollmentSettings",
       "label": "Enrollments",
       "description": "Tenant-wide enrollment workflow settings.",
       "icon": "clipboard-document-list",

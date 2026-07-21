@@ -2,7 +2,7 @@
   "$version": 1,
   "name": "formations",
   "alias": "formations",
-  "namespace": "Stackra\\Sports\\Formations",
+  "namespace": "Academorix\\Sports\\Formations",
   "description": "Formation templates + tactical board coordinates per blueprint §11.2. Ships TWO owned entities: `Formation` (named template — 4-3-3 / 4-4-2 / basketball zone / tennis singles/doubles / swim lane layout; sport-scoped; slot count validated vs sport team size from registry), `FormationSlot` (individual slot — position kebab-case + x/y coordinates 0-100 for field render + ordered). Consumed by sports/event lineup builder to place athletes into slots. Sports without FORMATIONS capability simply don't expose this feature.",
   "keywords": [
     "formations",
@@ -14,7 +14,7 @@
     "wave-3"
   ],
   "priority": 83,
-  "providers": ["Stackra\\Sports\\Formations\\Providers\\FormationsServiceProvider"],
+  "providers": ["Academorix\\Sports\\Formations\\Providers\\FormationsServiceProvider"],
   "files": [],
   "dependencies": ["foundation", "tenancy", "application", "registry", "coaching"],
   "extendedBy": [],

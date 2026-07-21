@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\PlatformUser\Exceptions;
 
-use Stackra\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * POST /offboard was called without a reason, or with a reason outside 20–1000 chars.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class OffboardingReasonRequiredException extends AcademorixException
+final class OffboardingReasonRequiredException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

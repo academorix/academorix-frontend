@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Rbac\Exceptions;
 
-use Stackra\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * role_definitions row not found (typically means `rbac:sync-role-definitions` never ran).
@@ -15,7 +15,7 @@ use Stackra\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class RoleDefinitionNotFoundException extends AcademorixException
+final class RoleDefinitionNotFoundException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

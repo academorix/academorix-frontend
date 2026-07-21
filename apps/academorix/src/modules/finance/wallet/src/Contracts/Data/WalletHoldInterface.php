@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Wallet\Contracts\Data;
+namespace Academorix\Wallet\Contracts\Data;
 
 use Illuminate\Container\Attributes\Bind;
-use Stackra\Wallet\Models\WalletHold;
+use Academorix\Wallet\Models\WalletHold;
 
 /**
  * Table shape for the `wallet_holds` table.

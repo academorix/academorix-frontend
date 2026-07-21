@@ -1,20 +1,20 @@
 {
-  "id": "stackra://modules/sports-registry/attributes",
+  "id": "academorix://modules/sports-registry/attributes",
   "$version": 1,
   "title": "sports-registry — PHP attribute contracts",
   "description": "One attribute. `#[AsSportRegistryListener]` on a service class marks it as a subscriber to sports-registry-lifecycle events — AttributeDiscovery picks it up + wires it to the event map declared in `events.json`. No property-level attributes: registry rows use ordinary Eloquent + spatie/laravel-data class attributes shipped by foundation.",
-  "namespace": "Stackra\\Sports\\Registry\\Attributes",
+  "namespace": "Academorix\\Sports\\Registry\\Attributes",
   "attributes": [
     {
       "name": "AsSportRegistryListener",
-      "class": "Stackra\\Sports\\Registry\\Attributes\\AsSportRegistryListener",
+      "class": "Academorix\\Sports\\Registry\\Attributes\\AsSportRegistryListener",
       "targets": ["class"],
       "params": [
         {
           "name": "events",
           "type": "array<string>",
           "default": [],
-          "description": "Array of event short names (`SportCreated`, `DisciplineCreated`, `SportPrefixResolutionFailed`, …) the class listens to. Empty = subscribe to every event in `Stackra\\Sports\\Registry\\Events\\*`. Names are resolved against `events.json`; typos surface at boot time when the discovery scan validates them."
+          "description": "Array of event short names (`SportCreated`, `DisciplineCreated`, `SportPrefixResolutionFailed`, …) the class listens to. Empty = subscribe to every event in `Academorix\\Sports\\Registry\\Events\\*`. Names are resolved against `events.json`; typos surface at boot time when the discovery scan validates them."
         },
         {
           "name": "queue",

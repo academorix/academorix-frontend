@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Auth\Exceptions;
 
-use Stackra\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Grant token unknown, expired, or already consumed.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class CrossAppGrantInvalidException extends AcademorixException
+final class CrossAppGrantInvalidException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

@@ -1,12 +1,12 @@
 {
-  "id": "stackra://modules/athlete-enrollment/observers",
+  "id": "academorix://modules/athlete-enrollment/observers",
   "$version": 1,
   "title": "athlete-enrollment — Eloquent observers",
   "description": "One observer enforces every write-time invariant: entitlement consumption, atomic conversion to TeamMember, state-machine transitions, capacity + waitlist handling, immutability of team/athlete/season, cross-tenant defense-in-depth. The atomic-conversion logic is delegated to EnrollmentAtomicityCoordinator binding — the observer only knows *whether* to convert; the coordinator encapsulates *how* (DB transaction + SELECT ... FOR UPDATE + create TeamMember + set team_member_id + fire events).",
   "observers": [
     {
       "model": "AthleteEnrollment",
-      "observer": "Stackra\\Sports\\AthleteEnrollment\\Observers\\AthleteEnrollmentObserver",
+      "observer": "Academorix\\Sports\\AthleteEnrollment\\Observers\\AthleteEnrollmentObserver",
       "handles": [
         "creating → populate ULID prefix `aen_`",
         "creating → refuse when tenant does NOT hold `athlete_enrollment.core` feature (defense-in-depth)",

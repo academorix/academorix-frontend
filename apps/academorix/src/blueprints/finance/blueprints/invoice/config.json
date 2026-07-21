@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/invoice/config",
+  "id": "academorix://modules/invoice/config",
   "$version": 1,
   "title": "invoice — developer configuration",
   "configFile": "config/invoice.php",

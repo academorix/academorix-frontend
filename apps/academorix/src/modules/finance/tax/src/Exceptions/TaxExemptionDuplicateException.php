@@ -4,7 +4,7 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Tax\Exceptions;
+namespace Academorix\Tax\Exceptions;
 
 use Stackra\Exceptions\StackraException;
 

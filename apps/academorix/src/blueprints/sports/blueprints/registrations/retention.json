@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/registrations/retention",
+  "id": "academorix://modules/registrations/retention",
   "$version": 1,
   "title": "registrations — data retention windows",
   "policies": [

@@ -4,17 +4,17 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Dunning\Models;
+namespace Academorix\Dunning\Models;
 
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
-use Stackra\Dunning\Contracts\Data\DunningRunInterface;
-use Stackra\Dunning\Database\Factories\DunningRunFactory;
-use Stackra\Dunning\Enums\DunningRunStatus;
-use Stackra\Dunning\Policies\DunningRunPolicy;
+use Academorix\Dunning\Contracts\Data\DunningRunInterface;
+use Academorix\Dunning\Database\Factories\DunningRunFactory;
+use Academorix\Dunning\Enums\DunningRunStatus;
+use Academorix\Dunning\Policies\DunningRunPolicy;
 use Stackra\Foundation\Concerns\HasMetadata;
 use Stackra\Tenancy\Concerns\BelongsToTenant;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;

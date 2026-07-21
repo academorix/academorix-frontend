@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/marketplace-fee/schemas/fee-payout",
+  "id": "academorix://modules/marketplace-fee/schemas/fee-payout",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "FeePayout",
@@ -13,9 +13,9 @@
     "keyType": "string",
     "keyPrefix": "fpo_",
     "incrementing": false,
-    "model": "Stackra\\Finance\\MarketplaceFee\\Models\\FeePayout",
-    "interface": "Stackra\\Finance\\MarketplaceFee\\Contracts\\Data\\FeePayoutInterface",
-    "implements": ["Stackra\\Finance\\MarketplaceFee\\Contracts\\Data\\FeePayoutInterface"],
+    "model": "Academorix\\Finance\\MarketplaceFee\\Models\\FeePayout",
+    "interface": "Academorix\\Finance\\MarketplaceFee\\Contracts\\Data\\FeePayoutInterface",
+    "implements": ["Academorix\\Finance\\MarketplaceFee\\Contracts\\Data\\FeePayoutInterface"],
     "traits": [
       "HasFactory",
       "HasUlids",

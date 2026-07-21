@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Stackra\FeatureFlags\Exceptions;
 
-use Stackra\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Raised when a caller references a flag that is not in the registry.
@@ -20,7 +20,7 @@ use Stackra\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class UnknownFeatureFlagException extends AcademorixException
+final class UnknownFeatureFlagException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

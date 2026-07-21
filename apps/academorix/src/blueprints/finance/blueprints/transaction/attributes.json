@@ -1,13 +1,13 @@
 {
-  "id": "stackra://modules/transaction/attributes",
+  "id": "academorix://modules/transaction/attributes",
   "$version": 1,
   "title": "transaction — PHP attribute contracts",
   "description": "Three class-level attributes. `#[AsTransactionListener]` subscribes a service to transaction-lane events (transaction lifecycle + ledger imbalance + reconciliation). `#[AsLedgerAccount]` marks a class as a chart-of-accounts registrant — enables data-driven per-tenant enable/disable of accounts. `#[AsTransactionKind]` marks a class as a transaction-kind handler — defines the canonical debit/credit pair for a given kind.",
-  "namespace": "Stackra\\Finance\\Transaction\\Attributes",
+  "namespace": "Academorix\\Finance\\Transaction\\Attributes",
   "attributes": [
     {
       "name": "AsTransactionListener",
-      "class": "Stackra\\Finance\\Transaction\\Attributes\\AsTransactionListener",
+      "class": "Academorix\\Finance\\Transaction\\Attributes\\AsTransactionListener",
       "targets": ["class"],
       "isRepeatable": false,
       "description": "Marks a service as a subscriber to transaction-lane events (TransactionCreated / Posted / Reversed / AmendmentRequested, LedgerEntryRecorded, LedgerImbalanceDetected, AccountBalanceThresholdCrossed, TenantOpeningBalanceRecorded, TransactionCurrencyConverted, LedgerReconciliationCompleted). Discovery loader picks up each class at boot + wires the declared events. Consumers of LedgerImbalanceDetected should override queue to `finance-critical` since imbalances are P0 signals.",
@@ -16,7 +16,7 @@
           "name": "events",
           "type": "array<string>",
           "default": [],
-          "description": "Array of event short names (`TransactionPosted`, `LedgerImbalanceDetected`, `TransactionReversed`, …). Empty = subscribe to every `Stackra\\Finance\\Transaction\\Events\\*` event. Names resolve against events.json at boot; typos abort boot with a discovery error."
+          "description": "Array of event short names (`TransactionPosted`, `LedgerImbalanceDetected`, `TransactionReversed`, …). Empty = subscribe to every `Academorix\\Finance\\Transaction\\Events\\*` event. Names resolve against events.json at boot; typos abort boot with a discovery error."
         },
         {
           "name": "queue",
@@ -35,7 +35,7 @@
     },
     {
       "name": "AsLedgerAccount",
-      "class": "Stackra\\Finance\\Transaction\\Attributes\\AsLedgerAccount",
+      "class": "Academorix\\Finance\\Transaction\\Attributes\\AsLedgerAccount",
       "targets": ["class"],
       "isRepeatable": false,
       "description": "Marks a class as a chart-of-accounts registrant. The ChartOfAccountsRegistry discovers these at boot + registers the account in the module's account catalog. Every #[AsLedgerAccount] class MUST implement the ILedgerAccount contract (slug(), display_name(), regulator_category(), default_currency()).",
@@ -67,7 +67,7 @@
     },
     {
       "name": "AsTransactionKind",
-      "class": "Stackra\\Finance\\Transaction\\Attributes\\AsTransactionKind",
+      "class": "Academorix\\Finance\\Transaction\\Attributes\\AsTransactionKind",
       "targets": ["class"],
       "isRepeatable": false,
       "description": "Marks a class as a transaction-kind handler. Defines the canonical debit/credit pair for a given TransactionKind — the TransactionRecorder consults these classes when building ledger entries. Every #[AsTransactionKind] class MUST implement the ITransactionKindHandler contract (buildLedgerEntries(TransactionData): TransactionLedgerEntryData[]).",

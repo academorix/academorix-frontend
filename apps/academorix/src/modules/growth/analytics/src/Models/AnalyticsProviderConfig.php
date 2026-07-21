@@ -4,16 +4,16 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Analytics\Models;
+namespace Academorix\Analytics\Models;
 
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
-use Stackra\Analytics\Contracts\Data\AnalyticsProviderConfigInterface;
-use Stackra\Analytics\Database\Factories\AnalyticsProviderConfigFactory;
-use Stackra\Analytics\Policies\AnalyticsProviderConfigPolicy;
+use Academorix\Analytics\Contracts\Data\AnalyticsProviderConfigInterface;
+use Academorix\Analytics\Database\Factories\AnalyticsProviderConfigFactory;
+use Academorix\Analytics\Policies\AnalyticsProviderConfigPolicy;
 use Stackra\Foundation\Concerns\Filterable;
 use Stackra\Foundation\Concerns\HasMetadata;
 use Stackra\Tenancy\Concerns\BelongsToTenant;

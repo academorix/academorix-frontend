@@ -4,16 +4,16 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Competition\Models;
+namespace Academorix\Competition\Models;
 
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
-use Stackra\Competition\Contracts\Data\BracketNodeInterface;
-use Stackra\Competition\Database\Factories\BracketNodeFactory;
-use Stackra\Competition\Policies\BracketNodePolicy;
+use Academorix\Competition\Contracts\Data\BracketNodeInterface;
+use Academorix\Competition\Database\Factories\BracketNodeFactory;
+use Academorix\Competition\Policies\BracketNodePolicy;
 use Stackra\Foundation\Concerns\Filterable;
 use Stackra\Foundation\Concerns\HasMetadata;
 use Stackra\Foundation\Concerns\HasPrefixedUlid;

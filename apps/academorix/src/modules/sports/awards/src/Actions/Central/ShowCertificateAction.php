@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Awards\Actions\Central;
+namespace Academorix\Awards\Actions\Central;
 
-use Stackra\Awards\Contracts\Repositories\CertificateRepositoryInterface;
-use Stackra\Awards\Data\CertificateData;
+use Academorix\Awards\Contracts\Repositories\CertificateRepositoryInterface;
+use Academorix\Awards\Data\CertificateData;
 use Stackra\Routing\Attributes\AsAction;
 use Stackra\Routing\Attributes\Middleware;
 use Stackra\Routing\Concerns\AsController;

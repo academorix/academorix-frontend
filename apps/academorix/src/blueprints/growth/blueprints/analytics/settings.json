@@ -1,14 +1,14 @@
 {
-  "id": "stackra://modules/analytics/settings",
+  "id": "academorix://modules/analytics/settings",
   "$version": 1,
   "title": "analytics — settings",
   "description": "Tenant-facing analytics settings. Small config surface \u2014 most configuration lives on AnalyticsProviderConfig rows. This settings group governs tenant-wide behaviors: default consent gate strictness, custom-webhook allowed domains, funnel defaults.",
   "storedIn": "settings",
-  "reference": { "contract": "stackra://modules/settings/attributes" },
+  "reference": { "contract": "academorix://modules/settings/attributes" },
   "groups": [
     {
       "key": "analytics",
-      "class": "Stackra\\Growth\\Analytics\\Settings\\AnalyticsSettings",
+      "class": "Academorix\\Growth\\Analytics\\Settings\\AnalyticsSettings",
       "label": "Analytics",
       "description": "Server-side analytics capture + fan-out behavior.",
       "icon": "chart-bar",

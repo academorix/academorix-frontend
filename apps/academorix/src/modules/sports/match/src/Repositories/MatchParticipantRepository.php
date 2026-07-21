@@ -4,25 +4,25 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Match\Repositories;
+namespace Academorix\Match\Repositories;
 
 use Stackra\Crud\Attributes\AsRepository;
 use Stackra\Crud\Attributes\Cacheable;
 use Stackra\Crud\Attributes\Filterable;
 use Stackra\Crud\Attributes\UseModel;
 use Stackra\Crud\Repositories\Repository;
-use Stackra\Match\Contracts\Data\MatchParticipantInterface;
-use Stackra\Match\Contracts\Repositories\MatchParticipantRepositoryInterface;
-use Stackra\Match\Models\MatchParticipant;
+use Academorix\Match\Contracts\Data\MatchParticipantInterface;
+use Academorix\Match\Contracts\Repositories\MatchParticipantRepositoryInterface;
+use Academorix\Match\Models\MatchParticipant;
 
 /**
- * Attribute-first Eloquent repository for {@see Stackra\Match\Models\MatchParticipant}.
+ * Attribute-first Eloquent repository for {@see Academorix\Match\Models\MatchParticipant}.
  *
  * Bound to the interface via `#[AsRepository]`; the model comes from
  * `#[UseModel(MatchParticipantInterface::class)]` which resolves to
  * `MatchParticipant` through the interface's `#[Bind]`.
  *
- * @extends Repository<\Stackra\Match\Models\MatchParticipant>
+ * @extends Repository<\Academorix\Match\Models\MatchParticipant>
  *
  * @category Match
  *

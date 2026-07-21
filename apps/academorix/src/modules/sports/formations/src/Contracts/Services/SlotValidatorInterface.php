@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Formations\Contracts\Services;
+namespace Academorix\Formations\Contracts\Services;
 
-use Stackra\Formations\Services\SlotValidator;
+use Academorix\Formations\Services\SlotValidator;
 use Illuminate\Container\Attributes\Bind;
 
 /**

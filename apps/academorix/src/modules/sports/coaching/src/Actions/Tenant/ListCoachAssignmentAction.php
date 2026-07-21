@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Coaching\Actions\Tenant;
+namespace Academorix\Coaching\Actions\Tenant;
 
-use Stackra\Coaching\Contracts\Repositories\CoachAssignmentRepositoryInterface;
-use Stackra\Coaching\Data\CoachAssignmentData;
+use Academorix\Coaching\Contracts\Repositories\CoachAssignmentRepositoryInterface;
+use Academorix\Coaching\Data\CoachAssignmentData;
 use Stackra\Routing\Attributes\AsAction;
 use Stackra\Routing\Attributes\Middleware;
 use Stackra\Routing\Concerns\AsController;
@@ -50,7 +50,7 @@ final class ListCoachAssignmentAction
      */
     public function __invoke(Request $request): PaginatedDataCollection
     {
-        /** @var LengthAwarePaginator<int, \Stackra\Coaching\Models\CoachAssignment> $page */
+        /** @var LengthAwarePaginator<int, \Academorix\Coaching\Models\CoachAssignment> $page */
         $page = $this->repository->paginate(
             perPage: (int) $request->integer('per_page', 15),
         );

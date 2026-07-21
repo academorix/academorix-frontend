@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Stackra\PrivateSessions\Actions\Tenant;
+namespace Academorix\PrivateSessions\Actions\Tenant;
 
-use Stackra\PrivateSessions\Contracts\Repositories\PrivateSessionRequestRepositoryInterface;
-use Stackra\PrivateSessions\Data\PrivateSessionRequestData;
+use Academorix\PrivateSessions\Contracts\Repositories\PrivateSessionRequestRepositoryInterface;
+use Academorix\PrivateSessions\Data\PrivateSessionRequestData;
 use Stackra\Routing\Attributes\AsAction;
 use Stackra\Routing\Attributes\Middleware;
 use Stackra\Routing\Concerns\AsController;

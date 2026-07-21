@@ -4,17 +4,17 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Progress\Contracts\Repositories;
+namespace Academorix\Progress\Contracts\Repositories;
 
 use Stackra\Crud\Contracts\RepositoryInterface;
 
 /**
- * Repository contract for {@see Stackra\Progress\Models\BeltRank}.
+ * Repository contract for {@see Academorix\Progress\Models\BeltRank}.
  *
  * Consumers type-hint the interface; the container binds the concrete
  * via `#[AsRepository]` on `BeltRankRepository`.
  *
- * @extends RepositoryInterface<\Stackra\Progress\Models\BeltRank>
+ * @extends RepositoryInterface<\Academorix\Progress\Models\BeltRank>
  *
  * @category Progress
  *

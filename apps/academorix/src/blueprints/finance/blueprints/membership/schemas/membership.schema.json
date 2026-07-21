@@ -1,9 +1,9 @@
 {
-  "id": "stackra://modules/membership/schemas/membership",
+  "id": "academorix://modules/membership/schemas/membership",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "Membership",
-  "description": "The customer's paid subscription contract with the academy. NEVER confused with subscription::TenantSubscription (which is the ACADEMY's Stackra SaaS bill — a different table entirely). Belongs to Tenant (CASCADE) + Region (RESTRICT) + Branch (RESTRICT) + Athlete (RESTRICT) + MembershipPlan (RESTRICT). Optional refs: primary_guardian_id (AthleteGuardian, RESTRICT), coupon_id (Coupon, RESTRICT), tax_calculation_id (TaxCalculation, RESTRICT). NEVER carries application_id (cascades through tenant), organization_id (cascades through branch), or scope_node_id (memberships are not a config consumer). Carries frozen snapshots (price + coupon + tax) at signing — plan price changes + coupon revisions + mid-contract VAT changes never retroactively affect an existing membership.",
+  "description": "The customer's paid subscription contract with the academy. NEVER confused with subscription::TenantSubscription (which is the ACADEMY's Academorix SaaS bill — a different table entirely). Belongs to Tenant (CASCADE) + Region (RESTRICT) + Branch (RESTRICT) + Athlete (RESTRICT) + MembershipPlan (RESTRICT). Optional refs: primary_guardian_id (AthleteGuardian, RESTRICT), coupon_id (Coupon, RESTRICT), tax_calculation_id (TaxCalculation, RESTRICT). NEVER carries application_id (cascades through tenant), organization_id (cascades through branch), or scope_node_id (memberships are not a config consumer). Carries frozen snapshots (price + coupon + tax) at signing — plan price changes + coupon revisions + mid-contract VAT changes never retroactively affect an existing membership.",
   "type": "object",
   "x-module": "membership",
   "x-eloquent": {
@@ -13,9 +13,9 @@
     "keyType": "string",
     "keyPrefix": "mbr_",
     "incrementing": false,
-    "model": "Stackra\\Finance\\Membership\\Models\\Membership",
-    "interface": "Stackra\\Finance\\Membership\\Contracts\\Data\\MembershipInterface",
-    "implements": ["Stackra\\Finance\\Membership\\Contracts\\Data\\MembershipInterface"],
+    "model": "Academorix\\Finance\\Membership\\Models\\Membership",
+    "interface": "Academorix\\Finance\\Membership\\Contracts\\Data\\MembershipInterface",
+    "implements": ["Academorix\\Finance\\Membership\\Contracts\\Data\\MembershipInterface"],
     "traits": [
       "HasFactory",
       "HasPrefixedUlid",
@@ -77,7 +77,7 @@
           "onUpdate": "cascade",
           "onDelete": "cascade"
         },
-        "description": "The academy that owns this membership (the recipient of the money, NOT the payer to Stackra)."
+        "description": "The academy that owns this membership (the recipient of the money, NOT the payer to Academorix)."
       },
       "region_id": {
         "type": "string",

@@ -4,7 +4,7 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Attribution\Concerns;
+namespace Academorix\Attribution\Concerns;
 
 /**
  * Trait — HasAttribution.

@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/registrations/schemas/trial-booking",
+  "id": "academorix://modules/registrations/schemas/trial-booking",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "TrialBooking",

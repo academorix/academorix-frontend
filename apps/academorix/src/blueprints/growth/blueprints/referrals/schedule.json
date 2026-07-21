@@ -1,39 +1,39 @@
 {
-  "id": "stackra://modules/referrals/schedule",
+  "id": "academorix://modules/referrals/schedule",
   "$version": 1,
   "title": "referrals — scheduled tasks",
   "entries": [
     {
       "name": "referrals-check-vesting",
-      "command": "queue:dispatch --job=Stackra\\Growth\\Referrals\\Jobs\\CheckReferralVestingJob",
+      "command": "queue:dispatch --job=Academorix\\Growth\\Referrals\\Jobs\\CheckReferralVestingJob",
       "cron": "0 3 * * *",
       "timezone": "UTC",
       "purpose": "Nightly 03:00 UTC. Transitions Referral.status vesting -> vested for rows past vesting_completes_at. Handles trigger_plus_hold_days, after_refund_window_closes, and n_events_completed vesting rules."
     },
     {
       "name": "referrals-materialize-vested",
-      "command": "queue:dispatch --job=Stackra\\Growth\\Referrals\\Jobs\\MaterializeVestedRewardsJob",
+      "command": "queue:dispatch --job=Academorix\\Growth\\Referrals\\Jobs\\MaterializeVestedRewardsJob",
       "cron": "*/15 * * * *",
       "timezone": "UTC",
       "purpose": "Every 15 min. Picks vested-status rewards + calls Finance module to create pending credits. Sets finance_credit_id + materialized_at on success."
     },
     {
       "name": "referrals-expire-stale",
-      "command": "queue:dispatch --job=Stackra\\Growth\\Referrals\\Jobs\\ExpireStaleReferralsJob",
+      "command": "queue:dispatch --job=Academorix\\Growth\\Referrals\\Jobs\\ExpireStaleReferralsJob",
       "cron": "0 4 * * *",
       "timezone": "UTC",
       "purpose": "Nightly 04:00 UTC. Transitions claimed-but-not-signed-up referrals past 30-day TTL to expired."
     },
     {
       "name": "referrals-reconcile-program-budget",
-      "command": "queue:dispatch --job=Stackra\\Growth\\Referrals\\Jobs\\ReconcileProgramBudgetJob",
+      "command": "queue:dispatch --job=Academorix\\Growth\\Referrals\\Jobs\\ReconcileProgramBudgetJob",
       "cron": "0 5 * * *",
       "timezone": "UTC",
       "purpose": "Nightly 05:00 UTC. Recomputes program budget counters + detects spikes. Every finding of drift > 0 is a P2 signal."
     },
     {
       "name": "referrals-purge-archived",
-      "command": "queue:dispatch --job=Stackra\\Growth\\Referrals\\Jobs\\PurgeArchivedReferralsJob",
+      "command": "queue:dispatch --job=Academorix\\Growth\\Referrals\\Jobs\\PurgeArchivedReferralsJob",
       "cron": "0 4 * * 0",
       "timezone": "UTC",
       "purpose": "Weekly Sunday 04:00 UTC. Hard-purge referrals + rewards + fraud flags past 7-year (or 10-year Enterprise) retention. Paid rewards > $600 migrate to compliance_archive first."

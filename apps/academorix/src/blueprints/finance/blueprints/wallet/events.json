@@ -1,14 +1,14 @@
 {
-  "id": "stackra://modules/wallet/events",
+  "id": "academorix://modules/wallet/events",
   "$version": 1,
   "title": "wallet — published events",
-  "namespace": "Stackra\\Finance\\Wallet\\Events",
+  "namespace": "Academorix\\Finance\\Wallet\\Events",
   "dispatchMode": "afterCommit",
   "description": "Ledger events plus hold-lifecycle plus reconciliation events. WalletReconciliationDrift alerts finance when the cash-mirror drifts from Stripe balance — an incident signal.",
   "events": [
     {
       "name": "WalletOpened",
-      "class": "Stackra\\Finance\\Wallet\\Events\\WalletOpened",
+      "class": "Academorix\\Finance\\Wallet\\Events\\WalletOpened",
       "trigger": "New wallet row committed.",
       "queue": "wallet",
       "consumers": ["audit::WriteToAuditLog"],
@@ -24,7 +24,7 @@
     },
     {
       "name": "WalletClosed",
-      "class": "Stackra\\Finance\\Wallet\\Events\\WalletClosed",
+      "class": "Academorix\\Finance\\Wallet\\Events\\WalletClosed",
       "trigger": "Wallet.closed_at set.",
       "queue": "wallet",
       "consumers": ["audit::WriteToAuditLog"],
@@ -32,7 +32,7 @@
     },
     {
       "name": "WalletCredited",
-      "class": "Stackra\\Finance\\Wallet\\Events\\WalletCredited",
+      "class": "Academorix\\Finance\\Wallet\\Events\\WalletCredited",
       "trigger": "wallet_transaction with positive amount committed.",
       "queue": "wallet",
       "consumers": [
@@ -49,7 +49,7 @@
     },
     {
       "name": "WalletDebited",
-      "class": "Stackra\\Finance\\Wallet\\Events\\WalletDebited",
+      "class": "Academorix\\Finance\\Wallet\\Events\\WalletDebited",
       "trigger": "wallet_transaction with negative amount committed.",
       "queue": "wallet",
       "consumers": ["audit::WriteToAuditLog"],
@@ -63,7 +63,7 @@
     },
     {
       "name": "WalletHoldPlaced",
-      "class": "Stackra\\Finance\\Wallet\\Events\\WalletHoldPlaced",
+      "class": "Academorix\\Finance\\Wallet\\Events\\WalletHoldPlaced",
       "trigger": "New wallet_hold row committed. Reserved balance increases.",
       "queue": "wallet",
       "consumers": [],
@@ -76,7 +76,7 @@
     },
     {
       "name": "WalletHoldReleased",
-      "class": "Stackra\\Finance\\Wallet\\Events\\WalletHoldReleased",
+      "class": "Academorix\\Finance\\Wallet\\Events\\WalletHoldReleased",
       "trigger": "Hold status -> released or expired. Reserved balance decreases.",
       "queue": "wallet",
       "consumers": ["audit::WriteToAuditLog"],
@@ -89,7 +89,7 @@
     },
     {
       "name": "WalletHoldCommitted",
-      "class": "Stackra\\Finance\\Wallet\\Events\\WalletHoldCommitted",
+      "class": "Academorix\\Finance\\Wallet\\Events\\WalletHoldCommitted",
       "trigger": "Hold status -> settled. Converted into a wallet_transaction.",
       "queue": "wallet",
       "consumers": ["audit::WriteToAuditLog"],
@@ -103,7 +103,7 @@
     },
     {
       "name": "WalletReconciled",
-      "class": "Stackra\\Finance\\Wallet\\Events\\WalletReconciled",
+      "class": "Academorix\\Finance\\Wallet\\Events\\WalletReconciled",
       "trigger": "Nightly reconciliation completed without drift.",
       "queue": "wallet",
       "consumers": ["audit::WriteToAuditLog"],
@@ -111,7 +111,7 @@
     },
     {
       "name": "WalletReconciliationDrift",
-      "class": "Stackra\\Finance\\Wallet\\Events\\WalletReconciliationDrift",
+      "class": "Academorix\\Finance\\Wallet\\Events\\WalletReconciliationDrift",
       "trigger": "Reconciliation found a difference between local balance and upstream source. INCIDENT SIGNAL.",
       "queue": "wallet-critical",
       "consumers": [
@@ -129,7 +129,7 @@
     },
     {
       "name": "PointsEarned",
-      "class": "Stackra\\Finance\\Wallet\\Events\\PointsEarned",
+      "class": "Academorix\\Finance\\Wallet\\Events\\PointsEarned",
       "trigger": "points_earn transaction committed. Fires from points-rule engine on OrderPaid.",
       "queue": "wallet",
       "consumers": ["notifications::DispatchPointsEarnedNotificationListener"],
@@ -143,7 +143,7 @@
     },
     {
       "name": "PointsRedeemed",
-      "class": "Stackra\\Finance\\Wallet\\Events\\PointsRedeemed",
+      "class": "Academorix\\Finance\\Wallet\\Events\\PointsRedeemed",
       "trigger": "points_redeem transaction committed. Fires from redemption flow.",
       "queue": "wallet",
       "consumers": ["audit::WriteToAuditLog"],
@@ -156,7 +156,7 @@
     },
     {
       "name": "PointsExpired",
-      "class": "Stackra\\Finance\\Wallet\\Events\\PointsExpired",
+      "class": "Academorix\\Finance\\Wallet\\Events\\PointsExpired",
       "trigger": "points_expire transaction committed. Fires from ExpirePointsJob.",
       "queue": "wallet",
       "consumers": ["notifications::DispatchPointsExpiredNotificationListener"],

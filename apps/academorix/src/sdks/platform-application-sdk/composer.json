@@ -1,10 +1,10 @@
 {
-  "name": "stackra-platform/application-sdk",
+  "name": "academorix-platform/application-sdk",
   "type": "library",
-  "description": "Wire-visible SDK surface (Spatie Data DTOs + Saloon Request transport + fluent Resources) for the `application` module of the Platform service. Ships the global product-catalogue registry (Application + BusinessType) — cross-tenant entities every tenant-scoped module cascades through. Auto-discovered at boot by stackra/platform-sdk via #[AsSdkResource(name: 'application', service: 'platform')]; consumed by every cross-service caller strictly over HTTP.",
+  "description": "Wire-visible SDK surface (Spatie Data DTOs + Saloon Request transport + fluent Resources) for the `application` module of the Platform service. Ships the global product-catalogue registry (Application + BusinessType) — cross-tenant entities every tenant-scoped module cascades through. Auto-discovered at boot by academorix/platform-sdk via #[AsSdkResource(name: 'application', service: 'platform')]; consumed by every cross-service caller strictly over HTTP.",
   "license": "proprietary",
   "keywords": [
-    "stackra",
+    "academorix",
     "sdk",
     "saloon",
     "spatie-data",
@@ -34,18 +34,18 @@
   },
   "autoload": {
     "psr-4": {
-      "Stackra\\PlatformApplicationSdk\\": "src/"
+      "Academorix\\PlatformApplicationSdk\\": "src/"
     }
   },
   "autoload-dev": {
     "psr-4": {
-      "Stackra\\PlatformApplicationSdk\\Tests\\": "tests/"
+      "Academorix\\PlatformApplicationSdk\\Tests\\": "tests/"
     }
   },
   "extra": {
     "laravel": {
       "providers": [],
-      "aliases": {}
+      "aliases": []
     }
   },
   "scripts": {
@@ -63,5 +63,35 @@
     }
   },
   "minimum-stability": "stable",
-  "prefer-stable": true
+  "prefer-stable": true,
+  "repositories": [
+    {
+      "type": "path",
+      "url": "../../../../../packages/backend/sdk/api-sdk",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../../../../packages/backend/framework/enum",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../../../../packages/backend/framework/exceptions",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "path",
+      "url": "../../../../../packages/backend/foundation",
+      "options": {
+        "symlink": true
+      }
+    }
+  ]
 }

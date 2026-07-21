@@ -4,19 +4,19 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Marketing\Database\Factories;
+namespace Academorix\Marketing\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Stackra\Marketing\Contracts\Data\MarketingDeadLetterInterface;
-use Stackra\Marketing\Models\MarketingDeadLetter;
+use Academorix\Marketing\Contracts\Data\MarketingDeadLetterInterface;
+use Academorix\Marketing\Models\MarketingDeadLetter;
 
 /**
- * Factory for {@see \Stackra\Marketing\Models\MarketingDeadLetter}.
+ * Factory for {@see \Academorix\Marketing\Models\MarketingDeadLetter}.
  *
  * Auto-generated skeleton — extend with named states as domain
  * cases emerge (e.g. `->published()`, `->overdue()`, `->archived()`).
  *
- * @extends Factory<\Stackra\Marketing\Models\MarketingDeadLetter>
+ * @extends Factory<\Academorix\Marketing\Models\MarketingDeadLetter>
  *
  * @category Marketing
  *

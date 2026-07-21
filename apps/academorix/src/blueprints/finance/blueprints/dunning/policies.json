@@ -1,12 +1,12 @@
 {
-  "id": "stackra://modules/dunning/policies",
+  "id": "academorix://modules/dunning/policies",
   "$version": 1,
   "title": "dunning — authorization policies",
   "description": "DunningPlan.delete refuses when active runs reference it. DunningRun state-gated: pause/resume/cancel/retry-now valid only when status='active' (pause) or 'paused' (resume). DunningEvent is read-only (never editable — timeline integrity).",
   "policies": [
     {
       "model": "DunningPlan",
-      "class": "Stackra\\Finance\\Dunning\\Policies\\DunningPlanPolicy",
+      "class": "Academorix\\Finance\\Dunning\\Policies\\DunningPlanPolicy",
       "abilities": [
         { "action": "viewAny", "permission": "dunning-plans.viewAny" },
         { "action": "view", "permission": "dunning-plans.view" },
@@ -21,7 +21,7 @@
     },
     {
       "model": "DunningRun",
-      "class": "Stackra\\Finance\\Dunning\\Policies\\DunningRunPolicy",
+      "class": "Academorix\\Finance\\Dunning\\Policies\\DunningRunPolicy",
       "abilities": [
         {
           "action": "viewAny",
@@ -53,7 +53,7 @@
     },
     {
       "model": "DunningEvent",
-      "class": "Stackra\\Finance\\Dunning\\Policies\\DunningEventPolicy",
+      "class": "Academorix\\Finance\\Dunning\\Policies\\DunningEventPolicy",
       "abilities": [
         {
           "action": "viewAny",

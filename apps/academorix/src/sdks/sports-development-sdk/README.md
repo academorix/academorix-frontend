@@ -1,7 +1,7 @@
-# stackra-sports/development-sdk
+# academorix-sports/development-sdk
 
 Wire-visible SDK surface for the `development` module of the Sports service.
-Auto-discovered by `stackra/sports-sdk` (the service umbrella) via
+Auto-discovered by `academorix/sports-sdk` (the service umbrella) via
 `#[AsSdkResource(name: 'development', service: 'sports')]`.
 
 ## Aggregates
@@ -29,7 +29,7 @@ src/
 Consumed only over HTTP via the umbrella client:
 
 ```php
-app(\Stackra\SportsSdk\Client\SportsSdk::class)
+app(\Academorix\SportsSdk\Client\SportsSdk::class)
     ->development()
     ->developmentPathwaies()
     ->list();

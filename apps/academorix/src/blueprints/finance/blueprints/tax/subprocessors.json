@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/tax/subprocessors",
+  "id": "academorix://modules/tax/subprocessors",
   "$version": 1,
   "title": "tax — subprocessors",
   "description": "The Tax module engages up to FOUR third-party subprocessors depending on the tenant's provider config — TaxJar, Avalara AvaTax, Stripe Tax, and (tenant-configured) CustomWebhook. NativeCalculator is INTERNAL (no external processing). Every external provider receives customer address data + purchase amount for tax computation. GDPR Art. 28 DPA references + Art. 30 records of processing activities.",
@@ -69,11 +69,11 @@
       "slug": "custom_webhook",
       "vendor_name": "caller-configured",
       "vendor_url": "N/A (tenant-owned endpoint)",
-      "purpose": "Generic HMAC-signed JSON webhook. Escape hatch for tenants running their own tax computation infrastructure (in-house tax engine, third-party integration not in Stackra's catalog, sovereign-cloud tax service).",
+      "purpose": "Generic HMAC-signed JSON webhook. Escape hatch for tenants running their own tax computation infrastructure (in-house tax engine, third-party integration not in Academorix's catalog, sovereign-cloud tax service).",
       "data_categories": [
         "full calculation request payload — includes customer address + source_amount + source_currency + jurisdiction + applicable exemptions"
       ],
-      "data_hashing": "none by Stackra — caller's endpoint responsible for handling",
+      "data_hashing": "none by Academorix — caller's endpoint responsible for handling",
       "endpoint": "caller-configured",
       "sub_processing_locations": ["caller-hosted"],
       "dpa_url": "N/A — the tenant is responsible for their downstream endpoint's DPA if any",
@@ -84,7 +84,7 @@
   "internal_processors": [
     {
       "slug": "native_calculator",
-      "description": "Built-in local computation. Reads tax_rates directly + applies exemptions via ExemptionValidator. NO external processing — the calculation happens inside the Stackra service boundary. Not a subprocessor.",
+      "description": "Built-in local computation. Reads tax_rates directly + applies exemptions via ExemptionValidator. NO external processing — the calculation happens inside the Academorix service boundary. Not a subprocessor.",
       "notes": "Suitable for single-country tenants + simple jurisdictions. Recommended default for Small-tier tenants."
     }
   ],

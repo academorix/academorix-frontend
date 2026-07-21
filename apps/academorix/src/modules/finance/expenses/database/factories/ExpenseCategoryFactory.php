@@ -4,19 +4,19 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Expenses\Database\Factories;
+namespace Academorix\Expenses\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Stackra\Expenses\Contracts\Data\ExpenseCategoryInterface;
-use Stackra\Expenses\Models\ExpenseCategory;
+use Academorix\Expenses\Contracts\Data\ExpenseCategoryInterface;
+use Academorix\Expenses\Models\ExpenseCategory;
 
 /**
- * Factory for {@see \Stackra\Expenses\Models\ExpenseCategory}.
+ * Factory for {@see \Academorix\Expenses\Models\ExpenseCategory}.
  *
  * Auto-generated skeleton — extend with named states as domain
  * cases emerge (e.g. `->published()`, `->overdue()`, `->archived()`).
  *
- * @extends Factory<\Stackra\Expenses\Models\ExpenseCategory>
+ * @extends Factory<\Academorix\Expenses\Models\ExpenseCategory>
  *
  * @category Expenses
  *

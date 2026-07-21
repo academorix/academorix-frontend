@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/marketing/feature-flags",
+  "id": "academorix://modules/marketing/feature-flags",
   "$version": 1,
   "title": "marketing — kill switches",
   "engine": "laravel/pennant",

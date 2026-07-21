@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/competition/middleware",
+  "id": "academorix://modules/competition/middleware",
   "$version": 1,
   "title": "competition — HTTP middleware",
   "description": "Middleware aliases this module contributes.",

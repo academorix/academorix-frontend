@@ -4,11 +4,11 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Registry\Actions\Tenant;
+namespace Academorix\Registry\Actions\Tenant;
 
-use Stackra\Registry\Contracts\Repositories\DisciplineRepositoryInterface;
-use Stackra\Registry\Data\DisciplineData;
-use Stackra\Registry\Data\Requests\UpdateDisciplineRequestData;
+use Academorix\Registry\Contracts\Repositories\DisciplineRepositoryInterface;
+use Academorix\Registry\Data\DisciplineData;
+use Academorix\Registry\Data\Requests\UpdateDisciplineRequestData;
 use Stackra\Routing\Attributes\AsAction;
 use Stackra\Routing\Attributes\Middleware;
 use Stackra\Routing\Concerns\AsController;

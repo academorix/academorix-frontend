@@ -4,7 +4,7 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Coupon\Concerns;
+namespace Academorix\Coupon\Concerns;
 
 /**
  * Trait — HasCouponRedemptions.

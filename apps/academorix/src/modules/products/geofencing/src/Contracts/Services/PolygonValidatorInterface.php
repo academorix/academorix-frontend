@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Geofencing\Contracts\Services;
+namespace Academorix\Geofencing\Contracts\Services;
 
-use Stackra\Geofencing\Services\PolygonValidator;
+use Academorix\Geofencing\Services\PolygonValidator;
 use Illuminate\Container\Attributes\Bind;
 
 /**
@@ -12,7 +12,7 @@ use Illuminate\Container\Attributes\Bind;
  *
  * Runs the closed / vertex-count / self-intersection / diameter / coordinate
  * checks before persist. Consumers throw
- * {@see \Stackra\Geofencing\Exceptions\InvalidPolygonException} with the
+ * {@see \Academorix\Geofencing\Exceptions\InvalidPolygonException} with the
  * specific reason on failure.
  *
  * @category Geofencing
@@ -24,7 +24,7 @@ interface PolygonValidatorInterface
 {
     /**
      * Validate a polygon expressed as an array of vertices. Raises
-     * {@see \Stackra\Geofencing\Exceptions\InvalidPolygonException} on
+     * {@see \Academorix\Geofencing\Exceptions\InvalidPolygonException} on
      * failure with the specific reason enum.
      *
      * @param  list<array{lat: float, lng: float}>  $vertices

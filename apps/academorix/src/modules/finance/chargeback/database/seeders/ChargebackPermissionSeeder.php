@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Chargeback\Database\Seeders;
+namespace Academorix\Chargeback\Database\Seeders;
 
-use Stackra\Chargeback\Enums\ChargebackPermission;
+use Academorix\Chargeback\Enums\ChargebackPermission;
 use Stackra\Authorization\Database\Seeders\Concerns\SeedsPermissionEnum;
 use Stackra\ServiceProvider\Attributes\AsSeeder;
 use Illuminate\Database\Seeder;

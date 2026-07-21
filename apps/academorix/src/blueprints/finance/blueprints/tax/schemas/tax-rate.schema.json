@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/tax/schemas/tax-rate",
+  "id": "academorix://modules/tax/schemas/tax-rate",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "TaxRate",
@@ -13,9 +13,9 @@
     "keyType": "string",
     "keyPrefix": "txr_",
     "incrementing": false,
-    "model": "Stackra\\Finance\\Tax\\Models\\TaxRate",
-    "interface": "Stackra\\Finance\\Tax\\Contracts\\Data\\TaxRateInterface",
-    "implements": ["Stackra\\Finance\\Tax\\Contracts\\Data\\TaxRateInterface"],
+    "model": "Academorix\\Finance\\Tax\\Models\\TaxRate",
+    "interface": "Academorix\\Finance\\Tax\\Contracts\\Data\\TaxRateInterface",
+    "implements": ["Academorix\\Finance\\Tax\\Contracts\\Data\\TaxRateInterface"],
     "traits": [
       "HasFactory",
       "HasUlids",

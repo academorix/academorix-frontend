@@ -4,11 +4,11 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Tax\Services;
+namespace Academorix\Tax\Services;
 
-use Stackra\Tax\Contracts\Services\TaxProviderManagerInterface;
+use Academorix\Tax\Contracts\Services\TaxProviderManagerInterface;
 use Illuminate\Container\Attributes\Scoped;
-use Stackra\Tax\Contracts\Repositories\TaxCalculationRepositoryInterface;
+use Academorix\Tax\Contracts\Repositories\TaxCalculationRepositoryInterface;
 
 /**
  * Concrete service — TaxProviderManager.

@@ -4,7 +4,7 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Tax\Console;
+namespace Academorix\Tax\Console;
 
 use Stackra\Console\Attributes\AsCommand;
 use Stackra\Console\Commands\BaseCommand;

@@ -4,19 +4,19 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Tax\Database\Factories;
+namespace Academorix\Tax\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Stackra\Tax\Contracts\Data\TaxCalculationInterface;
-use Stackra\Tax\Models\TaxCalculation;
+use Academorix\Tax\Contracts\Data\TaxCalculationInterface;
+use Academorix\Tax\Models\TaxCalculation;
 
 /**
- * Factory for {@see \Stackra\Tax\Models\TaxCalculation}.
+ * Factory for {@see \Academorix\Tax\Models\TaxCalculation}.
  *
  * Auto-generated skeleton — extend with named states as domain
  * cases emerge (e.g. `->published()`, `->overdue()`, `->archived()`).
  *
- * @extends Factory<\Stackra\Tax\Models\TaxCalculation>
+ * @extends Factory<\Academorix\Tax\Models\TaxCalculation>
  *
  * @category Tax
  *

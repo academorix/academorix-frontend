@@ -1,12 +1,12 @@
 {
-  "id": "stackra://modules/progress/policies",
+  "id": "academorix://modules/progress/policies",
   "$version": 1,
   "title": "progress — authorization policies",
   "description": "Six policies — one per aggregate. CoachNote visibility widening is a P1 authorization gate (once shared, cannot be un-shared). GradingResult writes gated to examiner_coach + admin.",
   "policies": [
     {
       "model": "ProgressAssessment",
-      "class": "Stackra\\Sports\\Progress\\Policies\\ProgressAssessmentPolicy",
+      "class": "Academorix\\Sports\\Progress\\Policies\\ProgressAssessmentPolicy",
       "abilities": [
         {
           "action": "viewAny",
@@ -42,7 +42,7 @@
     },
     {
       "model": "ProgressCard",
-      "class": "Stackra\\Sports\\Progress\\Policies\\ProgressCardPolicy",
+      "class": "Academorix\\Sports\\Progress\\Policies\\ProgressCardPolicy",
       "abilities": [
         {
           "action": "viewAny",
@@ -73,7 +73,7 @@
     },
     {
       "model": "CoachNote",
-      "class": "Stackra\\Sports\\Progress\\Policies\\CoachNotePolicy",
+      "class": "Academorix\\Sports\\Progress\\Policies\\CoachNotePolicy",
       "abilities": [
         {
           "action": "viewAny",
@@ -109,7 +109,7 @@
     },
     {
       "model": "BeltRank",
-      "class": "Stackra\\Sports\\Progress\\Policies\\BeltRankPolicy",
+      "class": "Academorix\\Sports\\Progress\\Policies\\BeltRankPolicy",
       "abilities": [
         {
           "action": "viewAny",
@@ -136,7 +136,7 @@
     },
     {
       "model": "GradingEvent",
-      "class": "Stackra\\Sports\\Progress\\Policies\\GradingEventPolicy",
+      "class": "Academorix\\Sports\\Progress\\Policies\\GradingEventPolicy",
       "abilities": [
         {
           "action": "viewAny",
@@ -163,7 +163,7 @@
     },
     {
       "model": "GradingResult",
-      "class": "Stackra\\Sports\\Progress\\Policies\\GradingResultPolicy",
+      "class": "Academorix\\Sports\\Progress\\Policies\\GradingResultPolicy",
       "abilities": [
         {
           "action": "viewAny",

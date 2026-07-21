@@ -4,25 +4,25 @@
 
 declare(strict_types=1);
 
-namespace Stackra\PrivateSessions\Repositories;
+namespace Academorix\PrivateSessions\Repositories;
 
 use Stackra\Crud\Attributes\AsRepository;
 use Stackra\Crud\Attributes\Cacheable;
 use Stackra\Crud\Attributes\Filterable;
 use Stackra\Crud\Attributes\UseModel;
 use Stackra\Crud\Repositories\Repository;
-use Stackra\PrivateSessions\Contracts\Data\PrivateSessionRequestInterface;
-use Stackra\PrivateSessions\Contracts\Repositories\PrivateSessionRequestRepositoryInterface;
-use Stackra\PrivateSessions\Models\PrivateSessionRequest;
+use Academorix\PrivateSessions\Contracts\Data\PrivateSessionRequestInterface;
+use Academorix\PrivateSessions\Contracts\Repositories\PrivateSessionRequestRepositoryInterface;
+use Academorix\PrivateSessions\Models\PrivateSessionRequest;
 
 /**
- * Attribute-first Eloquent repository for {@see Stackra\PrivateSessions\Models\PrivateSessionRequest}.
+ * Attribute-first Eloquent repository for {@see Academorix\PrivateSessions\Models\PrivateSessionRequest}.
  *
  * Bound to the interface via `#[AsRepository]`; the model comes from
  * `#[UseModel(PrivateSessionRequestInterface::class)]` which resolves to
  * `PrivateSessionRequest` through the interface's `#[Bind]`.
  *
- * @extends Repository<\Stackra\PrivateSessions\Models\PrivateSessionRequest>
+ * @extends Repository<\Academorix\PrivateSessions\Models\PrivateSessionRequest>
  *
  * @category PrivateSessions
  *

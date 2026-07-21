@@ -4,11 +4,11 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Registrations\Actions\Tenant;
+namespace Academorix\Registrations\Actions\Tenant;
 
-use Stackra\Registrations\Contracts\Repositories\RegistrationRepositoryInterface;
-use Stackra\Registrations\Data\RegistrationData;
-use Stackra\Registrations\Data\Requests\CreateRegistrationRequestData;
+use Academorix\Registrations\Contracts\Repositories\RegistrationRepositoryInterface;
+use Academorix\Registrations\Data\RegistrationData;
+use Academorix\Registrations\Data\Requests\CreateRegistrationRequestData;
 use Stackra\Routing\Attributes\AsAction;
 use Stackra\Routing\Attributes\Middleware;
 use Stackra\Routing\Concerns\AsController;

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Stackra\Tenancy\Exceptions;
 
-use Stackra\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Raised when a save attempts to write a row with a `tenant_id`
@@ -19,7 +19,7 @@ use Stackra\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class CrossTenantWriteException extends AcademorixException
+final class CrossTenantWriteException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

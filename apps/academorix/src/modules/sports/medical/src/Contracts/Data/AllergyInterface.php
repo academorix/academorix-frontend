@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Medical\Contracts\Data;
+namespace Academorix\Medical\Contracts\Data;
 
 use Illuminate\Container\Attributes\Bind;
-use Stackra\Medical\Models\Allergy;
+use Academorix\Medical\Models\Allergy;
 
 /**
  * Table shape for the `allergies` table.

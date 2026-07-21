@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Athlete\Exceptions;
+namespace Academorix\Athlete\Exceptions;
 
 use Stackra\Exceptions\StackraException;
 

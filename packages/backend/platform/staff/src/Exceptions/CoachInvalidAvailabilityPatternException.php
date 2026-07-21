@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Staff\Exceptions;
 
-use Stackra\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Raised when the domain rule `COACH_INVALID_AVAILABILITY_PATTERN` fires.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class CoachInvalidAvailabilityPatternException extends AcademorixException
+final class CoachInvalidAvailabilityPatternException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

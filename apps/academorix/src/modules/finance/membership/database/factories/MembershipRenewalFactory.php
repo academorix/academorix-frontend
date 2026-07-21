@@ -4,19 +4,19 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Membership\Database\Factories;
+namespace Academorix\Membership\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Stackra\Membership\Contracts\Data\MembershipRenewalInterface;
-use Stackra\Membership\Models\MembershipRenewal;
+use Academorix\Membership\Contracts\Data\MembershipRenewalInterface;
+use Academorix\Membership\Models\MembershipRenewal;
 
 /**
- * Factory for {@see \Stackra\Membership\Models\MembershipRenewal}.
+ * Factory for {@see \Academorix\Membership\Models\MembershipRenewal}.
  *
  * Auto-generated skeleton — extend with named states as domain
  * cases emerge (e.g. `->published()`, `->overdue()`, `->archived()`).
  *
- * @extends Factory<\Stackra\Membership\Models\MembershipRenewal>
+ * @extends Factory<\Academorix\Membership\Models\MembershipRenewal>
  *
  * @category Membership
  *

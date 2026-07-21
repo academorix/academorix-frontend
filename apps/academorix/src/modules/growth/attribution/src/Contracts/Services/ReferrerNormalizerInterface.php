@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Attribution\Contracts\Services;
+namespace Academorix\Attribution\Contracts\Services;
 
-use Stackra\Attribution\Data\NormalizedReferrerData;
-use Stackra\Attribution\Services\ReferrerNormalizer;
+use Academorix\Attribution\Data\NormalizedReferrerData;
+use Academorix\Attribution\Services\ReferrerNormalizer;
 use Illuminate\Container\Attributes\Bind;
 
 /**

@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/coaching/caches",
+  "id": "academorix://modules/coaching/caches",
   "$version": 1,
   "title": "coaching — cache keys + tags",
   "driver": "redis",

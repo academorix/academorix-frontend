@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Referrals\Contracts\Services;
+namespace Academorix\Referrals\Contracts\Services;
 
-use Stackra\Referrals\Services\FraudDetector;
+use Academorix\Referrals\Services\FraudDetector;
 use Illuminate\Container\Attributes\Bind;
 
 /**

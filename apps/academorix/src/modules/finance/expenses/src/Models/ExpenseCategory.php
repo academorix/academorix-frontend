@@ -4,15 +4,15 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Expenses\Models;
+namespace Academorix\Expenses\Models;
 
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
-use Stackra\Expenses\Contracts\Data\ExpenseCategoryInterface;
-use Stackra\Expenses\Database\Factories\ExpenseCategoryFactory;
+use Academorix\Expenses\Contracts\Data\ExpenseCategoryInterface;
+use Academorix\Expenses\Database\Factories\ExpenseCategoryFactory;
 use Stackra\Foundation\Concerns\Filterable;
 use Stackra\Foundation\Concerns\HasMetadata;
 use Stackra\Foundation\Concerns\HasPrefixedUlid;

@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Gateway\Contracts\Services;
+namespace Academorix\Gateway\Contracts\Services;
 
-use Stackra\Gateway\Services\CheckoutComGatewayDriver;
+use Academorix\Gateway\Services\CheckoutComGatewayDriver;
 use Illuminate\Container\Attributes\Bind;
 
 /**

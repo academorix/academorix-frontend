@@ -4,14 +4,14 @@
 
 declare(strict_types=1);
 
-namespace Stackra\AthleteGuardian\Data;
+namespace Academorix\AthleteGuardian\Data;
 
 use Spatie\LaravelData\Attributes\MapInputName;
 use Spatie\LaravelData\Data;
 use Spatie\LaravelData\Mappers\SnakeCaseMapper;
 
 /**
- * Server-side output DTO for {@see \Stackra\AthleteGuardian\Models\AthleteGuardian}.
+ * Server-side output DTO for {@see \Academorix\AthleteGuardian\Models\AthleteGuardian}.
  *
  * Consumed by controllers + services on the SERVER side. This is
  * distinct from the wire SDK's DTO (which sits under

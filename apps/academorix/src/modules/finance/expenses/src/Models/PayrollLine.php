@@ -4,15 +4,15 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Expenses\Models;
+namespace Academorix\Expenses\Models;
 
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
-use Stackra\Expenses\Contracts\Data\PayrollLineInterface;
-use Stackra\Expenses\Database\Factories\PayrollLineFactory;
+use Academorix\Expenses\Contracts\Data\PayrollLineInterface;
+use Academorix\Expenses\Database\Factories\PayrollLineFactory;
 use Stackra\Foundation\Concerns\HasMetadata;
 use Stackra\Foundation\Concerns\HasPrefixedUlid;
 use Stackra\Staff\Concerns\BelongsToStaff;

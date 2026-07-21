@@ -1,8 +1,8 @@
 {
-  "id": "stackra://modules/coaching/notifications",
+  "id": "academorix://modules/coaching/notifications",
   "$version": 1,
   "title": "coaching — notification classes + categories",
-  "namespace": "Stackra\\Sports\\Coaching\\Notifications",
+  "namespace": "Academorix\\Sports\\Coaching\\Notifications",
   "notifications": [
     "CoachingProfileCreatedNotification",
     "CoachingProfileVerifiedNotification",

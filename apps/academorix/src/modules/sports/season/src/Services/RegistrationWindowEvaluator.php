@@ -4,11 +4,11 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Season\Services;
+namespace Academorix\Season\Services;
 
-use Stackra\Season\Contracts\Services\RegistrationWindowEvaluatorInterface;
+use Academorix\Season\Contracts\Services\RegistrationWindowEvaluatorInterface;
 use Illuminate\Container\Attributes\Scoped;
-use Stackra\Season\Contracts\Repositories\SeasonRepositoryInterface;
+use Academorix\Season\Contracts\Repositories\SeasonRepositoryInterface;
 
 /**
  * Concrete service — RegistrationWindowEvaluator.

@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Stackra\MarketplaceFee\Database\Seeders;
+namespace Academorix\MarketplaceFee\Database\Seeders;
 
-use Stackra\MarketplaceFee\Enums\MarketplaceFeePermission;
+use Academorix\MarketplaceFee\Enums\MarketplaceFeePermission;
 use Stackra\Authorization\Database\Seeders\Concerns\SeedsPermissionEnum;
 use Stackra\ServiceProvider\Attributes\AsSeeder;
 use Illuminate\Database\Seeder;

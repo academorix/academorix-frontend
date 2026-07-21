@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Staff\Exceptions;
 
-use Stackra\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * A pre_hire / on_leave / suspended / offboarded Staff cannot be a branch manager.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class BranchManagerMustBeActiveException extends AcademorixException
+final class BranchManagerMustBeActiveException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

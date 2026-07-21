@@ -4,11 +4,11 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Progress\Services;
+namespace Academorix\Progress\Services;
 
-use Stackra\Progress\Contracts\Services\OverallScoreCalculatorInterface;
+use Academorix\Progress\Contracts\Services\OverallScoreCalculatorInterface;
 use Illuminate\Container\Attributes\Scoped;
-use Stackra\Progress\Contracts\Repositories\BeltRankRepositoryInterface;
+use Academorix\Progress\Contracts\Repositories\BeltRankRepositoryInterface;
 
 /**
  * Concrete service — OverallScoreCalculator.

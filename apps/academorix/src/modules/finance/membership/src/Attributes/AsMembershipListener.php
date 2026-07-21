@@ -4,7 +4,7 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Membership\Attributes;
+namespace Academorix\Membership\Attributes;
 
 use Attribute;
 

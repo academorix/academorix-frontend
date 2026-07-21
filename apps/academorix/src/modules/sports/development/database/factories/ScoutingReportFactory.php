@@ -4,19 +4,19 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Development\Database\Factories;
+namespace Academorix\Development\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Stackra\Development\Contracts\Data\ScoutingReportInterface;
-use Stackra\Development\Models\ScoutingReport;
+use Academorix\Development\Contracts\Data\ScoutingReportInterface;
+use Academorix\Development\Models\ScoutingReport;
 
 /**
- * Factory for {@see \Stackra\Development\Models\ScoutingReport}.
+ * Factory for {@see \Academorix\Development\Models\ScoutingReport}.
  *
  * Auto-generated skeleton — extend with named states as domain
  * cases emerge (e.g. `->published()`, `->overdue()`, `->archived()`).
  *
- * @extends Factory<\Stackra\Development\Models\ScoutingReport>
+ * @extends Factory<\Academorix\Development\Models\ScoutingReport>
  *
  * @category Development
  *

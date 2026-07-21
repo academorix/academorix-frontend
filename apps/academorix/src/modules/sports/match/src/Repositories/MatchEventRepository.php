@@ -4,25 +4,25 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Match\Repositories;
+namespace Academorix\Match\Repositories;
 
 use Stackra\Crud\Attributes\AsRepository;
 use Stackra\Crud\Attributes\Cacheable;
 use Stackra\Crud\Attributes\Filterable;
 use Stackra\Crud\Attributes\UseModel;
 use Stackra\Crud\Repositories\Repository;
-use Stackra\Match\Contracts\Data\MatchEventInterface;
-use Stackra\Match\Contracts\Repositories\MatchEventRepositoryInterface;
-use Stackra\Match\Models\MatchEvent;
+use Academorix\Match\Contracts\Data\MatchEventInterface;
+use Academorix\Match\Contracts\Repositories\MatchEventRepositoryInterface;
+use Academorix\Match\Models\MatchEvent;
 
 /**
- * Attribute-first Eloquent repository for {@see Stackra\Match\Models\MatchEvent}.
+ * Attribute-first Eloquent repository for {@see Academorix\Match\Models\MatchEvent}.
  *
  * Bound to the interface via `#[AsRepository]`; the model comes from
  * `#[UseModel(MatchEventInterface::class)]` which resolves to
  * `MatchEvent` through the interface's `#[Bind]`.
  *
- * @extends Repository<\Stackra\Match\Models\MatchEvent>
+ * @extends Repository<\Academorix\Match\Models\MatchEvent>
  *
  * @category Match
  *

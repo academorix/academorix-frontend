@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Staff\Exceptions;
 
-use Stackra\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * rating field is written exclusively by AggregateCoachRatingsJob.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class CoachRatingWriteForbiddenException extends AcademorixException
+final class CoachRatingWriteForbiddenException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

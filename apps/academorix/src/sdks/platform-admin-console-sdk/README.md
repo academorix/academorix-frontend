@@ -1,7 +1,7 @@
-# stackra-platform/admin-console-sdk
+# academorix-platform/admin-console-sdk
 
 Wire-visible SDK surface for the `admin-console` module of the Platform service.
-Auto-discovered by `stackra/platform-sdk` (the service umbrella) via
+Auto-discovered by `academorix/platform-sdk` (the service umbrella) via
 `#[AsSdkResource(name: 'admin-console', service: 'platform')]`.
 
 ## Aggregates
@@ -25,7 +25,7 @@ src/
 Consumed only over HTTP via the umbrella client:
 
 ```php
-app(\Stackra\PlatformSdk\Client\PlatformSdk::class)
+app(\Academorix\PlatformSdk\Client\PlatformSdk::class)
     ->adminConsole()
     ->adminDashboardConfigs()
     ->list();

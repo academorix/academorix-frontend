@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Coupon\Actions\Tenant;
+namespace Academorix\Coupon\Actions\Tenant;
 
-use Stackra\Coupon\Contracts\Services\CouponRedeemerInterface;
-use Stackra\Coupon\Data\CouponRedemptionData;
-use Stackra\Coupon\Data\Requests\ReverseRedemptionRequestData;
+use Academorix\Coupon\Contracts\Services\CouponRedeemerInterface;
+use Academorix\Coupon\Data\CouponRedemptionData;
+use Academorix\Coupon\Data\Requests\ReverseRedemptionRequestData;
 use Stackra\Routing\Attributes\AsAction;
 use Stackra\Routing\Attributes\Middleware;
 use Stackra\Routing\Attributes\Post;
@@ -45,8 +45,8 @@ final class ReverseAction
      * @param  string                         $redemptionId  Row to reverse.
      * @param  ReverseRedemptionRequestData   $data          Reversal reason.
      *
-     * @throws \Stackra\Coupon\Exceptions\CouponRedemptionNotFoundException
-     * @throws \Stackra\Coupon\Exceptions\CouponRedemptionAlreadyReversedException
+     * @throws \Academorix\Coupon\Exceptions\CouponRedemptionNotFoundException
+     * @throws \Academorix\Coupon\Exceptions\CouponRedemptionAlreadyReversedException
      *
      * @return CouponRedemptionData  The reversed redemption row.
      */

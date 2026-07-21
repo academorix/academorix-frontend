@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/coaching/analytics",
+  "id": "academorix://modules/coaching/analytics",
   "$version": 1,
   "title": "coaching — product analytics",
   "sink": "segment",

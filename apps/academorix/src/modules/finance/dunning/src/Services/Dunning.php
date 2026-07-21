@@ -4,11 +4,11 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Dunning\Services;
+namespace Academorix\Dunning\Services;
 
-use Stackra\Dunning\Contracts\Services\DunningInterface;
+use Academorix\Dunning\Contracts\Services\DunningInterface;
 use Illuminate\Container\Attributes\Scoped;
-use Stackra\Dunning\Contracts\Repositories\DunningEventRepositoryInterface;
+use Academorix\Dunning\Contracts\Repositories\DunningEventRepositoryInterface;
 
 /**
  * Concrete service — Dunning.

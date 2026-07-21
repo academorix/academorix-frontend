@@ -1,14 +1,14 @@
 {
-  "id": "stackra://modules/marketing/settings",
+  "id": "academorix://modules/marketing/settings",
   "$version": 1,
   "title": "marketing — settings",
   "description": "Tenant-facing marketing configuration + per-user preferences for the ROAS report subscription. The marketing_provider_configs table is NOT settings — those are per-provider credentials owned by the marketing module itself. This file declares tenant-level defaults (default retry schedule, notification routing) + per-user preferences (ROAS digest subscription).",
   "storedIn": "settings",
-  "reference": { "contract": "stackra://modules/settings/attributes" },
+  "reference": { "contract": "academorix://modules/settings/attributes" },
   "groups": [
     {
       "key": "marketing",
-      "class": "Stackra\\Growth\\Marketing\\Settings\\MarketingSettings",
+      "class": "Academorix\\Growth\\Marketing\\Settings\\MarketingSettings",
       "label": "Marketing conversion tracking",
       "description": "Tenant-wide defaults for marketing capture + dispatch.",
       "icon": "megaphone",
@@ -107,7 +107,7 @@
     },
     {
       "key": "marketing_user",
-      "class": "Stackra\\Growth\\Marketing\\Settings\\MarketingUserSettings",
+      "class": "Academorix\\Growth\\Marketing\\Settings\\MarketingUserSettings",
       "label": "My marketing preferences",
       "description": "Per-user preferences for marketing reports + alerts.",
       "icon": "user-circle",

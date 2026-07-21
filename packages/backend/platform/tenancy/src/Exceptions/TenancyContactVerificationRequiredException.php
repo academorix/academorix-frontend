@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Tenancy\Exceptions;
 
-use Stackra\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * kind=dpo or kind=legal contact promoted to primary before verified_at is set.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class TenancyContactVerificationRequiredException extends AcademorixException
+final class TenancyContactVerificationRequiredException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

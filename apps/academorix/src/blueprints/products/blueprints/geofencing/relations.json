@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/geofencing/relations",
+  "id": "academorix://modules/geofencing/relations",
   "$version": 1,
   "title": "geofencing \u2014 model relationships",
   "internal": [

@@ -125,7 +125,7 @@
   last-4 + BIN permitted in evidence bundles.
 - Card network rules integration: VDMP/MDMP monitoring via
   MonitorChargebackRateJob nightly + ChargebackRateThresholdExceeded event +
-  platform-plane rate-threshold-alerts endpoint for Stackra ops cross-tenant
+  platform-plane rate-threshold-alerts endpoint for Academorix ops cross-tenant
   risk monitoring.
 - ULID prefixes `cbk_` (Chargeback) + `cev_` (ChargebackEvidence) are new +
   distinct from `pay_` (Payment), `pdi_` (PaymentDispute), `rfd_` (Refund),

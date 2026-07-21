@@ -1,13 +1,13 @@
 {
-  "id": "stackra://modules/transaction/hooks",
+  "id": "academorix://modules/transaction/hooks",
   "$version": 1,
   "title": "transaction — TenancyHook + lifecycle hooks",
   "description": "Cross-module hook implementations. TenancyHooks are the tenancy module's contract for reacting to tenant-lifecycle events (provision / erase). This module registers five hooks: tenant provisioning (records the opening balance), tenant erasure archiving (archives to compliance-storage BEFORE the FK CASCADE), tenant erasure purge (the FK CASCADE), a defensive observer hook (rejects negative amounts), and a snapshotting hook (freezes exchange rate on cross-currency transactions).",
-  "namespace": "Stackra\\Finance\\Transaction\\Hooks",
+  "namespace": "Academorix\\Finance\\Transaction\\Hooks",
   "hooks": [
     {
       "name": "RecordOpeningBalanceOnTenantProvisioned",
-      "class": "Stackra\\Finance\\Transaction\\Hooks\\RecordOpeningBalanceOnTenantProvisioned",
+      "class": "Academorix\\Finance\\Transaction\\Hooks\\RecordOpeningBalanceOnTenantProvisioned",
       "kind": "tenant_provisioning",
       "listens_to": "tenancy::TenantProvisioned",
       "purpose": "Records the tenant's opening balance transaction. Creates one transaction (kind='opening_balance', reference_type='TenantProvisioning', reference_id=tenant.id) with ledger entries at zero for every enabled account. When migrating from a legacy system, the migration flow can inject non-zero opening balances via the TransactionRecorder's opening_balance API — the hook then no-ops for that tenant. Fires exactly once per tenant + emits TenantOpeningBalanceRecorded.",
@@ -15,7 +15,7 @@
     },
     {
       "name": "PurgeTransactionDataForErasedTenant",
-      "class": "Stackra\\Finance\\Transaction\\Hooks\\PurgeTransactionDataForErasedTenant",
+      "class": "Academorix\\Finance\\Transaction\\Hooks\\PurgeTransactionDataForErasedTenant",
       "kind": "tenant_erasure",
       "listens_to": "tenancy::TenantErased",
       "purpose": "Cascade delete via FK CASCADE across transactions + transaction_ledger_entries. IMPORTANT: this hook runs AFTER ArchiveTransactionsToComplianceOnTenantErased has completed successfully. If archive fails, this hook refuses to cascade (returns TRANSACTION_ARCHIVE_INCOMPLETE) — the tenant's transactional data remains in the operational store until an ops-authored fix lands. The hook writes a compliance audit trail entry + emits count metrics per entity (transactions + transaction_ledger_entries purged).",
@@ -23,7 +23,7 @@
     },
     {
       "name": "ArchiveTransactionsToComplianceOnTenantErased",
-      "class": "Stackra\\Finance\\Transaction\\Hooks\\ArchiveTransactionsToComplianceOnTenantErased",
+      "class": "Academorix\\Finance\\Transaction\\Hooks\\ArchiveTransactionsToComplianceOnTenantErased",
       "kind": "tenant_erasure",
       "listens_to": "tenancy::TenantErased",
       "purpose": "Runs BEFORE PurgeTransactionDataForErasedTenant. Exports every transaction + its ledger entries + the base_currency-normalized global tenant balance snapshot to compliance-storage as JSONL keyed by (tenant_id, effective_date). The archive lives at least the tenant's lifetime beyond deletion + is retrievable during regulator audits years later. If the archive fails, this hook throws + the FK CASCADE never runs — the tenant's data is preserved in the operational store until ops recovers.",
@@ -32,7 +32,7 @@
     },
     {
       "name": "PreventNegativeAmountsOnObserver",
-      "class": "Stackra\\Finance\\Transaction\\Hooks\\PreventNegativeAmountsOnObserver",
+      "class": "Academorix\\Finance\\Transaction\\Hooks\\PreventNegativeAmountsOnObserver",
       "kind": "observer_guard",
       "listens_to": "internal — invoked by TransactionObserver.creating during pre-persist validation",
       "purpose": "Defense-in-depth guard. Rejects transaction insertions where amount_cents <= 0 (should already be caught by the valid_positive_amount rule but this hook is a belt-and-suspenders check specifically to protect against a bypassed validator). Direction is expressed via ledger entries — never via a negative amount. Refusal returns TRANSACTION_NEGATIVE_AMOUNT + fires a critical audit signal.",
@@ -40,7 +40,7 @@
     },
     {
       "name": "FreezeExchangeRateOnCrossCurrencyTransaction",
-      "class": "Stackra\\Finance\\Transaction\\Hooks\\FreezeExchangeRateOnCrossCurrencyTransaction",
+      "class": "Academorix\\Finance\\Transaction\\Hooks\\FreezeExchangeRateOnCrossCurrencyTransaction",
       "kind": "observer_guard",
       "listens_to": "internal — invoked by TransactionObserver.creating when currency != tenant.base_currency",
       "purpose": "Ensures exchange_rate_to_base + base_amount_cents are captured atomically inside the same DB transaction as the transaction row insert. Delegates to ExchangeRateResolver to fetch the current rate (with 1h cache TTL) + validates the caller-supplied base_amount_cents matches the computed value within ±1 cent rounding tolerance. The rate is IMMUTABLE after commit — historical reports use the frozen rate, never the current market rate. Fires TransactionCurrencyConverted (afterCommit).",

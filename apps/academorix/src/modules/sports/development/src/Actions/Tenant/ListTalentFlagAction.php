@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Development\Actions\Tenant;
+namespace Academorix\Development\Actions\Tenant;
 
-use Stackra\Development\Contracts\Repositories\TalentFlagRepositoryInterface;
-use Stackra\Development\Data\TalentFlagData;
+use Academorix\Development\Contracts\Repositories\TalentFlagRepositoryInterface;
+use Academorix\Development\Data\TalentFlagData;
 use Stackra\Routing\Attributes\AsAction;
 use Stackra\Routing\Attributes\Middleware;
 use Stackra\Routing\Concerns\AsController;
@@ -50,7 +50,7 @@ final class ListTalentFlagAction
      */
     public function __invoke(Request $request): PaginatedDataCollection
     {
-        /** @var LengthAwarePaginator<int, \Stackra\Development\Models\TalentFlag> $page */
+        /** @var LengthAwarePaginator<int, \Academorix\Development\Models\TalentFlag> $page */
         $page = $this->repository->paginate(
             perPage: (int) $request->integer('per_page', 15),
         );

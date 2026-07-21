@@ -4,7 +4,7 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Payment\Attributes;
+namespace Academorix\Payment\Attributes;
 
 use Attribute;
 

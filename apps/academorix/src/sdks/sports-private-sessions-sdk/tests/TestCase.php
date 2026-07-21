@@ -7,7 +7,7 @@ namespace Stackra\SportsPrivateSessionsSdk\Tests;
 use Orchestra\Testbench\TestCase as OrchestraTestCase;
 
 /**
- * Base test case for stackra-sports/private-sessions-sdk.
+ * Base test case for academorix-sports/private-sessions-sdk.
  *
  * @category PrivateSessionsSdk
  *

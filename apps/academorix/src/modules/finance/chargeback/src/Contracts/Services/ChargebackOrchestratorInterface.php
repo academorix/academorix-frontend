@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Chargeback\Contracts\Services;
+namespace Academorix\Chargeback\Contracts\Services;
 
-use Stackra\Chargeback\Services\ChargebackOrchestrator;
+use Academorix\Chargeback\Services\ChargebackOrchestrator;
 use Illuminate\Container\Attributes\Bind;
 
 /**

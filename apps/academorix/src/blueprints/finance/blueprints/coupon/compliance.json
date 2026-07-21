@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/coupon/compliance",
+  "id": "academorix://modules/coupon/compliance",
   "$version": 1,
   "title": "coupon — compliance evidence",
   "description": "Coupon module is financial-record-adjacent (every redemption is a discount that reduced invoice-line revenue — SOX + tax audit relevant) + PII-adjacent (customer_id + redeemed_by_user_id captured on every redemption) + advertising-adjacent (feeds marketing conversion events for referral + campaign coupons) + rate-limit-relevant (preview endpoint protected against brute-force code enumeration). GDPR (Art. 5, 6, 17), CAN-SPAM Act (promotional coupon emails), US tax law (7y financial record), SOX 404 (internal controls), SOC 2 CC6.3.",
@@ -105,7 +105,7 @@
         {
           "criterion": "CC7.2",
           "principle": "system monitoring",
-          "evidence": "stackra.coupon.atomicity.failures_total = 0 target. stackra.coupon.usage_count.drift_ratio = 0 target. Every CouponClawbackRequested + CouponClawbackCompleted fires audit rows + notifications."
+          "evidence": "academorix.coupon.atomicity.failures_total = 0 target. academorix.coupon.usage_count.drift_ratio = 0 target. Every CouponClawbackRequested + CouponClawbackCompleted fires audit rows + notifications."
         },
         {
           "criterion": "CC9.1",

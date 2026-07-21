@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/analytics/caches",
+  "id": "academorix://modules/analytics/caches",
   "$version": 1,
   "title": "analytics — cache keys + tags",
   "description": "Fan-out cache for active-providers-per-tenant + circuit-breaker state mirror + batch buffer + entitlement cache.",

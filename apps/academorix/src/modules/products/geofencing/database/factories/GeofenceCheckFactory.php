@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Geofencing\Database\Factories;
+namespace Academorix\Geofencing\Database\Factories;
 
-use Stackra\Geofencing\Contracts\Data\GeofenceCheckInterface;
-use Stackra\Geofencing\Enums\GeofenceMode;
-use Stackra\Geofencing\Enums\GeofenceResult;
-use Stackra\Geofencing\Models\GeofenceCheck;
+use Academorix\Geofencing\Contracts\Data\GeofenceCheckInterface;
+use Academorix\Geofencing\Enums\GeofenceMode;
+use Academorix\Geofencing\Enums\GeofenceResult;
+use Academorix\Geofencing\Models\GeofenceCheck;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 

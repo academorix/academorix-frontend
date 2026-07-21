@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/medical/settings",
+  "id": "academorix://modules/medical/settings",
   "$version": 1,
   "title": "medical — tenant-editable settings",
   "description": "Settings this module registers against the settings substrate.",

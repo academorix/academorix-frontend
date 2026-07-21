@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Progress\Database\Seeders;
+namespace Academorix\Progress\Database\Seeders;
 
-use Stackra\Progress\Enums\ProgressPermission;
+use Academorix\Progress\Enums\ProgressPermission;
 use Stackra\Authorization\Database\Seeders\Concerns\SeedsPermissionEnum;
 use Stackra\ServiceProvider\Attributes\AsSeeder;
 use Illuminate\Database\Seeder;

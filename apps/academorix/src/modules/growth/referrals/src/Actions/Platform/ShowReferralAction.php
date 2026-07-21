@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Referrals\Actions\Platform;
+namespace Academorix\Referrals\Actions\Platform;
 
-use Stackra\Referrals\Contracts\Repositories\ReferralRepositoryInterface;
-use Stackra\Referrals\Data\ReferralData;
+use Academorix\Referrals\Contracts\Repositories\ReferralRepositoryInterface;
+use Academorix\Referrals\Data\ReferralData;
 use Stackra\Routing\Attributes\AsAction;
 use Stackra\Routing\Attributes\Middleware;
 use Stackra\Routing\Concerns\AsController;

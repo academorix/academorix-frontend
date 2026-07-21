@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Registrations\Contracts\Services;
+namespace Academorix\Registrations\Contracts\Services;
 
-use Stackra\Registrations\Services\RegistrationOrchestrator;
+use Academorix\Registrations\Services\RegistrationOrchestrator;
 use Illuminate\Container\Attributes\Bind;
 
 /**

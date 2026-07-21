@@ -2,7 +2,7 @@
   "$version": 1,
   "name": "event",
   "alias": "event",
-  "namespace": "Stackra\\Sports\\Event",
+  "namespace": "Academorix\\Sports\\Event",
   "description": "Sport competitive / social / educational event — tournament, match, showcase, workshop, camp opening, awards ceremony. Answers 'what's happening at our tenant on date X?'. Multi-day + multi-facility supported. Every Event optionally references a Season for temporal context. Team participation tracked via teams::EventTeam (Wave 2b nullable FK; Wave 3 hardens). Ships: Event model with lifecycle (draft -> announced -> registration_open -> registration_closed -> in_progress -> completed -> cancelled -> archived), rich metadata (public/private, capacity, entry_fee, format), scheduled auto-transitions, event-specific SDUI screens, per-Event ResourceBookings via a event<->facility pivot (nullable — some events use no facility, e.g. virtual awards, camp-openings held outdoors). Downstream: Session.event_id (nullable — a session may or may not be part of an event's schedule), teams::EventTeam.event_id (nullable pre-Wave-3, hardens with Wave 3 migration), Wave 4 finance module attaches invoices per registered participant.",
   "keywords": [
     "event",
@@ -40,7 +40,7 @@
     "wave-3b"
   ],
   "priority": 62,
-  "providers": ["Stackra\\Sports\\Event\\Providers\\EventServiceProvider"],
+  "providers": ["Academorix\\Sports\\Event\\Providers\\EventServiceProvider"],
   "files": [],
   "dependencies": [
     "foundation",

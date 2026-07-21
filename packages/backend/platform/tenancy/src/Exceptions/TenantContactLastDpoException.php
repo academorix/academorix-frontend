@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Stackra\Tenancy\Exceptions;
 
-use Stackra\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Raised when a caller attempts to delete the last remaining DPO
@@ -18,7 +18,7 @@ use Stackra\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class TenantContactLastDpoException extends AcademorixException
+final class TenantContactLastDpoException extends StackraException
 {
     public const CODE = 'tenancy.contact_last_dpo';
 

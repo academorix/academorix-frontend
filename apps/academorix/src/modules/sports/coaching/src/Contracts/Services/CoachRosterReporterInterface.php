@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Coaching\Contracts\Services;
+namespace Academorix\Coaching\Contracts\Services;
 
-use Stackra\Coaching\Services\CoachRosterReporter;
+use Academorix\Coaching\Services\CoachRosterReporter;
 use Illuminate\Container\Attributes\Bind;
 
 /**

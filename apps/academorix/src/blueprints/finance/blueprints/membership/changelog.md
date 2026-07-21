@@ -46,11 +46,11 @@
     fires refund module.
 - CRITICAL DISTINCTION documented throughout: `Membership` (customer's contract
   with academy) is NEVER conflated with `TenantSubscription` (academy's SaaS
-  bill from Stackra). Different tables, different money flows, different
+  bill from Academorix). Different tables, different money flows, different
   retention regimes.
 - Consumers gated on `subscription::TenantSubscription`-based feature toggles
   resolve entitlements via the tenant's TenantSubscription — memberships care
-  about their tenant's Stackra SaaS plan when deciding whether to allow
+  about their tenant's Academorix SaaS plan when deciding whether to allow
   hard-cancel-with-refund.
 - Cascade paths:
   - AthleteArchived / AthleteWithdrawn → cascade soft-cancel memberships (with

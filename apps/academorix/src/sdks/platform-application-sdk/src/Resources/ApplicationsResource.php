@@ -18,13 +18,13 @@
 
 declare(strict_types=1);
 
-namespace Stackra\PlatformApplicationSdk\Resources;
+namespace Academorix\PlatformApplicationSdk\Resources;
 
 use Stackra\ApiSdk\Client\ApiConnector;
 use Stackra\ApiSdk\Data\PaginatedResponse;
-use Stackra\PlatformApplicationSdk\Data\ApplicationData;
-use Stackra\PlatformApplicationSdk\Requests\Applications\ListApplicationsRequest;
-use Stackra\PlatformApplicationSdk\Requests\Applications\ShowApplicationRequest;
+use Academorix\PlatformApplicationSdk\Data\ApplicationData;
+use Academorix\PlatformApplicationSdk\Requests\Applications\ListApplicationsRequest;
+use Academorix\PlatformApplicationSdk\Requests\Applications\ShowApplicationRequest;
 
 /**
  * Public / central-audience Applications surface.

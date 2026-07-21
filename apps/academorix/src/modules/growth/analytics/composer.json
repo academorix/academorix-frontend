@@ -1,10 +1,10 @@
 {
-  "name": "stackra/analytics",
+  "name": "academorix/analytics",
   "type": "library",
-  "description": "Stackra Analytics module — server-side Laravel package emitted from the module blueprint at `modules/growth/blueprints/analytics/`. Complements the wire SDK at `stackra-growth/analytics-sdk`.",
+  "description": "Academorix Analytics module — server-side Laravel package emitted from the module blueprint at `modules/growth/blueprints/analytics/`. Complements the wire SDK at `academorix-growth/analytics-sdk`.",
   "license": "proprietary",
   "keywords": [
-    "stackra",
+    "academorix",
     "module",
     "laravel",
     "growth",
@@ -22,7 +22,7 @@
     "stackra/routing": "@dev",
     "stackra/service-provider": "@dev",
     "stackra/support": "@dev",
-    "stackra-growth/analytics-sdk": "@dev"
+    "academorix-growth/analytics-sdk": "@dev"
   },
   "require-dev": {
     "orchestra/testbench": "^11.0",
@@ -33,12 +33,12 @@
   },
   "autoload": {
     "psr-4": {
-      "Stackra\\Analytics\\": "src/"
+      "Academorix\\Analytics\\": "src/"
     }
   },
   "autoload-dev": {
     "psr-4": {
-      "Stackra\\Analytics\\Tests\\": "tests/"
+      "Academorix\\Analytics\\Tests\\": "tests/"
     }
   },
   "extra": {

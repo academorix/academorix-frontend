@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Mfa\Exceptions;
 
-use Stackra\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Round-2 confirm refused because no round-1 preview was ever issued for the caller's session.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class MfaPreviewMissingException extends AcademorixException
+final class MfaPreviewMissingException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

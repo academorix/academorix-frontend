@@ -4,25 +4,25 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Attendance\Repositories;
+namespace Academorix\Attendance\Repositories;
 
 use Stackra\Crud\Attributes\AsRepository;
 use Stackra\Crud\Attributes\Cacheable;
 use Stackra\Crud\Attributes\Filterable;
 use Stackra\Crud\Attributes\UseModel;
 use Stackra\Crud\Repositories\Repository;
-use Stackra\Attendance\Contracts\Data\AbsenceRecordInterface;
-use Stackra\Attendance\Contracts\Repositories\AbsenceRecordRepositoryInterface;
-use Stackra\Attendance\Models\AbsenceRecord;
+use Academorix\Attendance\Contracts\Data\AbsenceRecordInterface;
+use Academorix\Attendance\Contracts\Repositories\AbsenceRecordRepositoryInterface;
+use Academorix\Attendance\Models\AbsenceRecord;
 
 /**
- * Attribute-first Eloquent repository for {@see Stackra\Attendance\Models\AbsenceRecord}.
+ * Attribute-first Eloquent repository for {@see Academorix\Attendance\Models\AbsenceRecord}.
  *
  * Bound to the interface via `#[AsRepository]`; the model comes from
  * `#[UseModel(AbsenceRecordInterface::class)]` which resolves to
  * `AbsenceRecord` through the interface's `#[Bind]`.
  *
- * @extends Repository<\Stackra\Attendance\Models\AbsenceRecord>
+ * @extends Repository<\Academorix\Attendance\Models\AbsenceRecord>
  *
  * @category Attendance
  *

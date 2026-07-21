@@ -4,19 +4,19 @@
 
 declare(strict_types=1);
 
-namespace Stackra\PrivateSessions\Database\Factories;
+namespace Academorix\PrivateSessions\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Stackra\PrivateSessions\Contracts\Data\PrivateSessionRequestInterface;
-use Stackra\PrivateSessions\Models\PrivateSessionRequest;
+use Academorix\PrivateSessions\Contracts\Data\PrivateSessionRequestInterface;
+use Academorix\PrivateSessions\Models\PrivateSessionRequest;
 
 /**
- * Factory for {@see \Stackra\PrivateSessions\Models\PrivateSessionRequest}.
+ * Factory for {@see \Academorix\PrivateSessions\Models\PrivateSessionRequest}.
  *
  * Auto-generated skeleton — extend with named states as domain
  * cases emerge (e.g. `->published()`, `->overdue()`, `->archived()`).
  *
- * @extends Factory<\Stackra\PrivateSessions\Models\PrivateSessionRequest>
+ * @extends Factory<\Academorix\PrivateSessions\Models\PrivateSessionRequest>
  *
  * @category PrivateSessions
  *

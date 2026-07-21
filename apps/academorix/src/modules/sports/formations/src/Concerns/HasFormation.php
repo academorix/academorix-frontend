@@ -4,7 +4,7 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Formations\Concerns;
+namespace Academorix\Formations\Concerns;
 
 /**
  * Trait — HasFormation.

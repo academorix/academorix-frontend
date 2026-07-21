@@ -4,11 +4,11 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Referrals\Actions\Tenant;
+namespace Academorix\Referrals\Actions\Tenant;
 
-use Stackra\Referrals\Contracts\Repositories\ReferralCodeRepositoryInterface;
-use Stackra\Referrals\Data\ReferralCodeData;
-use Stackra\Referrals\Data\Requests\CreateReferralCodeRequestData;
+use Academorix\Referrals\Contracts\Repositories\ReferralCodeRepositoryInterface;
+use Academorix\Referrals\Data\ReferralCodeData;
+use Academorix\Referrals\Data\Requests\CreateReferralCodeRequestData;
 use Stackra\Routing\Attributes\AsAction;
 use Stackra\Routing\Attributes\Middleware;
 use Stackra\Routing\Concerns\AsController;

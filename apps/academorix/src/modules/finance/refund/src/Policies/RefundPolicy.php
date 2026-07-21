@@ -4,13 +4,13 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Refund\Policies;
+namespace Academorix\Refund\Policies;
 
 use Stackra\User\Models\User;
-use Stackra\Refund\Models\Refund;
+use Academorix\Refund\Models\Refund;
 
 /**
- * Authorization policy for {@see \Stackra\Refund\Models\Refund}.
+ * Authorization policy for {@see \Academorix\Refund\Models\Refund}.
  *
  * Wired via `#[UsePolicy]` on the Model.
  *

@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/membership/subprocessors",
+  "id": "academorix://modules/membership/subprocessors",
   "$version": 1,
   "title": "membership — subprocessors",
   "description": "The Membership module engages ZERO direct third-party subprocessors — every state transition is first-party. Downstream: payment (PCI-DSS regulated stripe/paddle), notifications (email/SMS providers), storage (Wave 4+ for statement PDFs).",

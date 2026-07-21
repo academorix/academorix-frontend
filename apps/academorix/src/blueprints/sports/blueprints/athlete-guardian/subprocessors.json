@@ -1,8 +1,8 @@
 {
-  "id": "stackra://modules/athlete-guardian/subprocessors",
+  "id": "academorix://modules/athlete-guardian/subprocessors",
   "$version": 1,
   "title": "athlete-guardian — subprocessors",
-  "description": "The AthleteGuardian module itself engages ZERO third-party subprocessors — every state transition happens within the Stackra platform. Downstream: notifications module dispatches guardian notifications; storage module (Wave 4+) stores verification documents.",
+  "description": "The AthleteGuardian module itself engages ZERO third-party subprocessors — every state transition happens within the Academorix platform. Downstream: notifications module dispatches guardian notifications; storage module (Wave 4+) stores verification documents.",
   "subprocessors": [],
   "downstream_subprocessors_referenced": [
     {

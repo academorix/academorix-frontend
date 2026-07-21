@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Registrations\Contracts\Services;
+namespace Academorix\Registrations\Contracts\Services;
 
-use Stackra\Registrations\Models\Offer;
-use Stackra\Registrations\Services\AutoOfferer;
+use Academorix\Registrations\Models\Offer;
+use Academorix\Registrations\Services\AutoOfferer;
 use Illuminate\Container\Attributes\Bind;
 
 /**

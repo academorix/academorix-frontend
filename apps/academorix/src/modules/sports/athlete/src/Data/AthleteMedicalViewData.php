@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Athlete\Data;
+namespace Academorix\Athlete\Data;
 
-use Stackra\Athlete\Contracts\Data\AthleteInterface;
-use Stackra\Athlete\Contracts\Services\MedicalDisclosureGateInterface;
-use Stackra\Athlete\Models\Athlete;
+use Academorix\Athlete\Contracts\Data\AthleteInterface;
+use Academorix\Athlete\Contracts\Services\MedicalDisclosureGateInterface;
+use Academorix\Athlete\Models\Athlete;
 use Spatie\LaravelData\Attributes\MapInputName;
 use Spatie\LaravelData\Attributes\MapOutputName;
 use Spatie\LaravelData\Data;

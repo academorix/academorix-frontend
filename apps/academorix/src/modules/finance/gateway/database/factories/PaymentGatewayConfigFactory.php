@@ -4,19 +4,19 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Gateway\Database\Factories;
+namespace Academorix\Gateway\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Stackra\Gateway\Contracts\Data\PaymentGatewayConfigInterface;
-use Stackra\Gateway\Models\PaymentGatewayConfig;
+use Academorix\Gateway\Contracts\Data\PaymentGatewayConfigInterface;
+use Academorix\Gateway\Models\PaymentGatewayConfig;
 
 /**
- * Factory for {@see \Stackra\Gateway\Models\PaymentGatewayConfig}.
+ * Factory for {@see \Academorix\Gateway\Models\PaymentGatewayConfig}.
  *
  * Auto-generated skeleton — extend with named states as domain
  * cases emerge (e.g. `->published()`, `->overdue()`, `->archived()`).
  *
- * @extends Factory<\Stackra\Gateway\Models\PaymentGatewayConfig>
+ * @extends Factory<\Academorix\Gateway\Models\PaymentGatewayConfig>
  *
  * @category Gateway
  *

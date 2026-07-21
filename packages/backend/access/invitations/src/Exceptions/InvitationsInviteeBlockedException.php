@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Invitations\Exceptions;
 
-use Stackra\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Invitee email is on the platform's block-list (abuse-response).
@@ -15,7 +15,7 @@ use Stackra\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class InvitationsInviteeBlockedException extends AcademorixException
+final class InvitationsInviteeBlockedException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

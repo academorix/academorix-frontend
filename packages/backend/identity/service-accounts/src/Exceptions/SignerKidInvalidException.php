@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\ServiceAccounts\Exceptions;
 
-use Stackra\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * The proposed `signer_kid` does not exist in `auth::jwt_signing_keys` OR is disabled.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class SignerKidInvalidException extends AcademorixException
+final class SignerKidInvalidException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

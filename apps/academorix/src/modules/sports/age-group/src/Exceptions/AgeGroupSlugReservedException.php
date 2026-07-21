@@ -4,7 +4,7 @@
 
 declare(strict_types=1);
 
-namespace Stackra\AgeGroup\Exceptions;
+namespace Academorix\AgeGroup\Exceptions;
 
 use Stackra\Exceptions\StackraException;
 

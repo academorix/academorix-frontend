@@ -4,11 +4,11 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Refund\Actions\Tenant;
+namespace Academorix\Refund\Actions\Tenant;
 
-use Stackra\Refund\Contracts\Repositories\RefundRepositoryInterface;
-use Stackra\Refund\Data\RefundData;
-use Stackra\Refund\Data\Requests\CreateRefundRequestData;
+use Academorix\Refund\Contracts\Repositories\RefundRepositoryInterface;
+use Academorix\Refund\Data\RefundData;
+use Academorix\Refund\Data\Requests\CreateRefundRequestData;
 use Stackra\Routing\Attributes\AsAction;
 use Stackra\Routing\Attributes\Middleware;
 use Stackra\Routing\Concerns\AsController;

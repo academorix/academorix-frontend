@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\ServiceAccounts\Exceptions;
 
-use Stackra\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Token-exchange or IssueTestJwtInput requested a TTL below `service-accounts.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class ServiceAccountTtlBelowMinException extends AcademorixException
+final class ServiceAccountTtlBelowMinException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

@@ -1,9 +1,9 @@
 # payout
 
 Stripe Connect payout mirror. The gateway executes the payout to the tenant's
-connected bank account; Stackra ledgers what happened locally for reporting
+connected bank account; Academorix ledgers what happened locally for reporting
 
-- reconciliation. Not a wallet product — Stackra never touches the money.
+- reconciliation. Not a wallet product — Academorix never touches the money.
 
 ## Owned tables
 

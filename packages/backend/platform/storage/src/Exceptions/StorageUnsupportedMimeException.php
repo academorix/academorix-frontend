@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Storage\Exceptions;
 
-use Stackra\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Uploaded file's sniffed MIME is not in the kind's allowed_mimes list.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class StorageUnsupportedMimeException extends AcademorixException
+final class StorageUnsupportedMimeException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

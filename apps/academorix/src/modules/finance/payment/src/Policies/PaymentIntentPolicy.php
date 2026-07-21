@@ -4,13 +4,13 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Payment\Policies;
+namespace Academorix\Payment\Policies;
 
 use Stackra\User\Models\User;
-use Stackra\Payment\Models\PaymentIntent;
+use Academorix\Payment\Models\PaymentIntent;
 
 /**
- * Authorization policy for {@see \Stackra\Payment\Models\PaymentIntent}.
+ * Authorization policy for {@see \Academorix\Payment\Models\PaymentIntent}.
  *
  * Wired via `#[UsePolicy]` on the Model.
  *

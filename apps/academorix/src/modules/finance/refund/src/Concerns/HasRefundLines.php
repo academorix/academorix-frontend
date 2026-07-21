@@ -4,7 +4,7 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Refund\Concerns;
+namespace Academorix\Refund\Concerns;
 
 /**
  * Trait — HasRefundLines.

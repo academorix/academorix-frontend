@@ -4,19 +4,19 @@
 
 declare(strict_types=1);
 
-namespace Stackra\DigitalPasses\Database\Factories;
+namespace Academorix\DigitalPasses\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Stackra\DigitalPasses\Contracts\Data\WalletPassInterface;
-use Stackra\DigitalPasses\Models\WalletPass;
+use Academorix\DigitalPasses\Contracts\Data\WalletPassInterface;
+use Academorix\DigitalPasses\Models\WalletPass;
 
 /**
- * Factory for {@see \Stackra\DigitalPasses\Models\WalletPass}.
+ * Factory for {@see \Academorix\DigitalPasses\Models\WalletPass}.
  *
  * Auto-generated skeleton — extend with named states as domain
  * cases emerge (e.g. `->published()`, `->overdue()`, `->archived()`).
  *
- * @extends Factory<\Stackra\DigitalPasses\Models\WalletPass>
+ * @extends Factory<\Academorix\DigitalPasses\Models\WalletPass>
  *
  * @category DigitalPasses
  *

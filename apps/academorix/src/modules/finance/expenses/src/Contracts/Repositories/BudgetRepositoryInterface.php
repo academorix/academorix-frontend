@@ -4,17 +4,17 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Expenses\Contracts\Repositories;
+namespace Academorix\Expenses\Contracts\Repositories;
 
 use Stackra\Crud\Contracts\RepositoryInterface;
 
 /**
- * Repository contract for {@see Stackra\Expenses\Models\Budget}.
+ * Repository contract for {@see Academorix\Expenses\Models\Budget}.
  *
  * Consumers type-hint the interface; the container binds the concrete
  * via `#[AsRepository]` on `BudgetRepository`.
  *
- * @extends RepositoryInterface<\Stackra\Expenses\Models\Budget>
+ * @extends RepositoryInterface<\Academorix\Expenses\Models\Budget>
  *
  * @category Expenses
  *

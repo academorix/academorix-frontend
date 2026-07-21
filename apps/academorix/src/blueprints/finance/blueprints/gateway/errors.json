@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/gateway/errors",
+  "id": "academorix://modules/gateway/errors",
   "$version": 1,
   "title": "gateway — error codes",
   "namespace": "gateway",
@@ -46,7 +46,7 @@
       "user_facing": true,
       "audit_severity": "info",
       "i18n_key": "gateway.errors.unsupported_provider",
-      "description": "Provider is not yet supported by this Stackra version."
+      "description": "Provider is not yet supported by this Academorix version."
     },
     {
       "code": "GATEWAY_HAS_ACTIVE_METHODS",

@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Tax\Contracts\Data;
+namespace Academorix\Tax\Contracts\Data;
 
 use Illuminate\Container\Attributes\Bind;
-use Stackra\Tax\Models\TaxRate;
+use Academorix\Tax\Models\TaxRate;
 
 /**
  * Table shape for the `tax_rates` table.

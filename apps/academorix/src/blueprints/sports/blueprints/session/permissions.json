@@ -1,8 +1,8 @@
 {
-  "id": "stackra://modules/session/permissions",
+  "id": "academorix://modules/session/permissions",
   "$version": 1,
   "title": "session — permissions",
-  "seeder": "Stackra\\Sports\\Session\\Database\\Seeders\\SessionPermissionSeeder",
+  "seeder": "Academorix\\Sports\\Session\\Database\\Seeders\\SessionPermissionSeeder",
   "isSystem": true,
   "scope_suffix_convention": "Session read permissions may carry scope suffixes (`.any`, `.tenant`, `.branch`, `.own` — sessions assigned to caller as coach, or attended by caller/their child). Writes always tenant-scoped. Coach-facing surface has narrower permissions than admin.",
   "permissions": [

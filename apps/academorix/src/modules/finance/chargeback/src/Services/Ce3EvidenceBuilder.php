@@ -4,11 +4,11 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Chargeback\Services;
+namespace Academorix\Chargeback\Services;
 
-use Stackra\Chargeback\Contracts\Services\Ce3EvidenceBuilderInterface;
+use Academorix\Chargeback\Contracts\Services\Ce3EvidenceBuilderInterface;
 use Illuminate\Container\Attributes\Scoped;
-use Stackra\Chargeback\Contracts\Repositories\ChargebackEvidenceRepositoryInterface;
+use Academorix\Chargeback\Contracts\Repositories\ChargebackEvidenceRepositoryInterface;
 
 /**
  * Concrete service — Ce3EvidenceBuilder.

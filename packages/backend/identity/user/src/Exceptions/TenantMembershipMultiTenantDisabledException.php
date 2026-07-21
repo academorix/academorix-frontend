@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\User\Exceptions;
 
-use Stackra\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * `multi_tenant_membership` entitlement is off (small tier).
@@ -15,7 +15,7 @@ use Stackra\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class TenantMembershipMultiTenantDisabledException extends AcademorixException
+final class TenantMembershipMultiTenantDisabledException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

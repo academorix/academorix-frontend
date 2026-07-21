@@ -4,13 +4,13 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Order\Policies;
+namespace Academorix\Order\Policies;
 
 use Stackra\User\Models\User;
-use Stackra\Order\Models\OrderAdjustment;
+use Academorix\Order\Models\OrderAdjustment;
 
 /**
- * Authorization policy for {@see \Stackra\Order\Models\OrderAdjustment}.
+ * Authorization policy for {@see \Academorix\Order\Models\OrderAdjustment}.
  *
  * Wired via `#[UsePolicy]` on the Model.
  *

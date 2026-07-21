@@ -4,15 +4,15 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Awards\Models;
+namespace Academorix\Awards\Models;
 
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
-use Stackra\Awards\Contracts\Data\CertificateInterface;
-use Stackra\Awards\Database\Factories\CertificateFactory;
+use Academorix\Awards\Contracts\Data\CertificateInterface;
+use Academorix\Awards\Database\Factories\CertificateFactory;
 use Stackra\Foundation\Concerns\Filterable;
 use Stackra\Foundation\Concerns\HasMetadata;
 use Stackra\Foundation\Concerns\HasPrefixedUlid;

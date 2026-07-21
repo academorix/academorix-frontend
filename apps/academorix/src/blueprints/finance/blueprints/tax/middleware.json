@@ -1,11 +1,11 @@
 {
-  "id": "stackra://modules/tax/middleware",
+  "id": "academorix://modules/tax/middleware",
   "$version": 1,
   "title": "tax — HTTP middleware",
   "middleware": [
     {
       "alias": "tax.audit_calculations",
-      "class": "Stackra\\Finance\\Tax\\Http\\Middleware\\AuditTaxCalculations",
+      "class": "Academorix\\Finance\\Tax\\Http\\Middleware\\AuditTaxCalculations",
       "priority": 42,
       "description": "Attaches a request-correlation-id to any TaxCalculationRequested event fired during the request. Ensures every calculation write emits an audit event tagged with the originating request (compliance CC7.2 traceability). Runs on tenant-plane routes that write calculations (POST /calculate + downstream invoice-line create paths).",
       "auto_applied": false,

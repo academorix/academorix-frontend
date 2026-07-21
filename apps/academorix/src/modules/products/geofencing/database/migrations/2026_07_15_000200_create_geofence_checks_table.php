@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use Stackra\Geofencing\Contracts\Data\GeofenceCheckInterface;
+use Academorix\Geofencing\Contracts\Data\GeofenceCheckInterface;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;

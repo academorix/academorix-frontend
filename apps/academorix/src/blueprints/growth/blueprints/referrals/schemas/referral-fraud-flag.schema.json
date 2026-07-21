@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/referrals/schemas/referral-fraud-flag",
+  "id": "academorix://modules/referrals/schemas/referral-fraud-flag",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "ReferralFraudFlag",
@@ -13,8 +13,8 @@
     "keyType": "string",
     "keyPrefix": "rfr_",
     "incrementing": false,
-    "model": "Stackra\\Growth\\Referrals\\Models\\ReferralFraudFlag",
-    "interface": "Stackra\\Growth\\Referrals\\Contracts\\Data\\ReferralFraudFlagInterface",
+    "model": "Academorix\\Growth\\Referrals\\Models\\ReferralFraudFlag",
+    "interface": "Academorix\\Growth\\Referrals\\Contracts\\Data\\ReferralFraudFlagInterface",
     "traits": [
       "HasFactory",
       "HasUlids",

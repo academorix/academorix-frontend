@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/coaching/schemas/coach-assignment",
+  "id": "academorix://modules/coaching/schemas/coach-assignment",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "CoachAssignment",
@@ -13,9 +13,9 @@
     "keyType": "string",
     "keyPrefix": "cas_",
     "incrementing": false,
-    "model": "Stackra\\Sports\\Coaching\\Models\\CoachAssignment",
-    "interface": "Stackra\\Sports\\Coaching\\Contracts\\Data\\CoachAssignmentInterface",
-    "implements": ["Stackra\\Sports\\Coaching\\Contracts\\Data\\CoachAssignmentInterface"],
+    "model": "Academorix\\Sports\\Coaching\\Models\\CoachAssignment",
+    "interface": "Academorix\\Sports\\Coaching\\Contracts\\Data\\CoachAssignmentInterface",
+    "implements": ["Academorix\\Sports\\Coaching\\Contracts\\Data\\CoachAssignmentInterface"],
     "traits": [
       "HasFactory",
       "HasPrefixedUlid",

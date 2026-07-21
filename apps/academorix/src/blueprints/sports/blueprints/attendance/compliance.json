@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/attendance/compliance",
+  "id": "academorix://modules/attendance/compliance",
   "$version": 1,
   "title": "attendance — compliance evidence",
   "description": "Attendance is safeguarding-adjacent (minor check-ins with device fingerprint + GPS), money-adjacent (Pass consumption + no-show fees), and audit-critical (state-machine + membership freeze cascade). US Department of Education retention for youth programs. State-level SafeSport minor-verification requirements. GDPR Art. 6(1)(b) contractual basis. CCPA export rights. COPPA parental consent for biometric-adjacent collection.",
@@ -75,7 +75,7 @@
         {
           "criterion": "CC7.2",
           "principle": "system monitoring",
-          "evidence": "CleanupOrphanCheckinsJob P1 signal — every finding (orphan attendance without pass consumption, orphan pass without attendance, mutual-exclusion violation) is investigated. Metric stackra.attendance.orphan.without_pass should stay at 0."
+          "evidence": "CleanupOrphanCheckinsJob P1 signal — every finding (orphan attendance without pass consumption, orphan pass without attendance, mutual-exclusion violation) is investigated. Metric academorix.attendance.orphan.without_pass should stay at 0."
         }
       ]
     },

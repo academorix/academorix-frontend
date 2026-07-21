@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/drills/schemas/curriculum",
+  "id": "academorix://modules/drills/schemas/curriculum",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "Curriculum",

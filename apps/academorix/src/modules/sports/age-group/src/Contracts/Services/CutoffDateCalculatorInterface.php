@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Stackra\AgeGroup\Contracts\Services;
+namespace Academorix\AgeGroup\Contracts\Services;
 
-use Stackra\AgeGroup\Services\CutoffDateCalculator;
+use Academorix\AgeGroup\Services\CutoffDateCalculator;
 use Illuminate\Container\Attributes\Bind;
 
 /**

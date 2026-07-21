@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/order/schemas/order-adjustment",
+  "id": "academorix://modules/order/schemas/order-adjustment",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "OrderAdjustment",
@@ -13,9 +13,9 @@
     "keyType": "string",
     "keyPrefix": "adj_",
     "incrementing": false,
-    "model": "Stackra\\Finance\\Order\\Models\\OrderAdjustment",
-    "interface": "Stackra\\Finance\\Order\\Contracts\\Data\\OrderAdjustmentInterface",
-    "implements": ["Stackra\\Finance\\Order\\Contracts\\Data\\OrderAdjustmentInterface"],
+    "model": "Academorix\\Finance\\Order\\Models\\OrderAdjustment",
+    "interface": "Academorix\\Finance\\Order\\Contracts\\Data\\OrderAdjustmentInterface",
+    "implements": ["Academorix\\Finance\\Order\\Contracts\\Data\\OrderAdjustmentInterface"],
     "traits": [
       "HasFactory",
       "HasUlids",

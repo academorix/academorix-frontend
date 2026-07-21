@@ -1,8 +1,8 @@
 {
-  "id": "stackra://modules/athlete-guardian/notifications",
+  "id": "academorix://modules/athlete-guardian/notifications",
   "$version": 1,
   "title": "athlete-guardian — notification classes + categories",
-  "namespace": "Stackra\\Sports\\AthleteGuardian\\Notifications",
+  "namespace": "Academorix\\Sports\\AthleteGuardian\\Notifications",
   "notifications": [
     "GuardianAddedNotification",
     "GuardianRemovedNotification",

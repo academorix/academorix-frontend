@@ -1,9 +1,9 @@
 {
-  "id": "stackra://modules/geofencing/metrics",
+  "id": "academorix://modules/geofencing/metrics",
   "$version": 1,
   "title": "geofencing \u2014 OpenTelemetry metrics",
   "instrumentation": "self via telemetry",
-  "namespace": "stackra.geofence",
+  "namespace": "academorix.geofence",
   "labelConventions": {
     "always": [],
     "commonlyAvailable": ["result", "mode", "fenceable_type", "subject_type"],
@@ -16,21 +16,21 @@
   },
   "metrics": [
     {
-      "name": "stackra.geofence.evaluations.total",
+      "name": "academorix.geofence.evaluations.total",
       "kind": "counter",
       "unit": "evaluations",
       "labels": ["result", "mode", "fenceable_type", "subject_type"],
       "description": "Every GeofenceService::evaluate() call increments. Broken down by verdict + mode + fenceable model kind + calling feature."
     },
     {
-      "name": "stackra.geofence.preflight.total",
+      "name": "academorix.geofence.preflight.total",
       "kind": "counter",
       "unit": "requests",
       "labels": ["result", "fenceable_type", "outcome"],
       "description": "outcome: served / rate_limited / kill_switched / errored. Preflight traffic distinct from real evaluations."
     },
     {
-      "name": "stackra.geofence.evaluation.duration_ms",
+      "name": "academorix.geofence.evaluation.duration_ms",
       "kind": "histogram",
       "unit": "ms",
       "buckets": [1, 5, 25, 100, 500, 2000],
@@ -38,7 +38,7 @@
       "description": "Wall-clock time inside GeofenceService::evaluate()."
     },
     {
-      "name": "stackra.geofence.distance_to_fence_m",
+      "name": "academorix.geofence.distance_to_fence_m",
       "kind": "histogram",
       "unit": "m",
       "buckets": [0, 10, 50, 250, 1000, 5000, 50000],
@@ -46,7 +46,7 @@
       "description": "Distance distribution. Right-tail is 'user was very far outside the fence'."
     },
     {
-      "name": "stackra.geofence.accuracy_m",
+      "name": "academorix.geofence.accuracy_m",
       "kind": "histogram",
       "unit": "m",
       "buckets": [5, 15, 30, 50, 100, 500],
@@ -54,46 +54,46 @@
       "description": "Reported GPS accuracy distribution. SKIPPED verdicts should concentrate in the right tail."
     },
     {
-      "name": "stackra.geofence.overrides.requested_total",
+      "name": "academorix.geofence.overrides.requested_total",
       "kind": "counter",
       "unit": "requests",
       "labels": ["fenceable_type", "subject_type"]
     },
     {
-      "name": "stackra.geofence.overrides.applied_total",
+      "name": "academorix.geofence.overrides.applied_total",
       "kind": "counter",
       "unit": "overrides",
       "labels": ["fenceable_type", "subject_type"]
     },
     {
-      "name": "stackra.geofence.overrides.rejected_total",
+      "name": "academorix.geofence.overrides.rejected_total",
       "kind": "counter",
       "unit": "rejections",
       "labels": ["fenceable_type", "subject_type"]
     },
     {
-      "name": "stackra.geofence.polygon_evaluator.fallback_total",
+      "name": "academorix.geofence.polygon_evaluator.fallback_total",
       "kind": "counter",
       "unit": "fallbacks",
       "labels": ["reason"],
       "description": "reason: geoPHP not loaded / geoPHP returned null / geoPHP threw. Feeds decision on whether to require the geoPHP classmap in production."
     },
     {
-      "name": "stackra.geofence.immutability_violations_total",
+      "name": "academorix.geofence.immutability_violations_total",
       "kind": "counter",
       "unit": "violations",
       "labels": [],
       "description": "MUST be 0 in production. Any non-zero value = code attempted to mutate a persisted row. Fires alerting."
     },
     {
-      "name": "stackra.geofence.registered_fenceable_aliases",
+      "name": "academorix.geofence.registered_fenceable_aliases",
       "kind": "gauge",
       "unit": "aliases",
       "labels": [],
       "description": "Count of registered #[Geofenceable] classes. Observable gauge polled at scrape."
     },
     {
-      "name": "stackra.geofence.registered_subject_aliases",
+      "name": "academorix.geofence.registered_subject_aliases",
       "kind": "gauge",
       "unit": "aliases",
       "labels": [],

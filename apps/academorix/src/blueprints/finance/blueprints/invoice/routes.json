@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/invoice/routes",
+  "id": "academorix://modules/invoice/routes",
   "$version": 1,
   "title": "invoice — HTTP routes",
   "description": "Tenant-facing invoicing surface — customer routes (own-invoice access via invoice.enforce_customer_scope), admin routes (finance workflow), reports (aging/revenue/tax). Platform-admin cross-tenant support routes. Every tenant-plane route carries `entitlement.enforce:invoice_capture` at minimum; credit-note routes additionally carry `entitlement.enforce:credit_note_issuance`. Direct customer-write actions (mark-viewed) are the ONLY write operation permitted to end-users — every other write requires admin+finance role.",
@@ -25,28 +25,28 @@
         {
           "method": "GET",
           "path": "/mine",
-          "controller": "Stackra\\Finance\\Invoice\\Http\\Controllers\\Tenant\\CustomerInvoiceController@index",
+          "controller": "Academorix\\Finance\\Invoice\\Http\\Controllers\\Tenant\\CustomerInvoiceController@index",
           "permission": "invoice.invoices.viewMine",
           "description": "filter[status], filter[from], filter[to]. Default sort: issue_date DESC."
         },
         {
           "method": "GET",
           "path": "/mine/{invoice}",
-          "controller": "Stackra\\Finance\\Invoice\\Http\\Controllers\\Tenant\\CustomerInvoiceController@show",
+          "controller": "Academorix\\Finance\\Invoice\\Http\\Controllers\\Tenant\\CustomerInvoiceController@show",
           "permission": "invoice.invoices.viewMine",
           "description": "Full detail of one own invoice. Includes lines + payment history + linked credit notes."
         },
         {
           "method": "GET",
           "path": "/mine/{invoice}/pdf",
-          "controller": "Stackra\\Finance\\Invoice\\Http\\Controllers\\Tenant\\CustomerInvoiceController@pdf",
+          "controller": "Academorix\\Finance\\Invoice\\Http\\Controllers\\Tenant\\CustomerInvoiceController@pdf",
           "permission": "invoice.invoices.viewMine",
           "description": "Returns a signed S3 URL (7-day TTL) OR streams the PDF inline. Uses signed-URL when Content-Disposition=inline; streams when Content-Disposition=attachment."
         },
         {
           "method": "POST",
           "path": "/mine/{invoice}/mark-viewed",
-          "controller": "Stackra\\Finance\\Invoice\\Http\\Controllers\\Tenant\\CustomerInvoiceController@markViewed",
+          "controller": "Academorix\\Finance\\Invoice\\Http\\Controllers\\Tenant\\CustomerInvoiceController@markViewed",
           "permission": "invoice.invoices.mark-viewed",
           "description": "Fires InvoiceViewed on first invocation; idempotent on subsequent. Also triggered by the email-tracking pixel with a signed token via a public route (not this one)."
         }
@@ -72,112 +72,112 @@
         {
           "method": "GET",
           "path": "/",
-          "controller": "Stackra\\Finance\\Invoice\\Http\\Controllers\\Tenant\\InvoiceController@index",
+          "controller": "Academorix\\Finance\\Invoice\\Http\\Controllers\\Tenant\\InvoiceController@index",
           "permission": "invoice.invoices.viewAny",
           "description": "Cross-customer list. filter[status], filter[customer_type], filter[customer_id], filter[from], filter[to], filter[series], filter[collection_status], filter[currency], filter[past_due]. Default sort: issue_date DESC."
         },
         {
           "method": "POST",
           "path": "/",
-          "controller": "Stackra\\Finance\\Invoice\\Http\\Controllers\\Tenant\\InvoiceController@store",
+          "controller": "Academorix\\Finance\\Invoice\\Http\\Controllers\\Tenant\\InvoiceController@store",
           "permission": "invoice.invoices.create",
           "description": "Body: InvoiceCreateData (customer_type + customer_id + membership_id? + currency + payment_terms + series? + notes?). Freezes billing_address from customer.profile. Consumes 1 unit of invoice_slot_per_month."
         },
         {
           "method": "GET",
           "path": "/{invoice}",
-          "controller": "Stackra\\Finance\\Invoice\\Http\\Controllers\\Tenant\\InvoiceController@show",
+          "controller": "Academorix\\Finance\\Invoice\\Http\\Controllers\\Tenant\\InvoiceController@show",
           "permission": "invoice.invoices.view",
           "description": "Full detail with lines + credit notes + audit trail."
         },
         {
           "method": "PATCH",
           "path": "/{invoice}",
-          "controller": "Stackra\\Finance\\Invoice\\Http\\Controllers\\Tenant\\InvoiceController@update",
+          "controller": "Academorix\\Finance\\Invoice\\Http\\Controllers\\Tenant\\InvoiceController@update",
           "permission": "invoice.invoices.update",
           "description": "Draft-only. Update notes / internal_notes / payment_terms / shipping_address. Frozen fields (billing_address, currency, invoice_number, issue_date) are refused."
         },
         {
           "method": "POST",
           "path": "/{invoice}/finalize",
-          "controller": "Stackra\\Finance\\Invoice\\Http\\Controllers\\Tenant\\InvoiceController@finalize",
+          "controller": "Academorix\\Finance\\Invoice\\Http\\Controllers\\Tenant\\InvoiceController@finalize",
           "permission": "invoice.invoices.finalize",
           "description": "Transition draft → open. Dispatches FinalizeInvoiceJob. Requires every line has tax_calculation_id."
         },
         {
           "method": "POST",
           "path": "/{invoice}/send",
-          "controller": "Stackra\\Finance\\Invoice\\Http\\Controllers\\Tenant\\InvoiceController@send",
+          "controller": "Academorix\\Finance\\Invoice\\Http\\Controllers\\Tenant\\InvoiceController@send",
           "permission": "invoice.invoices.send",
           "description": "Initial email delivery. Idempotent — refuses if sent_at IS NOT NULL. Use resend for follow-up sends."
         },
         {
           "method": "POST",
           "path": "/{invoice}/resend",
-          "controller": "Stackra\\Finance\\Invoice\\Http\\Controllers\\Tenant\\InvoiceController@resend",
+          "controller": "Academorix\\Finance\\Invoice\\Http\\Controllers\\Tenant\\InvoiceController@resend",
           "permission": "invoice.invoices.resend",
           "description": "Force re-send of the invoice email. Optional body { email_override } to send to a different address."
         },
         {
           "method": "POST",
           "path": "/{invoice}/void",
-          "controller": "Stackra\\Finance\\Invoice\\Http\\Controllers\\Tenant\\InvoiceController@void",
+          "controller": "Academorix\\Finance\\Invoice\\Http\\Controllers\\Tenant\\InvoiceController@void",
           "permission": "invoice.invoices.void",
           "description": "Body: { void_reason }. Refused when status IN ('paid', 'partially_paid') — issue credit note instead."
         },
         {
           "method": "POST",
           "path": "/{invoice}/mark-uncollectible",
-          "controller": "Stackra\\Finance\\Invoice\\Http\\Controllers\\Tenant\\InvoiceController@markUncollectible",
+          "controller": "Academorix\\Finance\\Invoice\\Http\\Controllers\\Tenant\\InvoiceController@markUncollectible",
           "permission": "invoice.invoices.mark-uncollectible",
           "description": "Body: { reason_note }. Requires days_past_due >= config('invoice.dunning.uncollectible_after_days')."
         },
         {
           "method": "POST",
           "path": "/{invoice}/mark-paid",
-          "controller": "Stackra\\Finance\\Invoice\\Http\\Controllers\\Tenant\\InvoiceController@markPaid",
+          "controller": "Academorix\\Finance\\Invoice\\Http\\Controllers\\Tenant\\InvoiceController@markPaid",
           "permission": "invoice.invoices.mark-paid",
           "description": "Body: { payment_method: 'check'|'wire'|'cash'|'other', reference_note, amount_cents, paid_at }. Manual reconciliation for off-platform payments. Creates a transaction row via the transaction module."
         },
         {
           "method": "POST",
           "path": "/{invoice}/regenerate-pdf",
-          "controller": "Stackra\\Finance\\Invoice\\Http\\Controllers\\Tenant\\InvoiceController@regeneratePdf",
+          "controller": "Academorix\\Finance\\Invoice\\Http\\Controllers\\Tenant\\InvoiceController@regeneratePdf",
           "permission": "invoice.invoices.regenerate-pdf",
           "description": "Dispatch GenerateInvoicePDFJob for the invoice. Use after tenant branding update or template refresh."
         },
         {
           "method": "GET",
           "path": "/{invoice}/pdf",
-          "controller": "Stackra\\Finance\\Invoice\\Http\\Controllers\\Tenant\\InvoiceController@pdf",
+          "controller": "Academorix\\Finance\\Invoice\\Http\\Controllers\\Tenant\\InvoiceController@pdf",
           "permission": "invoice.invoices.view",
           "description": "Signed S3 URL to the current PDF."
         },
         {
           "method": "GET",
           "path": "/{invoice}/lines",
-          "controller": "Stackra\\Finance\\Invoice\\Http\\Controllers\\Tenant\\InvoiceLineController@index",
+          "controller": "Academorix\\Finance\\Invoice\\Http\\Controllers\\Tenant\\InvoiceLineController@index",
           "permission": "invoice.lines.viewAny",
           "description": "Ordered by line_number ASC."
         },
         {
           "method": "POST",
           "path": "/{invoice}/lines",
-          "controller": "Stackra\\Finance\\Invoice\\Http\\Controllers\\Tenant\\InvoiceLineController@store",
+          "controller": "Academorix\\Finance\\Invoice\\Http\\Controllers\\Tenant\\InvoiceLineController@store",
           "permission": "invoice.lines.create",
           "description": "Body: InvoiceLineCreateData. Only allowed when parent invoice.status='draft'."
         },
         {
           "method": "PATCH",
           "path": "/{invoice}/lines/{line}",
-          "controller": "Stackra\\Finance\\Invoice\\Http\\Controllers\\Tenant\\InvoiceLineController@update",
+          "controller": "Academorix\\Finance\\Invoice\\Http\\Controllers\\Tenant\\InvoiceLineController@update",
           "permission": "invoice.lines.update",
           "description": "Draft-only. Editable fields: description, quantity, unit_price_cents, item_type, reference_type + reference_id, metadata."
         },
         {
           "method": "DELETE",
           "path": "/{invoice}/lines/{line}",
-          "controller": "Stackra\\Finance\\Invoice\\Http\\Controllers\\Tenant\\InvoiceLineController@destroy",
+          "controller": "Academorix\\Finance\\Invoice\\Http\\Controllers\\Tenant\\InvoiceLineController@destroy",
           "permission": "invoice.lines.delete",
           "description": "Draft-only. Re-numbers remaining lines + recomputes invoice totals."
         }
@@ -204,34 +204,34 @@
         {
           "method": "GET",
           "path": "/",
-          "controller": "Stackra\\Finance\\Invoice\\Http\\Controllers\\Tenant\\CreditNoteController@index",
+          "controller": "Academorix\\Finance\\Invoice\\Http\\Controllers\\Tenant\\CreditNoteController@index",
           "permission": "invoice.credit-notes.viewAny",
           "description": "filter[status], filter[reason], filter[original_invoice_id], filter[from], filter[to]. Customer scope is auto-applied for members without invoice.credit-notes.viewAny (they see only their own via original_invoice.customer_id=auth.user.id)."
         },
         {
           "method": "POST",
           "path": "/",
-          "controller": "Stackra\\Finance\\Invoice\\Http\\Controllers\\Tenant\\CreditNoteController@store",
+          "controller": "Academorix\\Finance\\Invoice\\Http\\Controllers\\Tenant\\CreditNoteController@store",
           "permission": "invoice.credit-notes.create",
           "description": "Body: CreditNoteCreateData (original_invoice_id + amount_cents + reason + reason_note?). Refused when parent invoice.status NOT IN ('paid', 'partially_paid', 'refunded', 'disputed', 'written_off')."
         },
         {
           "method": "GET",
           "path": "/{credit_note}",
-          "controller": "Stackra\\Finance\\Invoice\\Http\\Controllers\\Tenant\\CreditNoteController@show",
+          "controller": "Academorix\\Finance\\Invoice\\Http\\Controllers\\Tenant\\CreditNoteController@show",
           "permission": "invoice.credit-notes.view"
         },
         {
           "method": "POST",
           "path": "/{credit_note}/apply",
-          "controller": "Stackra\\Finance\\Invoice\\Http\\Controllers\\Tenant\\CreditNoteController@apply",
+          "controller": "Academorix\\Finance\\Invoice\\Http\\Controllers\\Tenant\\CreditNoteController@apply",
           "permission": "invoice.credit-notes.apply",
           "description": "Body: { applied_to_type: 'refund'|'next_invoice'|'customer_balance', applied_to_id }. Transitions issued → applied."
         },
         {
           "method": "GET",
           "path": "/{credit_note}/pdf",
-          "controller": "Stackra\\Finance\\Invoice\\Http\\Controllers\\Tenant\\CreditNoteController@pdf",
+          "controller": "Academorix\\Finance\\Invoice\\Http\\Controllers\\Tenant\\CreditNoteController@pdf",
           "permission": "invoice.credit-notes.view"
         }
       ]
@@ -256,21 +256,21 @@
         {
           "method": "GET",
           "path": "/invoice-aging",
-          "controller": "Stackra\\Finance\\Invoice\\Http\\Controllers\\Tenant\\Reports\\InvoiceAgingController@show",
+          "controller": "Academorix\\Finance\\Invoice\\Http\\Controllers\\Tenant\\Reports\\InvoiceAgingController@show",
           "permission": "invoice.reports.aging.view",
           "description": "?as_of=YYYY-MM-DD (default today). Returns aging buckets: current (not past due), 1-30, 31-60, 61-90, 91+ days past due. Grouped by customer_type + customer_id."
         },
         {
           "method": "GET",
           "path": "/revenue",
-          "controller": "Stackra\\Finance\\Invoice\\Http\\Controllers\\Tenant\\Reports\\RevenueController@show",
+          "controller": "Academorix\\Finance\\Invoice\\Http\\Controllers\\Tenant\\Reports\\RevenueController@show",
           "permission": "invoice.reports.revenue.view",
           "description": "?from=YYYY-MM-DD&to=YYYY-MM-DD&group_by=day|week|month|item_type. Returns invoiced revenue (total_cents on delivered invoices) + collected revenue (amount_paid_cents) + AR balance (amount_due_cents)."
         },
         {
           "method": "GET",
           "path": "/tax-collected",
-          "controller": "Stackra\\Finance\\Invoice\\Http\\Controllers\\Tenant\\Reports\\TaxCollectedController@show",
+          "controller": "Academorix\\Finance\\Invoice\\Http\\Controllers\\Tenant\\Reports\\TaxCollectedController@show",
           "permission": "invoice.reports.tax-collected.view",
           "description": "?from=YYYY-MM-DD&to=YYYY-MM-DD&group_by=jurisdiction. Returns tax collected per jurisdiction over the period. Feeds VAT / GST / sales-tax return preparation."
         }
@@ -293,27 +293,27 @@
         {
           "method": "GET",
           "path": "/invoices",
-          "controller": "Stackra\\Finance\\Invoice\\Http\\Controllers\\Platform\\InvoiceController@index",
+          "controller": "Academorix\\Finance\\Invoice\\Http\\Controllers\\Platform\\InvoiceController@index",
           "permission": "platform.invoice.invoices.viewAny",
           "description": "Cross-tenant list. filter[tenant_id], filter[status], filter[invoice_number], filter[from], filter[to]."
         },
         {
           "method": "GET",
           "path": "/invoices/{invoice}",
-          "controller": "Stackra\\Finance\\Invoice\\Http\\Controllers\\Platform\\InvoiceController@show",
+          "controller": "Academorix\\Finance\\Invoice\\Http\\Controllers\\Platform\\InvoiceController@show",
           "permission": "platform.invoice.invoices.view",
           "description": "?reveal_pii=true requires platform.invoice.pii.view; otherwise billing_address returns { redacted: true } for personal fields."
         },
         {
           "method": "GET",
           "path": "/credit-notes",
-          "controller": "Stackra\\Finance\\Invoice\\Http\\Controllers\\Platform\\CreditNoteController@index",
+          "controller": "Academorix\\Finance\\Invoice\\Http\\Controllers\\Platform\\CreditNoteController@index",
           "permission": "platform.invoice.credit-notes.viewAny"
         },
         {
           "method": "GET",
           "path": "/reports/revenue-cross-tenant",
-          "controller": "Stackra\\Finance\\Invoice\\Http\\Controllers\\Platform\\Reports\\RevenueCrossTenantController@show",
+          "controller": "Academorix\\Finance\\Invoice\\Http\\Controllers\\Platform\\Reports\\RevenueCrossTenantController@show",
           "permission": "platform.invoice.reports.revenue-cross-tenant.view",
           "description": "Aggregated revenue across all tenants. ?from=YYYY-MM-DD&to=YYYY-MM-DD&group_by=tenant|application|currency."
         }

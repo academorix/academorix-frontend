@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/athlete/errors",
+  "id": "academorix://modules/athlete/errors",
   "$version": 1,
   "title": "athlete — error codes",
   "namespace": "athlete",

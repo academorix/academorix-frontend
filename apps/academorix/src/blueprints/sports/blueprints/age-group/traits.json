@@ -1,11 +1,11 @@
 {
-  "id": "stackra://modules/age-group/traits",
+  "id": "academorix://modules/age-group/traits",
   "$version": 1,
   "title": "age-group — trait composition",
   "description": "Two owned traits — `BelongsToAgeGroup` for downstream models that carry an `age_group_id` FK (Team Wave 2b, EventDivision Wave 3+, TeamRegistration Wave 3+, AthleteEnrollment via snapshot Wave 3+), and `HasAgeGroupCatalog` on the Tenant model exposing per-tenant sibling accessors + catalog rollups. Trait ordering matters when `BelongsToAgeGroup` is composed with `BelongsToTenant` / `BelongsToOrganization` / `BelongsToRegion`: tenant → organization → region → age-group, so each hook observes the resolved scope from every prior trait.",
   "owned": [
     {
-      "trait": "Stackra\\Sports\\AgeGroup\\Concerns\\BelongsToAgeGroup",
+      "trait": "Academorix\\Sports\\AgeGroup\\Concerns\\BelongsToAgeGroup",
       "description": "Mixed into any domain model that carries an age-group FK (Team, EventDivision, TeamRegistration; AthleteEnrollment uses a distinct SNAPSHOTTED variant — see `HasAgeGroupSnapshot` below). Adds the `ageGroup()` belongsTo relation, a `resolveInAgeGroup(?AgeGroup $ageGroup = null)` query scope that filters `WHERE age_group_id = ?` (falling back to a caller-supplied resolver when the arg is omitted), and a `booted()` hook that refuses to save a row whose `age_group_id` points at an AgeGroup in a different tenant than the row itself (defense-in-depth against cross-tenant FK smuggling — the compliance-auditor would catch a bad schema, this catches a bad write).",
       "public": true,
       "usedBy": [
@@ -21,7 +21,7 @@
       ]
     },
     {
-      "trait": "Stackra\\Sports\\AgeGroup\\Concerns\\HasAgeGroupCatalog",
+      "trait": "Academorix\\Sports\\AgeGroup\\Concerns\\HasAgeGroupCatalog",
       "description": "Mixed into the Tenant model. Adds sibling accessors + catalog rollups: `ageGroups()` (hasMany), `activeAgeGroups()` (hasMany filtered by status), `defaultAgeGroup(?sport_key = null, ?organization_id = null)` (first row where is_default=true for the given tuple), `seededAgeGroups()` (is_seeded=true rows), `customAgeGroups()` (is_seeded=false rows — subject to the age_group_slot entitlement), `resolveAgeGroupFor(dob, sport_key = null, on_date = today)` (delegates to AgeGroupResolver — returns the group the athlete falls into). Read-only accessors; every write goes through AgeGroupProvisioner.",
       "public": true,
       "usedBy": [
@@ -41,29 +41,29 @@
       { "trait": "Illuminate\\Database\\Eloquent\\SoftDeletes" }
     ],
     "foundation": [
-      { "trait": "Stackra\\Foundation\\Concerns\\HasPrefixedUlid" },
-      { "trait": "Stackra\\Foundation\\Concerns\\HasUserstamps" },
-      { "trait": "Stackra\\Foundation\\Concerns\\HasMetadata" },
-      { "trait": "Stackra\\Foundation\\Concerns\\HasSlug" },
-      { "trait": "Stackra\\Foundation\\Concerns\\Filterable" },
-      { "trait": "Stackra\\Foundation\\Concerns\\Searchable" }
+      { "trait": "Academorix\\Foundation\\Concerns\\HasPrefixedUlid" },
+      { "trait": "Academorix\\Foundation\\Concerns\\HasUserstamps" },
+      { "trait": "Academorix\\Foundation\\Concerns\\HasMetadata" },
+      { "trait": "Academorix\\Foundation\\Concerns\\HasSlug" },
+      { "trait": "Academorix\\Foundation\\Concerns\\Filterable" },
+      { "trait": "Academorix\\Foundation\\Concerns\\Searchable" }
     ],
-    "tenants": [{ "trait": "Stackra\\Tenancy\\Concerns\\BelongsToTenant" }],
+    "tenants": [{ "trait": "Academorix\\Tenancy\\Concerns\\BelongsToTenant" }],
     "organization": [
       {
-        "trait": "Stackra\\Organization\\Concerns\\BelongsToOrganization",
+        "trait": "Academorix\\Organization\\Concerns\\BelongsToOrganization",
         "reason": "Optional (nullable FK). When set, the age group is scoped to one Organization; when null, it is tenant-wide. The trait must run AFTER `BelongsToTenant` so its scope observes the resolved tenant."
       }
     ],
     "audit": [
       {
-        "trait": "Stackra\\Audit\\Concerns\\Auditable",
+        "trait": "Academorix\\Audit\\Concerns\\Auditable",
         "reason": "AgeGroup mutations (bounds, cutoff, sport_key, default, status) write to the `audits` table — bounds + cutoff changes are audit-CRITICAL for minor-safeguarding compliance (7-year retention floor)."
       }
     ],
     "activity": [
       {
-        "trait": "Stackra\\Activity\\Concerns\\HasActivityLog",
+        "trait": "Academorix\\Activity\\Concerns\\HasActivityLog",
         "reason": "AgeGroup lifecycle events feed the tenant admin's product-facing activity feed."
       }
     ]

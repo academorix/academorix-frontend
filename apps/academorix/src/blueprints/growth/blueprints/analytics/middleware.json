@@ -1,12 +1,12 @@
 {
-  "id": "stackra://modules/analytics/middleware",
+  "id": "academorix://modules/analytics/middleware",
   "$version": 1,
   "title": "analytics — HTTP middleware",
   "description": "One owned middleware — `analytics.enforce_consent` — used on funnel + experiment report routes to refuse queries that would return data belonging to subjects who withdrew consent (the query itself is not sensitive, but composing per-subject rollups from suppressed events is).",
   "middleware": [
     {
       "alias": "analytics.enforce_consent",
-      "class": "Stackra\\Growth\\Analytics\\Http\\Middleware\\EnforceAnalyticsConsent",
+      "class": "Academorix\\Growth\\Analytics\\Http\\Middleware\\EnforceAnalyticsConsent",
       "kind": "route-scoped",
       "purpose": "Refuses report queries (funnel + experiment) when the caller lacks the `analytics.data-viewer` permission OR when the query would include subjects who have withdrawn `analytics` consent. Withdrawn-consent subjects are transparently EXCLUDED from the report; when exclusion would drop >20% of the sample, returns HTTP 422 with a warning so the caller doesn't misinterpret partial data.",
       "steps": [

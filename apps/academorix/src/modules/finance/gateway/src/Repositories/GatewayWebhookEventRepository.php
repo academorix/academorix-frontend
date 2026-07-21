@@ -4,25 +4,25 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Gateway\Repositories;
+namespace Academorix\Gateway\Repositories;
 
 use Stackra\Crud\Attributes\AsRepository;
 use Stackra\Crud\Attributes\Cacheable;
 use Stackra\Crud\Attributes\Filterable;
 use Stackra\Crud\Attributes\UseModel;
 use Stackra\Crud\Repositories\Repository;
-use Stackra\Gateway\Contracts\Data\GatewayWebhookEventInterface;
-use Stackra\Gateway\Contracts\Repositories\GatewayWebhookEventRepositoryInterface;
-use Stackra\Gateway\Models\GatewayWebhookEvent;
+use Academorix\Gateway\Contracts\Data\GatewayWebhookEventInterface;
+use Academorix\Gateway\Contracts\Repositories\GatewayWebhookEventRepositoryInterface;
+use Academorix\Gateway\Models\GatewayWebhookEvent;
 
 /**
- * Attribute-first Eloquent repository for {@see Stackra\Gateway\Models\GatewayWebhookEvent}.
+ * Attribute-first Eloquent repository for {@see Academorix\Gateway\Models\GatewayWebhookEvent}.
  *
  * Bound to the interface via `#[AsRepository]`; the model comes from
  * `#[UseModel(GatewayWebhookEventInterface::class)]` which resolves to
  * `GatewayWebhookEvent` through the interface's `#[Bind]`.
  *
- * @extends Repository<\Stackra\Gateway\Models\GatewayWebhookEvent>
+ * @extends Repository<\Academorix\Gateway\Models\GatewayWebhookEvent>
  *
  * @category Gateway
  *

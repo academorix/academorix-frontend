@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Delegation\Exceptions;
 
-use Stackra\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * The window fails validation — starts_at in past, ends_at <= starts_at, or ends_at > starts_at + max_days cap.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class InvalidDelegationWindowException extends AcademorixException
+final class InvalidDelegationWindowException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

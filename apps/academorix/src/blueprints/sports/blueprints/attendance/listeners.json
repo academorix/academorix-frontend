@@ -1,78 +1,78 @@
 {
-  "id": "stackra://modules/attendance/listeners",
+  "id": "academorix://modules/attendance/listeners",
   "$version": 1,
   "title": "attendance — subscribed events",
   "listeners": [
     {
       "event": "attendance::AttendanceRecord.creating (pre-commit)",
-      "listener": "Stackra\\Sports\\Attendance\\Listeners\\ConsumePassAtomicallyOnAttendanceCreated",
+      "listener": "Academorix\\Sports\\Attendance\\Listeners\\ConsumePassAtomicallyOnAttendanceCreated",
       "queue": "attendance-critical",
       "priority": 10,
       "purpose": "The atomic pass-consume hook. Runs BEFORE all other listeners on this event."
     },
     {
       "event": "attendance::AttendanceCancelled (pre-commit)",
-      "listener": "Stackra\\Sports\\Attendance\\Listeners\\RefundPassAtomicallyOnAttendanceCancelled",
+      "listener": "Academorix\\Sports\\Attendance\\Listeners\\RefundPassAtomicallyOnAttendanceCancelled",
       "queue": "attendance-critical",
       "priority": 10,
       "purpose": "The atomic pass-refund hook. Reverses the consume-side hook."
     },
     {
       "event": "attendance::AbsenceRecorded",
-      "listener": "Stackra\\Sports\\Attendance\\Listeners\\EvaluateAbsenceThresholdOnAbsenceRecorded",
+      "listener": "Academorix\\Sports\\Attendance\\Listeners\\EvaluateAbsenceThresholdOnAbsenceRecorded",
       "queue": "attendance",
       "priority": 15,
       "purpose": "Rolling-window check. Fires AbsenceFreezeThresholdReached when count crosses policy.max_unexcused_absences_per_period."
     },
     {
       "event": "attendance::AbsenceFreezeThresholdReached",
-      "listener": "Stackra\\Sports\\Attendance\\Listeners\\FreezeMembershipOnThresholdReached",
+      "listener": "Academorix\\Sports\\Attendance\\Listeners\\FreezeMembershipOnThresholdReached",
       "queue": "notifications-critical",
       "priority": 10,
       "purpose": "P1 cascade — pauses the athlete's membership via membership::MembershipObserver.setStatus('paused')."
     },
     {
       "event": "attendance::AbsenceRecorded",
-      "listener": "Stackra\\Sports\\Attendance\\Listeners\\DispatchNoShowFeeInvoiceOnAbsence",
+      "listener": "Academorix\\Sports\\Attendance\\Listeners\\DispatchNoShowFeeInvoiceOnAbsence",
       "queue": "attendance",
       "purpose": "When absence.status='unexcused' AND applicable policy.no_show_fee_cents > 0 AND tenant holds attendance_no_show_fees entitlement, dispatches ChargeNoShowFeeJob to create the invoice via finance::invoice."
     },
     {
       "event": "sports::SessionCompleted",
-      "listener": "Stackra\\Sports\\Attendance\\Listeners\\DetectAndCreateAbsencesForCompletedSession",
+      "listener": "Academorix\\Sports\\Attendance\\Listeners\\DetectAndCreateAbsencesForCompletedSession",
       "queue": "attendance",
       "priority": 20,
       "purpose": "Optional in-band absence detection. Immediately sweeps expected attendees on session completion."
     },
     {
       "event": "sports::SessionCancelled",
-      "listener": "Stackra\\Sports\\Attendance\\Listeners\\CancelAttendanceOnSessionCancelled",
+      "listener": "Academorix\\Sports\\Attendance\\Listeners\\CancelAttendanceOnSessionCancelled",
       "queue": "attendance",
       "purpose": "Cascade — every existing AttendanceRecord for the cancelled session transitions to soft-deleted via AttendanceCancelled. Refunds every consumed Pass in one transaction."
     },
     {
       "event": "sports::SessionArchived (pre-write)",
-      "listener": "Stackra\\Sports\\Attendance\\Listeners\\PreventSessionArchiveWithActiveAttendance",
+      "listener": "Academorix\\Sports\\Attendance\\Listeners\\PreventSessionArchiveWithActiveAttendance",
       "queue": "attendance",
       "priority": 30,
       "purpose": "Refuses session archive when active attendance records exist."
     },
     {
       "event": "athlete-enrollment::EnrollmentWithdrawn (pre-hard-delete)",
-      "listener": "Stackra\\Sports\\Attendance\\Listeners\\PreventEnrollmentArchiveWithActiveAttendance",
+      "listener": "Academorix\\Sports\\Attendance\\Listeners\\PreventEnrollmentArchiveWithActiveAttendance",
       "queue": "attendance",
       "priority": 30,
       "purpose": "Refuses enrollment hard-delete when attendance records reference it."
     },
     {
       "event": "finance::MembershipLapsed",
-      "listener": "Stackra\\Sports\\Attendance\\Listeners\\FlagAthleteAttendanceWhenMembershipLapsed",
+      "listener": "Academorix\\Sports\\Attendance\\Listeners\\FlagAthleteAttendanceWhenMembershipLapsed",
       "queue": "attendance",
       "purpose": "Cascade — future check-ins for the athlete's active enrollment will refuse with ATTENDANCE_NO_ACTIVE_PASS because no valid Pass exists. Also emits a diagnostic event for admin visibility."
     },
     {
       "event": "tenancy::TenantErased",
-      "listener": "Stackra\\Sports\\Attendance\\Listeners\\PurgeAttendanceDataForErasedTenant",
+      "listener": "Academorix\\Sports\\Attendance\\Listeners\\PurgeAttendanceDataForErasedTenant",
       "queue": "attendance",
       "purpose": "Cascade delete via FK. Compliance archive rows survive per compliance module."
     }

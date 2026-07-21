@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Stackra\Domains\Exceptions;
 
-use Stackra\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Raised when `verification_attempts` hits the 100 cap. Requires a
@@ -14,7 +14,7 @@ use Stackra\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class DomainVerificationExhaustedException extends AcademorixException
+final class DomainVerificationExhaustedException extends StackraException
 {
     public const CODE = 'domains.verification_exhausted';
 

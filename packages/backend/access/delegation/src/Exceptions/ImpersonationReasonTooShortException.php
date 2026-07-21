@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Delegation\Exceptions;
 
-use Stackra\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * The impersonation reason is under 40 characters (heavier than delegation's 20).
@@ -15,7 +15,7 @@ use Stackra\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class ImpersonationReasonTooShortException extends AcademorixException
+final class ImpersonationReasonTooShortException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

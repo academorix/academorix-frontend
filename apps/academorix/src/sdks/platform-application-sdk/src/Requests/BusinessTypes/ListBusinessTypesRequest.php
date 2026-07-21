@@ -13,13 +13,13 @@
 
 declare(strict_types=1);
 
-namespace Stackra\PlatformApplicationSdk\Requests\BusinessTypes;
+namespace Academorix\PlatformApplicationSdk\Requests\BusinessTypes;
 
 use Stackra\ApiSdk\Data\PaginatedResponse;
 use Stackra\ApiSdk\Data\PaginationLinks;
 use Stackra\ApiSdk\Data\PaginationMeta;
 use Stackra\ApiSdk\Requests\BaseSdkRequest;
-use Stackra\PlatformApplicationSdk\Data\BusinessTypeData;
+use Academorix\PlatformApplicationSdk\Data\BusinessTypeData;
 use Saloon\Enums\Method;
 use Saloon\Http\Response;
 

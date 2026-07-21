@@ -4,25 +4,25 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Payment\Repositories;
+namespace Academorix\Payment\Repositories;
 
 use Stackra\Crud\Attributes\AsRepository;
 use Stackra\Crud\Attributes\Cacheable;
 use Stackra\Crud\Attributes\Filterable;
 use Stackra\Crud\Attributes\UseModel;
 use Stackra\Crud\Repositories\Repository;
-use Stackra\Payment\Contracts\Data\PaymentIntentInterface;
-use Stackra\Payment\Contracts\Repositories\PaymentIntentRepositoryInterface;
-use Stackra\Payment\Models\PaymentIntent;
+use Academorix\Payment\Contracts\Data\PaymentIntentInterface;
+use Academorix\Payment\Contracts\Repositories\PaymentIntentRepositoryInterface;
+use Academorix\Payment\Models\PaymentIntent;
 
 /**
- * Attribute-first Eloquent repository for {@see Stackra\Payment\Models\PaymentIntent}.
+ * Attribute-first Eloquent repository for {@see Academorix\Payment\Models\PaymentIntent}.
  *
  * Bound to the interface via `#[AsRepository]`; the model comes from
  * `#[UseModel(PaymentIntentInterface::class)]` which resolves to
  * `PaymentIntent` through the interface's `#[Bind]`.
  *
- * @extends Repository<\Stackra\Payment\Models\PaymentIntent>
+ * @extends Repository<\Academorix\Payment\Models\PaymentIntent>
  *
  * @category Payment
  *

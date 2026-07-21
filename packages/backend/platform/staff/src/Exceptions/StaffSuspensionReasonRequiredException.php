@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Staff\Exceptions;
 
-use Stackra\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Raised when the domain rule `STAFF_SUSPENSION_REASON_REQUIRED` fires.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class StaffSuspensionReasonRequiredException extends AcademorixException
+final class StaffSuspensionReasonRequiredException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

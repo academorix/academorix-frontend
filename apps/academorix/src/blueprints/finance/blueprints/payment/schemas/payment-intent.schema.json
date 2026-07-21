@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/payment/schemas/payment-intent",
+  "id": "academorix://modules/payment/schemas/payment-intent",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "PaymentIntent",
@@ -13,9 +13,9 @@
     "keyType": "string",
     "keyPrefix": "pit_",
     "incrementing": false,
-    "model": "Stackra\\Finance\\Payment\\Models\\PaymentIntent",
-    "interface": "Stackra\\Finance\\Payment\\Contracts\\Data\\PaymentIntentInterface",
-    "implements": ["Stackra\\Finance\\Payment\\Contracts\\Data\\PaymentIntentInterface"],
+    "model": "Academorix\\Finance\\Payment\\Models\\PaymentIntent",
+    "interface": "Academorix\\Finance\\Payment\\Contracts\\Data\\PaymentIntentInterface",
+    "implements": ["Academorix\\Finance\\Payment\\Contracts\\Data\\PaymentIntentInterface"],
     "traits": [
       "HasFactory",
       "HasUlids",

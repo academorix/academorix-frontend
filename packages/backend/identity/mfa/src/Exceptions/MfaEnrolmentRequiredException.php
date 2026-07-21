@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Mfa\Exceptions;
 
-use Stackra\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Caller holds a role requiring MFA + the grace_days_after_enrollment window has elapsed + no MFA is enrolled.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class MfaEnrolmentRequiredException extends AcademorixException
+final class MfaEnrolmentRequiredException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

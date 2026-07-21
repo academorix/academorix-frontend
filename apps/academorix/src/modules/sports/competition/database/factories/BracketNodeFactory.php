@@ -4,19 +4,19 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Competition\Database\Factories;
+namespace Academorix\Competition\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Stackra\Competition\Contracts\Data\BracketNodeInterface;
-use Stackra\Competition\Models\BracketNode;
+use Academorix\Competition\Contracts\Data\BracketNodeInterface;
+use Academorix\Competition\Models\BracketNode;
 
 /**
- * Factory for {@see \Stackra\Competition\Models\BracketNode}.
+ * Factory for {@see \Academorix\Competition\Models\BracketNode}.
  *
  * Auto-generated skeleton — extend with named states as domain
  * cases emerge (e.g. `->published()`, `->overdue()`, `->archived()`).
  *
- * @extends Factory<\Stackra\Competition\Models\BracketNode>
+ * @extends Factory<\Academorix\Competition\Models\BracketNode>
  *
  * @category Competition
  *

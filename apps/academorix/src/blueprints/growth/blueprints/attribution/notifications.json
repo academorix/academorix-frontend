@@ -1,8 +1,8 @@
 {
-  "id": "stackra://modules/attribution/notifications",
+  "id": "academorix://modules/attribution/notifications",
   "$version": 1,
   "title": "attribution — notification classes + categories",
-  "namespace": "Stackra\\Growth\\Attribution\\Notifications",
+  "namespace": "Academorix\\Growth\\Attribution\\Notifications",
   "notifications": [
     "AttributionResetConfirmationNotification",
     "AttributionMergeCompletedNotification",

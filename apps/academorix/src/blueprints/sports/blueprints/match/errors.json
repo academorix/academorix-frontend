@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/match/errors",
+  "id": "academorix://modules/match/errors",
   "$version": 1,
   "title": "match — error codes",
   "namespace": "match",

@@ -4,7 +4,7 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Medical\Concerns;
+namespace Academorix\Medical\Concerns;
 
 /**
  * Trait — IsEligibilityGated.

@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/attendance/schemas/late-arrival",
+  "id": "academorix://modules/attendance/schemas/late-arrival",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "LateArrival",
@@ -13,8 +13,8 @@
     "keyType": "string",
     "keyPrefix": "lat_",
     "incrementing": false,
-    "model": "Stackra\\Sports\\Attendance\\Models\\LateArrival",
-    "interface": "Stackra\\Sports\\Attendance\\Contracts\\Data\\LateArrivalInterface",
+    "model": "Academorix\\Sports\\Attendance\\Models\\LateArrival",
+    "interface": "Academorix\\Sports\\Attendance\\Contracts\\Data\\LateArrivalInterface",
     "traits": [
       "HasFactory",
       "HasPrefixedUlid",

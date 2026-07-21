@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Awards\Contracts\Services;
+namespace Academorix\Awards\Contracts\Services;
 
-use Stackra\Awards\Services\AutoGrantEvaluator;
+use Academorix\Awards\Services\AutoGrantEvaluator;
 use Illuminate\Container\Attributes\Bind;
 
 /**

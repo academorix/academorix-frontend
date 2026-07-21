@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Event\Actions\Tenant;
+namespace Academorix\Event\Actions\Tenant;
 
-use Stackra\Event\Contracts\Repositories\EventRepositoryInterface;
-use Stackra\Event\Data\EventData;
+use Academorix\Event\Contracts\Repositories\EventRepositoryInterface;
+use Academorix\Event\Data\EventData;
 use Stackra\Routing\Attributes\AsAction;
 use Stackra\Routing\Attributes\Middleware;
 use Stackra\Routing\Concerns\AsController;
@@ -50,7 +50,7 @@ final class ListEventAction
      */
     public function __invoke(Request $request): PaginatedDataCollection
     {
-        /** @var LengthAwarePaginator<int, \Stackra\Event\Models\Event> $page */
+        /** @var LengthAwarePaginator<int, \Academorix\Event\Models\Event> $page */
         $page = $this->repository->paginate(
             perPage: (int) $request->integer('per_page', 15),
         );

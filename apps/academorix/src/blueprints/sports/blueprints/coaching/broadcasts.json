@@ -1,12 +1,12 @@
 {
-  "id": "stackra://modules/coaching/broadcasts",
+  "id": "academorix://modules/coaching/broadcasts",
   "$version": 1,
   "title": "coaching — realtime broadcast channels",
   "description": "Six broadcast channels. Tenant-level for admin + HR dashboards. Per-profile channels for assignments, certifications, and ratings — the coach's own management surface. Per-user channel for the coach's /me live widget. Certification-specific channel for expiration-cadence alerts.",
   "channels": [
     {
       "name": "tenant.{tenantId}.coaching-profiles",
-      "class": "Stackra\\Sports\\Coaching\\Broadcasts\\TenantCoachingProfilesChannel",
+      "class": "Academorix\\Sports\\Coaching\\Broadcasts\\TenantCoachingProfilesChannel",
       "description": "Tenant-wide coach roster lifecycle. Powers HR + admin dashboards.",
       "authorization": "sanctum::authed AND tenant_matches AND permission `coaching_profiles.viewAny`",
       "events": [
@@ -19,7 +19,7 @@
     },
     {
       "name": "tenant.{tenantId}.coach-certifications",
-      "class": "Stackra\\Sports\\Coaching\\Broadcasts\\TenantCoachCertificationsChannel",
+      "class": "Academorix\\Sports\\Coaching\\Broadcasts\\TenantCoachCertificationsChannel",
       "description": "Tenant-wide certification-expiration stream. Powers the compliance dashboard.",
       "authorization": "sanctum::authed AND tenant_matches AND permission `coach_certifications.viewAny`",
       "events": [
@@ -33,7 +33,7 @@
     },
     {
       "name": "coaching-profile.{coachingProfileId}.assignments",
-      "class": "Stackra\\Sports\\Coaching\\Broadcasts\\CoachingProfileAssignmentsChannel",
+      "class": "Academorix\\Sports\\Coaching\\Broadcasts\\CoachingProfileAssignmentsChannel",
       "description": "Per-profile assignment activity. Powers the coach's dashboard + admin's profile drill-down.",
       "authorization": "sanctum::authed AND (permission `coach_assignments.view` OR coaching_profile.staff.user_id = current_user_id)",
       "events": [
@@ -46,7 +46,7 @@
     },
     {
       "name": "coaching-profile.{coachingProfileId}.certifications",
-      "class": "Stackra\\Sports\\Coaching\\Broadcasts\\CoachingProfileCertificationsChannel",
+      "class": "Academorix\\Sports\\Coaching\\Broadcasts\\CoachingProfileCertificationsChannel",
       "description": "Per-profile certification activity. Coaches watch their own cert-status.",
       "authorization": "sanctum::authed AND (permission `coach_certifications.view` OR coaching_profile.staff.user_id = current_user_id)",
       "events": [
@@ -59,7 +59,7 @@
     },
     {
       "name": "coaching-profile.{coachingProfileId}.ratings",
-      "class": "Stackra\\Sports\\Coaching\\Broadcasts\\CoachingProfileRatingsChannel",
+      "class": "Academorix\\Sports\\Coaching\\Broadcasts\\CoachingProfileRatingsChannel",
       "description": "Per-profile skill-rating activity. Coach opt-in receive; admins always see.",
       "authorization": "sanctum::authed AND (permission `coach_skill_ratings.view` OR (coaching_profile.staff.user_id = current_user_id AND coaching_profile.notify_on_rating = true))",
       "events": ["CoachSkillRatingRecorded", "CoachSkillRatingUpdated"],
@@ -68,7 +68,7 @@
     },
     {
       "name": "user.{userId}.coaching",
-      "class": "Stackra\\Sports\\Coaching\\Broadcasts\\UserCoachingChannel",
+      "class": "Academorix\\Sports\\Coaching\\Broadcasts\\UserCoachingChannel",
       "description": "Per-user coaching-events stream — the /me/coaching live widget for coaches managing their own profile + assignments + certifications.",
       "authorization": "sanctum::authed AND user_matches",
       "events": [

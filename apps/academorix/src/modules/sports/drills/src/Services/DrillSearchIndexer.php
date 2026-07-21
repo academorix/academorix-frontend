@@ -4,11 +4,11 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Drills\Services;
+namespace Academorix\Drills\Services;
 
-use Stackra\Drills\Contracts\Services\DrillSearchIndexerInterface;
+use Academorix\Drills\Contracts\Services\DrillSearchIndexerInterface;
 use Illuminate\Container\Attributes\Scoped;
-use Stackra\Drills\Contracts\Repositories\CurriculumWeekRepositoryInterface;
+use Academorix\Drills\Contracts\Repositories\CurriculumWeekRepositoryInterface;
 
 /**
  * Concrete service — DrillSearchIndexer.

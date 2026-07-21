@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Theme\Exceptions;
 
-use Stackra\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * The tenant's plan does not include the requested capability.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class ThemeEntitlementRequiredException extends AcademorixException
+final class ThemeEntitlementRequiredException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

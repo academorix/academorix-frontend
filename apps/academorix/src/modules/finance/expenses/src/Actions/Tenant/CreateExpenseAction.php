@@ -4,11 +4,11 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Expenses\Actions\Tenant;
+namespace Academorix\Expenses\Actions\Tenant;
 
-use Stackra\Expenses\Contracts\Repositories\ExpenseRepositoryInterface;
-use Stackra\Expenses\Data\ExpenseData;
-use Stackra\Expenses\Data\Requests\CreateExpenseRequestData;
+use Academorix\Expenses\Contracts\Repositories\ExpenseRepositoryInterface;
+use Academorix\Expenses\Data\ExpenseData;
+use Academorix\Expenses\Data\Requests\CreateExpenseRequestData;
 use Stackra\Routing\Attributes\AsAction;
 use Stackra\Routing\Attributes\Middleware;
 use Stackra\Routing\Concerns\AsController;

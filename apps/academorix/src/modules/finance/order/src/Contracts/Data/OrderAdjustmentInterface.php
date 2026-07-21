@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Order\Contracts\Data;
+namespace Academorix\Order\Contracts\Data;
 
 use Illuminate\Container\Attributes\Bind;
-use Stackra\Order\Models\OrderAdjustment;
+use Academorix\Order\Models\OrderAdjustment;
 
 /**
  * Table shape for the `order_adjustments` table.

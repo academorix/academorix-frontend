@@ -4,11 +4,11 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Refund\Services;
+namespace Academorix\Refund\Services;
 
-use Stackra\Refund\Contracts\Services\RefundProviderExecutorInterface;
+use Academorix\Refund\Contracts\Services\RefundProviderExecutorInterface;
 use Illuminate\Container\Attributes\Scoped;
-use Stackra\Refund\Contracts\Repositories\RefundLineRepositoryInterface;
+use Academorix\Refund\Contracts\Repositories\RefundLineRepositoryInterface;
 
 /**
  * Concrete service — RefundProviderExecutor.

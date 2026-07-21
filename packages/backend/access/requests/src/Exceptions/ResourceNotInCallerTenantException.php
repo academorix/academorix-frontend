@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Requests\Exceptions;
 
-use Stackra\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * The target resource exists but is in a different tenant.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class ResourceNotInCallerTenantException extends AcademorixException
+final class ResourceNotInCallerTenantException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

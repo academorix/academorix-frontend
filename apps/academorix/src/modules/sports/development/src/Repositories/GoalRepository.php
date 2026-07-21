@@ -4,25 +4,25 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Development\Repositories;
+namespace Academorix\Development\Repositories;
 
 use Stackra\Crud\Attributes\AsRepository;
 use Stackra\Crud\Attributes\Cacheable;
 use Stackra\Crud\Attributes\Filterable;
 use Stackra\Crud\Attributes\UseModel;
 use Stackra\Crud\Repositories\Repository;
-use Stackra\Development\Contracts\Data\GoalInterface;
-use Stackra\Development\Contracts\Repositories\GoalRepositoryInterface;
-use Stackra\Development\Models\Goal;
+use Academorix\Development\Contracts\Data\GoalInterface;
+use Academorix\Development\Contracts\Repositories\GoalRepositoryInterface;
+use Academorix\Development\Models\Goal;
 
 /**
- * Attribute-first Eloquent repository for {@see Stackra\Development\Models\Goal}.
+ * Attribute-first Eloquent repository for {@see Academorix\Development\Models\Goal}.
  *
  * Bound to the interface via `#[AsRepository]`; the model comes from
  * `#[UseModel(GoalInterface::class)]` which resolves to
  * `Goal` through the interface's `#[Bind]`.
  *
- * @extends Repository<\Stackra\Development\Models\Goal>
+ * @extends Repository<\Academorix\Development\Models\Goal>
  *
  * @category Development
  *

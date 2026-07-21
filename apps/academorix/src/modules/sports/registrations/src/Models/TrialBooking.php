@@ -4,19 +4,19 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Registrations\Models;
+namespace Academorix\Registrations\Models;
 
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
-use Stackra\Registrations\Contracts\Data\TrialBookingInterface;
-use Stackra\Registrations\Database\Factories\TrialBookingFactory;
+use Academorix\Registrations\Contracts\Data\TrialBookingInterface;
+use Academorix\Registrations\Database\Factories\TrialBookingFactory;
 use Stackra\Foundation\Concerns\Filterable;
 use Stackra\Foundation\Concerns\HasMetadata;
 use Stackra\Foundation\Concerns\HasPrefixedUlid;
-use Stackra\Registrations\Policies\TrialBookingPolicy;
+use Academorix\Registrations\Policies\TrialBookingPolicy;
 use Stackra\Tenancy\Concerns\BelongsToTenant;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;

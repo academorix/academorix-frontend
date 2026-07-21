@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Stackra\AthleteGuardian\Contracts\Services;
+namespace Academorix\AthleteGuardian\Contracts\Services;
 
-use Stackra\AthleteGuardian\Services\SameHouseholdDetector;
+use Academorix\AthleteGuardian\Services\SameHouseholdDetector;
 use Illuminate\Container\Attributes\Bind;
 
 /**

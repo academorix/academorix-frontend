@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Stackra\PrivateSessions\Contracts\Data;
+namespace Academorix\PrivateSessions\Contracts\Data;
 
 use Illuminate\Container\Attributes\Bind;
-use Stackra\PrivateSessions\Models\SessionCredit;
+use Academorix\PrivateSessions\Models\SessionCredit;
 
 /**
  * Table shape for the `session_credits` table.

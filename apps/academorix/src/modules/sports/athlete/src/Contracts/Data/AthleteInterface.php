@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Athlete\Contracts\Data;
+namespace Academorix\Athlete\Contracts\Data;
 
 use Illuminate\Container\Attributes\Bind;
-use Stackra\Athlete\Models\Athlete;
+use Academorix\Athlete\Models\Athlete;
 
 /**
  * Table shape for the `athletes` table.

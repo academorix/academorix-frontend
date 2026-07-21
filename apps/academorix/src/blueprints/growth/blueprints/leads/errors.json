@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/leads/errors",
+  "id": "academorix://modules/leads/errors",
   "$version": 1,
   "title": "leads — error codes",
   "namespace": "leads",

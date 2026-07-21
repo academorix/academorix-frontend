@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Staff\Exceptions;
 
-use Stackra\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Tenant has not opted in to compensation tracking.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class StaffCompensationTrackingNotEnabledException extends AcademorixException
+final class StaffCompensationTrackingNotEnabledException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

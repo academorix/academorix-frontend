@@ -1,14 +1,14 @@
 {
-  "id": "stackra://modules/athlete-guardian/events",
+  "id": "academorix://modules/athlete-guardian/events",
   "$version": 1,
   "title": "athlete-guardian — published events",
-  "namespace": "Stackra\\Sports\\AthleteGuardian\\Events",
+  "namespace": "Academorix\\Sports\\AthleteGuardian\\Events",
   "dispatchMode": "afterCommit",
   "description": "Every event implements `ShouldDispatchAfterCommit` so listeners never fire against a rolled-back write. Guardianship lifecycle events fan out to notifications + activity + audit. Verification events (Verified / Disputed / Revoked) are audit-critical with 7-year retention. Primary-guardian changes are cannot-opt-out — the shift affects every downstream cascade + notification routing.",
   "events": [
     {
       "name": "GuardianAdded",
-      "class": "Stackra\\Sports\\AthleteGuardian\\Events\\GuardianAdded",
+      "class": "Academorix\\Sports\\AthleteGuardian\\Events\\GuardianAdded",
       "trigger": "AthleteGuardianProvisioner committed successfully. Fires once per guardian row.",
       "queue": "notifications",
       "consumers": [
@@ -32,7 +32,7 @@
     },
     {
       "name": "GuardianRemoved",
-      "class": "Stackra\\Sports\\AthleteGuardian\\Events\\GuardianRemoved",
+      "class": "Academorix\\Sports\\AthleteGuardian\\Events\\GuardianRemoved",
       "trigger": "Guardian soft-deleted (deleted_at set). If the removed guardian was is_primary=true, the observer auto-elects a new primary + fires PrimaryGuardianChanged in the same transaction.",
       "queue": "notifications",
       "consumers": [
@@ -53,7 +53,7 @@
     },
     {
       "name": "GuardianRoleChanged",
-      "class": "Stackra\\Sports\\AthleteGuardian\\Events\\GuardianRoleChanged",
+      "class": "Academorix\\Sports\\AthleteGuardian\\Events\\GuardianRoleChanged",
       "trigger": "Guardian.relationship OR notes mutated. Distinct from flag-change events (which have dedicated events).",
       "queue": "notifications",
       "consumers": ["audit::WriteToAuditLog", "activity::WriteToActivityLog"],
@@ -67,7 +67,7 @@
     },
     {
       "name": "PrimaryGuardianChanged",
-      "class": "Stackra\\Sports\\AthleteGuardian\\Events\\PrimaryGuardianChanged",
+      "class": "Academorix\\Sports\\AthleteGuardian\\Events\\PrimaryGuardianChanged",
       "trigger": "is_primary flag transitioned within (tenant, athlete) tuple. Fires with the previous primary's ID + the new primary's ID. Every downstream notification cascade routes through the primary guardian.",
       "queue": "notifications-critical",
       "consumers": [
@@ -87,7 +87,7 @@
     },
     {
       "name": "GuardianCustodyChanged",
-      "class": "Stackra\\Sports\\AthleteGuardian\\Events\\GuardianCustodyChanged",
+      "class": "Academorix\\Sports\\AthleteGuardian\\Events\\GuardianCustodyChanged",
       "trigger": "has_legal_custody flag flipped. Distinct event because custody changes are compliance-critical + drive downstream cascades (can_authorise_medical_care may auto-flip when has_legal_custody flips false).",
       "queue": "notifications-critical",
       "consumers": [
@@ -107,7 +107,7 @@
     },
     {
       "name": "GuardianVerified",
-      "class": "Stackra\\Sports\\AthleteGuardian\\Events\\GuardianVerified",
+      "class": "Academorix\\Sports\\AthleteGuardian\\Events\\GuardianVerified",
       "trigger": "verification_status transitioned pending → verified OR disputed → verified. Unlocks consent-recording for the guardian.",
       "queue": "notifications",
       "consumers": [
@@ -127,7 +127,7 @@
     },
     {
       "name": "GuardianVerificationDisputed",
-      "class": "Stackra\\Sports\\AthleteGuardian\\Events\\GuardianVerificationDisputed",
+      "class": "Academorix\\Sports\\AthleteGuardian\\Events\\GuardianVerificationDisputed",
       "trigger": "verification_status transitioned verified → disputed. HR flag — the guardian is under review; consent-recording BLOCKED until resolved.",
       "queue": "notifications-critical",
       "consumers": [
@@ -146,7 +146,7 @@
     },
     {
       "name": "GuardianVerificationRevoked",
-      "class": "Stackra\\Sports\\AthleteGuardian\\Events\\GuardianVerificationRevoked",
+      "class": "Academorix\\Sports\\AthleteGuardian\\Events\\GuardianVerificationRevoked",
       "trigger": "verification_status transitioned {pending, verified, disputed} → revoked. Terminal — the guardianship row stays for audit but is treated as inactive across every downstream consumer.",
       "queue": "notifications-critical",
       "consumers": [
@@ -166,7 +166,7 @@
     },
     {
       "name": "GuardianCanPickupToggled",
-      "class": "Stackra\\Sports\\AthleteGuardian\\Events\\GuardianCanPickupToggled",
+      "class": "Academorix\\Sports\\AthleteGuardian\\Events\\GuardianCanPickupToggled",
       "trigger": "can_pickup flag flipped. Reception staff refresh cached pickup roster.",
       "queue": "notifications",
       "consumers": [
@@ -185,7 +185,7 @@
     },
     {
       "name": "GuardianCanReceiveCommunicationsToggled",
-      "class": "Stackra\\Sports\\AthleteGuardian\\Events\\GuardianCanReceiveCommunicationsToggled",
+      "class": "Academorix\\Sports\\AthleteGuardian\\Events\\GuardianCanReceiveCommunicationsToggled",
       "trigger": "can_receive_communications flag flipped. Notification routing updates.",
       "queue": "notifications",
       "consumers": [
@@ -204,7 +204,7 @@
     },
     {
       "name": "GuardianCanAuthoriseMedicalCareToggled",
-      "class": "Stackra\\Sports\\AthleteGuardian\\Events\\GuardianCanAuthoriseMedicalCareToggled",
+      "class": "Academorix\\Sports\\AthleteGuardian\\Events\\GuardianCanAuthoriseMedicalCareToggled",
       "trigger": "can_authorise_medical_care flag flipped. Medical clearance workflow (Wave 4+) refreshes.",
       "queue": "notifications-critical",
       "consumers": [
@@ -223,7 +223,7 @@
     },
     {
       "name": "GuardianCommunicationsBounced",
-      "class": "Stackra\\Sports\\AthleteGuardian\\Events\\GuardianCommunicationsBounced",
+      "class": "Academorix\\Sports\\AthleteGuardian\\Events\\GuardianCommunicationsBounced",
       "trigger": "Wave 4+ Notifications module detected permanent delivery failure to a guardian's User. Auto-disables can_receive_communications after N permanent bounces (default 3).",
       "queue": "notifications",
       "consumers": [

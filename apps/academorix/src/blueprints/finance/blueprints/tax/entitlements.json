@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/tax/entitlements",
+  "id": "academorix://modules/tax/entitlements",
   "$version": 1,
   "title": "tax — declared entitlements",
   "description": "Eight entitlement keys. `tax_capture` is the boolean master gate. `tax_provider_slot` caps provider configs per tenant. `tax_advanced_providers` unlocks Avalara + Stripe Tax on Medium+. `tax_jurisdiction_custom` unlocks per-tenant custom jurisdictions on Enterprise. `tax_exemption_management` (Small+) enables the certificate workflow. `tax_multi_currency` (Medium+) enables multiple source_currency values. `tax_annual_report` (Small+) enables the annual summary export. `tax_extended_retention` (Enterprise) extends calculation retention from 7y to 10y.",

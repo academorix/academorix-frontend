@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Organization\Exceptions;
 
-use Stackra\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Requested status transition is not valid from the current state (e.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class OrganizationStatusTransitionInvalidException extends AcademorixException
+final class OrganizationStatusTransitionInvalidException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

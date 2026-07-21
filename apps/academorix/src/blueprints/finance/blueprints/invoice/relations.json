@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/invoice/relations",
+  "id": "academorix://modules/invoice/relations",
   "$version": 1,
   "title": "invoice — model relationships",
   "description": "Three owned entities. Invoice is the aggregate root; InvoiceLine + CreditNote attach to it. Every outbound FK stays same-tenant per tenancy-columns.md §5. NO application_id / region_id / organization_id / branch_id / scope_node_id on any owned row.",

@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Tax\Contracts\Services;
+namespace Academorix\Tax\Contracts\Services;
 
-use Stackra\Tax\Models\TaxRate;
-use Stackra\Tax\Services\TaxRateResolver;
+use Academorix\Tax\Models\TaxRate;
+use Academorix\Tax\Services\TaxRateResolver;
 use Illuminate\Container\Attributes\Bind;
 
 /**

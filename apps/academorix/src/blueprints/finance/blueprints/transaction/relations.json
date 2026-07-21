@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/transaction/relations",
+  "id": "academorix://modules/transaction/relations",
   "$version": 1,
   "title": "transaction — model relationships",
   "description": "Two owned entities. Transaction is the aggregate root; TransactionLedgerEntry attaches to it via the required transaction_id FK. Every outbound FK stays same-tenant per tenancy-columns.md §5. NO application_id / region_id / organization_id / branch_id / scope_node_id on either owned row. Transactions can reference-back to a source_transaction_id (RESTRICT — reversals point at the original + the original may never be hard-deleted while a reversal exists).",

@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Mfa\Exceptions;
 
-use Stackra\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * POST /me/mfa/totp/enroll refused because the Identity already has a TOTP secret persisted.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class MfaAlreadyEnrolledException extends AcademorixException
+final class MfaAlreadyEnrolledException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

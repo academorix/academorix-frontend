@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/coupon/routes",
+  "id": "academorix://modules/coupon/routes",
   "$version": 1,
   "title": "coupon — HTTP routes",
   "description": "Tenant-facing admin surfaces (coupon CRUD + bulk issue + redemption ledger + reverse action + weekly report) + tenant-facing customer surfaces (validate/preview only — NEVER a POST /redeem, redemption is an internal service call inside the invoice/membership creation transaction) + platform-plane cross-tenant read for support intervention. Every admin tenant route carries `entitlement.enforce:coupon_capture`; bulk-issue additionally requires `coupon_bulk_issue`; the preview endpoint is rate-limited via `coupon.rate_limit` middleware (10/IP/hour) to prevent brute-force code enumeration.",
@@ -24,56 +24,56 @@
         {
           "method": "GET",
           "path": "/",
-          "controller": "Stackra\\Finance\\Coupon\\Http\\Controllers\\Tenant\\CouponController@index",
+          "controller": "Academorix\\Finance\\Coupon\\Http\\Controllers\\Tenant\\CouponController@index",
           "permission": "coupons.viewAny",
           "description": "filter[is_active], filter[discount_type], filter[applicability], filter[issuance_source], filter[campaign_name], filter[valid_until.before/after], filter[usage_cap_reached] (bool derived). include=redemption_count."
         },
         {
           "method": "POST",
           "path": "/",
-          "controller": "Stackra\\Finance\\Coupon\\Http\\Controllers\\Tenant\\CouponController@store",
+          "controller": "Academorix\\Finance\\Coupon\\Http\\Controllers\\Tenant\\CouponController@store",
           "permission": "coupons.create",
           "description": "Body: CouponCreateData. Consumes 1 unit of `coupon_slot` entitlement. issuance_source defaults to 'manual' (admin UI/API call)."
         },
         {
           "method": "GET",
           "path": "/{coupon}",
-          "controller": "Stackra\\Finance\\Coupon\\Http\\Controllers\\Tenant\\CouponController@show",
+          "controller": "Academorix\\Finance\\Coupon\\Http\\Controllers\\Tenant\\CouponController@show",
           "permission": "coupons.view",
           "description": "Confidential financial fields redacted for readers without coupons.view-financials permission."
         },
         {
           "method": "PATCH",
           "path": "/{coupon}",
-          "controller": "Stackra\\Finance\\Coupon\\Http\\Controllers\\Tenant\\CouponController@update",
+          "controller": "Academorix\\Finance\\Coupon\\Http\\Controllers\\Tenant\\CouponController@update",
           "permission": "coupons.update",
           "description": "discount_type / discount_amount / applicability fields refuse when any redemption exists (COUPON_TERMS_LOCKED). Other fields (name, description, valid_until, usage_cap, per_customer_limit) freely editable."
         },
         {
           "method": "DELETE",
           "path": "/{coupon}",
-          "controller": "Stackra\\Finance\\Coupon\\Http\\Controllers\\Tenant\\CouponController@destroy",
+          "controller": "Academorix\\Finance\\Coupon\\Http\\Controllers\\Tenant\\CouponController@destroy",
           "permission": "coupons.delete",
           "description": "Soft-delete only. Refused when any non-reversed redemption exists — deactivate first."
         },
         {
           "method": "POST",
           "path": "/{coupon}/deactivate",
-          "controller": "Stackra\\Finance\\Coupon\\Http\\Controllers\\Tenant\\CouponController@deactivate",
+          "controller": "Academorix\\Finance\\Coupon\\Http\\Controllers\\Tenant\\CouponController@deactivate",
           "permission": "coupons.deactivate",
           "description": "Body: { reason? }. Sets is_active=false. Existing redemptions preserved."
         },
         {
           "method": "POST",
           "path": "/{coupon}/extend",
-          "controller": "Stackra\\Finance\\Coupon\\Http\\Controllers\\Tenant\\CouponController@extend",
+          "controller": "Academorix\\Finance\\Coupon\\Http\\Controllers\\Tenant\\CouponController@extend",
           "permission": "coupons.extend",
           "description": "Body: { valid_until }. Push valid_until forward. Refuses when coupon is already deactivated OR when new valid_until <= current NOW()."
         },
         {
           "method": "POST",
           "path": "/bulk-issue",
-          "controller": "Stackra\\Finance\\Coupon\\Http\\Controllers\\Tenant\\CouponController@bulkIssue",
+          "controller": "Academorix\\Finance\\Coupon\\Http\\Controllers\\Tenant\\CouponController@bulkIssue",
           "permission": "coupons.bulk-issue",
           "middleware_add": ["entitlement.enforce:coupon_bulk_issue"],
           "description": "Medium+ tier. Body: BulkIssueCouponData { count, code_template, campaign_name, ...coupon config }. Generates N unique codes (respects `coupon_slot` cap — refuses when count > remaining slots). Consumes count units of `coupon_slot`."
@@ -81,7 +81,7 @@
         {
           "method": "GET",
           "path": "/{coupon}/redemptions",
-          "controller": "Stackra\\Finance\\Coupon\\Http\\Controllers\\Tenant\\CouponController@redemptions",
+          "controller": "Academorix\\Finance\\Coupon\\Http\\Controllers\\Tenant\\CouponController@redemptions",
           "permission": "coupon_redemptions.viewAny",
           "description": "Redemptions filtered to a specific coupon. filter[customer_type], filter[customer_id], filter[applied_to_type], filter[reversed] (bool)."
         }
@@ -107,20 +107,20 @@
         {
           "method": "GET",
           "path": "/",
-          "controller": "Stackra\\Finance\\Coupon\\Http\\Controllers\\Tenant\\CouponRedemptionController@index",
+          "controller": "Academorix\\Finance\\Coupon\\Http\\Controllers\\Tenant\\CouponRedemptionController@index",
           "permission": "coupon_redemptions.viewAny",
           "description": "Full-tenant redemption ledger. filter[coupon_id], filter[customer_type], filter[customer_id], filter[applied_to_type], filter[applied_to_id], filter[reversed] (bool), filter[redeemed_at.gte/lte]."
         },
         {
           "method": "GET",
           "path": "/{redemption}",
-          "controller": "Stackra\\Finance\\Coupon\\Http\\Controllers\\Tenant\\CouponRedemptionController@show",
+          "controller": "Academorix\\Finance\\Coupon\\Http\\Controllers\\Tenant\\CouponRedemptionController@show",
           "permission": "coupon_redemptions.view"
         },
         {
           "method": "POST",
           "path": "/{redemption}/reverse",
-          "controller": "Stackra\\Finance\\Coupon\\Http\\Controllers\\Tenant\\CouponRedemptionController@reverse",
+          "controller": "Academorix\\Finance\\Coupon\\Http\\Controllers\\Tenant\\CouponRedemptionController@reverse",
           "permission": "coupon_redemptions.reverse",
           "description": "Body: { reason, notes? }. Admin manual reversal (correction path — distinct from refund-cascade clawback). Sets reversed_at + decrements coupon.usage_count. Fires CouponRedemptionReversed. Audit-critical."
         }
@@ -147,14 +147,14 @@
         {
           "method": "GET",
           "path": "/validate/{code}",
-          "controller": "Stackra\\Finance\\Coupon\\Http\\Controllers\\Tenant\\CouponValidateController@validate",
+          "controller": "Academorix\\Finance\\Coupon\\Http\\Controllers\\Tenant\\CouponValidateController@validate",
           "permission": null,
           "description": "Pre-checkout validation. Returns { is_valid, refusal_reason?, coupon_summary? }. Does NOT touch the DB counter. Rate-limited via coupon.rate_limit to prevent brute-force code enumeration."
         },
         {
           "method": "POST",
           "path": "/{code}/preview",
-          "controller": "Stackra\\Finance\\Coupon\\Http\\Controllers\\Tenant\\CouponPreviewController@preview",
+          "controller": "Academorix\\Finance\\Coupon\\Http\\Controllers\\Tenant\\CouponPreviewController@preview",
           "permission": null,
           "description": "Body: { customer_type, customer_id, applied_to_type?, applied_to_id?, source_amount_cents, source_currency, target_plan_id? }. Computes the hypothetical discount + final amount for a proposed cart line. Read-only — never inserts a redemption row. Response: { is_applicable, refusal_reason?, discount_amount_cents, final_amount_cents, discount_snapshot }. Rate-limited."
         }
@@ -179,7 +179,7 @@
         {
           "method": "GET",
           "path": "/report",
-          "controller": "Stackra\\Finance\\Coupon\\Http\\Controllers\\Tenant\\CouponReportController@show",
+          "controller": "Academorix\\Finance\\Coupon\\Http\\Controllers\\Tenant\\CouponReportController@show",
           "permission": "coupons.view-report",
           "description": "Weekly usage rollup: coupons issued, coupons redeemed, total discount cents, clawback count, top campaign codes, per-issuance_source breakdown. Query params: period_start, period_end (default: last 7 days). Response includes signed S3 URL to a full CSV export when the range > 7 days."
         }
@@ -202,20 +202,20 @@
         {
           "method": "GET",
           "path": "/",
-          "controller": "Stackra\\Finance\\Coupon\\Http\\Controllers\\Platform\\CouponController@index",
+          "controller": "Academorix\\Finance\\Coupon\\Http\\Controllers\\Platform\\CouponController@index",
           "permission": "platform.coupons.viewAny",
           "description": "filter[tenant_id], filter[is_active], filter[issuance_source]. Cross-tenant scan."
         },
         {
           "method": "GET",
           "path": "/{coupon}",
-          "controller": "Stackra\\Finance\\Coupon\\Http\\Controllers\\Platform\\CouponController@show",
+          "controller": "Academorix\\Finance\\Coupon\\Http\\Controllers\\Platform\\CouponController@show",
           "permission": "platform.coupons.view"
         },
         {
           "method": "GET",
           "path": "/redemptions",
-          "controller": "Stackra\\Finance\\Coupon\\Http\\Controllers\\Platform\\CouponRedemptionController@index",
+          "controller": "Academorix\\Finance\\Coupon\\Http\\Controllers\\Platform\\CouponRedemptionController@index",
           "permission": "platform.coupon_redemptions.viewAny",
           "description": "Cross-tenant redemption ledger for regulator-facing reporting. filter[tenant_id], filter[redeemed_at.gte/lte], filter[reversed] (bool)."
         }

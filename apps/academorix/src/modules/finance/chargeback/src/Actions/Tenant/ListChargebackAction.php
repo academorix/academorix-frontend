@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Chargeback\Actions\Tenant;
+namespace Academorix\Chargeback\Actions\Tenant;
 
-use Stackra\Chargeback\Contracts\Repositories\ChargebackRepositoryInterface;
-use Stackra\Chargeback\Data\ChargebackData;
+use Academorix\Chargeback\Contracts\Repositories\ChargebackRepositoryInterface;
+use Academorix\Chargeback\Data\ChargebackData;
 use Stackra\Routing\Attributes\AsAction;
 use Stackra\Routing\Attributes\Middleware;
 use Stackra\Routing\Concerns\AsController;
@@ -50,7 +50,7 @@ final class ListChargebackAction
      */
     public function __invoke(Request $request): PaginatedDataCollection
     {
-        /** @var LengthAwarePaginator<int, \Stackra\Chargeback\Models\Chargeback> $page */
+        /** @var LengthAwarePaginator<int, \Academorix\Chargeback\Models\Chargeback> $page */
         $page = $this->repository->paginate(
             perPage: (int) $request->integer('per_page', 15),
         );

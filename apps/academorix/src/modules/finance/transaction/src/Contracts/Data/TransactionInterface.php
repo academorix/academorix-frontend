@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Transaction\Contracts\Data;
+namespace Academorix\Transaction\Contracts\Data;
 
 use Illuminate\Container\Attributes\Bind;
-use Stackra\Transaction\Models\Transaction;
+use Academorix\Transaction\Models\Transaction;
 
 /**
  * Table shape for the `transactions` table.

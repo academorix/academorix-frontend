@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/coaching/retention",
+  "id": "academorix://modules/coaching/retention",
   "$version": 1,
   "title": "coaching — retention windows",
   "description": "Retention aligned with US DOL wage-and-hour + NCAA / IHSA coach-verification compliance. Active coaching records retain for the lifetime of the parent Staff. Deactivated profiles retain 7 years (10 with coaching_extended_retention). Certifications retain while-active + 7 years post-expiration. Skill ratings retain 2 years default (5 with extended). Tenant erasure cascades except records under active regulator hold.",

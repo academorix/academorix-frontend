@@ -4,11 +4,11 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Development\Actions\Tenant;
+namespace Academorix\Development\Actions\Tenant;
 
-use Stackra\Development\Contracts\Repositories\GoalRepositoryInterface;
-use Stackra\Development\Data\GoalData;
-use Stackra\Development\Data\Requests\UpdateGoalRequestData;
+use Academorix\Development\Contracts\Repositories\GoalRepositoryInterface;
+use Academorix\Development\Data\GoalData;
+use Academorix\Development\Data\Requests\UpdateGoalRequestData;
 use Stackra\Routing\Attributes\AsAction;
 use Stackra\Routing\Attributes\Middleware;
 use Stackra\Routing\Concerns\AsController;

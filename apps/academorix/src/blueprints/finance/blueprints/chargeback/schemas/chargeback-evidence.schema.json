@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/chargeback/schemas/chargeback-evidence",
+  "id": "academorix://modules/chargeback/schemas/chargeback-evidence",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "ChargebackEvidence",
@@ -13,9 +13,9 @@
     "keyType": "string",
     "keyPrefix": "cev_",
     "incrementing": false,
-    "model": "Stackra\\Finance\\Chargeback\\Models\\ChargebackEvidence",
-    "interface": "Stackra\\Finance\\Chargeback\\Contracts\\Data\\ChargebackEvidenceInterface",
-    "implements": ["Stackra\\Finance\\Chargeback\\Contracts\\Data\\ChargebackEvidenceInterface"],
+    "model": "Academorix\\Finance\\Chargeback\\Models\\ChargebackEvidence",
+    "interface": "Academorix\\Finance\\Chargeback\\Contracts\\Data\\ChargebackEvidenceInterface",
+    "implements": ["Academorix\\Finance\\Chargeback\\Contracts\\Data\\ChargebackEvidenceInterface"],
     "traits": [
       "HasFactory",
       "HasUlids",

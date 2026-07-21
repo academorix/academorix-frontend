@@ -4,25 +4,25 @@
 
 declare(strict_types=1);
 
-namespace Stackra\AthleteGuardian\Repositories;
+namespace Academorix\AthleteGuardian\Repositories;
 
 use Stackra\Crud\Attributes\AsRepository;
 use Stackra\Crud\Attributes\Cacheable;
 use Stackra\Crud\Attributes\Filterable;
 use Stackra\Crud\Attributes\UseModel;
 use Stackra\Crud\Repositories\Repository;
-use Stackra\AthleteGuardian\Contracts\Data\AthleteGuardianInterface;
-use Stackra\AthleteGuardian\Contracts\Repositories\AthleteGuardianRepositoryInterface;
-use Stackra\AthleteGuardian\Models\AthleteGuardian;
+use Academorix\AthleteGuardian\Contracts\Data\AthleteGuardianInterface;
+use Academorix\AthleteGuardian\Contracts\Repositories\AthleteGuardianRepositoryInterface;
+use Academorix\AthleteGuardian\Models\AthleteGuardian;
 
 /**
- * Attribute-first Eloquent repository for {@see Stackra\AthleteGuardian\Models\AthleteGuardian}.
+ * Attribute-first Eloquent repository for {@see Academorix\AthleteGuardian\Models\AthleteGuardian}.
  *
  * Bound to the interface via `#[AsRepository]`; the model comes from
  * `#[UseModel(AthleteGuardianInterface::class)]` which resolves to
  * `AthleteGuardian` through the interface's `#[Bind]`.
  *
- * @extends Repository<\Stackra\AthleteGuardian\Models\AthleteGuardian>
+ * @extends Repository<\Academorix\AthleteGuardian\Models\AthleteGuardian>
  *
  * @category AthleteGuardian
  *

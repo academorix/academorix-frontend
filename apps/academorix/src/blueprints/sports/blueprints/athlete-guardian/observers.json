@@ -1,12 +1,12 @@
 {
-  "id": "stackra://modules/athlete-guardian/observers",
+  "id": "academorix://modules/athlete-guardian/observers",
   "$version": 1,
   "title": "athlete-guardian — Eloquent observers",
   "description": "One observer enforces the module's write-time invariants: one primary guardian per athlete, one guardian row per (athlete, user), cross-tenant defense-in-depth, per-tier guardian count caps, role-flag consistency (can_authorise_medical_care requires has_legal_custody), verification state-machine, auto-primary election on primary removal.",
   "observers": [
     {
       "model": "AthleteGuardian",
-      "observer": "Stackra\\Sports\\AthleteGuardian\\Observers\\AthleteGuardianObserver",
+      "observer": "Academorix\\Sports\\AthleteGuardian\\Observers\\AthleteGuardianObserver",
       "handles": [
         "creating → populate ULID prefix `agu_`",
         "creating → refuse when tenant does NOT hold `athlete_guardian.core` feature (defense-in-depth)",

@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Progress\Actions\Tenant;
+namespace Academorix\Progress\Actions\Tenant;
 
-use Stackra\Progress\Contracts\Repositories\BeltRankRepositoryInterface;
-use Stackra\Progress\Data\BeltRankData;
+use Academorix\Progress\Contracts\Repositories\BeltRankRepositoryInterface;
+use Academorix\Progress\Data\BeltRankData;
 use Stackra\Routing\Attributes\AsAction;
 use Stackra\Routing\Attributes\Middleware;
 use Stackra\Routing\Concerns\AsController;
@@ -50,7 +50,7 @@ final class ListBeltRankAction
      */
     public function __invoke(Request $request): PaginatedDataCollection
     {
-        /** @var LengthAwarePaginator<int, \Stackra\Progress\Models\BeltRank> $page */
+        /** @var LengthAwarePaginator<int, \Academorix\Progress\Models\BeltRank> $page */
         $page = $this->repository->paginate(
             perPage: (int) $request->integer('per_page', 15),
         );

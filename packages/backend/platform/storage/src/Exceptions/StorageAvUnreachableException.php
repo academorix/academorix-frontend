@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Storage\Exceptions;
 
-use Stackra\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Antivirus scanner is not reachable.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class StorageAvUnreachableException extends AcademorixException
+final class StorageAvUnreachableException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

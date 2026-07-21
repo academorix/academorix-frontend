@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Grants\Exceptions;
 
-use Stackra\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * AccessRequestApprovedListener received an ApprovalExecuted event whose context_json did not shape into a valid grant payload.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class GrantApprovalInstanceMismatchException extends AcademorixException
+final class GrantApprovalInstanceMismatchException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

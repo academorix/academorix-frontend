@@ -4,7 +4,7 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Medical\Events;
+namespace Academorix\Medical\Events;
 
 use Stackra\Events\Attributes\AsEvent;
 use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;

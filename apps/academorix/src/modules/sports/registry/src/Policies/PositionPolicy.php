@@ -4,13 +4,13 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Registry\Policies;
+namespace Academorix\Registry\Policies;
 
 use Stackra\User\Models\User;
-use Stackra\Registry\Models\Position;
+use Academorix\Registry\Models\Position;
 
 /**
- * Authorization policy for {@see \Stackra\Registry\Models\Position}.
+ * Authorization policy for {@see \Academorix\Registry\Models\Position}.
  *
  * Wired via `#[UsePolicy]` on the Model.
  *

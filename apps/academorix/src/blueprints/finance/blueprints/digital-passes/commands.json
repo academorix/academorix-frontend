@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/digital-passes/commands",
+  "id": "academorix://modules/digital-passes/commands",
   "$version": 1,
   "title": "digital-passes — Artisan commands",
   "description": "Console commands this module ships.",

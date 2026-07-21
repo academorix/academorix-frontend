@@ -4,18 +4,18 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Payout\Models;
+namespace Academorix\Payout\Models;
 
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
-use Stackra\Payout\Contracts\Data\PayoutReconciliationInterface;
-use Stackra\Payout\Database\Factories\PayoutReconciliationFactory;
+use Academorix\Payout\Contracts\Data\PayoutReconciliationInterface;
+use Academorix\Payout\Database\Factories\PayoutReconciliationFactory;
 use Stackra\Foundation\Concerns\HasMetadata;
-use Stackra\Payout\Enums\PayoutReconciliationStatus;
-use Stackra\Payout\Policies\PayoutReconciliationPolicy;
+use Academorix\Payout\Enums\PayoutReconciliationStatus;
+use Academorix\Payout\Policies\PayoutReconciliationPolicy;
 use Stackra\Tenancy\Concerns\BelongsToTenant;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;

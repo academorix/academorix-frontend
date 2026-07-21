@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/analytics/features",
+  "id": "academorix://modules/analytics/features",
   "$version": 1,
   "title": "analytics — feature keys",
   "description": "Per-provider availability + advanced feature keys. Resolved at /auth/me. Downstream: `analytics.enabled` gates the module surface; per-provider keys let tenants pick their fan-out set.",

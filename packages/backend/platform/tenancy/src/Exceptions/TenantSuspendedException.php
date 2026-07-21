@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Stackra\Tenancy\Exceptions;
 
-use Stackra\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Raised when a request lands on a tenant with `status = suspended`.
@@ -17,7 +17,7 @@ use Stackra\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class TenantSuspendedException extends AcademorixException
+final class TenantSuspendedException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/wallet/schemas/wallet-transaction",
+  "id": "academorix://modules/wallet/schemas/wallet-transaction",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "WalletTransaction",
@@ -13,9 +13,9 @@
     "keyType": "string",
     "keyPrefix": "wtx_",
     "incrementing": false,
-    "model": "Stackra\\Finance\\Wallet\\Models\\WalletTransaction",
-    "interface": "Stackra\\Finance\\Wallet\\Contracts\\Data\\WalletTransactionInterface",
-    "implements": ["Stackra\\Finance\\Wallet\\Contracts\\Data\\WalletTransactionInterface"],
+    "model": "Academorix\\Finance\\Wallet\\Models\\WalletTransaction",
+    "interface": "Academorix\\Finance\\Wallet\\Contracts\\Data\\WalletTransactionInterface",
+    "implements": ["Academorix\\Finance\\Wallet\\Contracts\\Data\\WalletTransactionInterface"],
     "traits": [
       "HasFactory",
       "HasUlids",

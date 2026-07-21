@@ -2,7 +2,7 @@
   "$version": 1,
   "name": "chargeback",
   "alias": "chargeback",
-  "namespace": "Stackra\\Finance\\Chargeback",
+  "namespace": "Academorix\\Finance\\Chargeback",
   "description": "Chargeback lifecycle tracker. Answers 'has this payment been forcibly reversed by the customer via their bank, and how are we defending against it?'. Ships TWO tables: `chargebacks` (root record — one per chargeback filed by the cardholder's bank; escalated from `PaymentDispute` when the tenant loses the pre-chargeback dispute; carries reason_code + network + amount + status + evidence_due_by + provider_reference), `chargeback_evidence` (per-chargeback evidence submission — invoice + receipt + service_documentation + refund_policy + communication_log + shipping_docs + customer_signature_evidence + uncategorized_text; can have multiple submission attempts with the last one winning). Chargeback state machine: `pending_evidence` -> `evidence_submitted` -> `under_bank_review` -> `won` | `lost` | `expired` (evidence deadline passed with no submission) | `accepted_refund` (RDR path — auto-refund before chargeback filed). When `won`: parent Payment.amount_disputed_cents reduced back; fires ChargebackWon. When `lost`: money permanently gone; records offsetting Transaction (debit chargebacks_expense, credit cash); records penalty fee via secondary Transaction (debit chargeback_fees, credit cash — network fee $15-25 per chargeback); fires marketing::ChargebackFiled (negative-value + fraud signal); cascades referrals::ClawbackReward when applicable. IMMUTABLE after terminal status. Card network reason codes catalogued (Visa 10.xx / 11.xx / 12.xx / 13.xx; Mastercard 4837 / 4863 / 4870 / 4834 / 4841 / 4842 / 4853 / 4855; Amex F14 / F24 / F29 / P01 / P05; Discover 4842 / 4855). Rapid Dispute Resolution (RDR) integration for Visa — auto-refund below threshold to close pre-chargeback state. Compelling Evidence 3.0 (CE3.0) support for Visa merchants.",
   "keywords": [
     "chargeback",
@@ -68,7 +68,7 @@
     "wave-4"
   ],
   "priority": 67,
-  "providers": ["Stackra\\Finance\\Chargeback\\Providers\\ChargebackServiceProvider"],
+  "providers": ["Academorix\\Finance\\Chargeback\\Providers\\ChargebackServiceProvider"],
   "files": [],
   "dependencies": [
     "foundation",
@@ -230,7 +230,7 @@
       ]
     },
     "platform-admin": {
-      "description": "Cross-tenant support tooling. Ops + support review chargeback status across tenants for escalation cases (repeat-offender tenants approaching VDMP/MDMP thresholds, drift reconciliation), audit financial reversal records, and access chargeback evidence for compliance investigations. Redacted view — customer PII is hashed unless the caller holds platform.chargeback.pii.view. The rate-threshold-alerts endpoint surfaces cross-tenant chargeback-rate alerts for merchant-account risk monitoring — Stackra ops must intervene when any tenant approaches 0.9% (Visa) or 1.5% (Mastercard) rate thresholds.",
+      "description": "Cross-tenant support tooling. Ops + support review chargeback status across tenants for escalation cases (repeat-offender tenants approaching VDMP/MDMP thresholds, drift reconciliation), audit financial reversal records, and access chargeback evidence for compliance investigations. Redacted view — customer PII is hashed unless the caller holds platform.chargeback.pii.view. The rate-threshold-alerts endpoint surfaces cross-tenant chargeback-rate alerts for merchant-account risk monitoring — Academorix ops must intervene when any tenant approaches 0.9% (Visa) or 1.5% (Mastercard) rate thresholds.",
       "routes": [
         "GET /api/v1/platform/chargebacks",
         "GET /api/v1/platform/chargebacks/rate-threshold-alerts"

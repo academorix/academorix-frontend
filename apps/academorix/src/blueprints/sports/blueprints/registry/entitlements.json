@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/sports-registry/entitlements",
+  "id": "academorix://modules/sports-registry/entitlements",
   "$version": 1,
   "title": "sports-registry — declared entitlements",
   "description": "Two published entitlement keys plus one implicit. `sports_registry_read` is the implicit boolean — every tenant reads the merged catalog regardless of tier (this is not surfaced in the entitlements API because it's always on). `sports_registry_custom` gates the ability to create tenant customs at all — Enterprise-only. `sports_registry_custom_slot` caps the per-entity-type custom count — Enterprise default unlimited, but the slot exists so future tiering can introduce caps without a schema change.",

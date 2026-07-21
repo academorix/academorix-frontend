@@ -1,8 +1,8 @@
 {
-  "id": "stackra://modules/athlete-enrollment/helpers",
+  "id": "academorix://modules/athlete-enrollment/helpers",
   "$version": 1,
   "title": "athlete-enrollment — helper functions",
-  "namespace": "Stackra\\Sports\\AthleteEnrollment\\Support",
+  "namespace": "Academorix\\Sports\\AthleteEnrollment\\Support",
   "helpers": [
     {
       "signature": "current_enrollments_for_athlete(Athlete $athlete): Collection<AthleteEnrollment>",

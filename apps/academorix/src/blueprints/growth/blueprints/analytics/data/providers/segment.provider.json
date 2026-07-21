@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/analytics/data/providers/segment",
+  "id": "academorix://modules/analytics/data/providers/segment",
   "$version": 1,
   "provider": "segment",
   "displayName": "Segment (Twilio)",

@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/geofencing/data-classes",
+  "id": "academorix://modules/geofencing/data-classes",
   "$version": 1,
   "title": "geofencing \u2014 field classification",
   "description": "Location coordinates + accuracy are PERSONAL DATA. Subject id + override reason are internal. Every override reason may reference a specific worker's absence, so keep restricted.",

@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/chargeback/schemas/chargeback",
+  "id": "academorix://modules/chargeback/schemas/chargeback",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "Chargeback",
@@ -13,9 +13,9 @@
     "keyType": "string",
     "keyPrefix": "cbk_",
     "incrementing": false,
-    "model": "Stackra\\Finance\\Chargeback\\Models\\Chargeback",
-    "interface": "Stackra\\Finance\\Chargeback\\Contracts\\Data\\ChargebackInterface",
-    "implements": ["Stackra\\Finance\\Chargeback\\Contracts\\Data\\ChargebackInterface"],
+    "model": "Academorix\\Finance\\Chargeback\\Models\\Chargeback",
+    "interface": "Academorix\\Finance\\Chargeback\\Contracts\\Data\\ChargebackInterface",
+    "implements": ["Academorix\\Finance\\Chargeback\\Contracts\\Data\\ChargebackInterface"],
     "traits": [
       "HasFactory",
       "HasUlids",

@@ -4,7 +4,7 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Referrals\Attributes;
+namespace Academorix\Referrals\Attributes;
 
 use Attribute;
 

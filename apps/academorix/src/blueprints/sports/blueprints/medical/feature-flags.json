@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/medical/feature-flags",
+  "id": "academorix://modules/medical/feature-flags",
   "$version": 1,
   "title": "medical — feature flags",
   "description": "Kill switches + gradual-rollout flags this module publishes.",

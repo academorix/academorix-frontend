@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Delegation\Exceptions;
 
-use Stackra\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * An existing active delegation of the same (role, delegate) exists with an overlapping window.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class DelegationSelfOverlapDetectedException extends AcademorixException
+final class DelegationSelfOverlapDetectedException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

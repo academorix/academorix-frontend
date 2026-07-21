@@ -4,11 +4,11 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Registrations\Actions\Tenant;
+namespace Academorix\Registrations\Actions\Tenant;
 
-use Stackra\Registrations\Contracts\Repositories\TrialBookingRepositoryInterface;
-use Stackra\Registrations\Data\TrialBookingData;
-use Stackra\Registrations\Data\Requests\UpdateTrialBookingRequestData;
+use Academorix\Registrations\Contracts\Repositories\TrialBookingRepositoryInterface;
+use Academorix\Registrations\Data\TrialBookingData;
+use Academorix\Registrations\Data\Requests\UpdateTrialBookingRequestData;
 use Stackra\Routing\Attributes\AsAction;
 use Stackra\Routing\Attributes\Middleware;
 use Stackra\Routing\Concerns\AsController;

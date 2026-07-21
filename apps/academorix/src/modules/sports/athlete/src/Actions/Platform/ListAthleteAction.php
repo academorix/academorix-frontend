@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Athlete\Actions\Platform;
+namespace Academorix\Athlete\Actions\Platform;
 
-use Stackra\Athlete\Contracts\Repositories\AthleteRepositoryInterface;
-use Stackra\Athlete\Data\AthleteData;
+use Academorix\Athlete\Contracts\Repositories\AthleteRepositoryInterface;
+use Academorix\Athlete\Data\AthleteData;
 use Stackra\Routing\Attributes\AsAction;
 use Stackra\Routing\Attributes\Middleware;
 use Stackra\Routing\Concerns\AsController;
@@ -50,7 +50,7 @@ final class ListAthleteAction
      */
     public function __invoke(Request $request): PaginatedDataCollection
     {
-        /** @var LengthAwarePaginator<int, \Stackra\Athlete\Models\Athlete> $page */
+        /** @var LengthAwarePaginator<int, \Academorix\Athlete\Models\Athlete> $page */
         $page = $this->repository->paginate(
             perPage: (int) $request->integer('per_page', 15),
         );

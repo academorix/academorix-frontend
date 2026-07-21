@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/competition/notifications",
+  "id": "academorix://modules/competition/notifications",
   "$version": 1,
   "title": "competition — user-facing notifications",
   "description": "Laravel notifications (mail / database / broadcast / vonage / slack).",

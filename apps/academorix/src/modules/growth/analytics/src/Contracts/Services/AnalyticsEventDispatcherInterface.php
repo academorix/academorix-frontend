@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Analytics\Contracts\Services;
+namespace Academorix\Analytics\Contracts\Services;
 
-use Stackra\Analytics\Services\AnalyticsEventDispatcher;
+use Academorix\Analytics\Services\AnalyticsEventDispatcher;
 use Illuminate\Container\Attributes\Bind;
 
 /**

@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Referrals\Contracts\Services;
+namespace Academorix\Referrals\Contracts\Services;
 
-use Stackra\Referrals\Services\ProgramBudgetGate;
+use Academorix\Referrals\Services\ProgramBudgetGate;
 use Illuminate\Container\Attributes\Bind;
 
 /**

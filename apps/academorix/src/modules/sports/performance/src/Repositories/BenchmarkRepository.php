@@ -4,25 +4,25 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Performance\Repositories;
+namespace Academorix\Performance\Repositories;
 
 use Stackra\Crud\Attributes\AsRepository;
 use Stackra\Crud\Attributes\Cacheable;
 use Stackra\Crud\Attributes\Filterable;
 use Stackra\Crud\Attributes\UseModel;
 use Stackra\Crud\Repositories\Repository;
-use Stackra\Performance\Contracts\Data\BenchmarkInterface;
-use Stackra\Performance\Contracts\Repositories\BenchmarkRepositoryInterface;
-use Stackra\Performance\Models\Benchmark;
+use Academorix\Performance\Contracts\Data\BenchmarkInterface;
+use Academorix\Performance\Contracts\Repositories\BenchmarkRepositoryInterface;
+use Academorix\Performance\Models\Benchmark;
 
 /**
- * Attribute-first Eloquent repository for {@see Stackra\Performance\Models\Benchmark}.
+ * Attribute-first Eloquent repository for {@see Academorix\Performance\Models\Benchmark}.
  *
  * Bound to the interface via `#[AsRepository]`; the model comes from
  * `#[UseModel(BenchmarkInterface::class)]` which resolves to
  * `Benchmark` through the interface's `#[Bind]`.
  *
- * @extends Repository<\Stackra\Performance\Models\Benchmark>
+ * @extends Repository<\Academorix\Performance\Models\Benchmark>
  *
  * @category Performance
  *

@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/tax/retention",
+  "id": "academorix://modules/tax/retention",
   "$version": 1,
   "title": "tax — retention windows",
   "description": "Tax calculations are financial records — 7 years (10 for Enterprise). Tax rates + jurisdictions retain indefinitely for historical audit (calculation-freeze depends on the rate being resolvable years later). Exemptions retain 7 years post-expiry. TenantErased migrates calculations to compliance archive rather than hard-deleting.",

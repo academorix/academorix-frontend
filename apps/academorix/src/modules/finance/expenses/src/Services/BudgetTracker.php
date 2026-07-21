@@ -4,11 +4,11 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Expenses\Services;
+namespace Academorix\Expenses\Services;
 
-use Stackra\Expenses\Contracts\Services\BudgetTrackerInterface;
+use Academorix\Expenses\Contracts\Services\BudgetTrackerInterface;
 use Illuminate\Container\Attributes\Scoped;
-use Stackra\Expenses\Contracts\Repositories\BudgetRepositoryInterface;
+use Academorix\Expenses\Contracts\Repositories\BudgetRepositoryInterface;
 
 /**
  * Concrete service — BudgetTracker.

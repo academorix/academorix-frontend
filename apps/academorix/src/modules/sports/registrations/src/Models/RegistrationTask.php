@@ -4,15 +4,15 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Registrations\Models;
+namespace Academorix\Registrations\Models;
 
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
-use Stackra\Registrations\Contracts\Data\RegistrationTaskInterface;
-use Stackra\Registrations\Database\Factories\RegistrationTaskFactory;
+use Academorix\Registrations\Contracts\Data\RegistrationTaskInterface;
+use Academorix\Registrations\Database\Factories\RegistrationTaskFactory;
 use Stackra\Foundation\Concerns\Filterable;
 use Stackra\Foundation\Concerns\HasMetadata;
 use Stackra\Foundation\Concerns\HasPrefixedUlid;

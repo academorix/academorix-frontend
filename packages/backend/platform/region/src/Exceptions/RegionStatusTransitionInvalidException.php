@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Region\Exceptions;
 
-use Stackra\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Attempted a status transition that isn't in the state machine (e.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class RegionStatusTransitionInvalidException extends AcademorixException
+final class RegionStatusTransitionInvalidException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

@@ -4,25 +4,25 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Dunning\Repositories;
+namespace Academorix\Dunning\Repositories;
 
 use Stackra\Crud\Attributes\AsRepository;
 use Stackra\Crud\Attributes\Cacheable;
 use Stackra\Crud\Attributes\Filterable;
 use Stackra\Crud\Attributes\UseModel;
 use Stackra\Crud\Repositories\Repository;
-use Stackra\Dunning\Contracts\Data\DunningRunInterface;
-use Stackra\Dunning\Contracts\Repositories\DunningRunRepositoryInterface;
-use Stackra\Dunning\Models\DunningRun;
+use Academorix\Dunning\Contracts\Data\DunningRunInterface;
+use Academorix\Dunning\Contracts\Repositories\DunningRunRepositoryInterface;
+use Academorix\Dunning\Models\DunningRun;
 
 /**
- * Attribute-first Eloquent repository for {@see Stackra\Dunning\Models\DunningRun}.
+ * Attribute-first Eloquent repository for {@see Academorix\Dunning\Models\DunningRun}.
  *
  * Bound to the interface via `#[AsRepository]`; the model comes from
  * `#[UseModel(DunningRunInterface::class)]` which resolves to
  * `DunningRun` through the interface's `#[Bind]`.
  *
- * @extends Repository<\Stackra\Dunning\Models\DunningRun>
+ * @extends Repository<\Academorix\Dunning\Models\DunningRun>
  *
  * @category Dunning
  *

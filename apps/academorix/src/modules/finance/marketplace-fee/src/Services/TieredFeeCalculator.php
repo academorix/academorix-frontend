@@ -4,11 +4,11 @@
 
 declare(strict_types=1);
 
-namespace Stackra\MarketplaceFee\Services;
+namespace Academorix\MarketplaceFee\Services;
 
-use Stackra\MarketplaceFee\Contracts\Services\TieredFeeCalculatorInterface;
+use Academorix\MarketplaceFee\Contracts\Services\TieredFeeCalculatorInterface;
 use Illuminate\Container\Attributes\Scoped;
-use Stackra\MarketplaceFee\Contracts\Repositories\FeeApplicationRepositoryInterface;
+use Academorix\MarketplaceFee\Contracts\Repositories\FeeApplicationRepositoryInterface;
 
 /**
  * Concrete service — TieredFeeCalculator.

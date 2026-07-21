@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Event\Database\Seeders;
+namespace Academorix\Event\Database\Seeders;
 
-use Stackra\Event\Enums\EventPermission;
+use Academorix\Event\Enums\EventPermission;
 use Stackra\Authorization\Database\Seeders\Concerns\SeedsPermissionEnum;
 use Stackra\ServiceProvider\Attributes\AsSeeder;
 use Illuminate\Database\Seeder;

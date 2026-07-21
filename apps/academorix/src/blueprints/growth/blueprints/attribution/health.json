@@ -1,11 +1,11 @@
 {
-  "id": "stackra://modules/attribution/health",
+  "id": "academorix://modules/attribution/health",
   "$version": 1,
   "title": "attribution — health probes",
   "probes": [
     {
       "name": "attribution-schema-migrations-applied",
-      "class": "Stackra\\Growth\\Attribution\\Health\\Probes\\SchemaMigrationsAppliedProbe",
+      "class": "Academorix\\Growth\\Attribution\\Health\\Probes\\SchemaMigrationsAppliedProbe",
       "category": "startup",
       "critical": true,
       "description": "Confirms every migration this module ships has run: attributions, attribution_touchpoints, plus their indexes (composite on (tenant_id, subject_type, subject_id) for lookup, composite on (tenant_id, attribution_id, captured_at) for touchpoint scan, composite on (tenant_id, campaign, captured_at) for rollup).",
@@ -13,7 +13,7 @@
     },
     {
       "name": "attribution-subject-index-present",
-      "class": "Stackra\\Growth\\Attribution\\Health\\Probes\\SubjectIndexPresentProbe",
+      "class": "Academorix\\Growth\\Attribution\\Health\\Probes\\SubjectIndexPresentProbe",
       "category": "startup",
       "critical": true,
       "description": "Confirms the partial unique index (tenant_id, subject_type, subject_id) WHERE deleted_at IS NULL exists on attributions. Missing this index makes AttributionResolver.findOrCreate O(N) per lookup — request-boundary latency blows up.",
@@ -21,7 +21,7 @@
     },
     {
       "name": "attribution-touchpoint-scan-index-present",
-      "class": "Stackra\\Growth\\Attribution\\Health\\Probes\\TouchpointScanIndexPresentProbe",
+      "class": "Academorix\\Growth\\Attribution\\Health\\Probes\\TouchpointScanIndexPresentProbe",
       "category": "startup",
       "critical": true,
       "description": "Confirms the composite index (tenant_id, attribution_id, captured_at DESC) exists on attribution_touchpoints. Feeds the my-attribution timeline widget + the touchpoint-count reconciler.",
@@ -29,7 +29,7 @@
     },
     {
       "name": "attribution-campaign-index-present",
-      "class": "Stackra\\Growth\\Attribution\\Health\\Probes\\CampaignIndexPresentProbe",
+      "class": "Academorix\\Growth\\Attribution\\Health\\Probes\\CampaignIndexPresentProbe",
       "category": "startup",
       "critical": true,
       "description": "Confirms the composite index (tenant_id, campaign, captured_at) exists on attribution_touchpoints. Feeds CampaignRollupAggregatorJob — missing index blows up rollup latency into minutes on large tenants.",
@@ -37,7 +37,7 @@
     },
     {
       "name": "attribution-touchpoint-write-lag",
-      "class": "Stackra\\Growth\\Attribution\\Health\\Probes\\TouchpointWriteLagProbe",
+      "class": "Academorix\\Growth\\Attribution\\Health\\Probes\\TouchpointWriteLagProbe",
       "category": "readiness",
       "critical": false,
       "description": "Measures p99 latency of AttributionTouchpointObserver.creating (the append-only write). Should stay < 20ms — this fires on every attribution-bearing HTTP request.",
@@ -45,15 +45,15 @@
     },
     {
       "name": "attribution-count-drift-clean",
-      "class": "Stackra\\Growth\\Attribution\\Health\\Probes\\CountDriftCleanProbe",
+      "class": "Academorix\\Growth\\Attribution\\Health\\Probes\\CountDriftCleanProbe",
       "category": "readiness",
       "critical": false,
-      "description": "Reads stackra.attribution.count_drift_corrections counter. Any non-zero value in the last 24h is a data-integrity signal.",
+      "description": "Reads academorix.attribution.count_drift_corrections counter. Any non-zero value in the last 24h is a data-integrity signal.",
       "timeoutMs": 200
     },
     {
       "name": "attribution-rollup-recent",
-      "class": "Stackra\\Growth\\Attribution\\Health\\Probes\\RollupRecentProbe",
+      "class": "Academorix\\Growth\\Attribution\\Health\\Probes\\RollupRecentProbe",
       "category": "readiness",
       "critical": false,
       "description": "Confirms CampaignRollupAggregatorJob completed within the last 2 hours (hourly cadence + 1h slop). Stale rollup indicates scheduler drift.",
@@ -62,7 +62,7 @@
     },
     {
       "name": "attribution-reconciler-recent",
-      "class": "Stackra\\Growth\\Attribution\\Health\\Probes\\ReconcilerRecentProbe",
+      "class": "Academorix\\Growth\\Attribution\\Health\\Probes\\ReconcilerRecentProbe",
       "category": "readiness",
       "critical": false,
       "description": "Confirms ReconcileAttributionCountsJob + PurgeArchivedAttributionsJob completed within the last 8 days (weekly cadence + 24h slop).",
@@ -70,7 +70,7 @@
     },
     {
       "name": "attribution-churn-detector-recent",
-      "class": "Stackra\\Growth\\Attribution\\Health\\Probes\\ChurnDetectorRecentProbe",
+      "class": "Academorix\\Growth\\Attribution\\Health\\Probes\\ChurnDetectorRecentProbe",
       "category": "readiness",
       "critical": false,
       "description": "Confirms MarkAttributionChurnedJob completed within the last 25h (daily cadence + 1h slop). Stale detector means churn cohorts stop appearing on dashboards.",
@@ -78,15 +78,15 @@
     },
     {
       "name": "attribution-consent-suppression-rate",
-      "class": "Stackra\\Growth\\Attribution\\Health\\Probes\\ConsentSuppressionRateProbe",
+      "class": "Academorix\\Growth\\Attribution\\Health\\Probes\\ConsentSuppressionRateProbe",
       "category": "readiness",
       "critical": false,
-      "description": "Reads stackra.attribution.consent_suppressions_total counter over the last 1h. Sudden spikes (e.g. 100x baseline) indicate a consent-gate misconfiguration or a compliance-driven bulk revocation. Not itself a bug — but a signal for compliance to investigate.",
+      "description": "Reads academorix.attribution.consent_suppressions_total counter over the last 1h. Sudden spikes (e.g. 100x baseline) indicate a consent-gate misconfiguration or a compliance-driven bulk revocation. Not itself a bug — but a signal for compliance to investigate.",
       "timeoutMs": 200
     },
     {
       "name": "attribution-ip-hasher-clean",
-      "class": "Stackra\\Growth\\Attribution\\Health\\Probes\\IpHasherCleanProbe",
+      "class": "Academorix\\Growth\\Attribution\\Health\\Probes\\IpHasherCleanProbe",
       "category": "startup",
       "critical": true,
       "description": "Confirms the IpHasher salt is set in Doppler + the SHA-256 output length is 64 chars. A misconfigured salt would produce colliding hashes across tenants — critical privacy risk.",
@@ -94,7 +94,7 @@
     },
     {
       "name": "attribution-click-id-catalog-loaded",
-      "class": "Stackra\\Growth\\Attribution\\Health\\Probes\\ClickIdCatalogLoadedProbe",
+      "class": "Academorix\\Growth\\Attribution\\Health\\Probes\\ClickIdCatalogLoadedProbe",
       "category": "startup",
       "critical": true,
       "description": "Confirms data/click-id-catalog.json parsed successfully at boot. Every declared provider (google / meta / tiktok / microsoft / snapchat) must have a valid cookie + query_param mapping.",

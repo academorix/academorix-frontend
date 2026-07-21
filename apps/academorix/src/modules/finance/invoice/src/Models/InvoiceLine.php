@@ -4,20 +4,20 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Invoice\Models;
+namespace Academorix\Invoice\Models;
 
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
-use Stackra\Invoice\Contracts\Data\InvoiceLineInterface;
-use Stackra\Invoice\Database\Factories\InvoiceLineFactory;
+use Academorix\Invoice\Contracts\Data\InvoiceLineInterface;
+use Academorix\Invoice\Database\Factories\InvoiceLineFactory;
 use Stackra\Foundation\Concerns\Filterable;
 use Stackra\Foundation\Concerns\HasMetadata;
-use Stackra\Invoice\Concerns\BelongsToInvoice;
-use Stackra\Invoice\Enums\InvoiceLineItemType;
-use Stackra\Invoice\Policies\InvoiceLinePolicy;
+use Academorix\Invoice\Concerns\BelongsToInvoice;
+use Academorix\Invoice\Enums\InvoiceLineItemType;
+use Academorix\Invoice\Policies\InvoiceLinePolicy;
 use Stackra\Tenancy\Concerns\BelongsToTenant;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;

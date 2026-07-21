@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/chargeback/feature-flags",
+  "id": "academorix://modules/chargeback/feature-flags",
   "$version": 1,
   "title": "chargeback — kill switches",
   "engine": "laravel/pennant",

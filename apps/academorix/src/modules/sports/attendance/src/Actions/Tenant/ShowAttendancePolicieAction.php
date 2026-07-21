@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Attendance\Actions\Tenant;
+namespace Academorix\Attendance\Actions\Tenant;
 
-use Stackra\Attendance\Contracts\Repositories\AttendancePolicyRepositoryInterface;
-use Stackra\Attendance\Data\AttendancePolicyData;
+use Academorix\Attendance\Contracts\Repositories\AttendancePolicyRepositoryInterface;
+use Academorix\Attendance\Data\AttendancePolicyData;
 use Stackra\Routing\Attributes\AsAction;
 use Stackra\Routing\Attributes\Middleware;
 use Stackra\Routing\Concerns\AsController;

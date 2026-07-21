@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/age-group/middleware",
+  "id": "academorix://modules/age-group/middleware",
   "$version": 1,
   "title": "age-group — HTTP middleware",
   "description": "The age-group module ships ZERO middleware of its own. Age groups are reference data, not a request-scoped scoping axis — there is no `X-Age-Group-Id` header, no active-age-group resolution, no per-request context. Every endpoint reads the age_group from a route parameter or from the request body; there is no cross-cutting middleware need. Contrast with region + branch which both ship active-resolver middleware because the caller's active region + branch legitimately vary per request.",

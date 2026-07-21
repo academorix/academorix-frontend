@@ -1,10 +1,10 @@
 {
-  "name": "stackra/performance",
+  "name": "academorix/performance",
   "type": "library",
-  "description": "Stackra Performance module — server-side Laravel package emitted from the module blueprint at `modules/sports/blueprints/performance/`. Complements the wire SDK at `stackra-sports/performance-sdk`.",
+  "description": "Academorix Performance module — server-side Laravel package emitted from the module blueprint at `modules/sports/blueprints/performance/`. Complements the wire SDK at `academorix-sports/performance-sdk`.",
   "license": "proprietary",
   "keywords": [
-    "stackra",
+    "academorix",
     "module",
     "laravel",
     "sports",
@@ -22,7 +22,7 @@
     "stackra/routing": "@dev",
     "stackra/service-provider": "@dev",
     "stackra/support": "@dev",
-    "stackra-sports/performance-sdk": "@dev"
+    "academorix-sports/performance-sdk": "@dev"
   },
   "require-dev": {
     "orchestra/testbench": "^11.0",
@@ -33,12 +33,12 @@
   },
   "autoload": {
     "psr-4": {
-      "Stackra\\Performance\\": "src/"
+      "Academorix\\Performance\\": "src/"
     }
   },
   "autoload-dev": {
     "psr-4": {
-      "Stackra\\Performance\\Tests\\": "tests/"
+      "Academorix\\Performance\\Tests\\": "tests/"
     }
   },
   "extra": {

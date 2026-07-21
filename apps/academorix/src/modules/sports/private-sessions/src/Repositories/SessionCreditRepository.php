@@ -4,25 +4,25 @@
 
 declare(strict_types=1);
 
-namespace Stackra\PrivateSessions\Repositories;
+namespace Academorix\PrivateSessions\Repositories;
 
 use Stackra\Crud\Attributes\AsRepository;
 use Stackra\Crud\Attributes\Cacheable;
 use Stackra\Crud\Attributes\Filterable;
 use Stackra\Crud\Attributes\UseModel;
 use Stackra\Crud\Repositories\Repository;
-use Stackra\PrivateSessions\Contracts\Data\SessionCreditInterface;
-use Stackra\PrivateSessions\Contracts\Repositories\SessionCreditRepositoryInterface;
-use Stackra\PrivateSessions\Models\SessionCredit;
+use Academorix\PrivateSessions\Contracts\Data\SessionCreditInterface;
+use Academorix\PrivateSessions\Contracts\Repositories\SessionCreditRepositoryInterface;
+use Academorix\PrivateSessions\Models\SessionCredit;
 
 /**
- * Attribute-first Eloquent repository for {@see Stackra\PrivateSessions\Models\SessionCredit}.
+ * Attribute-first Eloquent repository for {@see Academorix\PrivateSessions\Models\SessionCredit}.
  *
  * Bound to the interface via `#[AsRepository]`; the model comes from
  * `#[UseModel(SessionCreditInterface::class)]` which resolves to
  * `SessionCredit` through the interface's `#[Bind]`.
  *
- * @extends Repository<\Stackra\PrivateSessions\Models\SessionCredit>
+ * @extends Repository<\Academorix\PrivateSessions\Models\SessionCredit>
  *
  * @category PrivateSessions
  *

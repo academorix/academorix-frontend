@@ -1,8 +1,8 @@
 {
-  "id": "stackra://modules/age-group/notifications",
+  "id": "academorix://modules/age-group/notifications",
   "$version": 1,
   "title": "age-group — notification classes + categories",
-  "namespace": "Stackra\\Sports\\AgeGroup\\Notifications",
+  "namespace": "Academorix\\Sports\\AgeGroup\\Notifications",
   "notifications": [
     "AgeGroupCreatedNotification",
     "AgeGroupBoundsChangedNotification",

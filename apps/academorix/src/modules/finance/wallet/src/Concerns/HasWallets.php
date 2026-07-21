@@ -4,7 +4,7 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Wallet\Concerns;
+namespace Academorix\Wallet\Concerns;
 
 /**
  * Trait — HasWallets.

@@ -4,13 +4,13 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Membership\Policies;
+namespace Academorix\Membership\Policies;
 
 use Stackra\User\Models\User;
-use Stackra\Membership\Models\MembershipPlan;
+use Academorix\Membership\Models\MembershipPlan;
 
 /**
- * Authorization policy for {@see \Stackra\Membership\Models\MembershipPlan}.
+ * Authorization policy for {@see \Academorix\Membership\Models\MembershipPlan}.
  *
  * Wired via `#[UsePolicy]` on the Model.
  *

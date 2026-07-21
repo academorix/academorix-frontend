@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/awards/routes",
+  "id": "academorix://modules/awards/routes",
   "$version": 1,
   "title": "awards — HTTP routes",
   "description": "Routes grouped by host audience. Discovery is attribute-driven at boot; this file is the machine-readable inventory + admin-visible surface.",

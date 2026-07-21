@@ -4,16 +4,16 @@
 
 declare(strict_types=1);
 
-namespace Stackra\DigitalPasses\Models;
+namespace Academorix\DigitalPasses\Models;
 
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
-use Stackra\DigitalPasses\Contracts\Data\WalletPassInterface;
-use Stackra\DigitalPasses\Database\Factories\WalletPassFactory;
-use Stackra\DigitalPasses\Policies\WalletPassPolicy;
+use Academorix\DigitalPasses\Contracts\Data\WalletPassInterface;
+use Academorix\DigitalPasses\Database\Factories\WalletPassFactory;
+use Academorix\DigitalPasses\Policies\WalletPassPolicy;
 use Stackra\Foundation\Concerns\Filterable;
 use Stackra\Foundation\Concerns\HasMetadata;
 use Stackra\Foundation\Concerns\HasPrefixedUlid;

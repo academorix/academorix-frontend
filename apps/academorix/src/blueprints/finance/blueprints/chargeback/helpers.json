@@ -1,9 +1,9 @@
 {
-  "id": "stackra://modules/chargeback/helpers",
+  "id": "academorix://modules/chargeback/helpers",
   "$version": 1,
   "title": "chargeback — helper functions",
   "description": "Ergonomic helpers for resolving chargebacks, computing rate, computing RDR eligibility, reading approaching-deadline chargebacks. All helpers are thin wrappers around bound services — never business logic.",
-  "namespace": "Stackra\\Finance\\Chargeback\\Support",
+  "namespace": "Academorix\\Finance\\Chargeback\\Support",
   "helpers": [
     {
       "signature": "resolve_chargeback(string $chargebackId, string $tenantId): ?Chargeback",

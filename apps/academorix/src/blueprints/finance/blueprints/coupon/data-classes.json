@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/coupon/data-classes",
+  "id": "academorix://modules/coupon/data-classes",
   "$version": 1,
   "title": "coupon — field classification",
   "description": "Coupon data is a mix of commercial reference data (public within tenant admin — code strings, discount config), operational identifiers (redemption customer_id, applied_to_id), financial records (discount_amount_cents + final_amount_cents on every redemption — 7y financial retention), marketing-adjacent metadata (issuance_context tagging referral / campaign), and per-customer usage counters. No health / medical / minor-specific data on any row.",

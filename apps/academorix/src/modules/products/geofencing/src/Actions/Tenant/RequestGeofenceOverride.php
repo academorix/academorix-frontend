@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Geofencing\Actions\Tenant;
+namespace Academorix\Geofencing\Actions\Tenant;
 
 use Stackra\Authorization\Attributes\RequirePermission;
-use Stackra\Geofencing\Contracts\Services\GeofenceOverrideServiceInterface;
-use Stackra\Geofencing\Data\Requests\RequestOverrideRequestData;
-use Stackra\Geofencing\Enums\GeofencingPermission;
+use Academorix\Geofencing\Contracts\Services\GeofenceOverrideServiceInterface;
+use Academorix\Geofencing\Data\Requests\RequestOverrideRequestData;
+use Academorix\Geofencing\Enums\GeofencingPermission;
 use Stackra\Routing\Attributes\AsAction;
 use Stackra\Routing\Attributes\Middleware;
 use Stackra\Routing\Attributes\Post;

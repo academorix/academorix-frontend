@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/attendance/routes",
+  "id": "academorix://modules/attendance/routes",
   "$version": 1,
   "title": "attendance — HTTP routes",
   "description": "Tenant-facing surfaces span four audiences: kiosk / self (athlete + guardian), coach, admin, and guardian-parent report path. Platform-admin adds cross-tenant read for support tooling.",
@@ -26,28 +26,28 @@
         {
           "method": "POST",
           "path": "/check-in",
-          "controller": "Stackra\\Sports\\Attendance\\Http\\Controllers\\Tenant\\CheckInController@store",
+          "controller": "Academorix\\Sports\\Attendance\\Http\\Controllers\\Tenant\\CheckInController@store",
           "permission": "attendance.check-in.own",
           "description": "Body: AttendanceCheckInData { session_id, athlete_id, checked_in_via, device_fingerprint_hash?, ip_address?, gps_lat?, gps_lng?, signature_url_signed? }. Atomically consumes a Pass when session.requires_pass=true. Refuses when no valid Pass available. Fires AttendanceRecorded + LateArrivalRecorded (if late)."
         },
         {
           "method": "POST",
           "path": "/check-out",
-          "controller": "Stackra\\Sports\\Attendance\\Http\\Controllers\\Tenant\\CheckOutController@store",
+          "controller": "Academorix\\Sports\\Attendance\\Http\\Controllers\\Tenant\\CheckOutController@store",
           "permission": "attendance.check-out",
           "description": "Body: { attendance_record_id, left_early_reason? }. Sets checked_out_at + fires AttendanceCheckedOut."
         },
         {
           "method": "GET",
           "path": "/mine",
-          "controller": "Stackra\\Sports\\Attendance\\Http\\Controllers\\Tenant\\MyAttendanceController@index",
+          "controller": "Academorix\\Sports\\Attendance\\Http\\Controllers\\Tenant\\MyAttendanceController@index",
           "permission": "attendance.view.own",
           "description": "Athlete / guardian view of own attendance history."
         },
         {
           "method": "POST",
           "path": "/reconcile",
-          "controller": "Stackra\\Sports\\Attendance\\Http\\Controllers\\Tenant\\ReconcileAttendanceController@store",
+          "controller": "Academorix\\Sports\\Attendance\\Http\\Controllers\\Tenant\\ReconcileAttendanceController@store",
           "permission": "attendance.reconcile",
           "description": "Manual sweep — admin invokes to force ReconcileAttendanceJob for a specific session or date range. Supports dry_run=true."
         }
@@ -74,21 +74,21 @@
         {
           "method": "GET",
           "path": "/",
-          "controller": "Stackra\\Sports\\Attendance\\Http\\Controllers\\Tenant\\CoachSessionAttendanceController@index",
+          "controller": "Academorix\\Sports\\Attendance\\Http\\Controllers\\Tenant\\CoachSessionAttendanceController@index",
           "permission": "attendance.viewAny.coach",
           "description": "Session roster with check-in status per enrolled athlete. Powers the coach's session-day dashboard."
         },
         {
           "method": "POST",
           "path": "/{athlete}",
-          "controller": "Stackra\\Sports\\Attendance\\Http\\Controllers\\Tenant\\CoachSessionAttendanceController@verify",
+          "controller": "Academorix\\Sports\\Attendance\\Http\\Controllers\\Tenant\\CoachSessionAttendanceController@verify",
           "permission": "attendance.create.coach",
           "description": "Coach verifies athlete's attendance. checked_in_via='coach_verified'. Body: { checked_in_at?, status? }."
         },
         {
           "method": "POST",
           "path": "/{athlete}/notes",
-          "controller": "Stackra\\Sports\\Attendance\\Http\\Controllers\\Tenant\\CoachSessionAttendanceController@addNotes",
+          "controller": "Academorix\\Sports\\Attendance\\Http\\Controllers\\Tenant\\CoachSessionAttendanceController@addNotes",
           "permission": "attendance.add-session-note",
           "description": "Body: { session_notes }. Coach's per-session note on the athlete."
         }
@@ -114,34 +114,34 @@
         {
           "method": "GET",
           "path": "/",
-          "controller": "Stackra\\Sports\\Attendance\\Http\\Controllers\\Tenant\\AttendanceRecordController@index",
+          "controller": "Academorix\\Sports\\Attendance\\Http\\Controllers\\Tenant\\AttendanceRecordController@index",
           "permission": "attendance.viewAny",
           "description": "filter[branch_id], filter[team_id], filter[session_id], filter[athlete_id], filter[status], filter[checked_in_via], filter[date_from], filter[date_to]."
         },
         {
           "method": "POST",
           "path": "/",
-          "controller": "Stackra\\Sports\\Attendance\\Http\\Controllers\\Tenant\\AttendanceRecordController@store",
+          "controller": "Academorix\\Sports\\Attendance\\Http\\Controllers\\Tenant\\AttendanceRecordController@store",
           "permission": "attendance.create",
           "description": "Admin-recorded check-in. Body: AttendanceCheckInData. checked_in_via='admin_recorded'."
         },
         {
           "method": "GET",
           "path": "/{record}",
-          "controller": "Stackra\\Sports\\Attendance\\Http\\Controllers\\Tenant\\AttendanceRecordController@show",
+          "controller": "Academorix\\Sports\\Attendance\\Http\\Controllers\\Tenant\\AttendanceRecordController@show",
           "permission": "attendance.view"
         },
         {
           "method": "PATCH",
           "path": "/{record}",
-          "controller": "Stackra\\Sports\\Attendance\\Http\\Controllers\\Tenant\\AttendanceRecordController@update",
+          "controller": "Academorix\\Sports\\Attendance\\Http\\Controllers\\Tenant\\AttendanceRecordController@update",
           "permission": "attendance.update",
           "description": "Updates status / session_notes / signature_url_signed. Refuses immutable fields (session_id / athlete_id / checked_in_at / checked_in_via / consumed_pass_id / athlete_enrollment_id). Only within 48h post-session window."
         },
         {
           "method": "POST",
           "path": "/{record}/cancel",
-          "controller": "Stackra\\Sports\\Attendance\\Http\\Controllers\\Tenant\\AttendanceRecordController@cancel",
+          "controller": "Academorix\\Sports\\Attendance\\Http\\Controllers\\Tenant\\AttendanceRecordController@cancel",
           "permission": "attendance.cancel",
           "description": "Body: { cancellation_reason (required) }. Soft-deletes attendance + refunds consumed Pass atomically. Fires AttendanceCancelled."
         }
@@ -167,40 +167,40 @@
         {
           "method": "GET",
           "path": "/",
-          "controller": "Stackra\\Sports\\Attendance\\Http\\Controllers\\Tenant\\AttendancePolicyController@index",
+          "controller": "Academorix\\Sports\\Attendance\\Http\\Controllers\\Tenant\\AttendancePolicyController@index",
           "permission": "attendance-policies.viewAny",
           "description": "filter[branch_id], filter[membership_plan_id], filter[is_active]."
         },
         {
           "method": "POST",
           "path": "/",
-          "controller": "Stackra\\Sports\\Attendance\\Http\\Controllers\\Tenant\\AttendancePolicyController@store",
+          "controller": "Academorix\\Sports\\Attendance\\Http\\Controllers\\Tenant\\AttendancePolicyController@store",
           "permission": "attendance-policies.create",
           "description": "Body: AttendancePolicyData. Refuses composite active-policy collision at same (branch, plan) specificity."
         },
         {
           "method": "GET",
           "path": "/{policy}",
-          "controller": "Stackra\\Sports\\Attendance\\Http\\Controllers\\Tenant\\AttendancePolicyController@show",
+          "controller": "Academorix\\Sports\\Attendance\\Http\\Controllers\\Tenant\\AttendancePolicyController@show",
           "permission": "attendance-policies.view"
         },
         {
           "method": "PATCH",
           "path": "/{policy}",
-          "controller": "Stackra\\Sports\\Attendance\\Http\\Controllers\\Tenant\\AttendancePolicyController@update",
+          "controller": "Academorix\\Sports\\Attendance\\Http\\Controllers\\Tenant\\AttendancePolicyController@update",
           "permission": "attendance-policies.update",
           "description": "Excludes tenant_id / branch_id / membership_plan_id (immutable — create new policy instead)."
         },
         {
           "method": "POST",
           "path": "/{policy}/activate",
-          "controller": "Stackra\\Sports\\Attendance\\Http\\Controllers\\Tenant\\AttendancePolicyController@activate",
+          "controller": "Academorix\\Sports\\Attendance\\Http\\Controllers\\Tenant\\AttendancePolicyController@activate",
           "permission": "attendance-policies.activate"
         },
         {
           "method": "POST",
           "path": "/{policy}/deactivate",
-          "controller": "Stackra\\Sports\\Attendance\\Http\\Controllers\\Tenant\\AttendancePolicyController@deactivate",
+          "controller": "Academorix\\Sports\\Attendance\\Http\\Controllers\\Tenant\\AttendancePolicyController@deactivate",
           "permission": "attendance-policies.deactivate"
         }
       ]
@@ -225,27 +225,27 @@
         {
           "method": "GET",
           "path": "/",
-          "controller": "Stackra\\Sports\\Attendance\\Http\\Controllers\\Tenant\\AbsenceRecordController@index",
+          "controller": "Academorix\\Sports\\Attendance\\Http\\Controllers\\Tenant\\AbsenceRecordController@index",
           "permission": "absences.viewAny",
           "description": "filter[branch_id], filter[team_id], filter[athlete_id], filter[status], filter[counted_toward_freeze], filter[date_from], filter[date_to]."
         },
         {
           "method": "GET",
           "path": "/{absence}",
-          "controller": "Stackra\\Sports\\Attendance\\Http\\Controllers\\Tenant\\AbsenceRecordController@show",
+          "controller": "Academorix\\Sports\\Attendance\\Http\\Controllers\\Tenant\\AbsenceRecordController@show",
           "permission": "absences.view"
         },
         {
           "method": "POST",
           "path": "/{absence}/excuse",
-          "controller": "Stackra\\Sports\\Attendance\\Http\\Controllers\\Tenant\\AbsenceRecordController@excuse",
+          "controller": "Academorix\\Sports\\Attendance\\Http\\Controllers\\Tenant\\AbsenceRecordController@excuse",
           "permission": "absences.excuse",
           "description": "Body: { absence_reason (required), explanation?, documented_url_signed? }. Flips status → excused; counted_toward_freeze → false; may undo prior freeze."
         },
         {
           "method": "POST",
           "path": "/report",
-          "controller": "Stackra\\Sports\\Attendance\\Http\\Controllers\\Tenant\\AbsenceReportController@store",
+          "controller": "Academorix\\Sports\\Attendance\\Http\\Controllers\\Tenant\\AbsenceReportController@store",
           "permission": "absences.report.own",
           "description": "Guardian/parent self-report path. Body: { session_id, athlete_id, absence_reason (required), explanation? }. Auto-excused when reported > 24h in advance AND reason in policy.auto_excuse_reasons."
         }
@@ -272,7 +272,7 @@
         {
           "method": "GET",
           "path": "/attendance",
-          "controller": "Stackra\\Sports\\Attendance\\Http\\Controllers\\Tenant\\AthleteAttendanceController@index",
+          "controller": "Academorix\\Sports\\Attendance\\Http\\Controllers\\Tenant\\AthleteAttendanceController@index",
           "permission": "attendance.view.own",
           "description": "Per-athlete attendance + absence history. filter[season_id], filter[date_from], filter[date_to]."
         }
@@ -298,7 +298,7 @@
         {
           "method": "GET",
           "path": "/attendance",
-          "controller": "Stackra\\Sports\\Attendance\\Http\\Controllers\\Tenant\\AttendanceReportController@show",
+          "controller": "Academorix\\Sports\\Attendance\\Http\\Controllers\\Tenant\\AttendanceReportController@show",
           "permission": "reports.attendance.view",
           "description": "Aggregate attendance report. filter[branch_id], filter[team_id], filter[season_id], filter[coach_id], filter[period]. Requires attendance_analytics entitlement — returns 402 UPGRADE_REQUIRED otherwise."
         }
@@ -320,14 +320,14 @@
         {
           "method": "GET",
           "path": "/",
-          "controller": "Stackra\\Sports\\Attendance\\Http\\Controllers\\Platform\\AttendanceController@index",
+          "controller": "Academorix\\Sports\\Attendance\\Http\\Controllers\\Platform\\AttendanceController@index",
           "permission": "platform.attendance.viewAny",
           "description": "Cross-tenant attendance read. Minor athlete names + device fingerprints redacted. filter[tenant_id]."
         },
         {
           "method": "GET",
           "path": "/{record}",
-          "controller": "Stackra\\Sports\\Attendance\\Http\\Controllers\\Platform\\AttendanceController@show",
+          "controller": "Academorix\\Sports\\Attendance\\Http\\Controllers\\Platform\\AttendanceController@show",
           "permission": "platform.attendance.view"
         }
       ]

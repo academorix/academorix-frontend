@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Gateway\Contracts\Data;
+namespace Academorix\Gateway\Contracts\Data;
 
 use Illuminate\Container\Attributes\Bind;
-use Stackra\Gateway\Models\GatewayWebhookEvent;
+use Academorix\Gateway\Models\GatewayWebhookEvent;
 
 /**
  * Table shape for the `gateway_webhook_events` table.

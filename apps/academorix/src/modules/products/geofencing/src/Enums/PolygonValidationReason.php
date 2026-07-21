@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Geofencing\Enums;
+namespace Academorix\Geofencing\Enums;
 
 use Stackra\Enum\Attributes\Description;
 use Stackra\Enum\Attributes\Label;
@@ -10,7 +10,7 @@ use Stackra\Enum\Attributes\Meta;
 use Stackra\Enum\Enum;
 
 /**
- * Reasons a polygon fails {@see \Stackra\Geofencing\Services\PolygonValidator}.
+ * Reasons a polygon fails {@see \Academorix\Geofencing\Services\PolygonValidator}.
  *
  * Consumers of the fence-edit endpoint see the reason carried on the 422
  * response so the UI can point at the exact violation.

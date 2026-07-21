@@ -7,7 +7,7 @@ namespace Stackra\PlatformSafeguardingSdk\Tests;
 use Orchestra\Testbench\TestCase as OrchestraTestCase;
 
 /**
- * Base test case for stackra-platform/safeguarding-sdk.
+ * Base test case for academorix-platform/safeguarding-sdk.
  *
  * @category SafeguardingSdk
  *

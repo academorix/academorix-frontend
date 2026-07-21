@@ -4,25 +4,25 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Leads\Repositories;
+namespace Academorix\Leads\Repositories;
 
 use Stackra\Crud\Attributes\AsRepository;
 use Stackra\Crud\Attributes\Cacheable;
 use Stackra\Crud\Attributes\Filterable;
 use Stackra\Crud\Attributes\UseModel;
 use Stackra\Crud\Repositories\Repository;
-use Stackra\Leads\Contracts\Data\LeadTaskInterface;
-use Stackra\Leads\Contracts\Repositories\LeadTaskRepositoryInterface;
-use Stackra\Leads\Models\LeadTask;
+use Academorix\Leads\Contracts\Data\LeadTaskInterface;
+use Academorix\Leads\Contracts\Repositories\LeadTaskRepositoryInterface;
+use Academorix\Leads\Models\LeadTask;
 
 /**
- * Attribute-first Eloquent repository for {@see Stackra\Leads\Models\LeadTask}.
+ * Attribute-first Eloquent repository for {@see Academorix\Leads\Models\LeadTask}.
  *
  * Bound to the interface via `#[AsRepository]`; the model comes from
  * `#[UseModel(LeadTaskInterface::class)]` which resolves to
  * `LeadTask` through the interface's `#[Bind]`.
  *
- * @extends Repository<\Stackra\Leads\Models\LeadTask>
+ * @extends Repository<\Academorix\Leads\Models\LeadTask>
  *
  * @category Leads
  *

@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/attribution/errors",
+  "id": "academorix://modules/attribution/errors",
   "$version": 1,
   "title": "attribution — error codes",
   "namespace": "attribution",

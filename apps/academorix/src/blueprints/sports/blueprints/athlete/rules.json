@@ -1,63 +1,63 @@
 {
-  "id": "stackra://modules/athlete/rules",
+  "id": "academorix://modules/athlete/rules",
   "$version": 1,
   "title": "athlete — validation rules",
   "description": "Custom Laravel validation rules published by AthleteServiceProvider::boot(). All rules are used both by the observer chain (for authoritative refusal on write) AND by FormRequest data classes (for early request-time validation with clear error surfaces). The medical + emergency-contact permission checks live in policies + observers, not in rules — rules validate shape, not authorization.",
-  "namespace": "Stackra\\Sports\\Athlete\\Rules",
+  "namespace": "Academorix\\Sports\\Athlete\\Rules",
   "rules": [
     {
       "name": "valid_hex_color",
-      "class": "Stackra\\Foundation\\Rules\\ValidHexColor",
+      "class": "Academorix\\Foundation\\Rules\\ValidHexColor",
       "signature": "valid_hex_color",
       "description": "Standard hex color validator. Foundation-owned; not directly consumed by Athlete but reserved for future customisation fields."
     },
     {
       "name": "valid_e164_phone",
-      "class": "Stackra\\Foundation\\Rules\\ValidE164Phone",
+      "class": "Academorix\\Foundation\\Rules\\ValidE164Phone",
       "signature": "valid_e164_phone",
       "description": "E.164 phone number. Used on Athlete.emergency_contact_phone."
     },
     {
       "name": "valid_url",
-      "class": "Stackra\\Foundation\\Rules\\ValidUrl",
+      "class": "Academorix\\Foundation\\Rules\\ValidUrl",
       "signature": "valid_url",
       "description": "URL validator. Used on Athlete.profile_photo_url."
     },
     {
       "name": "valid_bcp47_locale",
-      "class": "Stackra\\Foundation\\Rules\\ValidBcp47Locale",
+      "class": "Academorix\\Foundation\\Rules\\ValidBcp47Locale",
       "signature": "valid_bcp47_locale",
       "description": "BCP-47 language tag. Used on Athlete.primary_language."
     },
     {
       "name": "valid_iso4217_currency",
-      "class": "Stackra\\Foundation\\Rules\\ValidIso4217Currency",
+      "class": "Academorix\\Foundation\\Rules\\ValidIso4217Currency",
       "signature": "valid_iso4217_currency",
       "description": "ISO 4217 currency code. Foundation-owned; reserved for future Finance integration."
     },
     {
       "name": "valid_positive_int",
-      "class": "Stackra\\Foundation\\Rules\\ValidPositiveInt",
+      "class": "Academorix\\Foundation\\Rules\\ValidPositiveInt",
       "signature": "valid_positive_int",
       "description": "Non-negative integer. Used on Athlete.height_cm + weight_kg."
     },
     {
       "name": "valid_dob",
-      "class": "Stackra\\Sports\\Athlete\\Rules\\ValidDob",
+      "class": "Academorix\\Sports\\Athlete\\Rules\\ValidDob",
       "signature": "valid_dob",
       "description": "Validates Athlete.date_of_birth. Refuses: dates in the future, dates more than 100 years in the past (nonsense old-age), dates that would place the athlete at age < 3 (nonsense young-age — platform bounds).",
       "default_message": "The :attribute must be a valid date of birth (between 3 and 100 years old)."
     },
     {
       "name": "valid_athlete_status_transition",
-      "class": "Stackra\\Sports\\Athlete\\Rules\\ValidAthleteStatusTransition",
+      "class": "Academorix\\Sports\\Athlete\\Rules\\ValidAthleteStatusTransition",
       "signature": "valid_athlete_status_transition",
       "description": "Enforces the state-machine transitions from the schema x-invariants. Valid transitions: active ↔ paused; active → graduated (terminal); active → withdrawn (terminal, requires withdrawal_reason); {active, paused, graduated, withdrawn} → archived; archived → active (restore only within retention window). Refuses any invalid transition (e.g. graduated → withdrawn, archived → paused directly).",
       "default_message": "The :attribute transition from :from to :to is not allowed."
     },
     {
       "name": "consent_recorded_by_authorised_guardian",
-      "class": "Stackra\\Sports\\Athlete\\Rules\\ConsentRecordedByAuthorisedGuardian",
+      "class": "Academorix\\Sports\\Athlete\\Rules\\ConsentRecordedByAuthorisedGuardian",
       "signature": "consent_recorded_by_authorised_guardian",
       "description": "For minors (age_years < config.athlete.minor_min_age), when any consent_* is true, refuses when consent_recorded_by_user_id is not a User with an active AthleteGuardian row on this athlete + has_legal_custody=true. Wave 3a: SOFT-WARN (rule fires as a warning; write proceeds). Wave 3b: HARD-FAIL (rule refuses the write) once AthleteGuardian module lands + the cross-module lookup is wired.",
       "default_message": "For minor athletes, consent must be recorded by an authorised legal guardian.",
@@ -65,21 +65,21 @@
     },
     {
       "name": "medical_notes_within_length",
-      "class": "Stackra\\Sports\\Athlete\\Rules\\MedicalNotesWithinLength",
+      "class": "Academorix\\Sports\\Athlete\\Rules\\MedicalNotesWithinLength",
       "signature": "medical_notes_within_length",
       "description": "Enforces the 8192-char cap on each medical_* text field. Prevents pathological writes that would balloon the athlete_medical_history audit rows.",
       "default_message": "The :attribute cannot exceed 8192 characters."
     },
     {
       "name": "one_active_athlete_per_user_tenant",
-      "class": "Stackra\\Sports\\Athlete\\Rules\\OneActiveAthletePerUserTenant",
+      "class": "Academorix\\Sports\\Athlete\\Rules\\OneActiveAthletePerUserTenant",
       "signature": "one_active_athlete_per_user_tenant",
       "description": "Enforces the partial unique index (tenant_id, user_id, deleted_at IS NULL) where user_id IS NOT NULL. One active Athlete row per (tenant, user). Duplicate signups must archive first.",
       "default_message": "This user already has an active athlete record in this tenant."
     },
     {
       "name": "athlete_age_within_platform_bounds",
-      "class": "Stackra\\Sports\\Athlete\\Rules\\AthleteAgeWithinPlatformBounds",
+      "class": "Academorix\\Sports\\Athlete\\Rules\\AthleteAgeWithinPlatformBounds",
       "signature": "athlete_age_within_platform_bounds",
       "description": "Computes age_years from date_of_birth + today; refuses when age_years < 3 OR age_years > 100. Platform floor + ceiling — matches AgeGroup platform bounds so every athlete has at least one potential age-group match.",
       "default_message": "Athlete age must be between 3 and 100 years."

@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Progress\Contracts\Data;
+namespace Academorix\Progress\Contracts\Data;
 
 use Illuminate\Container\Attributes\Bind;
-use Stackra\Progress\Models\GradingResult;
+use Academorix\Progress\Models\GradingResult;
 
 /**
  * Table shape for the `grading_results` table.

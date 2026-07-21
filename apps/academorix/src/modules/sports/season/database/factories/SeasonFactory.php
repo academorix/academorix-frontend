@@ -4,19 +4,19 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Season\Database\Factories;
+namespace Academorix\Season\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Stackra\Season\Contracts\Data\SeasonInterface;
-use Stackra\Season\Models\Season;
+use Academorix\Season\Contracts\Data\SeasonInterface;
+use Academorix\Season\Models\Season;
 
 /**
- * Factory for {@see \Stackra\Season\Models\Season}.
+ * Factory for {@see \Academorix\Season\Models\Season}.
  *
  * Auto-generated skeleton — extend with named states as domain
  * cases emerge (e.g. `->published()`, `->overdue()`, `->archived()`).
  *
- * @extends Factory<\Stackra\Season\Models\Season>
+ * @extends Factory<\Academorix\Season\Models\Season>
  *
  * @category Season
  *

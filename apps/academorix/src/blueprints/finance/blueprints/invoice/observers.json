@@ -1,12 +1,12 @@
 {
-  "id": "stackra://modules/invoice/observers",
+  "id": "academorix://modules/invoice/observers",
   "$version": 1,
   "title": "invoice — Eloquent observers",
   "description": "Three observers enforce the module's write-time invariants: invoice lifecycle integrity (sequential numbering + address freeze + state machine + finalize-immutability + marketing signal fire), line integrity (draft-only mutation + line-number assignment + tax dispatch), and credit-note immutability (post-paid-only issuance + no updates + no deletes ever).",
   "observers": [
     {
       "model": "Invoice",
-      "observer": "Stackra\\Finance\\Invoice\\Observers\\InvoiceObserver",
+      "observer": "Academorix\\Finance\\Invoice\\Observers\\InvoiceObserver",
       "handles": [
         "creating → populate ULID prefix `ivc_`",
         "creating → refuse when tenant does NOT hold `invoice_capture` entitlement (returns `INVOICE_FEATURE_NOT_ENTITLED`)",
@@ -70,7 +70,7 @@
     },
     {
       "model": "InvoiceLine",
-      "observer": "Stackra\\Finance\\Invoice\\Observers\\InvoiceLineObserver",
+      "observer": "Academorix\\Finance\\Invoice\\Observers\\InvoiceLineObserver",
       "handles": [
         "creating → populate ULID prefix `ivl_`",
         "creating → refuse when parent invoice.status != 'draft' (returns `INVOICE_LINE_PARENT_NOT_DRAFT` — finalized invoices are immutable)",
@@ -100,7 +100,7 @@
     },
     {
       "model": "CreditNote",
-      "observer": "Stackra\\Finance\\Invoice\\Observers\\CreditNoteObserver",
+      "observer": "Academorix\\Finance\\Invoice\\Observers\\CreditNoteObserver",
       "handles": [
         "creating → populate ULID prefix `crn_`",
         "creating → refuse when tenant does NOT hold `credit_note_issuance` entitlement (returns `CREDIT_NOTE_FEATURE_NOT_ENTITLED`)",

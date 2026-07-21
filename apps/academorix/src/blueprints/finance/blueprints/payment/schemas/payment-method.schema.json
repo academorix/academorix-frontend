@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/payment/schemas/payment-method",
+  "id": "academorix://modules/payment/schemas/payment-method",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "PaymentMethod",
@@ -13,9 +13,9 @@
     "keyType": "string",
     "keyPrefix": "pmt_",
     "incrementing": false,
-    "model": "Stackra\\Finance\\Payment\\Models\\PaymentMethod",
-    "interface": "Stackra\\Finance\\Payment\\Contracts\\Data\\PaymentMethodInterface",
-    "implements": ["Stackra\\Finance\\Payment\\Contracts\\Data\\PaymentMethodInterface"],
+    "model": "Academorix\\Finance\\Payment\\Models\\PaymentMethod",
+    "interface": "Academorix\\Finance\\Payment\\Contracts\\Data\\PaymentMethodInterface",
+    "implements": ["Academorix\\Finance\\Payment\\Contracts\\Data\\PaymentMethodInterface"],
     "traits": [
       "HasFactory",
       "HasUlids",

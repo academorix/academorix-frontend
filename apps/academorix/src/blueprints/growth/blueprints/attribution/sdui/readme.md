@@ -39,6 +39,6 @@ marketing sees aggregated rollups without individual PII.
   renders in downstream marketing / analytics / referrals screens when they need
   to show a source bucket. This module owns the widget definition.
 - **`my-attribution` screens** live in the user-plane SDUI (owned by the
-  frontend `@stackra/ui` package) — those are trivial variants of
+  frontend `@academorix/ui` package) — those are trivial variants of
   `view.screen.json` restricted to the caller's own profile. Not shipped as
   blueprint files here because they don't add any structural surface.

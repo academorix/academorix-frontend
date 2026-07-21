@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Session\Contracts\Services;
+namespace Academorix\Session\Contracts\Services;
 
-use Stackra\Session\Services\AttendanceEvaluator;
+use Academorix\Session\Services\AttendanceEvaluator;
 use Illuminate\Container\Attributes\Bind;
 
 /**

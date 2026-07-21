@@ -1,13 +1,13 @@
 {
-  "id": "stackra://modules/analytics/attributes",
+  "id": "academorix://modules/analytics/attributes",
   "$version": 1,
   "title": "analytics — PHP attribute contracts",
   "description": "Two attributes discovered at build time by CompileAnalyticsRegistries. The compiler maps class targets into AnalyticsEventCapturerRegistry + AnalyticsProviderDriverRegistry so runtime dispatch is a hash-map lookup, never a reflection call.",
-  "namespace": "Stackra\\Growth\\Analytics\\Attributes",
+  "namespace": "Academorix\\Growth\\Analytics\\Attributes",
   "attributes": [
     {
       "name": "AsAnalyticsEventCapturer",
-      "class": "Stackra\\Growth\\Analytics\\Attributes\\AsAnalyticsEventCapturer",
+      "class": "Academorix\\Growth\\Analytics\\Attributes\\AsAnalyticsEventCapturer",
       "targets": ["class"],
       "description": "Marks a listener class as an analytics event capturer. The capturer receives one or more domain events and produces one or more analytics events. Many-to-one: a single domain event can map to multiple analytics events with different property shapes (e.g. OrderPlaced → 'checkout_completed' + 'first_purchase_completed' + 'lifetime_value_updated'). Registered at boot by the CompileAnalyticsRegistries loader into AnalyticsEventCapturerRegistry.",
       "params": [
@@ -64,7 +64,7 @@
     },
     {
       "name": "AsAnalyticsProviderDriver",
-      "class": "Stackra\\Growth\\Analytics\\Attributes\\AsAnalyticsProviderDriver",
+      "class": "Academorix\\Growth\\Analytics\\Attributes\\AsAnalyticsProviderDriver",
       "targets": ["class"],
       "description": "Registers a custom AnalyticsProviderDriver at boot. Enables third-party modules to ship additional drivers without editing the AnalyticsProviderManager. The 7 first-party drivers (PostHog, Amplitude, Mixpanel, Segment, June, Google Analytics 4, Custom Webhook) use this attribute; add a new one to teach the manager about a fresh provider.",
       "params": [
@@ -109,7 +109,7 @@
     }
   ],
   "discovery": {
-    "loader": "Stackra\\Growth\\Analytics\\Discovery\\CompileAnalyticsRegistries",
+    "loader": "Academorix\\Growth\\Analytics\\Discovery\\CompileAnalyticsRegistries",
     "runs_at": "boot (after ContainerBooted event)",
     "output_registries": [
       "AnalyticsEventCapturerRegistry — map of DomainEventClass → list of capturer class names ordered by priority",

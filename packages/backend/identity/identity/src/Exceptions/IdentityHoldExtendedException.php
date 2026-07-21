@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Identity\Exceptions;
 
-use Stackra\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Restore-erased-identity refused because the hold-period has been extended by compliance.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class IdentityHoldExtendedException extends AcademorixException
+final class IdentityHoldExtendedException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

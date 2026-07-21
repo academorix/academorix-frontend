@@ -4,19 +4,19 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Athlete\Database\Factories;
+namespace Academorix\Athlete\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Stackra\Athlete\Contracts\Data\AthleteInterface;
-use Stackra\Athlete\Models\Athlete;
+use Academorix\Athlete\Contracts\Data\AthleteInterface;
+use Academorix\Athlete\Models\Athlete;
 
 /**
- * Factory for {@see \Stackra\Athlete\Models\Athlete}.
+ * Factory for {@see \Academorix\Athlete\Models\Athlete}.
  *
  * Auto-generated skeleton — extend with named states as domain
  * cases emerge (e.g. `->published()`, `->overdue()`, `->archived()`).
  *
- * @extends Factory<\Stackra\Athlete\Models\Athlete>
+ * @extends Factory<\Academorix\Athlete\Models\Athlete>
  *
  * @category Athlete
  *

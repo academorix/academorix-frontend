@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Tenancy\Exceptions;
 
-use Stackra\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * business_type not present in the BusinessType catalogue.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class TenancyInvalidBusinessTypeException extends AcademorixException
+final class TenancyInvalidBusinessTypeException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

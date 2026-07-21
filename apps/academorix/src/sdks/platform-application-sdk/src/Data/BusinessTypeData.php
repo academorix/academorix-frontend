@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Stackra\PlatformApplicationSdk\Data;
+namespace Academorix\PlatformApplicationSdk\Data;
 
 use Spatie\LaravelData\Attributes\MapInputName;
 use Spatie\LaravelData\Data;

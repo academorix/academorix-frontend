@@ -4,7 +4,7 @@
 
 declare(strict_types=1);
 
-namespace Stackra\AthleteEnrollment\Exceptions;
+namespace Academorix\AthleteEnrollment\Exceptions;
 
 use Stackra\Exceptions\StackraException;
 

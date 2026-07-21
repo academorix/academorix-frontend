@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Auth\Exceptions;
 
-use Stackra\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Grant was issued for a different target Application than the current request's X-Application-Id.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class CrossAppGrantApplicationMismatchException extends AcademorixException
+final class CrossAppGrantApplicationMismatchException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

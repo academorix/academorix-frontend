@@ -1,10 +1,10 @@
 {
-  "name": "stackra/coaching",
+  "name": "academorix/coaching",
   "type": "library",
-  "description": "Stackra Coaching module — server-side Laravel package emitted from the module blueprint at `modules/sports/blueprints/coaching/`. Complements the wire SDK at `stackra-sports/coaching-sdk`.",
+  "description": "Academorix Coaching module — server-side Laravel package emitted from the module blueprint at `modules/sports/blueprints/coaching/`. Complements the wire SDK at `academorix-sports/coaching-sdk`.",
   "license": "proprietary",
   "keywords": [
-    "stackra",
+    "academorix",
     "module",
     "laravel",
     "sports",
@@ -22,7 +22,7 @@
     "stackra/routing": "@dev",
     "stackra/service-provider": "@dev",
     "stackra/support": "@dev",
-    "stackra-sports/coaching-sdk": "@dev"
+    "academorix-sports/coaching-sdk": "@dev"
   },
   "require-dev": {
     "orchestra/testbench": "^11.0",
@@ -33,12 +33,12 @@
   },
   "autoload": {
     "psr-4": {
-      "Stackra\\Coaching\\": "src/"
+      "Academorix\\Coaching\\": "src/"
     }
   },
   "autoload-dev": {
     "psr-4": {
-      "Stackra\\Coaching\\Tests\\": "tests/"
+      "Academorix\\Coaching\\Tests\\": "tests/"
     }
   },
   "extra": {

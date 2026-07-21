@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Registrations\Actions\Tenant;
+namespace Academorix\Registrations\Actions\Tenant;
 
-use Stackra\Registrations\Contracts\Repositories\TrialBookingRepositoryInterface;
-use Stackra\Registrations\Data\TrialBookingData;
+use Academorix\Registrations\Contracts\Repositories\TrialBookingRepositoryInterface;
+use Academorix\Registrations\Data\TrialBookingData;
 use Stackra\Routing\Attributes\AsAction;
 use Stackra\Routing\Attributes\Middleware;
 use Stackra\Routing\Concerns\AsController;
@@ -50,7 +50,7 @@ final class ListTrialBookingAction
      */
     public function __invoke(Request $request): PaginatedDataCollection
     {
-        /** @var LengthAwarePaginator<int, \Stackra\Registrations\Models\TrialBooking> $page */
+        /** @var LengthAwarePaginator<int, \Academorix\Registrations\Models\TrialBooking> $page */
         $page = $this->repository->paginate(
             perPage: (int) $request->integer('per_page', 15),
         );

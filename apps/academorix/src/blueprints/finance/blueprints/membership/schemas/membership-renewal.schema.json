@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/membership/schemas/membership-renewal",
+  "id": "academorix://modules/membership/schemas/membership-renewal",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "MembershipRenewal",
@@ -13,8 +13,8 @@
     "keyType": "string",
     "keyPrefix": "mbn_",
     "incrementing": false,
-    "model": "Stackra\\Finance\\Membership\\Models\\MembershipRenewal",
-    "interface": "Stackra\\Finance\\Membership\\Contracts\\Data\\MembershipRenewalInterface",
+    "model": "Academorix\\Finance\\Membership\\Models\\MembershipRenewal",
+    "interface": "Academorix\\Finance\\Membership\\Contracts\\Data\\MembershipRenewalInterface",
     "traits": [
       "HasFactory",
       "HasPrefixedUlid",

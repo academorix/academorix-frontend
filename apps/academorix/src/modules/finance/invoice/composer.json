@@ -1,10 +1,10 @@
 {
-  "name": "stackra/invoice",
+  "name": "academorix/invoice",
   "type": "library",
-  "description": "Stackra Invoice module — server-side Laravel package emitted from the module blueprint at `modules/finance/blueprints/invoice/`. Complements the wire SDK at `stackra-finance/invoice-sdk`.",
+  "description": "Academorix Invoice module — server-side Laravel package emitted from the module blueprint at `modules/finance/blueprints/invoice/`. Complements the wire SDK at `academorix-finance/invoice-sdk`.",
   "license": "proprietary",
   "keywords": [
-    "stackra",
+    "academorix",
     "module",
     "laravel",
     "finance",
@@ -22,7 +22,7 @@
     "stackra/routing": "@dev",
     "stackra/service-provider": "@dev",
     "stackra/support": "@dev",
-    "stackra-finance/invoice-sdk": "@dev"
+    "academorix-finance/invoice-sdk": "@dev"
   },
   "require-dev": {
     "orchestra/testbench": "^11.0",
@@ -33,12 +33,12 @@
   },
   "autoload": {
     "psr-4": {
-      "Stackra\\Invoice\\": "src/"
+      "Academorix\\Invoice\\": "src/"
     }
   },
   "autoload-dev": {
     "psr-4": {
-      "Stackra\\Invoice\\Tests\\": "tests/"
+      "Academorix\\Invoice\\Tests\\": "tests/"
     }
   },
   "extra": {

@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Theme\Exceptions;
 
-use Stackra\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Token key is not in the canonical vocabulary (data/token-vocabulary.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class ThemeInvalidTokenKeyException extends AcademorixException
+final class ThemeInvalidTokenKeyException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

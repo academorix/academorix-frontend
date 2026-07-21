@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/match/schemas/match-event",
+  "id": "academorix://modules/match/schemas/match-event",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "MatchEvent",
@@ -13,9 +13,9 @@
     "keyType": "string",
     "keyPrefix": "mev_",
     "incrementing": false,
-    "model": "Stackra\\Sports\\Match\\Models\\MatchEvent",
-    "interface": "Stackra\\Sports\\Match\\Contracts\\Data\\MatchEventInterface",
-    "implements": ["Stackra\\Sports\\Match\\Contracts\\Data\\MatchEventInterface"],
+    "model": "Academorix\\Sports\\Match\\Models\\MatchEvent",
+    "interface": "Academorix\\Sports\\Match\\Contracts\\Data\\MatchEventInterface",
+    "implements": ["Academorix\\Sports\\Match\\Contracts\\Data\\MatchEventInterface"],
     "traits": [
       "HasFactory",
       "HasUlids",

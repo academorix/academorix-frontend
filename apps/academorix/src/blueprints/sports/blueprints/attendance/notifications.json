@@ -1,8 +1,8 @@
 {
-  "id": "stackra://modules/attendance/notifications",
+  "id": "academorix://modules/attendance/notifications",
   "$version": 1,
   "title": "attendance — notification classes + categories",
-  "namespace": "Stackra\\Sports\\Attendance\\Notifications",
+  "namespace": "Academorix\\Sports\\Attendance\\Notifications",
   "notifications": [
     "AttendanceRecordedNotification",
     "LateArrivalNotification",

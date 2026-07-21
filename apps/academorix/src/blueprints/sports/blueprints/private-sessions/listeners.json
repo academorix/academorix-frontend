@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/private-sessions/listeners",
+  "id": "academorix://modules/private-sessions/listeners",
   "$version": 1,
   "title": "private-sessions — event listeners",
   "description": "Listeners this module registers, keyed by the event they consume.",

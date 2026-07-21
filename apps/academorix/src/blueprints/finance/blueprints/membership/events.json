@@ -1,14 +1,14 @@
 {
-  "id": "stackra://modules/membership/events",
+  "id": "academorix://modules/membership/events",
   "$version": 1,
   "title": "membership — published events",
-  "namespace": "Stackra\\Finance\\Membership\\Events",
+  "namespace": "Academorix\\Finance\\Membership\\Events",
   "dispatchMode": "afterCommit",
   "description": "Every event implements `ShouldDispatchAfterCommit`. Lifecycle events (created / activated / renewed / cancelled / lapsed / refunded / chargeback) route on transactional queues; renewal failures + lapsed are notifications-critical (dunning is contract-critical). Membership events are DISTINCT from TenantSubscription events — the two modules never share event names to avoid downstream ambiguity. Renewal events use their own class hierarchy so a listener saying `@AsMembershipListener(events: ['MembershipRenewed'])` cannot mis-fire on TenantSubscription lifecycle.",
   "events": [
     {
       "name": "MembershipCreated",
-      "class": "Stackra\\Finance\\Membership\\Events\\MembershipCreated",
+      "class": "Academorix\\Finance\\Membership\\Events\\MembershipCreated",
       "trigger": "MembershipCreator committed. Snapshots price / coupon / tax at signing. Fires alongside the atomic Invoice.create in the same DB transaction — if the invoice-create fails, this event never fires because the transaction rolls back.",
       "queue": "finance",
       "consumers": [
@@ -40,7 +40,7 @@
     },
     {
       "name": "MembershipActivated",
-      "class": "Stackra\\Finance\\Membership\\Events\\MembershipActivated",
+      "class": "Academorix\\Finance\\Membership\\Events\\MembershipActivated",
       "trigger": "Status transitioned pending → active after invoice.paid webhook (or manual mark-paid). Sets current_period_starts_at + current_period_ends_at + next_renewal_at from plan.billing_interval. IssuePassesForPeriodJob dispatches after commit to generate the period's passes.",
       "queue": "finance",
       "consumers": [
@@ -61,7 +61,7 @@
     },
     {
       "name": "MembershipPaused",
-      "class": "Stackra\\Finance\\Membership\\Events\\MembershipPaused",
+      "class": "Academorix\\Finance\\Membership\\Events\\MembershipPaused",
       "trigger": "Admin paused an active membership (e.g. athlete on medical leave). Freezes renewal + freezes pass consumption. Different from cancel — resumable.",
       "queue": "finance",
       "consumers": [
@@ -79,7 +79,7 @@
     },
     {
       "name": "MembershipResumed",
-      "class": "Stackra\\Finance\\Membership\\Events\\MembershipResumed",
+      "class": "Academorix\\Finance\\Membership\\Events\\MembershipResumed",
       "trigger": "Admin resumed a paused membership. next_renewal_at recomputed from resume date + remaining period.",
       "queue": "finance",
       "consumers": [
@@ -97,7 +97,7 @@
     },
     {
       "name": "MembershipCancelled",
-      "class": "Stackra\\Finance\\Membership\\Events\\MembershipCancelled",
+      "class": "Academorix\\Finance\\Membership\\Events\\MembershipCancelled",
       "trigger": "Terminal. Fires when status transitions to cancelled — either at cancellation_effective_at for soft cancel OR immediately for hard cancel. Hard cancel additionally fires CalculateProratedRefundOnHardCancel to trigger the refund module.",
       "queue": "finance",
       "consumers": [
@@ -123,7 +123,7 @@
     },
     {
       "name": "MembershipLapsed",
-      "class": "Stackra\\Finance\\Membership\\Events\\MembershipLapsed",
+      "class": "Academorix\\Finance\\Membership\\Events\\MembershipLapsed",
       "trigger": "Terminal. Fires when consecutive_failed_renewal_count >= 3 (after final retry ladder attempt). Distinct from cancelled — no customer intent, involuntary termination for payment failure. Remaining passes expire immediately.",
       "queue": "finance-critical",
       "consumers": [
@@ -144,7 +144,7 @@
     },
     {
       "name": "MembershipExpired",
-      "class": "Stackra\\Finance\\Membership\\Events\\MembershipExpired",
+      "class": "Academorix\\Finance\\Membership\\Events\\MembershipExpired",
       "trigger": "Terminal. ExpireMembershipJob detected an active membership past expires_at (soft cancel that reached period end). Distinct from lapsed — expected terminal path.",
       "queue": "finance",
       "consumers": [
@@ -161,7 +161,7 @@
     },
     {
       "name": "MembershipRenewed",
-      "class": "Stackra\\Finance\\Membership\\Events\\MembershipRenewed",
+      "class": "Academorix\\Finance\\Membership\\Events\\MembershipRenewed",
       "trigger": "MembershipRenewal succeeded. Membership.next_renewal_at extended by billing_interval; passes issued for the new period; consecutive_failed_renewal_count reset. Lifetime value increment.",
       "queue": "finance",
       "consumers": [
@@ -184,7 +184,7 @@
     },
     {
       "name": "MembershipRenewalFailed",
-      "class": "Stackra\\Finance\\Membership\\Events\\MembershipRenewalFailed",
+      "class": "Academorix\\Finance\\Membership\\Events\\MembershipRenewalFailed",
       "trigger": "MembershipRenewal.status = failed_transient. Payment failed but retryable. Increments membership.consecutive_failed_renewal_count. TriggerRetryLadderOnRenewalFailed schedules the next attempt at day+3/+7/+14 per attempt_number.",
       "queue": "finance-critical",
       "consumers": [
@@ -205,7 +205,7 @@
     },
     {
       "name": "MembershipRenewalRecovered",
-      "class": "Stackra\\Finance\\Membership\\Events\\MembershipRenewalRecovered",
+      "class": "Academorix\\Finance\\Membership\\Events\\MembershipRenewalRecovered",
       "trigger": "MembershipRenewal.status = succeeded AFTER a prior attempt failed. Distinct from MembershipRenewed (first-attempt success) — this is the retry-ladder recovery path. Growth analytics track dunning-effectiveness with this signal.",
       "queue": "finance",
       "consumers": [
@@ -224,7 +224,7 @@
     },
     {
       "name": "MembershipRefunded",
-      "class": "Stackra\\Finance\\Membership\\Events\\MembershipRefunded",
+      "class": "Academorix\\Finance\\Membership\\Events\\MembershipRefunded",
       "trigger": "Refund module completed a refund tied to this membership. Fires from the refund module downstream; membership records refund_id + refund_amount_cents in metadata.",
       "queue": "finance-critical",
       "consumers": [
@@ -243,7 +243,7 @@
     },
     {
       "name": "MembershipChargedBack",
-      "class": "Stackra\\Finance\\Membership\\Events\\MembershipChargedBack",
+      "class": "Academorix\\Finance\\Membership\\Events\\MembershipChargedBack",
       "trigger": "P1. Chargeback module fired a dispute affecting a payment on this membership. Membership status stays active — dispute lifecycle is chargeback module's concern. Admin notified via cannot-opt-out channel.",
       "queue": "finance-critical",
       "consumers": [
@@ -261,7 +261,7 @@
     },
     {
       "name": "MembershipPlanUpgraded",
-      "class": "Stackra\\Finance\\Membership\\Events\\MembershipPlanUpgraded",
+      "class": "Academorix\\Finance\\Membership\\Events\\MembershipPlanUpgraded",
       "trigger": "Admin (or customer via self-serve) migrated the membership to a higher-price plan. Prorated adjustment via invoice module. Passes for current period recomputed per new plan.",
       "queue": "finance",
       "consumers": [
@@ -280,7 +280,7 @@
     },
     {
       "name": "MembershipPlanDowngraded",
-      "class": "Stackra\\Finance\\Membership\\Events\\MembershipPlanDowngraded",
+      "class": "Academorix\\Finance\\Membership\\Events\\MembershipPlanDowngraded",
       "trigger": "Admin (or customer via self-serve) migrated the membership to a lower-price plan. Downgrade deferred to period end by default (soft-transition). Passes for next period reflect new plan.",
       "queue": "finance",
       "consumers": [
@@ -298,7 +298,7 @@
     },
     {
       "name": "MembershipTrialStarted",
-      "class": "Stackra\\Finance\\Membership\\Events\\MembershipTrialStarted",
+      "class": "Academorix\\Finance\\Membership\\Events\\MembershipTrialStarted",
       "trigger": "Medium+. Membership created with plan.trial_days > 0. First period is free; billing starts at trial end. NotifyTrialEndingJob fires 3 days before trial end.",
       "queue": "finance",
       "consumers": [
@@ -317,7 +317,7 @@
     },
     {
       "name": "MembershipTrialEnded",
-      "class": "Stackra\\Finance\\Membership\\Events\\MembershipTrialEnded",
+      "class": "Academorix\\Finance\\Membership\\Events\\MembershipTrialEnded",
       "trigger": "Trial period ended. Fires alongside the first real renewal attempt. Distinct from MembershipTrialConverted (which fires only on trial-to-paid conversion success).",
       "queue": "finance",
       "consumers": ["audit::WriteToAuditLog", "activity::WriteToActivityLog"],
@@ -329,7 +329,7 @@
     },
     {
       "name": "MembershipTrialConverted",
-      "class": "Stackra\\Finance\\Membership\\Events\\MembershipTrialConverted",
+      "class": "Academorix\\Finance\\Membership\\Events\\MembershipTrialConverted",
       "trigger": "Trial ended AND the first paid renewal succeeded. High-signal for growth analytics + funnel measurement.",
       "queue": "finance",
       "consumers": [
@@ -347,7 +347,7 @@
     },
     {
       "name": "MembershipPlanCreated",
-      "class": "Stackra\\Finance\\Membership\\Events\\MembershipPlanCreated",
+      "class": "Academorix\\Finance\\Membership\\Events\\MembershipPlanCreated",
       "trigger": "New plan added to the catalog. Consumes 1 unit of membership_plan_slot.",
       "queue": "finance",
       "consumers": ["audit::WriteToAuditLog", "activity::WriteToActivityLog"],
@@ -364,7 +364,7 @@
     },
     {
       "name": "MembershipPlanArchived",
-      "class": "Stackra\\Finance\\Membership\\Events\\MembershipPlanArchived",
+      "class": "Academorix\\Finance\\Membership\\Events\\MembershipPlanArchived",
       "trigger": "Plan archived (is_active=false). Refused when active memberships reference the plan — enforced by PreventPlanArchiveWithActiveMemberships hook. Releases 1 unit of membership_plan_slot.",
       "queue": "finance",
       "consumers": ["audit::WriteToAuditLog", "activity::WriteToActivityLog"],
@@ -377,7 +377,7 @@
     },
     {
       "name": "MembershipPlanCapacityReached",
-      "class": "Stackra\\Finance\\Membership\\Events\\MembershipPlanCapacityReached",
+      "class": "Academorix\\Finance\\Membership\\Events\\MembershipPlanCapacityReached",
       "trigger": "plan.current_active_members reached plan.max_active_members. Admin notified so they can raise capacity or communicate a waitlist.",
       "queue": "finance",
       "consumers": [
@@ -394,7 +394,7 @@
     },
     {
       "name": "PassIssued",
-      "class": "Stackra\\Finance\\Membership\\Events\\PassIssued",
+      "class": "Academorix\\Finance\\Membership\\Events\\PassIssued",
       "trigger": "One pass issued for a membership period. Fires N times when a period grants N passes.",
       "queue": "finance",
       "consumers": ["audit::WriteToAuditLog", "cache::InvalidatePassCache"],
@@ -409,7 +409,7 @@
     },
     {
       "name": "PassConsumed",
-      "class": "Stackra\\Finance\\Membership\\Events\\PassConsumed",
+      "class": "Academorix\\Finance\\Membership\\Events\\PassConsumed",
       "trigger": "Session check-in consumed a pass. Refused if pass already consumed OR outside valid window.",
       "queue": "finance",
       "consumers": [
@@ -427,7 +427,7 @@
     },
     {
       "name": "PassExpired",
-      "class": "Stackra\\Finance\\Membership\\Events\\PassExpired",
+      "class": "Academorix\\Finance\\Membership\\Events\\PassExpired",
       "trigger": "ExpireStalePassesJob nightly sweep found an unconsumed pass past valid_until. Distinct from PassRefunded (admin-initiated return).",
       "queue": "finance",
       "consumers": ["audit::WriteToAuditLog", "cache::InvalidatePassCache"],
@@ -440,7 +440,7 @@
     },
     {
       "name": "PassRefunded",
-      "class": "Stackra\\Finance\\Membership\\Events\\PassRefunded",
+      "class": "Academorix\\Finance\\Membership\\Events\\PassRefunded",
       "trigger": "Admin returned a pass (e.g. session cancelled). Pass returns to available; membership pass count restored.",
       "queue": "finance",
       "consumers": [

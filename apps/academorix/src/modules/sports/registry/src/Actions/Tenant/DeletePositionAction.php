@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Registry\Actions\Tenant;
+namespace Academorix\Registry\Actions\Tenant;
 
-use Stackra\Registry\Contracts\Repositories\PositionRepositoryInterface;
+use Academorix\Registry\Contracts\Repositories\PositionRepositoryInterface;
 use Stackra\Routing\Attributes\AsAction;
 use Stackra\Routing\Attributes\Middleware;
 use Stackra\Routing\Concerns\AsController;

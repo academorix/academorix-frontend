@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Rbac\Exceptions;
 
-use Stackra\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Composite unique (application_id, tenant_id, name, guard_name) collision.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class RoleNameDuplicateException extends AcademorixException
+final class RoleNameDuplicateException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

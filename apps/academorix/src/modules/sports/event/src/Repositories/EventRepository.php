@@ -4,25 +4,25 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Event\Repositories;
+namespace Academorix\Event\Repositories;
 
 use Stackra\Crud\Attributes\AsRepository;
 use Stackra\Crud\Attributes\Cacheable;
 use Stackra\Crud\Attributes\Filterable;
 use Stackra\Crud\Attributes\UseModel;
 use Stackra\Crud\Repositories\Repository;
-use Stackra\Event\Contracts\Data\EventInterface;
-use Stackra\Event\Contracts\Repositories\EventRepositoryInterface;
-use Stackra\Event\Models\Event;
+use Academorix\Event\Contracts\Data\EventInterface;
+use Academorix\Event\Contracts\Repositories\EventRepositoryInterface;
+use Academorix\Event\Models\Event;
 
 /**
- * Attribute-first Eloquent repository for {@see Stackra\Event\Models\Event}.
+ * Attribute-first Eloquent repository for {@see Academorix\Event\Models\Event}.
  *
  * Bound to the interface via `#[AsRepository]`; the model comes from
  * `#[UseModel(EventInterface::class)]` which resolves to
  * `Event` through the interface's `#[Bind]`.
  *
- * @extends Repository<\Stackra\Event\Models\Event>
+ * @extends Repository<\Academorix\Event\Models\Event>
  *
  * @category Event
  *

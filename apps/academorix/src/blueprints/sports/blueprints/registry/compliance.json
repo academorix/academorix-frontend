@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/sports-registry/compliance",
+  "id": "academorix://modules/sports-registry/compliance",
   "$version": 1,
   "title": "sports-registry — compliance evidence",
   "description": "The sports registry carries reference data (taxonomy names + slugs + governing bodies). No PII on any row. Zero third-party subprocessors. The compliance surface is narrow: mostly audit-trail integrity + data-minimisation attestation.",

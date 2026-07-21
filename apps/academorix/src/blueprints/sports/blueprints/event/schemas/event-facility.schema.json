@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/event/schemas/event-facility",
+  "id": "academorix://modules/event/schemas/event-facility",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "EventFacility",
@@ -13,9 +13,9 @@
     "keyType": "string",
     "keyPrefix": "efc_",
     "incrementing": false,
-    "model": "Stackra\\Sports\\Event\\Models\\EventFacility",
-    "interface": "Stackra\\Sports\\Event\\Contracts\\Data\\EventFacilityInterface",
-    "implements": ["Stackra\\Sports\\Event\\Contracts\\Data\\EventFacilityInterface"],
+    "model": "Academorix\\Sports\\Event\\Models\\EventFacility",
+    "interface": "Academorix\\Sports\\Event\\Contracts\\Data\\EventFacilityInterface",
+    "implements": ["Academorix\\Sports\\Event\\Contracts\\Data\\EventFacilityInterface"],
     "traits": [
       "HasFactory",
       "HasUlids",

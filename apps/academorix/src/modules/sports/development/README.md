@@ -1,4 +1,4 @@
-# stackra/development
+# academorix/development
 
 Server-side Laravel package for the `development` module. Auto-generated from
 the blueprint at `modules/sports/blueprints/development/`.
@@ -48,6 +48,6 @@ file is a hand-tuned override that survives regeneration.
 ## Companion wire SDK
 
 The wire-visible Saloon + Spatie Data package lives at
-`stackra-sports/development-sdk` under `sdk/sports-development-sdk/`.
+`academorix-sports/development-sdk` under `sdk/sports-development-sdk/`.
 Consumers cross the service boundary through the SDK; this package is the
 SERVER-side owner of the domain.

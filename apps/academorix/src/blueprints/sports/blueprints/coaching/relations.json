@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/coaching/relations",
+  "id": "academorix://modules/coaching/relations",
   "$version": 1,
   "title": "coaching — model relationships",
   "description": "Four owned entities: CoachingProfile, CoachAssignment, CoachCertification, CoachSkillRating. Every row carries `tenant_id` (CASCADE) per tenancy-columns.md §3. NEVER `application_id`, `region_id`, `organization_id`, `branch_id` (branch cascades through profile.branch_id), or `scope_node_id` — forbidden per §5. Every outbound FK stays same-tenant per defense-in-depth.",
@@ -159,18 +159,18 @@
     {
       "from": "CoachAssignment.assignable",
       "types": [
-        "Stackra\\Sports\\Session\\Models\\Session",
-        "Stackra\\Sports\\Team\\Models\\Team",
-        "Stackra\\Sports\\Event\\Models\\Event"
+        "Academorix\\Sports\\Session\\Models\\Session",
+        "Academorix\\Sports\\Team\\Models\\Team",
+        "Academorix\\Sports\\Event\\Models\\Event"
       ],
       "description": "The thing being coached. Enforced string enum in the assignable_type column: 'Session' | 'Team' | 'Event'."
     },
     {
       "from": "CoachSkillRating.ratable",
       "types": [
-        "Stackra\\Sports\\Registry\\Models\\Sport",
-        "Stackra\\Sports\\Registry\\Models\\Discipline",
-        "Stackra\\Sports\\Registry\\Models\\Position"
+        "Academorix\\Sports\\Registry\\Models\\Sport",
+        "Academorix\\Sports\\Registry\\Models\\Discipline",
+        "Academorix\\Sports\\Registry\\Models\\Position"
       ],
       "description": "The skill dimension being rated. Enforced string enum in the ratable_type column: 'Sport' | 'Discipline' | 'Position'."
     }

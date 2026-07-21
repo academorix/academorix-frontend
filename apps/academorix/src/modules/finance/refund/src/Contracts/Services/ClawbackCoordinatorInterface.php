@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Refund\Contracts\Services;
+namespace Academorix\Refund\Contracts\Services;
 
-use Stackra\Refund\Services\ClawbackCoordinator;
+use Academorix\Refund\Services\ClawbackCoordinator;
 use Illuminate\Container\Attributes\Bind;
 
 /**

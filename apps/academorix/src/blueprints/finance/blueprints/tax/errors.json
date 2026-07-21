@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/tax/errors",
+  "id": "academorix://modules/tax/errors",
   "$version": 1,
   "title": "tax — error codes",
   "namespace": "tax",

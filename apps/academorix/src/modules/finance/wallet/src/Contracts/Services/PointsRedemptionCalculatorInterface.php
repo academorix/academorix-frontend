@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Wallet\Contracts\Services;
+namespace Academorix\Wallet\Contracts\Services;
 
-use Stackra\Wallet\Services\PointsRedemptionCalculator;
+use Academorix\Wallet\Services\PointsRedemptionCalculator;
 use Illuminate\Container\Attributes\Bind;
 
 /**

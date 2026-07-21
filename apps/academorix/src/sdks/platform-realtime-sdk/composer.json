@@ -1,10 +1,10 @@
 {
-  "name": "stackra-platform/realtime-sdk",
+  "name": "academorix-platform/realtime-sdk",
   "type": "library",
-  "description": "Wire-visible SDK surface (Spatie Data DTOs + Saloon Request transport + fluent Resources) for the `realtime` module of the Platform service. Auto-discovered at boot by stackra/platform-sdk via #[AsSdkResource(name: 'realtime', service: 'platform')]; consumed by every cross-service caller strictly over HTTP.",
+  "description": "Wire-visible SDK surface (Spatie Data DTOs + Saloon Request transport + fluent Resources) for the `realtime` module of the Platform service. Auto-discovered at boot by academorix/platform-sdk via #[AsSdkResource(name: 'realtime', service: 'platform')]; consumed by every cross-service caller strictly over HTTP.",
   "license": "proprietary",
   "keywords": [
-    "stackra",
+    "academorix",
     "sdk",
     "saloon",
     "spatie-data",
@@ -32,12 +32,12 @@
   },
   "autoload": {
     "psr-4": {
-      "Stackra\\\\PlatformRealtimeSdk\\\\": "src/"
+      "Academorix\\\\PlatformRealtimeSdk\\": "src/"
     }
   },
   "autoload-dev": {
     "psr-4": {
-      "Stackra\\\\PlatformRealtimeSdk\\\\Tests\\\\": "tests/"
+      "Academorix\\\\PlatformRealtimeSdk\\\\Tests\\": "tests/"
     }
   },
   "extra": {

@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/coupon/relations",
+  "id": "academorix://modules/coupon/relations",
   "$version": 1,
   "title": "coupon — model relationships",
   "description": "Two owned entities. Every row is tenant-scoped (cascades on tenant delete). Coupon is the aggregate root; CouponRedemption belongs to a Coupon. Every outbound FK stays same-tenant per tenancy-columns.md §5. NO application_id / organization_id / region_id / branch_id / scope_node_id on any owned row — all cascade through tenant_id.",
@@ -100,6 +100,6 @@
     "CouponRedemption does NOT carry `applicable_plan_id` directly — that's a Coupon config concern (Coupon.applicable_plan_ids). The redemption freezes the coupon config into discount_snapshot for audit; the applied_to link handles the plan-membership relationship via the target's own FKs.",
     "The composite unique index on (tenant_id, coupon_id, customer_type, customer_id, applied_to_type, applied_to_id) prevents double-redemption on the same target — a customer cannot redeem the same coupon twice on the same invoice.",
     "CouponRedemption can have ONLY ONE parent Coupon — coupons stack at the target level (multiple redemption rows per invoice when is_stackable), not at the redemption level.",
-    "polymorphic morphTo on customer/applied_to uses `stackra/foundation`'s HasPolyRelation trait — refuses cross-tenant morph resolution at write time."
+    "polymorphic morphTo on customer/applied_to uses `academorix/foundation`'s HasPolyRelation trait — refuses cross-tenant morph resolution at write time."
   ]
 }

@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Mfa\Exceptions;
 
-use Stackra\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Operation refused because it requires MFA enrolment but the Identity has none.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class MfaNotEnrolledException extends AcademorixException
+final class MfaNotEnrolledException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

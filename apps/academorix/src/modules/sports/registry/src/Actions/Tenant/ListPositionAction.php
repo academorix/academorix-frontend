@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Registry\Actions\Tenant;
+namespace Academorix\Registry\Actions\Tenant;
 
-use Stackra\Registry\Contracts\Repositories\PositionRepositoryInterface;
-use Stackra\Registry\Data\PositionData;
+use Academorix\Registry\Contracts\Repositories\PositionRepositoryInterface;
+use Academorix\Registry\Data\PositionData;
 use Stackra\Routing\Attributes\AsAction;
 use Stackra\Routing\Attributes\Middleware;
 use Stackra\Routing\Concerns\AsController;
@@ -50,7 +50,7 @@ final class ListPositionAction
      */
     public function __invoke(Request $request): PaginatedDataCollection
     {
-        /** @var LengthAwarePaginator<int, \Stackra\Registry\Models\Position> $page */
+        /** @var LengthAwarePaginator<int, \Academorix\Registry\Models\Position> $page */
         $page = $this->repository->paginate(
             perPage: (int) $request->integer('per_page', 15),
         );

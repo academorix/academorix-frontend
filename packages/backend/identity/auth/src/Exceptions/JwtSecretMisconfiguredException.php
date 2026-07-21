@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Stackra\Auth\Exceptions;
 
-use Stackra\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Raised at boot when the HS256 shared secret is unset or too short.
@@ -18,7 +18,7 @@ use Stackra\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class JwtSecretMisconfiguredException extends AcademorixException
+final class JwtSecretMisconfiguredException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

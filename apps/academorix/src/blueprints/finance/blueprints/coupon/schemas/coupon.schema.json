@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/coupon/schemas/coupon",
+  "id": "academorix://modules/coupon/schemas/coupon",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "Coupon",
@@ -13,9 +13,9 @@
     "keyType": "string",
     "keyPrefix": "cpn_",
     "incrementing": false,
-    "model": "Stackra\\Finance\\Coupon\\Models\\Coupon",
-    "interface": "Stackra\\Finance\\Coupon\\Contracts\\Data\\CouponInterface",
-    "implements": ["Stackra\\Finance\\Coupon\\Contracts\\Data\\CouponInterface"],
+    "model": "Academorix\\Finance\\Coupon\\Models\\Coupon",
+    "interface": "Academorix\\Finance\\Coupon\\Contracts\\Data\\CouponInterface",
+    "implements": ["Academorix\\Finance\\Coupon\\Contracts\\Data\\CouponInterface"],
     "traits": [
       "HasFactory",
       "HasUlids",

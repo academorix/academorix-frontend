@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Registry\Actions\Tenant;
+namespace Academorix\Registry\Actions\Tenant;
 
-use Stackra\Registry\Contracts\Repositories\DisciplineRepositoryInterface;
-use Stackra\Registry\Data\DisciplineData;
+use Academorix\Registry\Contracts\Repositories\DisciplineRepositoryInterface;
+use Academorix\Registry\Data\DisciplineData;
 use Stackra\Routing\Attributes\AsAction;
 use Stackra\Routing\Attributes\Middleware;
 use Stackra\Routing\Concerns\AsController;
@@ -50,7 +50,7 @@ final class ListDisciplineAction
      */
     public function __invoke(Request $request): PaginatedDataCollection
     {
-        /** @var LengthAwarePaginator<int, \Stackra\Registry\Models\Discipline> $page */
+        /** @var LengthAwarePaginator<int, \Academorix\Registry\Models\Discipline> $page */
         $page = $this->repository->paginate(
             perPage: (int) $request->integer('per_page', 15),
         );

@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Competition\Actions\Tenant;
+namespace Academorix\Competition\Actions\Tenant;
 
-use Stackra\Competition\Contracts\Repositories\CompetitionRepositoryInterface;
-use Stackra\Competition\Data\CompetitionData;
+use Academorix\Competition\Contracts\Repositories\CompetitionRepositoryInterface;
+use Academorix\Competition\Data\CompetitionData;
 use Stackra\Routing\Attributes\AsAction;
 use Stackra\Routing\Attributes\Middleware;
 use Stackra\Routing\Concerns\AsController;
@@ -50,7 +50,7 @@ final class ListCompetitionAction
      */
     public function __invoke(Request $request): PaginatedDataCollection
     {
-        /** @var LengthAwarePaginator<int, \Stackra\Competition\Models\Competition> $page */
+        /** @var LengthAwarePaginator<int, \Academorix\Competition\Models\Competition> $page */
         $page = $this->repository->paginate(
             perPage: (int) $request->integer('per_page', 15),
         );

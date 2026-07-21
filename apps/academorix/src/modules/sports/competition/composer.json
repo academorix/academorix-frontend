@@ -1,10 +1,10 @@
 {
-  "name": "stackra/competition",
+  "name": "academorix/competition",
   "type": "library",
-  "description": "Stackra Competition module — server-side Laravel package emitted from the module blueprint at `modules/sports/blueprints/competition/`. Complements the wire SDK at `stackra-sports/competition-sdk`.",
+  "description": "Academorix Competition module — server-side Laravel package emitted from the module blueprint at `modules/sports/blueprints/competition/`. Complements the wire SDK at `academorix-sports/competition-sdk`.",
   "license": "proprietary",
   "keywords": [
-    "stackra",
+    "academorix",
     "module",
     "laravel",
     "sports",
@@ -22,7 +22,7 @@
     "stackra/routing": "@dev",
     "stackra/service-provider": "@dev",
     "stackra/support": "@dev",
-    "stackra-sports/competition-sdk": "@dev"
+    "academorix-sports/competition-sdk": "@dev"
   },
   "require-dev": {
     "orchestra/testbench": "^11.0",
@@ -33,12 +33,12 @@
   },
   "autoload": {
     "psr-4": {
-      "Stackra\\Competition\\": "src/"
+      "Academorix\\Competition\\": "src/"
     }
   },
   "autoload-dev": {
     "psr-4": {
-      "Stackra\\Competition\\Tests\\": "tests/"
+      "Academorix\\Competition\\Tests\\": "tests/"
     }
   },
   "extra": {

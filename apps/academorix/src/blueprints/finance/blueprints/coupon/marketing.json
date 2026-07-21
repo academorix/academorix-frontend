@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/coupon/marketing",
+  "id": "academorix://modules/coupon/marketing",
   "$version": 1,
   "title": "coupon — marketing events (ad-network conversions)",
   "lane": "marketing",

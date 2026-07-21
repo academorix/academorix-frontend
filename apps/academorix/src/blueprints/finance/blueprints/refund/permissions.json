@@ -1,8 +1,8 @@
 {
-  "id": "stackra://modules/refund/permissions",
+  "id": "academorix://modules/refund/permissions",
   "$version": 1,
   "title": "refund — permissions",
-  "seeder": "Stackra\\Finance\\Refund\\Database\\Seeders\\RefundPermissionSeeder",
+  "seeder": "Academorix\\Finance\\Refund\\Database\\Seeders\\RefundPermissionSeeder",
   "isSystem": true,
   "description": "Two audiences. Tenant plane (sanctum) — owner + finance + admin manage refunds + read refund ledger; support role reads only; marketing role reads reports only (for ROAS analysis); customers hold `refunds.request` to submit own refund requests + `refunds.cancel` scoped to own refunds. Platform plane (platform_admin) — cross-tenant read for support intervention + regulator-facing reporting. All tenant permissions carry the appropriate resource prefix (`refunds.` for the aggregate, `refunds.view-financials` for confidential fields).",
   "permissions": [

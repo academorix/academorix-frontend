@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Coupon\Actions\Tenant;
+namespace Academorix\Coupon\Actions\Tenant;
 
-use Stackra\Coupon\Contracts\Services\CouponRedeemerInterface;
-use Stackra\Coupon\Data\Requests\PreviewCouponRequestData;
+use Academorix\Coupon\Contracts\Services\CouponRedeemerInterface;
+use Academorix\Coupon\Data\Requests\PreviewCouponRequestData;
 use Stackra\Routing\Attributes\AsAction;
 use Stackra\Routing\Attributes\Middleware;
 use Stackra\Routing\Attributes\Post;

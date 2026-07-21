@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/analytics/schemas/analytics-event",
+  "id": "academorix://modules/analytics/schemas/analytics-event",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "AnalyticsEvent",
@@ -12,9 +12,9 @@
     "keyType": "string",
     "keyPrefix": "ane_",
     "incrementing": false,
-    "model": "Stackra\\Growth\\Analytics\\Models\\AnalyticsEvent",
-    "interface": "Stackra\\Growth\\Analytics\\Contracts\\Data\\AnalyticsEventInterface",
-    "implements": ["Stackra\\Growth\\Analytics\\Contracts\\Data\\AnalyticsEventInterface"],
+    "model": "Academorix\\Growth\\Analytics\\Models\\AnalyticsEvent",
+    "interface": "Academorix\\Growth\\Analytics\\Contracts\\Data\\AnalyticsEventInterface",
+    "implements": ["Academorix\\Growth\\Analytics\\Contracts\\Data\\AnalyticsEventInterface"],
     "traits": [
       "HasFactory",
       "HasUlids",
@@ -71,7 +71,7 @@
         "type": "string",
         "length": 128,
         "nullable": false,
-        "description": "Polymorphic subject class. `Stackra\\User\\Models\\User` for identified users; `Stackra\\Growth\\Analytics\\Models\\AnalyticsIdentity` for anonymous subjects."
+        "description": "Polymorphic subject class. `Academorix\\User\\Models\\User` for identified users; `Academorix\\Growth\\Analytics\\Models\\AnalyticsIdentity` for anonymous subjects."
       },
       "subject_id": {
         "type": "string",

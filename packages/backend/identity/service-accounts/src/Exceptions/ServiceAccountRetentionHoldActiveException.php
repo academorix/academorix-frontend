@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\ServiceAccounts\Exceptions;
 
-use Stackra\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Attempted to hard-delete an SA still inside the retention hold.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class ServiceAccountRetentionHoldActiveException extends AcademorixException
+final class ServiceAccountRetentionHoldActiveException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/age-group/data-classes",
+  "id": "academorix://modules/age-group/data-classes",
   "$version": 1,
   "title": "age-group — field classification",
   "description": "AgeGroup carries commercial + safeguarding reference data. No PII on the row itself (Athletes reference it, but the AgeGroup row never carries an Athlete's DOB). The safeguarding-critical fields are `min_age_inclusive` + `max_age_inclusive` + `is_youth` — mutations to these can invalidate downstream Athlete eligibility for their currently-enrolled Teams. Bounds + cutoff changes are financial-adjacent (invoice pricing sometimes ties to age-tier tuition rates) and audit-critical for child-safety compliance (COPPA + FERPA + GDPR-child).",

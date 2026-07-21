@@ -1,14 +1,14 @@
 {
-  "id": "stackra://modules/refund/settings",
+  "id": "academorix://modules/refund/settings",
   "$version": 1,
   "title": "refund — settings",
   "description": "Tenant-facing preferences (approval thresholds, notification cadence, retention window, refund policy configuration). No user-level preferences — refunds are admin-managed workflows, not user preferences.",
   "storedIn": "settings",
-  "reference": { "contract": "stackra://modules/settings/attributes" },
+  "reference": { "contract": "academorix://modules/settings/attributes" },
   "groups": [
     {
       "key": "refund",
-      "class": "Stackra\\Finance\\Refund\\Settings\\RefundSettings",
+      "class": "Academorix\\Finance\\Refund\\Settings\\RefundSettings",
       "label": "Refunds",
       "description": "Tenant-wide refund workflow configuration.",
       "icon": "arrow-uturn-left",

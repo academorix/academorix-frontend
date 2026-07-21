@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/sports-registry/schemas/discipline",
+  "id": "academorix://modules/sports-registry/schemas/discipline",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "Discipline",
@@ -13,9 +13,9 @@
     "keyType": "string",
     "keyPrefix": "dis_",
     "incrementing": false,
-    "model": "Stackra\\Sports\\Registry\\Models\\Discipline",
-    "interface": "Stackra\\Sports\\Registry\\Contracts\\Data\\DisciplineInterface",
-    "implements": ["Stackra\\Sports\\Registry\\Contracts\\Data\\DisciplineInterface"],
+    "model": "Academorix\\Sports\\Registry\\Models\\Discipline",
+    "interface": "Academorix\\Sports\\Registry\\Contracts\\Data\\DisciplineInterface",
+    "implements": ["Academorix\\Sports\\Registry\\Contracts\\Data\\DisciplineInterface"],
     "traits": [
       "HasFactory",
       "HasPrefixedUlid",
@@ -36,7 +36,7 @@
       "player_count_max": "integer",
       "session_duration_default_minutes": "integer",
       "sort_order": "integer",
-      "format_type": "Stackra\\Sports\\Registry\\Enums\\FormatType",
+      "format_type": "Academorix\\Sports\\Registry\\Enums\\FormatType",
       "metadata": "array"
     },
     "appends": ["display_label", "downstream_reference_count", "position_count"],

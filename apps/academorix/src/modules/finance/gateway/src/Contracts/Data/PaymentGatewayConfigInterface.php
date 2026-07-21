@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Gateway\Contracts\Data;
+namespace Academorix\Gateway\Contracts\Data;
 
 use Illuminate\Container\Attributes\Bind;
-use Stackra\Gateway\Models\PaymentGatewayConfig;
+use Academorix\Gateway\Models\PaymentGatewayConfig;
 
 /**
  * Table shape for the `payment_gateway_configs` table.

@@ -9,8 +9,8 @@ Per DL-4 / DL-5 in `tasks.md`:
 
 - Stripe Connect for tenant commerce (Parents → Academy) — charge splits at
   charge time: tenant Connect account receives `charge - platform_fee`;
-  Stackra platform account receives the platform fee.
-- Paddle for SaaS billing (Academy → Stackra) — handled by
+  Academorix platform account receives the platform fee.
+- Paddle for SaaS billing (Academy → Academorix) — handled by
   `billing/subscription`, not this module.
 - Multi-gateway per tenant — the abstraction lets tenants pick their own
   provider without code changes.

@@ -4,19 +4,19 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Transaction\Database\Factories;
+namespace Academorix\Transaction\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Stackra\Transaction\Contracts\Data\TransactionLedgerEntryInterface;
-use Stackra\Transaction\Models\TransactionLedgerEntry;
+use Academorix\Transaction\Contracts\Data\TransactionLedgerEntryInterface;
+use Academorix\Transaction\Models\TransactionLedgerEntry;
 
 /**
- * Factory for {@see \Stackra\Transaction\Models\TransactionLedgerEntry}.
+ * Factory for {@see \Academorix\Transaction\Models\TransactionLedgerEntry}.
  *
  * Auto-generated skeleton — extend with named states as domain
  * cases emerge (e.g. `->published()`, `->overdue()`, `->archived()`).
  *
- * @extends Factory<\Stackra\Transaction\Models\TransactionLedgerEntry>
+ * @extends Factory<\Academorix\Transaction\Models\TransactionLedgerEntry>
  *
  * @category Transaction
  *

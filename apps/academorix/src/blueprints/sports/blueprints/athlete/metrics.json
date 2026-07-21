@@ -1,9 +1,9 @@
 {
-  "id": "stackra://modules/athlete/metrics",
+  "id": "academorix://modules/athlete/metrics",
   "$version": 1,
   "title": "athlete — OpenTelemetry metrics",
   "instrumentation": "self via telemetry",
-  "namespace": "stackra.athlete",
+  "namespace": "academorix.athlete",
   "labelConventions": {
     "always": [],
     "commonlyAvailable": [
@@ -29,97 +29,97 @@
   },
   "metrics": [
     {
-      "name": "stackra.athlete.roster.count",
+      "name": "academorix.athlete.roster.count",
       "kind": "gauge",
       "unit": "athletes",
       "labels": ["status", "age_bucket"],
       "description": "Count of athletes per (status, age_bucket). Sampled hourly. Powers roster dashboards."
     },
     {
-      "name": "stackra.athlete.created_total",
+      "name": "academorix.athlete.created_total",
       "kind": "counter",
       "unit": "athletes",
       "labels": ["source", "age_bucket", "is_minor"]
     },
     {
-      "name": "stackra.athlete.graduated_total",
+      "name": "academorix.athlete.graduated_total",
       "kind": "counter",
       "unit": "athletes",
       "labels": ["age_bucket", "days_of_membership_bucket"]
     },
     {
-      "name": "stackra.athlete.withdrawn_total",
+      "name": "academorix.athlete.withdrawn_total",
       "kind": "counter",
       "unit": "athletes",
       "labels": ["withdrawal_reason", "was_guardian_initiated"]
     },
     {
-      "name": "stackra.athlete.paused_total",
+      "name": "academorix.athlete.paused_total",
       "kind": "counter",
       "unit": "athletes",
       "labels": [],
       "description": "Safeguarding pause frequency. Never labelled by reason — anti-discrimination compliance."
     },
     {
-      "name": "stackra.athlete.archived_total",
+      "name": "academorix.athlete.archived_total",
       "kind": "counter",
       "unit": "athletes",
       "labels": ["prior_status"]
     },
     {
-      "name": "stackra.athlete.linked_to_user_total",
+      "name": "academorix.athlete.linked_to_user_total",
       "kind": "counter",
       "unit": "links",
       "labels": ["trigger"]
     },
     {
-      "name": "stackra.athlete.age_group_snapshot.updates_total",
+      "name": "academorix.athlete.age_group_snapshot.updates_total",
       "kind": "counter",
       "unit": "updates",
       "labels": ["trigger"]
     },
     {
-      "name": "stackra.athlete.age_group_snapshot.unresolved_total",
+      "name": "academorix.athlete.age_group_snapshot.unresolved_total",
       "kind": "counter",
       "unit": "athletes",
       "labels": [],
       "description": "Athletes whose DOB fell outside every catalog. Elevated indicates a catalog gap — investigate."
     },
     {
-      "name": "stackra.athlete.age_group_snapshot.stale_backlog",
+      "name": "academorix.athlete.age_group_snapshot.stale_backlog",
       "kind": "gauge",
       "unit": "athletes",
       "labels": [],
       "description": "Count of athletes with current_age_group_snapshot_at > 48h ago. Sampled hourly."
     },
     {
-      "name": "stackra.athlete.consent.recorded_total",
+      "name": "academorix.athlete.consent.recorded_total",
       "kind": "counter",
       "unit": "consents",
       "labels": ["was_by_guardian"]
     },
     {
-      "name": "stackra.athlete.consent.revoked_total",
+      "name": "academorix.athlete.consent.revoked_total",
       "kind": "counter",
       "unit": "revocations",
       "labels": ["revoked_consent"]
     },
     {
-      "name": "stackra.athlete.consent.expired_snapshot_total",
+      "name": "academorix.athlete.consent.expired_snapshot_total",
       "kind": "counter",
       "unit": "snapshots",
       "labels": [],
       "description": "Consent snapshots aged past 365 days without re-consent. Elevated indicates guardian outreach failure."
     },
     {
-      "name": "stackra.athlete.medical.writes_total",
+      "name": "academorix.athlete.medical.writes_total",
       "kind": "counter",
       "unit": "writes",
       "labels": [],
       "description": "Frequency of medical mutations. Never labelled by field/value — private-tier."
     },
     {
-      "name": "stackra.athlete.medical.write_duration_ms",
+      "name": "academorix.athlete.medical.write_duration_ms",
       "kind": "histogram",
       "unit": "ms",
       "buckets": [10, 50, 200, 1000],
@@ -127,48 +127,48 @@
       "description": "P99 target < 200ms."
     },
     {
-      "name": "stackra.athlete.medical.large_batch_total",
+      "name": "academorix.athlete.medical.large_batch_total",
       "kind": "counter",
       "unit": "batches",
       "labels": [],
       "description": "Medical writes touching > 3 fields at once. Investigate outliers for compromised HR account."
     },
     {
-      "name": "stackra.athlete.minor_turned_adult_total",
+      "name": "academorix.athlete.minor_turned_adult_total",
       "kind": "counter",
       "unit": "athletes",
       "labels": ["boundary_crossed"]
     },
     {
-      "name": "stackra.athlete.retention.pii_redactions_total",
+      "name": "academorix.athlete.retention.pii_redactions_total",
       "kind": "counter",
       "unit": "redactions",
       "labels": [],
       "description": "PurgeArchivedAthletesJob phase 1 redaction count. Baseline: ~1 per archived athlete per 90 days."
     },
     {
-      "name": "stackra.athlete.retention.hard_purges_total",
+      "name": "academorix.athlete.retention.hard_purges_total",
       "kind": "counter",
       "unit": "purges",
       "labels": [],
       "description": "PurgeArchivedAthletesJob phase 2 hard-purge count."
     },
     {
-      "name": "stackra.athlete.retention.blocked_total",
+      "name": "academorix.athlete.retention.blocked_total",
       "kind": "counter",
       "unit": "blocks",
       "labels": ["reason"],
       "description": "Hard-purge attempts blocked by FK RESTRICT. reason: enrollment_still_present / membership_reference / other."
     },
     {
-      "name": "stackra.athlete.entitlement.gate_refusals_total",
+      "name": "academorix.athlete.entitlement.gate_refusals_total",
       "kind": "counter",
       "unit": "refusals",
       "labels": ["entitlement_key"],
       "description": "Number of hits refused by the entitlement middleware. Product signal for upgrade-CTA impressions."
     },
     {
-      "name": "stackra.athlete.minor_name_leakage_incidents_total",
+      "name": "academorix.athlete.minor_name_leakage_incidents_total",
       "kind": "counter",
       "unit": "incidents",
       "labels": [],

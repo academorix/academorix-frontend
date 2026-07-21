@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/chargeback/errors",
+  "id": "academorix://modules/chargeback/errors",
   "$version": 1,
   "title": "chargeback — error codes",
   "namespace": "chargeback",

@@ -4,7 +4,7 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Athlete\Settings;
+namespace Academorix\Athlete\Settings;
 
 use Stackra\Settings\Attributes\AsSetting;
 use Stackra\Settings\Attributes\SettingField;

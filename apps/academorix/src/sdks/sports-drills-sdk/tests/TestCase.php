@@ -7,7 +7,7 @@ namespace Stackra\SportsDrillsSdk\Tests;
 use Orchestra\Testbench\TestCase as OrchestraTestCase;
 
 /**
- * Base test case for stackra-sports/drills-sdk.
+ * Base test case for academorix-sports/drills-sdk.
  *
  * @category DrillsSdk
  *

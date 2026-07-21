@@ -1,12 +1,12 @@
 {
-  "id": "stackra://modules/season/observers",
+  "id": "academorix://modules/season/observers",
   "$version": 1,
   "title": "season — Eloquent observers",
   "description": "One observer — SeasonObserver — enforces the module's write-time invariants: entitlement gating (Small tier lockout), scoping-tuple integrity, date-range validation, one-current-per-tuple invariant, immutability rules on scoping columns post-create, and the guardrails on status transitions.",
   "observers": [
     {
       "model": "Season",
-      "observer": "Stackra\\Sports\\Season\\Observers\\SeasonObserver",
+      "observer": "Academorix\\Sports\\Season\\Observers\\SeasonObserver",
       "handles": [
         "creating -> populate ULID prefix `sea_`.",
         "creating -> refuse when tenant does NOT hold `sports_seasons` entitlement (returns `SEASON_FEATURE_NOT_ENTITLED`, 402 — Small tier is locked out entirely).",

@@ -1,8 +1,8 @@
 {
-  "id": "stackra://modules/attribution/subprocessors",
+  "id": "academorix://modules/attribution/subprocessors",
   "$version": 1,
   "title": "attribution — subprocessors",
-  "description": "The Attribution module itself engages ZERO third-party subprocessors — every state transition happens within the Stackra platform. Attribution DATA flows downstream to the Marketing module (Wave 5), which engages ad-network processors (Google, Meta, TikTok, Microsoft, Snapchat) for conversion forwarding — those live in marketing::subprocessors.json. Similarly the Analytics module (Wave 5) engages processors like Segment / PostHog — those live in analytics::subprocessors.json. This file lists ZERO active subprocessors to be explicit about the module's boundary — attribution capture + storage is fully first-party.",
+  "description": "The Attribution module itself engages ZERO third-party subprocessors — every state transition happens within the Academorix platform. Attribution DATA flows downstream to the Marketing module (Wave 5), which engages ad-network processors (Google, Meta, TikTok, Microsoft, Snapchat) for conversion forwarding — those live in marketing::subprocessors.json. Similarly the Analytics module (Wave 5) engages processors like Segment / PostHog — those live in analytics::subprocessors.json. This file lists ZERO active subprocessors to be explicit about the module's boundary — attribution capture + storage is fully first-party.",
   "subprocessors": [],
   "downstream_subprocessors_referenced": [
     {

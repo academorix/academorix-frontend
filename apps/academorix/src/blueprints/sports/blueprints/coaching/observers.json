@@ -1,12 +1,12 @@
 {
-  "id": "stackra://modules/coaching/observers",
+  "id": "academorix://modules/coaching/observers",
   "$version": 1,
   "title": "coaching — Eloquent observers",
   "description": "Four observers, one per entity. Each enforces write-time invariants specific to its aggregate.",
   "observers": [
     {
       "model": "CoachingProfile",
-      "observer": "Stackra\\Sports\\Coaching\\Observers\\CoachingProfileObserver",
+      "observer": "Academorix\\Sports\\Coaching\\Observers\\CoachingProfileObserver",
       "handles": [
         "creating → populate ULID prefix `cop_`",
         "creating → refuse when tenant does not hold `coaching_capture` entitlement (returns COACHING_CAPTURE_NOT_ENABLED)",
@@ -37,7 +37,7 @@
     },
     {
       "model": "CoachAssignment",
-      "observer": "Stackra\\Sports\\Coaching\\Observers\\CoachAssignmentObserver",
+      "observer": "Academorix\\Sports\\Coaching\\Observers\\CoachAssignmentObserver",
       "handles": [
         "creating → populate ULID prefix `cas_`",
         "creating → resolve coaching_profile; refuse when profile.is_active=false (returns COACHING_PROFILE_INACTIVE)",
@@ -62,7 +62,7 @@
     },
     {
       "model": "CoachCertification",
-      "observer": "Stackra\\Sports\\Coaching\\Observers\\CoachCertificationObserver",
+      "observer": "Academorix\\Sports\\Coaching\\Observers\\CoachCertificationObserver",
       "handles": [
         "creating → populate ULID prefix `ccf_`",
         "creating → refuse when coaching_profile.tenant_id != cert.tenant_id (cross-tenant defense-in-depth)",
@@ -78,7 +78,7 @@
     },
     {
       "model": "CoachSkillRating",
-      "observer": "Stackra\\Sports\\Coaching\\Observers\\CoachSkillRatingObserver",
+      "observer": "Academorix\\Sports\\Coaching\\Observers\\CoachSkillRatingObserver",
       "handles": [
         "creating → populate ULID prefix `csr_`",
         "creating → refuse when tenant lacks coaching_skill_ratings entitlement (returns COACHING_SKILL_RATINGS_NOT_ENABLED)",

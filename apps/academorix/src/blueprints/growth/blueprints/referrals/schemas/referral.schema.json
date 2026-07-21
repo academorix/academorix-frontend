@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/referrals/schemas/referral",
+  "id": "academorix://modules/referrals/schemas/referral",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "Referral",
@@ -13,8 +13,8 @@
     "keyType": "string",
     "keyPrefix": "ref_",
     "incrementing": false,
-    "model": "Stackra\\Growth\\Referrals\\Models\\Referral",
-    "interface": "Stackra\\Growth\\Referrals\\Contracts\\Data\\ReferralInterface",
+    "model": "Academorix\\Growth\\Referrals\\Models\\Referral",
+    "interface": "Academorix\\Growth\\Referrals\\Contracts\\Data\\ReferralInterface",
     "traits": [
       "HasFactory",
       "HasUlids",

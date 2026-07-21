@@ -1,10 +1,10 @@
 {
-  "name": "stackra-identity/people-sdk",
+  "name": "academorix-identity/people-sdk",
   "type": "library",
-  "description": "Wire-visible SDK surface (Spatie Data DTOs + Saloon Request transport + fluent Resources) for the `people` module of the Identity service. Auto-discovered at boot by stackra/identity-sdk via #[AsSdkResource(name: 'people', service: 'identity')]; consumed by every cross-service caller strictly over HTTP.",
+  "description": "Wire-visible SDK surface (Spatie Data DTOs + Saloon Request transport + fluent Resources) for the `people` module of the Identity service. Auto-discovered at boot by academorix/identity-sdk via #[AsSdkResource(name: 'people', service: 'identity')]; consumed by every cross-service caller strictly over HTTP.",
   "license": "proprietary",
   "keywords": [
-    "stackra",
+    "academorix",
     "sdk",
     "saloon",
     "spatie-data",
@@ -32,12 +32,12 @@
   },
   "autoload": {
     "psr-4": {
-      "Stackra\\\\IdentityPeopleSdk\\\\": "src/"
+      "Academorix\\\\IdentityPeopleSdk\\": "src/"
     }
   },
   "autoload-dev": {
     "psr-4": {
-      "Stackra\\\\IdentityPeopleSdk\\\\Tests\\\\": "tests/"
+      "Academorix\\\\IdentityPeopleSdk\\\\Tests\\": "tests/"
     }
   },
   "extra": {

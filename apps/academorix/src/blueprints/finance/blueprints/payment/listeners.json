@@ -1,67 +1,67 @@
 {
-  "id": "stackra://modules/payment/listeners",
+  "id": "academorix://modules/payment/listeners",
   "$version": 1,
   "title": "payment — subscribed events",
   "listeners": [
     {
       "event": "invoice::InvoiceFinalized",
-      "listener": "Stackra\\Finance\\Payment\\Listeners\\CreatePaymentIntentOnInvoiceFinalized",
+      "listener": "Academorix\\Finance\\Payment\\Listeners\\CreatePaymentIntentOnInvoiceFinalized",
       "queue": "payment",
       "priority": 100,
       "purpose": "Reacts to invoice finalization. Creates a PaymentIntent for the newly-finalized invoice using the tenant's default provider config + the customer's default PaymentMethod (if any). This is the bridge from invoice module (money owed) to payment module (in-flight capture). Skipped when invoice.total_cents = 0 (free invoice; no payment needed)."
     },
     {
       "event": "invoice::InvoiceVoided",
-      "listener": "Stackra\\Finance\\Payment\\Listeners\\CancelPendingIntentsOnInvoiceVoided",
+      "listener": "Academorix\\Finance\\Payment\\Listeners\\CancelPendingIntentsOnInvoiceVoided",
       "queue": "payment",
       "purpose": "Reacts to invoice voiding. Cancels any in-flight PaymentIntents for the voided invoice — the customer must not pay a voided invoice."
     },
     {
       "event": "tenancy::TenantSuspended",
-      "listener": "Stackra\\Finance\\Payment\\Listeners\\DeactivatePaymentMethodsOnTenantSuspended",
+      "listener": "Academorix\\Finance\\Payment\\Listeners\\DeactivatePaymentMethodsOnTenantSuspended",
       "queue": "payment",
       "purpose": "Soft-deletes every payment_method for the suspended tenant with deactivated_reason='tenant_suspended'. Cancels in-flight intents. Prevents captures during the suspension window."
     },
     {
       "event": "tenancy::TenantResumed",
-      "listener": "Stackra\\Finance\\Payment\\Listeners\\ReactivatePaymentMethodsOnTenantResumed",
+      "listener": "Academorix\\Finance\\Payment\\Listeners\\ReactivatePaymentMethodsOnTenantResumed",
       "queue": "payment",
       "purpose": "Reverses DeactivatePaymentMethodsOnTenantSuspended. Only re-activates methods that were deactivated BY the suspension cascade (checks the audit trail for deactivated_reason='tenant_suspended')."
     },
     {
       "event": "tenancy::TenantErased",
-      "listener": "Stackra\\Finance\\Payment\\Listeners\\PurgeMarketingDataForErasedTenant",
+      "listener": "Academorix\\Finance\\Payment\\Listeners\\PurgeMarketingDataForErasedTenant",
       "queue": "payment",
       "purpose": "Cascade delete via FK CASCADE. This listener writes the compliance audit trail entry + emits count metrics (payments purged, payment_methods purged, payment_intents purged, payment_disputes purged). Also archives financial records per Art. 17 §3 exception + fires cross-provider deletion requests (Stripe Customer.delete, Adyen shopper deletion, etc.) as a best-effort GDPR Art. 17 propagation."
     },
     {
       "event": "user::UserErased",
-      "listener": "Stackra\\Finance\\Payment\\Listeners\\RedactUserFromPayments",
+      "listener": "Academorix\\Finance\\Payment\\Listeners\\RedactUserFromPayments",
       "queue": "payment",
       "purpose": "Individual GDPR Art. 17. Nulls customer identifying fields on payment_methods WHERE customer_type='User' AND customer_id=erased_user.id. Nulls billing_details_snapshot.name + email + phone on payments where the customer resolved to this user. Fires provider-side deletion requests. Payment rows themselves survive (financial retention Art. 17 §3)."
     },
     {
       "event": "refund::RefundIssued",
-      "listener": "Stackra\\Finance\\Payment\\Listeners\\AccumulateRefundedAmount",
+      "listener": "Academorix\\Finance\\Payment\\Listeners\\AccumulateRefundedAmount",
       "queue": "payment",
       "priority": 100,
       "purpose": "Reacts to refund.issued from the refund module. Atomically increments the parent Payment's amount_refunded_cents. Enforces amount_refunded_cents <= amount_cents (defense-in-depth against the refund module)."
     },
     {
       "event": "chargeback::ChargebackFiled",
-      "listener": "Stackra\\Finance\\Payment\\Listeners\\NotePotentialDisputeEscalation",
+      "listener": "Academorix\\Finance\\Payment\\Listeners\\NotePotentialDisputeEscalation",
       "queue": "payment",
       "purpose": "Reacts to chargeback.filed from the chargeback module — a chargeback filed OUTSIDE our PaymentDispute lifecycle (e.g. customer went directly to their bank without our provider knowing first). Logs a warning + creates a PaymentDispute row with status='lost' + outcome='lost' + chargeback_id=source.id + reason='customer_initiated' for record-keeping."
     },
     {
       "event": "compliance::EncryptionKeyRotated",
-      "listener": "Stackra\\Finance\\Payment\\Listeners\\ReencryptOnKeyRotated",
+      "listener": "Academorix\\Finance\\Payment\\Listeners\\ReencryptOnKeyRotated",
       "queue": "payment",
       "purpose": "Reacts to encryption key rotation from the compliance/encryption module. Dispatches ReencryptPaymentDataJob per tenant to re-encrypt historical rows with the new key. Historical rows retain their old key_version for backward-compat decryption during the migration window."
     },
     {
       "event": "consent::ConsentGranted",
-      "listener": "Stackra\\Finance\\Payment\\Listeners\\UpdateMarketingConsentSnapshot",
+      "listener": "Academorix\\Finance\\Payment\\Listeners\\UpdateMarketingConsentSnapshot",
       "queue": "payment",
       "purpose": "Reacts to consent.granted on categories 'marketing' or 'advertising'. Does NOT affect existing Payment rows (immutable). Signals to the growth::marketing module that future payment-triggered marketing events can dispatch."
     }

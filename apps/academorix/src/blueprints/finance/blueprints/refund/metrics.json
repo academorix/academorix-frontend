@@ -1,9 +1,9 @@
 {
-  "id": "stackra://modules/refund/metrics",
+  "id": "academorix://modules/refund/metrics",
   "$version": 1,
   "title": "refund — OpenTelemetry metrics",
   "instrumentation": "self via telemetry",
-  "namespace": "stackra.refund",
+  "namespace": "academorix.refund",
   "labelConventions": {
     "always": [],
     "commonlyAvailable": [
@@ -29,48 +29,48 @@
   },
   "metrics": [
     {
-      "name": "stackra.refund.count",
+      "name": "academorix.refund.count",
       "kind": "gauge",
       "unit": "refunds",
       "labels": ["status", "reason", "refund_type"],
       "description": "Count of refunds per (status, reason, refund_type). Sampled hourly."
     },
     {
-      "name": "stackra.refund.pending_approvals",
+      "name": "academorix.refund.pending_approvals",
       "kind": "gauge",
       "unit": "refunds",
       "labels": [],
       "description": "Count of refunds stuck in awaiting_approval. Sampled every 15 minutes. Feeds the SLA-approaching alert threshold."
     },
     {
-      "name": "stackra.refund.requested_total",
+      "name": "academorix.refund.requested_total",
       "kind": "counter",
       "unit": "refunds",
       "labels": ["reason", "refund_type", "initiator_role"]
     },
     {
-      "name": "stackra.refund.approvals_pending_total",
+      "name": "academorix.refund.approvals_pending_total",
       "kind": "counter",
       "unit": "approvals",
       "labels": ["trigger"],
       "description": "Every awaiting_approval transition. trigger IN ('amount_threshold', 'staleness_threshold', 'both', 'always_approve_reason')."
     },
     {
-      "name": "stackra.refund.approvals_stale_total",
+      "name": "academorix.refund.approvals_stale_total",
       "kind": "counter",
       "unit": "refunds",
       "labels": [],
       "description": "Refunds stuck in awaiting_approval > refund.approval.approval_sla_hours. P2 signal — SLA-approaching alert."
     },
     {
-      "name": "stackra.refund.approvals_completed_total",
+      "name": "academorix.refund.approvals_completed_total",
       "kind": "counter",
       "unit": "approvals",
       "labels": ["outcome", "auto_approved"],
       "description": "outcome IN ('approved', 'rejected'). auto_approved boolean."
     },
     {
-      "name": "stackra.refund.approval_duration_hours",
+      "name": "academorix.refund.approval_duration_hours",
       "kind": "histogram",
       "unit": "hours",
       "buckets": [1, 4, 24, 72, 168, 720],
@@ -78,14 +78,14 @@
       "description": "Hours from awaiting_approval -> approved/rejected. Powers approval-SLA monitoring."
     },
     {
-      "name": "stackra.refund.provider_dispatch_total",
+      "name": "academorix.refund.provider_dispatch_total",
       "kind": "counter",
       "unit": "dispatches",
       "labels": ["provider", "outcome"],
       "description": "outcome IN ('sync_success', 'async_processing', 'failed', 'provider_error')."
     },
     {
-      "name": "stackra.refund.provider_dispatch_duration_ms",
+      "name": "academorix.refund.provider_dispatch_duration_ms",
       "kind": "histogram",
       "unit": "ms",
       "buckets": [50, 250, 1000, 5000, 30000],
@@ -93,47 +93,47 @@
       "description": "InitiateProviderRefundJob HTTP call duration. P99 target < 5000ms."
     },
     {
-      "name": "stackra.refund.polls_total",
+      "name": "academorix.refund.polls_total",
       "kind": "counter",
       "unit": "polls",
       "labels": ["provider", "terminal_state"],
       "description": "CheckRefundProviderStatusJob invocations. terminal_state = still_processing / succeeded / failed / provider_error / provider_reference_not_found."
     },
     {
-      "name": "stackra.refund.succeeded_total",
+      "name": "academorix.refund.succeeded_total",
       "kind": "counter",
       "unit": "refunds",
       "labels": ["reason", "refund_type", "provider"]
     },
     {
-      "name": "stackra.refund.failed_total",
+      "name": "academorix.refund.failed_total",
       "kind": "counter",
       "unit": "refunds",
       "labels": ["provider", "failure_reason_category"],
       "description": "failure_reason_category IN ('already_refunded', 'source_invalid', 'insufficient_funds', 'provider_account_closed', 'authentication_failed', 'other')."
     },
     {
-      "name": "stackra.refund.provider_errors_total",
+      "name": "academorix.refund.provider_errors_total",
       "kind": "counter",
       "unit": "errors",
       "labels": ["provider", "error_category"],
       "description": "error_category IN ('network_timeout', 'rate_limit', 'transient_5xx', 'authentication', 'unknown'). P1 signal when this counter surges."
     },
     {
-      "name": "stackra.refund.provider_errors_stale_total",
+      "name": "academorix.refund.provider_errors_stale_total",
       "kind": "counter",
       "unit": "refunds",
       "labels": [],
       "description": "Refunds stuck in provider_error > 24h. P2 signal — actionable to ops."
     },
     {
-      "name": "stackra.refund.cancelled_total",
+      "name": "academorix.refund.cancelled_total",
       "kind": "counter",
       "unit": "refunds",
       "labels": ["state_at_cancellation", "canceller_role"]
     },
     {
-      "name": "stackra.refund.processed_to_success_duration_hours",
+      "name": "academorix.refund.processed_to_success_duration_hours",
       "kind": "histogram",
       "unit": "hours",
       "buckets": [1, 24, 72, 168, 336],
@@ -141,7 +141,7 @@
       "description": "Hours from processing -> succeeded. Card refunds typically 120-240h. P99 target < 240h (10 days)."
     },
     {
-      "name": "stackra.refund.request_to_success_duration_hours",
+      "name": "academorix.refund.request_to_success_duration_hours",
       "kind": "histogram",
       "unit": "hours",
       "buckets": [1, 24, 72, 168, 336, 720],
@@ -149,63 +149,63 @@
       "description": "End-to-end request -> success duration. Consumer-protection-law SLA monitoring."
     },
     {
-      "name": "stackra.refund.finalizations_total",
+      "name": "academorix.refund.finalizations_total",
       "kind": "counter",
       "unit": "finalizations",
       "labels": ["success"],
       "description": "success=true when FinalizeRefundJob completed all 5 steps; false when the chain partial-failed + refund transitioned to provider_error."
     },
     {
-      "name": "stackra.refund.finalization_failures_total",
+      "name": "academorix.refund.finalization_failures_total",
       "kind": "counter",
       "unit": "failures",
       "labels": ["failure_step"],
       "description": "P1 signal. failure_step IN ('transaction_recorder', 'credit_note_issuer', 'invoice_state_updater', 'clawback_coordinator', 'marketing_fire')."
     },
     {
-      "name": "stackra.refund.atomicity.failures_total",
+      "name": "academorix.refund.atomicity.failures_total",
       "kind": "counter",
       "unit": "failures",
       "labels": ["failure_point"],
       "description": "CRITICAL. Refund transaction atomicity failures. Should stay at 0. failure_point: 'status_update' / 'finalization_partial' / 'unknown'."
     },
     {
-      "name": "stackra.refund.orphaned_provider_refunds_total",
+      "name": "academorix.refund.orphaned_provider_refunds_total",
       "kind": "counter",
       "unit": "orphans",
       "labels": ["provider"],
       "description": "P2 signal. Provider-side refunds detected without a matching local row. Requires investigation."
     },
     {
-      "name": "stackra.refund.orphaned_local_succeeded_total",
+      "name": "academorix.refund.orphaned_local_succeeded_total",
       "kind": "counter",
       "unit": "orphans",
       "labels": [],
       "description": "Refunds in status='succeeded' with credit_note_id IS NULL OR transaction_id IS NULL. Actionable via refund:generate-credit-note admin CLI."
     },
     {
-      "name": "stackra.refund.clawback_referral_total",
+      "name": "academorix.refund.clawback_referral_total",
       "kind": "counter",
       "unit": "clawbacks",
       "labels": [],
       "description": "RefundClawbackReferral cascades fired."
     },
     {
-      "name": "stackra.refund.clawback_coupon_total",
+      "name": "academorix.refund.clawback_coupon_total",
       "kind": "counter",
       "unit": "clawbacks",
       "labels": [],
       "description": "RefundClawbackCoupon cascades fired."
     },
     {
-      "name": "stackra.refund.reconciliations_total",
+      "name": "academorix.refund.reconciliations_total",
       "kind": "counter",
       "unit": "reconciliations",
       "labels": ["drift_detected"],
       "description": "ReconcileRefundsJob per-refund reconciliations. drift_detected=true means the local status differed from provider."
     },
     {
-      "name": "stackra.refund.reconciliation_run_duration_ms",
+      "name": "academorix.refund.reconciliation_run_duration_ms",
       "kind": "histogram",
       "unit": "ms",
       "buckets": [1000, 10000, 60000, 300000, 600000],
@@ -213,35 +213,35 @@
       "description": "ReconcileRefundsJob total run duration. P99 target < 600000ms (10 min)."
     },
     {
-      "name": "stackra.refund.approvals_notified_total",
+      "name": "academorix.refund.approvals_notified_total",
       "kind": "counter",
       "unit": "notifications",
       "labels": [],
       "description": "NotifyRefundApprovalRequiredJob per-refund approver-notification dispatches."
     },
     {
-      "name": "stackra.refund.notifications_dispatched_total",
+      "name": "academorix.refund.notifications_dispatched_total",
       "kind": "counter",
       "unit": "notifications",
       "labels": ["status", "channel"],
       "description": "channel IN ('mail', 'in_app', 'sms', 'push'). status IN ('requested', 'approval_required', 'approved', 'processed', 'succeeded', 'failed', 'rejected', 'cancelled')."
     },
     {
-      "name": "stackra.refund.entitlement.gate_refusals_total",
+      "name": "academorix.refund.entitlement.gate_refusals_total",
       "kind": "counter",
       "unit": "refusals",
       "labels": ["entitlement_key"],
       "description": "Route hits refused by the entitlement middleware. Product signal for upgrade-CTA impressions."
     },
     {
-      "name": "stackra.refund.retention.purged_total",
+      "name": "academorix.refund.retention.purged_total",
       "kind": "counter",
       "unit": "rows",
       "labels": ["entity", "destination"],
       "description": "PurgeExpiredRefundDataJob emits. entity: 'refunds' / 'refund_lines'. destination: 'hard_delete' / 'compliance_archive'."
     },
     {
-      "name": "stackra.refund.marketing_events_dispatched_total",
+      "name": "academorix.refund.marketing_events_dispatched_total",
       "kind": "counter",
       "unit": "events",
       "labels": ["provider"],

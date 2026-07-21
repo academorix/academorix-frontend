@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/performance/schemas/benchmark",
+  "id": "academorix://modules/performance/schemas/benchmark",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "Benchmark",

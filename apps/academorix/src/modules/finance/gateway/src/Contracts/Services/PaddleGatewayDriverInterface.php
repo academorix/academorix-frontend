@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Gateway\Contracts\Services;
+namespace Academorix\Gateway\Contracts\Services;
 
-use Stackra\Gateway\Services\PaddleGatewayDriver;
+use Academorix\Gateway\Services\PaddleGatewayDriver;
 use Illuminate\Container\Attributes\Bind;
 
 /**

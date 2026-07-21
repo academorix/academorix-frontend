@@ -2,7 +2,7 @@
   "$version": 1,
   "name": "athlete-guardian",
   "alias": "athlete_guardian",
-  "namespace": "Stackra\\Sports\\AthleteGuardian",
+  "namespace": "Academorix\\Sports\\AthleteGuardian",
   "description": "Parent/legal-guardian relationship binding an Athlete to a User. Answers 'who is responsible for this minor?'. Enables the parent-user to book sessions, pay memberships, receive notifications, and consent to activities on behalf of a minor Athlete. Multiple guardians per Athlete supported (split families, primary + secondary guardians). Exactly one `is_primary=true` guardian per Athlete when any exist. Every guardian carries a `relationship` enum + `has_legal_custody` bool + `can_pickup` bool + `can_receive_communications` bool + `can_authorise_medical_care` bool. Ships: AthleteGuardian pivot with tenant_id + athlete_id + user_id; PrimaryGuardianResolver (returns the primary guardian for an athlete, cache-hot); ConsentDelegationChain for propagating athlete consents through the primary guardian (Wave 3b hooks into athlete::consent_recorded_by_authorised_guardian rule); verification workflow (auto-verified on same-household email domain match, else HR review) with `verification_status` enum (pending / verified / disputed / revoked). Small tier limited to 1 guardian per athlete (`athlete_multi_guardian` gate); Medium+ unlocks multi-guardian split-family support; Enterprise adds `athlete_guardian_verification` HR-verification workflow. Cascade: hard-deleted on Athlete hard-delete (CASCADE FK — guardian rows have no meaning without their athlete). Notifications routed through guardian's User + channel preferences (Wave 3+ Notifications module). Domain-agnostic: applies wherever a minor participant needs a legally responsible adult — sports, music school, tutoring, camps.",
   "keywords": [
     "guardian",
@@ -23,7 +23,7 @@
     "wave-3a"
   ],
   "priority": 56,
-  "providers": ["Stackra\\Sports\\AthleteGuardian\\Providers\\AthleteGuardianServiceProvider"],
+  "providers": ["Academorix\\Sports\\AthleteGuardian\\Providers\\AthleteGuardianServiceProvider"],
   "files": [],
   "dependencies": [
     "foundation",

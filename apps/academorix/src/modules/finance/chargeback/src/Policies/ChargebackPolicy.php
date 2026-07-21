@@ -4,13 +4,13 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Chargeback\Policies;
+namespace Academorix\Chargeback\Policies;
 
 use Stackra\User\Models\User;
-use Stackra\Chargeback\Models\Chargeback;
+use Academorix\Chargeback\Models\Chargeback;
 
 /**
- * Authorization policy for {@see \Stackra\Chargeback\Models\Chargeback}.
+ * Authorization policy for {@see \Academorix\Chargeback\Models\Chargeback}.
  *
  * Wired via `#[UsePolicy]` on the Model.
  *

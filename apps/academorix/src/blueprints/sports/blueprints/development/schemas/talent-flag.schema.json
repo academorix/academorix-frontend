@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/development/schemas/talent-flag",
+  "id": "academorix://modules/development/schemas/talent-flag",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "TalentFlag",

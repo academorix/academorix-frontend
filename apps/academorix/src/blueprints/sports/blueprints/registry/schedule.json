@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/sports-registry/schedule",
+  "id": "academorix://modules/sports-registry/schedule",
   "$version": 1,
   "title": "sports-registry — scheduled tasks",
   "entries": [
@@ -8,7 +8,7 @@
       "command": "sports:registry:reconcile-references",
       "cron": "15 4 * * *",
       "timezone": "UTC",
-      "purpose": "Nightly 04:15 UTC. Scans every table in `config('sports_registry.reconciler.reference_tables')` for dangling sport_key / discipline_key / position_key references. Reports drift + fires SportPrefixResolutionFailed per unresolved row. Feeds `stackra.sports_registry.reference_drift.count` gauge."
+      "purpose": "Nightly 04:15 UTC. Scans every table in `config('sports_registry.reconciler.reference_tables')` for dangling sport_key / discipline_key / position_key references. Reports drift + fires SportPrefixResolutionFailed per unresolved row. Feeds `academorix.sports_registry.reference_drift.count` gauge."
     },
     {
       "name": "sports-registry-purge-archived",
@@ -22,7 +22,7 @@
       "command": "sports:registry:metrics:snapshot",
       "cron": "0 * * * *",
       "timezone": "UTC",
-      "purpose": "Hourly. Compute `stackra.sports_registry.active.count` per (entity_kind, is_platform_seeded) + `stackra.sports_registry.per_tenant_custom.count` histogram + `stackra.sports_registry.purge_pending.count`. Publishes to the OpenTelemetry endpoint."
+      "purpose": "Hourly. Compute `academorix.sports_registry.active.count` per (entity_kind, is_platform_seeded) + `academorix.sports_registry.per_tenant_custom.count` histogram + `academorix.sports_registry.purge_pending.count`. Publishes to the OpenTelemetry endpoint."
     },
     {
       "name": "sports-registry-cache-warm-catalog",

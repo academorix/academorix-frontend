@@ -1,8 +1,8 @@
 {
-  "id": "stackra://modules/event/permissions",
+  "id": "academorix://modules/event/permissions",
   "$version": 1,
   "title": "event — permissions",
-  "seeder": "Stackra\\Sports\\Event\\Database\\Seeders\\EventPermissionSeeder",
+  "seeder": "Academorix\\Sports\\Event\\Database\\Seeders\\EventPermissionSeeder",
   "isSystem": true,
   "scope_suffix_convention": "Read permissions may carry a scope suffix (`.any`, `.tenant`). Event has no `.branch` / `.org` variants because visibility filtering handles that — the base permission grants access to every event the caller can see per the visibility model. Writes are always tenant-scoped.",
   "permissions": [

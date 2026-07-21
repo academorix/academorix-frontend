@@ -1,8 +1,8 @@
 {
-  "id": "stackra://modules/expenses/permissions",
+  "id": "academorix://modules/expenses/permissions",
   "$version": 1,
   "title": "expenses — permissions",
-  "seeder": "Stackra\\Finance\\Expenses\\Database\\Seeders\\ExpensesPermissionSeeder",
+  "seeder": "Academorix\\Finance\\Expenses\\Database\\Seeders\\ExpensesPermissionSeeder",
   "isSystem": true,
   "description": "Money-out audit surface. Approval thresholds enforced by policy, not by permission — coaches may hold expenses.approve but the policy caps their approval at expense.approve.threshold entitlement.",
   "permissions": [

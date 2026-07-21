@@ -274,7 +274,7 @@ cap) + `marketing_event_slot_per_month` (event volume) +
 ## 13. What this module does NOT do
 
 - **Client-side pixel loading.** Server-side only. The frontend
-  `@stackra/analytics` package handles pixel + measurement-protocol calls the
+  `@academorix/analytics` package handles pixel + measurement-protocol calls the
   browser needs; this module owns SERVER-side conversion API forwarding.
 - **PII in analytics without hashing.** Meta CAPI requires SHA256. Every
   provider driver enforces its own hashing rules.

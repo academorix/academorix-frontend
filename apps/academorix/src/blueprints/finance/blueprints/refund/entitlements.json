@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/refund/entitlements",
+  "id": "academorix://modules/refund/entitlements",
   "$version": 1,
   "title": "refund — declared entitlements",
   "description": "Eight entitlement keys. `refund_capture` is the boolean master gate — on for every tier by default (refund is table-stakes for any commerce workflow). `refund_customer_self_service` (Small+) permits customer-initiated refunds via POST /refunds. `refund_partial` (Medium+) unlocks partial refund_type + refund_lines. `refund_prorated` (Medium+) unlocks prorated refunds for cancelled memberships. `refund_multi_currency` (Medium+) permits cross-currency refunds. `refund_approval_workflow` (Small+, default on) enables the require-approval flow. `refund_extended_retention` (Enterprise) extends 7y to 10y. `refund_bulk_processing` (Enterprise) unlocks bulk-refund CLI + admin bulk-issue UI.",

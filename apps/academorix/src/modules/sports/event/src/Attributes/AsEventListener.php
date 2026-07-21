@@ -4,7 +4,7 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Event\Attributes;
+namespace Academorix\Event\Attributes;
 
 use Attribute;
 

@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Tax\Contracts\Services;
+namespace Academorix\Tax\Contracts\Services;
 
-use Stackra\Tax\Data\TaxCalculationResultData;
-use Stackra\Tax\Data\TaxLineInputData;
-use Stackra\Tax\Services\TaxCalculator;
+use Academorix\Tax\Data\TaxCalculationResultData;
+use Academorix\Tax\Data\TaxLineInputData;
+use Academorix\Tax\Services\TaxCalculator;
 use Illuminate\Container\Attributes\Bind;
 
 /**

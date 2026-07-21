@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\User\Exceptions;
 
-use Stackra\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Caller attempted to read a minor Profile's PII without `profile.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class ProfileMinorPiiForbiddenException extends AcademorixException
+final class ProfileMinorPiiForbiddenException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

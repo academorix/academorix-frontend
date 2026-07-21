@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/tax/compliance",
+  "id": "academorix://modules/tax/compliance",
   "$version": 1,
   "title": "tax — compliance evidence",
   "description": "Tax is FINANCIAL-RECORD-CRITICAL. Every calculation is a record subject to regulator audit for 7-10 years (VAT MOSS, US Wayfair, EU VAT Directive, Canadian GST/HST). Exemption certificates are legal documents. PCI-DSS scope (never card data) applies. GDPR Art. 6(1)(c) legal-obligation basis for retention.",
@@ -70,7 +70,7 @@
         {
           "article": "Art. 28",
           "principle": "processor contracts",
-          "evidence": "TaxJar / Avalara / Stripe Tax are Data Processors under Art. 28 — tenant admin acknowledges DPA references before configuring the provider. subprocessors.json documents each. NativeCalculator + CustomWebhook are not Stackra processors (local computation / tenant-hosted respectively)."
+          "evidence": "TaxJar / Avalara / Stripe Tax are Data Processors under Art. 28 — tenant admin acknowledges DPA references before configuring the provider. subprocessors.json documents each. NativeCalculator + CustomWebhook are not Academorix processors (local computation / tenant-hosted respectively)."
         }
       ]
     },
@@ -90,7 +90,7 @@
         {
           "criterion": "CC7.2",
           "principle": "system monitoring",
-          "evidence": "TaxProviderCircuitBreakerOpened + TaxCalculationFailed + TaxCalculationDriftDetected are P1 signals. Every fire pages finance ops. stackra.tax.calculations.failed_total + stackra.tax.calculations.drift_detected_total counters tracked; spikes surface a compliance-relevant tax pipeline degradation."
+          "evidence": "TaxProviderCircuitBreakerOpened + TaxCalculationFailed + TaxCalculationDriftDetected are P1 signals. Every fire pages finance ops. academorix.tax.calculations.failed_total + academorix.tax.calculations.drift_detected_total counters tracked; spikes surface a compliance-relevant tax pipeline degradation."
         },
         {
           "criterion": "CC7.3",

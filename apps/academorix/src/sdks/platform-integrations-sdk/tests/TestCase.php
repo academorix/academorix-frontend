@@ -7,7 +7,7 @@ namespace Stackra\PlatformIntegrationsSdk\Tests;
 use Orchestra\Testbench\TestCase as OrchestraTestCase;
 
 /**
- * Base test case for stackra-platform/integrations-sdk.
+ * Base test case for academorix-platform/integrations-sdk.
  *
  * @category IntegrationsSdk
  *

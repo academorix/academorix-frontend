@@ -1,10 +1,10 @@
 {
-  "id": "stackra://modules/attendance/jobs",
+  "id": "academorix://modules/attendance/jobs",
   "$version": 1,
   "title": "attendance — background jobs",
   "jobs": [
     {
-      "class": "Stackra\\Sports\\Attendance\\Jobs\\ReconcileAttendanceJob",
+      "class": "Academorix\\Sports\\Attendance\\Jobs\\ReconcileAttendanceJob",
       "queue": "attendance",
       "purpose": "Nightly at 03:00 tenant-local time: for each Session past ends_at on that day, sweep expected attendees → create AbsenceRecord (status='unexcused', reported_at=now(), reported_by_user_id=NULL, counted_toward_freeze=true) for every enrolled athlete without an AttendanceRecord or existing AbsenceRecord. Fires AttendanceReconciled per session.",
       "steps": [
@@ -21,7 +21,7 @@
       "tries": 2
     },
     {
-      "class": "Stackra\\Sports\\Attendance\\Jobs\\NotifyAbsenceJob",
+      "class": "Academorix\\Sports\\Attendance\\Jobs\\NotifyAbsenceJob",
       "queue": "attendance",
       "purpose": "Per-absence: cascade notifications based on policy.notification_config. Dispatches FirstAbsenceNotification / ThirdAbsenceWarningNotification / AbsenceFreezeThresholdReachedNotification per athlete's rolling-window absence count.",
       "steps": [
@@ -36,7 +36,7 @@
       "tries": 3
     },
     {
-      "class": "Stackra\\Sports\\Attendance\\Jobs\\CheckAbsenceFreezeThresholdJob",
+      "class": "Academorix\\Sports\\Attendance\\Jobs\\CheckAbsenceFreezeThresholdJob",
       "queue": "attendance",
       "purpose": "Per-athlete rolling-window check. Fires AbsenceFreezeThresholdReached (P1) when unexcused-absence count crosses policy.max_unexcused_absences_per_period. Dispatched from AbsenceRecordObserver.creating + on excusal reversals.",
       "steps": [
@@ -49,7 +49,7 @@
       "tries": 3
     },
     {
-      "class": "Stackra\\Sports\\Attendance\\Jobs\\ChargeNoShowFeeJob",
+      "class": "Academorix\\Sports\\Attendance\\Jobs\\ChargeNoShowFeeJob",
       "queue": "attendance",
       "purpose": "Per-absence: dispatch invoice creation via finance::invoice for a policy-configured no-show fee. Only runs for tenants holding `attendance_no_show_fees` entitlement. Idempotent — refuses to fire twice for the same absence_record_id.",
       "steps": [
@@ -66,7 +66,7 @@
       "tries": 3
     },
     {
-      "class": "Stackra\\Sports\\Attendance\\Jobs\\ConsumePassAtomicallyJob",
+      "class": "Academorix\\Sports\\Attendance\\Jobs\\ConsumePassAtomicallyJob",
       "queue": "attendance-critical",
       "purpose": "Fallback path for the AttendanceOrchestrator when synchronous atomic consumption isn't available (rare — high-latency environments during peak check-in windows). Runs the pass consumption in a queued transaction with retries. Every failure is a P1 signal (attendance without pass consumption is a compliance violation).",
       "steps": [
@@ -82,14 +82,14 @@
       "backoff": [30, 60, 300, 900, 1800]
     },
     {
-      "class": "Stackra\\Sports\\Attendance\\Jobs\\CleanupOrphanCheckinsJob",
+      "class": "Academorix\\Sports\\Attendance\\Jobs\\CleanupOrphanCheckinsJob",
       "queue": "attendance",
       "purpose": "Nightly: verify integrity of atomic pass consumption. Every attendance with session.requires_pass=true MUST have consumed_pass_id set; every pass with consumed_by_session_id set MUST have a matching attendance record. Findings are P1 compliance signals.",
       "steps": [
         "SELECT id FROM attendance_records ar JOIN sessions s ON s.id=ar.session_id WHERE s.requires_pass=true AND ar.consumed_pass_id IS NULL AND ar.deleted_at IS NULL AND ar.created_at > now() - interval '48 hours' — Orphan attendance without pass",
-        "  For each: fire diagnostic event OrphanAttendanceWithoutPass + emit metric stackra.attendance.orphan.without_pass",
+        "  For each: fire diagnostic event OrphanAttendanceWithoutPass + emit metric academorix.attendance.orphan.without_pass",
         "SELECT id FROM passes p WHERE p.consumed_by_session_id IS NOT NULL AND NOT EXISTS(SELECT 1 FROM attendance_records ar WHERE ar.consumed_pass_id=p.id AND ar.deleted_at IS NULL) AND p.consumed_at > now() - interval '48 hours' — Orphan pass consumption without attendance",
-        "  For each: fire OrphanPassConsumption + emit metric stackra.attendance.orphan.pass_consumption",
+        "  For each: fire OrphanPassConsumption + emit metric academorix.attendance.orphan.pass_consumption",
         "SELECT ar.id FROM attendance_records ar WHERE EXISTS(SELECT 1 FROM absence_records abs WHERE abs.session_id=ar.session_id AND abs.athlete_id=ar.athlete_id AND abs.deleted_at IS NULL) AND ar.deleted_at IS NULL — Mutual exclusion violation",
         "  For each: fire AttendanceAbsenceCoexist (P1)"
       ],
@@ -99,7 +99,7 @@
       "tries": 2
     },
     {
-      "class": "Stackra\\Sports\\Attendance\\Jobs\\GenerateAttendanceReportJob",
+      "class": "Academorix\\Sports\\Attendance\\Jobs\\GenerateAttendanceReportJob",
       "queue": "attendance-reports",
       "purpose": "Weekly per-branch attendance summary: rate, absence patterns, late-arrival trends. Feeds the admin dashboard's Weekly Attendance Digest. Only runs for tenants holding `attendance_analytics` entitlement.",
       "steps": [

@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/private-sessions/settings",
+  "id": "academorix://modules/private-sessions/settings",
   "$version": 1,
   "title": "private-sessions — tenant-editable settings",
   "description": "Settings this module registers against the settings substrate.",

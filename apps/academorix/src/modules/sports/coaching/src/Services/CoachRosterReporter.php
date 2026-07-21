@@ -4,11 +4,11 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Coaching\Services;
+namespace Academorix\Coaching\Services;
 
-use Stackra\Coaching\Contracts\Services\CoachRosterReporterInterface;
+use Academorix\Coaching\Contracts\Services\CoachRosterReporterInterface;
 use Illuminate\Container\Attributes\Scoped;
-use Stackra\Coaching\Contracts\Repositories\CoachAssignmentRepositoryInterface;
+use Academorix\Coaching\Contracts\Repositories\CoachAssignmentRepositoryInterface;
 
 /**
  * Concrete service — CoachRosterReporter.

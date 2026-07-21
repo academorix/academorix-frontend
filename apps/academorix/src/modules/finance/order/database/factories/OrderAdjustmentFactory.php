@@ -4,19 +4,19 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Order\Database\Factories;
+namespace Academorix\Order\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Stackra\Order\Contracts\Data\OrderAdjustmentInterface;
-use Stackra\Order\Models\OrderAdjustment;
+use Academorix\Order\Contracts\Data\OrderAdjustmentInterface;
+use Academorix\Order\Models\OrderAdjustment;
 
 /**
- * Factory for {@see \Stackra\Order\Models\OrderAdjustment}.
+ * Factory for {@see \Academorix\Order\Models\OrderAdjustment}.
  *
  * Auto-generated skeleton — extend with named states as domain
  * cases emerge (e.g. `->published()`, `->overdue()`, `->archived()`).
  *
- * @extends Factory<\Stackra\Order\Models\OrderAdjustment>
+ * @extends Factory<\Academorix\Order\Models\OrderAdjustment>
  *
  * @category Order
  *

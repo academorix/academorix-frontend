@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Referrals\Actions\Platform;
+namespace Academorix\Referrals\Actions\Platform;
 
-use Stackra\Referrals\Contracts\Repositories\ReferralFraudFlagRepositoryInterface;
-use Stackra\Referrals\Data\ReferralFraudFlagData;
+use Academorix\Referrals\Contracts\Repositories\ReferralFraudFlagRepositoryInterface;
+use Academorix\Referrals\Data\ReferralFraudFlagData;
 use Stackra\Routing\Attributes\AsAction;
 use Stackra\Routing\Attributes\Middleware;
 use Stackra\Routing\Concerns\AsController;
@@ -50,7 +50,7 @@ final class ListReferralFraudFlagAction
      */
     public function __invoke(Request $request): PaginatedDataCollection
     {
-        /** @var LengthAwarePaginator<int, \Stackra\Referrals\Models\ReferralFraudFlag> $page */
+        /** @var LengthAwarePaginator<int, \Academorix\Referrals\Models\ReferralFraudFlag> $page */
         $page = $this->repository->paginate(
             perPage: (int) $request->integer('per_page', 15),
         );

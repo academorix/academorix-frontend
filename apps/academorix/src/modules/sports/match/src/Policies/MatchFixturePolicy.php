@@ -4,13 +4,13 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Match\Policies;
+namespace Academorix\Match\Policies;
 
 use Stackra\User\Models\User;
-use Stackra\Match\Models\MatchFixture;
+use Academorix\Match\Models\MatchFixture;
 
 /**
- * Authorization policy for {@see \Stackra\Match\Models\MatchFixture}.
+ * Authorization policy for {@see \Academorix\Match\Models\MatchFixture}.
  *
  * Wired via `#[UsePolicy]` on the Model.
  *

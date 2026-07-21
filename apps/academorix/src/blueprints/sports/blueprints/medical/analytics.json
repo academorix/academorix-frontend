@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/medical/analytics",
+  "id": "academorix://modules/medical/analytics",
   "$version": 1,
   "title": "medical — product-analytics events",
   "description": "PostHog / Mixpanel / Segment events this module emits.",

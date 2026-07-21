@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Staff\Exceptions;
 
-use Stackra\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Raised when the domain rule `STAFF_MUST_BE_OFFBOARDED_BEFORE_DELETE` fires.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class StaffMustBeOffboardedBeforeDeleteException extends AcademorixException
+final class StaffMustBeOffboardedBeforeDeleteException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

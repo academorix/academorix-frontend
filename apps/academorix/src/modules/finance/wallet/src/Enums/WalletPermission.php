@@ -4,7 +4,7 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Wallet\Enums;
+namespace Academorix\Wallet\Enums;
 
 use Stackra\Authorization\Contracts\PermissionEnum;
 use Stackra\Authorization\Enums\Guard;

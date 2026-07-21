@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Payment\Actions\Platform;
+namespace Academorix\Payment\Actions\Platform;
 
-use Stackra\Payment\Contracts\Repositories\PaymentDisputeRepositoryInterface;
-use Stackra\Payment\Data\PaymentDisputeData;
+use Academorix\Payment\Contracts\Repositories\PaymentDisputeRepositoryInterface;
+use Academorix\Payment\Data\PaymentDisputeData;
 use Stackra\Routing\Attributes\AsAction;
 use Stackra\Routing\Attributes\Middleware;
 use Stackra\Routing\Concerns\AsController;
@@ -50,7 +50,7 @@ final class ListPaymentDisputeAction
      */
     public function __invoke(Request $request): PaginatedDataCollection
     {
-        /** @var LengthAwarePaginator<int, \Stackra\Payment\Models\PaymentDispute> $page */
+        /** @var LengthAwarePaginator<int, \Academorix\Payment\Models\PaymentDispute> $page */
         $page = $this->repository->paginate(
             perPage: (int) $request->integer('per_page', 15),
         );

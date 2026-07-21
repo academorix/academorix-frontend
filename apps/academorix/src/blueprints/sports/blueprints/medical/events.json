@@ -1,14 +1,14 @@
 {
-  "id": "stackra://modules/medical/events",
+  "id": "academorix://modules/medical/events",
   "$version": 1,
   "title": "medical — published events",
-  "namespace": "Stackra\\Sports\\Medical\\Events",
+  "namespace": "Academorix\\Sports\\Medical\\Events",
   "dispatchMode": "afterCommit",
   "description": "Every event implements `ShouldDispatchAfterCommit`. InjuryReported closes the eligibility gate for the affected athlete on their next squad-selection query. ReturnToPlayCleared re-opens it. ClearanceExpiring fires at 90d / 30d / 7d intervals — cannot-opt-out notifications. Full payloads DO NOT include encrypted fields; consumers must re-fetch through the medical policy gate to read details.",
   "events": [
     {
       "name": "MedicalRecordCreated",
-      "class": "Stackra\\Sports\\Medical\\Events\\MedicalRecordCreated",
+      "class": "Academorix\\Sports\\Medical\\Events\\MedicalRecordCreated",
       "trigger": "First MedicalRecord committed for an athlete.",
       "queue": "medical",
       "consumers": ["audit::WriteToAuditLog (retention: 10 years)", "activity::WriteToActivityLog"],
@@ -21,7 +21,7 @@
     },
     {
       "name": "InjuryReported",
-      "class": "Stackra\\Sports\\Medical\\Events\\InjuryReported",
+      "class": "Academorix\\Sports\\Medical\\Events\\InjuryReported",
       "trigger": "P1 event. New Injury committed with status='reported'. Closes eligibility gate for the athlete on next squad query.",
       "queue": "notifications-critical",
       "consumers": [
@@ -43,7 +43,7 @@
     },
     {
       "name": "TreatmentAdministered",
-      "class": "Stackra\\Sports\\Medical\\Events\\TreatmentAdministered",
+      "class": "Academorix\\Sports\\Medical\\Events\\TreatmentAdministered",
       "trigger": "New Treatment committed against an active Injury.",
       "queue": "medical",
       "consumers": ["audit::WriteToAuditLog (retention: 10 years)"],
@@ -57,7 +57,7 @@
     },
     {
       "name": "ClearanceIssued",
-      "class": "Stackra\\Sports\\Medical\\Events\\ClearanceIssued",
+      "class": "Academorix\\Sports\\Medical\\Events\\ClearanceIssued",
       "trigger": "New MedicalClearance committed with expires_at > now.",
       "queue": "medical",
       "consumers": [
@@ -78,7 +78,7 @@
     },
     {
       "name": "ClearanceExpiring",
-      "class": "Stackra\\Sports\\Medical\\Events\\ClearanceExpiring",
+      "class": "Academorix\\Sports\\Medical\\Events\\ClearanceExpiring",
       "trigger": "Scheduled job fires at 90d / 30d / 7d before expires_at. Cannot-opt-out notifications.",
       "queue": "notifications-critical",
       "consumers": [
@@ -95,7 +95,7 @@
     },
     {
       "name": "ClearanceExpired",
-      "class": "Stackra\\Sports\\Medical\\Events\\ClearanceExpired",
+      "class": "Academorix\\Sports\\Medical\\Events\\ClearanceExpired",
       "trigger": "P1 event. Clearance passed expires_at without renewal. Closes eligibility gate.",
       "queue": "notifications-critical",
       "consumers": [
@@ -114,7 +114,7 @@
     },
     {
       "name": "ReturnToPlayCleared",
-      "class": "Stackra\\Sports\\Medical\\Events\\ReturnToPlayCleared",
+      "class": "Academorix\\Sports\\Medical\\Events\\ReturnToPlayCleared",
       "trigger": "P1 event. Injury.status flipped to 'cleared' by medical role. Re-opens eligibility gate.",
       "queue": "notifications-critical",
       "consumers": [
@@ -134,7 +134,7 @@
     },
     {
       "name": "AllergyAdded",
-      "class": "Stackra\\Sports\\Medical\\Events\\AllergyAdded",
+      "class": "Academorix\\Sports\\Medical\\Events\\AllergyAdded",
       "trigger": "New Allergy committed. Coach summary cache invalidated.",
       "queue": "medical",
       "consumers": [
@@ -152,7 +152,7 @@
     },
     {
       "name": "MedicationAdded",
-      "class": "Stackra\\Sports\\Medical\\Events\\MedicationAdded",
+      "class": "Academorix\\Sports\\Medical\\Events\\MedicationAdded",
       "trigger": "New Medication committed.",
       "queue": "medical",
       "consumers": ["audit::WriteToAuditLog"],
@@ -165,7 +165,7 @@
     },
     {
       "name": "MedicationDiscontinued",
-      "class": "Stackra\\Sports\\Medical\\Events\\MedicationDiscontinued",
+      "class": "Academorix\\Sports\\Medical\\Events\\MedicationDiscontinued",
       "trigger": "Medication.status flipped to 'discontinued'.",
       "queue": "medical",
       "consumers": ["audit::WriteToAuditLog"],

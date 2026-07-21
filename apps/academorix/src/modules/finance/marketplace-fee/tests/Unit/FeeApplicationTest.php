@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use Stackra\MarketplaceFee\Models\FeeApplication;
+use Academorix\MarketplaceFee\Models\FeeApplication;
 
 it('is a placeholder — replace with actual FeeApplication unit tests', function (): void {
     expect(FeeApplication::class)->toBeString();

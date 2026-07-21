@@ -1,10 +1,10 @@
 {
-  "name": "stackra/drills",
+  "name": "academorix/drills",
   "type": "library",
-  "description": "Stackra Drills module — server-side Laravel package emitted from the module blueprint at `modules/sports/blueprints/drills/`. Complements the wire SDK at `stackra-sports/drills-sdk`.",
+  "description": "Academorix Drills module — server-side Laravel package emitted from the module blueprint at `modules/sports/blueprints/drills/`. Complements the wire SDK at `academorix-sports/drills-sdk`.",
   "license": "proprietary",
   "keywords": [
-    "stackra",
+    "academorix",
     "module",
     "laravel",
     "sports",
@@ -22,7 +22,7 @@
     "stackra/routing": "@dev",
     "stackra/service-provider": "@dev",
     "stackra/support": "@dev",
-    "stackra-sports/drills-sdk": "@dev"
+    "academorix-sports/drills-sdk": "@dev"
   },
   "require-dev": {
     "orchestra/testbench": "^11.0",
@@ -33,12 +33,12 @@
   },
   "autoload": {
     "psr-4": {
-      "Stackra\\Drills\\": "src/"
+      "Academorix\\Drills\\": "src/"
     }
   },
   "autoload-dev": {
     "psr-4": {
-      "Stackra\\Drills\\Tests\\": "tests/"
+      "Academorix\\Drills\\Tests\\": "tests/"
     }
   },
   "extra": {

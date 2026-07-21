@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Event\Actions\Platform;
+namespace Academorix\Event\Actions\Platform;
 
-use Stackra\Event\Contracts\Repositories\EventRepositoryInterface;
-use Stackra\Event\Data\EventData;
+use Academorix\Event\Contracts\Repositories\EventRepositoryInterface;
+use Academorix\Event\Data\EventData;
 use Stackra\Routing\Attributes\AsAction;
 use Stackra\Routing\Attributes\Middleware;
 use Stackra\Routing\Concerns\AsController;

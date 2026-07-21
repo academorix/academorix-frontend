@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/referrals/marketing",
+  "id": "academorix://modules/referrals/marketing",
   "$version": 1,
   "title": "referrals — marketing events (ad-network conversions)",
   "lane": "marketing",

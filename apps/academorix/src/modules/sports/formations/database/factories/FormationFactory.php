@@ -4,19 +4,19 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Formations\Database\Factories;
+namespace Academorix\Formations\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Stackra\Formations\Contracts\Data\FormationInterface;
-use Stackra\Formations\Models\Formation;
+use Academorix\Formations\Contracts\Data\FormationInterface;
+use Academorix\Formations\Models\Formation;
 
 /**
- * Factory for {@see \Stackra\Formations\Models\Formation}.
+ * Factory for {@see \Academorix\Formations\Models\Formation}.
  *
  * Auto-generated skeleton — extend with named states as domain
  * cases emerge (e.g. `->published()`, `->overdue()`, `->archived()`).
  *
- * @extends Factory<\Stackra\Formations\Models\Formation>
+ * @extends Factory<\Academorix\Formations\Models\Formation>
  *
  * @category Formations
  *

@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/payment/data/providers/square-config",
+  "id": "academorix://modules/payment/data/providers/square-config",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "Square provider config",

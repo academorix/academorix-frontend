@@ -4,7 +4,7 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Coaching\Attributes;
+namespace Academorix\Coaching\Attributes;
 
 use Attribute;
 

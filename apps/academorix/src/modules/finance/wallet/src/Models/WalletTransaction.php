@@ -4,19 +4,19 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Wallet\Models;
+namespace Academorix\Wallet\Models;
 
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
-use Stackra\Wallet\Contracts\Data\WalletTransactionInterface;
-use Stackra\Wallet\Database\Factories\WalletTransactionFactory;
+use Academorix\Wallet\Contracts\Data\WalletTransactionInterface;
+use Academorix\Wallet\Database\Factories\WalletTransactionFactory;
 use Stackra\Foundation\Concerns\HasMetadata;
 use Stackra\Tenancy\Concerns\BelongsToTenant;
-use Stackra\Wallet\Enums\WalletTransactionKind;
-use Stackra\Wallet\Policies\WalletTransactionPolicy;
+use Academorix\Wallet\Enums\WalletTransactionKind;
+use Academorix\Wallet\Policies\WalletTransactionPolicy;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;

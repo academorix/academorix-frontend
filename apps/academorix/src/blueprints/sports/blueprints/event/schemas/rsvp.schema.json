@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/event/schemas/rsvp",
+  "id": "academorix://modules/event/schemas/rsvp",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "Rsvp",

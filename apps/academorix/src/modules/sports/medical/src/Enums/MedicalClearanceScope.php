@@ -4,7 +4,7 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Medical\Enums;
+namespace Academorix\Medical\Enums;
 
 use Stackra\Enum\Enum;
 

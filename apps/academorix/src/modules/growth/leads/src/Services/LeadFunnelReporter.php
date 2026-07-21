@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Leads\Services;
+namespace Academorix\Leads\Services;
 
-use Stackra\Leads\Contracts\Data\LeadInterface;
-use Stackra\Leads\Contracts\Services\LeadFunnelReporterInterface;
-use Stackra\Leads\Enums\LeadStage;
-use Stackra\Leads\Models\Lead;
+use Academorix\Leads\Contracts\Data\LeadInterface;
+use Academorix\Leads\Contracts\Services\LeadFunnelReporterInterface;
+use Academorix\Leads\Enums\LeadStage;
+use Academorix\Leads\Models\Lead;
 use Illuminate\Container\Attributes\Scoped;
 
 /**

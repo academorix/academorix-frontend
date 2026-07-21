@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Grants\Exceptions;
 
-use Stackra\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * The auth_user was hard-deleted mid-request.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class GrantGrantorDeletedException extends AcademorixException
+final class GrantGrantorDeletedException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/attribution/entitlements",
+  "id": "academorix://modules/attribution/entitlements",
   "$version": 1,
   "title": "attribution — declared entitlements",
   "description": "Six entitlement keys. `attribution_capture` is the master boolean feature gate — off = middleware becomes a no-op. `attribution_click_ids_advanced` gates the msclkid + sccid captures (Medium+). `attribution_rollup` gates the campaign performance rollup + dashboards (Medium+). `attribution_merge` gates cross-device profile merging (Enterprise). `attribution_import` gates bulk CSV import from external CRM (Enterprise). `attribution_touchpoint_retention_extended` extends touchpoint retention from 730d to 2555d (Enterprise). Every downstream growth-tier consumer (marketing, analytics, referrals) has its OWN feature gate — this module is a feeder, not a policy layer.",

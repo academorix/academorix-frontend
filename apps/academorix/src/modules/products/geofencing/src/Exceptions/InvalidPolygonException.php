@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Geofencing\Exceptions;
+namespace Academorix\Geofencing\Exceptions;
 
 use Stackra\Exceptions\StackraException;
-use Stackra\Geofencing\Enums\PolygonValidationReason;
+use Academorix\Geofencing\Enums\PolygonValidationReason;
 
 /**
- * Raised by {@see \Stackra\Geofencing\Services\PolygonValidator} when a
+ * Raised by {@see \Academorix\Geofencing\Services\PolygonValidator} when a
  * submitted polygon fails validation.
  *
  * Carries the specific {@see PolygonValidationReason} so the caller can point

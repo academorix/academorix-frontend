@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Registry\Contracts\Data;
+namespace Academorix\Registry\Contracts\Data;
 
 use Illuminate\Container\Attributes\Bind;
-use Stackra\Registry\Models\Discipline;
+use Academorix\Registry\Models\Discipline;
 
 /**
  * Table shape for the `disciplines` table.

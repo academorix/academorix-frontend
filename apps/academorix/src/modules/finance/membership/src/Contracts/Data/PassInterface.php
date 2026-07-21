@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Membership\Contracts\Data;
+namespace Academorix\Membership\Contracts\Data;
 
 use Illuminate\Container\Attributes\Bind;
-use Stackra\Membership\Models\Pass;
+use Academorix\Membership\Models\Pass;
 
 /**
  * Table shape for the `passes` table.

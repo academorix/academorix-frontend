@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/attribution/schemas/attribution",
+  "id": "academorix://modules/attribution/schemas/attribution",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "Attribution",
@@ -13,9 +13,9 @@
     "keyType": "string",
     "keyPrefix": "att_",
     "incrementing": false,
-    "model": "Stackra\\Growth\\Attribution\\Models\\Attribution",
-    "interface": "Stackra\\Growth\\Attribution\\Contracts\\Data\\AttributionInterface",
-    "implements": ["Stackra\\Growth\\Attribution\\Contracts\\Data\\AttributionInterface"],
+    "model": "Academorix\\Growth\\Attribution\\Models\\Attribution",
+    "interface": "Academorix\\Growth\\Attribution\\Contracts\\Data\\AttributionInterface",
+    "implements": ["Academorix\\Growth\\Attribution\\Contracts\\Data\\AttributionInterface"],
     "traits": [
       "HasFactory",
       "HasUlids",

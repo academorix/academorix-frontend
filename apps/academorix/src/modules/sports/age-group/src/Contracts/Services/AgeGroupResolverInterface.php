@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Stackra\AgeGroup\Contracts\Services;
+namespace Academorix\AgeGroup\Contracts\Services;
 
-use Stackra\AgeGroup\Services\AgeGroupResolver;
+use Academorix\AgeGroup\Services\AgeGroupResolver;
 use Illuminate\Container\Attributes\Bind;
 
 /**

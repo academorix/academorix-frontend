@@ -4,11 +4,11 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Attribution\Services;
+namespace Academorix\Attribution\Services;
 
-use Stackra\Attribution\Contracts\Services\ClickIdExtractorInterface;
+use Academorix\Attribution\Contracts\Services\ClickIdExtractorInterface;
 use Illuminate\Container\Attributes\Scoped;
-use Stackra\Attribution\Contracts\Repositories\AttributionTouchpointRepositoryInterface;
+use Academorix\Attribution\Contracts\Repositories\AttributionTouchpointRepositoryInterface;
 
 /**
  * Concrete service — ClickIdExtractor.

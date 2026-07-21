@@ -1,14 +1,14 @@
 {
-  "id": "stackra://modules/order/events",
+  "id": "academorix://modules/order/events",
   "$version": 1,
   "title": "order — published events",
-  "namespace": "Stackra\\Finance\\Order\\Events",
+  "namespace": "Academorix\\Finance\\Order\\Events",
   "dispatchMode": "afterCommit",
   "description": "State-machine transitions + line-item events. OrderPaid is the load-bearing signal — feeds invoice generation, wallet-hold settlement, membership provisioning, entitlement grants.",
   "events": [
     {
       "name": "OrderCreated",
-      "class": "Stackra\\Finance\\Order\\Events\\OrderCreated",
+      "class": "Academorix\\Finance\\Order\\Events\\OrderCreated",
       "trigger": "New draft Order committed.",
       "queue": "order",
       "consumers": ["audit::WriteToAuditLog", "activity::LogActivity"],
@@ -22,7 +22,7 @@
     },
     {
       "name": "OrderLineAdded",
-      "class": "Stackra\\Finance\\Order\\Events\\OrderLineAdded",
+      "class": "Academorix\\Finance\\Order\\Events\\OrderLineAdded",
       "trigger": "New OrderLine committed. Triggers total recalculation.",
       "queue": "order",
       "consumers": ["order::RecalculateOrderTotalsListener"],
@@ -35,7 +35,7 @@
     },
     {
       "name": "OrderLineRemoved",
-      "class": "Stackra\\Finance\\Order\\Events\\OrderLineRemoved",
+      "class": "Academorix\\Finance\\Order\\Events\\OrderLineRemoved",
       "trigger": "OrderLine deleted. Triggers total recalculation.",
       "queue": "order",
       "consumers": ["order::RecalculateOrderTotalsListener"],
@@ -48,7 +48,7 @@
     },
     {
       "name": "OrderAdjustmentApplied",
-      "class": "Stackra\\Finance\\Order\\Events\\OrderAdjustmentApplied",
+      "class": "Academorix\\Finance\\Order\\Events\\OrderAdjustmentApplied",
       "trigger": "New OrderAdjustment (coupon, credit, discount) committed.",
       "queue": "order",
       "consumers": [
@@ -66,7 +66,7 @@
     },
     {
       "name": "OrderAdjustmentRemoved",
-      "class": "Stackra\\Finance\\Order\\Events\\OrderAdjustmentRemoved",
+      "class": "Academorix\\Finance\\Order\\Events\\OrderAdjustmentRemoved",
       "trigger": "OrderAdjustment deleted.",
       "queue": "order",
       "consumers": [
@@ -78,7 +78,7 @@
     },
     {
       "name": "OrderTotalsRecalculated",
-      "class": "Stackra\\Finance\\Order\\Events\\OrderTotalsRecalculated",
+      "class": "Academorix\\Finance\\Order\\Events\\OrderTotalsRecalculated",
       "trigger": "OrderTotalsCalculator ran + updated the order.",
       "queue": "order",
       "consumers": [],
@@ -91,7 +91,7 @@
     },
     {
       "name": "OrderPending",
-      "class": "Stackra\\Finance\\Order\\Events\\OrderPending",
+      "class": "Academorix\\Finance\\Order\\Events\\OrderPending",
       "trigger": "Order status draft -> pending (checkout initiated).",
       "queue": "order",
       "consumers": ["audit::WriteToAuditLog"],
@@ -104,7 +104,7 @@
     },
     {
       "name": "OrderPaid",
-      "class": "Stackra\\Finance\\Order\\Events\\OrderPaid",
+      "class": "Academorix\\Finance\\Order\\Events\\OrderPaid",
       "trigger": "Order status -> paid. Sum of successful payments >= total. LOAD-BEARING EVENT.",
       "queue": "order-critical",
       "consumers": [
@@ -126,7 +126,7 @@
     },
     {
       "name": "OrderPartiallyPaid",
-      "class": "Stackra\\Finance\\Order\\Events\\OrderPartiallyPaid",
+      "class": "Academorix\\Finance\\Order\\Events\\OrderPartiallyPaid",
       "trigger": "Order status -> partially_paid. Partial payment received.",
       "queue": "order",
       "consumers": [
@@ -143,7 +143,7 @@
     },
     {
       "name": "OrderAbandoned",
-      "class": "Stackra\\Finance\\Order\\Events\\OrderAbandoned",
+      "class": "Academorix\\Finance\\Order\\Events\\OrderAbandoned",
       "trigger": "Order status -> abandoned via TTL sweeper.",
       "queue": "order",
       "consumers": [
@@ -155,7 +155,7 @@
     },
     {
       "name": "OrderCancelled",
-      "class": "Stackra\\Finance\\Order\\Events\\OrderCancelled",
+      "class": "Academorix\\Finance\\Order\\Events\\OrderCancelled",
       "trigger": "Order status -> cancelled (manual by staff or buyer).",
       "queue": "order",
       "consumers": [
@@ -173,7 +173,7 @@
     },
     {
       "name": "OrderRefunded",
-      "class": "Stackra\\Finance\\Order\\Events\\OrderRefunded",
+      "class": "Academorix\\Finance\\Order\\Events\\OrderRefunded",
       "trigger": "Order status -> refunded. Sum of refunds >= amount_paid.",
       "queue": "order-critical",
       "consumers": [
@@ -192,7 +192,7 @@
     },
     {
       "name": "OrderFulfilled",
-      "class": "Stackra\\Finance\\Order\\Events\\OrderFulfilled",
+      "class": "Academorix\\Finance\\Order\\Events\\OrderFulfilled",
       "trigger": "Order status -> fulfilled (goods delivered / service performed).",
       "queue": "order",
       "consumers": [

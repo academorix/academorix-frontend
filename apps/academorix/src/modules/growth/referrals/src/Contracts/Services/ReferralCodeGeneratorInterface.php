@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Referrals\Contracts\Services;
+namespace Academorix\Referrals\Contracts\Services;
 
-use Stackra\Referrals\Services\ReferralCodeGenerator;
+use Academorix\Referrals\Services\ReferralCodeGenerator;
 use Illuminate\Container\Attributes\Bind;
 
 /**

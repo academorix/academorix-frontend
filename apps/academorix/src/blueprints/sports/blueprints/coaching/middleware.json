@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/coaching/middleware",
+  "id": "academorix://modules/coaching/middleware",
   "$version": 1,
   "title": "coaching — HTTP middleware",
   "middleware": [],

@@ -4,13 +4,13 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Performance\Policies;
+namespace Academorix\Performance\Policies;
 
 use Stackra\User\Models\User;
-use Stackra\Performance\Models\TestBattery;
+use Academorix\Performance\Models\TestBattery;
 
 /**
- * Authorization policy for {@see \Stackra\Performance\Models\TestBattery}.
+ * Authorization policy for {@see \Academorix\Performance\Models\TestBattery}.
  *
  * Wired via `#[UsePolicy]` on the Model.
  *

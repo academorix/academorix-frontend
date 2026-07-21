@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Match\Actions\Tenant;
+namespace Academorix\Match\Actions\Tenant;
 
-use Stackra\Match\Contracts\Repositories\OpponentLogoRepositoryInterface;
-use Stackra\Match\Data\OpponentLogoData;
+use Academorix\Match\Contracts\Repositories\OpponentLogoRepositoryInterface;
+use Academorix\Match\Data\OpponentLogoData;
 use Stackra\Routing\Attributes\AsAction;
 use Stackra\Routing\Attributes\Middleware;
 use Stackra\Routing\Concerns\AsController;
@@ -50,7 +50,7 @@ final class ListOpponentLogoAction
      */
     public function __invoke(Request $request): PaginatedDataCollection
     {
-        /** @var LengthAwarePaginator<int, \Stackra\Match\Models\OpponentLogo> $page */
+        /** @var LengthAwarePaginator<int, \Academorix\Match\Models\OpponentLogo> $page */
         $page = $this->repository->paginate(
             perPage: (int) $request->integer('per_page', 15),
         );

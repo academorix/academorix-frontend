@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Leads\Actions\Tenant;
+namespace Academorix\Leads\Actions\Tenant;
 
-use Stackra\Leads\Contracts\Repositories\LeadActivityRepositoryInterface;
-use Stackra\Leads\Data\LeadActivityData;
+use Academorix\Leads\Contracts\Repositories\LeadActivityRepositoryInterface;
+use Academorix\Leads\Data\LeadActivityData;
 use Stackra\Routing\Attributes\AsAction;
 use Stackra\Routing\Attributes\Middleware;
 use Stackra\Routing\Concerns\AsController;
@@ -50,7 +50,7 @@ final class ListLeadActivitieAction
      */
     public function __invoke(Request $request): PaginatedDataCollection
     {
-        /** @var LengthAwarePaginator<int, \Stackra\Leads\Models\LeadActivity> $page */
+        /** @var LengthAwarePaginator<int, \Academorix\Leads\Models\LeadActivity> $page */
         $page = $this->repository->paginate(
             perPage: (int) $request->integer('per_page', 15),
         );

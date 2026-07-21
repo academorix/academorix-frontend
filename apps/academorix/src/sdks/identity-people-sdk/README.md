@@ -1,14 +1,14 @@
-# stackra-identity/people-sdk
+# academorix-identity/people-sdk
 
 Wire-visible SDK surface for the `people` module of the Identity service.
-Auto-discovered by `stackra/identity-sdk` (the service umbrella) via
+Auto-discovered by `academorix/identity-sdk` (the service umbrella) via
 `#[AsSdkResource(name: 'people', service: 'identity')]`.
 
 ## Aggregates
 
 - **person-guardian-links** — CENTRAL-plane guardian↔minor link that survives
   cross-tenant
-- **person-identities** — CENTRAL-plane global identity carrying the Stackra
+- **person-identities** — CENTRAL-plane global identity carrying the Academorix
   ID
 - **tenant-link-requests** — Consent-gated request from a tenant to link a local
   Athlete/Staff to a central PersonIdentity
@@ -29,7 +29,7 @@ src/
 Consumed only over HTTP via the umbrella client:
 
 ```php
-app(\Stackra\IdentitySdk\Client\IdentitySdk::class)
+app(\Academorix\IdentitySdk\Client\IdentitySdk::class)
     ->people()
     ->personGuardianLinks()
     ->list();

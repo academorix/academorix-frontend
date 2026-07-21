@@ -1,7 +1,7 @@
-# stackra-sports/progress-sdk
+# academorix-sports/progress-sdk
 
 Wire-visible SDK surface for the `progress` module of the Sports service.
-Auto-discovered by `stackra/sports-sdk` (the service umbrella) via
+Auto-discovered by `academorix/sports-sdk` (the service umbrella) via
 `#[AsSdkResource(name: 'progress', service: 'sports')]`.
 
 ## Aggregates
@@ -34,7 +34,7 @@ src/
 Consumed only over HTTP via the umbrella client:
 
 ```php
-app(\Stackra\SportsSdk\Client\SportsSdk::class)
+app(\Academorix\SportsSdk\Client\SportsSdk::class)
     ->progress()
     ->beltRanks()
     ->list();

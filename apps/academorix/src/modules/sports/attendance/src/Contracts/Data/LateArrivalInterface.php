@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Attendance\Contracts\Data;
+namespace Academorix\Attendance\Contracts\Data;
 
 use Illuminate\Container\Attributes\Bind;
-use Stackra\Attendance\Models\LateArrival;
+use Academorix\Attendance\Models\LateArrival;
 
 /**
  * Table shape for the `late_arrivals` table.

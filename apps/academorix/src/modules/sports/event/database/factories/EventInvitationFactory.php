@@ -4,19 +4,19 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Event\Database\Factories;
+namespace Academorix\Event\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Stackra\Event\Contracts\Data\EventInvitationInterface;
-use Stackra\Event\Models\EventInvitation;
+use Academorix\Event\Contracts\Data\EventInvitationInterface;
+use Academorix\Event\Models\EventInvitation;
 
 /**
- * Factory for {@see \Stackra\Event\Models\EventInvitation}.
+ * Factory for {@see \Academorix\Event\Models\EventInvitation}.
  *
  * Auto-generated skeleton — extend with named states as domain
  * cases emerge (e.g. `->published()`, `->overdue()`, `->archived()`).
  *
- * @extends Factory<\Stackra\Event\Models\EventInvitation>
+ * @extends Factory<\Academorix\Event\Models\EventInvitation>
  *
  * @category Event
  *

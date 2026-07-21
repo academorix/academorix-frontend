@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Geofencing\Enums;
+namespace Academorix\Geofencing\Enums;
 
 use Stackra\Enum\Attributes\Description;
 use Stackra\Enum\Attributes\Label;

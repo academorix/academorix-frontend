@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Theme\Exceptions;
 
-use Stackra\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Attempted to activate a theme that is already the active theme for its (tenant, mode).
@@ -15,7 +15,7 @@ use Stackra\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class ThemeAlreadyActiveException extends AcademorixException
+final class ThemeAlreadyActiveException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

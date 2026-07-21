@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/leads/schemas/lead-task",
+  "id": "academorix://modules/leads/schemas/lead-task",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "LeadTask",
@@ -13,9 +13,9 @@
     "keyType": "string",
     "keyPrefix": "let_",
     "incrementing": false,
-    "model": "Stackra\\Growth\\Leads\\Models\\LeadTask",
-    "interface": "Stackra\\Growth\\Leads\\Contracts\\Data\\LeadTaskInterface",
-    "implements": ["Stackra\\Growth\\Leads\\Contracts\\Data\\LeadTaskInterface"],
+    "model": "Academorix\\Growth\\Leads\\Models\\LeadTask",
+    "interface": "Academorix\\Growth\\Leads\\Contracts\\Data\\LeadTaskInterface",
+    "implements": ["Academorix\\Growth\\Leads\\Contracts\\Data\\LeadTaskInterface"],
     "traits": [
       "HasFactory",
       "HasUlids",

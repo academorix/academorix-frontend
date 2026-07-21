@@ -4,11 +4,11 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Registry\Actions\Platform;
+namespace Academorix\Registry\Actions\Platform;
 
-use Stackra\Registry\Contracts\Repositories\DisciplineRepositoryInterface;
-use Stackra\Registry\Data\DisciplineData;
-use Stackra\Registry\Data\Requests\CreateDisciplineRequestData;
+use Academorix\Registry\Contracts\Repositories\DisciplineRepositoryInterface;
+use Academorix\Registry\Data\DisciplineData;
+use Academorix\Registry\Data\Requests\CreateDisciplineRequestData;
 use Stackra\Routing\Attributes\AsAction;
 use Stackra\Routing\Attributes\Middleware;
 use Stackra\Routing\Concerns\AsController;

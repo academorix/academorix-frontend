@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Medical\Actions\Platform;
+namespace Academorix\Medical\Actions\Platform;
 
-use Stackra\Medical\Contracts\Repositories\InjuryRepositoryInterface;
-use Stackra\Medical\Data\InjuryData;
+use Academorix\Medical\Contracts\Repositories\InjuryRepositoryInterface;
+use Academorix\Medical\Data\InjuryData;
 use Stackra\Routing\Attributes\AsAction;
 use Stackra\Routing\Attributes\Middleware;
 use Stackra\Routing\Concerns\AsController;
@@ -50,7 +50,7 @@ final class ListInjurieAction
      */
     public function __invoke(Request $request): PaginatedDataCollection
     {
-        /** @var LengthAwarePaginator<int, \Stackra\Medical\Models\Injury> $page */
+        /** @var LengthAwarePaginator<int, \Academorix\Medical\Models\Injury> $page */
         $page = $this->repository->paginate(
             perPage: (int) $request->integer('per_page', 15),
         );

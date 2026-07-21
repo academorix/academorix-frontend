@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Teams\Exceptions;
 
-use Stackra\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * (team, member_type, member_id) already has an active row.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class TeamMemberAlreadyActiveException extends AcademorixException
+final class TeamMemberAlreadyActiveException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

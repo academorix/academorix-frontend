@@ -2,7 +2,7 @@
   "$version": 1,
   "name": "private-sessions",
   "alias": "private-sessions",
-  "namespace": "Stackra\\Sports\\PrivateSessions",
+  "namespace": "Academorix\\Sports\\PrivateSessions",
   "description": "1:1 coaching sessions per blueprint §13.4. Ships TWO owned entities: `PrivateSessionRequest` (request → approve → schedule → completed / no_show / cancelled; athlete + coach + preferred slots), `SessionCredit` (session-pack credit ledger — parent buys 10-pack; each private-session consume atomically decrements). Request flow: parent submits preferred slots → coach approves + picks slot → scheduled via sports/session → completed → invoice via finance/invoice (or credit consumed if pack purchased). Distinct from sports/session (regular team practice) — this is 1:1 paid coaching with per-session monetary tracking.",
   "keywords": [
     "private-sessions",
@@ -13,7 +13,7 @@
     "wave-2"
   ],
   "priority": 71,
-  "providers": ["Stackra\\Sports\\PrivateSessions\\Providers\\PrivateSessionsServiceProvider"],
+  "providers": ["Academorix\\Sports\\PrivateSessions\\Providers\\PrivateSessionsServiceProvider"],
   "files": [],
   "dependencies": [
     "foundation",

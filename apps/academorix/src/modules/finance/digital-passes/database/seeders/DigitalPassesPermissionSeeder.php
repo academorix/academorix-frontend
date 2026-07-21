@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Stackra\DigitalPasses\Database\Seeders;
+namespace Academorix\DigitalPasses\Database\Seeders;
 
-use Stackra\DigitalPasses\Enums\DigitalPassesPermission;
+use Academorix\DigitalPasses\Enums\DigitalPassesPermission;
 use Stackra\Authorization\Database\Seeders\Concerns\SeedsPermissionEnum;
 use Stackra\ServiceProvider\Attributes\AsSeeder;
 use Illuminate\Database\Seeder;

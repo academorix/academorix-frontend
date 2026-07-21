@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Expenses\Actions\Tenant;
+namespace Academorix\Expenses\Actions\Tenant;
 
-use Stackra\Expenses\Contracts\Repositories\BudgetRepositoryInterface;
-use Stackra\Expenses\Data\BudgetData;
+use Academorix\Expenses\Contracts\Repositories\BudgetRepositoryInterface;
+use Academorix\Expenses\Data\BudgetData;
 use Stackra\Routing\Attributes\AsAction;
 use Stackra\Routing\Attributes\Middleware;
 use Stackra\Routing\Concerns\AsController;
@@ -50,7 +50,7 @@ final class ListBudgetAction
      */
     public function __invoke(Request $request): PaginatedDataCollection
     {
-        /** @var LengthAwarePaginator<int, \Stackra\Expenses\Models\Budget> $page */
+        /** @var LengthAwarePaginator<int, \Academorix\Expenses\Models\Budget> $page */
         $page = $this->repository->paginate(
             perPage: (int) $request->integer('per_page', 15),
         );

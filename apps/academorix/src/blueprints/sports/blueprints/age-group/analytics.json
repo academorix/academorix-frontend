@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/age-group/analytics",
+  "id": "academorix://modules/age-group/analytics",
   "$version": 1,
   "title": "age-group — product analytics",
   "sink": "segment",

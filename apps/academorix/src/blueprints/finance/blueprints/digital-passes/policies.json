@@ -1,11 +1,11 @@
 {
-  "id": "stackra://modules/digital-passes/policies",
+  "id": "academorix://modules/digital-passes/policies",
   "$version": 1,
   "title": "digital-passes — authorization policies",
   "policies": [
     {
       "model": "WalletPass",
-      "class": "Stackra\\Finance\\DigitalPasses\\Policies\\WalletPassPolicy",
+      "class": "Academorix\\Finance\\DigitalPasses\\Policies\\WalletPassPolicy",
       "abilities": [
         {
           "action": "viewAny",

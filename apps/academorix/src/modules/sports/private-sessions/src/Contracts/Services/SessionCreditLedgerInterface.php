@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Stackra\PrivateSessions\Contracts\Services;
+namespace Academorix\PrivateSessions\Contracts\Services;
 
-use Stackra\PrivateSessions\Services\SessionCreditLedger;
+use Academorix\PrivateSessions\Services\SessionCreditLedger;
 use Illuminate\Container\Attributes\Bind;
 
 /**

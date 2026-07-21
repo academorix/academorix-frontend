@@ -4,13 +4,13 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Match\Policies;
+namespace Academorix\Match\Policies;
 
 use Stackra\User\Models\User;
-use Stackra\Match\Models\MatchResult;
+use Academorix\Match\Models\MatchResult;
 
 /**
- * Authorization policy for {@see \Stackra\Match\Models\MatchResult}.
+ * Authorization policy for {@see \Academorix\Match\Models\MatchResult}.
  *
  * Wired via `#[UsePolicy]` on the Model.
  *

@@ -1,10 +1,10 @@
 {
-  "name": "stackra-platform/integrations-sdk",
+  "name": "academorix-platform/integrations-sdk",
   "type": "library",
-  "description": "Wire-visible SDK surface (Spatie Data DTOs + Saloon Request transport + fluent Resources) for the `integrations` module of the Platform service. Auto-discovered at boot by stackra/platform-sdk via #[AsSdkResource(name: 'integrations', service: 'platform')]; consumed by every cross-service caller strictly over HTTP.",
+  "description": "Wire-visible SDK surface (Spatie Data DTOs + Saloon Request transport + fluent Resources) for the `integrations` module of the Platform service. Auto-discovered at boot by academorix/platform-sdk via #[AsSdkResource(name: 'integrations', service: 'platform')]; consumed by every cross-service caller strictly over HTTP.",
   "license": "proprietary",
   "keywords": [
-    "stackra",
+    "academorix",
     "sdk",
     "saloon",
     "spatie-data",
@@ -32,12 +32,12 @@
   },
   "autoload": {
     "psr-4": {
-      "Stackra\\\\PlatformIntegrationsSdk\\\\": "src/"
+      "Academorix\\\\PlatformIntegrationsSdk\\": "src/"
     }
   },
   "autoload-dev": {
     "psr-4": {
-      "Stackra\\\\PlatformIntegrationsSdk\\\\Tests\\\\": "tests/"
+      "Academorix\\\\PlatformIntegrationsSdk\\\\Tests\\": "tests/"
     }
   },
   "extra": {

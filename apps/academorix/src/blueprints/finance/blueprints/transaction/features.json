@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/transaction/features",
+  "id": "academorix://modules/transaction/features",
   "$version": 1,
   "title": "transaction — feature keys",
   "reference": {

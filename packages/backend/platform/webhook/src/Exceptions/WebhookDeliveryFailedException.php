@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Stackra\Webhook\Exceptions;
 
-use Stackra\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Raised when a delivery attempt fails and needs a domain-level
@@ -15,7 +15,7 @@ use Stackra\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class WebhookDeliveryFailedException extends AcademorixException
+final class WebhookDeliveryFailedException extends StackraException
 {
     public const CODE = 'webhook.delivery_failed';
 

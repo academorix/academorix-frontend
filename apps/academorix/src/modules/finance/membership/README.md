@@ -1,4 +1,4 @@
-# stackra/membership
+# academorix/membership
 
 Server-side Laravel package for the `membership` module. Auto-generated from the
 blueprint at `modules/finance/blueprints/membership/`.
@@ -48,6 +48,6 @@ file is a hand-tuned override that survives regeneration.
 ## Companion wire SDK
 
 The wire-visible Saloon + Spatie Data package lives at
-`stackra-finance/membership-sdk` under `sdk/finance-membership-sdk/`.
+`academorix-finance/membership-sdk` under `sdk/finance-membership-sdk/`.
 Consumers cross the service boundary through the SDK; this package is the
 SERVER-side owner of the domain.

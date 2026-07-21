@@ -1,11 +1,11 @@
 {
-  "id": "stackra://modules/season/traits",
+  "id": "academorix://modules/season/traits",
   "$version": 1,
   "title": "season — trait composition",
   "description": "Two owned traits — `BelongsToSeason` for downstream models that carry a `season_id` FK (Team via Wave 2b, AthleteEnrollment / Event / Session via Wave 3), and `HasSeasonScope` for the Season model itself. Order matters when composed with `BelongsToTenant` + `BelongsToBranch`: tenant MUST come first so subsequent traits observe the tenant context; branch precedes season so season fills against a resolved branch when relevant.",
   "owned": [
     {
-      "trait": "Stackra\\Sports\\Season\\Concerns\\BelongsToSeason",
+      "trait": "Academorix\\Sports\\Season\\Concerns\\BelongsToSeason",
       "description": "Mixed into any downstream model that carries a Season FK (planned consumers: Team, AthleteEnrollment, Event, Session). Adds the `season()` belongsTo relation, a `resolveInSeason(?Season $season = null)` query scope that filters `WHERE season_id = ?` (falling back to `Request::activeSeason()` when the arg is omitted), and a `booted()` hook that fills `season_id = active_season_id()` on `creating` when the field is null AND the current request carries a resolved active season. Refuses to save a row whose `season_id` points at a Season in a different tenant than the row itself (defense-in-depth against cross-tenant FK smuggling — the compliance-auditor would catch a bad schema, this catches a bad write).",
       "public": true,
       "usedBy": [
@@ -23,7 +23,7 @@
       ]
     },
     {
-      "trait": "Stackra\\Sports\\Season\\Concerns\\HasSeasonScope",
+      "trait": "Academorix\\Sports\\Season\\Concerns\\HasSeasonScope",
       "description": "Mixed into the Season model itself (not into downstream models). Exposes reverse accessors — `teams()`, `enrollments()`, `events()`, `sessions()` — that hasMany-through the downstream tables in Wave 3+. Wave 3a ships the trait with the accessor stubs pre-wired to the eventual Wave-3 model class names; each accessor returns an empty collection until the corresponding module lands. When Wave 3 modules deploy their models, the accessor's target class resolves via the container + returns real data — no Season-side change needed. Also publishes the `currentEnrollmentCount()` computed accessor + `hasActiveDownstreamRefs()` bool helper the archive observer uses.",
       "public": true,
       "usedBy": ["season::Season"],
@@ -41,35 +41,35 @@
       { "trait": "Illuminate\\Database\\Eloquent\\SoftDeletes" }
     ],
     "foundation": [
-      { "trait": "Stackra\\Foundation\\Concerns\\HasPrefixedUlid" },
-      { "trait": "Stackra\\Foundation\\Concerns\\HasUserstamps" },
-      { "trait": "Stackra\\Foundation\\Concerns\\HasMetadata" },
-      { "trait": "Stackra\\Foundation\\Concerns\\HasSlug" },
-      { "trait": "Stackra\\Foundation\\Concerns\\Filterable" },
-      { "trait": "Stackra\\Foundation\\Concerns\\Searchable" }
+      { "trait": "Academorix\\Foundation\\Concerns\\HasPrefixedUlid" },
+      { "trait": "Academorix\\Foundation\\Concerns\\HasUserstamps" },
+      { "trait": "Academorix\\Foundation\\Concerns\\HasMetadata" },
+      { "trait": "Academorix\\Foundation\\Concerns\\HasSlug" },
+      { "trait": "Academorix\\Foundation\\Concerns\\Filterable" },
+      { "trait": "Academorix\\Foundation\\Concerns\\Searchable" }
     ],
-    "tenancy": [{ "trait": "Stackra\\Tenancy\\Concerns\\BelongsToTenant" }],
+    "tenancy": [{ "trait": "Academorix\\Tenancy\\Concerns\\BelongsToTenant" }],
     "organization": [
       {
-        "trait": "Stackra\\Organization\\Concerns\\BelongsToOrganization",
+        "trait": "Academorix\\Organization\\Concerns\\BelongsToOrganization",
         "reason": "Optional FK — Season may be org-scoped."
       }
     ],
     "branch": [
       {
-        "trait": "Stackra\\Branch\\Concerns\\BelongsToBranch",
+        "trait": "Academorix\\Branch\\Concerns\\BelongsToBranch",
         "reason": "Optional FK — Season may be branch-scoped."
       }
     ],
     "audit": [
       {
-        "trait": "Stackra\\Audit\\Concerns\\Auditable",
+        "trait": "Academorix\\Audit\\Concerns\\Auditable",
         "reason": "Season mutations (rename, status transitions, is_current flip, date shifts, sport_key changes) write to the `audits` table — every one of them is compliance-relevant."
       }
     ],
     "activity": [
       {
-        "trait": "Stackra\\Activity\\Concerns\\HasActivityLog",
+        "trait": "Academorix\\Activity\\Concerns\\HasActivityLog",
         "reason": "Season lifecycle events feed the tenant admin's product-facing activity feed."
       }
     ]

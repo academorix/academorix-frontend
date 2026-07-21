@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/dunning/errors",
+  "id": "academorix://modules/dunning/errors",
   "$version": 1,
   "title": "dunning — error codes",
   "namespace": "dunning",

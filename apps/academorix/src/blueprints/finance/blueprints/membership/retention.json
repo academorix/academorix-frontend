@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/membership/retention",
+  "id": "academorix://modules/membership/retention",
   "$version": 1,
   "title": "membership — retention windows",
   "description": "Active + paused memberships never expire. Terminal memberships retain 7 years post-transition (SOX 404 + tax audit). Enterprise extends to 10 years via `membership_extended_retention` entitlement. Renewals + passes co-terminate with their parent membership. Refund + chargeback records survive tenant erasure in the compliance archive.",

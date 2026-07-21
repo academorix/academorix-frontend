@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Athlete\Services;
+namespace Academorix\Athlete\Services;
 
-use Stackra\AgeGroup\Contracts\Data\AgeGroupInterface;
-use Stackra\Athlete\Contracts\Services\AgeGroupSnapshotResolverInterface;
+use Academorix\AgeGroup\Contracts\Data\AgeGroupInterface;
+use Academorix\Athlete\Contracts\Services\AgeGroupSnapshotResolverInterface;
 use Illuminate\Container\Attributes\Scoped;
 use Illuminate\Support\Facades\DB;
 

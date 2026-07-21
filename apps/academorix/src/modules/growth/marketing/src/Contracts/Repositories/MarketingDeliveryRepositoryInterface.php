@@ -4,17 +4,17 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Marketing\Contracts\Repositories;
+namespace Academorix\Marketing\Contracts\Repositories;
 
 use Stackra\Crud\Contracts\RepositoryInterface;
 
 /**
- * Repository contract for {@see Stackra\Marketing\Models\MarketingDelivery}.
+ * Repository contract for {@see Academorix\Marketing\Models\MarketingDelivery}.
  *
  * Consumers type-hint the interface; the container binds the concrete
  * via `#[AsRepository]` on `MarketingDeliveryRepository`.
  *
- * @extends RepositoryInterface<\Stackra\Marketing\Models\MarketingDelivery>
+ * @extends RepositoryInterface<\Academorix\Marketing\Models\MarketingDelivery>
  *
  * @category Marketing
  *

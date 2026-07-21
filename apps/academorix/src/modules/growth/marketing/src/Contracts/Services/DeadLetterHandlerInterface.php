@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Marketing\Contracts\Services;
+namespace Academorix\Marketing\Contracts\Services;
 
-use Stackra\Marketing\Services\DeadLetterHandler;
+use Academorix\Marketing\Services\DeadLetterHandler;
 use Illuminate\Container\Attributes\Bind;
 
 /**

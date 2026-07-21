@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Awards\Actions\Tenant;
+namespace Academorix\Awards\Actions\Tenant;
 
-use Stackra\Awards\Contracts\Repositories\AwardRepositoryInterface;
-use Stackra\Awards\Data\AwardData;
+use Academorix\Awards\Contracts\Repositories\AwardRepositoryInterface;
+use Academorix\Awards\Data\AwardData;
 use Stackra\Routing\Attributes\AsAction;
 use Stackra\Routing\Attributes\Middleware;
 use Stackra\Routing\Concerns\AsController;

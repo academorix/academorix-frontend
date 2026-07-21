@@ -1,104 +1,104 @@
 {
-  "id": "stackra://modules/referrals/rules",
+  "id": "academorix://modules/referrals/rules",
   "$version": 1,
   "title": "referrals — validation rules",
   "description": "Custom Laravel validation rules published by ReferralsServiceProvider::boot(). All rules are used both by the observer chain (authoritative refusal on write) AND by FormRequest data classes (early request-time validation with clear error surfaces).",
-  "namespace": "Stackra\\Growth\\Referrals\\Rules",
+  "namespace": "Academorix\\Growth\\Referrals\\Rules",
   "rules": [
     {
       "name": "valid_reward_type_amount_currency_combo",
-      "class": "Stackra\\Growth\\Referrals\\Rules\\ValidRewardTypeAmountCurrencyCombo",
+      "class": "Academorix\\Growth\\Referrals\\Rules\\ValidRewardTypeAmountCurrencyCombo",
       "signature": "valid_reward_type_amount_currency_combo",
       "description": "Program reward config internal consistency. `percent_discount` requires 1..100 (percent points); `fixed_amount` requires positive integer + reward_currency; `free_months` requires 1..24; `free_sessions` requires 1..1000; `credits` requires positive + currency; `point_award` requires positive integer + NO currency (points are not currency).",
       "default_message": "The :attribute reward configuration is invalid. See docs/reward-type-catalog for allowed combinations of reward_type + amount + currency."
     },
     {
       "name": "valid_vesting_rule_dependencies",
-      "class": "Stackra\\Growth\\Referrals\\Rules\\ValidVestingRuleDependencies",
+      "class": "Academorix\\Growth\\Referrals\\Rules\\ValidVestingRuleDependencies",
       "signature": "valid_vesting_rule_dependencies",
       "description": "vesting_rule must carry its required companion field. `trigger_plus_hold_days` requires `vesting_hold_days` 1..365; `n_events_completed` requires `vesting_n_events` 1..100; `after_refund_window_closes` requires (implicit) Finance module (Wave 4) configured refund_window_days; `immediate` + `manual_approval` require neither.",
       "default_message": "The vesting rule :vesting_rule requires additional fields: :missing_fields."
     },
     {
       "name": "valid_program_date_range",
-      "class": "Stackra\\Growth\\Referrals\\Rules\\ValidProgramDateRange",
+      "class": "Academorix\\Growth\\Referrals\\Rules\\ValidProgramDateRange",
       "signature": "valid_program_date_range",
       "description": "program_starts_at < program_ends_at when both set. program_ends_at nullable (open-ended program).",
       "default_message": "The program end date must be after the start date."
     },
     {
       "name": "valid_fraud_config_shape",
-      "class": "Stackra\\Growth\\Referrals\\Rules\\ValidFraudConfigShape",
+      "class": "Academorix\\Growth\\Referrals\\Rules\\ValidFraudConfigShape",
       "signature": "valid_fraud_config_shape",
       "description": "fraud_config JSONB must have documented shape: { max_referrals_per_hour: int (default 3), self_ip_match_block: bool, device_fingerprint_match_block: bool, disposable_email_domain_block: bool, self_email_variant_block: bool, blacklist_domains: string[], hard_block_threshold: int (default 90), warn_threshold: int (default 40) }. Extra keys refused for forward-compat safety.",
       "default_message": "The fraud_config JSONB shape is invalid. See schemas/referral-program.schema.json for the allowed structure."
     },
     {
       "name": "valid_eligibility_config_shape",
-      "class": "Stackra\\Growth\\Referrals\\Rules\\ValidEligibilityConfigShape",
+      "class": "Academorix\\Growth\\Referrals\\Rules\\ValidEligibilityConfigShape",
       "signature": "valid_eligibility_config_shape",
       "description": "eligibility_config JSONB must have documented shape: { referrer_min_account_age_days: int|null, referred_must_be_new_user: bool, referred_must_verify_email: bool, referred_must_be_from_country: string[] (ISO 3166-1 alpha-2), referrer_min_ltv_cents: int|null, allowed_email_domains: string[]|null }.",
       "default_message": "The eligibility_config JSONB shape is invalid. See schemas/referral-program.schema.json."
     },
     {
       "name": "valid_referral_code_format",
-      "class": "Stackra\\Growth\\Referrals\\Rules\\ValidReferralCodeFormat",
+      "class": "Academorix\\Growth\\Referrals\\Rules\\ValidReferralCodeFormat",
       "signature": "valid_referral_code_format",
       "description": "Enforces per-code_type pattern. user_scoped: `^[a-z0-9]+(-[a-z0-9]{4,8})?$` (kebab-lowercase, optional 4-8 char suffix). campaign: `^[A-Z0-9][A-Z0-9_-]{3,31}$` (uppercase, 4-32 chars). opaque: `^[A-Z0-9]{16,26}$` (uppercase alphanumeric, 16-26 chars — Crockford ULID-adjacent).",
       "default_message": "The :attribute value does not match the required format for code_type :code_type."
     },
     {
       "name": "valid_status_transition",
-      "class": "Stackra\\Growth\\Referrals\\Rules\\ValidStatusTransition",
+      "class": "Academorix\\Growth\\Referrals\\Rules\\ValidStatusTransition",
       "signature": "valid_status_transition",
       "description": "Referral state machine guard. Allowed transitions: pending_claim -> claimed | expired; claimed -> signed_up | expired | cancelled | fraudulent; signed_up -> trigger_pending | cancelled | fraudulent; trigger_pending -> vesting | cancelled | fraudulent; vesting -> vested | cancelled | fraudulent; vested -> rewarded | cancelled (via clawback path); rewarded -> (terminal); cancelled -> (terminal); expired -> (terminal); fraudulent -> (terminal). Backward transitions refused.",
       "default_message": "Referral status cannot transition from :from to :to. See the state machine in readme.md §3."
     },
     {
       "name": "valid_reward_status_transition",
-      "class": "Stackra\\Growth\\Referrals\\Rules\\ValidRewardStatusTransition",
+      "class": "Academorix\\Growth\\Referrals\\Rules\\ValidRewardStatusTransition",
       "signature": "valid_reward_status_transition",
       "description": "ReferralReward state machine guard. Allowed: pending -> vesting | cancelled; vesting -> vested | cancelled; vested -> materialized | cancelled; materialized -> paid | clawback; paid -> clawback; cancelled -> (terminal); clawback -> (terminal). No backward transitions except cancelled/clawback which are terminal.",
       "default_message": "Reward status cannot transition from :from to :to."
     },
     {
       "name": "unique_referral_per_program_per_pair",
-      "class": "Stackra\\Growth\\Referrals\\Rules\\UniqueReferralPerProgramPerPair",
+      "class": "Academorix\\Growth\\Referrals\\Rules\\UniqueReferralPerProgramPerPair",
       "signature": "unique_referral_per_program_per_pair",
       "description": "Enforces the composite unique index (tenant_id, referral_program_id, referrer_id, referred_id) partial WHERE deleted_at IS NULL. A referred user cannot be re-referred by the same referrer for the same program. Rule runs both at request-validation time (early feedback) + the observer re-checks under DB unique index (authoritative).",
       "default_message": "This referrer has already referred this user for this program."
     },
     {
       "name": "program_active_when_referral_created",
-      "class": "Stackra\\Growth\\Referrals\\Rules\\ProgramActiveWhenReferralCreated",
+      "class": "Academorix\\Growth\\Referrals\\Rules\\ProgramActiveWhenReferralCreated",
       "signature": "program_active_when_referral_created",
       "description": "The parent program must be status='active' at referral-create time. Refuses when program is draft / paused / archived. Additionally: program_starts_at <= now() <= program_ends_at (when program_ends_at is set).",
       "default_message": "The referral program is not active or is outside its scheduled window."
     },
     {
       "name": "fraud_score_below_hard_block",
-      "class": "Stackra\\Growth\\Referrals\\Rules\\FraudScoreBelowHardBlock",
+      "class": "Academorix\\Growth\\Referrals\\Rules\\FraudScoreBelowHardBlock",
       "signature": "fraud_score_below_hard_block",
       "description": "Post-FraudDetector guard. Refuses when computed fraud_score > program.fraud_config.hard_block_threshold (default 90). Warn-tier (score >= warn_threshold, default 40) creates a ReferralFraudFlag but permits the referral to proceed.",
       "default_message": "This referral was refused because it matched multiple fraud signals. Contact support if you believe this is in error."
     },
     {
       "name": "referrer_not_self",
-      "class": "Stackra\\Growth\\Referrals\\Rules\\ReferrerNotSelf",
+      "class": "Academorix\\Growth\\Referrals\\Rules\\ReferrerNotSelf",
       "signature": "referrer_not_self",
       "description": "referrer_id must not equal referred_id (same-user self-referral). Applied on both id equality (obvious) + email equality (self_email_variant is caught by the FraudDetector at claim time; this rule is the strict same-user check).",
       "default_message": "You cannot refer yourself."
     },
     {
       "name": "referred_must_be_new_user",
-      "class": "Stackra\\Growth\\Referrals\\Rules\\ReferredMustBeNewUser",
+      "class": "Academorix\\Growth\\Referrals\\Rules\\ReferredMustBeNewUser",
       "signature": "referred_must_be_new_user",
       "description": "When program.eligibility_config.referred_must_be_new_user = true (default): the referred user's created_at must be >= referral.claimed_at (i.e. the user was created AFTER the referral was claimed). Refuses when a pre-existing user attempts to sign up via a referral link.",
       "default_message": "This referral offer is only valid for new users."
     },
     {
       "name": "code_owner_matches_type",
-      "class": "Stackra\\Growth\\Referrals\\Rules\\CodeOwnerMatchesType",
+      "class": "Academorix\\Growth\\Referrals\\Rules\\CodeOwnerMatchesType",
       "signature": "code_owner_matches_type",
       "description": "code_type / owner_type / owner_user_id / campaign_name internal consistency. user_scoped: owner_user_id set, campaign_name null, owner_type='user'. campaign: owner_user_id null, campaign_name set, owner_type='campaign'. opaque: owner_user_id null, campaign_name null, owner_type='anonymous' | null.",
       "default_message": "The code_type does not match the provided owner fields."

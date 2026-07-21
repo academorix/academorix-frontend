@@ -4,7 +4,7 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Formations\Events;
+namespace Academorix\Formations\Events;
 
 use Stackra\Events\Attributes\AsEvent;
 use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;

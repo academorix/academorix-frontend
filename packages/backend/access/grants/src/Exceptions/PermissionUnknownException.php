@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Grants\Exceptions;
 
-use Stackra\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * One or more permission names in the array don't resolve to rows in the access/rbac permissions table.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class PermissionUnknownException extends AcademorixException
+final class PermissionUnknownException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

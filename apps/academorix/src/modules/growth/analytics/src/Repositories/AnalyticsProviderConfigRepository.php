@@ -4,25 +4,25 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Analytics\Repositories;
+namespace Academorix\Analytics\Repositories;
 
 use Stackra\Crud\Attributes\AsRepository;
 use Stackra\Crud\Attributes\Cacheable;
 use Stackra\Crud\Attributes\Filterable;
 use Stackra\Crud\Attributes\UseModel;
 use Stackra\Crud\Repositories\Repository;
-use Stackra\Analytics\Contracts\Data\AnalyticsProviderConfigInterface;
-use Stackra\Analytics\Contracts\Repositories\AnalyticsProviderConfigRepositoryInterface;
-use Stackra\Analytics\Models\AnalyticsProviderConfig;
+use Academorix\Analytics\Contracts\Data\AnalyticsProviderConfigInterface;
+use Academorix\Analytics\Contracts\Repositories\AnalyticsProviderConfigRepositoryInterface;
+use Academorix\Analytics\Models\AnalyticsProviderConfig;
 
 /**
- * Attribute-first Eloquent repository for {@see Stackra\Analytics\Models\AnalyticsProviderConfig}.
+ * Attribute-first Eloquent repository for {@see Academorix\Analytics\Models\AnalyticsProviderConfig}.
  *
  * Bound to the interface via `#[AsRepository]`; the model comes from
  * `#[UseModel(AnalyticsProviderConfigInterface::class)]` which resolves to
  * `AnalyticsProviderConfig` through the interface's `#[Bind]`.
  *
- * @extends Repository<\Stackra\Analytics\Models\AnalyticsProviderConfig>
+ * @extends Repository<\Academorix\Analytics\Models\AnalyticsProviderConfig>
  *
  * @category Analytics
  *

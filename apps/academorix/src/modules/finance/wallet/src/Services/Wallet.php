@@ -4,11 +4,11 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Wallet\Services;
+namespace Academorix\Wallet\Services;
 
-use Stackra\Wallet\Contracts\Services\WalletInterface;
+use Academorix\Wallet\Contracts\Services\WalletInterface;
 use Illuminate\Container\Attributes\Scoped;
-use Stackra\Wallet\Contracts\Repositories\WalletHoldRepositoryInterface;
+use Academorix\Wallet\Contracts\Repositories\WalletHoldRepositoryInterface;
 
 /**
  * Concrete service — Wallet.

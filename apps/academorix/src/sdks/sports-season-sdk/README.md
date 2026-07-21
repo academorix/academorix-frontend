@@ -1,7 +1,7 @@
-# stackra-sports/season-sdk
+# academorix-sports/season-sdk
 
 Wire-visible SDK surface for the `season` module of the Sports service.
-Auto-discovered by `stackra/sports-sdk` (the service umbrella) via
+Auto-discovered by `academorix/sports-sdk` (the service umbrella) via
 `#[AsSdkResource(name: 'season', service: 'sports')]`.
 
 ## Aggregates
@@ -24,7 +24,7 @@ src/
 Consumed only over HTTP via the umbrella client:
 
 ```php
-app(\Stackra\SportsSdk\Client\SportsSdk::class)
+app(\Academorix\SportsSdk\Client\SportsSdk::class)
     ->season()
     ->seasons()
     ->list();

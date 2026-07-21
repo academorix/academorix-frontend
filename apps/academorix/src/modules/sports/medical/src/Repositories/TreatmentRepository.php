@@ -4,25 +4,25 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Medical\Repositories;
+namespace Academorix\Medical\Repositories;
 
 use Stackra\Crud\Attributes\AsRepository;
 use Stackra\Crud\Attributes\Cacheable;
 use Stackra\Crud\Attributes\Filterable;
 use Stackra\Crud\Attributes\UseModel;
 use Stackra\Crud\Repositories\Repository;
-use Stackra\Medical\Contracts\Data\TreatmentInterface;
-use Stackra\Medical\Contracts\Repositories\TreatmentRepositoryInterface;
-use Stackra\Medical\Models\Treatment;
+use Academorix\Medical\Contracts\Data\TreatmentInterface;
+use Academorix\Medical\Contracts\Repositories\TreatmentRepositoryInterface;
+use Academorix\Medical\Models\Treatment;
 
 /**
- * Attribute-first Eloquent repository for {@see Stackra\Medical\Models\Treatment}.
+ * Attribute-first Eloquent repository for {@see Academorix\Medical\Models\Treatment}.
  *
  * Bound to the interface via `#[AsRepository]`; the model comes from
  * `#[UseModel(TreatmentInterface::class)]` which resolves to
  * `Treatment` through the interface's `#[Bind]`.
  *
- * @extends Repository<\Stackra\Medical\Models\Treatment>
+ * @extends Repository<\Academorix\Medical\Models\Treatment>
  *
  * @category Medical
  *

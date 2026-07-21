@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/event/schemas/calendar-subscription",
+  "id": "academorix://modules/event/schemas/calendar-subscription",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "CalendarSubscription",

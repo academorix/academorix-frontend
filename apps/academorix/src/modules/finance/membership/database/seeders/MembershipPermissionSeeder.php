@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Membership\Database\Seeders;
+namespace Academorix\Membership\Database\Seeders;
 
-use Stackra\Membership\Enums\MembershipPermission;
+use Academorix\Membership\Enums\MembershipPermission;
 use Stackra\Authorization\Database\Seeders\Concerns\SeedsPermissionEnum;
 use Stackra\ServiceProvider\Attributes\AsSeeder;
 use Illuminate\Database\Seeder;

@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Staff\Exceptions;
 
-use Stackra\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * coach_started_at cannot be earlier than the parent Staff.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class CoachStartedBeforeStaffException extends AcademorixException
+final class CoachStartedBeforeStaffException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

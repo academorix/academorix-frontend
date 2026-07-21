@@ -1,12 +1,12 @@
 {
-  "id": "stackra://modules/gateway/policies",
+  "id": "academorix://modules/gateway/policies",
   "$version": 1,
   "title": "gateway — authorization policies",
   "description": "Three policies. PaymentGatewayConfig — credentials NEVER leave the server; every response redacts credentials_encrypted + webhook_secret_encrypted. PaymentMethod — guardian narrowed to own methods via owner_type/owner_id check. GatewayWebhookEvent — read-only for support role; replay requires admin.",
   "policies": [
     {
       "model": "PaymentGatewayConfig",
-      "class": "Stackra\\Finance\\Gateway\\Policies\\PaymentGatewayConfigPolicy",
+      "class": "Academorix\\Finance\\Gateway\\Policies\\PaymentGatewayConfigPolicy",
       "abilities": [
         { "action": "viewAny", "permission": "gateways.viewAny" },
         {
@@ -28,7 +28,7 @@
     },
     {
       "model": "PaymentMethod",
-      "class": "Stackra\\Finance\\Gateway\\Policies\\PaymentMethodPolicy",
+      "class": "Academorix\\Finance\\Gateway\\Policies\\PaymentMethodPolicy",
       "abilities": [
         {
           "action": "viewAny",
@@ -51,7 +51,7 @@
     },
     {
       "model": "GatewayWebhookEvent",
-      "class": "Stackra\\Finance\\Gateway\\Policies\\GatewayWebhookEventPolicy",
+      "class": "Academorix\\Finance\\Gateway\\Policies\\GatewayWebhookEventPolicy",
       "abilities": [
         { "action": "viewAny", "permission": "gateway-webhooks.viewAny" },
         { "action": "view", "permission": "gateway-webhooks.view" },

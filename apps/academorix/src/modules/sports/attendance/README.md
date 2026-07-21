@@ -1,4 +1,4 @@
-# stackra/attendance
+# academorix/attendance
 
 Server-side Laravel package for the `attendance` module. Auto-generated from the
 blueprint at `modules/sports/blueprints/attendance/`.
@@ -48,6 +48,6 @@ file is a hand-tuned override that survives regeneration.
 ## Companion wire SDK
 
 The wire-visible Saloon + Spatie Data package lives at
-`stackra-sports/attendance-sdk` under `sdk/sports-attendance-sdk/`. Consumers
+`academorix-sports/attendance-sdk` under `sdk/sports-attendance-sdk/`. Consumers
 cross the service boundary through the SDK; this package is the SERVER-side
 owner of the domain.

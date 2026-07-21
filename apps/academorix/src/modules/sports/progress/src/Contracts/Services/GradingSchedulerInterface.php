@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Progress\Contracts\Services;
+namespace Academorix\Progress\Contracts\Services;
 
-use Stackra\Progress\Services\GradingScheduler;
+use Academorix\Progress\Services\GradingScheduler;
 use Illuminate\Container\Attributes\Bind;
 
 /**

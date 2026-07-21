@@ -205,7 +205,7 @@ attribution changes do not reshape historical events.
     "campaign": "spring-signup-2026",
     "content": "ad-variant-b",
     "term": "sports academy",
-    "landing_page": "https://tenant.stackra.app/signup",
+    "landing_page": "https://tenant.academorix.app/signup",
     "referrer": "https://google.com/search?q=…",
     "click_id": { "gclid": "Cj0KCQjw…", "provider_hint": "google" },
     "at": "2026-01-15T09:32:14Z"
@@ -265,7 +265,7 @@ requests. Every force-reset writes an audit row + notifies the tenant admin.
 ## 12. What this module does NOT do
 
 - **No third-party tracking pixel.** Attribution is server-side capture only.
-  The frontend `@stackra/analytics` package captures client-side events; those
+  The frontend `@academorix/analytics` package captures client-side events; those
   route through this module's attribution snapshot at capture time.
 - **No cross-tenant attribution stitching.** Attribution is tenant-scoped; a
   user active on two tenants has two attribution profiles.

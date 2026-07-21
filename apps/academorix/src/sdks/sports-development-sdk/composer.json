@@ -1,10 +1,10 @@
 {
-  "name": "stackra-sports/development-sdk",
+  "name": "academorix-sports/development-sdk",
   "type": "library",
-  "description": "Wire-visible SDK surface (Spatie Data DTOs + Saloon Request transport + fluent Resources) for the `development` module of the Sports service. Auto-discovered at boot by stackra/sports-sdk via #[AsSdkResource(name: 'development', service: 'sports')]; consumed by every cross-service caller strictly over HTTP.",
+  "description": "Wire-visible SDK surface (Spatie Data DTOs + Saloon Request transport + fluent Resources) for the `development` module of the Sports service. Auto-discovered at boot by academorix/sports-sdk via #[AsSdkResource(name: 'development', service: 'sports')]; consumed by every cross-service caller strictly over HTTP.",
   "license": "proprietary",
   "keywords": [
-    "stackra",
+    "academorix",
     "sdk",
     "saloon",
     "spatie-data",
@@ -32,12 +32,12 @@
   },
   "autoload": {
     "psr-4": {
-      "Stackra\\\\SportsDevelopmentSdk\\\\": "src/"
+      "Academorix\\\\SportsDevelopmentSdk\\": "src/"
     }
   },
   "autoload-dev": {
     "psr-4": {
-      "Stackra\\\\SportsDevelopmentSdk\\\\Tests\\\\": "tests/"
+      "Academorix\\\\SportsDevelopmentSdk\\\\Tests\\": "tests/"
     }
   },
   "extra": {

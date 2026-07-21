@@ -1,61 +1,61 @@
 {
-  "id": "stackra://modules/chargeback/commands",
+  "id": "academorix://modules/chargeback/commands",
   "$version": 1,
   "title": "chargeback — Artisan commands",
   "commands": [
     {
       "signature": "chargeback:list {--tenant=} {--payment=} {--invoice=} {--status=} {--network=} {--reason-category=} {--reason-code=} {--rdr-eligible} {--ce3-eligible} {--from=} {--to=} {--include-deleted}",
-      "class": "Stackra\\Finance\\Chargeback\\Console\\Commands\\ListChargebacksCommand",
+      "class": "Academorix\\Finance\\Chargeback\\Console\\Commands\\ListChargebacksCommand",
       "purpose": "Cross-tenant or tenant-scoped chargeback view. --status filters by state (pending_evidence / evidence_submitted / under_bank_review / won / lost / expired / accepted_refund). --network filters by card network. --reason-category filters (fraud / authorization / processing_errors / consumer_disputes / card_recovery). --reason-code filters exact code (10.4 / 4837 / etc.). --rdr-eligible / --ce3-eligible surface actionable candidates. --from/--to filter by filed_at range. Confidential financial fields (amount_cents, fee_cents) print only when the caller has chargebacks.view-financials permission."
     },
     {
       "signature": "chargeback:describe {chargeback}",
-      "class": "Stackra\\Finance\\Chargeback\\Console\\Commands\\DescribeChargebackCommand",
+      "class": "Academorix\\Finance\\Chargeback\\Console\\Commands\\DescribeChargebackCommand",
       "purpose": "Verbose read of one chargeback: base fields + parent payment + parent invoice + linked payment_dispute (when escalated) + linked transaction (loss offset) + linked fee_transaction (network fee) + linked refund (when RDR path) + full evidence submission history (every ChargebackEvidence row + provider response) + reconciliation history + downstream clawback status (referral + coupon) + audit trail summary. Confidential financial fields print only when the caller has chargebacks.view-financials permission."
     },
     {
       "signature": "chargeback:submit-evidence {chargeback} {--actor=} {--evidence-file=} {--dry-run}",
-      "class": "Stackra\\Finance\\Chargeback\\Console\\Commands\\SubmitEvidenceCommand",
+      "class": "Academorix\\Finance\\Chargeback\\Console\\Commands\\SubmitEvidenceCommand",
       "purpose": "Scriptable evidence submission for ops + test harness. --evidence-file is a JSON file matching schemas/chargeback-evidence.schema.json. When omitted, submits the auto-collected evidence from CollectChargebackEvidenceJob (via cache rfd:evidence-draft:{chargeback_id}). --actor is the submitting user_id (required — records submitted_by_user_id). --dry-run validates the evidence shape + PCI-DSS PAN pattern + entitlement + policy without persisting or dispatching to the provider."
     },
     {
       "signature": "chargeback:accept {chargeback} {--actor=} {--notes=}",
-      "class": "Stackra\\Finance\\Chargeback\\Console\\Commands\\AcceptChargebackCommand",
+      "class": "Academorix\\Finance\\Chargeback\\Console\\Commands\\AcceptChargebackCommand",
       "purpose": "RDR path — auto-refund below threshold. Only allowed when parent chargeback.rdr_eligible=true AND status='pending_evidence'. --actor records the accepting user_id. --notes appended to metadata.rdr_acceptance_notes for audit. Delegates to RdrHandler::accept which creates a Refund via refund::RefundOrchestrator with reason='chargeback_prevention' + refund_type='full'. On RefundSucceeded, chargeback transitions to accepted_refund (terminal — no network fee, no rate impact). Fires ChargebackAcceptedRefund."
     },
     {
       "signature": "chargeback:list-pending-evidence {--tenant=} {--overdue-only} {--days-remaining=}",
-      "class": "Stackra\\Finance\\Chargeback\\Console\\Commands\\ListPendingEvidenceCommand",
+      "class": "Academorix\\Finance\\Chargeback\\Console\\Commands\\ListPendingEvidenceCommand",
       "purpose": "Actionable queue for admin — chargebacks in status='pending_evidence' sorted by evidence_due_by ASC (soonest deadlines first). --overdue-only filters to chargebacks where evidence_due_by is within the next 7 days (approaching miss). --days-remaining filters exactly (e.g. --days-remaining=3 for the 3-day cadence bucket). Prints chargeback_id + evidence_due_by + days_remaining + current_evidence_completeness_percent + assigned_defenders (from metadata.evidence_notification)."
     },
     {
       "signature": "chargeback:report {tenant} {--period-start=} {--period-end=} {--format=csv} {--to-s3}",
-      "class": "Stackra\\Finance\\Chargeback\\Console\\Commands\\ReportChargebacksCommand",
+      "class": "Academorix\\Finance\\Chargeback\\Console\\Commands\\ReportChargebacksCommand",
       "purpose": "Ad-hoc CLI equivalent of GET /reports/chargeback-rate. --period-start/--period-end default to last 60 days (matches the rolling window used by rate monitoring). --format=csv|json|table. Writes to stdout (redirect to a file) OR to S3 when --to-s3 is set. Rollup: rolling 60-day rate per network + total chargebacks + total lost + total fees + reason distribution + reason_category distribution + provider distribution + RDR acceptance rate + evidence submission rate + median days_to_decision + win rate. Redacted when caller lacks chargebacks.view-financials permission. Actionable for merchant-account risk assessment."
     },
     {
       "signature": "chargeback:reconcile {--provider=} {--tenant=}",
-      "class": "Stackra\\Finance\\Chargeback\\Console\\Commands\\ReconcileChargebacksCommand",
+      "class": "Academorix\\Finance\\Chargeback\\Console\\Commands\\ReconcileChargebacksCommand",
       "purpose": "Dispatches CheckChargebackStatusJob for one or all providers. --provider=stripe|paddle|adyen|square|paypal|custom_webhook narrows to a specific provider. --tenant narrows to a specific tenant. Prints a summary of reconciled state changes + drift detected. Used when a provider outage recovers + we need to sweep stuck chargebacks OR when investigating a specific reconciliation discrepancy."
     },
     {
       "signature": "chargeback:notify-overdue {--tenant=} {--days-remaining=7}",
-      "class": "Stackra\\Finance\\Chargeback\\Console\\Commands\\NotifyOverdueCommand",
+      "class": "Academorix\\Finance\\Chargeback\\Console\\Commands\\NotifyOverdueCommand",
       "purpose": "Ad-hoc dispatch of ChargebackEvidenceOverdueNotification for chargebacks approaching evidence_due_by. --days-remaining defaults to 7 (matches the scheduled cadence). --tenant narrows to a specific tenant. Useful when the scheduled cadence was skipped OR when ops manually escalates. Idempotent per (chargeback_id, days_remaining_bucket) — refuses re-fire within 24h of last dispatch."
     },
     {
       "signature": "chargeback:audit-terminal {--tenant=} {--older-than-days=90}",
-      "class": "Stackra\\Finance\\Chargeback\\Console\\Commands\\AuditTerminalCommand",
+      "class": "Academorix\\Finance\\Chargeback\\Console\\Commands\\AuditTerminalCommand",
       "purpose": "Reports chargebacks in terminal state (won / lost / expired / accepted_refund) that lack complete finalization state — e.g. lost chargebacks with transaction_id IS NULL OR fee_transaction_id IS NULL (finalization chain partially failed). Actionable for ops — chargebacks with orphan finalization are a P1 signal (financial-record inconsistency). Prints chargeback_id + terminal_status + decision_at + missing_fields + suggested action (chargeback:reconcile OR manual DB investigation)."
     },
     {
       "signature": "chargeback:mark-lost-manually {chargeback} {--actor=} {--decision-reason=}",
-      "class": "Stackra\\Finance\\Chargeback\\Console\\Commands\\MarkLostManuallyCommand",
+      "class": "Academorix\\Finance\\Chargeback\\Console\\Commands\\MarkLostManuallyCommand",
       "purpose": "Admin escape hatch — force-mark a chargeback as lost when ops determined that defense is not viable (e.g. evidence insufficient, cost of defense > amount, tenant chose to write off). Only allowed when status IN ('pending_evidence', 'evidence_submitted', 'under_bank_review'). --actor records the admin user_id. --decision-reason is the 256-char rationale (required — audit trail). Dispatches FinalizeChargebackJob + fires ChargebackLost. Chargebacks in provider-side won/lost states cannot be manually overridden — those are provider-authoritative."
     },
     {
       "signature": "chargeback:preview-evidence {chargeback} {--actor=} {--format=json}",
-      "class": "Stackra\\Finance\\Chargeback\\Console\\Commands\\PreviewEvidenceCommand",
+      "class": "Academorix\\Finance\\Chargeback\\Console\\Commands\\PreviewEvidenceCommand",
       "purpose": "Dry-run evidence collection. Runs CollectChargebackEvidenceJob synchronously in read-only mode + prints the collected evidence bundle without persisting to chargeback_evidence table. --format=json|table. Useful for admin review before submission — shows what auto-collected evidence looks like, allows admin to spot missing pieces + optionally supplement via uncategorized_text. Redacts PCI-adjacent fields (device_fingerprint_hash) when caller lacks chargebacks.view-financials permission."
     }
   ]

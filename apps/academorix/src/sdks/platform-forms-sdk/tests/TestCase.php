@@ -7,7 +7,7 @@ namespace Stackra\PlatformFormsSdk\Tests;
 use Orchestra\Testbench\TestCase as OrchestraTestCase;
 
 /**
- * Base test case for stackra-platform/forms-sdk.
+ * Base test case for academorix-platform/forms-sdk.
  *
  * @category FormsSdk
  *

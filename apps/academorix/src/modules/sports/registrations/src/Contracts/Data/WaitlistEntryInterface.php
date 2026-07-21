@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Registrations\Contracts\Data;
+namespace Academorix\Registrations\Contracts\Data;
 
 use Illuminate\Container\Attributes\Bind;
-use Stackra\Registrations\Models\WaitlistEntry;
+use Academorix\Registrations\Models\WaitlistEntry;
 
 /**
  * Table shape for the `waitlist_entries` table.

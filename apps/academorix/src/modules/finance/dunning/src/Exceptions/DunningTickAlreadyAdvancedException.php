@@ -4,7 +4,7 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Dunning\Exceptions;
+namespace Academorix\Dunning\Exceptions;
 
 use Stackra\Exceptions\StackraException;
 

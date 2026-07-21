@@ -1,21 +1,21 @@
 {
-  "id": "stackra://modules/marketing/hooks",
+  "id": "academorix://modules/marketing/hooks",
   "$version": 1,
   "title": "marketing — TenancyHook + lifecycle hooks",
   "description": "Cross-module hook implementations. TenancyHooks are the tenancy module's contract for reacting to tenant-lifecycle events (provision / suspend / erase). Marketing registers three hooks: tenant erasure cascade, consent-revocation suppression, and tenant-suspend provider deactivation. No bootstrapper — marketing does not need per-request tenant hydration.",
-  "namespace": "Stackra\\Growth\\Marketing\\Hooks",
+  "namespace": "Academorix\\Growth\\Marketing\\Hooks",
   "hooks": [
     {
       "name": "PurgeMarketingDataForErasedTenant",
-      "class": "Stackra\\Growth\\Marketing\\Hooks\\PurgeMarketingDataForErasedTenant",
+      "class": "Academorix\\Growth\\Marketing\\Hooks\\PurgeMarketingDataForErasedTenant",
       "kind": "tenant_erasure",
       "listens_to": "tenancy::TenantErased",
       "purpose": "Cascade delete via FK CASCADE across the four marketing tables. This hook writes the compliance audit trail entry + emits count metrics per entity family (marketing_events / marketing_deliveries / marketing_provider_configs / marketing_dead_letters purged) + fires best-effort provider-side deletion requests (Meta Data Deletion API, Google Ads user-data deletion, TikTok user-data deletion) so the propagation is transparent to auditors.",
-      "compliance": "GDPR Art. 17 (right to erasure). Emitted metrics feed the compliance dashboard for retention proof. Provider-side deletion is best-effort — Stackra records the deletion request; the provider is responsible for honoring it. If a provider does not respond within its documented SLA, ops files a support ticket."
+      "compliance": "GDPR Art. 17 (right to erasure). Emitted metrics feed the compliance dashboard for retention proof. Provider-side deletion is best-effort — Academorix records the deletion request; the provider is responsible for honoring it. If a provider does not respond within its documented SLA, ops files a support ticket."
     },
     {
       "name": "SuppressMarketingOnConsentRevoked",
-      "class": "Stackra\\Growth\\Marketing\\Hooks\\SuppressMarketingOnConsentRevoked",
+      "class": "Academorix\\Growth\\Marketing\\Hooks\\SuppressMarketingOnConsentRevoked",
       "kind": "consent_revocation",
       "listens_to": "compliance::ConsentRevoked",
       "purpose": "Compliance-critical. Reacts to consent revocation on the `marketing` or `advertising` category. Sweeps pending + dispatching marketing_events for the affected subject + transitions them to status='suppressed_by_consent'. Cancels pending DispatchToProviderJobs. This is the enforcement path for the re-check-at-dispatch consent guarantee — captured events with valid consent that are still in-flight when the user revokes are suppressed BEFORE they hit the wire.",
@@ -23,7 +23,7 @@
     },
     {
       "name": "CascadeMarketingProviderDeactivationOnTenantSuspended",
-      "class": "Stackra\\Growth\\Marketing\\Hooks\\CascadeMarketingProviderDeactivationOnTenantSuspended",
+      "class": "Academorix\\Growth\\Marketing\\Hooks\\CascadeMarketingProviderDeactivationOnTenantSuspended",
       "kind": "cascade",
       "listens_to": "tenancy::TenantSuspended",
       "purpose": "Marks every marketing_provider_config for the suspended tenant as is_active=false. Does NOT soft-delete — restoration on tenant reactivation is one flip away (via ReactivateProvidersOnTenantResumed which checks the audit trail for reason='tenant_suspended'). Fires MarketingProviderDeactivated (reason='tenant_suspended') per config.",

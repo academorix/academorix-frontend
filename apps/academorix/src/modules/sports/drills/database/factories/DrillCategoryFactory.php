@@ -4,19 +4,19 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Drills\Database\Factories;
+namespace Academorix\Drills\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Stackra\Drills\Contracts\Data\DrillCategoryInterface;
-use Stackra\Drills\Models\DrillCategory;
+use Academorix\Drills\Contracts\Data\DrillCategoryInterface;
+use Academorix\Drills\Models\DrillCategory;
 
 /**
- * Factory for {@see \Stackra\Drills\Models\DrillCategory}.
+ * Factory for {@see \Academorix\Drills\Models\DrillCategory}.
  *
  * Auto-generated skeleton — extend with named states as domain
  * cases emerge (e.g. `->published()`, `->overdue()`, `->archived()`).
  *
- * @extends Factory<\Stackra\Drills\Models\DrillCategory>
+ * @extends Factory<\Academorix\Drills\Models\DrillCategory>
  *
  * @category Drills
  *

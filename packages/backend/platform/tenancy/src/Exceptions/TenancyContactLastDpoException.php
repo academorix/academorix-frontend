@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Tenancy\Exceptions;
 
-use Stackra\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Attempt to delete the last remaining DPO contact for a GDPR-subject tenant.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class TenancyContactLastDpoException extends AcademorixException
+final class TenancyContactLastDpoException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

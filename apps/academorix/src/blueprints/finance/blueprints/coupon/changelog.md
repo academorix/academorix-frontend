@@ -29,7 +29,7 @@
   usage_cap + per_customer_limit + applicability, inserts the redemption,
   increments `usage_count`. Rollback of the surrounding invoice-creation
   transaction rolls back both. Metric
-  `stackra.coupons.atomicity.failures_total` should stay at 0.
+  `academorix.coupons.atomicity.failures_total` should stay at 0.
 - No public `POST /redeem` endpoint. Every redemption is an internal service
   call inside the invoice/membership creation transaction. Public surface:
   `GET /coupons/validate/{code}` (validation, no counter change),

@@ -31,7 +31,7 @@
   (terminal). Escape hatches: cancelled, clawback.
 - Atomic vesting: status → vested creates ReferralReward rows in the same DB
   transaction (one for single_sided, two for double_sided). Rollback aborts both
-  sides. `stackra.referrals.atomicity.failures_total` should stay at 0.
+  sides. `academorix.referrals.atomicity.failures_total` should stay at 0.
 - Cascade paths: `ReferralProgramArchived` → cancel non-terminal referrals +
   clawback unpaid rewards; `finance::RefundIssued` / `ChargebackFiled` →
   clawback path; `user::UserErased` (referrer) → cancel pending, retain paid

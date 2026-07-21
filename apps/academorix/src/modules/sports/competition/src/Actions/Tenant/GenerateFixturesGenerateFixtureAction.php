@@ -4,7 +4,7 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Competition\Actions\Tenant;
+namespace Academorix\Competition\Actions\Tenant;
 
 use Stackra\Routing\Attributes\AsAction;
 use Stackra\Routing\Attributes\Middleware;

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use Stackra\Wallet\Models\WalletTransaction;
+use Academorix\Wallet\Models\WalletTransaction;
 
 it('is a placeholder — replace with actual WalletTransaction unit tests', function (): void {
     expect(WalletTransaction::class)->toBeString();

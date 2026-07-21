@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Requests\Exceptions;
 
-use Stackra\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * The Google-Docs 403 hint.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class AccessDeniedCanRequestException extends AcademorixException
+final class AccessDeniedCanRequestException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

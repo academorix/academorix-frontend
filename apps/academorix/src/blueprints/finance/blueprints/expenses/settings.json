@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/expenses/settings",
+  "id": "academorix://modules/expenses/settings",
   "$version": 1,
   "title": "expenses — tenant-editable settings",
   "description": "Settings this module registers against the settings substrate.",

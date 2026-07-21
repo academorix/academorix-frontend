@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Stackra\Webhook\Exceptions;
 
-use Stackra\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Raised when a subscription's `rate_limit_per_minute` is exceeded.
@@ -14,7 +14,7 @@ use Stackra\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class WebhookRateLimitExceededException extends AcademorixException
+final class WebhookRateLimitExceededException extends StackraException
 {
     public const CODE = 'webhook.rate_limit_exceeded';
 

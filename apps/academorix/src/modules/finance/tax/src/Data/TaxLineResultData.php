@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Tax\Data;
+namespace Academorix\Tax\Data;
 
 use Spatie\LaravelData\Attributes\MapOutputName;
 use Spatie\LaravelData\Data;

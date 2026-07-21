@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/invoice/macros",
+  "id": "academorix://modules/invoice/macros",
   "$version": 1,
   "title": "invoice — published macros",
   "description": "The invoice module publishes ZERO framework macros. Every consumer touches the invoice surface via injected services (InvoiceCreator, InvoiceFinalizer, CreditNoteIssuer) or the domain-event listener path (CreateInvoiceOnMembershipCreated, MarkPaidOnPaymentIntentConfirmed). Middleware attaches the current customer scope (invoice.enforce_customer_scope) — invoice consumes it via request injection.",

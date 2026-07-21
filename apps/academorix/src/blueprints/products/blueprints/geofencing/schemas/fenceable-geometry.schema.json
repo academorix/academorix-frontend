@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/geofencing/schemas/fenceable-geometry",
+  "id": "academorix://modules/geofencing/schemas/fenceable-geometry",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "FenceableGeometry",
@@ -7,7 +7,7 @@
   "type": "object",
   "x-module": "geofencing",
   "x-value_object_only": true,
-  "x-value_object_class": "Stackra\\Geofencing\\ValueObjects\\FenceableGeometry",
+  "x-value_object_class": "Academorix\\Geofencing\\ValueObjects\\FenceableGeometry",
   "x-value_object_note": "Hydrated by FenceableResolver from any Geofenceable model. Never persisted to a dedicated table. This schema documents the columns the HasGeofence trait EXPECTS on the consumer's table, added via the blueprint macro.",
   "x-blueprint_macro": {
     "name": "Blueprint::addGeofenceColumns()",

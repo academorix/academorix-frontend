@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Athlete\Actions\Tenant;
+namespace Academorix\Athlete\Actions\Tenant;
 
-use Stackra\Athlete\Contracts\Data\AthleteInterface;
-use Stackra\Athlete\Contracts\Services\AthleteProvisionerInterface;
-use Stackra\Athlete\Data\AthleteData;
-use Stackra\Athlete\Data\Requests\CreateAthleteRequestData;
+use Academorix\Athlete\Contracts\Data\AthleteInterface;
+use Academorix\Athlete\Contracts\Services\AthleteProvisionerInterface;
+use Academorix\Athlete\Data\AthleteData;
+use Academorix\Athlete\Data\Requests\CreateAthleteRequestData;
 use Stackra\Routing\Attributes\AsAction;
 use Stackra\Routing\Attributes\Middleware;
 use Stackra\Routing\Attributes\Post;

@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Delegation\Exceptions;
 
-use Stackra\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * The PlatformUser already has an active impersonation session.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class ImpersonationAlreadyActiveForOperatorException extends AcademorixException
+final class ImpersonationAlreadyActiveForOperatorException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

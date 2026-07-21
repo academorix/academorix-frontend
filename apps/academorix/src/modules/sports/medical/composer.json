@@ -1,10 +1,10 @@
 {
-  "name": "stackra/medical",
+  "name": "academorix/medical",
   "type": "library",
-  "description": "Stackra Medical module — server-side Laravel package emitted from the module blueprint at `modules/sports/blueprints/medical/`. Complements the wire SDK at `stackra-sports/medical-sdk`.",
+  "description": "Academorix Medical module — server-side Laravel package emitted from the module blueprint at `modules/sports/blueprints/medical/`. Complements the wire SDK at `academorix-sports/medical-sdk`.",
   "license": "proprietary",
   "keywords": [
-    "stackra",
+    "academorix",
     "module",
     "laravel",
     "sports",
@@ -22,7 +22,7 @@
     "stackra/routing": "@dev",
     "stackra/service-provider": "@dev",
     "stackra/support": "@dev",
-    "stackra-sports/medical-sdk": "@dev"
+    "academorix-sports/medical-sdk": "@dev"
   },
   "require-dev": {
     "orchestra/testbench": "^11.0",
@@ -33,12 +33,12 @@
   },
   "autoload": {
     "psr-4": {
-      "Stackra\\Medical\\": "src/"
+      "Academorix\\Medical\\": "src/"
     }
   },
   "autoload-dev": {
     "psr-4": {
-      "Stackra\\Medical\\Tests\\": "tests/"
+      "Academorix\\Medical\\Tests\\": "tests/"
     }
   },
   "extra": {

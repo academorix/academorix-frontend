@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Drills\Contracts\Data;
+namespace Academorix\Drills\Contracts\Data;
 
 use Illuminate\Container\Attributes\Bind;
-use Stackra\Drills\Models\Drill;
+use Academorix\Drills\Models\Drill;
 
 /**
  * Table shape for the `drills` table.

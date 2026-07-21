@@ -4,13 +4,13 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Transaction\Policies;
+namespace Academorix\Transaction\Policies;
 
 use Stackra\User\Models\User;
-use Stackra\Transaction\Models\TransactionLedgerEntry;
+use Academorix\Transaction\Models\TransactionLedgerEntry;
 
 /**
- * Authorization policy for {@see \Stackra\Transaction\Models\TransactionLedgerEntry}.
+ * Authorization policy for {@see \Academorix\Transaction\Models\TransactionLedgerEntry}.
  *
  * Wired via `#[UsePolicy]` on the Model.
  *

@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/match/schemas/match-squad-entry",
+  "id": "academorix://modules/match/schemas/match-squad-entry",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "MatchSquadEntry",
@@ -13,9 +13,9 @@
     "keyType": "string",
     "keyPrefix": "msq_",
     "incrementing": false,
-    "model": "Stackra\\Sports\\Match\\Models\\MatchSquadEntry",
-    "interface": "Stackra\\Sports\\Match\\Contracts\\Data\\MatchSquadEntryInterface",
-    "implements": ["Stackra\\Sports\\Match\\Contracts\\Data\\MatchSquadEntryInterface"],
+    "model": "Academorix\\Sports\\Match\\Models\\MatchSquadEntry",
+    "interface": "Academorix\\Sports\\Match\\Contracts\\Data\\MatchSquadEntryInterface",
+    "implements": ["Academorix\\Sports\\Match\\Contracts\\Data\\MatchSquadEntryInterface"],
     "traits": [
       "HasFactory",
       "HasUlids",

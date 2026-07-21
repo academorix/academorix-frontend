@@ -4,22 +4,22 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Transaction\Models;
+namespace Academorix\Transaction\Models;
 
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
-use Stackra\Transaction\Contracts\Data\TransactionInterface;
-use Stackra\Transaction\Database\Factories\TransactionFactory;
+use Academorix\Transaction\Contracts\Data\TransactionInterface;
+use Academorix\Transaction\Database\Factories\TransactionFactory;
 use Stackra\Foundation\Concerns\Filterable;
 use Stackra\Foundation\Concerns\HasMetadata;
 use Stackra\Tenancy\Concerns\BelongsToTenant;
-use Stackra\Transaction\Enums\TransactionKind;
-use Stackra\Transaction\Enums\TransactionReversalReason;
-use Stackra\Transaction\Enums\TransactionStatus;
-use Stackra\Transaction\Policies\TransactionPolicy;
+use Academorix\Transaction\Enums\TransactionKind;
+use Academorix\Transaction\Enums\TransactionReversalReason;
+use Academorix\Transaction\Enums\TransactionStatus;
+use Academorix\Transaction\Policies\TransactionPolicy;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;

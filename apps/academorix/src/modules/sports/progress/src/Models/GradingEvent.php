@@ -4,20 +4,20 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Progress\Models;
+namespace Academorix\Progress\Models;
 
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
-use Stackra\Progress\Contracts\Data\GradingEventInterface;
-use Stackra\Progress\Database\Factories\GradingEventFactory;
+use Academorix\Progress\Contracts\Data\GradingEventInterface;
+use Academorix\Progress\Database\Factories\GradingEventFactory;
 use Stackra\Branch\Concerns\BelongsToBranch;
 use Stackra\Foundation\Concerns\Filterable;
 use Stackra\Foundation\Concerns\HasMetadata;
 use Stackra\Foundation\Concerns\HasPrefixedUlid;
-use Stackra\Progress\Policies\GradingEventPolicy;
+use Academorix\Progress\Policies\GradingEventPolicy;
 use Stackra\Tenancy\Concerns\BelongsToTenant;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;

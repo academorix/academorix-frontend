@@ -4,17 +4,17 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Medical\Contracts\Repositories;
+namespace Academorix\Medical\Contracts\Repositories;
 
 use Stackra\Crud\Contracts\RepositoryInterface;
 
 /**
- * Repository contract for {@see Stackra\Medical\Models\MedicalRecord}.
+ * Repository contract for {@see Academorix\Medical\Models\MedicalRecord}.
  *
  * Consumers type-hint the interface; the container binds the concrete
  * via `#[AsRepository]` on `MedicalRecordRepository`.
  *
- * @extends RepositoryInterface<\Stackra\Medical\Models\MedicalRecord>
+ * @extends RepositoryInterface<\Academorix\Medical\Models\MedicalRecord>
  *
  * @category Medical
  *

@@ -1,14 +1,14 @@
 {
-  "id": "stackra://modules/tax/settings",
+  "id": "academorix://modules/tax/settings",
   "$version": 1,
   "title": "tax — settings",
   "description": "Tenant-facing tax configuration + per-user preferences. The tax_provider_configs table is NOT settings — those are per-provider credentials owned by the tax module itself. This file declares tenant-level defaults (default address preference, notification routing) + per-user preferences (annual report subscription).",
   "storedIn": "settings",
-  "reference": { "contract": "stackra://modules/settings/attributes" },
+  "reference": { "contract": "academorix://modules/settings/attributes" },
   "groups": [
     {
       "key": "tax",
-      "class": "Stackra\\Finance\\Tax\\Settings\\TaxSettings",
+      "class": "Academorix\\Finance\\Tax\\Settings\\TaxSettings",
       "label": "Tax computation",
       "description": "Tenant-wide defaults for tax rate resolution + address preference + notification routing.",
       "icon": "calculator",
@@ -110,7 +110,7 @@
     },
     {
       "key": "tax_user",
-      "class": "Stackra\\Finance\\Tax\\Settings\\TaxUserSettings",
+      "class": "Academorix\\Finance\\Tax\\Settings\\TaxUserSettings",
       "label": "My tax preferences",
       "description": "Per-user preferences for tax reports + alerts.",
       "icon": "user-circle",

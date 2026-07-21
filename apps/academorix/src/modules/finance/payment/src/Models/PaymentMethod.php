@@ -4,20 +4,20 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Payment\Models;
+namespace Academorix\Payment\Models;
 
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
-use Stackra\Payment\Contracts\Data\PaymentMethodInterface;
-use Stackra\Payment\Database\Factories\PaymentMethodFactory;
+use Academorix\Payment\Contracts\Data\PaymentMethodInterface;
+use Academorix\Payment\Database\Factories\PaymentMethodFactory;
 use Stackra\Foundation\Concerns\Filterable;
 use Stackra\Foundation\Concerns\HasMetadata;
-use Stackra\Payment\Enums\PaymentMethodDeactivatedReason;
-use Stackra\Payment\Enums\PaymentProvider;
-use Stackra\Payment\Policies\PaymentMethodPolicy;
+use Academorix\Payment\Enums\PaymentMethodDeactivatedReason;
+use Academorix\Payment\Enums\PaymentProvider;
+use Academorix\Payment\Policies\PaymentMethodPolicy;
 use Stackra\Tenancy\Concerns\BelongsToTenant;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;

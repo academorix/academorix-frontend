@@ -4,25 +4,25 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Coupon\Repositories;
+namespace Academorix\Coupon\Repositories;
 
 use Stackra\Crud\Attributes\AsRepository;
 use Stackra\Crud\Attributes\Cacheable;
 use Stackra\Crud\Attributes\Filterable;
 use Stackra\Crud\Attributes\UseModel;
 use Stackra\Crud\Repositories\Repository;
-use Stackra\Coupon\Contracts\Data\CouponInterface;
-use Stackra\Coupon\Contracts\Repositories\CouponRepositoryInterface;
-use Stackra\Coupon\Models\Coupon;
+use Academorix\Coupon\Contracts\Data\CouponInterface;
+use Academorix\Coupon\Contracts\Repositories\CouponRepositoryInterface;
+use Academorix\Coupon\Models\Coupon;
 
 /**
- * Attribute-first Eloquent repository for {@see Stackra\Coupon\Models\Coupon}.
+ * Attribute-first Eloquent repository for {@see Academorix\Coupon\Models\Coupon}.
  *
  * Bound to the interface via `#[AsRepository]`; the model comes from
  * `#[UseModel(CouponInterface::class)]` which resolves to
  * `Coupon` through the interface's `#[Bind]`.
  *
- * @extends Repository<\Stackra\Coupon\Models\Coupon>
+ * @extends Repository<\Academorix\Coupon\Models\Coupon>
  *
  * @category Coupon
  *

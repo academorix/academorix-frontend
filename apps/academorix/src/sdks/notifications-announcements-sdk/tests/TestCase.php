@@ -7,7 +7,7 @@ namespace Stackra\NotificationsAnnouncementsSdk\Tests;
 use Orchestra\Testbench\TestCase as OrchestraTestCase;
 
 /**
- * Base test case for stackra-notifications/announcements-sdk.
+ * Base test case for academorix-notifications/announcements-sdk.
  *
  * @category AnnouncementsSdk
  *

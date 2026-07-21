@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/transaction/config",
+  "id": "academorix://modules/transaction/config",
   "$version": 1,
   "title": "transaction — developer configuration",
   "configFile": "config/transaction.php",

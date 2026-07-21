@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/age-group/data/sport-cutoff-samples",
+  "id": "academorix://modules/age-group/data/sport-cutoff-samples",
   "$version": 1,
   "title": "age-group — canonical per-sport cutoff samples",
   "description": "Reference material — canonical cutoff patterns per sport, sourced from public federation documentation. NOT loaded at runtime — this file exists as a copy-paste starter for tenants creating sport-specific age groups (age_group_sport_specific entitlement, Enterprise-only). The tenant's actual overrides are stored as regular AgeGroup rows with the appropriate sport_key + cutoff_date_kind + cutoff_month + cutoff_day fields set.",

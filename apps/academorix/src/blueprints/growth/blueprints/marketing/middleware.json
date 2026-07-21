@@ -1,11 +1,11 @@
 {
-  "id": "stackra://modules/marketing/middleware",
+  "id": "academorix://modules/marketing/middleware",
   "$version": 1,
   "title": "marketing — HTTP middleware",
   "middleware": [
     {
       "alias": "marketing.enforce_consent",
-      "class": "Stackra\\Growth\\Marketing\\Http\\Middleware\\EnforceMarketingConsent",
+      "class": "Academorix\\Growth\\Marketing\\Http\\Middleware\\EnforceMarketingConsent",
       "priority": 44,
       "description": "Guards tenant-plane marketing routes that expose marketing data. Refuses non-owner / non-admin / non-marketing-role callers with 403 MARKETING_INSUFFICIENT_ROLE. Not a consent-gate for the DATA (that's per-event via ConsentGate); this middleware gates VIEW ACCESS to the marketing surface based on role. Distinct from entitlement.enforce:marketing_capture which gates on tenant tier.",
       "auto_applied": false,

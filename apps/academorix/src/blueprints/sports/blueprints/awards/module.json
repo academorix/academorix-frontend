@@ -2,7 +2,7 @@
   "$version": 1,
   "name": "awards",
   "alias": "awards",
-  "namespace": "Stackra\\Sports\\Awards",
+  "namespace": "Academorix\\Sports\\Awards",
   "description": "Recognition + certificates per blueprint §14.7. Ships TWO owned entities: `Award` (recognition instance granted to an athlete — type + granted_at + evidence event/attendance/etc; auto-grant rules subscribe to domain events like RTP/BENCHMARK_BROKEN/attendance streaks/BELT_PROMOTED), `Certificate` (PDF certificate rendered for an Award — signed URL + branded template + issued_to + issued_at). Auto-grant rules define award triggers as event listeners; manual awards created via admin UI. Shareable badge wall on athlete profile.",
   "keywords": [
     "awards",
@@ -14,7 +14,7 @@
     "wave-4"
   ],
   "priority": 89,
-  "providers": ["Stackra\\Sports\\Awards\\Providers\\AwardsServiceProvider"],
+  "providers": ["Academorix\\Sports\\Awards\\Providers\\AwardsServiceProvider"],
   "files": [],
   "dependencies": [
     "foundation",

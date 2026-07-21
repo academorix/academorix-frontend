@@ -4,15 +4,15 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Performance\Models;
+namespace Academorix\Performance\Models;
 
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
-use Stackra\Performance\Contracts\Data\PerformanceTestInterface;
-use Stackra\Performance\Database\Factories\PerformanceTestFactory;
+use Academorix\Performance\Contracts\Data\PerformanceTestInterface;
+use Academorix\Performance\Database\Factories\PerformanceTestFactory;
 use Stackra\Foundation\Concerns\Filterable;
 use Stackra\Foundation\Concerns\HasMetadata;
 use Stackra\Foundation\Concerns\HasPrefixedUlid;

@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/analytics/retention",
+  "id": "academorix://modules/analytics/retention",
   "$version": 1,
   "title": "analytics — retention windows",
   "description": "Retention is compliance-anchored. Events retain 2 years by default (5 with extended entitlement); deliveries retain 90 days (support-debugging window); identities retain 1 year post-identify per GDPR minimisation. TenantErased cascades hard-delete every table.",

@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/digital-passes/notifications",
+  "id": "academorix://modules/digital-passes/notifications",
   "$version": 1,
   "title": "digital-passes — user-facing notifications",
   "description": "Laravel notifications (mail / database / broadcast / vonage / slack).",

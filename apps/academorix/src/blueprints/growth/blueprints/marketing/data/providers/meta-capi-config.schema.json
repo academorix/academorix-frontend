@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/marketing/data/providers/meta-capi-config",
+  "id": "academorix://modules/marketing/data/providers/meta-capi-config",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "Meta CAPI provider config",

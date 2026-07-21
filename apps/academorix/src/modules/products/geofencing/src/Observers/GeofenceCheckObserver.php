@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Geofencing\Observers;
+namespace Academorix\Geofencing\Observers;
 
-use Stackra\Geofencing\Contracts\Data\GeofenceCheckInterface;
-use Stackra\Geofencing\Models\GeofenceCheck;
+use Academorix\Geofencing\Contracts\Data\GeofenceCheckInterface;
+use Academorix\Geofencing\Models\GeofenceCheck;
 use Illuminate\Container\Attributes\Config;
 
 /**

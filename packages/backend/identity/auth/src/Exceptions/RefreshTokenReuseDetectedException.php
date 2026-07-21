@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Auth\Exceptions;
 
-use Stackra\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Refresh token was already consumed.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class RefreshTokenReuseDetectedException extends AcademorixException
+final class RefreshTokenReuseDetectedException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

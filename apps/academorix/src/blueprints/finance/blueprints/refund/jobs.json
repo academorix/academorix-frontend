@@ -1,10 +1,10 @@
 {
-  "id": "stackra://modules/refund/jobs",
+  "id": "academorix://modules/refund/jobs",
   "$version": 1,
   "title": "refund — background jobs",
   "jobs": [
     {
-      "class": "Stackra\\Finance\\Refund\\Jobs\\InitiateProviderRefundJob",
+      "class": "Academorix\\Finance\\Refund\\Jobs\\InitiateProviderRefundJob",
       "queue": "refunds-critical",
       "purpose": "Dispatched on Refund.status transition to `approved`. Calls the provider's createRefund method via `payment::PaymentProviderManager.instance()->createRefund()`. Persists provider_reference_id + provider_fee_reversal_cents on the refund row. Transitions status to `processing` on 2xx + async response; `succeeded` on immediate 2xx sync response (rare — most providers are async); `provider_error` on transient failure; `failed` on non-recoverable rejection. Fires RefundNotifiedProvider on successful dispatch.",
       "steps": [
@@ -16,7 +16,7 @@
         "On 2xx async processing: UPDATE refunds SET status='processing', provider_reference_id=?, provider_fee_reversal_cents=? — fires RefundProcessing + RefundNotifiedProvider",
         "On 4xx non-recoverable: UPDATE refunds SET status='failed', failure_reason=?, failed_at=NOW() — fires RefundFailed",
         "On 5xx transient or network error: UPDATE refunds SET status='provider_error', failure_reason=?, retry_count += 1 — fires RefundProviderError; ReconcileRefundsJob will retry",
-        "Emit stackra.refund.provider_dispatch_duration_ms histogram"
+        "Emit academorix.refund.provider_dispatch_duration_ms histogram"
       ],
       "shouldQueue": true,
       "shouldBeUnique": true,
@@ -26,7 +26,7 @@
       "backoff": [30, 120, 600]
     },
     {
-      "class": "Stackra\\Finance\\Refund\\Jobs\\CheckRefundProviderStatusJob",
+      "class": "Academorix\\Finance\\Refund\\Jobs\\CheckRefundProviderStatusJob",
       "queue": "refunds",
       "purpose": "Polls the provider periodically for async refunds. Some providers (Stripe, Adyen) take 5-10 days to fully process card refunds — this job checks the provider's authoritative status + reconciles our record. Per-provider cadence configurable (Stripe: hourly; Paddle: 4h; Adyen: hourly; Square: 4h; PayPal: hourly; CustomWebhook: caller-configured). Dispatched by ReconcileRefundsJob for every refund still in status=processing + provider_error.",
       "steps": [
@@ -37,7 +37,7 @@
         "If provider failed (non-recoverable): UPDATE refunds SET status='failed' + fire RefundFailed",
         "If provider still processing: UPDATE refunds SET updated_at=NOW() (touch — signals we polled), fire RefundProviderReconciled with drift_detected=false",
         "If provider returns 404 (refund reference not found — investigate ops): UPDATE refunds SET status='provider_error', failure_reason='provider_reference_not_found'",
-        "Emit stackra.refund.polls_total counter labelled by provider + terminal_state"
+        "Emit academorix.refund.polls_total counter labelled by provider + terminal_state"
       ],
       "shouldQueue": true,
       "shouldBeUnique": true,
@@ -47,7 +47,7 @@
       "backoff": [60, 300, 900]
     },
     {
-      "class": "Stackra\\Finance\\Refund\\Jobs\\FinalizeRefundJob",
+      "class": "Academorix\\Finance\\Refund\\Jobs\\FinalizeRefundJob",
       "queue": "refunds-critical",
       "purpose": "Dispatched by RefundObserver.updating when status transitions to `succeeded`. Runs the finalization chain: creates offsetting Transaction via TransactionRecorder + creates CreditNote via CreditNoteIssuer + updates parent Invoice state + fires clawback events (RefundClawbackReferral + RefundClawbackCoupon) + fires marketing::RefundIssued negative-value conversion event. All five steps run in the same DB transaction — a Refund row NEVER exists in status=succeeded without its transaction record + credit note + invoice state update. On failure, the whole chain rolls back (transient) OR transitions the refund to `provider_error` for manual investigation (persistent).",
       "steps": [
@@ -59,7 +59,7 @@
         "Step 5: refund::FireMarketingRefundIssued($refund) — dispatches marketing::RefundIssued negative-value conversion event.",
         "Commit transaction",
         "On any step failure: rollback + UPDATE refunds SET status='provider_error', failure_reason=? (surfaces to admin as 'finalization failed — retry via reconcile') + fire RefundProviderError",
-        "Emit stackra.refund.finalizations_total counter labelled by success/failure"
+        "Emit academorix.refund.finalizations_total counter labelled by success/failure"
       ],
       "shouldQueue": true,
       "shouldBeUnique": true,
@@ -69,7 +69,7 @@
       "backoff": [60, 300, 900, 1800, 3600]
     },
     {
-      "class": "Stackra\\Finance\\Refund\\Jobs\\NotifyRefundApprovalRequiredJob",
+      "class": "Academorix\\Finance\\Refund\\Jobs\\NotifyRefundApprovalRequiredJob",
       "queue": "notifications",
       "purpose": "Dispatched by RefundObserver.creating when requires_approval=true. Sends RefundApprovalRequiredNotification to every user holding `refunds.approve` permission for the tenant. Signed magic link in the notification deep-links to the approve/reject UI. Enforces segregation of duties — approver ≠ initiator (initiator's user_id is filtered out of the recipient list). Idempotent — refuses re-fire when refund is no longer in `awaiting_approval`.",
       "steps": [
@@ -77,7 +77,7 @@
         "Resolve list of approvers: SELECT users.id FROM users JOIN role_user JOIN roles JOIN role_has_permissions JOIN permissions WHERE tenant_id=? AND permissions.name='refunds.approve' AND users.id != refund.initiated_by_user_id",
         "For each approver: dispatch RefundApprovalRequiredNotification via NotificationsService",
         "Record dispatched_approvers on refund.metadata.approval_notification (list of approver user_ids notified)",
-        "Emit stackra.refund.approvals_notified_total counter"
+        "Emit academorix.refund.approvals_notified_total counter"
       ],
       "shouldQueue": true,
       "shouldBeUnique": true,
@@ -87,16 +87,16 @@
       "backoff": [60, 300, 900]
     },
     {
-      "class": "Stackra\\Finance\\Refund\\Jobs\\ReconcileRefundsJob",
+      "class": "Academorix\\Finance\\Refund\\Jobs\\ReconcileRefundsJob",
       "queue": "refunds",
       "purpose": "Nightly. Reconciles every non-terminal refund against provider authoritative state. Dispatches CheckRefundProviderStatusJob per-provider for every refund still in status=processing + provider_error. Also detects orphaned refunds (provider says refund exists but we have no matching row) + reports as P2 signal. Alerts on drift > 0.",
       "steps": [
         "Group refunds by provider: SELECT provider, count(*) FROM refunds WHERE status IN ('processing', 'provider_error') GROUP BY provider",
         "For each provider: dispatch CheckRefundProviderStatusJob(provider=?)",
         "Optional: per-provider audit — query the provider's list_refunds API for the last 7 days + cross-reference against our refunds table",
-        "For provider-side refunds without a local row: emit stackra.refund.orphaned_provider_refunds_total counter + P2 alert",
-        "For local refunds still in status=provider_error > 24h: emit stackra.refund.stale_provider_errors_total counter + P2 alert",
-        "Emit stackra.refund.reconciliation_run_duration_ms histogram"
+        "For provider-side refunds without a local row: emit academorix.refund.orphaned_provider_refunds_total counter + P2 alert",
+        "For local refunds still in status=provider_error > 24h: emit academorix.refund.stale_provider_errors_total counter + P2 alert",
+        "Emit academorix.refund.reconciliation_run_duration_ms histogram"
       ],
       "shouldQueue": true,
       "shouldBeUnique": true,
@@ -104,7 +104,7 @@
       "tries": 2
     },
     {
-      "class": "Stackra\\Finance\\Refund\\Jobs\\PurgeExpiredRefundDataJob",
+      "class": "Academorix\\Finance\\Refund\\Jobs\\PurgeExpiredRefundDataJob",
       "queue": "refunds",
       "purpose": "Weekly. Hard-purge refunds + refund_lines past 7-year (or 10-year Enterprise) retention. Invoice-linked refunds migrate to compliance_archive.refunds + compliance_archive.refund_lines prior to cascade (financial-obligation retention). Non-invoice-linked refunds hard-delete. Audit rows outlive per audit module design.",
       "steps": [
@@ -112,7 +112,7 @@
         "For each tenant: SELECT refunds WHERE processed_at < cutoff AND deleted_at IS NULL FOR UPDATE SKIP LOCKED LIMIT 5000",
         "For each refund: if invoice_id is set + parent invoice still exists in compliance_archive: INSERT INTO compliance_archive.refunds + compliance_archive.refund_lines",
         "DELETE FROM refunds (FK CASCADE handles refund_lines)",
-        "Emit stackra.refund.retention_purged_total counter labelled by entity (refunds / refund_lines) + destination (hard_delete / compliance_archive)"
+        "Emit academorix.refund.retention_purged_total counter labelled by entity (refunds / refund_lines) + destination (hard_delete / compliance_archive)"
       ],
       "shouldQueue": true,
       "shouldBeUnique": true,
@@ -120,7 +120,7 @@
       "tries": 2
     },
     {
-      "class": "Stackra\\Finance\\Refund\\Jobs\\NotifyRefundStatusJob",
+      "class": "Academorix\\Finance\\Refund\\Jobs\\NotifyRefundStatusJob",
       "queue": "notifications",
       "purpose": "Dispatches customer + admin notifications on refund state transitions. Called from RefundObserver.updating when status changes. Routes to the appropriate notification class based on the target state (RefundProcessedNotification for processing, RefundSucceededNotification for succeeded, RefundFailedNotification for failed, RefundStatusNotification for cancelled). Respects notification consent tier + tenant-configured cadence. Idempotent — each transition fires exactly one notification per recipient.",
       "steps": [
@@ -128,7 +128,7 @@
         "Look up recipients: customer (always, transactional consent), admin group (per tenant setting refund.notify_admins_on_status)",
         "Dispatch appropriate notification class based on status: RefundRequestedNotification / RefundApprovedNotification / RefundProcessedNotification / RefundSucceededNotification / RefundFailedNotification / RefundRejectedNotification / RefundStatusNotification (cancelled)",
         "Record dispatched_at on refund.metadata.notifications for idempotency",
-        "Emit stackra.refund.notifications_dispatched_total counter labelled by status + channel"
+        "Emit academorix.refund.notifications_dispatched_total counter labelled by status + channel"
       ],
       "shouldQueue": true,
       "shouldBeUnique": true,

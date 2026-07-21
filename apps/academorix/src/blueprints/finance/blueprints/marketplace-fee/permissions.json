@@ -1,10 +1,10 @@
 {
-  "id": "stackra://modules/marketplace-fee/permissions",
+  "id": "academorix://modules/marketplace-fee/permissions",
   "$version": 1,
   "title": "marketplace-fee — permissions",
-  "seeder": "Stackra\\Finance\\MarketplaceFee\\Database\\Seeders\\MarketplaceFeePermissionSeeder",
+  "seeder": "Academorix\\Finance\\MarketplaceFee\\Database\\Seeders\\MarketplaceFeePermissionSeeder",
   "isSystem": true,
-  "description": "Tenant plane — read-only visibility into what fees are applied to them (transparency). Platform plane — Stackra ops team creates + activates schedules + settles payouts.",
+  "description": "Tenant plane — read-only visibility into what fees are applied to them (transparency). Platform plane — Academorix ops team creates + activates schedules + settles payouts.",
   "permissions": [
     {
       "name": "fee-schedules.viewAny",

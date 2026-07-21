@@ -4,19 +4,19 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Event\Database\Factories;
+namespace Academorix\Event\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Stackra\Event\Contracts\Data\RsvpInterface;
-use Stackra\Event\Models\Rsvp;
+use Academorix\Event\Contracts\Data\RsvpInterface;
+use Academorix\Event\Models\Rsvp;
 
 /**
- * Factory for {@see \Stackra\Event\Models\Rsvp}.
+ * Factory for {@see \Academorix\Event\Models\Rsvp}.
  *
  * Auto-generated skeleton — extend with named states as domain
  * cases emerge (e.g. `->published()`, `->overdue()`, `->archived()`).
  *
- * @extends Factory<\Stackra\Event\Models\Rsvp>
+ * @extends Factory<\Academorix\Event\Models\Rsvp>
  *
  * @category Event
  *

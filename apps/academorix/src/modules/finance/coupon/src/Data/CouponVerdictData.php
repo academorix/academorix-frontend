@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Coupon\Data;
+namespace Academorix\Coupon\Data;
 
 use Spatie\LaravelData\Attributes\MapOutputName;
 use Spatie\LaravelData\Data;

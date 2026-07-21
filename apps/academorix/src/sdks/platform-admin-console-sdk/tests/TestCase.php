@@ -7,7 +7,7 @@ namespace Stackra\PlatformAdminConsoleSdk\Tests;
 use Orchestra\Testbench\TestCase as OrchestraTestCase;
 
 /**
- * Base test case for stackra-platform/admin-console-sdk.
+ * Base test case for academorix-platform/admin-console-sdk.
  *
  * @category AdminConsoleSdk
  *

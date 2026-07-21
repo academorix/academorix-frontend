@@ -14,11 +14,11 @@
 
 declare(strict_types=1);
 
-namespace Stackra\PlatformApplicationSdk\Requests\Applications;
+namespace Academorix\PlatformApplicationSdk\Requests\Applications;
 
 use Stackra\ApiSdk\Requests\BaseSdkRequest;
-use Stackra\PlatformApplicationSdk\Data\ApplicationData;
-use Stackra\PlatformApplicationSdk\Payloads\Applications\CreateApplicationPayload;
+use Academorix\PlatformApplicationSdk\Data\ApplicationData;
+use Academorix\PlatformApplicationSdk\Payloads\Applications\CreateApplicationPayload;
 use Saloon\Contracts\Body\HasBody;
 use Saloon\Enums\Method;
 use Saloon\Http\Response;

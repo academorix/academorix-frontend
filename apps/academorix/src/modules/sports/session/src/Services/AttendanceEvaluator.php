@@ -4,11 +4,11 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Session\Services;
+namespace Academorix\Session\Services;
 
-use Stackra\Session\Contracts\Services\AttendanceEvaluatorInterface;
+use Academorix\Session\Contracts\Services\AttendanceEvaluatorInterface;
 use Illuminate\Container\Attributes\Scoped;
-use Stackra\Session\Contracts\Repositories\SessionAttendanceRepositoryInterface;
+use Academorix\Session\Contracts\Repositories\SessionAttendanceRepositoryInterface;
 
 /**
  * Concrete service — AttendanceEvaluator.

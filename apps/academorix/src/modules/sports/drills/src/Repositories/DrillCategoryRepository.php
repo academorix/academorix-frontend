@@ -4,25 +4,25 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Drills\Repositories;
+namespace Academorix\Drills\Repositories;
 
 use Stackra\Crud\Attributes\AsRepository;
 use Stackra\Crud\Attributes\Cacheable;
 use Stackra\Crud\Attributes\Filterable;
 use Stackra\Crud\Attributes\UseModel;
 use Stackra\Crud\Repositories\Repository;
-use Stackra\Drills\Contracts\Data\DrillCategoryInterface;
-use Stackra\Drills\Contracts\Repositories\DrillCategoryRepositoryInterface;
-use Stackra\Drills\Models\DrillCategory;
+use Academorix\Drills\Contracts\Data\DrillCategoryInterface;
+use Academorix\Drills\Contracts\Repositories\DrillCategoryRepositoryInterface;
+use Academorix\Drills\Models\DrillCategory;
 
 /**
- * Attribute-first Eloquent repository for {@see Stackra\Drills\Models\DrillCategory}.
+ * Attribute-first Eloquent repository for {@see Academorix\Drills\Models\DrillCategory}.
  *
  * Bound to the interface via `#[AsRepository]`; the model comes from
  * `#[UseModel(DrillCategoryInterface::class)]` which resolves to
  * `DrillCategory` through the interface's `#[Bind]`.
  *
- * @extends Repository<\Stackra\Drills\Models\DrillCategory>
+ * @extends Repository<\Academorix\Drills\Models\DrillCategory>
  *
  * @category Drills
  *

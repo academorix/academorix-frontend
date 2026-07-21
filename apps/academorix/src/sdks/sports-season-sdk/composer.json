@@ -1,10 +1,10 @@
 {
-  "name": "stackra-sports/season-sdk",
+  "name": "academorix-sports/season-sdk",
   "type": "library",
-  "description": "Wire-visible SDK surface (Spatie Data DTOs + Saloon Request transport + fluent Resources) for the `season` module of the Sports service. Auto-discovered at boot by stackra/sports-sdk via #[AsSdkResource(name: 'season', service: 'sports')]; consumed by every cross-service caller strictly over HTTP.",
+  "description": "Wire-visible SDK surface (Spatie Data DTOs + Saloon Request transport + fluent Resources) for the `season` module of the Sports service. Auto-discovered at boot by academorix/sports-sdk via #[AsSdkResource(name: 'season', service: 'sports')]; consumed by every cross-service caller strictly over HTTP.",
   "license": "proprietary",
   "keywords": [
-    "stackra",
+    "academorix",
     "sdk",
     "saloon",
     "spatie-data",
@@ -32,12 +32,12 @@
   },
   "autoload": {
     "psr-4": {
-      "Stackra\\\\SportsSeasonSdk\\\\": "src/"
+      "Academorix\\\\SportsSeasonSdk\\": "src/"
     }
   },
   "autoload-dev": {
     "psr-4": {
-      "Stackra\\\\SportsSeasonSdk\\\\Tests\\\\": "tests/"
+      "Academorix\\\\SportsSeasonSdk\\\\Tests\\": "tests/"
     }
   },
   "extra": {

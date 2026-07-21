@@ -4,19 +4,19 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Season\Models;
+namespace Academorix\Season\Models;
 
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
-use Stackra\Season\Contracts\Data\SeasonInterface;
-use Stackra\Season\Database\Factories\SeasonFactory;
+use Academorix\Season\Contracts\Data\SeasonInterface;
+use Academorix\Season\Database\Factories\SeasonFactory;
 use Stackra\Foundation\Concerns\Filterable;
 use Stackra\Foundation\Concerns\HasMetadata;
-use Stackra\Season\Enums\SeasonStatus;
-use Stackra\Season\Policies\SeasonPolicy;
+use Academorix\Season\Enums\SeasonStatus;
+use Academorix\Season\Policies\SeasonPolicy;
 use Stackra\Tenancy\Concerns\BelongsToTenant;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;

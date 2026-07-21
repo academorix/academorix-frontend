@@ -1,8 +1,8 @@
 {
-  "id": "stackra://modules/invoice/permissions",
+  "id": "academorix://modules/invoice/permissions",
   "$version": 1,
   "title": "invoice — permissions",
-  "seeder": "Stackra\\Finance\\Invoice\\Database\\Seeders\\InvoicePermissionSeeder",
+  "seeder": "Academorix\\Finance\\Invoice\\Database\\Seeders\\InvoicePermissionSeeder",
   "isSystem": true,
   "description": "Two audiences. Tenant plane (sanctum) — customer sees own invoices via invoice.enforce_customer_scope; admin + finance role manage tenant-wide invoices; ops role sees read-only view for support. Platform plane (platform_admin) — cross-tenant support tooling for ops + support. All tenant-plane permissions carry the `invoice.` prefix (or `platform.invoice.` on the platform audience) per hierarchy.md §4 audience-boundary rules. Financial actions (create, finalize, void, mark-uncollectible, issue credit note) require BOTH admin role AND finance sub-role for defense-in-depth.",
   "permissions": [

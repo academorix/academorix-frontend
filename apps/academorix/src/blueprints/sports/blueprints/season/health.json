@@ -1,11 +1,11 @@
 {
-  "id": "stackra://modules/season/health",
+  "id": "academorix://modules/season/health",
   "$version": 1,
   "title": "season — health probes",
   "probes": [
     {
       "name": "season-tables-migrated",
-      "class": "Stackra\\Sports\\Season\\Health\\Probes\\TablesMigratedProbe",
+      "class": "Academorix\\Sports\\Season\\Health\\Probes\\TablesMigratedProbe",
       "category": "startup",
       "critical": true,
       "description": "The `seasons` table exists + carries the latest schema version. Failure indicates a missed migration.",
@@ -13,7 +13,7 @@
     },
     {
       "name": "season-type-catalog-loaded",
-      "class": "Stackra\\Sports\\Season\\Health\\Probes\\SeasonTypeCatalogLoadedProbe",
+      "class": "Academorix\\Sports\\Season\\Health\\Probes\\SeasonTypeCatalogLoadedProbe",
       "category": "startup",
       "critical": true,
       "description": "`data/season-type-catalog.json` parses cleanly + contains every enum value referenced by the SeasonType cast. Failure indicates a corrupted deploy artifact.",
@@ -21,7 +21,7 @@
     },
     {
       "name": "season-business-type-defaults-loaded",
-      "class": "Stackra\\Sports\\Season\\Health\\Probes\\BusinessTypeDefaultsLoadedProbe",
+      "class": "Academorix\\Sports\\Season\\Health\\Probes\\BusinessTypeDefaultsLoadedProbe",
       "category": "startup",
       "critical": true,
       "description": "`data/business-type-defaults.json` parses cleanly + every seasonal business_type entry has a valid default template. The seed listener depends on this.",
@@ -29,7 +29,7 @@
     },
     {
       "name": "season-tenant-fk-integrity",
-      "class": "Stackra\\Sports\\Season\\Health\\Probes\\TenantFkIntegrityProbe",
+      "class": "Academorix\\Sports\\Season\\Health\\Probes\\TenantFkIntegrityProbe",
       "category": "readiness",
       "critical": false,
       "description": "Every `seasons.tenant_id` resolves to a live `tenants` row. The FK is onDelete=cascade so the DB should never permit orphans; this probe catches direct SQL manipulation.",
@@ -37,7 +37,7 @@
     },
     {
       "name": "season-current-invariant",
-      "class": "Stackra\\Sports\\Season\\Health\\Probes\\CurrentSeasonInvariantProbe",
+      "class": "Academorix\\Sports\\Season\\Health\\Probes\\CurrentSeasonInvariantProbe",
       "category": "readiness",
       "critical": false,
       "description": "Every (tenant_id, organization_id, branch_id, sport_key) tuple has AT MOST one row with `is_current = true`. Failure is a data-quality signal; the observer normally prevents this state, but the probe catches drift from bulk-imports + direct SQL.",
@@ -45,7 +45,7 @@
     },
     {
       "name": "season-slug-uniqueness",
-      "class": "Stackra\\Sports\\Season\\Health\\Probes\\SlugUniquenessProbe",
+      "class": "Academorix\\Sports\\Season\\Health\\Probes\\SlugUniquenessProbe",
       "category": "readiness",
       "critical": false,
       "description": "No two active Seasons share (tenant_id, COALESCE(organization_id,''), COALESCE(branch_id,''), slug). Backed by the partial unique index; the probe verifies the index is in place + healthy.",
@@ -53,7 +53,7 @@
     },
     {
       "name": "season-date-consistency",
-      "class": "Stackra\\Sports\\Season\\Health\\Probes\\DateConsistencyProbe",
+      "class": "Academorix\\Sports\\Season\\Health\\Probes\\DateConsistencyProbe",
       "category": "readiness",
       "critical": false,
       "description": "For every Season: start_date < end_date; when set, registration_opens_at < registration_closes_at; when has_playoffs=true, playoff_starts_at falls within [start_date, end_date]; when late_registration_ends_at is set, it's > registration_closes_at. Catches drift from raw SQL edits.",
@@ -61,14 +61,14 @@
     },
     {
       "name": "season-purge-queue-drained",
-      "class": "Stackra\\Sports\\Season\\Health\\Probes\\PurgeQueueDrainedProbe",
+      "class": "Academorix\\Sports\\Season\\Health\\Probes\\PurgeQueueDrainedProbe",
       "category": "readiness",
       "critical": false,
       "description": "No `PurgeArchivedSeasonsJob` has been pending for > 48h. Catches queue stalls that could push an archived Season past its 7-year retention window."
     },
     {
       "name": "season-phase-roll-heartbeat",
-      "class": "Stackra\\Sports\\Season\\Health\\Probes\\PhaseRollHeartbeatProbe",
+      "class": "Academorix\\Sports\\Season\\Health\\Probes\\PhaseRollHeartbeatProbe",
       "category": "readiness",
       "critical": false,
       "description": "The RollSeasonPhaseJob ran successfully within the last 90 minutes (the hourly cron has a 30-minute grace before this alerts). Feeds ops alerting when the scheduler is stuck.",
@@ -76,7 +76,7 @@
     },
     {
       "name": "season-inbound-fk-drift",
-      "class": "Stackra\\Sports\\Season\\Health\\Probes\\InboundFkDriftProbe",
+      "class": "Academorix\\Sports\\Season\\Health\\Probes\\InboundFkDriftProbe",
       "category": "readiness",
       "critical": false,
       "description": "No Team / AthleteEnrollment / Event / Session row references a hard-deleted Season. Every FK is RESTRICT so this should never happen — probe catches direct SQL manipulation.",

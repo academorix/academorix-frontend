@@ -1,12 +1,12 @@
 {
-  "id": "stackra://modules/membership/policies",
+  "id": "academorix://modules/membership/policies",
   "$version": 1,
   "title": "membership — authorization policies",
   "description": "Four policies, one per owned entity. Composes ResolveScope + .own scope for guardians / adult athletes. Refund + chargeback abilities restricted to finance roles; hard-cancel gated by membership_hard_cancel_prorated_refund entitlement.",
   "policies": [
     {
       "model": "Membership",
-      "class": "Stackra\\Finance\\Membership\\Policies\\MembershipPolicy",
+      "class": "Academorix\\Finance\\Membership\\Policies\\MembershipPolicy",
       "abilities": [
         {
           "action": "viewAny",
@@ -73,7 +73,7 @@
     },
     {
       "model": "MembershipPlan",
-      "class": "Stackra\\Finance\\Membership\\Policies\\MembershipPlanPolicy",
+      "class": "Academorix\\Finance\\Membership\\Policies\\MembershipPlanPolicy",
       "abilities": [
         {
           "action": "viewAny",
@@ -101,7 +101,7 @@
     },
     {
       "model": "MembershipRenewal",
-      "class": "Stackra\\Finance\\Membership\\Policies\\MembershipRenewalPolicy",
+      "class": "Academorix\\Finance\\Membership\\Policies\\MembershipRenewalPolicy",
       "abilities": [
         {
           "action": "viewAny",
@@ -117,7 +117,7 @@
     },
     {
       "model": "Pass",
-      "class": "Stackra\\Finance\\Membership\\Policies\\PassPolicy",
+      "class": "Academorix\\Finance\\Membership\\Policies\\PassPolicy",
       "abilities": [
         {
           "action": "viewAny",

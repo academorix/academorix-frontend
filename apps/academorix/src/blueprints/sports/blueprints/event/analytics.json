@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/event/analytics",
+  "id": "academorix://modules/event/analytics",
   "$version": 1,
   "title": "event — product analytics",
   "sink": "segment",

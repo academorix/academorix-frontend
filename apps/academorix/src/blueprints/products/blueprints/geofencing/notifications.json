@@ -1,8 +1,8 @@
 {
-  "id": "stackra://modules/geofencing/notifications",
+  "id": "academorix://modules/geofencing/notifications",
   "$version": 1,
   "title": "geofencing \u2014 notification classes + categories",
-  "namespace": "Stackra\\Geofencing\\Notifications",
+  "namespace": "Academorix\\Geofencing\\Notifications",
   "notifications": [
     "GeofenceOverrideRequestedNotification",
     "GeofenceOverrideAppliedNotification",

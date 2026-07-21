@@ -4,19 +4,19 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Dunning\Database\Factories;
+namespace Academorix\Dunning\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Stackra\Dunning\Contracts\Data\DunningPlanInterface;
-use Stackra\Dunning\Models\DunningPlan;
+use Academorix\Dunning\Contracts\Data\DunningPlanInterface;
+use Academorix\Dunning\Models\DunningPlan;
 
 /**
- * Factory for {@see \Stackra\Dunning\Models\DunningPlan}.
+ * Factory for {@see \Academorix\Dunning\Models\DunningPlan}.
  *
  * Auto-generated skeleton — extend with named states as domain
  * cases emerge (e.g. `->published()`, `->overdue()`, `->archived()`).
  *
- * @extends Factory<\Stackra\Dunning\Models\DunningPlan>
+ * @extends Factory<\Academorix\Dunning\Models\DunningPlan>
  *
  * @category Dunning
  *

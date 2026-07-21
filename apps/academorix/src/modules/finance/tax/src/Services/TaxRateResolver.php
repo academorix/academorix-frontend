@@ -2,19 +2,19 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Tax\Services;
+namespace Academorix\Tax\Services;
 
-use Stackra\Tax\Contracts\Data\TaxRateInterface;
-use Stackra\Tax\Contracts\Repositories\TaxRateRepositoryInterface;
-use Stackra\Tax\Contracts\Services\TaxRateResolverInterface;
-use Stackra\Tax\Models\TaxRate;
+use Academorix\Tax\Contracts\Data\TaxRateInterface;
+use Academorix\Tax\Contracts\Repositories\TaxRateRepositoryInterface;
+use Academorix\Tax\Contracts\Services\TaxRateResolverInterface;
+use Academorix\Tax\Models\TaxRate;
 use Illuminate\Container\Attributes\Cache;
 use Illuminate\Container\Attributes\Scoped;
 use Illuminate\Contracts\Cache\Repository as CacheRepository;
 
 /**
  * Reference implementation of
- * {@see \Stackra\Tax\Contracts\Services\TaxRateResolverInterface}.
+ * {@see \Academorix\Tax\Contracts\Services\TaxRateResolverInterface}.
  *
  * Query strategy:
  *   `SELECT * FROM tax_rates WHERE tenant_id = ? AND jurisdiction_id = ?

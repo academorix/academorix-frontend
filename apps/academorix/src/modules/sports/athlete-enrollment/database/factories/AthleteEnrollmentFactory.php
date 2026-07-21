@@ -4,19 +4,19 @@
 
 declare(strict_types=1);
 
-namespace Stackra\AthleteEnrollment\Database\Factories;
+namespace Academorix\AthleteEnrollment\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Stackra\AthleteEnrollment\Contracts\Data\AthleteEnrollmentInterface;
-use Stackra\AthleteEnrollment\Models\AthleteEnrollment;
+use Academorix\AthleteEnrollment\Contracts\Data\AthleteEnrollmentInterface;
+use Academorix\AthleteEnrollment\Models\AthleteEnrollment;
 
 /**
- * Factory for {@see \Stackra\AthleteEnrollment\Models\AthleteEnrollment}.
+ * Factory for {@see \Academorix\AthleteEnrollment\Models\AthleteEnrollment}.
  *
  * Auto-generated skeleton — extend with named states as domain
  * cases emerge (e.g. `->published()`, `->overdue()`, `->archived()`).
  *
- * @extends Factory<\Stackra\AthleteEnrollment\Models\AthleteEnrollment>
+ * @extends Factory<\Academorix\AthleteEnrollment\Models\AthleteEnrollment>
  *
  * @category AthleteEnrollment
  *

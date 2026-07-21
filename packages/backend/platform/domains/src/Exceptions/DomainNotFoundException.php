@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Stackra\Domains\Exceptions;
 
-use Stackra\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Raised when a request lands on a Host header that maps to no
@@ -14,7 +14,7 @@ use Stackra\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class DomainNotFoundException extends AcademorixException
+final class DomainNotFoundException extends StackraException
 {
     public const CODE = 'domains.not_found';
 

@@ -24,9 +24,9 @@ Branch or any other entity**. To make a model fenceable:
 **Step 1 — add the trait + attribute:**
 
 ```php
-use Stackra\Geofencing\Attributes\Geofenceable;
-use Stackra\Geofencing\Concerns\HasGeofence;
-use Stackra\Geofencing\Contracts\Geofenceable as GeofenceableContract;
+use Academorix\Geofencing\Attributes\Geofenceable;
+use Academorix\Geofencing\Concerns\HasGeofence;
+use Academorix\Geofencing\Contracts\Geofenceable as GeofenceableContract;
 
 #[Geofenceable(alias: 'branch')]
 final class Branch extends Model implements GeofenceableContract

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Referrals\Tests;
+namespace Academorix\Referrals\Tests;
 
 use Orchestra\Testbench\TestCase as OrchestraTestCase;
 

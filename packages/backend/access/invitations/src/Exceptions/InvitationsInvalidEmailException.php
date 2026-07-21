@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Invitations\Exceptions;
 
-use Stackra\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Raised when the domain rule `INVITATIONS_INVALID_EMAIL` fires.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class InvitationsInvalidEmailException extends AcademorixException
+final class InvitationsInvalidEmailException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

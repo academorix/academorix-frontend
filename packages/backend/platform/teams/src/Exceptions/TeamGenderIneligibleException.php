@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Teams\Exceptions;
 
-use Stackra\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Member's gender doesn't match team.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class TeamGenderIneligibleException extends AcademorixException
+final class TeamGenderIneligibleException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Progress\Contracts\Data;
+namespace Academorix\Progress\Contracts\Data;
 
 use Illuminate\Container\Attributes\Bind;
-use Stackra\Progress\Models\ProgressAssessment;
+use Academorix\Progress\Models\ProgressAssessment;
 
 /**
  * Table shape for the `progress_assessments` table.

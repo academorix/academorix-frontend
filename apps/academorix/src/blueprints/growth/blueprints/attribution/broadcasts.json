@@ -1,12 +1,12 @@
 {
-  "id": "stackra://modules/attribution/broadcasts",
+  "id": "academorix://modules/attribution/broadcasts",
   "$version": 1,
   "title": "attribution — realtime broadcast channels",
   "description": "Two broadcast channel families for live UI updates. Tenant-level channel for admin dashboards (campaign-rollup + newly-identified subjects); user-level channel for a user's own attribution profile changes (rare — but referrals dashboard shows real-time attribution). Reverb driver (Laravel Reverb) is the default transport; the notifications module handles fanout. NO facility-level channels — attribution is per-tenant + per-subject, no intermediate scope.",
   "channels": [
     {
       "name": "tenant.{tenantId}.attribution",
-      "class": "Stackra\\Growth\\Attribution\\Broadcasts\\TenantAttributionChannel",
+      "class": "Academorix\\Growth\\Attribution\\Broadcasts\\TenantAttributionChannel",
       "description": "Tenant-wide attribution + campaign stream. Sink for admin dashboards showing incoming attribution activity, campaign-rollup updates, merge/reset admin actions.",
       "authorization": "sanctum::authed AND tenant_matches AND permission:attribution.view-all",
       "events": [
@@ -24,7 +24,7 @@
     },
     {
       "name": "user.{userId}.attribution",
-      "class": "Stackra\\Growth\\Attribution\\Broadcasts\\UserAttributionChannel",
+      "class": "Academorix\\Growth\\Attribution\\Broadcasts\\UserAttributionChannel",
       "description": "Per-user attribution stream. Powers the my-attribution live-updates widget in the user dashboard (rare — most users don't need this; referrals module surfaces it for referrer accounts).",
       "authorization": "sanctum::authed AND user_matches",
       "events": [

@@ -1,8 +1,8 @@
 {
-  "id": "stackra://modules/order/permissions",
+  "id": "academorix://modules/order/permissions",
   "$version": 1,
   "title": "order — permissions",
-  "seeder": "Stackra\\Finance\\Order\\Database\\Seeders\\OrderPermissionSeeder",
+  "seeder": "Academorix\\Finance\\Order\\Database\\Seeders\\OrderPermissionSeeder",
   "isSystem": true,
   "description": "Guardian narrows to own orders (buyer_type='guardian', buyer_id=current user). Staff + finance + owner see all tenant orders.",
   "permissions": [

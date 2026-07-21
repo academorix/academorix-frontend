@@ -4,7 +4,7 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Tax\Concerns;
+namespace Academorix\Tax\Concerns;
 
 /**
  * Trait — HasTaxRates.

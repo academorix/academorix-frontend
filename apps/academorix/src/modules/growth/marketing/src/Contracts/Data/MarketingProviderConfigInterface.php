@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Marketing\Contracts\Data;
+namespace Academorix\Marketing\Contracts\Data;
 
 use Illuminate\Container\Attributes\Bind;
-use Stackra\Marketing\Models\MarketingProviderConfig;
+use Academorix\Marketing\Models\MarketingProviderConfig;
 
 /**
  * Table shape for the `marketing_provider_configs` table.

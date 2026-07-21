@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Facility\Exceptions;
 
-use Stackra\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * starts_at not aligned to facility.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class BookingSlotMisalignedException extends AcademorixException
+final class BookingSlotMisalignedException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

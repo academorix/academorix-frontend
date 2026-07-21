@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Stackra\Integrations\Exceptions;
 
-use Stackra\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Raised when a caller attempts to sync (or otherwise operate on) an
@@ -14,7 +14,7 @@ use Stackra\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class IntegrationDisabledException extends AcademorixException
+final class IntegrationDisabledException extends StackraException
 {
     public const CODE = 'integrations.disabled';
 

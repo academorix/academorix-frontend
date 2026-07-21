@@ -4,7 +4,7 @@
 
 declare(strict_types=1);
 
-namespace Stackra\AthleteEnrollment\Concerns;
+namespace Academorix\AthleteEnrollment\Concerns;
 
 /**
  * Trait — HasEnrollmentHistory.

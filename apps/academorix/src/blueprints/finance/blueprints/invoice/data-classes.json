@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/invoice/data-classes",
+  "id": "academorix://modules/invoice/data-classes",
   "$version": 1,
   "title": "invoice — field classification",
   "description": "Invoices carry customer PII (billing_address name/phone/email, customer_tax_id) — personal + potentially minor-adjacent (parent guardian on athlete-linked invoices). Revenue amounts are confidential (competitor cross-inference). Payment references (payment_method_id, transaction_id) point at the payment module — no card data. Frozen snapshots (billing_address, currency, totals after finalize) survive as historical records for the invoice's lifetime + archive.",

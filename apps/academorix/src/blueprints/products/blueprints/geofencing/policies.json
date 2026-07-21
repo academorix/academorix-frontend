@@ -1,11 +1,11 @@
 {
-  "id": "stackra://modules/geofencing/policies",
+  "id": "academorix://modules/geofencing/policies",
   "$version": 1,
   "title": "geofencing \u2014 authorization policies",
   "policies": [
     {
       "model": "GeofenceCheck",
-      "class": "Stackra\\Geofencing\\Policies\\GeofenceCheckPolicy",
+      "class": "Academorix\\Geofencing\\Policies\\GeofenceCheckPolicy",
       "abilities": [
         {
           "action": "preflight",

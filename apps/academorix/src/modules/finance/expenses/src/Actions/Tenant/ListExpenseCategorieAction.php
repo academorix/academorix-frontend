@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Expenses\Actions\Tenant;
+namespace Academorix\Expenses\Actions\Tenant;
 
-use Stackra\Expenses\Contracts\Repositories\ExpenseCategoryRepositoryInterface;
-use Stackra\Expenses\Data\ExpenseCategoryData;
+use Academorix\Expenses\Contracts\Repositories\ExpenseCategoryRepositoryInterface;
+use Academorix\Expenses\Data\ExpenseCategoryData;
 use Stackra\Routing\Attributes\AsAction;
 use Stackra\Routing\Attributes\Middleware;
 use Stackra\Routing\Concerns\AsController;
@@ -50,7 +50,7 @@ final class ListExpenseCategorieAction
      */
     public function __invoke(Request $request): PaginatedDataCollection
     {
-        /** @var LengthAwarePaginator<int, \Stackra\Expenses\Models\ExpenseCategory> $page */
+        /** @var LengthAwarePaginator<int, \Academorix\Expenses\Models\ExpenseCategory> $page */
         $page = $this->repository->paginate(
             perPage: (int) $request->integer('per_page', 15),
         );

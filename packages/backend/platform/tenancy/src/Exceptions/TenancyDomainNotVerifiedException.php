@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Tenancy\Exceptions;
 
-use Stackra\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Attempt to promote a Domain to primary before it is verified.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class TenancyDomainNotVerifiedException extends AcademorixException
+final class TenancyDomainNotVerifiedException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

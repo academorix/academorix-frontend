@@ -4,11 +4,11 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Development\Services;
+namespace Academorix\Development\Services;
 
-use Stackra\Development\Contracts\Services\PromotionEvaluatorInterface;
+use Academorix\Development\Contracts\Services\PromotionEvaluatorInterface;
 use Illuminate\Container\Attributes\Scoped;
-use Stackra\Development\Contracts\Repositories\DevelopmentPathwayRepositoryInterface;
+use Academorix\Development\Contracts\Repositories\DevelopmentPathwayRepositoryInterface;
 
 /**
  * Concrete service — PromotionEvaluator.

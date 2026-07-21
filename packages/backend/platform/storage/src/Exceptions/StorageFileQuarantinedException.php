@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Storage\Exceptions;
 
-use Stackra\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * File was moved to quarantine (infected or manual quarantine).
@@ -15,7 +15,7 @@ use Stackra\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class StorageFileQuarantinedException extends AcademorixException
+final class StorageFileQuarantinedException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

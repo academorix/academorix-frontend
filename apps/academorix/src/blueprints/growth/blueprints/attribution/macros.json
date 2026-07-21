@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/attribution/macros",
+  "id": "academorix://modules/attribution/macros",
   "$version": 1,
   "title": "attribution — published macros",
   "description": "Three request-level macros that surface the resolved attribution + its frozen snapshot from the RequestContext (set by the attribution.capture middleware). Registered by AttributionServiceProvider::boot(). No Blueprint macros — the owned tables use standard column shapes.",
@@ -10,7 +10,7 @@
       "signature": "Request::currentAttribution(): ?Attribution",
       "adds": "A single accessor on the framework Request class that returns the resolved Attribution model (or null when no attribution context / consent refused).",
       "description": "Reads from RequestContext::attribution() set by the attribution.capture middleware. Lazy-loads the model on first access — subsequent calls in the same request return the cached instance.",
-      "registered_by": "Stackra\\Growth\\Attribution\\Providers\\AttributionServiceProvider::boot()",
+      "registered_by": "Academorix\\Growth\\Attribution\\Providers\\AttributionServiceProvider::boot()",
       "example": "public function store(Request $request): JsonResponse\n{\n    $attribution = $request->currentAttribution();\n    // Freeze the attribution into the created row so it survives future attribution changes.\n    $subscription = Subscription::create([\n        'user_id' => $request->user()->id,\n        'attribution' => $request->attributionSnapshot(),\n    ]);\n}"
     },
     {

@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/sports-registry/retention",
+  "id": "academorix://modules/sports-registry/retention",
   "$version": 1,
   "title": "sports-registry — retention windows",
   "description": "Two shapes of retention. Platform-seeded rows are PERMANENT — they never hard-delete (only deactivate). Tenant custom rows follow the standard soft-delete → archived → hard-delete lifecycle. Audit rows survive their source row for compliance replay: 2 years for regular mutations, 7 years for SportPrefixResolutionFailed events (dangling-reference signal).",

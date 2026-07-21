@@ -4,11 +4,11 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Leads\Actions\Tenant;
+namespace Academorix\Leads\Actions\Tenant;
 
-use Stackra\Leads\Contracts\Repositories\LeadTaskRepositoryInterface;
-use Stackra\Leads\Data\LeadTaskData;
-use Stackra\Leads\Data\Requests\CreateLeadTaskRequestData;
+use Academorix\Leads\Contracts\Repositories\LeadTaskRepositoryInterface;
+use Academorix\Leads\Data\LeadTaskData;
+use Academorix\Leads\Data\Requests\CreateLeadTaskRequestData;
 use Stackra\Routing\Attributes\AsAction;
 use Stackra\Routing\Attributes\Middleware;
 use Stackra\Routing\Concerns\AsController;

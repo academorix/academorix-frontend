@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Geofencing\Services;
+namespace Academorix\Geofencing\Services;
 
-use Stackra\Geofencing\Contracts\Services\PolygonEvaluatorInterface;
-use Stackra\Geofencing\Contracts\Services\PolygonValidatorInterface;
-use Stackra\Geofencing\Enums\PolygonValidationReason;
-use Stackra\Geofencing\Exceptions\InvalidPolygonException;
+use Academorix\Geofencing\Contracts\Services\PolygonEvaluatorInterface;
+use Academorix\Geofencing\Contracts\Services\PolygonValidatorInterface;
+use Academorix\Geofencing\Enums\PolygonValidationReason;
+use Academorix\Geofencing\Exceptions\InvalidPolygonException;
 use Illuminate\Container\Attributes\Config;
 use Illuminate\Container\Attributes\Singleton;
 

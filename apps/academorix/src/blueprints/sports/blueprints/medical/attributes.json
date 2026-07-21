@@ -1,8 +1,8 @@
 {
-  "id": "stackra://modules/medical/attributes",
+  "id": "academorix://modules/medical/attributes",
   "$version": 1,
   "title": "medical — PHP attributes",
   "description": "PHP attributes owned by this module. Empty at scaffold time; fill in with each new `#[As...]` class the module ships.",
-  "namespace": "Stackra\\\\Medical\\\\Attributes",
+  "namespace": "Academorix\\\\Medical\\\\Attributes",
   "attributes": []
 }

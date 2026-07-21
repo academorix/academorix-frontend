@@ -2,22 +2,22 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Athlete\Services;
+namespace Academorix\Athlete\Services;
 
-use Stackra\Athlete\Contracts\Data\AthleteInterface;
-use Stackra\Athlete\Contracts\Repositories\AthleteRepositoryInterface;
-use Stackra\Athlete\Contracts\Services\AgeGroupSnapshotResolverInterface;
-use Stackra\Athlete\Contracts\Services\AthleteConsentGateInterface;
-use Stackra\Athlete\Contracts\Services\AthleteProvisionerInterface;
-use Stackra\Athlete\Enums\AthleteStatus;
-use Stackra\Athlete\Events\AthleteCreated;
-use Stackra\Athlete\Exceptions\AthleteDobOutOfBoundsException;
-use Stackra\Athlete\Exceptions\AthleteGuardianRequiredException;
-use Stackra\Athlete\Exceptions\AthleteMedicalPermissionRequiredException;
-use Stackra\Athlete\Models\Athlete;
-use Stackra\AthleteGuardian\Contracts\Data\AthleteGuardianInterface;
-use Stackra\AthleteGuardian\Contracts\Repositories\AthleteGuardianRepositoryInterface;
-use Stackra\AthleteGuardian\Enums\AthleteGuardianVerificationStatus;
+use Academorix\Athlete\Contracts\Data\AthleteInterface;
+use Academorix\Athlete\Contracts\Repositories\AthleteRepositoryInterface;
+use Academorix\Athlete\Contracts\Services\AgeGroupSnapshotResolverInterface;
+use Academorix\Athlete\Contracts\Services\AthleteConsentGateInterface;
+use Academorix\Athlete\Contracts\Services\AthleteProvisionerInterface;
+use Academorix\Athlete\Enums\AthleteStatus;
+use Academorix\Athlete\Events\AthleteCreated;
+use Academorix\Athlete\Exceptions\AthleteDobOutOfBoundsException;
+use Academorix\Athlete\Exceptions\AthleteGuardianRequiredException;
+use Academorix\Athlete\Exceptions\AthleteMedicalPermissionRequiredException;
+use Academorix\Athlete\Models\Athlete;
+use Academorix\AthleteGuardian\Contracts\Data\AthleteGuardianInterface;
+use Academorix\AthleteGuardian\Contracts\Repositories\AthleteGuardianRepositoryInterface;
+use Academorix\AthleteGuardian\Enums\AthleteGuardianVerificationStatus;
 use Illuminate\Container\Attributes\Scoped;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;

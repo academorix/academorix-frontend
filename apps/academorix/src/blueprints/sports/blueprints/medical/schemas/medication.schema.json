@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/medical/schemas/medication",
+  "id": "academorix://modules/medical/schemas/medication",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "Medication",

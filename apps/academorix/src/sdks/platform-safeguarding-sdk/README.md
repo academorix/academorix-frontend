@@ -1,7 +1,7 @@
-# stackra-platform/safeguarding-sdk
+# academorix-platform/safeguarding-sdk
 
 Wire-visible SDK surface for the `safeguarding` module of the Platform service.
-Auto-discovered by `stackra/platform-sdk` (the service umbrella) via
+Auto-discovered by `academorix/platform-sdk` (the service umbrella) via
 `#[AsSdkResource(name: 'safeguarding', service: 'platform')]`.
 
 ## Aggregates
@@ -27,7 +27,7 @@ src/
 Consumed only over HTTP via the umbrella client:
 
 ```php
-app(\Stackra\PlatformSdk\Client\PlatformSdk::class)
+app(\Academorix\PlatformSdk\Client\PlatformSdk::class)
     ->safeguarding()
     ->backgroundChecks()
     ->list();

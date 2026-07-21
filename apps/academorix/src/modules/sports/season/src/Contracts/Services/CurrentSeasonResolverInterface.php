@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Season\Contracts\Services;
+namespace Academorix\Season\Contracts\Services;
 
-use Stackra\Season\Services\CurrentSeasonResolver;
+use Academorix\Season\Services\CurrentSeasonResolver;
 use Illuminate\Container\Attributes\Bind;
 
 /**

@@ -4,13 +4,13 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Progress\Policies;
+namespace Academorix\Progress\Policies;
 
 use Stackra\User\Models\User;
-use Stackra\Progress\Models\CoachNote;
+use Academorix\Progress\Models\CoachNote;
 
 /**
- * Authorization policy for {@see \Stackra\Progress\Models\CoachNote}.
+ * Authorization policy for {@see \Academorix\Progress\Models\CoachNote}.
  *
  * Wired via `#[UsePolicy]` on the Model.
  *

@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/attendance/errors",
+  "id": "academorix://modules/attendance/errors",
   "$version": 1,
   "title": "attendance — error codes",
   "namespace": "attendance",

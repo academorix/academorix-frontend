@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/athlete/caches",
+  "id": "academorix://modules/athlete/caches",
   "$version": 1,
   "title": "athlete — cache keys + tags",
   "driver": "redis",

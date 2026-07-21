@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\PlatformUser\Exceptions;
 
-use Stackra\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Attempted to offboard a PlatformUser who is a manager (manager_id on other active/suspended rows points at them).
@@ -15,7 +15,7 @@ use Stackra\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class ManagerHasReportsException extends AcademorixException
+final class ManagerHasReportsException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

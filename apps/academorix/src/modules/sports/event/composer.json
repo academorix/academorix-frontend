@@ -1,10 +1,10 @@
 {
-  "name": "stackra/event",
+  "name": "academorix/event",
   "type": "library",
-  "description": "Stackra Event module — server-side Laravel package emitted from the module blueprint at `modules/sports/blueprints/event/`. Complements the wire SDK at `stackra-sports/event-sdk`.",
+  "description": "Academorix Event module — server-side Laravel package emitted from the module blueprint at `modules/sports/blueprints/event/`. Complements the wire SDK at `academorix-sports/event-sdk`.",
   "license": "proprietary",
   "keywords": [
-    "stackra",
+    "academorix",
     "module",
     "laravel",
     "sports",
@@ -22,7 +22,7 @@
     "stackra/routing": "@dev",
     "stackra/service-provider": "@dev",
     "stackra/support": "@dev",
-    "stackra-sports/event-sdk": "@dev"
+    "academorix-sports/event-sdk": "@dev"
   },
   "require-dev": {
     "orchestra/testbench": "^11.0",
@@ -33,12 +33,12 @@
   },
   "autoload": {
     "psr-4": {
-      "Stackra\\Event\\": "src/"
+      "Academorix\\Event\\": "src/"
     }
   },
   "autoload-dev": {
     "psr-4": {
-      "Stackra\\Event\\Tests\\": "tests/"
+      "Academorix\\Event\\Tests\\": "tests/"
     }
   },
   "extra": {

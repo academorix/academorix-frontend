@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Stackra\Storage\Exceptions;
 
-use Stackra\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Raised when a caller tries to read a File whose
@@ -14,7 +14,7 @@ use Stackra\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class FileQuarantinedException extends AcademorixException
+final class FileQuarantinedException extends StackraException
 {
     public const CODE = 'storage.quarantined';
 

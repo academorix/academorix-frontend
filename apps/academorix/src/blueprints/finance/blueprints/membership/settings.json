@@ -1,14 +1,14 @@
 {
-  "id": "stackra://modules/membership/settings",
+  "id": "academorix://modules/membership/settings",
   "$version": 1,
   "title": "membership — settings",
   "description": "Tenant-facing preferences for the membership workflow (renewal cadence, dunning tone, cancellation grace, statement schedule).",
   "storedIn": "settings",
-  "reference": { "contract": "stackra://modules/settings/attributes" },
+  "reference": { "contract": "academorix://modules/settings/attributes" },
   "groups": [
     {
       "key": "membership",
-      "class": "Stackra\\Finance\\Membership\\Settings\\MembershipSettings",
+      "class": "Academorix\\Finance\\Membership\\Settings\\MembershipSettings",
       "label": "Memberships",
       "description": "Tenant-wide membership workflow settings.",
       "icon": "credit-card",

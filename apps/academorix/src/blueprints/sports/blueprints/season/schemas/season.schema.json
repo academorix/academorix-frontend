@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/season/schemas/season",
+  "id": "academorix://modules/season/schemas/season",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "Season",
@@ -13,9 +13,9 @@
     "keyType": "string",
     "keyPrefix": "sea_",
     "incrementing": false,
-    "model": "Stackra\\Sports\\Season\\Models\\Season",
-    "interface": "Stackra\\Sports\\Season\\Contracts\\Data\\SeasonInterface",
-    "implements": ["Stackra\\Sports\\Season\\Contracts\\Data\\SeasonInterface"],
+    "model": "Academorix\\Sports\\Season\\Models\\Season",
+    "interface": "Academorix\\Sports\\Season\\Contracts\\Data\\SeasonInterface",
+    "implements": ["Academorix\\Sports\\Season\\Contracts\\Data\\SeasonInterface"],
     "traits": [
       "HasFactory",
       "HasUlids",

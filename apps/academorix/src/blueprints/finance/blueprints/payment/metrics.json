@@ -1,9 +1,9 @@
 {
-  "id": "stackra://modules/payment/metrics",
+  "id": "academorix://modules/payment/metrics",
   "$version": 1,
   "title": "payment — OpenTelemetry metrics",
   "instrumentation": "self via telemetry",
-  "namespace": "stackra.payment",
+  "namespace": "academorix.payment",
   "labelConventions": {
     "always": [],
     "commonlyAvailable": ["provider", "status", "method_type", "brand_bucket", "currency"],
@@ -22,54 +22,54 @@
   },
   "metrics": [
     {
-      "name": "stackra.payment.intents.created_total",
+      "name": "academorix.payment.intents.created_total",
       "kind": "counter",
       "unit": "intents",
       "labels": ["provider", "capture_method", "currency"],
       "description": "Number of payment intents created."
     },
     {
-      "name": "stackra.payment.intents.succeeded_total",
+      "name": "academorix.payment.intents.succeeded_total",
       "kind": "counter",
       "unit": "intents",
       "labels": ["provider"]
     },
     {
-      "name": "stackra.payment.intents.failed_total",
+      "name": "academorix.payment.intents.failed_total",
       "kind": "counter",
       "unit": "intents",
       "labels": ["provider", "error_type"]
     },
     {
-      "name": "stackra.payment.intents.cancelled_total",
+      "name": "academorix.payment.intents.cancelled_total",
       "kind": "counter",
       "unit": "intents",
       "labels": ["provider", "cancellation_reason_bucket"],
       "description": "cancellation_reason_bucket = requested_by_customer / duplicate / fraudulent / abandoned / expired."
     },
     {
-      "name": "stackra.payment.intents.expired_total",
+      "name": "academorix.payment.intents.expired_total",
       "kind": "counter",
       "unit": "intents",
       "labels": ["provider"],
       "description": "ExpireStalePaymentIntentsJob nightly sweep count. Non-zero indicates abandoned checkouts."
     },
     {
-      "name": "stackra.payment.intents.3ds_challenge_triggered_total",
+      "name": "academorix.payment.intents.3ds_challenge_triggered_total",
       "kind": "counter",
       "unit": "intents",
       "labels": ["provider", "reason"],
       "description": "reason: psd2_threshold / high_risk / forced_by_tenant / issuer_required."
     },
     {
-      "name": "stackra.payment.intents.3ds_challenge_outcome_total",
+      "name": "academorix.payment.intents.3ds_challenge_outcome_total",
       "kind": "counter",
       "unit": "challenges",
       "labels": ["provider", "outcome"],
       "description": "outcome: authenticated / rejected / not_supported / bypassed / abandoned."
     },
     {
-      "name": "stackra.payment.intents.confirm_duration_ms",
+      "name": "academorix.payment.intents.confirm_duration_ms",
       "kind": "histogram",
       "unit": "ms",
       "buckets": [50, 200, 1000, 5000, 15000],
@@ -77,21 +77,21 @@
       "description": "End-to-end ConfirmPaymentIntentJob latency. Provider-specific — Stripe typically < 500ms P99; PayPal < 2s; Custom Webhook varies."
     },
     {
-      "name": "stackra.payment.captured_total",
+      "name": "academorix.payment.captured_total",
       "kind": "counter",
       "unit": "payments",
       "labels": ["provider", "method_type", "brand_bucket", "currency"],
       "description": "The primary success metric. brand_bucket = card_major (visa/mc/amex) / card_other / bank / wallet / other."
     },
     {
-      "name": "stackra.payment.captured_amount_total_cents",
+      "name": "academorix.payment.captured_amount_total_cents",
       "kind": "counter",
       "unit": "cents",
       "labels": ["provider", "currency"],
       "description": "Cumulative captured amount. Cross-tenant aggregation only — per-tenant amounts NEVER surfaced as labels (compliance)."
     },
     {
-      "name": "stackra.payment.capture_duration_ms",
+      "name": "academorix.payment.capture_duration_ms",
       "kind": "histogram",
       "unit": "ms",
       "buckets": [100, 500, 2000, 10000],
@@ -99,141 +99,141 @@
       "description": "End-to-end capture latency (intent create → payment row committed). Includes provider round-trip + observer atomic side effects."
     },
     {
-      "name": "stackra.payment.manual_capture_triggered_total",
+      "name": "academorix.payment.manual_capture_triggered_total",
       "kind": "counter",
       "unit": "captures",
       "labels": ["provider", "partial"],
       "description": "partial: true / false. Non-zero on 'true' indicates significant manual-capture use."
     },
     {
-      "name": "stackra.payment.methods.attached_total",
+      "name": "academorix.payment.methods.attached_total",
       "kind": "counter",
       "unit": "methods",
       "labels": ["provider", "method_type", "brand_bucket"]
     },
     {
-      "name": "stackra.payment.methods.detached_total",
+      "name": "academorix.payment.methods.detached_total",
       "kind": "counter",
       "unit": "methods",
       "labels": ["provider", "deactivated_reason"]
     },
     {
-      "name": "stackra.payment.methods.expired_total",
+      "name": "academorix.payment.methods.expired_total",
       "kind": "counter",
       "unit": "methods",
       "labels": ["provider"]
     },
     {
-      "name": "stackra.payment.methods.duplicate_detected_total",
+      "name": "academorix.payment.methods.duplicate_detected_total",
       "kind": "counter",
       "unit": "duplicates",
       "labels": ["provider"],
       "description": "Non-zero indicates the fingerprint-based deduplication logic is preventing duplicate cards from being stored (working as intended)."
     },
     {
-      "name": "stackra.payment.methods.active",
+      "name": "academorix.payment.methods.active",
       "kind": "gauge",
       "unit": "methods",
       "labels": ["provider", "method_type"],
       "description": "Current count of active payment methods per (provider, method_type)."
     },
     {
-      "name": "stackra.payment.disputes.opened_total",
+      "name": "academorix.payment.disputes.opened_total",
       "kind": "counter",
       "unit": "disputes",
       "labels": ["provider", "reason", "amount_bucket"],
       "description": "amount_bucket: low (<$100) / medium ($100-$500) / high ($500-$5000) / very_high (>$5000)."
     },
     {
-      "name": "stackra.payment.disputes.evidence_submitted_total",
+      "name": "academorix.payment.disputes.evidence_submitted_total",
       "kind": "counter",
       "unit": "submissions",
       "labels": ["provider"]
     },
     {
-      "name": "stackra.payment.disputes.closed_total",
+      "name": "academorix.payment.disputes.closed_total",
       "kind": "counter",
       "unit": "disputes",
       "labels": ["provider", "outcome"],
       "description": "outcome: won / lost / accepted / warning_closed_without_dispute."
     },
     {
-      "name": "stackra.payment.disputes.escalated_to_chargeback_total",
+      "name": "academorix.payment.disputes.escalated_to_chargeback_total",
       "kind": "counter",
       "unit": "escalations",
       "labels": ["provider"],
       "description": "Every escalation is a paid conversion loss + a regulator-facing chargeback record."
     },
     {
-      "name": "stackra.payment.disputes.unresolved",
+      "name": "academorix.payment.disputes.unresolved",
       "kind": "gauge",
       "unit": "disputes",
       "labels": ["provider"],
       "description": "Current count of unresolved disputes per provider."
     },
     {
-      "name": "stackra.payment.disputes.evidence_due_soon",
+      "name": "academorix.payment.disputes.evidence_due_soon",
       "kind": "gauge",
       "unit": "disputes",
       "labels": ["provider"],
       "description": "Disputes with evidence_due_by within the next 7 days."
     },
     {
-      "name": "stackra.payment.providers.configured_total",
+      "name": "academorix.payment.providers.configured_total",
       "kind": "counter",
       "unit": "configs",
       "labels": ["provider"]
     },
     {
-      "name": "stackra.payment.providers.deactivated_total",
+      "name": "academorix.payment.providers.deactivated_total",
       "kind": "counter",
       "unit": "deactivations",
       "labels": ["provider", "reason"]
     },
     {
-      "name": "stackra.payment.circuit_breakers.opened_total",
+      "name": "academorix.payment.circuit_breakers.opened_total",
       "kind": "counter",
       "unit": "opens",
       "labels": ["provider"],
       "description": "Every increment is a P1 signal. Should stay near 0 in a healthy system."
     },
     {
-      "name": "stackra.payment.circuit_breakers.currently_open",
+      "name": "academorix.payment.circuit_breakers.currently_open",
       "kind": "gauge",
       "unit": "breakers",
       "labels": ["provider"],
       "description": "Current count of open circuit-breakers per provider across all tenants."
     },
     {
-      "name": "stackra.payment.webhooks.received_total",
+      "name": "academorix.payment.webhooks.received_total",
       "kind": "counter",
       "unit": "webhooks",
       "labels": ["provider", "signature_valid"],
       "description": "signature_valid = 'true' / 'false'. Non-zero on 'false' indicates potential attack or misconfigured signing secret."
     },
     {
-      "name": "stackra.payment.webhooks.processing_duration_ms",
+      "name": "academorix.payment.webhooks.processing_duration_ms",
       "kind": "histogram",
       "unit": "ms",
       "buckets": [10, 100, 500, 2000],
       "labels": ["provider"]
     },
     {
-      "name": "stackra.payment.reconcile.drift_count",
+      "name": "academorix.payment.reconcile.drift_count",
       "kind": "counter",
       "unit": "drifts",
       "labels": ["provider"],
       "description": "ReconcilePaymentIntentsJob finding count per run. Should stay near 0 in a healthy system."
     },
     {
-      "name": "stackra.payment.entitlement.gate_refusals_total",
+      "name": "academorix.payment.entitlement.gate_refusals_total",
       "kind": "counter",
       "unit": "refusals",
       "labels": ["entitlement_key"],
       "description": "Number of route hits refused by the entitlement middleware. Product signal for upgrade-CTA impressions."
     },
     {
-      "name": "stackra.payment.fraud.review_queued_total",
+      "name": "academorix.payment.fraud.review_queued_total",
       "kind": "counter",
       "unit": "payments",
       "labels": ["provider", "risk_level"],

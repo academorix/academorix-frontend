@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Payment\Contracts\Services;
+namespace Academorix\Payment\Contracts\Services;
 
-use Stackra\Payment\Services\FraudChecker;
+use Academorix\Payment\Services\FraudChecker;
 use Illuminate\Container\Attributes\Bind;
 
 /**

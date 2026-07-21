@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Gateway\Actions\Tenant;
+namespace Academorix\Gateway\Actions\Tenant;
 
-use Stackra\Gateway\Contracts\Repositories\PaymentMethodRepositoryInterface;
-use Stackra\Gateway\Data\PaymentMethodData;
+use Academorix\Gateway\Contracts\Repositories\PaymentMethodRepositoryInterface;
+use Academorix\Gateway\Data\PaymentMethodData;
 use Stackra\Routing\Attributes\AsAction;
 use Stackra\Routing\Attributes\Middleware;
 use Stackra\Routing\Concerns\AsController;

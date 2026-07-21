@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Gateway\Data;
+namespace Academorix\Gateway\Data;
 
 /**
  * Provider-agnostic request DTO for refunding a payment.

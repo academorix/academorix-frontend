@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Leads\Actions\Platform;
+namespace Academorix\Leads\Actions\Platform;
 
-use Stackra\Leads\Contracts\Repositories\LeadRepositoryInterface;
-use Stackra\Leads\Data\LeadData;
+use Academorix\Leads\Contracts\Repositories\LeadRepositoryInterface;
+use Academorix\Leads\Data\LeadData;
 use Stackra\Routing\Attributes\AsAction;
 use Stackra\Routing\Attributes\Middleware;
 use Stackra\Routing\Concerns\AsController;

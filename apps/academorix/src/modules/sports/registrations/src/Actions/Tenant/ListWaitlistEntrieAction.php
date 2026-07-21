@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Registrations\Actions\Tenant;
+namespace Academorix\Registrations\Actions\Tenant;
 
-use Stackra\Registrations\Contracts\Repositories\WaitlistEntryRepositoryInterface;
-use Stackra\Registrations\Data\WaitlistEntryData;
+use Academorix\Registrations\Contracts\Repositories\WaitlistEntryRepositoryInterface;
+use Academorix\Registrations\Data\WaitlistEntryData;
 use Stackra\Routing\Attributes\AsAction;
 use Stackra\Routing\Attributes\Middleware;
 use Stackra\Routing\Concerns\AsController;
@@ -50,7 +50,7 @@ final class ListWaitlistEntrieAction
      */
     public function __invoke(Request $request): PaginatedDataCollection
     {
-        /** @var LengthAwarePaginator<int, \Stackra\Registrations\Models\WaitlistEntry> $page */
+        /** @var LengthAwarePaginator<int, \Academorix\Registrations\Models\WaitlistEntry> $page */
         $page = $this->repository->paginate(
             perPage: (int) $request->integer('per_page', 15),
         );

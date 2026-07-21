@@ -4,19 +4,19 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Attendance\Database\Factories;
+namespace Academorix\Attendance\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Stackra\Attendance\Contracts\Data\AbsenceRecordInterface;
-use Stackra\Attendance\Models\AbsenceRecord;
+use Academorix\Attendance\Contracts\Data\AbsenceRecordInterface;
+use Academorix\Attendance\Models\AbsenceRecord;
 
 /**
- * Factory for {@see \Stackra\Attendance\Models\AbsenceRecord}.
+ * Factory for {@see \Academorix\Attendance\Models\AbsenceRecord}.
  *
  * Auto-generated skeleton — extend with named states as domain
  * cases emerge (e.g. `->published()`, `->overdue()`, `->archived()`).
  *
- * @extends Factory<\Stackra\Attendance\Models\AbsenceRecord>
+ * @extends Factory<\Academorix\Attendance\Models\AbsenceRecord>
  *
  * @category Attendance
  *

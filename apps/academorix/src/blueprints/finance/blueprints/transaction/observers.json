@@ -1,12 +1,12 @@
 {
-  "id": "stackra://modules/transaction/observers",
+  "id": "academorix://modules/transaction/observers",
   "$version": 1,
   "title": "transaction — Eloquent observers",
   "description": "Two observers enforce the module's load-bearing invariants: transaction lifecycle (draft → posted transition, transaction-number generation, cross-currency snapshotting, ledger balance check, IMMUTABILITY after post) + ledger entry integrity (debit XOR credit, parent-transaction not-posted-yet, IMMUTABILITY after create).",
   "observers": [
     {
       "model": "Transaction",
-      "observer": "Stackra\\Finance\\Transaction\\Observers\\TransactionObserver",
+      "observer": "Academorix\\Finance\\Transaction\\Observers\\TransactionObserver",
       "handles": [
         "creating → populate ULID prefix `trx_`",
         "creating → refuse when tenant does NOT hold `transaction_capture` entitlement (returns `TRANSACTION_FEATURE_NOT_ENTITLED`) — master gate; every tenant has this on but this check ensures dormant/lapsed tenants can't record",
@@ -33,7 +33,7 @@
     },
     {
       "model": "TransactionLedgerEntry",
-      "observer": "Stackra\\Finance\\Transaction\\Observers\\TransactionLedgerEntryObserver",
+      "observer": "Academorix\\Finance\\Transaction\\Observers\\TransactionLedgerEntryObserver",
       "handles": [
         "creating → populate ULID prefix `tld_`",
         "creating → verify parent transaction exists + belongs to the same tenant (defense-in-depth against cross-tenant FK smuggling; returns `LEDGER_ENTRY_CROSS_TENANT`)",

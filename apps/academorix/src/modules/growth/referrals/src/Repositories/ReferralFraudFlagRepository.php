@@ -4,25 +4,25 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Referrals\Repositories;
+namespace Academorix\Referrals\Repositories;
 
 use Stackra\Crud\Attributes\AsRepository;
 use Stackra\Crud\Attributes\Cacheable;
 use Stackra\Crud\Attributes\Filterable;
 use Stackra\Crud\Attributes\UseModel;
 use Stackra\Crud\Repositories\Repository;
-use Stackra\Referrals\Contracts\Data\ReferralFraudFlagInterface;
-use Stackra\Referrals\Contracts\Repositories\ReferralFraudFlagRepositoryInterface;
-use Stackra\Referrals\Models\ReferralFraudFlag;
+use Academorix\Referrals\Contracts\Data\ReferralFraudFlagInterface;
+use Academorix\Referrals\Contracts\Repositories\ReferralFraudFlagRepositoryInterface;
+use Academorix\Referrals\Models\ReferralFraudFlag;
 
 /**
- * Attribute-first Eloquent repository for {@see Stackra\Referrals\Models\ReferralFraudFlag}.
+ * Attribute-first Eloquent repository for {@see Academorix\Referrals\Models\ReferralFraudFlag}.
  *
  * Bound to the interface via `#[AsRepository]`; the model comes from
  * `#[UseModel(ReferralFraudFlagInterface::class)]` which resolves to
  * `ReferralFraudFlag` through the interface's `#[Bind]`.
  *
- * @extends Repository<\Stackra\Referrals\Models\ReferralFraudFlag>
+ * @extends Repository<\Academorix\Referrals\Models\ReferralFraudFlag>
  *
  * @category Referrals
  *

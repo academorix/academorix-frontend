@@ -1,10 +1,10 @@
 {
-  "id": "stackra://modules/athlete/jobs",
+  "id": "academorix://modules/athlete/jobs",
   "$version": 1,
   "title": "athlete — background jobs",
   "jobs": [
     {
-      "class": "Stackra\\Sports\\Athlete\\Jobs\\RollAthleteAgeGroupSnapshotJob",
+      "class": "Academorix\\Sports\\Athlete\\Jobs\\RollAthleteAgeGroupSnapshotJob",
       "queue": "athlete",
       "purpose": "Nightly sweep of every active + paused Athlete. Recomputes Athlete.current_age_group_id via AgeGroupResolver::resolveFor(dob, sport_key=null, on_date=today). Fires AthleteAgeGroupSnapshotUpdated per athlete whose snapshot flipped. Powers the 'birthday drift' cascade — when a child crosses an age-group boundary (e.g. U10 → U12), the snapshot updates + notifications fire to guardians + downstream enrollments soft-warn.",
       "steps": [
@@ -12,8 +12,8 @@
         "For each athlete (batched 500 rows):",
         "  new_group_id = AgeGroupResolver::resolveFor(athlete.date_of_birth, sport_key=null, on_date=today, tenant_id=athlete.tenant_id)",
         "  If new_group_id != current_age_group_id: UPDATE athletes SET current_age_group_id=new_group_id, current_age_group_snapshot_at=now() WHERE id=?; fire AthleteAgeGroupSnapshotUpdated",
-        "Emit metric stackra.athlete.age_group_snapshot.updates_total per tenant",
-        "Emit metric stackra.athlete.age_group_snapshot.unresolved_total when the resolver returned null (DOB outside every catalog)"
+        "Emit metric academorix.athlete.age_group_snapshot.updates_total per tenant",
+        "Emit metric academorix.athlete.age_group_snapshot.unresolved_total when the resolver returned null (DOB outside every catalog)"
       ],
       "shouldQueue": true,
       "shouldBeUnique": true,
@@ -22,7 +22,7 @@
       "batch_size": 500
     },
     {
-      "class": "Stackra\\Sports\\Athlete\\Jobs\\CheckAthleteMinorTurnedAdultJob",
+      "class": "Academorix\\Sports\\Athlete\\Jobs\\CheckAthleteMinorTurnedAdultJob",
       "queue": "athlete",
       "purpose": "Daily sweep for athletes whose DOB matches today - config.athlete.minor_min_age (default 16) OR today - 18 (legal-adult boundary). Fires AthleteMinorTurnedAdult per athlete + drives the re-consent flow (their prior consents by a guardian expire; new consents required from the adult athlete themselves).",
       "steps": [
@@ -36,7 +36,7 @@
       "tries": 2
     },
     {
-      "class": "Stackra\\Sports\\Athlete\\Jobs\\ReconcileAthleteConsentsJob",
+      "class": "Academorix\\Sports\\Athlete\\Jobs\\ReconcileAthleteConsentsJob",
       "queue": "athlete",
       "purpose": "Daily sweep for athletes whose consent_recorded_at is past the 12-month re-consent cadence (only fires when the tenant carries `athlete_consent_workflow` entitlement). Dispatches AthleteConsentExpiringNotification at 30, 14, 7-day pre-expiry thresholds. When consent_recorded_at is more than 365 days old + no reminders acted upon, the athlete row is flagged consent-expired (metadata.consent_expired_at set) — downstream photo-consent-required flows refuse until re-consent.",
       "steps": [
@@ -50,7 +50,7 @@
       "tries": 2
     },
     {
-      "class": "Stackra\\Sports\\Athlete\\Jobs\\PurgeArchivedAthletesJob",
+      "class": "Academorix\\Sports\\Athlete\\Jobs\\PurgeArchivedAthletesJob",
       "queue": "athlete",
       "purpose": "Daily sweep of archived Athlete rows. Phase 1 — 90-day PII redaction (emergency_contact_* + medical_* fields redacted to '[REDACTED]' while preserving the rest for legal-record retention). Phase 2 — 7-year hard-purge for rows with no downstream references. Phase 3 — cleanup of orphaned athlete_medical_history rows past their independent 7-year retention.",
       "steps": [
@@ -70,7 +70,7 @@
       "tries": 2
     },
     {
-      "class": "Stackra\\Sports\\Athlete\\Jobs\\AutoLinkAthleteToUserOnEmailMatchJob",
+      "class": "Academorix\\Sports\\Athlete\\Jobs\\AutoLinkAthleteToUserOnEmailMatchJob",
       "queue": "athlete",
       "purpose": "Automation for adult self-service signups. Sweeps unlinked Athlete rows (user_id IS NULL) where the athlete's contact email (metadata.email_hint) matches a live User.email in the same tenant AND the athlete's age_years >= config.athlete.minor_min_age (default 16). Auto-links + fires AthleteLinkedToUser. Skipped for minors — their user linkage requires explicit guardian action.",
       "steps": [

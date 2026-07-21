@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/analytics/webhooks",
+  "id": "academorix://modules/analytics/webhooks",
   "$version": 1,
   "title": "analytics — webhook namespaces",
   "description": "One OUTBOUND wire event: `analytics.event.delivered` (v1). No INBOUND webhooks \u2014 analytics providers don't call us back (their dashboards are the source of truth for delivered analytics data; we only care about our own delivery-side status).",

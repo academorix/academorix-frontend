@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Stackra\PrivateSessions\Database\Seeders;
+namespace Academorix\PrivateSessions\Database\Seeders;
 
-use Stackra\PrivateSessions\Enums\PrivateSessionsPermission;
+use Academorix\PrivateSessions\Enums\PrivateSessionsPermission;
 use Stackra\Authorization\Database\Seeders\Concerns\SeedsPermissionEnum;
 use Stackra\ServiceProvider\Attributes\AsSeeder;
 use Illuminate\Database\Seeder;

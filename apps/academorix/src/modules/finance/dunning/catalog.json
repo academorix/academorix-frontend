@@ -1,6 +1,6 @@
 {
-  "$schema": "https://gist.githubusercontent.com/stackra-user/073a1ab687cd93ede7ae927b96a025ea/raw/catalog.v1.json",
-  "name": "stackra/dunning",
+  "$schema": "https://gist.githubusercontent.com/academorix-user/073a1ab687cd93ede7ae927b96a025ea/raw/catalog.v1.json",
+  "name": "academorix/dunning",
   "tier": "saas",
   "surfaces": ["core"],
   "kind": "feature",
@@ -11,22 +11,22 @@
     "DunningEvent aggregate (dev_ prefix) — timeline entries",
     "Retry attempts + escalation ladder + notification steps",
     "Attribute-first CRUD, Actions, Policies, Events",
-    "Wire SDK companion at stackra-finance/dunning-sdk"
+    "Wire SDK companion at academorix-finance/dunning-sdk"
   ],
   "when_to_use": "A recurring charge fails and the tenant needs a retry ladder plus escalation before cancelling the customer's subscription.",
-  "when_not_to_use": "For one-shot refund workflows, use stackra/refund. For chargeback disputes, use stackra/chargeback.",
+  "when_not_to_use": "For one-shot refund workflows, use academorix/refund. For chargeback disputes, use academorix/chargeback.",
   "peer_deps": [
-    "stackra-finance/dunning-sdk",
-    "stackra/crud",
-    "stackra/foundation",
-    "stackra/routing",
-    "stackra/service-provider",
-    "stackra/support",
+    "academorix-finance/dunning-sdk",
+    "academorix/crud",
+    "academorix/foundation",
+    "academorix/routing",
+    "academorix/service-provider",
+    "academorix/support",
     "spatie/laravel-data"
   ],
   "backend_pair": null,
   "size_gzip_kb": {},
   "maturity": "alpha",
   "owning_agent": "laravel-feature-builder",
-  "docs": ["apps/stackra/src/modules/finance/dunning/README.md"]
+  "docs": ["apps/academorix/src/modules/finance/dunning/README.md"]
 }

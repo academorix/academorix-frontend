@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Expenses\Actions\Tenant;
+namespace Academorix\Expenses\Actions\Tenant;
 
-use Stackra\Expenses\Contracts\Repositories\PayrollRunRepositoryInterface;
-use Stackra\Expenses\Data\PayrollRunData;
+use Academorix\Expenses\Contracts\Repositories\PayrollRunRepositoryInterface;
+use Academorix\Expenses\Data\PayrollRunData;
 use Stackra\Routing\Attributes\AsAction;
 use Stackra\Routing\Attributes\Middleware;
 use Stackra\Routing\Concerns\AsController;

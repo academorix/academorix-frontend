@@ -1,14 +1,14 @@
 {
-  "id": "stackra://modules/transaction/settings",
+  "id": "academorix://modules/transaction/settings",
   "$version": 1,
   "title": "transaction — settings",
   "description": "Tenant-facing transaction + ledger configuration. Two groups: `transaction` for tenant-wide ledger config (base currency, enabled accounts, reconciliation schedule, alerts routing) + `transaction_user` for per-user preferences (monthly-report subscription, imbalance-alert opt-in).",
   "storedIn": "settings",
-  "reference": { "contract": "stackra://modules/settings/attributes" },
+  "reference": { "contract": "academorix://modules/settings/attributes" },
   "groups": [
     {
       "key": "transaction",
-      "class": "Stackra\\Finance\\Transaction\\Settings\\TransactionSettings",
+      "class": "Academorix\\Finance\\Transaction\\Settings\\TransactionSettings",
       "label": "Ledger + transactions",
       "description": "Tenant-wide configuration for the money-movement ledger. Regulator-critical — changes to base_currency + enabled_accounts + threshold configs write audit rows with 7-year retention.",
       "icon": "banknotes",
@@ -190,7 +190,7 @@
     },
     {
       "key": "transaction_user",
-      "class": "Stackra\\Finance\\Transaction\\Settings\\TransactionUserSettings",
+      "class": "Academorix\\Finance\\Transaction\\Settings\\TransactionUserSettings",
       "label": "My ledger preferences",
       "description": "Per-user preferences for the ledger surface.",
       "icon": "user-circle",

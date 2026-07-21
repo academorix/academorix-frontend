@@ -1,12 +1,12 @@
 {
-  "id": "stackra://modules/age-group/policies",
+  "id": "academorix://modules/age-group/policies",
   "$version": 1,
   "title": "age-group — authorization policies",
   "description": "One policy — AgeGroupPolicy — narrows by scope suffix (`.any` / `.tenant`). Every tenant member can READ age groups in their active tenant (they are UI reference data every enrollment + roster + team form depends on). Only admins + owners can WRITE. Seeded rows have extra guardrails: they cannot be deleted (only edited); `is_seeded` cannot be flipped by any caller.",
   "policies": [
     {
       "model": "AgeGroup",
-      "class": "Stackra\\Sports\\AgeGroup\\Policies\\AgeGroupPolicy",
+      "class": "Academorix\\Sports\\AgeGroup\\Policies\\AgeGroupPolicy",
       "abilities": [
         {
           "action": "viewAny",

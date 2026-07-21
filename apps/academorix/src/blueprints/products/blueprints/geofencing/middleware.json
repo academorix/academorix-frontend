@@ -1,11 +1,11 @@
 {
-  "id": "stackra://modules/geofencing/middleware",
+  "id": "academorix://modules/geofencing/middleware",
   "$version": 1,
   "title": "geofencing \u2014 HTTP middleware",
   "middleware": [
     {
       "alias": "geofence.preflight.throttle",
-      "class": "Stackra\\Geofencing\\Http\\Middleware\\PreflightThrottle",
+      "class": "Academorix\\Geofencing\\Http\\Middleware\\PreflightThrottle",
       "priority": 55,
       "description": "Rate limits the /preflight endpoint to 60 requests/minute per authenticated user. Delegates to Laravel's ThrottleRequests with a named `geofence-preflight` limiter registered by GeofencingServiceProvider. Cheaper than a generic `throttle:60,1` because the limiter reads user_id straight from the auth guard, not a request signature hash.",
       "auto_applied": false,
@@ -24,7 +24,7 @@
   "rate_limiter_definitions": [
     {
       "name": "geofence-preflight",
-      "class": "Stackra\\Geofencing\\RateLimiters\\PreflightRateLimiter",
+      "class": "Academorix\\Geofencing\\RateLimiters\\PreflightRateLimiter",
       "registered_by": "GeofencingServiceProvider::registerRateLimiters()",
       "default": "60 req/min per user_id",
       "env_override": "GEOFENCE_PREFLIGHT_RATE_PER_MINUTE"

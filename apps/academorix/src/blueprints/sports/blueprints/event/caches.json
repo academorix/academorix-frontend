@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/event/caches",
+  "id": "academorix://modules/event/caches",
   "$version": 1,
   "title": "event — cache keys + tags",
   "driver": "redis",

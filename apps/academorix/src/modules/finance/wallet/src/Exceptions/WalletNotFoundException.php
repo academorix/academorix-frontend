@@ -4,7 +4,7 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Wallet\Exceptions;
+namespace Academorix\Wallet\Exceptions;
 
 use Stackra\Exceptions\StackraException;
 

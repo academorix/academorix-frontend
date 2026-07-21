@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Coaching\Actions\Tenant;
+namespace Academorix\Coaching\Actions\Tenant;
 
-use Stackra\Coaching\Contracts\Repositories\CoachingProfileRepositoryInterface;
-use Stackra\Coaching\Data\CoachingProfileData;
+use Academorix\Coaching\Contracts\Repositories\CoachingProfileRepositoryInterface;
+use Academorix\Coaching\Data\CoachingProfileData;
 use Stackra\Routing\Attributes\AsAction;
 use Stackra\Routing\Attributes\Middleware;
 use Stackra\Routing\Concerns\AsController;

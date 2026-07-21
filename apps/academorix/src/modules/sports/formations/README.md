@@ -1,4 +1,4 @@
-# stackra/formations
+# academorix/formations
 
 Server-side Laravel package for the `formations` module. Auto-generated from the
 blueprint at `modules/sports/blueprints/formations/`.
@@ -44,6 +44,6 @@ file is a hand-tuned override that survives regeneration.
 ## Companion wire SDK
 
 The wire-visible Saloon + Spatie Data package lives at
-`stackra-sports/formations-sdk` under `sdk/sports-formations-sdk/`. Consumers
+`academorix-sports/formations-sdk` under `sdk/sports-formations-sdk/`. Consumers
 cross the service boundary through the SDK; this package is the SERVER-side
 owner of the domain.

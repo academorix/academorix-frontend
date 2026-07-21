@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/marketing/analytics",
+  "id": "academorix://modules/marketing/analytics",
   "$version": 1,
   "title": "marketing — product analytics",
   "sink": "segment",

@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Staff\Exceptions;
 
-use Stackra\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * tax_id_last4 must be exactly 4 digits.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class StaffTaxIdInvalidFormatException extends AcademorixException
+final class StaffTaxIdInvalidFormatException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Invitations\Exceptions;
 
-use Stackra\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * The requested channel (sms/slack) is not in the tenant's entitlement grant.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class InvitationsChannelNotEnabledException extends AcademorixException
+final class InvitationsChannelNotEnabledException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

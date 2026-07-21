@@ -4,19 +4,19 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Membership\Database\Factories;
+namespace Academorix\Membership\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Stackra\Membership\Contracts\Data\MembershipPlanInterface;
-use Stackra\Membership\Models\MembershipPlan;
+use Academorix\Membership\Contracts\Data\MembershipPlanInterface;
+use Academorix\Membership\Models\MembershipPlan;
 
 /**
- * Factory for {@see \Stackra\Membership\Models\MembershipPlan}.
+ * Factory for {@see \Academorix\Membership\Models\MembershipPlan}.
  *
  * Auto-generated skeleton — extend with named states as domain
  * cases emerge (e.g. `->published()`, `->overdue()`, `->archived()`).
  *
- * @extends Factory<\Stackra\Membership\Models\MembershipPlan>
+ * @extends Factory<\Academorix\Membership\Models\MembershipPlan>
  *
  * @category Membership
  *

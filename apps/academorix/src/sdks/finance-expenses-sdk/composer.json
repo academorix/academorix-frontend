@@ -1,10 +1,10 @@
 {
-  "name": "stackra-finance/expenses-sdk",
+  "name": "academorix-finance/expenses-sdk",
   "type": "library",
-  "description": "Wire-visible SDK surface (Spatie Data DTOs + Saloon Request transport + fluent Resources) for the `expenses` module of the Finance service. Auto-discovered at boot by stackra/finance-sdk via #[AsSdkResource(name: 'expenses', service: 'finance')]; consumed by every cross-service caller strictly over HTTP.",
+  "description": "Wire-visible SDK surface (Spatie Data DTOs + Saloon Request transport + fluent Resources) for the `expenses` module of the Finance service. Auto-discovered at boot by academorix/finance-sdk via #[AsSdkResource(name: 'expenses', service: 'finance')]; consumed by every cross-service caller strictly over HTTP.",
   "license": "proprietary",
   "keywords": [
-    "stackra",
+    "academorix",
     "sdk",
     "saloon",
     "spatie-data",
@@ -32,12 +32,12 @@
   },
   "autoload": {
     "psr-4": {
-      "Stackra\\\\FinanceExpensesSdk\\\\": "src/"
+      "Academorix\\\\FinanceExpensesSdk\\": "src/"
     }
   },
   "autoload-dev": {
     "psr-4": {
-      "Stackra\\\\FinanceExpensesSdk\\\\Tests\\\\": "tests/"
+      "Academorix\\\\FinanceExpensesSdk\\\\Tests\\": "tests/"
     }
   },
   "extra": {

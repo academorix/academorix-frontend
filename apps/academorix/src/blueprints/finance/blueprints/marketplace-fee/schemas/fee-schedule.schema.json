@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/marketplace-fee/schemas/fee-schedule",
+  "id": "academorix://modules/marketplace-fee/schemas/fee-schedule",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "FeeSchedule",
@@ -13,9 +13,9 @@
     "keyType": "string",
     "keyPrefix": "fsc_",
     "incrementing": false,
-    "model": "Stackra\\Finance\\MarketplaceFee\\Models\\FeeSchedule",
-    "interface": "Stackra\\Finance\\MarketplaceFee\\Contracts\\Data\\FeeScheduleInterface",
-    "implements": ["Stackra\\Finance\\MarketplaceFee\\Contracts\\Data\\FeeScheduleInterface"],
+    "model": "Academorix\\Finance\\MarketplaceFee\\Models\\FeeSchedule",
+    "interface": "Academorix\\Finance\\MarketplaceFee\\Contracts\\Data\\FeeScheduleInterface",
+    "implements": ["Academorix\\Finance\\MarketplaceFee\\Contracts\\Data\\FeeScheduleInterface"],
     "traits": [
       "HasFactory",
       "HasUlids",

@@ -1,11 +1,11 @@
 {
-  "id": "stackra://modules/attendance/traits",
+  "id": "academorix://modules/attendance/traits",
   "$version": 1,
   "title": "attendance — trait composition",
   "description": "Four owned traits — BelongsToAttendanceRecord + BelongsToAttendancePolicy for downstream models, HasAttendanceHistory + HasAbsenceHistory on Athlete for reverse-relation accessors.",
   "owned": [
     {
-      "trait": "Stackra\\Sports\\Attendance\\Concerns\\BelongsToAttendanceRecord",
+      "trait": "Academorix\\Sports\\Attendance\\Concerns\\BelongsToAttendanceRecord",
       "description": "Mixed into downstream models that carry an `attendance_record_id` FK. Adds `attendanceRecord()` belongsTo + query scope + cross-tenant guard.",
       "public": true,
       "usedBy": [
@@ -14,19 +14,19 @@
       ]
     },
     {
-      "trait": "Stackra\\Sports\\Attendance\\Concerns\\BelongsToAttendancePolicy",
+      "trait": "Academorix\\Sports\\Attendance\\Concerns\\BelongsToAttendancePolicy",
       "description": "Mixed into downstream models that carry a `policy_id` FK. Adds `attendancePolicy()` belongsTo + query scope.",
       "public": true,
       "usedBy": ["attendance::LateArrival (policy_id at check-in snapshot)"]
     },
     {
-      "trait": "Stackra\\Sports\\Attendance\\Concerns\\HasAttendanceHistory",
+      "trait": "Academorix\\Sports\\Attendance\\Concerns\\HasAttendanceHistory",
       "description": "Composed onto the Athlete model. Adds `attendanceRecords()` (hasMany), `recentAttendance(days)` (rolling window), `attendanceRate(season)` (present + late / expected), `sessionsAttended()` (distinct sessions).",
       "public": true,
       "usedBy": ["athlete::Athlete"]
     },
     {
-      "trait": "Stackra\\Sports\\Attendance\\Concerns\\HasAbsenceHistory",
+      "trait": "Academorix\\Sports\\Attendance\\Concerns\\HasAbsenceHistory",
       "description": "Composed onto the Athlete model. Adds `absenceRecords()` (hasMany), `unexcusedAbsencesInWindow(days)` (rolling-window count), `absencesGroupedByReason()`, `hasReachedAbsenceThreshold(policy)`.",
       "public": true,
       "usedBy": ["athlete::Athlete"]
@@ -39,22 +39,22 @@
       { "trait": "Illuminate\\Database\\Eloquent\\SoftDeletes" }
     ],
     "foundation": [
-      { "trait": "Stackra\\Foundation\\Concerns\\HasPrefixedUlid" },
-      { "trait": "Stackra\\Foundation\\Concerns\\HasUserstamps" },
-      { "trait": "Stackra\\Foundation\\Concerns\\HasMetadata" },
-      { "trait": "Stackra\\Foundation\\Concerns\\Filterable" },
-      { "trait": "Stackra\\Foundation\\Concerns\\Searchable" }
+      { "trait": "Academorix\\Foundation\\Concerns\\HasPrefixedUlid" },
+      { "trait": "Academorix\\Foundation\\Concerns\\HasUserstamps" },
+      { "trait": "Academorix\\Foundation\\Concerns\\HasMetadata" },
+      { "trait": "Academorix\\Foundation\\Concerns\\Filterable" },
+      { "trait": "Academorix\\Foundation\\Concerns\\Searchable" }
     ],
-    "tenants": [{ "trait": "Stackra\\Tenancy\\Concerns\\BelongsToTenant" }],
-    "branch": [{ "trait": "Stackra\\Branch\\Concerns\\BelongsToBranch" }],
-    "athlete": [{ "trait": "Stackra\\Sports\\Athlete\\Concerns\\BelongsToAthlete" }],
+    "tenants": [{ "trait": "Academorix\\Tenancy\\Concerns\\BelongsToTenant" }],
+    "branch": [{ "trait": "Academorix\\Branch\\Concerns\\BelongsToBranch" }],
+    "athlete": [{ "trait": "Academorix\\Sports\\Athlete\\Concerns\\BelongsToAthlete" }],
     "athlete-enrollment": [
-      { "trait": "Stackra\\Sports\\AthleteEnrollment\\Concerns\\BelongsToAthleteEnrollment" }
+      { "trait": "Academorix\\Sports\\AthleteEnrollment\\Concerns\\BelongsToAthleteEnrollment" }
     ],
-    "session": [{ "trait": "Stackra\\Sports\\Session\\Concerns\\BelongsToSession" }],
-    "membership": [{ "trait": "Stackra\\Finance\\Membership\\Concerns\\BelongsToMembership" }],
-    "audit": [{ "trait": "Stackra\\Audit\\Concerns\\Auditable" }],
-    "activity": [{ "trait": "Stackra\\Activity\\Concerns\\HasActivityLog" }]
+    "session": [{ "trait": "Academorix\\Sports\\Session\\Concerns\\BelongsToSession" }],
+    "membership": [{ "trait": "Academorix\\Finance\\Membership\\Concerns\\BelongsToMembership" }],
+    "audit": [{ "trait": "Academorix\\Audit\\Concerns\\Auditable" }],
+    "activity": [{ "trait": "Academorix\\Activity\\Concerns\\HasActivityLog" }]
   },
   "composition": {
     "attendanceRecord": {

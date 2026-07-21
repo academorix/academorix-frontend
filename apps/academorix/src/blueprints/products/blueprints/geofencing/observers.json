@@ -1,11 +1,11 @@
 {
-  "id": "stackra://modules/geofencing/observers",
+  "id": "academorix://modules/geofencing/observers",
   "$version": 1,
   "title": "geofencing \u2014 Eloquent observers",
   "observers": [
     {
       "model": "GeofenceCheck",
-      "observer": "Stackra\\Geofencing\\Observers\\GeofenceCheckObserver",
+      "observer": "Academorix\\Geofencing\\Observers\\GeofenceCheckObserver",
       "handles": [
         "creating \u2192 delegate ULID minting to HasPrefixedUlid trait (prefix `gfc_`)",
         "creating \u2192 default metadata={} when null (jsonb column has default but PHP-side we ensure it never lands as null)",

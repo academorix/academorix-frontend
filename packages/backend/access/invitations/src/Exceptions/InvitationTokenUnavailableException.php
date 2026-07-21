@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Stackra\Invitations\Exceptions;
 
-use Stackra\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Raised by `SendInvitationJob` when the queue-serialised
@@ -16,7 +16,7 @@ use Stackra\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class InvitationTokenUnavailableException extends AcademorixException
+final class InvitationTokenUnavailableException extends StackraException
 {
     public const string CODE = 'INVITATIONS_TOKEN_UNAVAILABLE';
 

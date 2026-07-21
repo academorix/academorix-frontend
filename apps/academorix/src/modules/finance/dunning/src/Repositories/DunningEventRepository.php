@@ -4,25 +4,25 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Dunning\Repositories;
+namespace Academorix\Dunning\Repositories;
 
 use Stackra\Crud\Attributes\AsRepository;
 use Stackra\Crud\Attributes\Cacheable;
 use Stackra\Crud\Attributes\Filterable;
 use Stackra\Crud\Attributes\UseModel;
 use Stackra\Crud\Repositories\Repository;
-use Stackra\Dunning\Contracts\Data\DunningEventInterface;
-use Stackra\Dunning\Contracts\Repositories\DunningEventRepositoryInterface;
-use Stackra\Dunning\Models\DunningEvent;
+use Academorix\Dunning\Contracts\Data\DunningEventInterface;
+use Academorix\Dunning\Contracts\Repositories\DunningEventRepositoryInterface;
+use Academorix\Dunning\Models\DunningEvent;
 
 /**
- * Attribute-first Eloquent repository for {@see Stackra\Dunning\Models\DunningEvent}.
+ * Attribute-first Eloquent repository for {@see Academorix\Dunning\Models\DunningEvent}.
  *
  * Bound to the interface via `#[AsRepository]`; the model comes from
  * `#[UseModel(DunningEventInterface::class)]` which resolves to
  * `DunningEvent` through the interface's `#[Bind]`.
  *
- * @extends Repository<\Stackra\Dunning\Models\DunningEvent>
+ * @extends Repository<\Academorix\Dunning\Models\DunningEvent>
  *
  * @category Dunning
  *

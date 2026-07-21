@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/transaction/retention",
+  "id": "academorix://modules/transaction/retention",
   "$version": 1,
   "title": "transaction — retention windows",
   "description": "Transactions + ledger entries are the module's financial-record backbone — 7-year retention default (10 for Enterprise via transaction_extended_retention). No soft-delete on either table — both are append-only. Hard-purge ONLY via PurgeExpiredTransactionDataJob after archiving to compliance-storage. TenantErased triggers archive-to-compliance BEFORE cascade-delete — regulator + tax authority audit trail survives tenant deletion.",

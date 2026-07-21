@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/invoice/retention",
+  "id": "academorix://modules/invoice/retention",
   "$version": 1,
   "title": "invoice — retention windows",
   "description": "Invoices are the tenant's canonical financial-record entity. Retention is 7 years default (10 for Enterprise with invoice_extended_retention). Credit notes retain the same window in the primary DB but MIGRATE to the compliance archive for indefinite retention (regulator may audit years later). Invoice lines cascade with parents. PDFs move from S3 hot (7 years) to S3 Glacier cold (indefinite). TenantErased archives ALL records before the FK CASCADE — the tenant sees data gone, regulators still have visibility.",

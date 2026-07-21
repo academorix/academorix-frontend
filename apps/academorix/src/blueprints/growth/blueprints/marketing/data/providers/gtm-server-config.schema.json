@@ -1,9 +1,9 @@
 {
-  "id": "stackra://modules/marketing/data/providers/gtm-server-config",
+  "id": "academorix://modules/marketing/data/providers/gtm-server-config",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "GTM Server-side provider config",
-  "description": "Configuration shape for a Google Tag Manager Server-side container integration. The tenant hosts the GTM container; Stackra dispatches to it via HTTPS with HMAC signature.",
+  "description": "Configuration shape for a Google Tag Manager Server-side container integration. The tenant hosts the GTM container; Academorix dispatches to it via HTTPS with HMAC signature.",
   "type": "object",
   "required": ["webhook_url", "hmac_secret"],
   "additionalProperties": false,

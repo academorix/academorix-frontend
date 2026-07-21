@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/drills/schedule",
+  "id": "academorix://modules/drills/schedule",
   "$version": 1,
   "title": "drills — scheduled tasks",
   "description": "Artisan / cron entries this module registers.",

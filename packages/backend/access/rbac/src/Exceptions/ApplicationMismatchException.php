@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Rbac\Exceptions;
 
-use Stackra\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * A write would have crossed the Application boundary.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class ApplicationMismatchException extends AcademorixException
+final class ApplicationMismatchException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

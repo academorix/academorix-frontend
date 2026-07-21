@@ -4,17 +4,17 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Tax\Contracts\Repositories;
+namespace Academorix\Tax\Contracts\Repositories;
 
 use Stackra\Crud\Contracts\RepositoryInterface;
 
 /**
- * Repository contract for {@see Stackra\Tax\Models\TaxExemption}.
+ * Repository contract for {@see Academorix\Tax\Models\TaxExemption}.
  *
  * Consumers type-hint the interface; the container binds the concrete
  * via `#[AsRepository]` on `TaxExemptionRepository`.
  *
- * @extends RepositoryInterface<\Stackra\Tax\Models\TaxExemption>
+ * @extends RepositoryInterface<\Academorix\Tax\Models\TaxExemption>
  *
  * @category Tax
  *

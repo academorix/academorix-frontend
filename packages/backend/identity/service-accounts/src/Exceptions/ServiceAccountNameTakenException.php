@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\ServiceAccounts\Exceptions;
 
-use Stackra\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Creation attempt collided with an existing non-deleted SA on the same `application_id`.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class ServiceAccountNameTakenException extends AcademorixException
+final class ServiceAccountNameTakenException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

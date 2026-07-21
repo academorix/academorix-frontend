@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/attendance/config",
+  "id": "academorix://modules/attendance/config",
   "$version": 1,
   "title": "attendance — developer configuration",
   "configFile": "config/attendance.php",

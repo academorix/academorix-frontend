@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Stackra\AthleteGuardian\Database\Seeders;
+namespace Academorix\AthleteGuardian\Database\Seeders;
 
-use Stackra\AthleteGuardian\Enums\AthleteGuardianPermission;
+use Academorix\AthleteGuardian\Enums\AthleteGuardianPermission;
 use Stackra\Authorization\Database\Seeders\Concerns\SeedsPermissionEnum;
 use Stackra\ServiceProvider\Attributes\AsSeeder;
 use Illuminate\Database\Seeder;

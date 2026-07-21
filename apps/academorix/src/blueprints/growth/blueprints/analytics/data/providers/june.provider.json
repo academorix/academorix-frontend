@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/analytics/data/providers/june",
+  "id": "academorix://modules/analytics/data/providers/june",
   "$version": 1,
   "provider": "june",
   "displayName": "June",

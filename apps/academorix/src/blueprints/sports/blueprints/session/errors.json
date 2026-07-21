@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/session/errors",
+  "id": "academorix://modules/session/errors",
   "$version": 1,
   "title": "session — error codes",
   "namespace": "session",

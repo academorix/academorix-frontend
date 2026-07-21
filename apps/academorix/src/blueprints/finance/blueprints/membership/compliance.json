@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/membership/compliance",
+  "id": "academorix://modules/membership/compliance",
   "$version": 1,
   "title": "membership — compliance evidence",
   "description": "Membership is finance-regulated (SOX Section 404) + PCI-adjacent (payment tokens live in payment module, this module holds no PAN/CVV) + GDPR Art. 6(1)(b) contractual basis + CAN-SPAM transactional-exempt for payment + cancellation communications + Consumer-protection refund-policy-disclosure at signup.",

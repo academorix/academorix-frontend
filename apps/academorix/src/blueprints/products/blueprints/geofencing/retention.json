@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/geofencing/retention",
+  "id": "academorix://modules/geofencing/retention",
   "$version": 1,
   "title": "geofencing \u2014 retention windows",
   "description": "GeofenceCheck is an immutable audit log. Retention drives soft-delete after 7 years (default) + hard-delete after 10 years with anonymisation. Longer retention on override rows because they carry disputed-clock-in evidence.",

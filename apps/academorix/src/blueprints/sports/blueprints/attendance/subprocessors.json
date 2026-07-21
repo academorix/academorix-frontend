@@ -1,8 +1,8 @@
 {
-  "id": "stackra://modules/attendance/subprocessors",
+  "id": "academorix://modules/attendance/subprocessors",
   "$version": 1,
   "title": "attendance — subprocessors",
-  "description": "The Attendance module engages ZERO third-party subprocessors — every state transition is first-party. Downstream: notifications (dispatch), finance::invoice (no-show fees), storage (signature images on S3), membership (freeze cascade). All internal to Stackra.",
+  "description": "The Attendance module engages ZERO third-party subprocessors — every state transition is first-party. Downstream: notifications (dispatch), finance::invoice (no-show fees), storage (signature images on S3), membership (freeze cascade). All internal to Academorix.",
   "subprocessors": [],
   "downstream_subprocessors_referenced": [
     {

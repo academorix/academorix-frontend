@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/age-group/schemas/age-group",
+  "id": "academorix://modules/age-group/schemas/age-group",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "AgeGroup",
@@ -13,9 +13,9 @@
     "keyType": "string",
     "keyPrefix": "age_",
     "incrementing": false,
-    "model": "Stackra\\Sports\\AgeGroup\\Models\\AgeGroup",
-    "interface": "Stackra\\Sports\\AgeGroup\\Contracts\\Data\\AgeGroupInterface",
-    "implements": ["Stackra\\Sports\\AgeGroup\\Contracts\\Data\\AgeGroupInterface"],
+    "model": "Academorix\\Sports\\AgeGroup\\Models\\AgeGroup",
+    "interface": "Academorix\\Sports\\AgeGroup\\Contracts\\Data\\AgeGroupInterface",
+    "implements": ["Academorix\\Sports\\AgeGroup\\Contracts\\Data\\AgeGroupInterface"],
     "traits": [
       "HasFactory",
       "HasPrefixedUlid",
@@ -39,9 +39,9 @@
       "is_youth": "boolean",
       "is_default": "boolean",
       "is_seeded": "boolean",
-      "cutoff_date_kind": "Stackra\\Sports\\AgeGroup\\Enums\\CutoffDateKind",
-      "gender_category": "Stackra\\Sports\\AgeGroup\\Enums\\GenderCategory",
-      "color": "Stackra\\Sports\\AgeGroup\\Casts\\HexColor",
+      "cutoff_date_kind": "Academorix\\Sports\\AgeGroup\\Enums\\CutoffDateKind",
+      "gender_category": "Academorix\\Sports\\AgeGroup\\Enums\\GenderCategory",
+      "color": "Academorix\\Sports\\AgeGroup\\Casts\\HexColor",
       "metadata": "array"
     },
     "appends": ["display_label", "bounds_summary", "is_in_use", "inbound_reference_count"],

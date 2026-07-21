@@ -1,132 +1,132 @@
 {
-  "id": "stackra://modules/membership/listeners",
+  "id": "academorix://modules/membership/listeners",
   "$version": 1,
   "title": "membership — subscribed events",
   "listeners": [
     {
       "event": "membership::Membership.creating (pre-commit)",
-      "listener": "Stackra\\Finance\\Membership\\Listeners\\CreateInvoiceOnMembershipCreated",
+      "listener": "Academorix\\Finance\\Membership\\Listeners\\CreateInvoiceOnMembershipCreated",
       "queue": "finance",
       "priority": 5,
       "purpose": "LOAD-BEARING atomic invoice creation. Runs BEFORE all other listeners on create."
     },
     {
       "event": "membership::Membership.creating (pre-commit)",
-      "listener": "Stackra\\Finance\\Membership\\Listeners\\SnapshotTaxCalculationOnMembershipCreated",
+      "listener": "Academorix\\Finance\\Membership\\Listeners\\SnapshotTaxCalculationOnMembershipCreated",
       "queue": "finance",
       "priority": 8,
       "purpose": "Freezes tax_calculation snapshot at signing."
     },
     {
       "event": "membership::Membership.creating (pre-commit)",
-      "listener": "Stackra\\Finance\\Membership\\Listeners\\SnapshotCouponRedemptionOnMembershipCreated",
+      "listener": "Academorix\\Finance\\Membership\\Listeners\\SnapshotCouponRedemptionOnMembershipCreated",
       "queue": "finance",
       "priority": 9,
       "purpose": "Freezes coupon snapshot at signing."
     },
     {
       "event": "membership::MembershipActivated",
-      "listener": "Stackra\\Finance\\Membership\\Listeners\\GeneratePassesOnMembershipActivated",
+      "listener": "Academorix\\Finance\\Membership\\Listeners\\GeneratePassesOnMembershipActivated",
       "queue": "finance",
       "priority": 20,
       "purpose": "Dispatches IssuePassesForPeriodJob for first period."
     },
     {
       "event": "membership::MembershipRenewed",
-      "listener": "Stackra\\Finance\\Membership\\Listeners\\ExtendPeriodOnRenewalSucceeded",
+      "listener": "Academorix\\Finance\\Membership\\Listeners\\ExtendPeriodOnRenewalSucceeded",
       "queue": "finance",
       "priority": 20,
       "purpose": "Advances period + issues new-period passes + resets consecutive_failed_renewal_count."
     },
     {
       "event": "membership::MembershipRenewalRecovered",
-      "listener": "Stackra\\Finance\\Membership\\Listeners\\ExtendPeriodOnRenewalSucceeded",
+      "listener": "Academorix\\Finance\\Membership\\Listeners\\ExtendPeriodOnRenewalSucceeded",
       "queue": "finance",
       "priority": 20,
       "purpose": "Same as above — recovery path from retry ladder."
     },
     {
       "event": "membership::MembershipRenewalFailed",
-      "listener": "Stackra\\Finance\\Membership\\Listeners\\TriggerRetryLadderOnRenewalFailed",
+      "listener": "Academorix\\Finance\\Membership\\Listeners\\TriggerRetryLadderOnRenewalFailed",
       "queue": "finance-critical",
       "priority": 20,
       "purpose": "Schedules next retry attempt + dunning notification."
     },
     {
       "event": "membership::MembershipLapsed",
-      "listener": "Stackra\\Finance\\Membership\\Listeners\\ExpirePassesOnMembershipLapsed",
+      "listener": "Academorix\\Finance\\Membership\\Listeners\\ExpirePassesOnMembershipLapsed",
       "queue": "finance",
       "priority": 25,
       "purpose": "Expires all unconsumed passes immediately (lapsed = involuntary, no grace)."
     },
     {
       "event": "membership::MembershipCancelled",
-      "listener": "Stackra\\Finance\\Membership\\Listeners\\ExpirePassesOnMembershipCancelled",
+      "listener": "Academorix\\Finance\\Membership\\Listeners\\ExpirePassesOnMembershipCancelled",
       "queue": "finance",
       "priority": 25,
       "purpose": "For hard-cancel only — expires passes. Soft-cancel is a no-op (passes stay valid through period)."
     },
     {
       "event": "membership::MembershipCancelled (cancellation_kind='hard_immediate')",
-      "listener": "Stackra\\Finance\\Membership\\Listeners\\CalculateProratedRefundOnHardCancel",
+      "listener": "Academorix\\Finance\\Membership\\Listeners\\CalculateProratedRefundOnHardCancel",
       "queue": "finance-critical",
       "priority": 30,
       "purpose": "Computes prorated refund + dispatches to refund module."
     },
     {
       "event": "membership::MembershipPlan.updating (is_active → false, pre-write)",
-      "listener": "Stackra\\Finance\\Membership\\Listeners\\PreventPlanArchiveWithActiveMemberships",
+      "listener": "Academorix\\Finance\\Membership\\Listeners\\PreventPlanArchiveWithActiveMemberships",
       "queue": "finance",
       "priority": 30,
       "purpose": "Refuses plan archive when active memberships exist."
     },
     {
       "event": "branch::BranchArchived (pre-write)",
-      "listener": "Stackra\\Finance\\Membership\\Listeners\\PreventBranchArchiveWithActiveMemberships",
+      "listener": "Academorix\\Finance\\Membership\\Listeners\\PreventBranchArchiveWithActiveMemberships",
       "queue": "finance",
       "priority": 30,
       "purpose": "Refuses branch archive when active memberships reference it."
     },
     {
       "event": "athlete::AthleteArchived (pre-write)",
-      "listener": "Stackra\\Finance\\Membership\\Listeners\\CascadeCancelMembershipsOnAthleteArchived",
+      "listener": "Academorix\\Finance\\Membership\\Listeners\\CascadeCancelMembershipsOnAthleteArchived",
       "queue": "finance",
       "priority": 30,
       "purpose": "Cascade soft-cancel of active memberships when cascade=true on athlete archive route; otherwise refuses."
     },
     {
       "event": "athlete::AthleteWithdrawn",
-      "listener": "Stackra\\Finance\\Membership\\Listeners\\CancelMembershipsOnAthleteWithdrawn",
+      "listener": "Academorix\\Finance\\Membership\\Listeners\\CancelMembershipsOnAthleteWithdrawn",
       "queue": "finance",
       "purpose": "Cascade soft-cancel of active memberships."
     },
     {
       "event": "athlete_guardian::AthleteGuardianRemoved",
-      "listener": "Stackra\\Finance\\Membership\\Listeners\\ClearPrimaryGuardianOnGuardianRemoved",
+      "listener": "Academorix\\Finance\\Membership\\Listeners\\ClearPrimaryGuardianOnGuardianRemoved",
       "queue": "finance",
       "purpose": "Sets membership.primary_guardian_id = null when the referenced guardian relationship is removed; membership continues; admin notified to reassign."
     },
     {
       "event": "invoice::InvoicePaid (Wave 4.5+)",
-      "listener": "Stackra\\Finance\\Membership\\Listeners\\ActivateMembershipOnInvoicePaid",
+      "listener": "Academorix\\Finance\\Membership\\Listeners\\ActivateMembershipOnInvoicePaid",
       "queue": "finance-critical",
       "purpose": "Transitions Membership.status pending → active when the initial invoice is paid. First-activation path only — subsequent renewal-invoice payments are handled by MembershipRenewalObserver."
     },
     {
       "event": "chargeback::ChargebackFiled (Wave 4.5+)",
-      "listener": "Stackra\\Finance\\Membership\\Listeners\\FireMembershipChargedBackOnChargebackFiled",
+      "listener": "Academorix\\Finance\\Membership\\Listeners\\FireMembershipChargedBackOnChargebackFiled",
       "queue": "finance-critical",
       "purpose": "Downstream chargeback module fires this when a dispute is filed on a payment tied to a membership; the listener fires MembershipChargedBack + notifies admin."
     },
     {
       "event": "refund::RefundCompleted (Wave 4.5+)",
-      "listener": "Stackra\\Finance\\Membership\\Listeners\\FireMembershipRefundedOnRefundCompleted",
+      "listener": "Academorix\\Finance\\Membership\\Listeners\\FireMembershipRefundedOnRefundCompleted",
       "queue": "finance",
       "purpose": "Downstream refund module fires this when a refund settles; the listener records refund_id + refund_amount_cents on membership metadata + fires MembershipRefunded."
     },
     {
       "event": "tenancy::TenantErased",
-      "listener": "Stackra\\Finance\\Membership\\Listeners\\PurgeMembershipDataForErasedTenant",
+      "listener": "Academorix\\Finance\\Membership\\Listeners\\PurgeMembershipDataForErasedTenant",
       "queue": "finance",
       "purpose": "Cascade delete via FK. Compliance archive retention on refund + renewal records."
     }

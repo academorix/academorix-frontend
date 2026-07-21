@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Webhook\Exceptions;
 
-use Stackra\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * Referenced api_version doesn't exist OR is in state=sunset.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class WebhookApiVersionInvalidException extends AcademorixException
+final class WebhookApiVersionInvalidException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

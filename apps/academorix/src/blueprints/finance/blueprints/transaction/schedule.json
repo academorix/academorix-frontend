@@ -1,25 +1,25 @@
 {
-  "id": "stackra://modules/transaction/schedule",
+  "id": "academorix://modules/transaction/schedule",
   "$version": 1,
   "title": "transaction — scheduled tasks",
   "entries": [
     {
       "name": "transaction-reconcile-ledger-balances",
-      "command": "queue:dispatch --job=Stackra\\Finance\\Transaction\\Jobs\\ReconcileLedgerBalancesJob",
+      "command": "queue:dispatch --job=Academorix\\Finance\\Transaction\\Jobs\\ReconcileLedgerBalancesJob",
       "cron": "0 2 * * *",
       "timezone": "UTC",
       "purpose": "Nightly 02:00 UTC. The load-bearing integrity check: for every tenant, computes SUM(debit_cents) vs SUM(credit_cents) globally per account per day + per transaction. Fires LedgerImbalanceDetected (P0) per imbalance. Also fires AccountBalanceThresholdCrossed for threshold crossings. Fires LedgerReconciliationCompleted per tenant with stats."
     },
     {
       "name": "transaction-generate-general-ledger-report",
-      "command": "queue:dispatch --job=Stackra\\Finance\\Transaction\\Jobs\\GenerateGeneralLedgerReportJob",
+      "command": "queue:dispatch --job=Academorix\\Finance\\Transaction\\Jobs\\GenerateGeneralLedgerReportJob",
       "cron": "0 6 1 * *",
       "timezone": "UTC",
       "purpose": "Monthly 06:00 UTC on the 1st. Generates the per-tenant General Ledger (GL) report for the previous closed month. Delivers MonthlyLedgerReportNotification to finance-role users. Only fires for tenants with transaction_advanced_reporting entitlement."
     },
     {
       "name": "transaction-purge-expired",
-      "command": "queue:dispatch --job=Stackra\\Finance\\Transaction\\Jobs\\PurgeExpiredTransactionDataJob",
+      "command": "queue:dispatch --job=Academorix\\Finance\\Transaction\\Jobs\\PurgeExpiredTransactionDataJob",
       "cron": "0 4 * * 0",
       "timezone": "UTC",
       "purpose": "Weekly Sunday 04:00 UTC. Applies retention: transactions + ledger_entries > 7 years (10 for Enterprise) archived to compliance-storage then hard-deleted. NEVER hard-purges without first archiving — a copy always survives in compliance-storage per SOX 802 + AML retention."

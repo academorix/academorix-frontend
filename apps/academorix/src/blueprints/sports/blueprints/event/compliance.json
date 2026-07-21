@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/event/compliance",
+  "id": "academorix://modules/event/compliance",
   "$version": 1,
   "title": "event — compliance evidence",
   "description": "Event is a scheduling + commercial container. Bulk of compliance responsibility: financial-record retention (entry_fee / late_fee / prize_pool changes -> 7-year audit rows), SOC 2 CC6.3 change tracking (EventCancellationBroadcast + EventRescheduled + EventVenueChanged + EventPricingChanged + EventMinorEligibilityCorrected are the highest-severity events), and child-safeguarding regulator interest on events with minor registrants.",

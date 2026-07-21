@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/membership/relations",
+  "id": "academorix://modules/membership/relations",
   "$version": 1,
   "title": "membership — model relationships",
   "description": "Four owned entities. Membership belongs to Tenant + Region + Branch + Athlete + MembershipPlan directly + optional AthleteGuardian + Coupon + TaxCalculation. MembershipPlan belongs to Tenant + Branch + optional AgeGroup. MembershipRenewal belongs to Tenant + Membership + optional Invoice + optional Coupon. Pass belongs to Tenant + Membership + optional Session. None carry `application_id` / `organization_id` / `scope_node_id` — forbidden columns. Cascades organization + application through the belongs-to chain.",

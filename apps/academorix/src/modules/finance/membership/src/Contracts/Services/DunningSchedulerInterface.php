@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Membership\Contracts\Services;
+namespace Academorix\Membership\Contracts\Services;
 
-use Stackra\Membership\Services\DunningScheduler;
+use Academorix\Membership\Services\DunningScheduler;
 use Illuminate\Container\Attributes\Bind;
 
 /**

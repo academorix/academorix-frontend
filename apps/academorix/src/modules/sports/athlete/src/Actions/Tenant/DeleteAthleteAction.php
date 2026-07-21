@@ -4,9 +4,9 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Athlete\Actions\Tenant;
+namespace Academorix\Athlete\Actions\Tenant;
 
-use Stackra\Athlete\Contracts\Repositories\AthleteRepositoryInterface;
+use Academorix\Athlete\Contracts\Repositories\AthleteRepositoryInterface;
 use Stackra\Routing\Attributes\AsAction;
 use Stackra\Routing\Attributes\Middleware;
 use Stackra\Routing\Concerns\AsController;

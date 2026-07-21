@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/tax/schemas/tax-exemption",
+  "id": "academorix://modules/tax/schemas/tax-exemption",
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "TaxExemption",
@@ -13,9 +13,9 @@
     "keyType": "string",
     "keyPrefix": "txe_",
     "incrementing": false,
-    "model": "Stackra\\Finance\\Tax\\Models\\TaxExemption",
-    "interface": "Stackra\\Finance\\Tax\\Contracts\\Data\\TaxExemptionInterface",
-    "implements": ["Stackra\\Finance\\Tax\\Contracts\\Data\\TaxExemptionInterface"],
+    "model": "Academorix\\Finance\\Tax\\Models\\TaxExemption",
+    "interface": "Academorix\\Finance\\Tax\\Contracts\\Data\\TaxExemptionInterface",
+    "implements": ["Academorix\\Finance\\Tax\\Contracts\\Data\\TaxExemptionInterface"],
     "traits": [
       "HasFactory",
       "HasUlids",

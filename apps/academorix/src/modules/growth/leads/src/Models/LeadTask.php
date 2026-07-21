@@ -4,20 +4,20 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Leads\Models;
+namespace Academorix\Leads\Models;
 
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
-use Stackra\Leads\Contracts\Data\LeadTaskInterface;
-use Stackra\Leads\Database\Factories\LeadTaskFactory;
+use Academorix\Leads\Contracts\Data\LeadTaskInterface;
+use Academorix\Leads\Database\Factories\LeadTaskFactory;
 use Stackra\Foundation\Concerns\Filterable;
 use Stackra\Foundation\Concerns\HasMetadata;
-use Stackra\Leads\Enums\LeadTaskPriority;
-use Stackra\Leads\Enums\LeadTaskStatus;
-use Stackra\Leads\Policies\LeadTaskPolicy;
+use Academorix\Leads\Enums\LeadTaskPriority;
+use Academorix\Leads\Enums\LeadTaskStatus;
+use Academorix\Leads\Policies\LeadTaskPolicy;
 use Stackra\Tenancy\Concerns\BelongsToTenant;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;

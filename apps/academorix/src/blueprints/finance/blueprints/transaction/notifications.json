@@ -1,8 +1,8 @@
 {
-  "id": "stackra://modules/transaction/notifications",
+  "id": "academorix://modules/transaction/notifications",
   "$version": 1,
   "title": "transaction — notification classes + categories",
-  "namespace": "Stackra\\Finance\\Transaction\\Notifications",
+  "namespace": "Academorix\\Finance\\Transaction\\Notifications",
   "notifications": [
     "LedgerImbalanceDetectedNotification",
     "TransactionAmendmentAppliedNotification",

@@ -4,10 +4,10 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Progress\Actions\Platform;
+namespace Academorix\Progress\Actions\Platform;
 
-use Stackra\Progress\Contracts\Repositories\ProgressAssessmentRepositoryInterface;
-use Stackra\Progress\Data\ProgressAssessmentData;
+use Academorix\Progress\Contracts\Repositories\ProgressAssessmentRepositoryInterface;
+use Academorix\Progress\Data\ProgressAssessmentData;
 use Stackra\Routing\Attributes\AsAction;
 use Stackra\Routing\Attributes\Middleware;
 use Stackra\Routing\Concerns\AsController;
@@ -50,7 +50,7 @@ final class ListProgressAssessmentAction
      */
     public function __invoke(Request $request): PaginatedDataCollection
     {
-        /** @var LengthAwarePaginator<int, \Stackra\Progress\Models\ProgressAssessment> $page */
+        /** @var LengthAwarePaginator<int, \Academorix\Progress\Models\ProgressAssessment> $page */
         $page = $this->repository->paginate(
             perPage: (int) $request->integer('per_page', 15),
         );

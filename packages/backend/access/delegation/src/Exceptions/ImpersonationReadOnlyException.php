@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Stackra\Delegation\Exceptions;
 
-use Stackra\Exceptions\AcademorixException;
+use Stackra\Exceptions\StackraException;
 
 /**
  * The session is is_read_only=true; the mutating verb is refused by enforce_read_only middleware.
@@ -15,7 +15,7 @@ use Stackra\Exceptions\AcademorixException;
  *
  * @since    0.1.0
  */
-final class ImpersonationReadOnlyException extends AcademorixException
+final class ImpersonationReadOnlyException extends StackraException
 {
     /**
      * Stable machine-readable error code emitted on the JSON envelope.

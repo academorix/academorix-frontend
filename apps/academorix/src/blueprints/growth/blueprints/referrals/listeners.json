@@ -1,94 +1,94 @@
 {
-  "id": "stackra://modules/referrals/listeners",
+  "id": "academorix://modules/referrals/listeners",
   "$version": 1,
   "title": "referrals — subscribed events",
   "listeners": [
     {
       "event": "user::UserAccountActivated",
-      "listener": "Stackra\\Growth\\Referrals\\Listeners\\IssueUserReferralCodeOnAccountActivated",
+      "listener": "Academorix\\Growth\\Referrals\\Listeners\\IssueUserReferralCodeOnAccountActivated",
       "queue": "referrals",
       "priority": 60,
       "purpose": "Auto-issue a user_scoped referral code for the newly-activated user. Dispatches IssueReferralCodeJob per active program on the tenant. Idempotent: skips programs where the user already has a code."
     },
     {
       "event": "referrals::ReferralClaimed",
-      "listener": "Stackra\\Growth\\Referrals\\Listeners\\SnapshotAttributionOnReferralClaimed",
+      "listener": "Academorix\\Growth\\Referrals\\Listeners\\SnapshotAttributionOnReferralClaimed",
       "queue": "referrals",
       "priority": 10,
       "purpose": "Reads AttributionSnapshotBuilder output (from growth::attribution) and freezes into referral.attribution_snapshot. Runs synchronously inside the create transaction (priority 10 = first)."
     },
     {
       "event": "referrals::ReferralSignedUp",
-      "listener": "Stackra\\Growth\\Referrals\\Listeners\\CaptureReferralSignupAsMarketingConversion",
+      "listener": "Academorix\\Growth\\Referrals\\Listeners\\CaptureReferralSignupAsMarketingConversion",
       "queue": "marketing",
       "priority": 60,
       "purpose": "Fires a marketing::MarketingEvent for ad-network conversion attribution. Reads referral.attribution_snapshot and forwards to the marketing module's MarketingEventCapturer. The marketing module fans out to configured ad networks (Meta CAPI, Google Ads Enhanced Conversions, TikTok Events API, etc.)."
     },
     {
       "event": "referrals::ReferralVested",
-      "listener": "Stackra\\Growth\\Referrals\\Listeners\\CaptureReferralVestedAsMarketingConversion",
+      "listener": "Academorix\\Growth\\Referrals\\Listeners\\CaptureReferralVestedAsMarketingConversion",
       "queue": "marketing",
       "priority": 60,
       "purpose": "Fires a marketing::MarketingEvent for the higher-tier 'vested conversion' — often the ad-network events with revenue attribution (value in USD). Distinct from ReferralSignedUp because vested means the referred user completed the tenant's chosen trigger event (typically first_payment)."
     },
     {
       "event": "referrals::ReferralVested",
-      "listener": "Stackra\\Growth\\Referrals\\Listeners\\MaterializeVestedRewardsIntoFinance",
+      "listener": "Academorix\\Growth\\Referrals\\Listeners\\MaterializeVestedRewardsIntoFinance",
       "queue": "referrals-critical",
       "priority": 30,
       "purpose": "Dispatches MaterializeVestedRewardsJob for each reward created by the vested transition. Runs before notification listeners so notifications reflect the materialized state."
     },
     {
       "event": "referrals::ReferralTriggerReached",
-      "listener": "Stackra\\Growth\\Referrals\\Listeners\\DetectReferralFraudAtTriggerTime",
+      "listener": "Academorix\\Growth\\Referrals\\Listeners\\DetectReferralFraudAtTriggerTime",
       "queue": "referrals",
       "priority": 20,
       "purpose": "Re-runs FraudDetector at trigger time — catches fraud signals that only surface after the referred user has been in the tenant for a while (velocity, click_storm, geographic mismatch discovered post-signup)."
     },
     {
       "event": "user::UserErased",
-      "listener": "Stackra\\Growth\\Referrals\\Listeners\\CancelReferralsOnReferrerErased",
+      "listener": "Academorix\\Growth\\Referrals\\Listeners\\CancelReferralsOnReferrerErased",
       "queue": "referrals",
       "priority": 40,
       "purpose": "Cancels pending referrals owned by the erased user; retains paid rewards with recipient redacted."
     },
     {
       "event": "user::UserErased",
-      "listener": "Stackra\\Growth\\Referrals\\Listeners\\RedactReferralDataOnUserErasure",
+      "listener": "Academorix\\Growth\\Referrals\\Listeners\\RedactReferralDataOnUserErasure",
       "queue": "referrals",
       "priority": 50,
       "purpose": "Schedules a 90-day-post-erasure redaction of referred_email + user-identifying attribution snapshot fields on referrals where the erased user was the referred party. Retention window unchanged."
     },
     {
       "event": "finance::RefundIssued",
-      "listener": "Stackra\\Growth\\Referrals\\Listeners\\ClawbackRewardsOnFinanceRefund",
+      "listener": "Academorix\\Growth\\Referrals\\Listeners\\ClawbackRewardsOnFinanceRefund",
       "queue": "referrals-critical",
       "priority": 40,
       "purpose": "Wave 4 bridge. Dispatches ClawbackRewardsOnRefundJob to reverse any ReferralReward tied to the refunded payment."
     },
     {
       "event": "finance::ChargebackFiled",
-      "listener": "Stackra\\Growth\\Referrals\\Listeners\\ClawbackRewardsOnFinanceChargeback",
+      "listener": "Academorix\\Growth\\Referrals\\Listeners\\ClawbackRewardsOnFinanceChargeback",
       "queue": "referrals-critical",
       "priority": 40,
       "purpose": "Higher-severity clawback path. Marks the referrer's fraud-flag counters (chargeback abuse = fraud signal)."
     },
     {
       "event": "referrals::ReferralProgramArchived",
-      "listener": "Stackra\\Growth\\Referrals\\Listeners\\ArchiveReferralsOnProgramArchived",
+      "listener": "Academorix\\Growth\\Referrals\\Listeners\\ArchiveReferralsOnProgramArchived",
       "queue": "referrals",
       "priority": 50,
       "purpose": "Cascades: cancels non-terminal referrals + clawbacks materialized-not-yet-paid rewards."
     },
     {
       "event": "tenancy::TenantErased",
-      "listener": "Stackra\\Growth\\Referrals\\Listeners\\PurgeReferralDataForErasedTenant",
+      "listener": "Academorix\\Growth\\Referrals\\Listeners\\PurgeReferralDataForErasedTenant",
       "queue": "referrals",
       "purpose": "Cascade delete via FK; writes compliance audit trail entry + emits count metrics. Paid rewards > $600 migrate to compliance_archive first."
     },
     {
       "event": "attribution::AttributionSubjectIdentified",
-      "listener": "Stackra\\Growth\\Referrals\\Listeners\\ResolveReferrerOnAttributionIdentified",
+      "listener": "Academorix\\Growth\\Referrals\\Listeners\\ResolveReferrerOnAttributionIdentified",
       "queue": "referrals",
       "purpose": "When an anonymous session identifies (attribution.subject_type transitions to 'user'), check if a pending_claim referral exists with the same session_id/device_hash. If yes, transition the referral to 'claimed' + set referred_id."
     }

@@ -1,5 +1,5 @@
 {
-  "id": "stackra://modules/athlete/relations",
+  "id": "academorix://modules/athlete/relations",
   "$version": 1,
   "title": "athlete — model relationships",
   "description": "One owned entity: Athlete. Belongs to Tenant (CASCADE) + Branch (RESTRICT) + optionally User (RESTRICT, nullable). Cascades organization + region through branch, application through tenant per hierarchy.md §2. No `application_id` on any row — cascades through `tenant_id → tenants.application_id`. No `organization_id` or `region_id` — cascades through `branch_id → branches.organization_id / branches.region_id`. Every outbound FK stays same-tenant per tenancy-columns.md §5. The `current_age_group_id` is a SNAPSHOT — nightly-recomputed pointer to an AgeGroup row. When the source AgeGroup is deleted, the FK is SET NULL and the next snapshot job re-resolves.",

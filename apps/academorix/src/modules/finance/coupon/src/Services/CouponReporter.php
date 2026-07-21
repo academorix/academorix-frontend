@@ -2,19 +2,19 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Coupon\Services;
+namespace Academorix\Coupon\Services;
 
-use Stackra\Coupon\Contracts\Data\CouponInterface;
-use Stackra\Coupon\Contracts\Data\CouponRedemptionInterface;
-use Stackra\Coupon\Contracts\Repositories\CouponRedemptionRepositoryInterface;
-use Stackra\Coupon\Contracts\Repositories\CouponRepositoryInterface;
-use Stackra\Coupon\Contracts\Services\CouponReporterInterface;
+use Academorix\Coupon\Contracts\Data\CouponInterface;
+use Academorix\Coupon\Contracts\Data\CouponRedemptionInterface;
+use Academorix\Coupon\Contracts\Repositories\CouponRedemptionRepositoryInterface;
+use Academorix\Coupon\Contracts\Repositories\CouponRepositoryInterface;
+use Academorix\Coupon\Contracts\Services\CouponReporterInterface;
 use Illuminate\Container\Attributes\Scoped;
 use Illuminate\Support\Facades\DB;
 
 /**
  * Reference implementation of
- * {@see \Stackra\Coupon\Contracts\Services\CouponReporterInterface}.
+ * {@see \Academorix\Coupon\Contracts\Services\CouponReporterInterface}.
  *
  * Read-only aggregation over `coupons` + `coupon_redemptions` for a
  * given tenant over a `[periodStart, periodEnd)` window. Consumed

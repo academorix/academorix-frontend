@@ -1,10 +1,10 @@
 {
-  "name": "stackra/attendance",
+  "name": "academorix/attendance",
   "type": "library",
-  "description": "Stackra Attendance module — server-side Laravel package emitted from the module blueprint at `modules/sports/blueprints/attendance/`. Complements the wire SDK at `stackra-sports/attendance-sdk`.",
+  "description": "Academorix Attendance module — server-side Laravel package emitted from the module blueprint at `modules/sports/blueprints/attendance/`. Complements the wire SDK at `academorix-sports/attendance-sdk`.",
   "license": "proprietary",
   "keywords": [
-    "stackra",
+    "academorix",
     "module",
     "laravel",
     "sports",
@@ -22,7 +22,7 @@
     "stackra/routing": "@dev",
     "stackra/service-provider": "@dev",
     "stackra/support": "@dev",
-    "stackra-sports/attendance-sdk": "@dev"
+    "academorix-sports/attendance-sdk": "@dev"
   },
   "require-dev": {
     "orchestra/testbench": "^11.0",
@@ -33,12 +33,12 @@
   },
   "autoload": {
     "psr-4": {
-      "Stackra\\Attendance\\": "src/"
+      "Academorix\\Attendance\\": "src/"
     }
   },
   "autoload-dev": {
     "psr-4": {
-      "Stackra\\Attendance\\Tests\\": "tests/"
+      "Academorix\\Attendance\\Tests\\": "tests/"
     }
   },
   "extra": {

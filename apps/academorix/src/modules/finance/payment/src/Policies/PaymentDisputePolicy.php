@@ -4,13 +4,13 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Payment\Policies;
+namespace Academorix\Payment\Policies;
 
 use Stackra\User\Models\User;
-use Stackra\Payment\Models\PaymentDispute;
+use Academorix\Payment\Models\PaymentDispute;
 
 /**
- * Authorization policy for {@see \Stackra\Payment\Models\PaymentDispute}.
+ * Authorization policy for {@see \Academorix\Payment\Models\PaymentDispute}.
  *
  * Wired via `#[UsePolicy]` on the Model.
  *

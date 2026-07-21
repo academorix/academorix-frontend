@@ -4,7 +4,7 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Refund\Exceptions;
+namespace Academorix\Refund\Exceptions;
 
 use Stackra\Exceptions\StackraException;
 

@@ -7,7 +7,7 @@ namespace Stackra\SportsFormationsSdk\Tests;
 use Orchestra\Testbench\TestCase as OrchestraTestCase;
 
 /**
- * Base test case for stackra-sports/formations-sdk.
+ * Base test case for academorix-sports/formations-sdk.
  *
  * @category FormationsSdk
  *

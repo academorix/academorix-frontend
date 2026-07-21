@@ -4,18 +4,18 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Tax\Models;
+namespace Academorix\Tax\Models;
 
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
-use Stackra\Tax\Contracts\Data\TaxCalculationInterface;
-use Stackra\Tax\Database\Factories\TaxCalculationFactory;
+use Academorix\Tax\Contracts\Data\TaxCalculationInterface;
+use Academorix\Tax\Database\Factories\TaxCalculationFactory;
 use Stackra\Foundation\Concerns\Filterable;
 use Stackra\Foundation\Concerns\HasMetadata;
-use Stackra\Tax\Policies\TaxCalculationPolicy;
+use Academorix\Tax\Policies\TaxCalculationPolicy;
 use Stackra\Tenancy\Concerns\BelongsToTenant;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;

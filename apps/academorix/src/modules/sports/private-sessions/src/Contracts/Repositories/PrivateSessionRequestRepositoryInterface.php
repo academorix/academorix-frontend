@@ -4,17 +4,17 @@
 
 declare(strict_types=1);
 
-namespace Stackra\PrivateSessions\Contracts\Repositories;
+namespace Academorix\PrivateSessions\Contracts\Repositories;
 
 use Stackra\Crud\Contracts\RepositoryInterface;
 
 /**
- * Repository contract for {@see Stackra\PrivateSessions\Models\PrivateSessionRequest}.
+ * Repository contract for {@see Academorix\PrivateSessions\Models\PrivateSessionRequest}.
  *
  * Consumers type-hint the interface; the container binds the concrete
  * via `#[AsRepository]` on `PrivateSessionRequestRepository`.
  *
- * @extends RepositoryInterface<\Stackra\PrivateSessions\Models\PrivateSessionRequest>
+ * @extends RepositoryInterface<\Academorix\PrivateSessions\Models\PrivateSessionRequest>
  *
  * @category PrivateSessions
  *

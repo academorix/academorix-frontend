@@ -1,12 +1,12 @@
 {
-  "id": "stackra://modules/coaching/policies",
+  "id": "academorix://modules/coaching/policies",
   "$version": 1,
   "title": "coaching — authorization policies",
   "description": "Four policies, one per entity. Each composes the .own scope (coach acting on their own row) with admin-scope for HR + branch_manager + owner. Rate + PII access is gated by dedicated permissions to keep the sensitive columns separately controllable.",
   "policies": [
     {
       "model": "CoachingProfile",
-      "class": "Stackra\\Sports\\Coaching\\Policies\\CoachingProfilePolicy",
+      "class": "Academorix\\Sports\\Coaching\\Policies\\CoachingProfilePolicy",
       "abilities": [
         {
           "action": "viewAny",
@@ -87,7 +87,7 @@
     },
     {
       "model": "CoachAssignment",
-      "class": "Stackra\\Sports\\Coaching\\Policies\\CoachAssignmentPolicy",
+      "class": "Academorix\\Sports\\Coaching\\Policies\\CoachAssignmentPolicy",
       "abilities": [
         {
           "action": "viewAny",
@@ -119,7 +119,7 @@
     },
     {
       "model": "CoachCertification",
-      "class": "Stackra\\Sports\\Coaching\\Policies\\CoachCertificationPolicy",
+      "class": "Academorix\\Sports\\Coaching\\Policies\\CoachCertificationPolicy",
       "abilities": [
         {
           "action": "viewAny",
@@ -161,7 +161,7 @@
     },
     {
       "model": "CoachSkillRating",
-      "class": "Stackra\\Sports\\Coaching\\Policies\\CoachSkillRatingPolicy",
+      "class": "Academorix\\Sports\\Coaching\\Policies\\CoachSkillRatingPolicy",
       "abilities": [
         {
           "action": "viewAny",

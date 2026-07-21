@@ -4,25 +4,25 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Medical\Repositories;
+namespace Academorix\Medical\Repositories;
 
 use Stackra\Crud\Attributes\AsRepository;
 use Stackra\Crud\Attributes\Cacheable;
 use Stackra\Crud\Attributes\Filterable;
 use Stackra\Crud\Attributes\UseModel;
 use Stackra\Crud\Repositories\Repository;
-use Stackra\Medical\Contracts\Data\MedicalRecordInterface;
-use Stackra\Medical\Contracts\Repositories\MedicalRecordRepositoryInterface;
-use Stackra\Medical\Models\MedicalRecord;
+use Academorix\Medical\Contracts\Data\MedicalRecordInterface;
+use Academorix\Medical\Contracts\Repositories\MedicalRecordRepositoryInterface;
+use Academorix\Medical\Models\MedicalRecord;
 
 /**
- * Attribute-first Eloquent repository for {@see Stackra\Medical\Models\MedicalRecord}.
+ * Attribute-first Eloquent repository for {@see Academorix\Medical\Models\MedicalRecord}.
  *
  * Bound to the interface via `#[AsRepository]`; the model comes from
  * `#[UseModel(MedicalRecordInterface::class)]` which resolves to
  * `MedicalRecord` through the interface's `#[Bind]`.
  *
- * @extends Repository<\Stackra\Medical\Models\MedicalRecord>
+ * @extends Repository<\Academorix\Medical\Models\MedicalRecord>
  *
  * @category Medical
  *

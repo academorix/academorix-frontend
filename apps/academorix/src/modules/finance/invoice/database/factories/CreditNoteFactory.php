@@ -4,19 +4,19 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Invoice\Database\Factories;
+namespace Academorix\Invoice\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Stackra\Invoice\Contracts\Data\CreditNoteInterface;
-use Stackra\Invoice\Models\CreditNote;
+use Academorix\Invoice\Contracts\Data\CreditNoteInterface;
+use Academorix\Invoice\Models\CreditNote;
 
 /**
- * Factory for {@see \Stackra\Invoice\Models\CreditNote}.
+ * Factory for {@see \Academorix\Invoice\Models\CreditNote}.
  *
  * Auto-generated skeleton — extend with named states as domain
  * cases emerge (e.g. `->published()`, `->overdue()`, `->archived()`).
  *
- * @extends Factory<\Stackra\Invoice\Models\CreditNote>
+ * @extends Factory<\Academorix\Invoice\Models\CreditNote>
  *
  * @category Invoice
  *

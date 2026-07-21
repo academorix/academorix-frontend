@@ -4,25 +4,25 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Membership\Repositories;
+namespace Academorix\Membership\Repositories;
 
 use Stackra\Crud\Attributes\AsRepository;
 use Stackra\Crud\Attributes\Cacheable;
 use Stackra\Crud\Attributes\Filterable;
 use Stackra\Crud\Attributes\UseModel;
 use Stackra\Crud\Repositories\Repository;
-use Stackra\Membership\Contracts\Data\MembershipPlanInterface;
-use Stackra\Membership\Contracts\Repositories\MembershipPlanRepositoryInterface;
-use Stackra\Membership\Models\MembershipPlan;
+use Academorix\Membership\Contracts\Data\MembershipPlanInterface;
+use Academorix\Membership\Contracts\Repositories\MembershipPlanRepositoryInterface;
+use Academorix\Membership\Models\MembershipPlan;
 
 /**
- * Attribute-first Eloquent repository for {@see Stackra\Membership\Models\MembershipPlan}.
+ * Attribute-first Eloquent repository for {@see Academorix\Membership\Models\MembershipPlan}.
  *
  * Bound to the interface via `#[AsRepository]`; the model comes from
  * `#[UseModel(MembershipPlanInterface::class)]` which resolves to
  * `MembershipPlan` through the interface's `#[Bind]`.
  *
- * @extends Repository<\Stackra\Membership\Models\MembershipPlan>
+ * @extends Repository<\Academorix\Membership\Models\MembershipPlan>
  *
  * @category Membership
  *

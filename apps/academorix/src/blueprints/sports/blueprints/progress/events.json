@@ -1,14 +1,14 @@
 {
-  "id": "stackra://modules/progress/events",
+  "id": "academorix://modules/progress/events",
   "$version": 1,
   "title": "progress — published events",
-  "namespace": "Stackra\\Sports\\Progress\\Events",
+  "namespace": "Academorix\\Sports\\Progress\\Events",
   "dispatchMode": "afterCommit",
   "description": "Every event implements `ShouldDispatchAfterCommit`. ProgressAssessmentRecorded is the load-bearing signal — cascades to development promotion evaluation, awards auto-grant, and analytics. BeltRankPromoted is a P1 event that awards module always consumes.",
   "events": [
     {
       "name": "ProgressAssessmentRecorded",
-      "class": "Stackra\\Sports\\Progress\\Events\\ProgressAssessmentRecorded",
+      "class": "Academorix\\Sports\\Progress\\Events\\ProgressAssessmentRecorded",
       "trigger": "AssessmentOrchestrator committed a ProgressAssessment (values validated + snapshot stamped + overall computed).",
       "queue": "progress",
       "consumers": [
@@ -33,7 +33,7 @@
     },
     {
       "name": "ProgressCardGenerated",
-      "class": "Stackra\\Sports\\Progress\\Events\\ProgressCardGenerated",
+      "class": "Academorix\\Sports\\Progress\\Events\\ProgressCardGenerated",
       "trigger": "ProgressCard rendered — either automatically after assessment save (per sport config) or on-demand via regenerate endpoint.",
       "queue": "progress",
       "consumers": ["audit::WriteToAuditLog", "cache::WarmCardRender"],
@@ -47,7 +47,7 @@
     },
     {
       "name": "ProgressCardShared",
-      "class": "Stackra\\Sports\\Progress\\Events\\ProgressCardShared",
+      "class": "Academorix\\Sports\\Progress\\Events\\ProgressCardShared",
       "trigger": "Card shared via signed URL — sharing action recorded for later expiry / revoke.",
       "queue": "progress",
       "consumers": ["audit::WriteToAuditLog", "activity::WriteToActivityLog"],
@@ -61,7 +61,7 @@
     },
     {
       "name": "CoachNoteCreated",
-      "class": "Stackra\\Sports\\Progress\\Events\\CoachNoteCreated",
+      "class": "Academorix\\Sports\\Progress\\Events\\CoachNoteCreated",
       "trigger": "New CoachNote committed. Immutable — never fires again on the same row (edits create revisions via revision_of_id).",
       "queue": "progress",
       "consumers": ["audit::WriteToAuditLog", "activity::WriteToActivityLog"],
@@ -75,7 +75,7 @@
     },
     {
       "name": "CoachNoteRevised",
-      "class": "Stackra\\Sports\\Progress\\Events\\CoachNoteRevised",
+      "class": "Academorix\\Sports\\Progress\\Events\\CoachNoteRevised",
       "trigger": "New CoachNote row created with revision_of_id pointing at a predecessor. Original preserved.",
       "queue": "progress",
       "consumers": ["audit::WriteToAuditLog"],
@@ -88,7 +88,7 @@
     },
     {
       "name": "CoachNoteShared",
-      "class": "Stackra\\Sports\\Progress\\Events\\CoachNoteShared",
+      "class": "Academorix\\Sports\\Progress\\Events\\CoachNoteShared",
       "trigger": "P1 event. Visibility widened (coach_only → shared_with_parent / shared_with_athlete). Never fires on narrowing (refused by observer).",
       "queue": "notifications-critical",
       "consumers": [
@@ -107,7 +107,7 @@
     },
     {
       "name": "GradingEventScheduled",
-      "class": "Stackra\\Sports\\Progress\\Events\\GradingEventScheduled",
+      "class": "Academorix\\Sports\\Progress\\Events\\GradingEventScheduled",
       "trigger": "New GradingEvent committed with status='scheduled'. Fires notifications to candidate athletes + guardians.",
       "queue": "progress",
       "consumers": [
@@ -126,7 +126,7 @@
     },
     {
       "name": "GradingResultRecorded",
-      "class": "Stackra\\Sports\\Progress\\Events\\GradingResultRecorded",
+      "class": "Academorix\\Sports\\Progress\\Events\\GradingResultRecorded",
       "trigger": "GradingResult with result IN ('pass', 'fail', 'deferred'). Cascades to BeltRankPromoted on 'pass'.",
       "queue": "progress",
       "consumers": [
@@ -146,7 +146,7 @@
     },
     {
       "name": "BeltRankPromoted",
-      "class": "Stackra\\Sports\\Progress\\Events\\BeltRankPromoted",
+      "class": "Academorix\\Sports\\Progress\\Events\\BeltRankPromoted",
       "trigger": "P1 event. Belt promotion committed from GradingResult with result='pass'. Load-bearing signal for awards + activity + notifications.",
       "queue": "notifications-critical",
       "consumers": [

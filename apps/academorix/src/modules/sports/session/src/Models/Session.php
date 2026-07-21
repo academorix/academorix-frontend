@@ -4,23 +4,23 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Session\Models;
+namespace Academorix\Session\Models;
 
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
-use Stackra\Session\Contracts\Data\SessionInterface;
-use Stackra\Session\Database\Factories\SessionFactory;
+use Academorix\Session\Contracts\Data\SessionInterface;
+use Academorix\Session\Database\Factories\SessionFactory;
 use Stackra\Branch\Concerns\BelongsToBranch;
-use Stackra\Event\Concerns\BelongsToEvent;
+use Academorix\Event\Concerns\BelongsToEvent;
 use Stackra\Foundation\Concerns\Filterable;
 use Stackra\Foundation\Concerns\HasMetadata;
-use Stackra\Season\Concerns\BelongsToSeason;
-use Stackra\Session\Enums\SessionGenderCategory;
-use Stackra\Session\Enums\SessionStatus;
-use Stackra\Session\Policies\SessionPolicy;
+use Academorix\Season\Concerns\BelongsToSeason;
+use Academorix\Session\Enums\SessionGenderCategory;
+use Academorix\Session\Enums\SessionStatus;
+use Academorix\Session\Policies\SessionPolicy;
 use Stackra\Tenancy\Concerns\BelongsToTenant;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;

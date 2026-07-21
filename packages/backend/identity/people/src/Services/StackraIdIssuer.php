@@ -6,14 +6,14 @@ declare(strict_types=1);
 
 namespace Stackra\People\Services;
 
-use Stackra\People\Contracts\Services\AcademorixIdIssuerInterface;
+use Stackra\People\Contracts\Services\StackraIdIssuerInterface;
 use Illuminate\Container\Attributes\Scoped;
 use Stackra\People\Contracts\Repositories\PersonGuardianLinkRepositoryInterface;
 
 /**
- * Concrete service — AcademorixIdIssuer.
+ * Concrete service — Stackrassuer.
  *
- * Implements {@see AcademorixIdIssuerInterface}. `#[Scoped]` because most
+ * Implements {@see StackrassuerInterface}. `#[Scoped]` because most
  * services touch request state (current tenant, current user,
  * correlation id) — see `.kiro/steering/octane-first-di.md`. If
  * the service is provably stateless, promote to `#[Singleton]`.
@@ -23,7 +23,7 @@ use Stackra\People\Contracts\Repositories\PersonGuardianLinkRepositoryInterface;
  * @since    0.1.0
  */
 #[Scoped]
-final class AcademorixIdIssuer implements AcademorixIdIssuerInterface
+final class Stackrassuer implements StaStackraerInterface
 {
     /**
      * @param  PersonGuardianLinkRepositoryInterface  $personGuardianLinkRepository  Primary persistence boundary.

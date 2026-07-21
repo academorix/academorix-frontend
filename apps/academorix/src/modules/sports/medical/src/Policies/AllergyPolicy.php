@@ -4,13 +4,13 @@
 
 declare(strict_types=1);
 
-namespace Stackra\Medical\Policies;
+namespace Academorix\Medical\Policies;
 
 use Stackra\User\Models\User;
-use Stackra\Medical\Models\Allergy;
+use Academorix\Medical\Models\Allergy;
 
 /**
- * Authorization policy for {@see \Stackra\Medical\Models\Allergy}.
+ * Authorization policy for {@see \Academorix\Medical\Models\Allergy}.
  *
  * Wired via `#[UsePolicy]` on the Model.
  *
